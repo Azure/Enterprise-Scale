@@ -19,7 +19,7 @@
   * [Configure own environment](./docs/Deploy/configure-own-environment.md)
   * [Discovery and initialize](./docs/Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
-  * [Deploy landing zones](./docs/Deploy/deploy-deploy-landing-zones.md)
+  * [Deploy landing zones](./docs/Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](./docs/EnterpriseScale-known-issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
