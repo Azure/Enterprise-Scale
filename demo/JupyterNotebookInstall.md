@@ -79,15 +79,15 @@
 
     ```bash
     cd
-    git clone https://github.com/Azure/CET-NorthStar.git
-    cd CET-NorthStar/demo
+    git clone https://github.com/Azure/Enterprise-Scale.git
+    cd Enterprise-Scale/demo
     jupyter notebook &
     ```
 
     Make a note of the server URL in the output and navigate using your browser in Windows
 
     ```bash
-    [I 11:51:20.798 NotebookApp] Serving notebooks from local directory: /home/user/CET-NorthStar/demo
+    [I 11:51:20.798 NotebookApp] Serving notebooks from local directory: /home/user/Enterprise-Scale/demo
     [I 11:51:20.798 NotebookApp] The Jupyter Notebook is running at:
     [I 11:51:20.799 NotebookApp] http://localhost:8888/?token=3a96245be09fdb7cf0f9ca8f2aa862b99b5b51554b2e6e00
     [I 11:51:20.799 NotebookApp]  or http://127.0.0.1:8888/?token=3a96245be09fdb7cf0f9ca8f2aa862b99b5b51554b2e6e00

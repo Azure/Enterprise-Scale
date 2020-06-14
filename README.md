@@ -1,53 +1,77 @@
+| Azure CI | Deploy ARM Template |
+|:-------------|:--------------|
+| [![azure-pipelines-linux-image][]][azure-pipelines-linux-site] | [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmaster%2Ftemplate%2Fux-foundatione2e.json) |
+
+[azure-pipelines-linux-image]: https://dev.azure.com/mscet/Enterprise-Scale/_apis/build/status/master/CI%20-%20Linux?branchName=master
+[azure-pipelines-linux-site]: https://dev.azure.com/mscet/Enterprise-Scale/_build/latest?definitionId=8&branchName=master
+
+# Enterprise-Scale - Reference Implementation
+
+## Navigation Menu
+
+* [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
+* [Getting started](./docs/Deploy/Getting-Started.md)
+  * [Prerequisites](./docs/Deploy/Prerequisites.md)
+  * [Validate prerequisites](./docs/Deploy/Validate-prereqs.md)
+* [Reference implementations](./docs/reference/Readme.md)
+  * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
+  * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
+  * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
+* Using reference implementation in your own environment
+  * [Configure own environment](./docs/Deploy/Using-Reference-Implementation.md)
+    * [Configure GitHub and run initialization](./docs/Deploy/Configure-run-initialization.md)
+    * [Deploy platform infrastructure](./docs/Deploy/Deploy-platform-infra.md)
+    * [Deploy landing zones](./docs/Deploy/Deploy-lz.md)
+    * [Trigger deployments locally](./docs/Deploy/Trigger-local-deployment.md)
+  * [Enterprise-Scale ARM template](./docs/Deploy/ES-schema.md)
+* [Known Issues](./docs/Deploy/Known-Issues.md)
+* [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
+* [FAQ](./docs/EnterpriseScale-FAQ.md)
+* [Roadmap](./docs/EnterpriseScale-roadmap.md)
+
 ---
-page_type: sample
-languages:
-- csharp
-products:
-- dotnet
-description: "Add 150 character max description"
-urlFragment: "update-this-to-unique-url-stub"
+
+## Objective
+
+The primary objective of this playbook is to **help organizations to define their Azure architecture**, considering requisite design decisions across fundamental technical topics and "what-must-be-true" for organization wide Azure adoption. 
+
 ---
+_The Enterprise-Scale architecture represents the strategic design path and target technical state for your Azure environment._
+***
 
-# Official Microsoft Sample
+The Enterprise-Scale architecture provides prescriptive guidance coupled with Azure best practices, and it follows design principles across the critical design areas for the customer's Azure environment. It will continue to evolve alongside the Azure platform and is ultimately defined by the various design decisions that organizations must make to define their Azure journey.
 
-<!-- 
-Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
+Not all enterprises adopt Azure in the same way, so the Enterprise-Scale architecture may vary between customers. Ultimately, the technical considerations and design recommendations of the Enterprise-Scale architecture may lead to different trade-offs based on the customer's scenario. Some variation is expected, but if core recommendations are followed, the resulting target architecture will put the customer on a path to sustainable scale.
 
-Guidance on onboarding samples to docs.microsoft.com/samples: https://review.docs.microsoft.com/help/onboard/admin/samples/process/onboarding?branch=master
+The reference implementations in this repository is intended to support Enterprise-Scale Azure adoption by leveraging learnings from previous engineering engagements and provide architecture design pattern.
 
-Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
+## Conditions for success
+
+To fully leverage this reference implementation in this repository, readers must have a collaborative engagement with key customer stakeholders across critical technical domains, such as identity, security, and networking. Ultimately, the success of cloud adoption hinges on cross-discipline cooperation within the organization, since key requisite Enterprise-Scale design decisions are cross cutting, and to be authoritative must involve domain Subject Matter Expertise (SME) and stakeholders within the customer. It is crucial that the organization has been defined their [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md) following the design principals and critical design areas.
+
+It is also assumed that readers have a broad understanding of key Azure constructs and services in order to fully contextualize the prescriptive recommendations contained within this playbook.
+
+## How to get started
+
+Organization can use Azure Portal or Infrastructure-as-code to setup and configure Azure environment. It is also possible to **transition between portal and infrastructure-as-code (recommended)** when your ready to do so. 
+
+<!--
+![Enterprise-Scale ](./docs/media/ES-process.png)
 -->
 
-Give a short description for your sample here. What does it do and why is it important?
+### Deploying Enterprise-Scale Architecture in your own environment
 
-## Contents
+The enterprise-scale architecture is modular by design and allow customers to start with foundational landing zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point.In this repository we are providing the following three templates representing different scenarios composed using ARM templates.
 
-Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
+| Reference implementation | Description | ARM Template | Link |
+|:-------------------------|:-------------|:-------------|------|
+| Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmaster%2Ftemplate%2Fux-vwan.json) | [Detail description](./docs/reference/contoso/README.md) |
+| AdventureWorks | On-premises connectivity with Hub & Spoke  |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmaster%2Ftemplate%2Fux-hub-spoke.json) | [Detail description](./docs/reference/adventureworks/README.md) |
+| WingTip | Azure Only |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmaster%2Ftemplate%2Fux-foundation.json) | [Detail description](./docs/reference/wingtip/README.md) |
 
-| File/folder       | Description                                |
-|-------------------|--------------------------------------------|
-| `src`             | Sample source code.                        |
-| `.gitignore`      | Define what to ignore at commit time.      |
-| `CHANGELOG.md`    | List of changes to the sample.             |
-| `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
-| `README.md`       | This README file.                          |
-| `LICENSE`         | The license for the sample.                |
+### Getting Started with Infrastructure-as-a-Code
 
-## Prerequisites
-
-Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
-
-## Setup
-
-Explain how to prepare the sample once the user clones or downloads the repository. The section should outline every step necessary to install dependencies and set up any settings (for example, API keys and output folders).
-
-## Running the sample
-
-Outline step-by-step instructions to execute the sample and see its output. Include steps for executing the sample from the IDE, starting specific services in the Azure portal or anything related to the overall launch of the code.
-
-## Key concepts
-
-Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
+This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any OOB configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure resources in Azure. Please see [this section](./docs/Deploy/Configure-run-initialization.md) to get started with infrastructure-as-a-code in your environment.
 
 ## Contributing
 
