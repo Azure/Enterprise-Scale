@@ -41,7 +41,8 @@ Contoso has come across the Enterprise scale architecture which provides a forwa
 
 Contoso has opted for simpler EA design with a single department and multiple EA Accounts. Each EA account will have an associated service principal account by configuring IAM permission as part of the (automated) subscription provisioning process.
 
-Contoso has three separate Azure AD tenants for Dev, Test, and Prod and Azure AD Connect is already in place for the Production Azure AD tenant. The dev and test tenants are used for Office 365 validation, and there is no requirement to separate Identities at the Azure AD tenant level across Dev, Test and Production environments in Azure, so Contoso will only leverage the Production Azure AD tenant for Azure access.  
+Contoso has three separate Azure AD tenants for Dev, Test, and Prod and Azure AD Connect is already in place for the Production Azure AD tenant. The dev and test tenants are used for Office 365 validation, and there is no requirement to separate Identities at the Azure AD tenant level across Dev, Test and Production environments in Azure, so Contoso will only leverage the Production Azure AD tenant for Azure access.
+
 Additional controls will be in place for Networking (isolation) and Identity (segregation of duties) to guarantee separation between Dev, Test and Production workloads. From Networking and Identity perspective, all subscriptions are considered as production including all sandbox subscriptions.
 
 ### Identity and Access Management

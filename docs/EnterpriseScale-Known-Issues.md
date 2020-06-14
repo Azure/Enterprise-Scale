@@ -1,7 +1,15 @@
 
 # Reference Implementation - Known Issues
 
-The list below summarizes the known issues with Contoso reference implementation, when building and operationalizing their Azure platform using first-party platform and product capabilities.
+The list below summarizes the known issues with reference implementation, when building and operationalize their Azure platform using first-party platform and product capabilities.
+
+## Subscription and Management Group with duplicate display name
+
+Area: AzOps
+
+Issue: At present, if you environment contains management group or subscription with duplicate display name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration.
+
+Status: There is work in progress to use Name instead of display name. There will be runtime configuration option to override  this behavior however, it will reduce usability. We highly recommend to have unique display name for management groups and subscription.
 
 ## Subscription Creation
 
@@ -9,7 +17,7 @@ Area: Microsoft.Subscription Resource Provider
 
 Issue: At present, it is not possible to provision new Subscription via ARM templates. Subscription creation requires an Enterprise Enrollment account to be migrated to a new billing account API in the backend.
 
-Status: We are working closely with engineering teams to enable this functionality for the Contoso Tenant. As a workaround, subscriptions are created using GitHub Actions, having a Service Principal to call the POST API
+Status: We are working closely with engineering teams to enable this functionality for the Contoso Tenant. As a workaround, subscriptions are created using GitHub Actions, having a Service Principal to call the POST API.
 
 ## Unable to tag subscriptions using Azure Policy
 
@@ -25,15 +33,15 @@ Area: Microsoft.Subscription Resource Provider
 
 Issue: Currently, the display name of a subscription cannot be used in the policy rule, which makes it hard to navigate through subscriptions in policy evaluations to target the correct subscription(s).
 
-Status: For Contoso to deterministically target the platform subscriptions with their specific policies, their workaround is to have a dedicated management group for each subscription, child to the platform management group
+Status: To deterministically target the platform subscriptions with their specific policies, their workaround is to have a dedicated management group for each subscription, child to the platform management group
 
 ## Move subscription to management group
 
 Area: Microsoft.Management Resource Provider
 
-Issue: When doing put on Microsoft.Management/managementGroups/subscriptions, the PUT and GET response is 204 (no content), so the overall template deployment fails.	Fix was deployed to resolve PUT request. Waiting for the fix to resolve GET request.
+Issue: When doing put on Microsoft.Management/managementGroups/subscriptions, the PUT and GET response is 204 (no content), so the overall template deployment fails. Fix was deployed to resolve PUT request. Waiting for the fix to resolve GET request.
 
-Status: No fix as of yet.
+Status: In Progress.
 
 ## Reference() resources at management group scope when deploying ARM templates to subscription scope
 

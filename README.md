@@ -29,7 +29,7 @@ Disabling it until docs are refreshed.
     * [Trigger deployments locally](./docs/Deploy/Trigger-local-deployment.md)
   * [Enterprise-Scale ARM template](./docs/Deploy/ES-schema.md)
 -->
-* [Known Issues](./docs/Deploy/Known-Issues.md)
+* [Known Issues](./docs/EnterpriseScale-known-issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
 * [Roadmap](./docs/EnterpriseScale-roadmap.md)
