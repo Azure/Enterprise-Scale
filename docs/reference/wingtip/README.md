@@ -6,11 +6,11 @@
 
 ## Customer profile
 
-This reference implementation is ideal for customers who want to start with landing zones for their net new development in Azure, where hybrid connectivity to their on-premise datacenters is not required from the start.
+This reference implementation is ideal for customers who want to start with landing zones for their workload in Azure, where hybrid connectivity to their on-premise datacenter is not required from the start.
 
 ## How to evolve and add support for hybrid connectivity later
 
-If the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, the architecture allows you to expand and implement networking without any refactoring of the architecture nor implications to the runtime state of existing applications. You will simply create the connectivity subscription and place it into the platform management group and assign Azure Policy for the particular networking topology you desire.
+If the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, the architecture allows you to expand and implement networking without refactoring Azure Design with minimal disruption to what is already in Azure. Architecture allows to create the connectivity subscription and place it into the platform management group and assign Azure Policy for the target networking topology using either Virtual WAN or Hub and Spoke networking topology.
 
 ## Pre-requisites
 
@@ -19,7 +19,7 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 
 ## What will be deployed?
 
-- A scalable management group hiearchy aligned to core platform capabilities, allowing you to operationalize at scale using RBAC and Policy
+- A scalable management group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using RBAC and Policy
 - An Azure subscription dedicated for management, which enables core platform capabilities at scale such as security, auditing, and logging
 - Landing Zone management group for Azure native, internet-facing applications and resources, which doesn't require hybrid connectivity. This is where you will create your subscriptions that will host your workloads.
 
