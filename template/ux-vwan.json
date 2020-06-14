@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enterpriseScaleCompanyPrefix": {
+            "type": "string",
+            "maxLength": 5,
+            "metadata": {
+                "description": "Provide the prefix (max 5 characters) to the management group hierarchy that will be created"
+            }
+        },
+        "setup": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the type of initial deployment. Foundation will always be included and ideal for net new deployment/development in Azure without hybric connectivity requirements. If hybrid connectivity is required for migration scenarios and/or connectivy to on-premises, select eith VWan (Microsoft managed network) or HubSpoke (customer managed network) to deploy the requisite networking setup."
+            },
+            "defaultValue": "VWAN",
+            "allowedValues": [
+                "Foundation",
+                "HubSpoke",
+                "VWAN"
+            ]
+        }
+    },
+    "variables": {
+        "e2eTemplate": "https://raw.githubusercontent.com/Azure/Enterprise-Scale/master/template/enterprise-scale-arm-template.json"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[concat('EntScale', '-', parameters('setup'), guid(parameters('enterpriseScaleCompanyPrefix')))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('e2eTemplate')]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "setup": {
+                        "value": "[parameters('setup')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "deployment": {
+            "type": "string",
+            "value": "[concat(deployment().name, ' has successfully deployed. Welcome to NorthStar!')]"
+        }
+    }
+}

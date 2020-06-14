@@ -1,0 +1,363 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "input": {
+            "type": "object"
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/Azure/Enterprise-Scale/master/template/",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment. 
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "roleAssignmentEnabledForPolicy": {        
+            "type": "bool",
+            "defaultValue": true
+        },
+        "deploymentEnabledForPolicy": {        
+            "type": "bool",
+            "defaultValue": true
+        },
+        "remediationEnabledForPolicy": {        
+            "type": "bool",
+            "defaultValue": false
+        },
+        "debug":{        
+            "type": "bool",
+            "defaultValue": true
+        }
+    },
+    "variables": {
+        "debug": "[parameters('debug')]",
+        "roleAssignmentEnabledForPolicy": "[parameters('roleAssignmentEnabledForPolicy')]",
+        "deploymentEnabledForPolicy": "[parameters('deploymentEnabledForPolicy')]",
+        "remediationEnabledForPolicy": "[parameters('remediationEnabledForPolicy')]",        
+        "nestedTemplatesLocation": {
+            "tenantTemplate": "[uri(parameters('_artifactsLocation'), concat('tenant.json', parameters('_artifactsLocationSasToken')))]", 
+            "resourceTemplate": "[uri(parameters('_artifactsLocation'), concat('template.json', parameters('_artifactsLocationSasToken')))]"
+        }, 
+        
+        "input": "[parameters('input')]",
+        "resourceType": "[if(
+                            and(contains(parameters('input'), 'ResourceType'),not(empty(parameters('input').ResourceType))),
+                            parameters('input').ResourceType,
+                            json('null')
+                        )]",
+        "ExtensionResourceType": "[if(
+                                        and(contains(parameters('input'), 'ExtensionResourceType'),not(empty(parameters('input').ExtensionResourceType))),
+                                        parameters('input').ExtensionResourceType,
+                                        json('null')
+                                    )]",
+        "type": "[if(
+                    and(contains(parameters('input'), 'type'),not(empty(parameters('input').type))),
+                    parameters('input').type,
+                    json('null')
+                )]",        
+        "effectiveResourceType": "[coalesce(
+                                        variables('ExtensionResourceType'),
+                                        variables('ResourceType'),
+                                        variables('type')
+                                )]",        
+        "identity":"[if(
+                        and(
+                            contains(variables('input'),'identity'),
+                            not(empty(variables('input').identity))
+                            ),
+                        variables('input').identity,
+                        json('null')
+                    )]",
+        "location": "[if(
+                        and(
+                            contains(variables('input'),'Location'),
+                            not(empty(variables('input').Location))
+                        ),
+                        variables('input').location,
+                        'eastus'
+                    )]",
+        "tags": "[if(
+                        and(
+                            contains(variables('input'),'tags'),
+                            not(empty(variables('input').tags))
+                        ),
+                        variables('input').tags,
+                        json('null')
+                    )]",
+        "apiVersionLookup": {
+            "Microsoft.Resources/resourceGroups": "2019-05-10",
+            "Microsoft.Authorization/policyAssignments": "2019-06-01",
+            "Microsoft.Authorization/policyDefinitions": "2018-05-01",
+            "Microsoft.Authorization/PolicySetDefinitions": "2018-05-01",
+            "Microsoft.Authorization/roleDefinitions": "2018-01-01-preview",
+            "Microsoft.Authorization/roleAssignments": "2018-09-01-preview",
+            "Microsoft.PolicyInsights/remediations": "2019-07-01",
+            "Microsoft.ContainerService/ManagedClusters": "2019-10-01",
+            "Microsoft.KeyVault/vaults": "2018-02-14",
+            "Microsoft.Network/virtualWans": "2019-09-01",
+            "Microsoft.Network/virtualHubs": "2019-09-01",
+            "Microsoft.Network/virtualNetworks": "2017-10-01",
+            "Microsoft.Network/azureFirewalls": "2019-04-01",
+            "/providers/Microsoft.Management/managementGroups": "2020-02-01",
+            "/subscriptions" : "2019-10-01",
+            "na": "0000-00-00",
+            "": "0000-00-00"
+        },
+        "apiVersion": "[if(empty(variables('effectiveResourceType')),variables('apiVersionLookup')[''], variables('apiVersionLookup')[variables('effectiveResourceType')])]"
+        
+    },
+    "resources": [        
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Resources/resourceGroups'))]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[variables('location')]",
+            "tags": "[variables('tags')]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Authorization/policyDefinitions'))]",
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Authorization/policySetDefinitions'))]",
+            "type": "Microsoft.Authorization/policySetDefinitions",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Authorization/policyAssignments'))]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "identity": "[variables('identity')]",
+            "location": "[variables('location')]",
+            "Properties": "[variables('input').Properties]"
+        },       
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Authorization/roleDefinitions'))]",
+            "type": "Microsoft.Authorization/roleDefinitions",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Authorization/roleAssignments'))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.PolicyInsights/remediations'))]",
+            "type": "Microsoft.PolicyInsights/remediations",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Network/virtualWans'))]",
+            "type": "Microsoft.Network/virtualWans",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Network/virtualHubs'))]",
+            "type": "Microsoft.Network/virtualHubs",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.Network/azureFirewalls'))]",
+            "type": "Microsoft.Network/azureFirewalls",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            "condition": "[equals(toLower(variables('effectiveResourceType')),toLower('Microsoft.KeyVault/vaults'))]",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('input').name]",
+            "apiVersion": "[variables('apiversion')]",
+            "location": "[deployment().location]",
+            "Properties": "[variables('input').Properties]"
+        },
+        {
+            /*
+                Intent: Fan out Management Group Deployment for Policy/PolicySet/Role Definition and Assignment.
+                
+                Required Parameters (of PolicyDefinitions[] Object):
+
+                    1. Name                     
+                    2. "ResourceType": "Microsoft.Management/managementGroups",
+                    3. Properties Object with following optional Properties
+                        3.1  "policySetDefinitions": []
+                        3.2  "policyDefinitions": []
+                        3.3  "policyAssignments": []
+                        3.4  "roleDefinitions": []
+                        3.5  "roleAssignments": []
+                
+                Scope: Management Group
+                
+                Condition: Type property set to  "/providers/Microsoft.Management/managementGroups"
+
+                Details: Trigger Nested Deployment at MG scope
+
+                Change Log: 
+                    1. Initial Definition
+            */
+
+            "condition": "[contains(tolower(variables('effectiveResourceType')),toLower('Microsoft.Management/managementGroups'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[concat('NorthStar-MG-', variables('input').Name)]",
+            "dependsOn": [
+            ],
+            "Properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "outer"
+                },
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nestedTemplatesLocation').tenantTemplate]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "input": {
+                        "value": "[variables('input')]"
+                    },                    
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },                 
+                    "roleAssignmentEnabledForPolicy": {
+                        "value": "[variables('roleAssignmentEnabledForPolicy')]"
+                    },
+                    "deploymentEnabledForPolicy": {
+                        "value": "[variables('deploymentEnabledForPolicy')]"
+                    },
+                    "remediationEnabledForPolicy": {
+                        "value": "[variables('remediationEnabledForPolicy')]"
+                    }                    
+                }
+            }
+        }
+        /*
+        {
+            /*
+                Intent: Fan out Subscription Deployment for Policy/PolicySet/Role Definition and Assignment.
+                
+                Required Parameters (of PolicyDefinitions[] Object):
+
+                    1. Name                     
+                    2. "ResourceType": "Microsoft.Management/managementGroups",
+                    3. Properties Object with following optional Properties
+                        3.1  "policySetDefinitions": []
+                        3.2  "policyDefinitions": []
+                        3.3  "policyAssignments": []
+                        3.4  "roleDefinitions": []
+                        3.5  "roleAssignments": []
+                
+                Scope: Management Group
+                
+                Condition: Type property set to  "/providers/Microsoft.Management/managementGroups"
+
+                Details: Trigger Nested Deployment at MG scope
+
+                Change Log: 
+                    1. Initial Definition
+            
+
+            "condition": "[contains(tolower(variables('effectiveResourceType')),toLower('/subscriptions'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[concat('NorthStar-Sub-', variables('input').Name)]",
+            "dependsOn": [
+            ],
+            "Properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "outer"
+                },
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nestedTemplatesLocation').tenantTemplate]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "input": {
+                        "value": "[variables('input')]"
+                    },                    
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    }, 
+                    "roleAssignmentEnabledForPolicy": {
+                        "value": "[variables('roleAssignmentEnabledForPolicy')]"
+                    },
+                    "deploymentEnabledForPolicy": {
+                        "value": "[variables('deploymentEnabledForPolicy')]"
+                    },
+                    "remediationEnabledForPolicy": {
+                        "value": "[variables('remediationEnabledForPolicy')]"
+                    }  
+                }
+            }
+        },
+        */
+     
+    ],
+    "outputs": {
+        "hobo": {
+            "condition": "[and(variables('debug'),bool('false'))]",
+            "type": "object",
+            "value": "[variables('input')]"
+        },
+        "effectiveResourceType": {
+            "condition": "[variables('debug')]",
+            "type": "string",
+            "value": "[variables('effectiveResourceType')]"
+        },
+        "apiversion": {
+            "condition": "[variables('debug')]",
+            "type": "string",
+            "value": "[if(empty(variables('effectiveResourceType')),variables('apiVersionLookup')[''], variables('apiVersionLookup')[variables('effectiveResourceType')])]"
+        },
+        "tenantTemplate": {   
+            "condition": "[variables('debug')]",         
+            "type": "string",
+            "value": "[variables('nestedTemplatesLocation').tenantTemplate]"
+        },
+        "resourceTemplate": {
+            "condition": "[variables('debug')]",
+            "type": "string",
+            "value": "[variables('nestedTemplatesLocation').resourceTemplate]"
+        }   
+    }
+}

@@ -1,0 +1,139 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "defaultValue": "e210",
+            "maxLength": 5,
+            "metadata": {
+                "description": "This will be used as prefix for the top level management group and subsequent child management groups to ensure naming uniqueness for management groups inside your Azure tenant. 
+                                Please keep prefix to 3-5 characters.
+                                This should create following hierarchy of management group where ES (stands of Enterprise Scale) denotes the prefix specified for the value of parameter.
+                                <prefix>
+                                |--<prefix>-LandingZones
+                                    |--<prefix>-online
+                                    |--<prefix>-sap
+                                    |--<prefix>-corp
+                                |--<prefix>-platform
+                                |--<prefix>-decomissioned
+                                |--<prefix>-sandboxes
+                                "
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/Azure/Enterprise-Scale/master/template/tenant.json",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment. 
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "rootManagementGroupIdToReplace": {
+            "type": "string",
+            "defaultValue": "/providers/Microsoft.Management/managementGroups/3fc1081d-6105-4e19-b60c-1ec1252cf560",
+            "metadata": {
+                "description": "This will find the tenant id from the source template to replace with 'rootManagementGroupIdToReplaceWith'"
+            }
+        },
+        "rootManagementGroupIdToReplaceWith": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Replace value for tenant ID. Leave this to your tenant ID or empty string value (recommended) to ensure top level management group is placed under the root management group. Alternative you can specify any valid management group resource ID."
+            }
+        },
+        "setup": {
+            "type": "string",
+            "allowedValues": [
+                "Foundation",
+                "VWAN",
+                "HubSpoke"
+            ]
+        }
+    },
+    "variables": {
+        "topLevelManagementGroupPrefix" : "[parameters('topLevelManagementGroupPrefix')]",
+        "nestedTemplatesLocation": {
+            "tenantTemplate": "[uri(parameters('_artifactsLocation'), concat('tenant.json', parameters('_artifactsLocationSasToken')))]", 
+            "tenantTemplateParameters": "[uri(parameters('_artifactsLocation'), concat('e2e-landing-zone-orchestration.parameters.json', parameters('_artifactsLocationSasToken')))]",
+            "foundationTemplateParameters": "[uri(parameters('_artifactsLocation'), concat('e2e-landing-zone-foundation-orchestration.parameters.json', parameters('_artifactsLocationSasToken')))]",
+            "vWanTemplateParameters": "[uri(parameters('_artifactsLocation'), concat('e2e-landing-zone-vwan-orchestration.parameters.json', parameters('_artifactsLocationSasToken')))]",
+            "hubSpokeTemplateParameters": "[uri(parameters('_artifactsLocation'), concat('e2e-landing-zone-hubspoke-orchestration.parameters.json', parameters('_artifactsLocationSasToken')))]",
+            "resourceTemplate": "[uri(parameters('_artifactsLocation'), concat('template.json', parameters('_artifactsLocationSasToken')))]"
+        },
+        "resolverTemplateName": "[concat('EntScale', deployment().location, guid(parameters('topLevelManagementGroupPrefix')))]",
+        "enterpriseScaleTemplateName": "[concat('EntScale', deployment().location, guid(parameters('setup')))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[variables('resolverTemplateName')]",
+            "properties": {
+                "mode": "Incremental",                
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "input": {
+                            "type": "object",
+                            "metadata": {
+                                "description": "input parameter for RESTful representation"
+                            }
+                        }                        
+                    },
+                    "variables": {
+                        "topLevelManagementGroupPrefix" : "[parameters('topLevelManagementGroupPrefix')]",
+                        "rootManagementGroupIdToReplace" : "[parameters('rootManagementGroupIdToReplace')]",
+                        "rootManagementGroupIdToReplaceWith" : "[parameters('rootManagementGroupIdToReplaceWith')]"
+                    },
+                    "resources": [
+                    ],
+                    "outputs": {
+                        "deploymentJson": {
+                            "condition": "[bool('true')]",
+                            "type": "object",
+                            "value": "[[json(replace(replace(string(parameters('input')),'Tailspin',variables('topLevelManagementGroupPrefix')),variables('rootManagementGroupIdToReplace'),variables('rootManagementGroupIdToReplaceWith')))]"
+                        }
+                    }
+                },
+                "parametersLink": {
+                    "uri": "[if(equals(parameters('setup'), 'Foundation'), variables('nestedTemplatesLocation').foundationTemplateParameters, variables('nestedTemplatesLocation').tenantTemplateParameters)]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",            
+            "name": "[variables('enterpriseScaleTemplateName')]",            
+            "properties": {
+                "mode": "Incremental",
+                
+                "templateLink": {
+                    "uri": "[variables('nestedTemplatesLocation').tenantTemplate]",
+                    "contentVersion": "1.0.0.0"
+                },                
+                "parameters": {
+                    "input": {
+                        "value": "[reference(variables('resolverTemplateName')).outputs.deploymentJson.Value]"
+                    }
+                }
+            }
+        }         
+    ],
+    "outputs": {       
+        "deploymentJson": {
+            "condition": "[bool('true')]",
+            "type": "object",
+            "value": "[reference(variables('resolverTemplateName')).outputs.deploymentJson]"
+        }
+    }
+}
