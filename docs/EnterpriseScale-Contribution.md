@@ -2,7 +2,7 @@
 ## Contribution Guide
 
 ### Enterprise Scale Committee
-The North Star Committee and its members (aka Committee Members) are the primary caretakers of the North Star repo including language, design, and contoso implementation.
+The Enterprise Scale Committee and its members (aka Committee Members) are the primary caretakers of the Enterprise-Scale and AzOps repos including language, design, and reference implementations.
 
 ### Current Committee Members
 
@@ -46,7 +46,7 @@ Submit a pull request for documentation updates using the following template 'pl
 
     ```shell
     #substitute file name as appropriate. below example
-    git checkout feature: .\.github\workflows\azops-push.yml
+    git checkout feature: .\.docs\Deploy\Deploy-lz.md
     ```
 
 3. Push your Git branch to your origin
@@ -63,9 +63,9 @@ First, let's assert that there is no right or wrong way writing ARM templates an
 
 ARM is a language and everyone has different "style of writing". Very seldom composition of the template and parameters file are the same amongst group of developers. There is no clear style definition to govern and separate code from the config. In other words, what goes in template Vs. what is in the parameter files. Available guidance on when to use parameters and object as parameters (without any schema) are subject to interpretation and there is no one authoring "style" fits all.
 
-To simplify development and unit testing at-scale with multiple developers contributing, we have adopted to specific style of writing templates by decoupling template from its parameter file completely.
+To simplify development and unit testing at-scale with multiple developers contributing, we have adopted to specific style of writing ARM templates by decoupling template from its parameter file completely.
 
-We have opted for minimalist "one template to rule them all" approach. This will externalize all resource properties as a complex object in parameter file and we can enforce strict schema validation on parameter file based on resource schema that platform already publishes. This drives clear separation between  template and parameters. Parameter file is essentially RESTful representation of the resource when calling "Get-AzResource" or "az resource show".
+We have opted for minimalist "one template to rule them all" approach. This will externalize all resource properties as a complex object in parameter file and we can enforce strict schema validation on parameter file based on resource schema that platform already publishes. This drives clear separation between template and parameters. Parameter file is essentially RESTful representation of the resource when calling "Get-AzResource" or "az resource show".
 
 - Template.json
 
@@ -75,12 +75,12 @@ We have opted for minimalist "one template to rule them all" approach. This will
         "type": "Microsoft.Authorization/policyDefinitions",
         "name": "[variables('policyDefinitions').name]",
         "apiVersion": "[variables('apiversion')[variables('resourceType')]]",
-        "location": "northeurope",
+        "location": "[deployment().location]",
         "properties": "[variables('policyDefinitions').Properties]"
     }],
 ```
 
-There is generic multi-resource template available [here](../src/template.json) to ensure bug fixes are incorporated with latest API Version.
+There is generic multi-resource template available [here](../template/template.json) to ensure bug fixes are incorporated with latest API Version.
 
 - Template.parameters.json
 
@@ -109,22 +109,22 @@ Following Pros and Cons are considered when making design decision.
 
 - Pros
 
-  - No more writing of ARM templates! Last ARM template is written 😊.
-  - Consistent resource export throughout the lifecycle of the resource regardless of how resource is created and updated - Portal, CLI, PowerShell or 3rd Party tools
-  - Easier to detect drift between configuration stored in Git Vs what is current configuration – we are essentially comparing two JSON documents.
+  - No more writing of ARM templates! The last ARM template is written.
+  - Consistent resource export throughout the lifecycle of the resource regardless of how the resource is created and updated - Portal, CLI, PowerShell or 3rd Party tools
+  - Easier to detect drift between configuration stored in Git vs what is current configuration – we are essentially comparing two JSON documents.
   - Managing implicit dependencies between simple resources at client side or server side. Azure doesn't have many circular dependency between resources and it is possible to workout implicit dependencies based on resource schema already published. For example, VM might have dependency on KV but KVs do not depend on VMs. e.g. PolicyDefinition -> Policy Assignment -> Role Assignment -> Remediation or vNet -> ExpressRoute or kv-> Azure SQL
 
 - Cons
 
   - Losing intellisense when authoring parameter file complex object. This is one-off activity and can be mitigated by retrieving base definition of existing resource or creating resource via portal first.
-  - Unable to track template deployments using azure-partner-customer-usage-attribution. This is Not in the scope of North Star.
+  - Unable to track template deployments using azure-partner-customer-usage-attribution. This is Not in the scope of Enterprise Scale.
 
 Again to re-iterate, there is nothing wrong with existing ARM templates used for resource deployments and there is no expectation to re-write those. Pipeline will continue to honour deployment of those ARM templates and detect configuration drift. However we will not be able to reconcile those templates as platform do not allow exporting deployment template in a way that can facilitate reconciliation. For that reason, any templates submit for PR must conform to ***"what-you-export"*** is ***"what-you-deploy"***.
 
 - Dos
   - Read the next section before submitting PR
 - Don'ts
-  - Submit PR with template and parameters file to deploy resources e.g. Key Vault, Log Analytics, Network without wrapping them inside Policy.
+  - Submit PR with template and parameters file to deploy resources e.g. Key Vault, Log Analytics, Network without wrapping them inside Policy (Microsoft.Authorization/policyDefinitions).
 
 #### Contributing Policy Definitions, Policy Assignment, Role Definition and Role Assignment for for Contoso Implementation
 
