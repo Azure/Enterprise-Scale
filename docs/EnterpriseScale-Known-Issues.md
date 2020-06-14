@@ -9,7 +9,7 @@ Area: AzOps
 
 Issue: At present, if you environment contains management group or subscription with duplicate display name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration.
 
-Status: There is work in progress to use Name instead of display name. There will be runtime configuration option to override  this behavior however, it will reduce usability. We highly recommend to have unique display name for management groups and subscription.
+Status: There is work in progress to use resource name instead of display name. There will be runtime configuration option to override  this behavior however, it will reduce usability. We highly recommend to have unique display name for management groups and subscription.
 
 ## Subscription Creation
 
@@ -19,29 +19,21 @@ Issue: At present, it is not possible to provision new Subscription via ARM temp
 
 Status: We are working closely with engineering teams to enable this functionality for the Contoso Tenant. As a workaround, subscriptions are created using GitHub Actions, having a Service Principal to call the POST API.
 
-## Unable to tag subscriptions using Azure Policy
-
-Area: Azure Policy
-
-Issue: Currently, a subscription cannot be tagged by Azure Policy, which makes it hard to navigate through subscriptions in policy evaluations to target the correct subscription(s).
-
-Status: For Contoso to deterministically target the platform subscriptions with their specific policies, their workaround is to have a dedicated management group for each subscription, child to the platform management group
-
 ## Unable to use policy aliases on Microsoft.Resources/subscriptions
 
 Area: Microsoft.Subscription Resource Provider
 
 Issue: Currently, the display name of a subscription cannot be used in the policy rule, which makes it hard to navigate through subscriptions in policy evaluations to target the correct subscription(s).
 
-Status: To deterministically target the platform subscriptions with their specific policies, their workaround is to have a dedicated management group for each subscription, child to the platform management group
+Status: To deterministically target the platform subscriptions with their specific policies, their workaround is to have a dedicated management group for each platform subscription, child to the platform management group
 
 ## Move subscription to management group
 
 Area: Microsoft.Management Resource Provider
 
-Issue: When doing put on Microsoft.Management/managementGroups/subscriptions, the PUT and GET response is 204 (no content), so the overall template deployment fails. Fix was deployed to resolve PUT request. Waiting for the fix to resolve GET request.
+Issue: When doing http put on Microsoft.Management/managementGroups/subscriptions, the subsequent GET response is 204 (no content), so the overall template deployment fails. 
 
-Status: In Progress.
+Status: Fix is in progress.
 
 ## Reference() resources at management group scope when deploying ARM templates to subscription scope
 
@@ -49,7 +41,7 @@ Area: Azure Resource Manager template deployments
 
 Issue: When deploying a subscription template and using template reference() function to reference a resource (policyDefinitions/policyAssignments) from management group, the function append the subscriptionId to the referenced resource, which will cause the deployment to fail.
 
-Status: No fix as of yet, and for workaround the particular policyAssignments must sit directly on the subscription for the template deployment to succeed.
+Status: No fix as of yet, and for workaround the particular policyAssignments must sit directly on the subscription for the template deployment invoked to succeed.
 
 ## Management group scoped deployments can deploy to tenant root scope
 
@@ -65,13 +57,13 @@ Area: Azure Resource Manager template deployments
 
 Issue: When doing nested deployments from tenant scope (e.g., policyAssignment and subsequent roleAssignment for the managed identity), the reference() function fails saying the policyAssignment cannot be found, even though it exists. A re-deployment works fine.
 
-Status: No fix as of yet.
+Status: No fix as of yet. Workaround is to add a "delayFor" resource deployment in serial mode with batch size set to 1
 
 ## Reference() function runs even though the resource condition is false
 
 Area: Azure Resource Manager template deployments
 
-Issue: When using “conditions” on resources, and it evaluates to false, the reference() function within the resource properties is still executed which causes the deployment to fail.
+Issue: When using “conditions” on resources, and when it evaluates to false, the reference() function within the resource properties is still executed which causes the deployment to fail.
 
 Status: No fix as of yet. Workaround is to do N number of additional if() functions to logically navigate (e.g., if reference resource doesn’t exist, throw json(‘null’).)
 
