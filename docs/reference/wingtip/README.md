@@ -20,7 +20,8 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 ## What will be deployed?
 
 - A scalable management group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using RBAC and Policy
+- Azure Policies that will enable autonomy for the platform and the landing zones
 - An Azure subscription dedicated for management, which enables core platform capabilities at scale such as security, auditing, and logging
-- Landing Zone management group for Azure native, internet-facing applications and resources, which doesn't require hybrid connectivity. This is where you will create your subscriptions that will host your workloads.
+- Landing Zone management group for Azure native, internet-facing applications and resources, which doesn't require hybrid connectivity. This is where you will create your subscriptions that will host your workloads
 
 ![Enterprise scale without connectivity](./media/es-without-networking.PNG)

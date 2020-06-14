@@ -27,6 +27,7 @@ For the purpose of discovery, following resources are considered within the scop
 - Policy Definition and Policy Assignment for Governance
   - ResourceTypes:
     - Microsoft.Authorization/policyDefinitions
+    - Microsoft.Authorization/policySetDefinitions
     - Microsoft.Authorization/policyAssignments
 - Role Definition and Role Assignment
   - ResourceTypes:
