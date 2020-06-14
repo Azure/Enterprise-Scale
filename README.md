@@ -10,9 +10,6 @@
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
-* [Getting started](./docs/Deploy/Getting-Started.md)
-  * [Prerequisites](./docs/Deploy/Prerequisites.md)
-  * [Validate prerequisites](./docs/Deploy/Validate-prereqs.md)
 * [Reference implementations](./docs/reference/Readme.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
@@ -23,7 +20,7 @@
   * [Discovery and initialize](./docs/Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
   * [Deploy landing zones](./docs/Deploy/deploy-deploy-landing-zones.md)
-  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md)
+<!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
 <!--
 
 Disabling it until docs are refreshed.
