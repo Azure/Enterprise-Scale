@@ -85,4 +85,4 @@ Status: No fix as of yet.
 
 Issue: The discovery process discussed on [this](./Configure-run-initialization.md) article will fail if there are subscriptions or Management Groups with duplicated names. 
 
-Status: Workaround is to ensure subscription names and management groups are unique in your tenant regradless of the hierarchy prior to running the discovery process.
+Status: Workaround is to ensure subscription names and management groups are unique in your tenant regardless of the hierarchy prior to running the discovery process.
