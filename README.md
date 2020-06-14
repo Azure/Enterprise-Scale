@@ -36,9 +36,7 @@ Disabling it until docs are refreshed.
 
 ## Objective
 
-The primary objective of this playbook is to **help organizations to define their Azure architecture**, considering requisite design decisions across fundamental technical topics and "what-must-be-true" for organization wide Azure adoption. 
-
-The Enterprise-Scale architecture provides prescriptive guidance coupled with Azure best practices, and it follows design principles across the critical design areas for the customer's Azure environment. It will continue to evolve alongside the Azure platform and is ultimately defined by the various design decisions that organizations must make to define their Azure journey.
+The Enterprise-Scale architecture provides prescriptive guidance coupled with Azure best practices, and it follows design principles across the critical design areas for **organizations to define their their Azure architecture. It will continue to evolve alongside the Azure platform and is ultimately defined by the various design decisions that organizations must make to define their Azure journey.
 
 ---
 _The Enterprise-Scale architecture represents the strategic design path and target technical state for your Azure environment._

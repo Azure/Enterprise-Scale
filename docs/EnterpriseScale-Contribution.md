@@ -80,7 +80,7 @@ We have opted for minimalist "one template to rule them all" approach. This will
     }],
 ```
 
-There is generic multi-resource template available [here](../template/template.json) to ensure bug fixes are incorporated with latest API Version.
+There is generic multi-resource template available [here](https://raw.githubusercontent.com/Azure/AzOps/master/template/template.json) to ensure bug fixes are incorporated with latest API Version.
 
 - Template.parameters.json
 
