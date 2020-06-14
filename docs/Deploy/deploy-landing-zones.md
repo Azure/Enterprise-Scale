@@ -1,20 +1,18 @@
 
 # Contents
 
-This article describes how to deploy Landing Zones under the respective Management Group scope. This is the last of the three steps to setup your environment. Please complete first [Step 1](./Configure-run-initialization.md) and [Step 2](./Deploy-lz.md) before you continue.
-
-![Deploy your own environment process - step 3](./media/deploy-environment-step-3.png)
+This article describes how to deploy Landing Zones under the respective Management Group scope.
 
 # Create Landing Zones
 
-In a Enterprise scale implementation, all platform resources in the __Connectivity__ and __Management__ Subscriptions are deployed via Azure Policy. Enterprise scale includes both, policy definitions and assignments required to deploy the neccesary resources. While it is possible to deploy both, Azure Policy definition and assignments using Enterprise scale deployment process via GitHub Actions as described in this article, Enterprise scale provides flexiblity for how the assignments can be done in the platform subscriptions.
+In a Enterprise-Scale implementation, all platform resources in the __Connectivity__ and __Management__ Subscriptions are deployed via Azure Policy. Enterprise-Scale includes both, policy definitions and assignments required to deploy the neccesary resources for the reference implementation. While it is possible to deploy both, Azure Policy definition and assignments using Enterprise-Scale deployment process via GitHub Actions as described in this article, Enterprise-Scale provides flexiblity for how the assignments can be done in the platform subscriptions.
 
-All platform Azure resources in a Landing Zones following the Enterprise scale guidance are fully controlled and provisioned through Azure Policy on the Landing Zone Management Group scope. More information on the [Policy Driven Approach](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) can be found in the Enterprise scale design principals section of this document.
+All platform Azure resources in a Landing Zones following the Enterprise-Scale guidance are fully controlled and provisioned through Azure Policy. More information on the [Policy Driven Approach](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) can be found in the Enterprise-Scale design principals section of this document.
 
 Before continuing, please ensure that you have completed all prerequisites in the previous sections. Specially the below steps:
 
-1. Ensure the default management structure exist as described in the the [configure GitHub and run initialization](./Configure-run-initialization.md) section.
-2. Ensure you have [initialized AzOps repository](Configure-run-initialization.md) and pushed changes are in your **master** branch.
+1. Ensure the default management structure exist for example as described in the [Contoso reference implementation](../reference/contoso/Readme.md)
+2. Ensure you have [setup Git](setup-github.md).
 3. All the platform infrastructure has been deployed following [these instructions](./Deploy-platform-infra.md).
 
 ---

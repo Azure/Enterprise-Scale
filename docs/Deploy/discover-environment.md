@@ -20,4 +20,6 @@ This triggers a GitHub Action which runs a discovery of the Azure environment. P
    a. The `system` branch contains the discovered Azure environment (`azops` folder). Verfiy the Files changed tab in the PR.  
    b. Merge PR to `master`.
 
+> Note: It is safe to delete the `system` branch at this point in time as it is created as part of the discovery process.
+
 The current Azure environment is now represented in the `azops` folder of the master branch. With this step discovery of the configured environment is completed. The next section will deploy policy assignements.
