@@ -2,11 +2,11 @@
 
 This article will guide you through the process to configure GitHub in preparation for Enterprise-Scale deployments.
 
-1. Fork the Enterprise-Scale GitHub repo (https://github.com/Azure/Enterprise-Scale) to your GitHub organization and optionally [clone the forked GitHub repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) to your local machine.
+1. Create a new GitHub repository from [Enterprise-Scale GitHub repo](https://github.com/Azure/Enterprise-Scale) as a template in your GitHub organization or [clone the forked GitHub repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) to your local machine. If you clone the repository locally you have to push it the a new remote repository.
 
-2. In your fork (for example, https://github.com/your-github-id/Enterprise-Scale), create a Personal Access Token (PAT). You can refer to this [article](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for steps on creating a PAT.
+2. In your new repository (for example, `https://github.com/your-github-id/Enterprise-Scale`), create a Personal Access Token (PAT). You can refer to this [article](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for steps on creating a PAT. Only `repo` permissions are required.
 
-3. "User Access Administrator" role is required to manage the deployment of your Enterprise-Scale architecture. This may requires [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) It is strongly recommended to assign the permission at the highest scope possible (i.e. tenant root "/") to ensure you can use the service principal to perform subscriptions management operation. "App registration" needs to be enabled on the Azure AD tenant to self-register an Application (Option 1).
+3. "User Access Administrator" role is required to manage the deployment of your Enterprise-Scale architecture. This may requires [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) It is strongly recommended to assign the permission at the highest scope possible (i.e. tenant root scope `/`) to ensure you can use the service principal to perform subscriptions management operation. "App registration" needs to be enabled on the Azure AD tenant to self-register an Application (Option 1).
     > Note: Read access on the root level is enough to perform the initialization, but not for deployment. To be able to create management group and subscriptions, platform requires Tenant level PUT permission.
 
     Option 1 (App registration enabled)
@@ -54,7 +54,7 @@ This article will guide you through the process to configure GitHub in preparati
     }
     ```
 
-* Name: AZURE_ENROLLMENT_ACCOUNT_NAME [Optional] 
+* Name: AZURE_ENROLLMENT_ACCOUNT_NAME [Optional]
   
     This parameter is required if you are planning to create new subscription though this workflow. This secret must contain the **ObjectId** for the Azure Enrollment Account. You can obtain the id by running ```Get-AzEnrollmentAccount```
 
