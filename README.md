@@ -10,24 +10,17 @@
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
-* [Getting started](./docs/Deploy/Getting-Started.md)
-  * [Prerequisites](./docs/Deploy/Prerequisites.md)
-  * [Validate prerequisites](./docs/Deploy/Validate-prereqs.md)
 * [Reference implementations](./docs/reference/Readme.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
-<!--
-Disabling it until docs are refreshed.
-
-* Using reference implementation in your own environment
-  * [Configure own environment](./docs/Deploy/Using-Reference-Implementation.md)
-    * [Configure GitHub and run initialization](./docs/Deploy/Configure-run-initialization.md)
-    * [Deploy platform infrastructure](./docs/Deploy/Deploy-platform-infra.md)
-    * [Deploy landing zones](./docs/Deploy/Deploy-lz.md)
-    * [Trigger deployments locally](./docs/Deploy/Trigger-local-deployment.md)
-  * [Enterprise-Scale ARM template](./docs/Deploy/ES-schema.md)
--->
+* [Getting started](./docs/Deploy/getting-started.md)
+  * [Setup GitHub](./docs/Deploy/setup-github.md)
+  * [Configure own environment](./docs/Deploy/configure-own-environment.md)
+  * [Discovery and initialize](./docs/Deploy/discover-environment.md)
+  * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
+  * [Deploy landing zones](./docs/Deploy/deploy-landing-zones.md)
+<!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](./docs/EnterpriseScale-known-issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
