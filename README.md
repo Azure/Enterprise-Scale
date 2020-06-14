@@ -18,7 +18,6 @@
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
 <!--
-
 Disabling it until docs are refreshed.
 
 * Using reference implementation in your own environment
@@ -33,7 +32,6 @@ Disabling it until docs are refreshed.
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
 * [Roadmap](./docs/EnterpriseScale-roadmap.md)
-
 ---
 
 ## Objective
@@ -70,9 +68,9 @@ The enterprise-scale architecture is modular by design and allow customers to st
 
 | Reference implementation | Description | ARM Template | Link |
 |:-------------------------|:-------------|:-------------|------|
-| Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-vwan.json) | [Detail description](./docs/reference/contoso/Readme.md) |
-| AdventureWorks | On-premises connectivity with Hub & Spoke  | <!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detail description](./docs/reference/adventureworks/README.md) |
-| WingTip | Azure Only |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-foundation.json) | [Detail description](./docs/reference/wingtip/README.md) |
+| Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-vwan.json) | [Detailed description](./docs/reference/contoso/Readme.md) |
+| AdventureWorks | On-premises connectivity with Hub & Spoke  | <!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detailed description](./docs/reference/adventureworks/README.md) |
+| WingTip | Azure without hybrid connectivity |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-foundation.json) | [Detailed description](./docs/reference/wingtip/README.md) |
 
 ### Getting Started with Infrastructure-as-a-Code
 

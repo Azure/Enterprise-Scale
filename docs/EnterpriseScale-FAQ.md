@@ -12,7 +12,7 @@ From Enterprise scale point of view, Subscription is the "Landing Zone" in Azure
 
 **Why do Enterprise Scale ARM templates require permission at tenant root '/' scope?**
 
-Management Group creation is tenant level PUT API and hence it is pre-requisite to grant permission at root scope to use example templates.
+Management Group creation, subscription creation, and subscription placement into management groups are tenant level PUT API and hence it is pre-requisite to grant permission at root scope to use example templates, which will handle end-2-end resource composition and orchestration.
 
 **Why do we need to sync fork with upstream repo?**
 
