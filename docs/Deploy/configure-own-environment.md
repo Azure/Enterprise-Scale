@@ -6,7 +6,7 @@ To deploy a sample Enterprise-Scale reference implementation, simply choose your
 
 - [WingTip](../reference/wingtip/README.md)
 - [AdventureWorks](../reference/adventureworks/README.md)
-- [Contoso reference implementations](../reference/contoso/Readme.md)
+- [Contoso](../reference/contoso/Readme.md)
 
 This will create a sample management group structure that you can use for starting point.
 
@@ -16,4 +16,4 @@ Once the deployment is complete, ensure you move your subscriptions under the de
 
 ## Next steps
 
-Once you have an environment with your desired management group hierarchy, you can proceed to the next step, Setup GitHub.
+Once you have an environment with your desired management group hierarchy, you can proceed to the next step, [Setup GitHub](./setup-github.md).
