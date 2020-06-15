@@ -1,0 +1,90 @@
+name: AzOps
+
+on:
+  repository_dispatch:
+    types:
+      - "activity-logs"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "azops/**"
+  pull_request_review:
+    branches:
+      - master
+    types: [submitted]
+    paths:
+      - "azops/**"
+
+jobs:
+  push:
+    if: ${{ github.event_name == 'pull_request' && github.head_ref != 'system' }}
+    name: Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actions checkout
+        uses: actions/checkout@v2
+      - name: GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Actions azops
+        uses: Azure/AzOps@master
+        with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          github_comments: ${{ github.event.pull_request._links.comments.href }}
+          github_issue: ${{ github.event.pull_request._links.issue.href }}
+          github_base_ref: ${{ github.event.pull_request.base.ref }}
+          github_head_ref: ${{ github.event.pull_request.head.ref }}
+          mode: push
+          verbose: "true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # If you want review before triggering the push event, enable push_with_review block and disable push.
+  # Review will require, someone other than the creator or the PR to complete review.
+  # GitHub Action will run once PR is reviewed with comment that contains  "LGTM". 
+  # However, in order for GitHub Action status check to display in your PR, you have to enable branch access policy.
+  #
+  # push_with_review:
+  #   if: ${{ github.head_ref != 'system' && contains(github.event.review.body, 'LGTM')}}
+  #   name: Push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Actions checkout
+  #       uses: actions/checkout@v2
+  #     - name: GitHub context
+  #       env:
+  #         GITHUB_CONTEXT: ${{ toJson(github) }}
+  #       run: echo "$GITHUB_CONTEXT"
+  #     - name: Actions azops
+  #       uses: Azure/AzOps@master
+  #       with:
+  #         azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+  #         github_comments: ${{ github.event.pull_request._links.comments.href }}
+  #         github_issue: ${{ github.event.pull_request._links.issue.href }}
+  #         github_base_ref: ${{ github.event.pull_request.base.ref }}
+  #         github_head_ref: ${{ github.event.pull_request.head.ref }}
+  #         mode: push
+  #         verbose: "true"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pull:
+    if: ${{ github.event_name == 'repository_dispatch' }}
+    name: Pull
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actions checkout
+        uses: actions/checkout@v2
+      - name: GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Actions azops
+        uses: Azure/AzOps@master
+        with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          mode: pull
+          verbose: "true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

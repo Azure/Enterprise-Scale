@@ -1,0 +1,107 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Tailspin",
+        "DisplayName": "Tailspin",
+        "ParentId": "/providers/Microsoft.Management/managementGroups/3fc1081d-6105-4e19-b60c-1ec1252cf560",
+        "Type": "/providers/Microsoft.Management/managementGroups",
+        "Children": [
+          {
+            "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-bu1",
+            "Name": "Tailspin-bu1",
+            "DisplayName": "Tailspin-bu1",
+            "Type": "/providers/Microsoft.Management/managementGroups"
+          }
+        ],
+        "properties": {
+          "policyDefinitions": [
+            {
+              "Name": "DINE-KeyVault",
+              "ExtensionResourceType": "Microsoft.Authorization/policyDefinitions",
+              "Properties": {
+                "displayName": "KeyVault",
+                "policyType": "Custom",
+                "mode": "All",
+                "description": "Ensures that management RG has Key Vault Deployed to manage platform secrets",
+                "parameters": {},
+                "policyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.KeyVault/vaults",
+                      "deploymentScope": "Subscription",
+                      "existenceScope": "Subscription",
+                      "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                      ],
+                      "existenceCondition": {
+                        "allOf": [
+                          {
+                            "field": "type",
+                            "equals": "Microsoft.KeyVault/vaults"
+                          },
+                          {
+                            "field": "name",
+                            "like": "[concat(subscription().displayName, '-keyvault')]"
+                          }
+                        ]
+                      },
+                      "deployment": {
+                        "location": "northeurope",
+                        "properties": {
+                          "mode": "incremental",
+                          "parameters": {},
+                          "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {},
+                            "variables": {},
+                            "resources": [
+                              {
+                                "type": "Microsoft.Resources/resourceGroups",
+                                "apiVersion": "2018-05-01",
+                                "name": "[concat(subscription().displayName, '-keyvault')]",
+                                "location": "[deployment().location]",
+                                "properties": {}
+                              }
+                            ],
+                            "outputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "policyAssignments": [
+            {
+              "Name": "ADINE-KeyVault",
+              "Type": "Microsoft.Authorization/policyAssignments",
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "Properties": {
+                "displayName": "ADINE-KeyVault",
+                "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/Tailspin/providers/Microsoft.Authorization/policyDefinitions/DINE-KeyVault",
+                "scope": "/providers/Microsoft.Management/managementGroups/Tailspin",
+                "notScopes": [],
+                "parameters": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
