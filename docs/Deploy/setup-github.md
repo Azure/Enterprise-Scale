@@ -2,7 +2,7 @@
 
 This article will guide you through the process to configure GitHub in preparation for Enterprise-Scale deployments.
 
-1. Create a new GitHub repository from [Enterprise-Scale GitHub repo](https://github.com/Azure/Enterprise-Scale) as a template in your GitHub organization or [clone the forked GitHub repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) to your local machine. If you clone the repository locally you have to push it the a new remote repository.
+1. Create a new GitHub repository from [Enterprise-Scale GitHub repo](https://github.com/Azure/Enterprise-Scale) as a template in your GitHub organization.
 
 2. In your new repository (for example, `https://github.com/your-github-id/Enterprise-Scale`), create a Personal Access Token (PAT). You can refer to this [article](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for steps on creating a PAT. Only `repo` permissions are required.
 
@@ -39,6 +39,8 @@ This article will guide you through the process to configure GitHub in preparati
     } | ConvertTo-Json
     ```
 
+    > Note: It can take up to 15 minutes for newly added permission to reflect for SPN
+
 4. To create the following secrets on GitHub, navigate to the main page of the repository and under your repository name, click **Settings**, click **Secrets**, and then click **New secret**.
 
 * Name: AZURE_CREDENTIALS
@@ -68,15 +70,15 @@ Follow these steps in order to synchronize the latest changes from the upstream 
 
 Run the following git commands once you change your directory to your local fork to add a reference to the upstream repo
 
-    ```shell
-    git remote -v
-    git remote add upstream https://github.com/Azure/Enterprise-scale.git
-    git remote -v
-    ```
+```shell
+git remote -v
+git remote add upstream https://github.com/Azure/Enterprise-scale.git
+git remote -v
+```
 
 Execute the following git commands when you want to synchronize changes from upstream repo into your local fork:
 
-    ```shell
-    git fetch upstream
-    git merge upstream/master
-    ```
+```shell
+git fetch upstream
+git merge upstream/master
+```

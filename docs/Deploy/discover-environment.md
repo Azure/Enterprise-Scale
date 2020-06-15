@@ -11,7 +11,7 @@ In a terminal, type the following commands by replacing the placeholders (<...>)
 
 **PowerShell:**
 ```powershell
-$GitHubUserName = "<GH UserName>"
+$GitHubUserName = "<GH UserName or Github Enterprise Organisation Name>"
 $GitHubPAT = "<PAT TOKEN>"
 $GitHubRepoName = "<Repo Name>"
 $uri = "https://api.github.com/repos/$GitHubUserName/$GitHubRepoName/dispatches"
@@ -34,7 +34,7 @@ Invoke-RestMethod -Method "POST" @params
 curl -u "<GH UserName>:<PAT Token>" -H "Accept: application/vnd.github.everest-preview+json"  -H "Content-Type: application/json" https://api.github.com/repos/<Your GitHub ID>/<Your Repo Name>/dispatches --data '{"event_type": "activity-logs"}'
 ```
 
-Please check progress in the GitHub repo in the Actions tab and wait for it complete. At present, if your environment contains management group or subscription with duplicate display name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration and we highly recommend unique names for management groups and subscriptions. There is work planned to override Display Name with Name ETA 7/31.
+Please check progress in the GitHub repo in the Actions tab and wait for it complete. At present, if your environment contains management group or subscription with duplicate display name, initialization of discovery will fail. This is a precautionary check to avoid accidental misconfiguration and we highly recommend unique names for management groups and subscriptions. There is work planned to override Display Name with ResourceName.
 
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
@@ -44,7 +44,7 @@ The following steps will be executed automatically to ensure that the current Az
 
 ## Verify PR and merge with `master` branch
 
-Verify the Files changed tab in the PR.
+Once the discovery process has completed, select the PR that was automatically created (it will be called Azure Change Notification). You can verify the changes discovered by clicking in the Files tab withiin the PR. In order to accept these changes into your `master` branch:
 
 1. Merge PR to `master`.
 2. Delete `system` branch.

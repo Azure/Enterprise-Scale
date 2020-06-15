@@ -75,6 +75,6 @@ Status: No fix as of yet.
 
 ## Subscriptions or Management Group with duplicated names
 
-Issue: The discovery process discussed on [this](./Configure-run-initialization.md) article will fail if there are subscriptions or Management Groups with duplicated names. 
+Issue: The discovery process discussed on [this](./Deploy/discover-environment.md) article will fail if there are subscriptions or Management Groups with duplicated names. 
 
-Status: Workaround is to ensure subscription names and management groups are unique in your tenant regardless of the hierarchy prior to running the discovery process.
+Status: There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure subscription names and management groups are unique in your tenant regardless of the hierarchy prior to running the discovery process. 

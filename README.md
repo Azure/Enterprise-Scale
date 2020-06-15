@@ -18,7 +18,7 @@
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
   * [Deploy landing zones](./docs/Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
-* [Known Issues](./docs/EnterpriseScale-known-issues.md)
+* [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
 * [Roadmap](./docs/EnterpriseScale-roadmap.md)
@@ -62,7 +62,7 @@ The enterprise-scale architecture is modular by design and allow customers to st
 
 ### Getting Started with Infrastructure-as-Code
 
-This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure resources in Azure. Please see [this section](./docs/Deploy/Configure-run-initialization.md) to get started with infrastructure-as-code in your environment.
+This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure resources in Azure. Please see [this section](./docs/Deploy/configure-own-environment.md) to get started with infrastructure-as-code in your environment.
 
 ## Contributing
 
