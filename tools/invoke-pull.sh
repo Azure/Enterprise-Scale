@@ -7,7 +7,7 @@ usage()
     echo
     echo "Requirements:"
     echo " - Must be in a git repo"
-    echo " - Must have access to curl, git and grep"
+    echo " - Must have access to curl, git, sed and grep"
     exit 2
 }
 
