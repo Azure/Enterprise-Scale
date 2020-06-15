@@ -9,7 +9,14 @@ Your repo should contain GitHub Action [/workflows/azops.yml](../../.github/work
 
 In a terminal, type the following commands by replacing the placeholders (<...>) with your actual values:
 
-**PowerShell:**
+### Github Cli (Does not Require PAT token)
+
+```bash
+gh api -X POST repos/<Your GitHub ID>/<Your Repo Name>/dispatches --field event_type=activity-logs
+````
+
+### PowerShell
+
 ```powershell
 $GitHubUserName = "<GH UserName or Github Enterprise Organisation Name>"
 $GitHubPAT = "<PAT TOKEN>"
@@ -29,7 +36,8 @@ $params = @{
 Invoke-RestMethod -Method "POST" @params
 ```
 
-**Bash:**
+### Bash
+
 ```bash
 curl -u "<GH UserName>:<PAT Token>" -H "Accept: application/vnd.github.everest-preview+json"  -H "Content-Type: application/json" https://api.github.com/repos/<Your GitHub ID>/<Your Repo Name>/dispatches --data '{"event_type": "activity-logs"}'
 ```
