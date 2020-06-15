@@ -4,7 +4,7 @@ This article explains how to perform a discovery of your existing Azure environm
 
 ## Initialize existing environment
 
-Your repo should contain GitHub Action [/workflows/azops.yml](../../github/workflows/azops.yml) that can pull latest configuration from Azure. Before invoking action, please ensure Actions are enabled for your repo. AzOps GitHub Action is maintained at [https://github.com/Azure/azops](https://github.com/Azure/azops).
+Your repo should contain GitHub Action [/workflows/azops.yml](../../.github/workflows/azops.yml) that can pull latest configuration from Azure. Before invoking action, please ensure Actions are enabled for your repo. AzOps GitHub Action is maintained at [https://github.com/Azure/azops](https://github.com/Azure/azops).
 
 In a terminal, type the following commands by replacing the placeholders (<...>) with your actual values:
 
