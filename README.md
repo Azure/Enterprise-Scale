@@ -1,9 +1,6 @@
-| Azure CI | Deploy ARM Template |
-|:-------------|:--------------|
-| [![azure-pipelines-linux-image][]][azure-pipelines-linux-site] | [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-foundation.json) |
-
-[azure-pipelines-linux-image]: https://dev.azure.com/mscet/Enterprise-Scale/_apis/build/status/master/CI%20-%20Linux?branchName=master
-[azure-pipelines-linux-site]: https://dev.azure.com/mscet/Enterprise-Scale/_build/latest?definitionId=8&branchName=master
+| Deploy ARM Template |
+|:--------------|
+|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-foundation.json) |
 
 # Enterprise-Scale - Reference Implementation
 
