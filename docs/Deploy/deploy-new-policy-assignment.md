@@ -7,27 +7,27 @@ This article will explain how to deploy Policy assignments for `platform` and `l
 It is important, that you are familiar with the AzOps folder structure that has been created during the environment discovery and repository initialization. To describe the desired state of Platform Subcriptions and Landing Zone we apply changes only in the _managementgroupscope_.parameters.json in the .AzState folder. This is how the folder structure should look like for your environment:
 
 ```bash
-    azops
+    AzOps
     └───Tenant Root Group
-        ├───<prefix>                              # NEW company root management group
+        ├───<YourCompanyName>      # NEW company root management group
         │   ├───.AzState
-        │   │   └───<YourCompanyName>.parameters.json
-        │   ├───<prefix>-landing Zones
+        │   │   └───Microsoft.Management-managementGroups_<YourCompanyName>.parameters.json
+        │   ├───Landing Zones
         │   │   └───.AzState
-        │   │       └───LandingZones.parameters.json
-        │   ├───<prefix>-platform
+        │   │       └───Microsoft.Management-managementGroups_LandingZones.parameters.json
+        │   ├───Platform
         │   │   └───.AzState
-        │   │       └───Platform.parameters.json
-        │   ├───<prefix>-sandbox
+        │   │       └───Microsoft.Management-managementGroups_Platform.parameters.json
+        │   ├───Sandbox
         │   │   └───.AzState
-        │   │       └───Sandbox.parameters.json
-        │   └───<prefix>-decommissioned
+        │   │       └───Microsoft.Management-managementGroups_Sandbox.parameters.json
+        │   └───Decommissioned
         │       └───.AzState
-        │           └───Decommissioned.parameters.json
+        │           └───Microsoft.Management-managementGroups_Decommissioned.parameters.json
         ├───.....
 ```
 
-Each _managementgroupscope_.parameters.json file has the following section, and it is the most important part of the parameter files and the section you have to primarily apply changes to using this guide. You can learn more about the *.parameters.json schema [here](./ES-schema.md).
+Each Microsoft.Management-managementGroups_<_managementgroupscope_>.parameters.json file has the following section, and it is the most important part of the parameter files and the section you have to primarily apply changes to using this guide. You can learn more about the *.parameters.json schema [here](./ES-schema.md).
 
 ``` bash
     # empty part of a parameter json file after initialization
@@ -45,10 +45,10 @@ There are two groups of properties in this section _\*Definitions\*_ and _\*Assi
 __Definitions:__ All the definitions (`policy`, `role` and `policySet`) have been deployed if you have used the green field approach. Policy definitions have been deployed on the 'YourCompanyName' Management Group scope and with this in the 'YourCompanyName'.parameters.json file.
 >Note: In the Azure portal `policySetDefinitions` is also known as an initiative. It represents a set of Azure Policy definition.
 
-__Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exisits on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise-Scale reference implementation we recommend to do assignment at the following three scopes only:
+__Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exists on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise-Scale reference implementation we recommend to do assignment at the following three scopes only:
 
-* 'YourCompanyName' __Management Group__ scope for all companywide policies
-* Platform Subscription scope for Azure Policy deploying Platform resourses
+* 'YourCompanyName' __Management Group__ scope for all company wide policies
+* Platform Subscription scope for Azure Policy deploying Platform resources
 * Landing Zones __Management Group__ scope for all Landing Zone specific Azure Policy
 
 ## Assign Azure Policy
@@ -59,7 +59,7 @@ Changes in the platform will always be deployed via a feature branch. The descri
 
 2. Add the policy assignment to the target scope
 
-    To do the assignments for `policyAssignments` and `roleAssignments` the _managementGroupName_.parameters.json need to be updated a second time as done it for the defintions.  
+    To do the assignments for `policyAssignments` and `roleAssignments` the _managementGroupName_.parameters.json
 
     Three scopes for the assignment need to be considered to follow the Enterprise-Scale reference implementation:
 
@@ -86,10 +86,9 @@ Changes in the platform will always be deployed via a feature branch. The descri
     ...
 ```
 
-3. Commit change to the feature branch and create a Pull Request to the `master` branch. GitHub Actions runs a PR check and pushes the changes to the target Azure enviroment.
+3. Commit change to the feature branch and create a Pull Request to the `master` branch. GitHub Actions runs a PR check and pushes the changes to the target Azure environment.
 
 4. You can monitor the status in the Actions log. Once all the checks are successful you have to squash and merge your changes to the master branch.
 
->Note: If the Azure Policy assigments fails please re-run the checks a second time. There is currently a known problem with the Azure Policy assigment on Azure which the product team is currently fixing.
 
->Note: For the repective Azure Policy assignment please see the examples in the [Contoso reference article](../reference/contoso/Readme.md).
+>Note: For future, Azure Policy assignment please see the examples in the [Contoso reference article](../reference/contoso).

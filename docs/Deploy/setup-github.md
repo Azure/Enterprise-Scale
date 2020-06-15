@@ -61,3 +61,21 @@ This article will guide you through the process to configure GitHub in preparati
     ```bash
     ObjectId
     ```
+5. Add upstream repo to your local repository to get latest changes
+
+Follow these steps in order to synchronize the latest changes from the upstream repo into your local repositories.
+
+Run the following git commands only once you change your directory to your local fork to add a reference to the upstream repo
+
+    ```shell
+    git remote -v
+    git remote add upstream https://github.com/Azure/Enterprise-scale.git
+    git remote -v
+    ```
+
+Execute the following git commands only when you need to synchronize changes from upstream repo into your local fork:
+
+    ```shell
+    git fetch upstream
+    git merge upstream/master
+    ```

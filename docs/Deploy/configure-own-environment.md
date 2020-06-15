@@ -7,7 +7,11 @@ To deploy a sample Enterprise-Scale reference implementation, simply choose your
 - [AdventureWorks](../reference/adventureworks/README.md) 
 - [Contoso reference implementations](../reference/contoso/Readme.md)
 
-This will create a sample management group structure that you can use for starting point.  Once the deployment is complete, ensure you move your subscriptions under the desired management groups.
+This will create a sample management group structure that you can use for starting point.  
+
+## Move Subscription under management groups
+
+Once the deployment is complete, ensure you move your subscriptions under the desired management groups.
 
 ## Next steps
 
