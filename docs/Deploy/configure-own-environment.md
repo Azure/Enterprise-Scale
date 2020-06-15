@@ -6,7 +6,7 @@ To deploy a sample Enterprise-Scale reference implementation, simply choose your
 
 - [WingTip](../reference/wingtip/README.md)
 - [AdventureWorks](../reference/adventureworks/README.md)
-- [Contoso reference implementations](../reference/contoso/Readme.md)
+- [Contoso](../reference/contoso/Readme.md)
 
 This will create a sample management group structure that you can use for starting point.
 
