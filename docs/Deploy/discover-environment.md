@@ -39,14 +39,14 @@ Please check progress in the GitHub repo in the Actions tab and wait for it comp
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
 * Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered and RESTful representation of the resources are  saved as ARM Template parameters file.
-* If changes are detected that is not represented in your `master` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
-* Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `master`)
+* If changes are detected that is not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
+* Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`)
 
-## Verify PR and merge with `master` branch
+## Verify PR and merge with `main` branch
 
-Once the discovery process has completed, select the PR that was automatically created (it will be called Azure Change Notification). You can verify the changes discovered by clicking in the Files tab withiin the PR. In order to accept these changes into your `master` branch:
+Once the discovery process has completed, select the PR that was automatically created (it will be called Azure Change Notification). You can verify the changes discovered by clicking in the Files tab within the PR. In order to accept these changes into your `main` branch:
 
-1. Merge PR to `master`.
+1. Merge PR to `main`.
 2. Delete `system` branch.
 
-The current Azure environment is now represented in the `azops` folder of the master branch. You can invoke this action at any time, when you want to retrieve current Azure configuration when you suspect configuration drift due to OOB changes in Azure.
+The current Azure environment is now represented in the `azops` folder of the main branch. You can invoke this action at any time, when you want to retrieve current Azure configuration when you suspect configuration drift due to OOB changes in Azure.

@@ -80,5 +80,5 @@ Execute the following git commands when you want to synchronize changes from ups
 
 ```shell
 git fetch upstream
-git merge upstream/master
+git merge upstream/main
 ```

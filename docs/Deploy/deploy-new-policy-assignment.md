@@ -67,7 +67,7 @@ In Enterprise-Scale reference implementation, changes in the platform are always
    * Landing Zones Management Group scope
    * _connectivity_ / _management_ / _identity Subscription scope
 
-    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../../../tree/master/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
+    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../../../tree/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
 
    * `policyDefinitionId`: Full resource ID (including scope path) of the definition
    * `scope`: Assignment scope for the definition
@@ -86,9 +86,9 @@ In Enterprise-Scale reference implementation, changes in the platform are always
     ...
 ```
 
-3. Commit change to the feature branch and create a Pull Request to the `master` branch. GitHub Actions runs a PR check and pushes the changes to the target Azure environment.
+3. Commit change to the feature branch and create a Pull Request to the `main` branch. GitHub Actions runs a PR check and pushes the changes to the target Azure environment.
 
-4. You can monitor the status in the Actions log. Once all the checks are successful you have to squash and merge your changes to the master branch.
+4. You can monitor the status in the Actions log. Once all the checks are successful you have to squash and merge your changes to the main branch.
 
 
 >Note: For future, Azure Policy assignment please see the examples in the [Contoso reference article](../reference/contoso).

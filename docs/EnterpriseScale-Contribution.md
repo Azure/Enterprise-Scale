@@ -36,10 +36,10 @@ Submit a pull request for documentation updates using the following template 'pl
 
 #### How to submit Pull Request to upstream repo
 
-1. Create a new branch based on upstream/master by executing following command
+1. Create a new branch based on upstream/main by executing following command
 
     ```shell
-    git checkout -b feature upstream/master
+    git checkout -b feature upstream/main
     ```
 
 2. Checkout the file(s) from your working branch that you may want to include in PR
@@ -55,7 +55,7 @@ Submit a pull request for documentation updates using the following template 'pl
     git push origin -u
     ```
 
-4. Create a pull request from upstream to your remote master
+4. Create a pull request from upstream to your remote main
 
 #### Writing ARM Templates for reference implementation
 
@@ -80,7 +80,7 @@ We have opted for minimalist "one template to rule them all" approach. This will
     }],
 ```
 
-This is generic multi-resource template available [here](https://raw.githubusercontent.com/Azure/AzOps/master/template/template.json) to ensure bug fixes are incorporated with latest API Version.
+This is generic multi-resource template available [here](https://raw.githubusercontent.com/Azure/AzOps/main/template/template.json) to ensure bug fixes are incorporated with latest API Version.
 
 - Template.parameters.json
 

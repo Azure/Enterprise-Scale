@@ -6,7 +6,7 @@ Azure Resource Manager (ARM) is the unified control-plane (global API front-door
 One of the essential capabilities of ARM, is the template orchestration engine that allows users to declare their resource compositions, and deploy to one or more *scopes* in Azure.
 With the philosophy that everything in Azure is a resource, that means you can declare the goal-state of your Azure tenant as a whole and all its resources using ARM templates.
 
-This article will help you to familiarize with the [Enterprise-Scale ARM template](../../../../tree/master/template/tenant.json), which consist on one and only one ARM template (one template to rule them all). We recommend to also explore the [Examples](../../../../tree/master/examples) to understand how parameter files are used to provide the resources as objects to the template.
+This article will help you to familiarize with the [Enterprise-Scale ARM template](../../../../tree/main/template/tenant.json), which consist on one and only one ARM template (one template to rule them all). We recommend to also explore the [Examples](../../../../tree/main/examples) to understand how parameter files are used to provide the resources as objects to the template.
 
 ## ARM template objectives for Enterprise-Scale
 
