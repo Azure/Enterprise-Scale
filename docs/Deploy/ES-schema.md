@@ -13,7 +13,7 @@ Some of the key [design principles](https://docs.microsoft.com/en-us/azure/cloud
 
 The objectives includes:
 
-- Any resource can be declared and deployd to Azure, using ARM templates
+- Any resource can be declared and deployed to Azure, using ARM templates
 - Resources are configured and deployed in a consistent and deterministic way, using ARM template language expressions
 - Deployments will target the appropriate ARM scope, subject to the resource compositions
 - ARM will handle template validation, dependencies (both implicit and explicit), and the end-to-end orchestration

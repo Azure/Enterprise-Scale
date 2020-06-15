@@ -14,7 +14,7 @@
 * [Getting started](./docs/Deploy/Getting-Started.md)
   * [Setup GitHub](./docs/Deploy/setup-github.md)
   * [Configure own environment](./docs/Deploy/configure-own-environment.md)
-  * [Discovery and initialize](./docs/Deploy/discover-environment.md)
+  * [Initialize Git With Current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
   * [Deploy landing zones](./docs/Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->

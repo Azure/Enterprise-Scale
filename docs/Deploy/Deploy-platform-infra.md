@@ -7,26 +7,26 @@ This article describes how to deploy the platform infrastructure for the Enterpr
 
 ## Deployment artifact overview
 
-It is important, that you are familiar with the AzOps folder structure that has been created during the environment discovery and repository initialization. To describe the desired state of Platform Subcriptions and Landing Zone we apply changes only in the _managementgroupscope_.parameters.json in the .AzState folder. This is how the folder structure should look like for your environment:
+It is important, that you are familiar with the AzOps folder structure that has been created during the environment discovery and repository initialization. To describe the desired state of Platform Subscriptions and Landing Zone we apply changes only in the _managementgroupscope_.parameters.json in the .AzState folder. This is how the folder structure should look like for your environment:
 
 ```bash
     AzOps
     └───Tenant Root Group
-        ├───<YourCompanyName>                              # NEW company root management group
+        ├───<YourCompanyName>      # NEW company root management group
         │   ├───.AzState
-        │   │   └───<YourCompanyName>.parameters.json
+        │   │   └───Microsoft.Management-managementGroups_<YourCompanyName>.parameters.json
         │   ├───Landing Zones
         │   │   └───.AzState
-        │   │       └───LandingZones.parameters.json
+        │   │       └───Microsoft.Management-managementGroups_LandingZones.parameters.json
         │   ├───Platform
         │   │   └───.AzState
-        │   │       └───Platform.parameters.json
+        │   │       └───Microsoft.Management-managementGroups_Platform.parameters.json
         │   ├───Sandbox
         │   │   └───.AzState
-        │   │       └───Sandbox.parameters.json
+        │   │       └───Microsoft.Management-managementGroups_Sandbox.parameters.json
         │   └───Decommissioned
         │       └───.AzState
-        │           └───Decommissioned.parameters.json
+        │           └───Microsoft.Management-managementGroups_Decommissioned.parameters.json
         ├───.....
 ```
 
@@ -50,13 +50,13 @@ __Definitions:__ All the definitions (`policy`, `role` and `policySet`) have to 
 
 __Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exisits on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise-Scale reference implementation we recommend to do assignment at the following three scopes only:
 
-* 'YourCompanyName' __Management Group__ scope for all companywide policies
-* Platform Subscription scope for Azure Policy deploying Platform resourses
+* 'YourCompanyName' __Management Group__ scope for all company wide policies
+* Platform Subscription scope for Azure Policy deploying Platform resources
 * Landing Zones __Management Group__ scope for all Landing Zone specific Azure Policy
 
 ## Deployment flow
 
-In this reference implementation we are using GitHub and GitHub Actions to push and pull changes to and from your Azure environment. All the changes need to be committed to a feature branch and merged to the master using Pull Request (PR). The PR triggers a GitHub Action doing the validation of the changes followed by a deployment to Azure.  
+In this reference implementation we are using GitHub and GitHub Actions to push and pull changes to and from your Azure environment. All the changes need to be committed to a feature branch and merged to the master using Pull Request (PR). The PR triggers a GitHub Action doing the validation of the changes followed by a deployment to Azure.
 
 The following diagram illustrates the flow to deploy the definitions:
 

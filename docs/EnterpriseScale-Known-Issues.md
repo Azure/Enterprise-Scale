@@ -7,9 +7,9 @@ The list below summarizes the known issues with reference implementation, when b
 
 Area: AzOps
 
-Issue: At present, if you environment contains management group or subscription with duplicate display name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration.
+Issue: At present, if your environment contains management group or subscription with duplicate display name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration.
 
-Status: There is work in progress to use resource name instead of display name. There will be runtime configuration option to override  this behavior however, it will reduce usability. We highly recommend to have unique display name for management groups and subscription.
+Status: There is work in progress to use resource name instead of display name. There will be runtime configuration option to override this behavior. We highly recommend to have unique display name for management groups and subscription.
 
 ## Subscription Creation
 
