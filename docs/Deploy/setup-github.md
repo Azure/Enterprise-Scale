@@ -39,6 +39,8 @@ This article will guide you through the process to configure GitHub in preparati
     } | ConvertTo-Json
     ```
 
+    > Note: It can take up to 15 minutes for newly added permission to reflect for SPN
+
 4. To create the following secrets on GitHub, navigate to the main page of the repository and under your repository name, click **Settings**, click **Secrets**, and then click **New secret**.
 
 * Name: AZURE_CREDENTIALS
@@ -68,15 +70,15 @@ Follow these steps in order to synchronize the latest changes from the upstream 
 
 Run the following git commands once you change your directory to your local fork to add a reference to the upstream repo
 
-    ```shell
-    git remote -v
-    git remote add upstream https://github.com/Azure/Enterprise-scale.git
-    git remote -v
-    ```
+```shell
+git remote -v
+git remote add upstream https://github.com/Azure/Enterprise-scale.git
+git remote -v
+```
 
 Execute the following git commands when you want to synchronize changes from upstream repo into your local fork:
 
-    ```shell
-    git fetch upstream
-    git merge upstream/master
-    ```
+```shell
+git fetch upstream
+git merge upstream/master
+```

@@ -18,7 +18,7 @@
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
   * [Deploy landing zones](./docs/Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
-* [Known Issues](./docs/EnterpriseScale-known-issues.md)
+* [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
 * [Roadmap](./docs/EnterpriseScale-roadmap.md)

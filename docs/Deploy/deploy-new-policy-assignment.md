@@ -42,7 +42,7 @@ Each Microsoft.Management-managementGroups_<_managementgroupscope_>.parameters.j
 
 There are two groups of properties in this section _\*Definitions\*_ and _\*Assignments\*_.
 
-__Definitions:__ All the definitions (`policy`, `role` and `policySet`) have been deployed if you have used the green field approach. Policy definitions have been deployed on the 'YourCompanyName' Management Group scope and with this in the 'YourCompanyName'.parameters.json file.
+__Definitions:__ All the definitions (`policy`, `role` and `policySet`) have been deployed if you have used one of the Enterprise Scale reference implementations (such as Contoso). Policy definitions have been deployed on the 'YourCompanyName' Management Group scope and with this in the 'YourCompanyName'.parameters.json file.
 >Note: In the Azure portal `policySetDefinitions` is also known as an initiative. It represents a set of Azure Policy definition.
 
 __Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exists on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise-Scale reference implementation we recommend to do assignment at the following three scopes only:
@@ -53,21 +53,21 @@ __Assignments :__ The assignments (`role`, `policy`) can be deployed at any Mana
 
 ## Assign Azure Policy
 
-Changes in the platform will always be deployed via a feature branch. The described flow below has to be repeated for all changes in your Azure environment.
+In Enterprise-Scale reference implementation, changes in the platform are always deployed via a feature branch. The steps below have to be repeated whenever you want to make changes in your Azure environment.
 
 1. Create a feature branch in GitHub
 
 2. Add the policy assignment to the target scope
 
-    To do the assignments for `policyAssignments` and `roleAssignments` the _managementGroupName_.parameters.json
+    For `policyAssignments` and `roleAssignments`, you will use the _managementGroupName_.parameters.json file.
 
-    Three scopes for the assignment need to be considered to follow the Enterprise-Scale reference implementation:
+    Enterprise-Scale reference implementation recommends the following three scopes for the assignments:
 
    * 'YourCompanyName' Management Group scope
    * Landing Zones Management Group scope
    * _connectivity_ / _management_ / _identity Subscription scope
 
-    As a reference for Azure Policy assignment you can select a reference Azure Policy assignment in the [azopsreference](../../../../tree/master/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
+    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../../../tree/master/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
 
    * `policyDefinitionId`: Full resource ID (including scope path) of the definition
    * `scope`: Assignment scope for the definition

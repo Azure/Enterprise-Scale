@@ -16,4 +16,4 @@ Once the deployment is complete, ensure you move your subscriptions under the de
 
 ## Next steps
 
-Once you have an environment with your desired management group hierarchy, you can proceed to the next step, Setup GitHub.
+Once you have an environment with your desired management group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](./discover-environment.md).
