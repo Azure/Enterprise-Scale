@@ -1,17 +1,17 @@
 
-| Enterprise scale Design Principles | ARM Template | Scale without refactoring |
+| Enterprise-Scale Design Principles | ARM Template | Scale without refactoring |
 |:-------------|:--------------|:--------------|
 |![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-vwan.json) | Yes |
 
-# Deploy Enterprise scale with Azure VWAN
+# Deploy Enterprise-Scale with Azure VWAN
 
 ## Customer profile
 
-This reference implementation is ideal for customers that have started their Enterprise scale journey with a Enterprise scale foundation implementation and then there is a need to add connectivity on-premises datacenters and branch offices by using Azure VWAN, ExpressRoute and VPN. This reference implementation is also well suited for customers who want to start with landing zones for their net new
+This reference implementation is ideal for customers that have started their Enterprise-Scale journey with a Enterprise-Scale foundation implementation and then there is a need to add connectivity on-premises datacenters and branch offices by using Azure VWAN, ExpressRoute and VPN. This reference implementation is also well suited for customers who want to start with landing zones for their net new
 deployment/development in Azure, where a global transit network is required, including hybrid connectivity to on-premises datacenters and branch offices via ExpressRoute and VPN.
 
-## How to evolve from Enterprise scale foundation
-If customer started with a Enterprise scale foundation deployment, and if the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, you will simply create the **connectivity** subscription and place it into the **platform** management group and assign Azure Policy for the VWAN network topology.
+## How to evolve from Enterprise-Scale foundation
+If customer started with a Enterprise-Scale foundation deployment, and if the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, you will simply create the **connectivity** subscription and place it into the **platform** management group and assign Azure Policy for the VWAN network topology.
 
 ## Pre-requisites
 To deploy this ARM template, your user/service principal must have Owner permission at the tenant root.
@@ -26,7 +26,7 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 - Landing Zone management group for corp-connected applications that require hybrid connectivity. This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone management group for online applications that will be internet-facing, which doesn't require hybrid connectivity. This is where you will create your subscriptions that will host your online workloads
 
-![Enterprise scale without connectivity](./media/ns-vwan.png)
+![Enterprise-Scale without connectivity](./media/ns-vwan.png)
 
 ---
 
@@ -34,7 +34,7 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 
 Contoso, Ltd. is a multi-national business with headquarters in London, UK. Contoso Senior leadership has mandated a "Cloud-First" approach, with an overarching strategy to reduce and gradually divest the on-premises datacenter footprint. Contoso has chosen Azure as their preferred public cloud provider. They have a large overall IT estate and are concerned about the velocity of workload transformation/migration, and how they can establish landing zones for application teams to migrate their applications.
 
-Contoso has come across the Enterprise scale architecture which provides a forward looking Azure-native design approach. The Contoso IT leadership team has committed to this as they believe it will allow applications (legacy or modern) to seamlessly move at their own pace while also providing secure and streamlined operations, management, and governance across the entire Contoso platform on Azure.
+Contoso has come across the Enterprise-Scale architecture which provides a forward looking Azure-native design approach. The Contoso IT leadership team has committed to this as they believe it will allow applications (legacy or modern) to seamlessly move at their own pace while also providing secure and streamlined operations, management, and governance across the entire Contoso platform on Azure.
 
 ## Contoso Architecture
 
@@ -48,7 +48,7 @@ Additional controls will be in place for Networking (isolation) and Identity (se
 
 ### Identity and Access Management
 
-Contoso wants to ensure zero standing access for production environments across all Azure control plane access and will use Azure AD Privileged Identity Management (PIM) to ensure just-in-time control plane access to Azure resources. Contoso will create custom role definitions (Platform Owner, NetOps, SecOps, Landing Zone Owner, AppOps/DevOps) in accordance with Enterprise scale roles which will be supported by the operating model for the Azure platform.
+Contoso wants to ensure zero standing access for production environments across all Azure control plane access and will use Azure AD Privileged Identity Management (PIM) to ensure just-in-time control plane access to Azure resources. Contoso will create custom role definitions (Platform Owner, NetOps, SecOps, Landing Zone Owner, AppOps/DevOps) in accordance with Enterprise-Scale roles which will be supported by the operating model for the Azure platform.
 
 The identity team will create an Azure AD only group for each of the roles above and make Landing Zone Owner/Requestor an owner of the group before creating entitlements for those groups in Azure AD PIM. Those who require access to Azure resources will be able to search for the Azure AD group by name and leverage the Azure AD Self-service group management capability to join a group. Group Owners can determine whether to approve or deny a user request based on eligibility criteria.
 
@@ -140,7 +140,7 @@ The following policies related to Management Group hierarchy and Subscription or
 
 Contoso has a presence across Europe and North America. Contoso's headquarters are located in London, UK. Contoso also has regional HQ offices in Amsterdam and Chicago. Contoso has a large number of branch offices (around 500) across the US and Europe. Each branch office contains a CPE that is connected to the local regional HQ via S2S VPN.
 
-Contoso has decided to adopt Enterprise scale recommendations for building their network architecture in Azure. Key decisions they have adopted include:
+Contoso has decided to adopt Enterprise-Scale recommendations for building their network architecture in Azure. Key decisions they have adopted include:
 
 1. The deployment of a Microsoft-managed network in Azure using Azure Virtual WAN to interconnect all Azure and on-premises locations around the world.
 
@@ -150,7 +150,7 @@ Contoso has decided to adopt Enterprise scale recommendations for building their
 
 4. Allow full subscription democratization by giving Landing Zone Owners' rights to create subnets within their landing zones to suit their application needs while ensuring the platform maintains compliance and security as defined by the SecOps team.
 
-Contoso's network design based on NorthStar design principles is depicted in the picture shown below:
+Contoso's network design based on Enterprise-Scale design principles is depicted in the picture shown below:
 
 ![Network topology](./media/image5.png)
 
@@ -174,7 +174,7 @@ In order to simplify the routing configuration across the entire Azure networkin
 * West Europe: 10.2.0.0/16
 * North Central US: 10.3.0.0/16
 
-Since Contoso must support those three Azure regions (North Europe, West Europe and North Central US), Contoso has documented the required resources and parameters so that the platform can be deployed via Azure Policy in alignment with Enterprise scale guidance. More specifically, all these resources will be deployed within the "Connectivity" subscription and enforced by Deploy-If-Not-Exist Policies.
+Since Contoso must support those three Azure regions (North Europe, West Europe and North Central US), Contoso has documented the required resources and parameters so that the platform can be deployed via Azure Policy in alignment with Enterprise-Scale guidance. More specifically, all these resources will be deployed within the "Connectivity" subscription and enforced by Deploy-If-Not-Exist Policies.
 
 North Europe:
 
@@ -420,7 +420,7 @@ Since Contoso has selected West Europe as their primary Azure region, they will 
 * Centralized alerting from a platform perspective.
 * Centralized, interactive Azure dashboards through the lenses of networking, security, and overall platform health.
 
-Contoso has documented the resources and parameters that it requires so that the platform can be managed and monitored via Policy as per NorthStar guidance. All these resources will be deployed in the "Management" subscription.
+Contoso has documented the resources and parameters that it requires so that the platform can be managed and monitored via Policy as per Enterprise-Scale guidance. All these resources will be deployed in the "Management" subscription.
 
 
 <table>
@@ -553,7 +553,7 @@ The following policies related to management and monitoring will be assigned in 
 
 ## Business Continuity and Disaster Recovery
 
-Core Contoso Enterprise scale platform components across all regions consider an active-active design i.e. Identity, Management and Networking are considered as highly available in all regions and can function independent of each other.
+Core Contoso Enterprise-Scale platform components across all regions consider an active-active design i.e. Identity, Management and Networking are considered as highly available in all regions and can function independent of each other.
 
 Contoso has defined the following BCDR guidelines when applications are moved to Azure to allow application owners to ensure their applications (either cloud native apps or traditional IaaS workloads) are architected and deployed to meet HA and DR requirements:
 
@@ -717,7 +717,7 @@ From an identity and access perspective, Contoso will develop their own custom R
 
 ### Contoso - Roles & Responsibilities
 
-Contoso has acknowledged that their existing on-premises operating model requires change to ensure they maximise the benefits of the cloud. Contoso has decided to create a Platform Operations team who will oversee execution of the Enterprise scale architecture and will be accountable for the Contoso Azure Platform. This Platform team will have representations from the following IT functions:
+Contoso has acknowledged that their existing on-premises operating model requires change to ensure they maximise the benefits of the cloud. Contoso has decided to create a Platform Operations team who will oversee execution of the Enterprise-Scale architecture and will be accountable for the Contoso Azure Platform. This Platform team will have representations from the following IT functions:
 
 <table>
 <thead>
@@ -791,11 +791,11 @@ Contoso has acknowledged that their existing on-premises operating model require
 
 ### Contoso Platform DevOps
 
-Contoso will use the Enterprise scale Git repo for Infrastructure-as-code (IaC) and instantiate their Management Group and Subscription hierarchy using the tenant level Azure Resource Manager template deployment examples provided within the Enterprise scale repo. This repository is used for bootstrapping and managing their entire platform and hence will require access permissions for service principle at a tenant root scope. To simplify RBAC and management of client secrets for service principles, Contoso will use a single service principle scoped at the tenant root scope which will have access to all resources inside a tenant. This account is the highest privilege account and no user will have direct access to the secrets of this service account.
+Contoso will use the Enterprise-Scale Git repo for Infrastructure-as-code (IaC) and instantiate their Management Group and Subscription hierarchy using the tenant level Azure Resource Manager template deployment examples provided within the Enterprise-Scale repo. This repository is used for bootstrapping and managing their entire platform and hence will require access permissions for service principle at a tenant root scope. To simplify RBAC and management of client secrets for service principles, Contoso will use a single service principle scoped at the tenant root scope which will have access to all resources inside a tenant. This account is the highest privilege account and no user will have direct access to the secrets of this service account.
 
 **Initialization**
 
-Before starting the Enterprise scale journey, Contoso will discover existing configurations in Azure that can serve as a platform baseline. The consequence of not discovering the existing environment will be no reference point to rollback or roll-forward after a deployment. Initialization is also important since it can provide a crucial on-ramp path to infrastructure as code and allow transitioning without starting all-over. For the purpose of initialization, the following resources are considered within the scope of the overall Azure platform.
+Before starting the Enterprise-Scale journey, Contoso will discover existing configurations in Azure that can serve as a platform baseline. The consequence of not discovering the existing environment will be no reference point to rollback or roll-forward after a deployment. Initialization is also important since it can provide a crucial on-ramp path to infrastructure as code and allow transitioning without starting all-over. For the purpose of initialization, the following resources are considered within the scope of the overall Azure platform.
 This will initialize an empty Git repo with the current configuration establish a baseline configuration encompassing the following:
 
 * Management Group hierarchy and Subscription organization
@@ -822,7 +822,7 @@ Contoso's infrastructure as code Git repo will have 100s if not 1000s of configu
 
 In production environment, operational changes are bound to happen. Ideally, Contoso will ensure changes are made in a structured way using the principles of Infrastructure-as-code (IaC): A change would be made by adding or updating templates within the Git repository, relying on an automated test and release process to deploy required operational changes.
 
-However, manual changes (made, for example, using the Azure portal) may be unavoidable due to urgent operational demands. This leads to 'Configuration Drift', where the environment as described in source control no longer reflects the actual state of the Azure resources. To deal with this situation, Enterprise scale envisions not only a control mechanism to push changes within the IaC source to the Azure environment, but also to pull changes made outside IaC back into source control.  
+However, manual changes (made, for example, using the Azure portal) may be unavoidable due to urgent operational demands. This leads to 'Configuration Drift', where the environment as described in source control no longer reflects the actual state of the Azure resources. To deal with this situation, Enterprise-Scale envisions not only a control mechanism to push changes within the IaC source to the Azure environment, but also to pull changes made outside IaC back into source control.  
 
 By establishing a feedback loop we can ensure that:
 

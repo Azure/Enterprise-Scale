@@ -8,10 +8,10 @@
 
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
 * [Reference implementations](./docs/reference/Readme.md)
-  * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
-  * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
-* [Getting started](./docs/Deploy/getting-started.md)
+  * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
+  * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
+* [Getting started](./docs/Deploy/Getting-Started.md)
   * [Setup GitHub](./docs/Deploy/setup-github.md)
   * [Configure own environment](./docs/Deploy/configure-own-environment.md)
   * [Discovery and initialize](./docs/Deploy/discover-environment.md)

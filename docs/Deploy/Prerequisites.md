@@ -1,7 +1,7 @@
 
 # Prerequisites
 
-This table lists the technical prerequisites needed to use the NorthStar reference implementation. We have chosen to base the reference implementation on PowerShell, but if desired, it is perfectly possible to use other tools such as e.g. Azure CLI for deployment operations.
+This table lists the technical prerequisites needed to use the Enterprise-Scale reference implementation. We have chosen to base the reference implementation on PowerShell, but if desired, it is perfectly possible to use other tools such as e.g. Azure CLI for deployment operations.
 
 |Requirement|Additional info | |
 |---------------|--------------------|--------------------|

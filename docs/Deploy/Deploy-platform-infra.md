@@ -1,7 +1,7 @@
 
 # Provision platform
 
-This article describes how to deploy the platform infrastructure for the Enterprise scale reference implementation into your own environment. If you haven't completed the first step please start [here](./Configure-run-initialization.md).
+This article describes how to deploy the platform infrastructure for the Enterprise-Scale reference implementation into your own environment. If you haven't completed the first step please start [here](./Configure-run-initialization.md).
 
 ![Deploy your own environment process - step 2](./media/deploy-environment-step-2.png)
 
@@ -48,7 +48,7 @@ There are two groups of properties in this section _\*Definitions\*_ and _\*Assi
 __Definitions:__ All the definitions (`policy`, `role` and `policySet`) have to be deployed on the 'YourCompanyName' Management Group scope and with this in the 'YourCompanyName'.parameters.json file.
 >Note: In the Azure portal `policySetDefinitions` is also known as an initiative. It represents a set of Azure Policy definition.
 
-__Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exisits on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise scale reference implementation we recommend to do assignment at the following three scopes only:
+__Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exisits on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise-Scale reference implementation we recommend to do assignment at the following three scopes only:
 
 * 'YourCompanyName' __Management Group__ scope for all companywide policies
 * Platform Subscription scope for Azure Policy deploying Platform resourses
@@ -128,9 +128,9 @@ The platform infrastructure is deployed across __three__ Azure Subscriptions on 
 
 * __Management Subscription__ - where all cross-platform management resources are deployed (such as centralized Log Analytics workspace)
 * __Connectivity Subscription__ - where all the networking resources are deployed (such as Azure Virtual WAN or Azure Firewall)
-* __Identity Subscription__ - for VWAN-based Enterprise scale implementations, this is where domain controllers are deployed.
+* __Identity Subscription__ - for VWAN-based Enterprise-Scale implementations, this is where domain controllers are deployed.
 
-In a Enterprise scale implementation, all platform resources in the __Connectivity__ and __Management__ Subscriptions are deployed via Azure Policy. Enterprise scale includes both, policy definitions and assignments required to deploy the neccesary resources. While it is possible to deploy both, Azure Policy definition and assignments using Enterprise scale deployment process via GitHub Actions as described in this article, Enterprise scale provides flexiblity for how the assignments can be done in the platform subscriptions.
+In a Enterprise-Scale implementation, all platform resources in the __Connectivity__ and __Management__ Subscriptions are deployed via Azure Policy. Enterprise-Scale includes both, policy definitions and assignments required to deploy the neccesary resources. While it is possible to deploy both, Azure Policy definition and assignments using Enterprise-Scale deployment process via GitHub Actions as described in this article, Enterprise-Scale provides flexiblity for how the assignments can be done in the platform subscriptions.
 
 However, not all resources in the __Identity__ Subscriptions are deployed via Azure Policy, as each organization have different methods to deploy Active Directory domain controllers.
 
@@ -138,7 +138,7 @@ The following sections describe how to deploy the platform infrastructure resour
 
 ### Management Subscription
 
-In the Enterprise scale reference implementation, Azure resources in the __Management__ Subscription are deployed via Azure Policy. Enterprise scale includes both, policy definitions and assignments required to deploy the neccesary resources in the __Management__ Subscription. We will walk you though the process how to assign the Azure Policy later in the article. We need two Azure Policy assigments which create a Log Analytics workspace and Azure Automation Account that are required in the **Management** Subscription:
+In the Enterprise-Scale reference implementation, Azure resources in the __Management__ Subscription are deployed via Azure Policy. Enterprise-Scale includes both, policy definitions and assignments required to deploy the neccesary resources in the __Management__ Subscription. We will walk you though the process how to assign the Azure Policy later in the article. We need two Azure Policy assigments which create a Log Analytics workspace and Azure Automation Account that are required in the **Management** Subscription:
 
 Required custom Azure Policy definition:
 
@@ -158,7 +158,7 @@ Azure Policy assignments required on _management_ Subscription:
 
 ### Connectivity Subscription
 
-The resource in the __Connectivity__ Subscription will be deployed via Azure Policy following the Enterprise scale reference implementation. We need four Azure Policy assigments to create the VWAN, VHub, FirewallPolicy and DDoSProtection resources required in the __Connectivity__ Subscription:
+The resource in the __Connectivity__ Subscription will be deployed via Azure Policy following the Enterprise-Scale reference implementation. We need four Azure Policy assigments to create the VWAN, VHub, FirewallPolicy and DDoSProtection resources required in the __Connectivity__ Subscription:
 The resources in the regional __Connectivity__ Subscription will be deployed using DeployIfNotExist-Policy.
 
 Required custom Azure Policy definition:
@@ -185,11 +185,11 @@ Azure Policy assignments required on _connectifity_ Subscription:
 
 ### Identity Subscription
 
-In the Enterprise scale reference implementation, the **Identity** Subscription is only required when deploying a VWAN-based Enterprise scale implementation (as domain controllers cannot be deployed in a managed Virtual Hub). For non-VWAN Enterprise scale reference implementations (traditional hub & spoke network architecture), the **Identity** subscription is not required as Domain Controllers should be deployed in the central Hub VNet.
+In the Enterprise-Scale reference implementation, the **Identity** Subscription is only required when deploying a VWAN-based Enterprise-Scale implementation (as domain controllers cannot be deployed in a managed Virtual Hub). For non-VWAN Enterprise-Scale reference implementations (traditional hub & spoke network architecture), the **Identity** subscription is not required as Domain Controllers should be deployed in the central Hub VNet.
 
-The following instructions provide guidance for deploying the required resources for the **Identity** subscription for both, VWAN-based and non-VWAN based Enterprise scale implementations:
+The following instructions provide guidance for deploying the required resources for the **Identity** subscription for both, VWAN-based and non-VWAN based Enterprise-Scale implementations:
 
-__VWAN-based Enterprise scale implementation__
+__VWAN-based Enterprise-Scale implementation__
 
 // TODO Required custom Azure Policy definition:
 
@@ -205,7 +205,7 @@ Azure Policy assignments required on _identity_ Subscription (per region a polic
 
 Once the virtual network is created the two Active Directory Domain Controllers can be created in the VNet following your company's procedures.
 
-__Non-VWAN based Enterprise scale implementation__
+__Non-VWAN based Enterprise-Scale implementation__
 
 1. In a regional hub VNet, deploy two Active Directory Domain Controllers following your company's procedures
 2. Repeat process for each regional hub VNet
@@ -233,7 +233,7 @@ __Non-VWAN based Enterprise scale implementation__
 ```
 
 To do the assignments for `policyAssignments` and `roleAssignments` the _managementGroupName_.parameters.json need to be updated a second time as done it for the defintions.  
-Three scopes for the assignment need to be considered to follow the Enterprise scale reference implementation:
+Three scopes for the assignment need to be considered to follow the Enterprise-Scale reference implementation:
 
 * 'YourCompanyName' Management Group scope
 * Landing Zones Management Group scope

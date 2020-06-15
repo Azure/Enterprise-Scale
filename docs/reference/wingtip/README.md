@@ -1,8 +1,8 @@
-| Enterprise scale Design Principles | ARM Template | Scale without refactoring |
+| Enterprise-Scale Design Principles | ARM Template | Scale without refactoring |
 |:-------------|:--------------|:--------------|
 |![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmaster%2Ftemplate%2Fux-foundation.json)  | Yes |
 
-# Deploy Enterprise scale foundation
+# Deploy Enterprise-Scale foundation
 
 ## Customer profile
 
@@ -24,4 +24,4 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 - An Azure subscription dedicated for management, which enables core platform capabilities at scale such as security, auditing, and logging
 - Landing Zone management group for Azure native, internet-facing applications and resources, which doesn't require hybrid connectivity. This is where you will create your subscriptions that will host your workloads
 
-![Enterprise scale without connectivity](./media/es-without-networking.PNG)
+![Enterprise-Scale without connectivity](./media/es-without-networking.PNG)

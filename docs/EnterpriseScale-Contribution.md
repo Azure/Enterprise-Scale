@@ -1,8 +1,8 @@
 
 ## Contribution Guide
 
-### Enterprise Scale Committee
-The Enterprise Scale Committee and its members (aka Committee Members) are the primary caretakers of the Enterprise-Scale and AzOps repos including language, design, and reference implementations.
+### Enterprise-Scale Committee
+The Enterprise-Scale Committee and its members (aka Committee Members) are the primary caretakers of the Enterprise-Scale and AzOps repos including language, design, and reference implementations.
 
 ### Current Committee Members
 
@@ -23,7 +23,7 @@ The initial Enterprise Committee consists of Microsoft employees. It is expected
 
 At any point in time, a Committee Member can nominate a strong community member to join the Committee. Nominations should be submitted in the form of RFCs detailing why that individual is qualified and how they will contribute. After the RFC has been discussed, a unanimous vote will be required for the new Committee Member to be confirmed.
 
-### Contribution scope for Enterprise scale
+### Contribution scope for Enterprise-Scale
 
 The following is the scope of contributions to this repository:
 
@@ -117,7 +117,7 @@ Following Pros and Cons are considered when making design decision.
 - Cons
 
   - Losing intellisense when authoring parameter file complex object. This is one-off activity and can be mitigated by retrieving base definition of existing resource or creating resource via portal first.
-  - Unable to track template deployments using azure-partner-customer-usage-attribution. This is Not in the scope of Enterprise Scale.
+  - Unable to track template deployments using azure-partner-customer-usage-attribution. This is Not in the scope of Enterprise-Scale.
 
 Again to re-iterate, there is nothing wrong with existing ARM templates used for resource deployments and there is no expectation to re-write those. Pipeline will continue to honour deployment of those ARM templates and detect configuration drift. However we will not be able to reconcile those templates as platform do not allow exporting deployment template in a way that can facilitate reconciliation. For that reason, any templates submit for PR must conform to ***"what-you-export"*** is ***"what-you-deploy"***.
 
@@ -184,7 +184,7 @@ Example:
 
 #### Contributing New Azure Policy definitions for reference implementations
 
-To contribute with policy definitions that adheres to the Enterprise scale architecture, use the following tools and recommendations:
+To contribute with policy definitions that adheres to the Enterprise-Scale architecture, use the following tools and recommendations:
 
 [Azure Policy extension for Visual Studio](https://docs.microsoft.com/en-us/azure/governance/policy/how-to/extension-for-vscode)
 

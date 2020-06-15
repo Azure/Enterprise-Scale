@@ -45,7 +45,7 @@ There are two groups of properties in this section _\*Definitions\*_ and _\*Assi
 __Definitions:__ All the definitions (`policy`, `role` and `policySet`) have been deployed if you have used the green field approach. Policy definitions have been deployed on the 'YourCompanyName' Management Group scope and with this in the 'YourCompanyName'.parameters.json file.
 >Note: In the Azure portal `policySetDefinitions` is also known as an initiative. It represents a set of Azure Policy definition.
 
-__Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exisits on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise scale reference implementation we recommend to do assignment at the following three scopes only:
+__Assignments :__ The assignments (`role`, `policy`) can be deployed at any Management Group scope as long as the definition exisits on the same scope or above. To simplify the management, it is highly recommended to reduce the number of scopes where you assign Azure Policy and RBAC roles. In the Enterprise-Scale reference implementation we recommend to do assignment at the following three scopes only:
 
 * 'YourCompanyName' __Management Group__ scope for all companywide policies
 * Platform Subscription scope for Azure Policy deploying Platform resourses
@@ -61,7 +61,7 @@ Changes in the platform will always be deployed via a feature branch. The descri
 
     To do the assignments for `policyAssignments` and `roleAssignments` the _managementGroupName_.parameters.json need to be updated a second time as done it for the defintions.  
 
-    Three scopes for the assignment need to be considered to follow the Enterprise scale reference implementation:
+    Three scopes for the assignment need to be considered to follow the Enterprise-Scale reference implementation:
 
    * 'YourCompanyName' Management Group scope
    * Landing Zones Management Group scope

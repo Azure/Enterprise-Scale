@@ -2,15 +2,15 @@
 # Getting Started
 
 This article describes how to get started with Enterprise-Scale reference implementation by walking you through all the prerequistes to deploy a platform-native reference implementation of Enterprise-Scale.
-> Note:  Before you start, make sure that you have read and understood the overall design objective and scope of the reference implementation.
+> Note:  Before you start, please make sure that you have read and understood the overall design objective and scope of the reference implementation.
 
 ## Target audience
 
-The target audience for this guide is people with a typical DevOps / SRE background and assumes knowledge in Azure Resource Manager (ARM)/Infrastructure as Code (IaC), Git, and PowerShell.
+The target audience for this guide DevOps / SRE role and assumes knowledge in Azure Resource Manager (ARM)/Infrastructure as Code (IaC), Git, and PowerShell.
 
 ## Prerequisites
 
-This table lists the technical prerequisites needed to use the NorthStar reference implementation. We have chosen to base the reference implementation on PowerShell, but if desired, it is perfectly possible to use other tools such as e.g. Azure CLI for deployment operations.
+This table lists the technical prerequisites needed to use the Enterprise-Scale reference implementation. We have chosen to base the reference implementation on PowerShell, but if desired, it is perfectly possible to use other tools such as e.g. Azure CLI for deployment operations.
 
 |Requirement|Additional info | |
 |---------------|--------------------|--------------------|
