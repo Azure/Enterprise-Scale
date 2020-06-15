@@ -11,7 +11,7 @@
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
-* [Getting started](./docs/Deploy/Getting-Started.md)
+* [Getting started](./docs/Deploy/getting-started.md)
   * [Setup GitHub](./docs/Deploy/setup-github.md)
   * [Configure own environment](./docs/Deploy/configure-own-environment.md)
   * [Initialize Git With Current Azure configuration](./docs/Deploy/discover-environment.md)
