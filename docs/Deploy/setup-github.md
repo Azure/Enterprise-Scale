@@ -2,7 +2,7 @@
 
 This article will guide you through the process to configure GitHub in preparation for Enterprise-Scale deployments.
 
-1. Create a new GitHub repository from [Enterprise-Scale GitHub repo](https://github.com/Azure/Enterprise-Scale) as a template in your GitHub organization or [clone the forked GitHub repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) to your local machine. If you clone the repository locally you have to push it the a new remote repository.
+1. Create a new GitHub repository from [Enterprise-Scale GitHub repo](https://github.com/Azure/Enterprise-Scale) as a template in your GitHub organization.
 
 2. In your new repository (for example, `https://github.com/your-github-id/Enterprise-Scale`), create a Personal Access Token (PAT). You can refer to this [article](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for steps on creating a PAT. Only `repo` permissions are required.
 

@@ -11,7 +11,7 @@ In a terminal, type the following commands by replacing the placeholders (<...>)
 
 **PowerShell:**
 ```powershell
-$GitHubUserName = "<GH UserName>"
+$GitHubUserName = "<GH UserName or Github Enterprise Organisation Name>"
 $GitHubPAT = "<PAT TOKEN>"
 $GitHubRepoName = "<Repo Name>"
 $uri = "https://api.github.com/repos/$GitHubUserName/$GitHubRepoName/dispatches"

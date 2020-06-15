@@ -62,7 +62,7 @@ The enterprise-scale architecture is modular by design and allow customers to st
 
 ### Getting Started with Infrastructure-as-Code
 
-This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure resources in Azure. Please see [this section](./docs/Deploy/Configure-run-initialization.md) to get started with infrastructure-as-code in your environment.
+This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure resources in Azure. Please see [this section](./docs/Deploy/configure-own-environment.md) to get started with infrastructure-as-code in your environment.
 
 ## Contributing
 
