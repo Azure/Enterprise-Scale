@@ -30,8 +30,7 @@ if [ -n "$GHPAT" ] && [ -z "$GHUSER" ]; then
     exit 1
 fi
 
-COMMANDS="git grep curl"
-
+COMMANDS="git grep curl sed"
 for COMMAND in $COMMANDS; do
   if [ ! $(command -v $COMMAND) ]; then
     echo "Fatal: Could not find '$COMMAND' command. Is it installed?"
