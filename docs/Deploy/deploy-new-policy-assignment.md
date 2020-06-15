@@ -67,7 +67,7 @@ In Enterprise-Scale reference implementation, changes in the platform are always
    * Landing Zones Management Group scope
    * _connectivity_ / _management_ / _identity Subscription scope
 
-    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../../../tree/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
+    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
 
    * `policyDefinitionId`: Full resource ID (including scope path) of the definition
    * `scope`: Assignment scope for the definition
