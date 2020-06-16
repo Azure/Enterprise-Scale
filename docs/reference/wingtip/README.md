@@ -17,7 +17,7 @@ If the business requirements changes over time, such as migration of on-prem app
 To deploy this ARM template, your user/service principal must have Owner permission at the tenant root.
 See the following [instructions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) on how to grant access.
 
-Also you need to esure that at subscription level the resource provider Microsoft.Management is regsitert. You find the currently registered resource providers in the Azure Portal at your Subscription. You can find more details in the [article](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types).
+Also you need to ensure that at subscription level the resource provider Microsoft.Management is registert. You find the currently registered resource providers in the Azure Portal at your Subscription. More details can be found in the following [article](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types).
 
 ## What will be deployed?
 
