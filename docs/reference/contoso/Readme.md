@@ -30,7 +30,7 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 
 ---
 
-## Customer design journy and scope
+## Customer design journey and scope
 
 Contoso, Ltd. is a multi-national business with headquarters in London, UK. Contoso Senior leadership has mandated a "Cloud-First" approach, with an overarching strategy to reduce and gradually divest the on-premises datacenter footprint. Contoso has chosen Azure as their preferred public cloud provider. They have a large overall IT estate and are concerned about the velocity of workload transformation/migration, and how they can establish landing zones for application teams to migrate their applications.
 
@@ -70,7 +70,7 @@ Contoso is designing their management group hierarchy and subscription organizat
 
 Contoso has decided to use Geo-affinitized subscriptions which will greatly simplify networking and connectivity. Workloads that do require multiple regions, will have at least one subscription for each region including for business continuity and disaster recovery purposes.
 
-Contoso has decided to use Azure Resource Tags for billing and chargeback purposes instead of blending a cost management structure within the Management Group and Subscription hierarchy. This will provide horizontal capabilities to query cost across multiple subscriptions. Tags required for billing (Department and Cost Center) will be enforced by policy at landing zone management group scope.
+Contoso has decided to use Azure Resource Tags for billing and charge back purposes instead of blending a cost management structure within the Management Group and Subscription hierarchy. This will provide horizontal capabilities to query cost across multiple subscriptions. Tags required for billing (Department and Cost Center) will be enforced by policy at landing zone management group scope.
 
 ![Contoso MG structure](./media/contoso-mg-structure.png)
 
@@ -589,7 +589,7 @@ Contoso also recognizes the need to add backup capabilities to other resource ty
 
 ## Security, Governance and Compliance
 
-For Contoso to understand what controls must be implemented, and where these controls must be layered in their Azure architecture, they have developed and established a control framework to map their requirements to Azure platform capabilities. The framework principals are data protection, network protection, key management, vulnerability, and least privilege to ensure any allowed Azure service can conform to Contoso's enterprise security requirements, which are implemented using Azure Policy, Azure AD PIM, Azure RBAC, Azure Security Center, Azure Sentinel, and Azure Monitor.
+For Contoso to understand what controls must be implemented, and where these controls must be layered in their Azure architecture, they have developed and established a control framework to map their requirements to Azure platform capabilities. The framework principles are data protection, network protection, key management, vulnerability, and least privilege to ensure any allowed Azure service can conform to Contoso's enterprise security requirements, which are implemented using Azure Policy, Azure AD PIM, Azure RBAC, Azure Security Center, Azure Sentinel, and Azure Monitor.
 
 Through policy-driven management, Contoso's policy implementation will ensure new subscriptions and resources will immediately be brought to their target compliant state. The primary policy effects used by Contoso to achieve this are "deployIfNotExists", "deny", "append", and "modify".
 
@@ -603,7 +603,7 @@ Through policy-driven management, Contoso's policy implementation will ensure ne
 
 Contoso's existing Azure subscriptions will initially start with "audit" and "auditIfNotExists" policies to understand the current resource distribution from a compliance perspective as well as what changes are necessary to bring the existing subscriptions with their resources into the target landing zones.  
 
-From a platform architecture perspective, the principals of Contoso policy implementation will ensure that:
+From a platform architecture perspective, the principles of Contoso policy implementation will ensure that:
 
 * Platform is autonomous  
 When a new subscription is created, Azure Policy will automate and ensure requisite plumbing is in place, such as security, networking, logging and workload specific policies mapped to Contoso's controls.

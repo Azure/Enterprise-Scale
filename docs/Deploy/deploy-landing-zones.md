@@ -7,7 +7,7 @@ This article describes how to deploy Landing Zones under the respective Manageme
 
 In a Enterprise-Scale implementation, all platform resources in the __Connectivity__ and __Management__ Subscriptions are deployed via Azure Policy. Enterprise-Scale includes both, policy definitions and assignments required to deploy the necessary resources for the reference implementation. While it is possible to deploy both, Azure Policy definition and assignments using Enterprise-Scale deployment process via GitHub Actions as described in this [article](./deploy-new-policy-assignment.md), Enterprise-Scale provides flexibility for how the assignments can be done in the platform subscriptions.
 
-All platform Azure resources in a Landing Zones following the Enterprise-Scale guidance are fully controlled and provisioned through Azure Policy. More information on the [Policy Driven Approach](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) can be found in the Enterprise-Scale design principals section of this document.
+All platform Azure resources in a Landing Zones following the Enterprise-Scale guidance are fully controlled and provisioned through Azure Policy. More information on the [Policy Driven Approach](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) can be found in the Enterprise-Scale design principles section of this document.
 
 Before continuing, please ensure that you have completed all prerequisites in the previous sections. Specially these steps:
 
