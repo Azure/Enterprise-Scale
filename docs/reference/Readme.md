@@ -1,7 +1,7 @@
 
 # What are Reference Implementations
 
-Enterprise-Scale degin principals and implemantation can be adopted by all customer no matter what size and history thier Azure estate. The following customer reference implementations target different and most common customer scenarios for a Enterprise-Scale adoption.
+Enterprise-Scale degin principles and implemantation can be adopted by all customer no matter what size and history thier Azure estate. The following customer reference implementations target different and most common customer scenarios for a Enterprise-Scale adoption.
 
 | Reference implementation | Description | ARM Template | Link |
 |:-------------------------|:-------------|:-------------|------|
@@ -13,7 +13,7 @@ Enterprise-Scale degin principals and implemantation can be adopted by all custo
 
 Enterprise-scale reference implementation is rooted in the principle that **Everything in Azure is a resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their resources as part of their target state architecture at scale.
 
-Enable security, logging, networking, and any other plumbing needed for landing zones (i.e. Subscriptions) autonomously through policy enforcement. Companys will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principal of "Policy Driven Governance" to deploy all necessary platform resources for a landing zone using policy. For example, deploying a Key Vault to store platform-level secrets in the management subscription instead of scripting the template deployment to deploy Key Vault, the Enterprise-Scale based reference implementation will have a policy definition that deploys the Key Vault in a prescriptive manner using a policy assignment at the management subscription scope. The core benefits of a policy-driven approach are manyfold but the most significant include:
+Enable security, logging, networking, and any other plumbing needed for landing zones (i.e. Subscriptions) autonomously through policy enforcement. Companys will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy Driven Governance" to deploy all necessary platform resources for a landing zone using policy. For example, deploying a Key Vault to store platform-level secrets in the management subscription instead of scripting the template deployment to deploy Key Vault, the Enterprise-Scale based reference implementation will have a policy definition that deploys the Key Vault in a prescriptive manner using a policy assignment at the management subscription scope. The core benefits of a policy-driven approach are manyfold but the most significant include:
 
 * Platform can provide an orchestration capability to bring target resources (in this case a subscription) to a desired goal state.
 * Continuous conformance to ensure all platform-level resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediating the resources throughout the life-cycle of the resource.
