@@ -74,7 +74,7 @@ In Enterprise-Scale reference implementation, changes in the platform are always
 
 ``` bash
     ....
-    # here an empty example for the policyAssigments
+    # here an empty example for the policyAssignments
     "policyAssignments": [
         {
             # Copy value object content of a Azure Policy from the azopsreference here.
