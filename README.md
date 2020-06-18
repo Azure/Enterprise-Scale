@@ -22,6 +22,8 @@
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
 * [Roadmap](./docs/EnterpriseScale-roadmap.md)
+* [PREVIEW - Azure DevOps support](./docs/Deploy/setup-azuredevops.md)
+
 ---
 
 ## Objective
