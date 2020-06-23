@@ -27,23 +27,7 @@ Issue: As duplicate Subscription names can exist in Azure, the Display Name of a
 
 Status: To deterministically target the platform Subscriptions with their specific policies, their workaround is to have a dedicated Management Group for each Platform Subscription, child to the platform Management Group
 
-## Move Subscription to Management Group
-
-Area: Microsoft.Management Resource Provider
-
-Issue: When doing http put on Microsoft.Management/managementGroups/subscriptions, the subsequent GET response is 204 (no content), so the overall template deployment fails. 
-
-Status: Fix is in progress.
-
-## Reference() Resources at Management Group scope when deploying ARM templates to Subscription scope
-
-Area: Azure Resource Manager template deployments
-
-Issue: When deploying a Subscription template and using template reference() function to reference a Resource (policyDefinitions/policyAssignments) from Management Group, the function append the subscriptionId to the referenced Resource, which will cause the deployment to fail.
-
-Status: No fix as of yet, and for workaround the particular policyAssignments must sit directly on the Subscription for the template deployment invoked to succeed.
-
-## Management Group scoped deployments can deploy to Tenant root scope
+## Management group scoped deployments can deploy to tenant root scope
 
 Area: Azure Resource Manager template deployments
 
