@@ -64,8 +64,6 @@ The illustration below shows an end-to-end deployment workflow across the Azure 
 
 ![ARM template](./media/arm-template.png)
 
-For additional information on how to use the Enterprise-Scale ARM template via GitHub actions and how to deploy manually, se the following articles:
+For additional information on how to use the Enterprise-Scale ARM template via GitHub actions, see the following article:
 
-[Deploy Enterprise-Scale platform infrastructure](./Deploy-platform-infra.md)
-
-[Deploy Enterprise-Scale ARM template locally](./Trigger-local-deployment.md)
+[Deploy Enterprise-Scale platform infrastructure](./configure-own-environment.md)
