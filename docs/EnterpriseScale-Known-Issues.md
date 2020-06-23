@@ -27,22 +27,6 @@ Issue: Currently, the display name of a subscription cannot be used in the polic
 
 Status: To deterministically target the platform subscriptions with their specific policies, their workaround is to have a dedicated management group for each platform subscription, child to the platform management group
 
-## Move subscription to management group
-
-Area: Microsoft.Management Resource Provider
-
-Issue: When doing http put on Microsoft.Management/managementGroups/subscriptions, the subsequent GET response is 204 (no content), so the overall template deployment fails. 
-
-Status: Fix is in progress.
-
-## Reference() resources at management group scope when deploying ARM templates to subscription scope
-
-Area: Azure Resource Manager template deployments
-
-Issue: When deploying a subscription template and using template reference() function to reference a resource (policyDefinitions/policyAssignments) from management group, the function append the subscriptionId to the referenced resource, which will cause the deployment to fail.
-
-Status: No fix as of yet, and for workaround the particular policyAssignments must sit directly on the subscription for the template deployment invoked to succeed.
-
 ## Management group scoped deployments can deploy to tenant root scope
 
 Area: Azure Resource Manager template deployments
