@@ -8,12 +8,12 @@ To deploy a sample Enterprise-Scale reference implementation, simply choose your
 - [AdventureWorks](../reference/adventureworks/README.md)
 - [Contoso](../reference/contoso/Readme.md)
 
-This will create a sample management group structure that you can use for starting point.
+This will create a sample Management Group structure that you can use for starting point.
 
-## Move Subscription under management groups
+## Move Subscription under Management Groups
 
-Once the deployment is complete, ensure you move your subscriptions under the desired management groups.
+Once the deployment is complete, ensure you move your Subscriptions under the desired Management Groups.
 
 ## Next steps
 
-Once you have an environment with your desired management group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](./discover-environment.md).
+Once you have an environment with your desired Management Group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](./discover-environment.md).

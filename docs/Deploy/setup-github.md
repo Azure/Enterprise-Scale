@@ -6,13 +6,13 @@ This article will guide you through the process to configure GitHub in preparati
 
 2. In your new repository (for example, `https://github.com/your-github-id/Enterprise-Scale`), create a Personal Access Token (PAT). You can refer to this [article](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for steps on creating a PAT. Only `repo` permissions are required.
 
-3. "User Access Administrator" role is required to manage the deployment of your Enterprise-Scale architecture. This may requires [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) It is strongly recommended to assign the permission at the highest scope possible (i.e. tenant root scope `/`) to ensure you can use the service principal to perform subscriptions management operation. "App registration" needs to be enabled on the Azure AD tenant to self-register an Application (Option 1).
-    > Note: Read access on the root level is enough to perform the initialization, but not for deployment. To be able to create management group and subscriptions, platform requires Tenant level PUT permission.
+3. "User Access Administrator" role is required to manage the deployment of your Enterprise-Scale architecture. This may requires [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) It is strongly recommended to assign the permission at the highest scope possible (i.e. Tenant root scope `/`) to ensure you can use the service principal to perform Subscriptions management operation. "App registration" needs to be enabled on the Azure AD Tenant to self-register an Application (Option 1).
+    > Note: Read access on the root level is enough to perform the initialization, but not for deployment. To be able to create Management Group and Subscriptions, platform requires Tenant level PUT permission.
 
     Option 1 (App registration enabled)
 
     ```powershell
-    #Create Service Principal and assign Owner role to tenant root scope ("/")
+    #Create Service Principal and assign Owner role to Tenant root scope ("/")
     $servicePrincipal = New-AzADServicePrincipal -Role Owner -Scope / -DisplayName AzOps
     ```
 
@@ -21,7 +21,7 @@ This article will guide you through the process to configure GitHub in preparati
     ```powershell
     #Create Service Principal as the Azure AD administrator
     $servicePrincipal = New-AzADServicePrincipal -Role Owner -Scope / -DisplayName AzOps -SkipAssignment
-    #Assign Owner role to tenant root scope ("/") as a User Access Administrator
+    #Assign Owner role to Tenant root scope ("/") as a User Access Administrator
     New-AzRoleAssignment -ApplicationId $servicePrincipal.ApplicationId -RoleDefinitionName Owner -Scope /
     ```
 
@@ -52,13 +52,13 @@ This article will guide you through the process to configure GitHub in preparati
       "name": "<<redacted>>",
       "clientSecret": "<<redacted>>",
       "tenantId": "<<redacted>>",
-      "subscriptionId": "<<default-subscriptionid>>"
+      "subscriptionId": "<<default-subscriptionId>>"
     }
     ```
 
 * Name: AZURE_ENROLLMENT_ACCOUNT_NAME [Optional]
 
-    This parameter is required if you are planning to create new subscription though this workflow. This secret must contain the **ObjectId** for the Azure Enrollment Account. You can obtain the id by running ```Get-AzEnrollmentAccount```
+    This parameter is required if you are planning to create new Subscription though this workflow. This secret must contain the **ObjectId** for the Azure Enrollment Account. You can obtain the id by running ```Get-AzEnrollmentAccount```
 
     ```bash
     ObjectId
