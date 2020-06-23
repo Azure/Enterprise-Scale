@@ -16,7 +16,7 @@
   * [Deploy Enterprise-Scale reference implementation](./docs/Deploy/configure-own-environment.md)
   * [Initialize Git With Current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
-  * [Deploy landing zones](./docs/Deploy/deploy-landing-zones.md)
+  * [Deploy Landing Zones](./docs/Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
@@ -34,7 +34,7 @@ _The Enterprise-Scale architecture represents the strategic design path and targ
 
 Not all enterprises adopt Azure in the same way, so the Enterprise-Scale architecture may vary between customers. Ultimately, the technical considerations and design recommendations of the Enterprise-Scale architecture may lead to different trade-offs based on the customer's scenario. Some variation is expected, but if core recommendations are followed, the resulting target architecture will put the customer on a path to sustainable scale.
 
-The reference implementations in this repository is intended to support Enterprise-Scale Azure adoption by leveraging learnings from previous engineering engagements and provide architecture design pattern.
+The reference implementations in this repository is intended to support Enterprise-Scale Azure adoption by taking learnings from previous engineering engagements and provide architecture design pattern.
 
 ## Conditions for success
 
@@ -44,7 +44,7 @@ It is also assumed that readers have a broad understanding of key Azure construc
 
 ## How to get started
 
-Organization can use Azure Portal or Infrastructure-as-code to setup and configure Azure environment. It is also possible to **transition between portal and infrastructure-as-code (recommended)** when your ready to do so. 
+Organization can use Azure Portal or Infrastructure-as-Code to setup and configure Azure environment. It is also possible to **transition between portal and Infrastructure-as-Code (recommended)** when your ready to do so. 
 
 <!--
 ![Enterprise-Scale ](./docs/media/ES-process.png)
@@ -52,7 +52,7 @@ Organization can use Azure Portal or Infrastructure-as-code to setup and configu
 
 ### Deploying Enterprise-Scale Architecture in your own environment
 
-The enterprise-scale architecture is modular by design and allow customers to start with foundational landing zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point.In this repository we are providing the following three templates representing different scenarios composed using ARM templates.
+The enterprise-scale architecture is modular by design and allow customers to start with foundational Landing Zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point.In this repository we are providing the following three templates representing different scenarios composed using ARM templates.
 
 | Reference implementation | Description | ARM Template | Link |
 |:-------------------------|:-------------|:-------------|------|
@@ -62,7 +62,7 @@ The enterprise-scale architecture is modular by design and allow customers to st
 
 ### Getting Started with Infrastructure-as-Code
 
-This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure resources in Azure. Please see [this section](./docs/Deploy/configure-own-environment.md) to get started with infrastructure-as-code in your environment.
+This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure Resources in Azure. Please see [this section](./docs/Deploy/configure-own-environment.md) to get started with Infrastructure-as-Code in your environment.
 
 ## Contributing
 

@@ -11,12 +11,12 @@ Enterprise-Scale degin principles and implemantation can be adopted by all custo
 
 # Reference Implementation
 
-Enterprise-scale reference implementation is rooted in the principle that **Everything in Azure is a resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their resources as part of their target state architecture at scale.
+Enterprise-scale reference implementation is rooted in the principle that **Everything in Azure is a Resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their Resources as part of their target state architecture at scale.
 
-Enable security, logging, networking, and any other plumbing needed for landing zones (i.e. Subscriptions) autonomously through policy enforcement. Companys will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy Driven Governance" to deploy all necessary platform resources for a landing zone using policy. For example, deploying a Key Vault to store platform-level secrets in the management subscription instead of scripting the template deployment to deploy Key Vault, the Enterprise-Scale based reference implementation will have a policy definition that deploys the Key Vault in a prescriptive manner using a policy assignment at the management subscription scope. The core benefits of a policy-driven approach are manyfold but the most significant include:
+Enable security, logging, networking, and any other plumbing needed for Landing Zones (i.e. Subscriptions) autonomously through policy enforcement. Companies will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy Driven Governance" to deploy all necessary platform Resources for a Landing Zone using policy. For example, deploying a Key Vault to store platform-level secrets in the management Subscription instead of scripting the template deployment to deploy Key Vault, the Enterprise-Scale based reference implementation will have a policy definition that deploys the Key Vault in a prescriptive manner using a policy assignment at the management Subscription scope. The core benefits of a policy-driven approach are many, but the most significant include:
 
-* Platform can provide an orchestration capability to bring target resources (in this case a subscription) to a desired goal state.
-* Continuous conformance to ensure all platform-level resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediating the resources throughout the life-cycle of the resource.
+* Platform can provide an orchestration capability to bring target Resources (in this case a subscription) to a desired goal state.
+* Continuous conformance to ensure all platform-level Resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediation of Resources throughout the life-cycle of the Resource.
 * Platform enables autonomy regardless of the customer's scale point.
 
 ## File -> New -> Region
@@ -25,33 +25,33 @@ Companies wants to leverage new Azure regions and deploy the workload closer to 
 
 ### Management
 
-All reference customer have decided to use a single Log Analytics workspace. When the first region is enabled, they will deploy Log Analytics workspace in their management subscription. No action will be required when enabling subsequent Azure regions as Azure Policy will ensure all platform logging is routed to the workspace.
+All reference customer have decided to use a single Log Analytics workspace. When the first region is enabled, they will deploy Log Analytics workspace in their management Subscription. No action will be required when enabling subsequent Azure regions as Azure Policy will ensure all platform logging is routed to the workspace.
 
 ### Networking
 
 Here customer are taking different architecture designs the following examples is for the Contoso reference implementation:
 
-Policy will continuously check if a Virtual WAN VHub already exist in "Connectivity" subscription for all enabled regions and create one if it does not. Configure Virtual WAN VHub to secure internet traffic from secured connections (spoke VNets inside Landing Zone) to the internet via Azure Firewall.
+Policy will continuously check if a Virtual WAN VHub already exist in "Connectivity" Subscription for all enabled regions and create one if it does not. Configure Virtual WAN VHub to secure internet traffic from secured connections (spoke Virtual Networks inside Landing Zone) to the internet via Azure Firewall.
 
 For all Azure Virtual WAN VHubs, Policy will ensure that Azure Firewall is deployed and linked to the existing global Azure Firewall Policy as well as the creation of a regional Firewall Policy, if needed.
 
-Azure Policy will also deploy default NSGs and UDRs in Landing Zones and, while NSG will be linked to all subnets, UDR will only be linked to VNet injected PaaS services subnets. Azure Policy will ensure that the right NSG and UDR rules are configured to allow control plane traffic for VNet injected services to continue to work but only for those Azure PaaS services that have been approved as per the [Service Enablement Framework](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance#whitelist-the-service-framework) described in this document. This is required as, when landing zone VNets get connected to Virtual WAN VHub, they will get the default route (0.0.0.0/0) configured to point to their regional Azure Firewall, hence UDR and NSG rules are required to protect and manage control plane traffic for VNet injected PaaS services (such as SQL MI).
+Azure Policy will also deploy default NSGs and UDRs in Landing Zones and, while NSG will be linked to all Subnets, UDR will only be linked to Virtual Network injected PaaS services Subnets. Azure Policy will ensure that the right NSG and UDR rules are configured to allow control plane traffic for Virtual Network injected services to continue to work but only for those Azure PaaS services that have been approved as per the [Service Enablement Framework](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance#whitelist-the-service-framework) described in this document. This is required as, when Landing Zone Virtual Networks get connected to Virtual WAN VHub, they will get the default route (0.0.0.0/0) configured to point to their regional Azure Firewall, hence UDR and NSG rules are required to protect and manage control plane traffic for Virtual Network injected PaaS services (such as SQL MI).
 
-For cross-premises connectivity, Policy will ensure that ExpressRoute and/or VPN gateways are deployed (as required by the regional VHub), and it will connect the VHub to on-premises using ExpressRoute (by taking the ExpressRoute resource ID and authorization key as parameters). In case of VPN, Contoso can decide if they use their existing SD-WAN solution to automate the connectivity from branch offices into Azure via S2S VPN, or alternatively, Contoso can manually configure the CPE devices on the branch offices and then let Azure Policy to configure the VPN sites in Azure Virtual WAN. As Contoso is rolling out a SD-WAN solution to manage the connectivity of all their branches around the globe, their preference is to use the SD-WAN solution, which is a solution certified with Azure Virtual WAN, to connect all their branches to Azure.
+For cross-premises connectivity, Policy will ensure that ExpressRoute and/or VPN gateways are deployed (as required by the regional VHub), and it will connect the VHub to on-premises using ExpressRoute (by taking the ExpressRoute Resource ID and authorization key as parameters). In case of VPN, Contoso can decide if they use their existing SD-WAN solution to automate the connectivity from branch offices into Azure via S2S VPN, or alternatively, Contoso can manually configure the CPE devices on the branch offices and then let Azure Policy to configure the VPN sites in Azure Virtual WAN. As Contoso is rolling out a SD-WAN solution to manage the connectivity of all their branches around the globe, their preference is to use the SD-WAN solution, which is a solution certified with Azure Virtual WAN, to connect all their branches to Azure.
 
 ## File ->New -> Landing Zone (Subscription)
 
-Reference customer want to minimize the time it takes to create Landing Zones and do not want central IT to become a bottleneck. Subscriptions will be the unit of management for the landing zones and each business owner will have access to an Azure Billing Profile that will allow them to create new subscriptions (a.k.a. Landing Zones) with an ability to delegate this task to their own IT teams.
-Once new a subscription is provisioned, the subscription will be automatically placed in the desired management group and subject to any configured policy.
+Reference customer want to minimize the time it takes to create Landing Zones and do not want central IT to become a bottleneck. Subscriptions will be the unit of management for the Landing Zones and each business owner will have access to an Azure Billing Profile that will allow them to create new Subscriptions (a.k.a. Landing Zones) with an ability to delegate this task to their own IT teams.
+Once new a Subscription is provisioned, the Subscription will be automatically placed in the desired Management Group and subject to any configured policy.
 
 Networking:
 
-1) Create VNet inside Landing Zone and establish VNet peering with VWAN VHub in the same Azure region
+1) Create Virtual Network inside Landing Zone and establish Virtual Network peering with VWAN VHub in the same Azure region
 2) Create Default NSG inside Landing Zone with default rules e.g. no RDP/SSH from Internet
-3) Ensure new subnets created inside Landing Zone must have NSGs
+3) Ensure new Subnets created inside Landing Zone must have NSGs
 4) Default NSG Rules cannot be modified e.g. RDP/SSH from Internet
-5) Enable NSG Flow logs and connect it to Log Analytics Workspace in management subscription.
-6) Protect VNet traffic across VHubs with NSGs.
+5) Enable NSG Flow logs and connect it to Log Analytics Workspace in management Subscription.
+6) Protect Virtual Network traffic across VHubs with NSGs.
 
 IAM
 
@@ -60,15 +60,15 @@ IAM
 
 # File -> New -> Sandbox
 
-Sandbox subscriptions are for experiment and validation only. Sandbox subscriptions will not be allowed connectivity to Production and Policy will prevent the connectivity to on-premises resources.
+Sandbox Subscriptions are for experiment and validation only. Sandbox Subscriptions will not be allowed connectivity to Production and Policy will prevent the connectivity to on-premises Resources.
 
 ## File -> Delete -> Sandbox/Landing Zone
 
-Susbcription will be moved to a decommissioned management group. Decommissioned management group policies will deny creation of new services and a subscription cancellation request will be sent.
+Susbcription will be moved to a decommissioned Management Group. Decommissioned Management Group policies will deny creation of new services and a Subscription cancellation request will be sent.
 
 # Implementation
 
-Reference cusomters will use "AzOps" acronym (inspired by GitOps, KOps etc.) for Azure Operations in context of Enterprise-Scale design principles. They have decided to use platform-native capability to orchestrate, configure and deploy Landing Zones using Azure Resource Manager (ARM) for declaring goal state. They have abided by "Policy Driven Governance" design principle and wants landing zones (a.k.a Subscription) to be provisioned and configured autonomously.
+Reference cusomters will use "AzOps" acronym (inspired by GitOps, KOps etc.) for Azure Operations in context of Enterprise-Scale design principles. They have decided to use platform-native capability to orchestrate, configure and deploy Landing Zones using Azure Resource Manager (ARM) for declaring goal state. They have abided by "Policy Driven Governance" design principle and wants Landing Zones (a.k.a Subscription) to be provisioned and configured autonomously.
 
 All refernce customer cases have deliberated over whether to use single a Template vs modular Templates and Pros and Cons of both. They have decided in favor of a single template for platform orchestration. The primary reason behind this is the template will mainly consist of Policy Definition and Policy Assignments. Since, Policy Assignments have direct dependency on Policy Definitions, it will be operationally easier to manage and control life-cycle changes/versioning if artifacts are represented in a single template.
 
@@ -157,9 +157,9 @@ All reference customers have decided following for their reference implementatio
 
 ## Git repository for Azure Platform configuration
 
-They are already using Azure and is concerned about their existing management group and subscription already deployed in production. To address the concerns, they have decided to create Git repository to store existing management group and subscription organization.
+They are already using Azure and is concerned about their existing Management Group and Subscription already deployed in production. To address the concerns, they have decided to create Git repository to store existing Management Group and Subscription organization.
 
-Azure resources are organized in hierarchical manner:
+Azure Resources are organized in hierarchical manner:
 
 ```shell
 Tenant Root
@@ -169,11 +169,11 @@ Tenant Root
             ├───Resources
 ```
 
-This is a clear advantage to organize these resources in the same hierarchical layout inside Git Repo. Over time, management groups and subscriptions move and/or are renamed. Therefore, organizing resources in a hierarchical manner allows Contoso to track the lineage over time. It will also allow them to map the path of the resources based on resourceID in predictable manner inside Git and reduce miss-configuration.
+This is a clear advantage to organize these Resources in the same hierarchical layout inside Git Repo. Over time, Management Groups and Subscriptions move and/or are renamed. Therefore, organizing Resources in a hierarchical manner allows Contoso to track the lineage over time. It will also allow them to map the path of the Resources based on ResourceID in predictable manner inside Git and reduce miss-configuration.
 
-**AzOpsScope** class will abstract the mapping between resource identifiers in Azure and the path to resources stored in the Git repo. This will facilitate a quick conversion between Git and Azure and vice versa. Examining the examples below, important properties to note are scope, type (e.g. tenant, ManagementGroup, Subscription, Resource Group) and statepath (representing file location inside Git).
+**AzOpsScope** class will abstract the mapping between Resource identifiers in Azure and the path to Resources stored in the Git repo. This will facilitate a quick conversion between Git and Azure and vice versa. Examining the examples below, important properties to note are scope, type (e.g. Tenant, ManagementGroup, Subscription, Resource Group) and statepath (representing file location inside Git).
 
-Another advantage of the class is recognized when deployment templates are updated in pull request, pipeline can determine at what scope to trigger deployments and appropriate parameters to pass like name, scope etc. In this way, pipeline can be triggered in predictable manner and deployment artefact can be organized at appropriate scope without  including deployment scripts in each pull request throughout the scope of the Azure platform using same Azure AD tenant. Please check [deploy-templates](../Implementation-Getting-Started.md#deploy-templates) section for further details.
+Another advantage of the class is recognized when deployment templates are updated in pull request, pipeline can determine at what scope to trigger deployments and appropriate parameters to pass like name, scope etc. In this way, pipeline can be triggered in predictable manner and deployment artefact can be organized at appropriate scope without  including deployment scripts in each pull request throughout the scope of the Azure platform using same Azure AD Tenant. Please check [deploy-templates](../Implementation-Getting-Started.md#deploy-templates) section for further details.
 
 * New-AzTenantDeployment
 * New-AzManagementGroupDeployment
@@ -212,13 +212,13 @@ resource         :
 
 **Initialize-AzOpsRepository**
 
-This will provide Discovery function to traverse the whole management group and subscription hierarchy by calling:
+This will provide Discovery function to traverse the whole Management Group and Subscription hierarchy by calling:
 
 ```powershell
-Get-AzManagementGroup -Recurse -expand -GroupName {{root management group name or ID}} | ConvertTo-Json -depth 100
+Get-AzManagementGroup -Recurse -expand -GroupName {{root Management Group name or ID}} | ConvertTo-Json -depth 100
 ```
 
-This will build the relationship association between management group and subscription.
+This will build the relationship association between Management Group and Subscription.
 
 ### Deployment
 
