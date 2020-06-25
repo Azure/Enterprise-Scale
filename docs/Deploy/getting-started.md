@@ -6,7 +6,7 @@ This article describes how to get started with Enterprise-Scale reference implem
 
 ## Target audience
 
-The target audience for this guide DevOps / SRE role and assumes knowledge in Azure Resource Manager (ARM)/Infrastructure as Code (IaC), Git, and PowerShell.
+The target audience for this guide DevOps / SRE role and assumes knowledge in Azure Resource Manager (ARM) / Infrastructure-as-Code (IaC), Git, and PowerShell.
 
 ## Prerequisites
 

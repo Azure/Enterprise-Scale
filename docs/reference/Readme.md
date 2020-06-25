@@ -5,18 +5,18 @@ Enterprise-Scale design principles and implementation can be adopted by all cust
 
 | Reference implementation | Description | ARM Template | Link |
 |:-------------------------|:-------------|:-------------|------|
-| Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-vwan.json) | [Detail description](./docs/reference/contoso/README.md) |
-| AdventureWorks | On-premises connectivity with Hub & Spoke  |<!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detail description](./docs/reference/adventureworks/README.md) |
-| WingTip | Azure Only |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json) | [Detail description](./docs/reference/wingtip/README.md) |
+| Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | [Detailed description](./docs/reference/contoso/README.md) |
+| AdventureWorks | On-premises connectivity with Hub & Spoke  |<!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detailed description](./docs/reference/adventureworks/README.md) |
+| WingTip | Azure Only |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | [Detailed description](./docs/reference/wingtip/README.md) |
 
 # Reference Implementation
 
-Enterprise-scale reference implementation is rooted in the principle that **Everything in Azure is a resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their resources as part of their target state architecture at scale.
+Enterprise-scale reference implementation is rooted in the principle that **Everything in Azure is a Resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their Resources as part of their target state architecture at scale.
 
 Enable security, logging, networking, and any other plumbing needed for landing zones (i.e. Subscriptions) autonomously through policy enforcement. Companies will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy Driven Governance" to deploy all necessary platform resources for a landing zone using policy. For example, deploying a Key Vault to store platform-level secrets in the management subscription instead of scripting the template deployment to deploy Key Vault, the Enterprise-Scale based reference implementation will have a policy definition that deploys the Key Vault in a prescriptive manner using a policy assignment at the management subscription scope. The core benefits of a policy-driven approach are manyfold but the most significant include:
 
-* Platform can provide an orchestration capability to bring target resources (in this case a subscription) to a desired goal state.
-* Continuous conformance to ensure all platform-level resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediating the resources throughout the life-cycle of the resource.
+* Platform can provide an orchestration capability to bring target Resources (in this case a subscription) to a desired goal state.
+* Continuous conformance to ensure all platform-level Resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediation of Resources throughout the life-cycle of the Resource.
 * Platform enables autonomy regardless of the customer's scale point.
 
 ## File -> New -> Region
@@ -35,9 +35,10 @@ A policy will continuously check if a Virtual WAN VHub already exist in "Connect
 
 For all Azure Virtual WAN VHubs, Policies will ensure that Azure Firewall is deployed and linked to the existing global Azure Firewall Policy as well as the creation of a regional Firewall policy, if needed.
 
+
 An Azure Policy will also deploy default NSGs and UDRs in Landing Zones and, while NSG will be linked to all subnets, UDR will only be linked to VNet injected PaaS services subnets. The Azure Policy will ensure that the right NSG and UDR rules are configured to allow control plane traffic for VNet injected services to continue to work but only for those Azure PaaS services that have been approved as per the [Service Enablement Framework](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance#whitelist-the-service-framework) described in this document. This is required as, when landing zone VNets get connected to Virtual WAN VHub, they will get the default route (0.0.0.0/0) configured to point to their regional Azure Firewall, hence UDR and NSG rules are required to protect and manage control plane traffic for VNet injected PaaS services (such as SQL MI).
 
-For cross-premises connectivity, Policy will ensure that ExpressRoute and/or VPN gateways are deployed (as required by the regional VHub), and it will connect the VHub to on-premises using ExpressRoute (by taking the ExpressRoute resource ID and authorization key as parameters). In case of VPN, Contoso can decide if they use their existing SD-WAN solution to automate the connectivity from branch offices into Azure via S2S VPN, or alternatively, Contoso can manually configure the CPE devices on the branch offices and then let Azure Policy to configure the VPN sites in Azure Virtual WAN. As Contoso is rolling out a SD-WAN solution to manage the connectivity of all their branches around the globe, their preference is to use the SD-WAN solution, which is a solution certified with Azure Virtual WAN, to connect all their branches to Azure.
+For cross-premises connectivity, Policy will ensure that ExpressRoute and/or VPN gateways are deployed (as required by the regional VHub), and it will connect the VHub to on-premises using ExpressRoute (by taking the ExpressRoute Resource ID and authorization key as parameters). In case of VPN, Contoso can decide if they use their existing SD-WAN solution to automate the connectivity from branch offices into Azure via S2S VPN, or alternatively, Contoso can manually configure the CPE devices on the branch offices and then let Azure Policy to configure the VPN sites in Azure Virtual WAN. As Contoso is rolling out a SD-WAN solution to manage the connectivity of all their branches around the globe, their preference is to use the SD-WAN solution, which is a solution certified with Azure Virtual WAN, to connect all their branches to Azure.
 
 ## File -> New -> Landing Zone (Subscription)
 
@@ -46,12 +47,12 @@ Once new a subscription is provisioned, the subscription will be automatically p
 
 Networking:
 
-1) Create VNet inside Landing Zone and establish VNet peering with VWAN VHub in the same Azure region
+1) Create Virtual Network inside Landing Zone and establish Virtual Network peering with VWAN VHub in the same Azure region
 2) Create Default NSG inside Landing Zone with default rules e.g. no RDP/SSH from Internet
 3) Ensure new subnets are created inside Landing Zone and have NSGs
 4) Default NSG Rules cannot be modified e.g. RDP/SSH from Internet
-5) Enable NSG Flow logs and connect it to Log Analytics Workspace in management subscription.
-6) Protect VNet traffic across VHubs with NSGs.
+5) Enable NSG Flow logs and connect it to Log Analytics Workspace in management Subscription.
+6) Protect Virtual Network traffic across VHubs with NSGs.
 
 IAM
 
@@ -60,11 +61,11 @@ IAM
 
 # File -> New -> Sandbox
 
-Sandbox subscriptions are for experiment and validation only. Sandbox subscriptions will not be allowed connectivity to Production and Policy will prevent the connectivity to on-premises resources.
+Sandbox Subscriptions are for experiment and validation only. Sandbox Subscriptions will not be allowed connectivity to Production and Policy will prevent the connectivity to on-premises Resources.
 
 ## File -> Delete -> Sandbox/Landing Zone
 
-Susbcription will be moved to a decommissioned management group. Decommissioned management group policies will deny creation of new services and a subscription cancellation request will be sent.
+Susbcription will be moved to a decommissioned Management Group. Decommissioned Management Group policies will deny creation of new services and a Subscription cancellation request will be sent.
 
 # Implementation
 
@@ -157,9 +158,9 @@ All reference customers have decided following for their reference implementatio
 
 ## Git repository for Azure Platform configuration
 
-They are already using Azure and is concerned about their existing management group and subscription already deployed in production. To address the concerns, they have decided to create Git repository to store existing management group and subscription organization.
+They are already using Azure and is concerned about their existing Management Group and Subscription already deployed in production. To address the concerns, they have decided to create Git repository to store existing Management Group and Subscription organization.
 
-Azure resources are organized in hierarchical manner:
+Azure Resources are organized in hierarchical manner:
 
 ```shell
 Tenant Root
@@ -169,11 +170,11 @@ Tenant Root
             ├───Resources
 ```
 
-This is a clear advantage to organize these resources in the same hierarchical layout inside Git Repo. Over time, management groups and subscriptions move and/or are renamed. Therefore, organizing resources in a hierarchical manner allows Contoso to track the lineage over time. It will also allow them to map the path of the resources based on resourceID in predictable manner inside Git and reduce miss-configuration.
+This is a clear advantage to organize these Resources in the same hierarchical layout inside Git Repo. Over time, Management Groups and Subscriptions move and/or are renamed. Therefore, organizing Resources in a hierarchical manner allows Contoso to track the lineage over time. It will also allow them to map the path of the Resources based on ResourceID in predictable manner inside Git and reduce miss-configuration.
 
-**AzOpsScope** class will abstract the mapping between resource identifiers in Azure and the path to resources stored in the Git repo. This will facilitate a quick conversion between Git and Azure and vice versa. Examining the examples below, important properties to note are scope, type (e.g. tenant, ManagementGroup, Subscription, Resource Group) and statepath (representing file location inside Git).
+**AzOpsScope** class will abstract the mapping between Resource identifiers in Azure and the path to Resources stored in the Git repo. This will facilitate a quick conversion between Git and Azure and vice versa. Examining the examples below, important properties to note are scope, type (e.g. Tenant, ManagementGroup, Subscription, Resource Group) and statepath (representing file location inside Git).
 
-Another advantage of the class is recognized when deployment templates are updated in pull request, pipeline can determine at what scope to trigger deployments and appropriate parameters to pass like name, scope etc. In this way, pipeline can be triggered in predictable manner and deployment artefact can be organized at appropriate scope without  including deployment scripts in each pull request throughout the scope of the Azure platform using same Azure AD tenant. Please check [deploy-templates](../Implementation-Getting-Started.md#deploy-templates) section for further details.
+Another advantage of the class is recognized when deployment templates are updated in pull request, pipeline can determine at what scope to trigger deployments and appropriate parameters to pass like name, scope etc. In this way, pipeline can be triggered in predictable manner and deployment artefact can be organized at appropriate scope without  including deployment scripts in each pull request throughout the scope of the Azure platform using same Azure AD Tenant. Please check [deploy-templates](../Implementation-Getting-Started.md#deploy-templates) section for further details.
 
 * New-AzTenantDeployment
 * New-AzManagementGroupDeployment
@@ -212,13 +213,13 @@ resource         :
 
 **Initialize-AzOpsRepository**
 
-This will provide Discovery function to traverse the whole management group and subscription hierarchy by calling:
+This will provide Discovery function to traverse the whole Management Group and Subscription hierarchy by calling:
 
 ```powershell
-Get-AzManagementGroup -Recurse -expand -GroupName {{root management group name or ID}} | ConvertTo-Json -depth 100
+Get-AzManagementGroup -Recurse -expand -GroupName {{root Management Group name or ID}} | ConvertTo-Json -depth 100
 ```
 
-This will build the relationship association between management group and subscription.
+This will build the relationship association between Management Group and Subscription.
 
 ### Deployment
 
