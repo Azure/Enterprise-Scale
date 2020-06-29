@@ -1,4 +1,4 @@
-# Setup GitHub for Enterprise-Scale
+# Setup GitHub and Azure for Enterprise-Scale
 
 This article will guide you through the process to configure GitHub in preparation for Enterprise-Scale deployments.
 
@@ -6,13 +6,27 @@ This article will guide you through the process to configure GitHub in preparati
 
 2. In your new repository (for example, `https://github.com/your-github-id/Enterprise-Scale`), create a Personal Access Token (PAT). You can refer to this [article](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) for steps on creating a PAT. Only `repo` permissions are required.
 
-3. "User Access Administrator" role is required to manage the deployment of your Enterprise-Scale architecture. This may requires [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) It is strongly recommended to assign the permission at the highest scope possible (i.e. tenant root scope `/`) to ensure you can use the service principal to perform subscriptions management operation. "App registration" needs to be enabled on the Azure AD tenant to self-register an Application (Option 1).
-    > Note: Read access on the root level is enough to perform the initialization, but not for deployment. To be able to create management group and subscriptions, platform requires Tenant level PUT permission.
+3. "User Access Administrator" role is required to grant permission to manage the deployment of your Enterprise-Scale architecture (Step #4). After permission is granted, you can safely disable "User Access Administrator" permission. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
+
+    3.1 Sign in to the Azure portal or the Azure Active Directory admin center as a Global Administrator. If you are using Azure AD Privileged Identity Management, activate your Global Administrator role assignment.
+
+    3.2 Open Azure Active Directory.
+
+    3.3. Under Manage, select Properties.
+    ![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
+
+    3.4 Under Access management for Azure resources, set the toggle to Yes.
+
+    ![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
+
+4. Create SPN (same step should be followed for user account used for portal deployment)
+
+     "App registration" needs to be enabled on the Azure AD Tenant to self-register an Application (Option 1).
 
     Option 1 (App registration enabled)
 
     ```powershell
-    #Create Service Principal and assign Owner role to tenant root scope ("/")
+    #Create Service Principal and assign Owner role to Tenant root scope ("/")
     $servicePrincipal = New-AzADServicePrincipal -Role Owner -Scope / -DisplayName AzOps
     ```
 
@@ -21,7 +35,8 @@ This article will guide you through the process to configure GitHub in preparati
     ```powershell
     #Create Service Principal as the Azure AD administrator
     $servicePrincipal = New-AzADServicePrincipal -Role Owner -Scope / -DisplayName AzOps -SkipAssignment
-    #Assign Owner role to tenant root scope ("/") as a User Access Administrator
+
+    #Assign Owner role to Tenant root scope ("/") as a User Access Administrator
     New-AzRoleAssignment -ApplicationId $servicePrincipal.ApplicationId -RoleDefinitionName Owner -Scope /
     ```
 
@@ -41,7 +56,7 @@ This article will guide you through the process to configure GitHub in preparati
 
     > Note: It can take up to 15 minutes for newly added permission to reflect for SPN
 
-4. To create the following secrets on GitHub, navigate to the main page of the repository and under your repository name, click **Settings**, click **Secrets**, and then click **New secret**.
+5. To create the following secrets on GitHub, navigate to the main page of the repository and under your repository name, click **Settings**, click **Secrets**, and then click **New secret**.
 
 * Name: AZURE_CREDENTIALS
 
@@ -52,19 +67,19 @@ This article will guide you through the process to configure GitHub in preparati
       "name": "<<redacted>>",
       "clientSecret": "<<redacted>>",
       "tenantId": "<<redacted>>",
-      "subscriptionId": "<<default-subscriptionid>>"
+      "subscriptionId": "<<default-subscriptionId>>"
     }
     ```
 
 * Name: AZURE_ENROLLMENT_ACCOUNT_NAME [Optional]
 
-    This parameter is required if you are planning to create new subscription though this workflow. This secret must contain the **ObjectId** for the Azure Enrollment Account. You can obtain the id by running ```Get-AzEnrollmentAccount```
+    This parameter is required if you are planning to create new Subscription though this workflow. This secret must contain the **ObjectId** for the Azure Enrollment Account. You can obtain the id by running ```Get-AzEnrollmentAccount```
 
     ```bash
     ObjectId
     ```
 
-5. Add upstream repo to your local repository to get latest changes
+6. Add upstream repo to your local repository to get latest changes
 
 Follow these steps in order to synchronize the latest changes from the upstream repo into your local repositories.
 
@@ -80,5 +95,5 @@ Execute the following git commands when you want to synchronize changes from ups
 
 ```shell
 git fetch upstream
-git merge upstream/main
+git pull upstream main --allow-unrelated-histories
 ```
