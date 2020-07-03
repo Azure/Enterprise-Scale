@@ -13,5 +13,3 @@ RUN [ "/bin/bash", "-c", "wget https://github.com/cli/cli/releases/download/v${g
 RUN [ "/bin/bash", "-c", "dpkg -i /tmp/gh_${github}_linux_amd64.deb &> /dev/null" ]
 RUN [ "/usr/bin/pwsh", "-Command", "Install-Module -Name Az.Accounts -RequiredVersion ${azure_accounts} -Scope AllUsers -Force" ]
 RUN [ "/usr/bin/pwsh", "-Command", "Install-Module -Name Az.Resources -RequiredVersion ${azure_resources} -Scope AllUsers -Force" ]
-RUN [ "/usr/bin/pwsh", "-Command", "Install-Module -Name Pester -Scope AllUsers -Force" ]
-RUN [ "/usr/bin/pwsh", "-Command", "Install-Module -Name PSScriptAnalyzer -Scope AllUsers -Force" ]
