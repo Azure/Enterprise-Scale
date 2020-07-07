@@ -228,6 +228,8 @@ For all policy assignment, the following must be considered:
 
 We are working hard to build strong and productive collaboration with our passionate community. We heard you loud and clear. We are working on set of principles and guidelines with Do's and Don'ts.
 
+---
+
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
@@ -243,6 +245,5 @@ We are working hard to build strong and productive collaboration with our passio
   * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](./EnterpriseScale-Known-Issues.md)
-* [How Do I Contribute?](./EnterpriseScale-Contribution.md)
 * [FAQ](./EnterpriseScale-FAQ.md)
 * [Roadmap](./EnterpriseScale-roadmap.md)

@@ -63,6 +63,8 @@ Issue: The discovery process discussed on [this](./Deploy/discover-environment.m
 
 Status: There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure Subscription names and Management Groups are unique in your Tenant regardless of the hierarchy prior to running the discovery process. 
 
+---
+
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
@@ -77,7 +79,6 @@ Status: There is work planned to override Display Name with ResourceName for __M
   * [Deploy new Policy assignment](./Deploy/deploy-new-policy-assignment.md)
   * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
-* [Known Issues](./EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./EnterpriseScale-Contribution.md)
 * [FAQ](./EnterpriseScale-FAQ.md)
 * [Roadmap](./EnterpriseScale-roadmap.md)

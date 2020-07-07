@@ -18,6 +18,8 @@ Management Group creation, Subscription creation, and Subscription placement int
 
 This allows you to control how frequently you want to take bug/patches. This is interim solution while we package pipeline codebase as GitHub action so this step will not be required in future.
 
+---
+
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
@@ -34,5 +36,4 @@ This allows you to control how frequently you want to take bug/patches. This is 
 <!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](./EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./EnterpriseScale-Contribution.md)
-* [FAQ](./EnterpriseScale-FAQ.md)
 * [Roadmap](./EnterpriseScale-roadmap.md)

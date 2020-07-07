@@ -50,9 +50,9 @@ The impact of decisions made within these critical areas will reverberate across
 * [Security, governance and compliance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance)
 * [Platform automation and DevOps](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/platform-automation-and-devops)
 
+---
 ## Navigation Menu
 
-* [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
 * [Reference implementations](./reference/Readme.md)
   * [Contoso Reference - Scope and Design](./reference/contoso/Readme.md)
   * [AdventureWorks Reference - Scope and Design](./reference/adventureworks/README.md)

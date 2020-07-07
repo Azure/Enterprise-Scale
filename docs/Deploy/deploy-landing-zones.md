@@ -25,3 +25,23 @@ It is now time to turn the lights ON, there is only one step required!
    Once all the required definitions (Roles, Policies and PolicySet) and assignments (Roles and Policies) are deployed, Subscriptions can be created or moved to the Landing Zones Management Group or any child Management Group below.
 
 > Important: When moving existing Subscriptions under the Landing Zone Management Group hierarchy, the Subscription and all contained Resources will be updated to match the assigned state of compliance.
+
+---
+
+## Navigation Menu
+
+* [Enterprise-Scale Architecture](../EnterpriseScale-Architecture.md)
+* [Reference implementations](./reference/Readme.md)
+  * [Contoso Reference - Scope and Design](./reference/contoso/Readme.md)
+  * [AdventureWorks Reference - Scope and Design](./reference/adventureworks/README.md)
+  * [WingTip Reference - Scope and Design](./reference/wingtip/README.md)
+* [Getting started](./Deploy/getting-started.md)
+  * [Setup GitHub and Azure for Enterprise-Scale](./Deploy/setup-github.md)
+  * [Deploy Enterprise-Scale reference implementation](./Deploy/configure-own-environment.md)
+  * [Initialize Git With Current Azure configuration](./Deploy/discover-environment.md)
+  * [Deploy new Policy assignment](./Deploy/deploy-new-policy-assignment.md)
+<!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
+* [Known Issues](../EnterpriseScale-Known-Issues.md)
+* [How Do I Contribute?](../EnterpriseScale-Contribution.md)
+* [FAQ](../EnterpriseScale-FAQ.md)
+* [Roadmap](../EnterpriseScale-roadmap.md)
