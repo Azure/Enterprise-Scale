@@ -29,4 +29,6 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
 
+## Next steps
 
+Once you have an environment with your desired Management Group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](../../Deploy/discover-environment.md).

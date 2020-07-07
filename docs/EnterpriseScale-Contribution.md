@@ -227,3 +227,22 @@ For all policy assignment, the following must be considered:
 ### Code of Conduct
 
 We are working hard to build strong and productive collaboration with our passionate community. We heard you loud and clear. We are working on set of principles and guidelines with Do's and Don'ts.
+
+## Navigation Menu
+
+* [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
+* [Reference implementations](./reference/Readme.md)
+  * [Contoso Reference - Scope and Design](./reference/contoso/Readme.md)
+  * [AdventureWorks Reference - Scope and Design](./reference/adventureworks/README.md)
+  * [WingTip Reference - Scope and Design](./reference/wingtip/README.md)
+* [Getting started](./Deploy/getting-started.md)
+  * [Setup GitHub and Azure for Enterprise-Scale](./Deploy/setup-github.md)
+  * [Deploy Enterprise-Scale reference implementation](./Deploy/configure-own-environment.md)
+  * [Initialize Git With Current Azure configuration](./Deploy/discover-environment.md)
+  * [Deploy new Policy assignment](./Deploy/deploy-new-policy-assignment.md)
+  * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
+<!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
+* [Known Issues](./EnterpriseScale-Known-Issues.md)
+* [How Do I Contribute?](./EnterpriseScale-Contribution.md)
+* [FAQ](./EnterpriseScale-FAQ.md)
+* [Roadmap](./EnterpriseScale-roadmap.md)

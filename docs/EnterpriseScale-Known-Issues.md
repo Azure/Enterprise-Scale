@@ -62,3 +62,22 @@ Status: No fix as of yet.
 Issue: The discovery process discussed on [this](./Deploy/discover-environment.md) article will fail if there are Subscriptions or Management Groups with duplicated names. 
 
 Status: There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure Subscription names and Management Groups are unique in your Tenant regardless of the hierarchy prior to running the discovery process. 
+
+## Navigation Menu
+
+* [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
+* [Reference implementations](./reference/Readme.md)
+  * [Contoso Reference - Scope and Design](./reference/contoso/Readme.md)
+  * [AdventureWorks Reference - Scope and Design](./reference/adventureworks/README.md)
+  * [WingTip Reference - Scope and Design](./reference/wingtip/README.md)
+* [Getting started](./Deploy/getting-started.md)
+  * [Setup GitHub and Azure for Enterprise-Scale](./Deploy/setup-github.md)
+  * [Deploy Enterprise-Scale reference implementation](./Deploy/configure-own-environment.md)
+  * [Initialize Git With Current Azure configuration](./Deploy/discover-environment.md)
+  * [Deploy new Policy assignment](./Deploy/deploy-new-policy-assignment.md)
+  * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
+<!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
+* [Known Issues](./EnterpriseScale-Known-Issues.md)
+* [How Do I Contribute?](./EnterpriseScale-Contribution.md)
+* [FAQ](./EnterpriseScale-FAQ.md)
+* [Roadmap](./EnterpriseScale-roadmap.md)
