@@ -31,17 +31,17 @@ It is now time to turn the lights ON, there is only one step required!
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](../EnterpriseScale-Architecture.md)
-* [Reference implementations](./reference/Readme.md)
-  * [Contoso Reference - Scope and Design](./reference/contoso/Readme.md)
-  * [AdventureWorks Reference - Scope and Design](./reference/adventureworks/README.md)
-  * [WingTip Reference - Scope and Design](./reference/wingtip/README.md)
-* [Getting started](./Deploy/getting-started.md)
-  * [Setup GitHub and Azure for Enterprise-Scale](./Deploy/setup-github.md)
-  * [Deploy Enterprise-Scale reference implementation](./Deploy/configure-own-environment.md)
-  * [Initialize Git With Current Azure configuration](./Deploy/discover-environment.md)
-  * [Deploy new Policy assignment](./Deploy/deploy-new-policy-assignment.md)
-  * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
-<!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
+* [Reference implementations](../reference/Readme.md)
+  * [Contoso Reference - Scope and Design](../reference/contoso/Readme.md)
+  * [AdventureWorks Reference - Scope and Design](../reference/adventureworks/README.md)
+  * [WingTip Reference - Scope and Design](../reference/wingtip/README.md)
+* [Getting started](./getting-started.md)
+  * [Setup GitHub and Azure for Enterprise-Scale](./setup-github.md)
+  * [Deploy Enterprise-Scale reference implementation](./configure-own-environment.md)
+  * [Initialize Git With Current Azure configuration](./discover-environment.md)
+  * [Deploy new Policy assignment](./deploy-new-policy-assignment.md)
+  * [Deploy Landing Zones](./deploy-landing-zones.md)
+<!--  * [Deploy new Policy Definition](./deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](../EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](../EnterpriseScale-Contribution.md)
 * [FAQ](../EnterpriseScale-FAQ.md)
