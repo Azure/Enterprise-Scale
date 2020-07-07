@@ -40,6 +40,7 @@ It is now time to turn the lights ON, there is only one step required!
   * [Deploy Enterprise-Scale reference implementation](./Deploy/configure-own-environment.md)
   * [Initialize Git With Current Azure configuration](./Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./Deploy/deploy-new-policy-assignment.md)
+  * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](../EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](../EnterpriseScale-Contribution.md)

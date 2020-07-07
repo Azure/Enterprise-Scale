@@ -33,3 +33,4 @@ We intend to update the content within this repo in alignment with Azure Semeste
 * [Known Issues](./EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./EnterpriseScale-Contribution.md)
 * [FAQ](./EnterpriseScale-FAQ.md)
+* [Roadmap](./EnterpriseScale-roadmap.md)

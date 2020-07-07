@@ -100,4 +100,4 @@ git pull upstream main --allow-unrelated-histories
 
 ## Next steps
 
-Once GitHub and Azure is in place, you can proceed to the next step, [Deploy Enterprice-Scale reference implementation in your own environment](./configure-own-environment.md).
+Once GitHub and Azure is ready, you can [Deploy Enterprice-Scale reference implementation in your own environment](./configure-own-environment.md).

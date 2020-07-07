@@ -53,6 +53,7 @@ The impact of decisions made within these critical areas will reverberate across
 ---
 ## Navigation Menu
 
+* [Enterprise-Scale Architecture](./EnterpriseScale-Architecture.md)
 * [Reference implementations](./reference/Readme.md)
   * [Contoso Reference - Scope and Design](./reference/contoso/Readme.md)
   * [AdventureWorks Reference - Scope and Design](./reference/adventureworks/README.md)

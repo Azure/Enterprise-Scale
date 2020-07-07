@@ -61,4 +61,4 @@ The current Azure environment is now represented in the `azops` folder of the ma
 
 ## Next steps
 
-Once GitHub will reflect your existing Azure environment, you can start to deploy new policy assignment, [Deploy new Policy assignment](./deploy-new-policy-assignment.md).
+Once GitHub will reflect your existing Azure environment, you can [deploy new Policy assignment](./deploy-new-policy-assignment.md).

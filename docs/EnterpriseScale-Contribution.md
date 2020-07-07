@@ -245,5 +245,6 @@ We are working hard to build strong and productive collaboration with our passio
   * [Deploy Landing Zones](./Deploy/deploy-landing-zones.md)
 <!--  * [Deploy new Policy Definition](./Deploy/deploy-new-deploy-new-policy-definition.md) -->
 * [Known Issues](./EnterpriseScale-Known-Issues.md)
+* [How Do I Contribute?](./EnterpriseScale-Contribution.md)
 * [FAQ](./EnterpriseScale-FAQ.md)
 * [Roadmap](./EnterpriseScale-roadmap.md)
