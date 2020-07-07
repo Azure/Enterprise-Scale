@@ -116,7 +116,6 @@ Following Pros and Cons are considered when making design decision.
 
 - Cons
 
-  - Losing intellisense when authoring parameter file complex object. This is one-off activity and can be mitigated by retrieving base definition of existing Resource or creating Resource via portal first.
   - Unable to track template deployments using azure-partner-customer-usage-attribution. This is Not in the scope of Enterprise-Scale.
 
 Again to re-iterate, there is nothing wrong with existing ARM templates used for Resource deployments and there is no expectation to re-write those. Pipeline will continue to honour deployment of those ARM templates and detect configuration drift. However we will not be able to reconcile those templates as platform do not allow exporting deployment template in a way that can facilitate reconciliation. For that reason, any templates submit for PR must conform to ***"what-you-export"*** is ***"what-you-deploy"***.
