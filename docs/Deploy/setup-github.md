@@ -97,3 +97,7 @@ Execute the following git commands when you want to synchronize changes from ups
 git fetch upstream
 git pull upstream main --allow-unrelated-histories
 ```
+
+## Next steps
+
+Once GitHub and Azure is in place, you can proceed to the next step, [Deploy Enterprice-Scale reference implementation in your own environment](./configure-own-environment.md).
