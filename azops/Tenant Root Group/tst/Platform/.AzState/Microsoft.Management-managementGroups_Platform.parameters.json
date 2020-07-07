@@ -1,0 +1,203 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Id": "/providers/Microsoft.Management/managementGroups/Platform",
+        "Type": "/providers/Microsoft.Management/managementGroups",
+        "Name": "Platform",
+        "TenantId": "bc3728a6-8e61-42d1-883a-4f6f7609afa5",
+        "DisplayName": "Platform",
+        "UpdatedTime": "0001-01-01T00:00:00Z",
+        "UpdatedBy": null,
+        "ParentId": "/providers/Microsoft.Management/managementGroups/tst",
+        "ParentName": "tst",
+        "ParentDisplayName": "tst",
+        "Children": null,
+        "properties": {
+          "policyDefinitions": [
+            {
+              "Name": "LZ-Enforce-Logging-Definition",
+              "ResourceId": "/providers/Microsoft.Management/managementGroups/platform/providers/Microsoft.Authorization/policyDefinitions/LZ-Enforce-Logging-Definition",
+              "ResourceName": "LZ-Enforce-Logging-Definition",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": null,
+              "PolicyDefinitionId": "/providers/Microsoft.Management/managementGroups/platform/providers/Microsoft.Authorization/policyDefinitions/LZ-Enforce-Logging-Definition",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Enforce-Workspace-Per-Subscription",
+                "Mode": "All",
+                "Parameters": {
+                  "workspaceName": {
+                    "type": "String",
+                    "metadata": {
+                      "description": "Provide suffix for Log Analytics workspace that will be created per subscription"
+                    }
+                  },
+                  "workspaceRegion": {
+                    "type": "String",
+                    "metadata": {
+                      "description": "Select Azure region for Log Analytics"
+                    }
+                  }
+                },
+                "PolicyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.Resources/resourceGroups",
+                      "deploymentScope": "Subscription",
+                      "existenceScope": "Subscription",
+                      "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                      ],
+                      "existenceCondition": {
+                        "allOf": [
+                          {
+                            "field": "name",
+                            "like": "[concat(subscription().displayName, '-mgmt')]"
+                          },
+                          {
+                            "field": "type",
+                            "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                          },
+                          {
+                            "field": "type",
+                            "equals": "Microsoft.OperationalInsights/workspaces"
+                          }
+                        ]
+                      },
+                      "deployment": {
+                        "location": "westeurope",
+                        "properties": {
+                          "mode": "incremental",
+                          "parameters": {
+                            "rgName": {
+                              "value": "[concat(subscription().displayName, '-mgmt')]"
+                            },
+                            "workspaceName": {
+                              "value": "[concat(subscription().displayName, parameters('workspaceName'))]"
+                            },
+                            "workspaceRegion": {
+                              "value": "[parameters('workspaceRegion')]"
+                            }
+                          },
+                          "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                              "rgName": {
+                                "type": "string"
+                              },
+                              "workspaceName": {
+                                "type": "string"
+                              },
+                              "workspaceRegion": {
+                                "type": "string"
+                              }
+                            },
+                            "variables": {},
+                            "resources": [
+                              {
+                                "type": "Microsoft.Resources/resourceGroups",
+                                "apiVersion": "2018-05-01",
+                                "name": "[parameters('rgName')]",
+                                "location": "[deployment().location]",
+                                "properties": {}
+                              },
+                              {
+                                "type": "Microsoft.Resources/deployments",
+                                "apiVersion": "2018-05-01",
+                                "name": "[concat('mgmt', uniqueString('foo'))]",
+                                "resourceGroup": "[parameters('rgName')]",
+                                "dependsOn": [
+                                  "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+                                ],
+                                "properties": {
+                                  "mode": "Incremental",
+                                  "template": {
+                                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "variables": {},
+                                    "resources": [
+                                      {
+                                        "apiVersion": "2017-03-15-preview",
+                                        "location": "[parameters('workspaceRegion')]",
+                                        "name": "[parameters('workspaceName')]",
+                                        "type": "Microsoft.OperationalInsights/workspaces",
+                                        "properties": {
+                                          "sku": {
+                                            "name": "pernode"
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "outputs": {}
+                                  }
+                                }
+                              }
+                            ],
+                            "outputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "policySetDefinitions": [],
+          "policyAssignments": [
+            {
+              "Identity": {
+                "type": "SystemAssigned",
+                "principalId": "1e4dbe58-f71a-45fb-a6ea-790eb4f8fbe2",
+                "tenantId": "bc3728a6-8e61-42d1-883a-4f6f7609afa5"
+              },
+              "Location": "westeurope",
+              "Name": "LZ-Enforce-Logging",
+              "ResourceId": "/providers/Microsoft.Management/managementGroups/platform/providers/Microsoft.Authorization/policyAssignments/LZ-Enforce-Logging",
+              "ResourceName": "LZ-Enforce-Logging",
+              "ResourceGroupName": null,
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "SubscriptionId": null,
+              "Sku": {
+                "name": "A0",
+                "tier": "Free"
+              },
+              "PolicyAssignmentId": "/providers/Microsoft.Management/managementGroups/platform/providers/Microsoft.Authorization/policyAssignments/LZ-Enforce-Logging",
+              "Properties": {
+                "Scope": "/providers/Microsoft.Management/managementGroups/platform",
+                "NotScopes": null,
+                "DisplayName": "LZ-Enforce-Logging",
+                "Description": "LZ-Enforce-Logging",
+                "PolicyDefinitionId": "/providers/Microsoft.Management/managementGroups/platform/providers/Microsoft.Authorization/policyDefinitions/LZ-Enforce-Logging-Definition",
+                "Parameters": {
+                  "workspaceName": {
+                    "value": "abc-tst-liepa"
+                  },
+                  "workspaceRegion": {
+                    "value": "westeurope"
+                  }
+                }
+              }
+            }
+          ],
+          "roleDefinitions": null,
+          "roleAssignments": null
+        }
+      }
+    }
+  }
+}
