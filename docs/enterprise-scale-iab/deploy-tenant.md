@@ -10,7 +10,7 @@ Once you have completed the first step (deploy your tenant), the second step **S
 
 This section is used to setup the exact environment you see in the [reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/contoso/Readme.md) for the Enterprise-Scale approach, including the Management Group schema in [**deploy new policy assignments**](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/deploy-new-policy-assignment.md#deployment-artifact-overview) and the policy definitions and assignments listed [here](https://github.com/Azure/Enterprise-Scale/tree/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState).
 
-Execute the following steps of the following sections to deploy this environment in your MSDN/Visual Studio Azure Subscription.
+Execute the following steps of the following sections to deploy this environment in your Azure Subscription.
 
 ### Create a GitHub repository from Enterprise-Scale repo
 
@@ -32,7 +32,7 @@ To create a GitHub repository from the Enterprise-Scale repo as a template, exec
 
     ![_Figure_](./media/wt-1.1-4.png)
 
-5. After selecting Git: Clone, paste the URL that you copied to the clipboard in your previous step (for example, [https://github.com/<yourGitHubID>/your-RepoName.git](https://github.com/%3cyourGitHubID%3e/your-RepoName.git)), and then hit enter.
+5. After selecting Git: Clone, paste the URL that you copied to the clipboard in your previous step (for example, [https://github.com/yourGitHubID/your-RepoName.git](https://github.com/%3cyourGitHubID%3e/your-RepoName.git)), and then hit enter.
 
     ![_Figure_](./media/wt-1.1-5.png)
 
@@ -74,7 +74,7 @@ ARM template.
 
     > **NOTE:**
     > Please note that as an optional parameter, you can provide the subscription id of an existing, empty Azure subscription if you want it to be dedicated for management.  
-    > For this walkthrough, provide your MSDN/Visual Studio Azure subscription ID and click on **Next: Select Enterprise-Scale setup**. If you don't provide a subscription ID on this steps, then you will have to manually move the subscription under the correct Management Group as described on section **Move a subscription to ES-management Management Group.**
+    > For this walkthrough, provide your Azure subscription ID and click on **Next: Select Enterprise-Scale setup**. If you don't provide a subscription ID on this steps, then you will have to manually move the subscription under the correct Management Group as described on section **Move a subscription to ES-management Management Group.**
 
     ![_Figure_](./media/wt-1.2-4.png)
 
@@ -116,7 +116,7 @@ ARM template.
 
 Only execute this section if you did not provide your Azure subscription ID in section **1.2 Deploy the Management Group structure and policy/PolicySet definitions** section.
 
-In this section, we will move your **MSDN** or **Visual Studio Enterprise subscription** under the **ES-management** Management Group you created with the template deployment. For simplicity, we will use the portal in this exercise.
+In this section, we will move your Azure subscription under the **ES-management** Management Group you created with the template deployment. For simplicity, we will use the portal in this exercise.
 
 1. In the Azure portal, in the **Management Groups** page, click on the **ES-management** (under ES-Platform) Management Group. Click **details**:
 
@@ -126,7 +126,7 @@ In this section, we will move your **MSDN** or **Visual Studio Enterprise subscr
 
     ![_Figure_](./media/wt-1.3-2.png)
 
-2. In the **Add subscription** page, select your MSDN or Visual Studio subscription in the Subscription list and click **Save**.
+2. In the **Add subscription** page, select your Azure subscription in the Subscription list and click **Save**.
 
     ![_Figure_](./media/wt-1.3-3.png)
 
@@ -136,4 +136,4 @@ In this section, we will move your **MSDN** or **Visual Studio Enterprise subscr
 
 ## Next steps
 
-Once the subsciption has been moved under the **ES-management** conuntinue [setting the GitHub environment](./setup-git-cicd.md).
+Once the Management Group structure and Policy/policySet definitions have been deployed, and your Azure subscription has been moved under the **ES-management** Management Group, you can proceed to the next step by [setting the GitHub environment](./setup-git-cicd.md).

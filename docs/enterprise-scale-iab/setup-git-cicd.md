@@ -4,7 +4,7 @@ One of the **design goals of** the Enterprise-Scale reference implementation is 
 
 In this exercise you will learn how to fully use the Enterprise-Scale GitHub repository to create a DevOps pipeline using GitHub Actions for deploying resources to Azure, and reconcile changes made through tools outside the DevOps pipeline.
 
-To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#DeploytheManagementGroupstructureandpolicy/PolicySetdefinitions) and an MSDN/Visual Studio Azure subscription which has been moved under it. We will now be leveraging your GitHub repository to discover the contents of your tenant, and save your Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure Environment.
+To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#DeploytheManagementGroupstructureandpolicy/PolicySetdefinitions) and an Azure subscription which has been moved under it. We will now be leveraging your GitHub repository to discover the contents of your tenant, and save your Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure environment.
 
 ## Configure GitHub
 
@@ -16,22 +16,19 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
 2. In the **TERMINAL WINDOW (PowerShell 7)** or any other **PowerShell 7** shell, execute the following command to log into your Azure tenant by using your tenant admin account.
 
-    ```PowerShell
-    # PowerShell
+    ```PowerShell    
     Connect-AzAccount -TenantId <your-tenant-id>
     ```
 
 3. After you login, run the command below to create a service principal to be used for the GitHub integration. Make sure the **DisplayName** for the service principal is unique within your tenant.
 
-    ```PowerShell
-    # PowerShell
+    ```PowerShell    
     $servicePrincipal = New-AzADServicePrincipal -Role Owner -Scope "/" -DisplayName es-<yourAlias>
     ```
 
 4. Run the command below to retrieve the necessary information from the service principal that needs to be added to GitHub to integrate the git workflow with your Azure environment.
 
-    ```PowerShell
-    # PowerShell
+    ```PowerShell    
     [ordered]@{
         clientId = $servicePrincipal.ApplicationId
         displayName = $servicePrincipal.DisplayName
@@ -54,8 +51,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
    Paste the information that you got in the clipboard (the outcome from the last PowerShell step you executed). The outcome should look like this:
 
-   ```PowerShell
-   # PowerShell
+   ```PowerShell   
    [ordered]@{
    "clientId":       $servicePrincipal.ApplicationId,
    "displayName":    $servicePrincipal.DisplayName,
@@ -77,8 +73,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     Open a terminal window in Visual Studio Code, or another shell of your preference, and execute the following command:
 
-    ```bash
-    # bash
+    ```bash    
     gh api -X POST repos/<Your GitHub ID>/<Your Repo Name>/dispatches --field event_type="GitHub CLI"
     ```
 
@@ -114,7 +109,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     ![_Figure_](./media/wt-2.1-7.png)
 
-13. **Pull** the changes in the main branch locally using by launching the command palette **(CTRL + SHIFT + P)** in **Visual Studio Code** and type `Git: Pull` then press **Enter**
+13. **Pull** the changes in the main branch to your local clone by launching the command palette **(CTRL + SHIFT + P)** in **Visual Studio Code** and type `Git: Pull` then press **Enter**. Alternatively, you can select the main branch at the bottom-left section in Visual Studio Code and then click on the Sync icon as depicted in the picture below.
 
     ![_Figure_](./media/wt-2.1-8.png)
 

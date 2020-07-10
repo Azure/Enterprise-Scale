@@ -2,13 +2,11 @@
 
 ## Deployment Region
 
-If you are using AAD Tenant where you have previously deployed Enterprise-Scale and wish to use region other than North Europe, we highly recommend to clean up your previous Enterprise-Scale deployments. This is one-off time activity to ensure there are no conflicts.
+If you are using AAD Tenant where you have previously deployed Enterprise-Scale and wish to use a region other than the one you used in your previous deployment, we highly recommend to clean up your previous Enterprise-Scale deployments. This is one-off time activity to ensure there are no conflicts.
 
 Please use following snippet to clear all deployments at tenant, Management Group and Subscription scopes.
 
 ```PowerShell
-# PowerShell
-
 Get-AzTenantDeployment   | Foreach-Object -Parallel {
     Write-Verbose "$(Get-Date) Removing Tenant Deployment $($_.Id)"
     Stop-AzTenantDeployment -Id $_.Id -Confirm:$false -ErrorAction:SilentlyContinue
