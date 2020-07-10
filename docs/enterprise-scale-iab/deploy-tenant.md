@@ -136,4 +136,4 @@ In this section, we will move your **MSDN** or **Visual Studio Enterprise subscr
 
 ## Next steps
 
-Once the subsciption has been moved under the **ES-management** conuntinue [setting the GitHub environment](./setup-git-cicd-md).
+Once the subsciption has been moved under the **ES-management** conuntinue [setting the GitHub environment](./setup-git-cicd.md).

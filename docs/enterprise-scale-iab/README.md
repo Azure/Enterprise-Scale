@@ -7,9 +7,9 @@ This section describes how to deploy the Enterprise-Scale 1st party reference im
 
 Before deploy the Enterprise-Scale reference implementation, take the time to learn more about the [architecture](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/architecture), [design principles](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles), and [critical design](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines#critical-design-areas) areas related to the Enterprise-Scale architecture.
 
-This guide contains the following four section which is recommended to execute it in the given order:
+This guide contains the following four sections which is recommended to execute it in the given order:
 
 * [Deploy your tenant](./deploy-tenant.md)
-* [Setup GitHub CI/CD pipeline](./setup-git-cicd-md)
+* [Setup GitHub CI/CD pipeline](./setup-git-cicd.md)
 * [Using GitHub pipeline](./use-git-pipeline.md)
 * [Troubleshooting](./troubleshooting.md)
