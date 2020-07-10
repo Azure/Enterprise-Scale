@@ -133,3 +133,7 @@ In this section, we will move your **MSDN** or **Visual Studio Enterprise subscr
 3. The subscription will be displayed under the Management Group once it has been moved, as shown below.
 
     ![_Figure_](./media/wt-1.3-4.png)
+
+## Next steps
+
+Once the subsciption has been moved under the **ES-management** conuntinue [setting the GitHub environment](./setup-git-cicd-md).
