@@ -14,21 +14,21 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
 1. In **Visual Studio Code**, click **Terminal > New Terminal**.
 
-2. In the **TERMINAL WINDOW (PowerShell 7)** or any other **PowerShell 7** shell, execute the following command to log into your Azure tenant by using your tenant admin account.
+2. In the **TERMINAL WINDOW (PowerShell 7)** or any other **PowerShell 7** shell, execute the following command to log into your Azure tenant by using your Azure AD tenant admin account. Follow [this instructions here](../Deploy/setup-github.md) to enable your Azure AD tenant admin to access resources.
 
-    ```PowerShell    
+    ```PowerShell
     Connect-AzAccount -TenantId <your-tenant-id>
     ```
 
 3. After you login, run the command below to create a service principal to be used for the GitHub integration. Make sure the **DisplayName** for the service principal is unique within your tenant.
 
-    ```PowerShell    
+    ```PowerShell
     $servicePrincipal = New-AzADServicePrincipal -Role Owner -Scope "/" -DisplayName es-<yourAlias>
     ```
 
 4. Run the command below to retrieve the necessary information from the service principal that needs to be added to GitHub to integrate the git workflow with your Azure environment.
 
-    ```PowerShell    
+    ```PowerShell
     [ordered]@{
         clientId = $servicePrincipal.ApplicationId
         displayName = $servicePrincipal.DisplayName
@@ -51,7 +51,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
    Paste the information that you got in the clipboard (the outcome from the last PowerShell step you executed). The outcome should look like this:
 
-   ```PowerShell   
+   ```PowerShell
    [ordered]@{
    "clientId":       $servicePrincipal.ApplicationId,
    "displayName":    $servicePrincipal.DisplayName,
@@ -66,14 +66,14 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     ![_Figure_](./media/wt-2.1-2.png)
 
-9. Now, we will run discovery, based on GitHub Actions, to discover your existing Azure environment and initialize your GitHub repo. For this exercise we will use GitHub CLI (please refer to the prerequisites [article](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/getting-started.md) to ensure you've the correct version installed).
+9. Now, we will run discovery, based on GitHub Actions, to discover your existing Azure environment and initialize your GitHub repo. For this exercise we will use GitHub CLI (please refer to the prerequisites [article](../Deploy/getting-started.md) to ensure you've the correct version installed).
 
     > **NOTE:**
-    >If you prefer, you can execute the discovery process via Bash or PowerShell as described on this [article](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/discover-environment.md).
+    >If you prefer, execute the discovery process via Bash or PowerShell as described on this [article](../Deploy/discover-environment.md).
 
-    Open a terminal window in Visual Studio Code, or another shell of your preference, and execute the following command:
+    Open a terminal window in Visual Studio Code, or another shell of your preference, and execute the following command. Ensure that the GitHub Cli is installed, the instructions can be found [here](../Deploy/getting-started.md):
 
-    ```bash    
+    ```bash
     gh api -X POST repos/<Your GitHub ID>/<Your Repo Name>/dispatches --field event_type="GitHub CLI"
     ```
 
@@ -99,7 +99,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     - It will create **system** branch representing your current configuration as ARM template parameter file.
 
-    - Create a Pull Request (PR) with the name Azure Change Notification **(system** -> **main)**
+    - Create a Pull Request (PR) with the name Azure Change Notification **(system->main)**
 
 12. Select the **Pull Request** tab in your GitHub repository and if everything looks good, go ahead and merge **system** branch to the **main** branch. Once successfully merged, delete the **system** branch.
 
@@ -127,7 +127,7 @@ Please perform the following steps to configure the region for the template depl
 
     For example, for a deployment in the North Europe Azure region, you would provide:
 
-    ```AZOPS_DEFAULT_DEPLOYMENT_REGION: "northeurope"```
+    `AZOPS_DEFAULT_DEPLOYMENT_REGION: "northeurope"`
 
     Since deployment names have to be unique across regions, you must select the region that you have used in portal to bootstrap Enterprise-Scale environment.
 

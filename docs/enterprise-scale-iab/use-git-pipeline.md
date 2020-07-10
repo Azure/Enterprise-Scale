@@ -1,24 +1,24 @@
 # Using GitHub to deploy changes to your Enterprise-Scale architecture
 
-Now that your DevOps environment is setup, you could build an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/e2e-landing-zone-vwan-orchestration.parameters.json) to deploy a complex Azure architecture in your Azure tenant with minimal user input. Although this simplifies the setup process, by having a reusable ARM template, it comes with hurdles on how to handle changes as they occur outside the use of your ARM template.
+Now that your DevOps environment and Azure tenant is setup, you could build an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/e2e-landing-zone-vwan-orchestration.parameters.json) to deploy a complex Azure architecture in your Azure tenant with minimal user input. Although this simplifies the setup process, by having a reusable ARM template, it comes with hurdles on how to handle changes as they occur outside the use of your ARM template.
 
-For instance, after deployment you can make changes to the environment by using the Azure portal, the Azure CLI, PowerShell, or third-party tools that make use of the Azure Resource Manager API. Reconciling these changes back into your all-encompassing ARM template is not an easy task. One of the design goals on the Enterprise-Scale reference implementation is to provide a mechanism for reconciling changes.
+Now that your DevOps environment and Azure tenant is setup using an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/e2e-landing-zone-vwan-orchestration.parameters.json), you can make changes to the environment by using the Azure portal, the Azure CLI, PowerShell, or third-party tools that make use of the Azure Resource Manager API. Reconciling these changes back into your all-encompassing ARM template is not an easy task. One of the design goals on the Enterprise-Scale reference implementation is to provide a mechanism for reconciling changes.
 
 The Enterprise-Scale reference implementation leverages the GET and PUT schema used by Azure resources to export and import the state of an Azure environment. One of the benefits of this implementation approach is that regardless of how changes are made (Portal, CLI, PowerShell, ARM Template), you can consistently retrieve the current state of your Azure environment and version control it in Git as for Infrastructure-as-Code. This mechanism is the foundation of how configuration drift and reconciliation is achieved to provide an Enterprise-Scale approach to the operations of an Azure environment.
 
-By using the Enterprise-Scale reference implementation, customers can define their environment based on Enterprise-Scale design principles and construct their Management Group hierarchy and policies based on reference [artifacts](https://github.com/Azure/Enterprise-Scale/tree/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState).
+By using the Enterprise-Scale reference implementation, environment can be definde based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState).
 
-Reference artifacts are ARM template parameter files that can be used with a generic ARM template.
+Reference artifacts are ARM template parameter files that can be used with a [generic ARM template](https://github.com/Azure/AzOps/blob/main/template/tenant.json).
 
 In subsequent exercises, we will continue to construct an Enterprise-Scale reference implementation in your own environment by following these high-level steps:
 
-Use Git to deploy policy assignments:
+Use GitHub Actions to deploy policy assignments:
 
 * 1 (Optional) Creates management resources.
   
 * 2 (Optional) Collect Azure Activity Logs in to Log Analytics.
 
-* 3 (Optional) Enable Diagnostic Policy to enable monitoring.    
+* 3 (Optional) Enable Diagnostic Policy to enable monitoring.
 
 * 4 Author policy assignment ARM template to declare goal state of **connectivity** subscription (please note that the resources deployed on this step will cause additional cost on your subscription).
 
@@ -62,8 +62,9 @@ In the previous exercises you deployed policy and initiative (policy set) defini
     | automationAccountName | `<yourAutomationAccountName>` |
     | workspaceRegion       | `<AzureRegion>` |
     | automationRegion      | `<AzureRegion>` |
-    | ----                  | --- |
-    | **Note**              | Location is where the managed service identity for this policy assignment will be created. |
+
+    > **Note**
+    > Location is where the managed service identity for this policy assignment will be created.
 
 5. Commit changes to the **feature** branch `Git: commit` and sync changes to your remote GitHub repository `Git: Push`
 
@@ -71,7 +72,7 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
     ![_Figure_](./media/wt-3.1-4.png)
 
-    Once the policy is deployed with this pipeline the AzOps push process will also ensure policy compliance. Even if the services are deployed with the AzOps Action it could take a while until the policy compliance status is reflected on your **ES-management** Management Group scope.
+    Once the policy is deployed with this pipeline the AzOps push process will also ensure policy compliance. Even if the services are deployed with the AzOps action it could take a while until the policy compliance status is reflected on your **ES-management** Management Group scope.
 
     In the Azure Portal select the **ES-management** management and then click on **details** and then click on **Policies**:
 
@@ -85,7 +86,7 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
 Only execute this section in case you selected **No** to create management resources in the [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) section.
 
-We will use git to assign the **Collect Azure Activity Logs in to Log Analytics and Enable Diagnostic** policy to enable monitoring.
+We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log Analytics and Enable Diagnostic** policy to enable monitoring.
 
 1. Pull latest master branch locally by running ```git checkout main``` and ```git pull```
 
@@ -105,8 +106,9 @@ We will use git to assign the **Collect Azure Activity Logs in to Log Analytics 
     | Scope              | `/providers/Microsoft.Management/managementGroups/ES` |
     | PolicyDefinitionId | `/providers/Microsoft.Management/managementGroups/ES/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-ActivityLog` |
     | logAnalytics/value | `/subscriptions/<subscription-id>/resourcegroups/<resourcegroupname>/providers/microsoft.operationalinsights/workspaces/<loganalyticswsname>` |
-    | ----                  | --- |
-    | **Note**              | Location is where the managed service identity for this policy assignment will be created. |
+
+    > **Note**
+    > Location is where the managed service identity for this policy assignment will be created.
 
 5. Commit changes to your feature branch and create a pull request.
 
@@ -116,15 +118,15 @@ We will use git to assign the **Collect Azure Activity Logs in to Log Analytics 
 
     ![_Figure_](./media/wt-3.2-3.png)
 
-    It is important to note that if this policy assignment is specified at Management Group scope, all future subscription that move under the scope of this Management Group will automatically have monitoring and diagnostics settings applied without any custom orchestration. In our case, all subscription will be enabled existing under the **ES** (company root) Management Group scope will be enabled. That is a design goal of Enterprise-Scale reference implementation.
+    It is important to note that if this policy assignment is specified at Management Group scope, all future subscription that move under the scope of this Management Group will automatically monitoring and diagnostics settings be enabled without any custom orchestration. In our case, all subscription existing under the **ES** (company root) Management Group scope will be enabled. That is a design goal of Enterprise-Scale reference implementation.
 
 ## Assign the networking policies
 
-In this section, we will focus on enabling networking for landing zones. In our example, we only have a single subscription in the **ES-management** Management Group. In environments with multiple subscriptions, you would assign these policies at the **Connectivity** Management Group scope.
+In this section, we will focus on enabling networking for landing zones. In this tutorial, we only have a single subscription in the **ES-management** Management Group. In environments with multiple subscriptions, you would assign these policies at the **Connectivity** Management Group scope.
 
-Please follow the instructions from the previous sections to use git to assign policies as required in the steps below. You can obtain the sample policy assignments from [this](https://github.com/Azure/Enterprise-Scale/tree/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/platform/connectivity/.AzState) link or from your local Git repository under `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState`.
+Please follow the instructions from the previous sections to use git to assign policies as required in the steps below. You can obtain the sample policy assignments from [this](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/platform/connectivity/.AzState) link or from your local Git repository under `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState`.
 
-We will make policy assignments via Git process on these steps.
+We will make policy assignments via GitHub Action process on these steps.
 
 1. Assign the **Deploy-vWAN** and **Deploy-FirewallPolicy** policies to the **ES-management** Management Group:
 
@@ -139,7 +141,7 @@ We will make policy assignments via Git process on these steps.
     d. Go to the folder `azops\Tenant Root Group\ES\ES-platform\ES-management\.AzState` and open the file `Microsoft.Management-managementGroups_ES.parameters.json` Paste the value into **policyAssignments** array and change the marked values.
 
     > **NOTE:**
-    > This policy was changed in a previous step. You will find content there from the previous step. Be sure to keep the content that is highlighted below in place.
+    > We have already a policy assignment deployed on this scope make sure that you extend the json array correctly.
 
     ![_Figure_](./media/wt-3.3-2.png)
 
@@ -151,8 +153,9 @@ We will make policy assignments via Git process on these steps.
     | vwanName           | `<yourVWANname>`|
     | vwanRegion         | `<AzureRegion>` |
     | rgName             | `<yourRGname>` |
-    | ----               | --- |
-    | **Note**           | Location is where the managed service identity for this policy assignment will be created. |
+
+    > **Note**
+    > Location is where the managed service identity for this policy assignment will be created. |
 
     e. Open the file `Microsoft.Authorization_policyAssignments-Deploy-FirewallPolicy.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
 
@@ -169,8 +172,9 @@ We will make policy assignments via Git process on these steps.
     | fwpolicy/location  | `<AzureRegion>` |
     | fwPolicyRegion     | `<AzureRegion>` |
     | rgName             | `<yourRGname>` |
-    | ----               | --- |
-    | **Note**           | Location is where the managed service identity for this policy assignment will be created. |
+
+    > **Note**
+    > Location is where the managed service > identity for this policy assignment will be created.
 
     g. Save the `Microsoft.Management-managementGroups_ES.parameters.json` file, commit changes to your feature branch and create a pull request.
 
@@ -202,11 +206,16 @@ We will make policy assignments via Git process on these steps.
     | azfw -> name           | `<yourAzureFirewallname>` |
     | azfw -> firewallPolicy | Replace with resource ID of your Firewall Policy that you created in the previous step |
     | rgName                 | Provide the resource group name where you created the VWAN in the previous step |
-    | ----               | --- |
-    | **Note**           | Location is where the managed service identity for this policy assignment will be created. |
+
+    > **Note**
+    > Location is where the managed service identity for this policy assignment will be created.
 
     e. Save the `Microsoft.Management-managementGroups_ES.parameters.json` file, commit changes to your feature branch and create a pull request.
 
     f. **Wait for deployment to succeed** and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge. Please note that this is going to take some time to complete (about 40 minutes) as the VHub, Gateways and Azure Firewall are deployed. After a successful deployment, a VHub, VPN Gateway and Azure Firewall resources will be created in your Azure subscription:
 
     ![_Figure_](./media/wt-3.3-6.png)
+
+## Summary
+
+At this stage you have completed the Enterprise-Scale "in-a-box" tutorial. As described in this tutorial we have used different deployment methods to showcase the Enterprise-Scale 1st party reference implementation. If you want to learn more about the Enterprise-Scale reference implementation use this [**getting started guide**](../Deploy/getting-started.md).

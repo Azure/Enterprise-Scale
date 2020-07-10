@@ -4,11 +4,11 @@ Enterprise-Scale-in-a-box deployment is a two-step approach.
 
 The **Deploy your tenant** scenario initializes a new Enterprise-Scale (ES) Management Group structure and all custom Azure Policy and PolicySet (aka Policy Initiative) definitions at the ES Management Group scope.
 
-Once you have completed the first step (deploy your tenant), the second step **Setup GitHub Action for CI/CD** and **Using GitHub to deploy changes to your Enterprise-Scale architecture**, will walk you through the setup of an DevOps pipeline based on GitHub Actions to do the Azure Policy assignments.
+Once you have completed the first step (deploy your tenant), the second step [Setup GitHub Action for CI/CD](./setup-git-cicd.md) and [Using GitHub to deploy changes to your Enterprise-Scale architecture](./use-git-pipeline.md), will walk you through the setup of an DevOps pipeline based on GitHub Actions to do the Azure Policy assignments.
 
 ## Deploy your Tenant
 
-This section is used to setup the exact environment you see in the [reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/contoso/Readme.md) for the Enterprise-Scale approach, including the Management Group schema in [**deploy new policy assignments**](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/deploy-new-policy-assignment.md#deployment-artifact-overview) and the policy definitions and assignments listed [here](https://github.com/Azure/Enterprise-Scale/tree/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState).
+This section is used to setup the exact environment you see in the [reference implementation](../reference/contoso/Readme.md) for the Enterprise-Scale approach, including the Management Group schema in [**deploy new policy assignments**](../Deploy/deploy-new-policy-assignment.md#deployment-artifact-overview) and the policy definitions and assignments listed [here](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState).
 
 Execute the following steps of the following sections to deploy this environment in your Azure Subscription.
 
@@ -16,23 +16,23 @@ Execute the following steps of the following sections to deploy this environment
 
 To create a GitHub repository from the Enterprise-Scale repo as a template, execute the following steps.
 
-1. Go to the Enterprise-Scale repo (https://github.com/Azure/Enterprise-Scale), and clone it to your organization by clicking on **Use this template** function.
+1. Clone current [Enterprise-Scale repository](https://github.com/Azure/Enterprise-Scale) to your organization by clicking on **Use this template** function.
 
-    ![_Figure_](./media/wt-1.1-1.png)
+    ![Clone Enterprise-Scale repository](./media/wt-1.1-1.png)
 
-2. On the **Create a new repository from Enterprise-Scale** window, create a new repo under your GitHub-ID. Provide a repository name (for example, ES-IAB). The repository can be created **Public** or **Private** and the **Include all branches** should be unchecked.
+2. On the **Create a new repository from Enterprise-Scale** window, create a new repo under your GitHub-ID. Provide a repository name (for example, `ES-IAB`). The repository can be created as **Public** or **Private** and the **Include all branches** should be unchecked.
 
-    ![_Figure_](./media/wt-1.1-2.png)
+    ![Create a new repository](./media/wt-1.1-2.png)
 
-3. Once the new repository has been created in your GitHub-ID, click on **Clone or download**, and copy the URL provided by clicking on the button highlighted.
+3. Once the new repository has been created under your GitHub-ID, click on **Code**, and copy the URL provided by clicking on the button highlighted.
 
-    ![_Figure_](./media/wt-1.1-3.png)
+    ![Clone repository localy](./media/wt-1.1-3.png)
 
-4. On your local computer, launch Visual Studio Code and open the command palette (CTRL + SHIFT + P). In the command palette, type (or select) ```git: clone```
+4. On your local computer, launch Visual Studio Code and open the command palette (CTRL + SHIFT + P). In the command palette, type (or select) ```Git: clone```
 
-    ![_Figure_](./media/wt-1.1-4.png)
+    ![Git clone](./media/wt-1.1-4.png)
 
-5. After selecting Git: Clone, paste the URL that you copied to the clipboard in your previous step (for example, [https://github.com/yourGitHubID/your-RepoName.git](https://github.com/%3cyourGitHubID%3e/your-RepoName.git)), and then hit enter.
+5. After selecting Git: Clone, paste the URL that you copied to the clipboard in your previous step (for example, https://github.com/yourGitHubID/your-RepoName.git), and then hit enter.
 
     ![_Figure_](./media/wt-1.1-5.png)
 
@@ -48,10 +48,10 @@ To create a GitHub repository from the Enterprise-Scale repo as a template, exec
 
 ### Deploy the Management Group structure and policy/PolicySet definitions
 
-In this section you are deploying the foundational Management Group structure as well as the policy and PolicySet definitions. To deploy this we will use the [Contoso reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/contoso/Readme.md)
+In this section you are deploying the foundational Management Group structure as well as the policy and PolicySet definitions. To deploy this we will use the [Contoso reference implementation](../reference/contoso/Readme.md)
 ARM template.
 
-1. In a browser, navigate to the [Contoso reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/contoso/Readme.md) in the Enterprise-Scale GitHub repository.
+1. In a browser, navigate to the [Contoso reference implementation](../reference/contoso/Readme.md) in the Enterprise-Scale GitHub repository.
 
     ![_Figure_](./media/wt-1.2-1.png)
 
@@ -61,20 +61,20 @@ ARM template.
 
 3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure.
 
-4. On the **custom deployment** blade, in the Basics section, fill in the **region** and click on **Next: Enterprise Scale Company Prefix.**
+4. On the **Custom deployment** blade, in the Basics section, fill in the **Region** and click on **Next: Enterprise Scale Company Prefix.**
 
     ![_Figure_](./media/wt-1.2-3.png)
 
     > **NOTE:**
     > Make sure, that the correct directory is selected
 
-    **Deployment region limitations:** This is the region where the deployment happens. Not the regions the resources will be deployed to. The reference implementation depends on a single region for deployments. You have to configure this region later when we configure the regions for the GH Actions.
+    **Deployment region limitations:** This is the region where the deployment happens. Not the regions the resources will be deployed to. The reference implementation depends on a single region for deployments. You have to configure this region later when we configure the regions for the GitHub Actions and the CI/CD pipeline.
 
 5. On the **Enterprise Scale Company Prefix** section, provide a company prefix (for this document, we will use **ES** as the prefix, but you can choose the prefix of your preference).
 
     > **NOTE:**
-    > Please note that as an optional parameter, you can provide the subscription id of an existing, empty Azure subscription if you want it to be dedicated for management.  
-    > For this walkthrough, provide your Azure subscription ID and click on **Next: Select Enterprise-Scale setup**. If you don't provide a subscription ID on this steps, then you will have to manually move the subscription under the correct Management Group as described on section **Move a subscription to ES-management Management Group.**
+    > Please note that as an optional parameter, you can provide the Subscription ID of an existing and empty Azure subscription if you want it to be dedicated for management.  
+    > For this walkthrough, provide a Azure Subscription ID and click on **Next: Select Enterprise-Scale setup**. If you don't provide a Subscription ID on this steps, then you will have to manually move the subscription under the correct Management Group as described on section [Move a subscription to ES-management Management Group](#optional-move-a-subscription-to-es-management-management-group).
 
     ![_Figure_](./media/wt-1.2-4.png)
 
@@ -84,8 +84,8 @@ ARM template.
 
 7. On the **Enable Resource Deployments** section, you have two options.
 
-    a. If you select **Yes**, as part of the template deployment ARM will assign two policies to enable auditing in your environment, sending logs to the Log Analytics workspace for platform monitoring. If you select **Yes**, then you can skip the following steps on this guide: **3.1 Assign the Log Analytics policy** and **3.2 Assign the diagnostics policy using GitHub actions** (as template deployment will perform these actions).
-    b. If you select **No**, then the template deployment will not assign the policies to create the Log Analytics workspace and to enable auditing on the environment. Hence, you will need to perform the following steps described on this guide: **3.1 Assign the Log Analytics policy** and **3.2 Assign the diagnostics policy using GitHub actions**.
+    a. If you select **Yes**, as part of the template deployment ARM will assign two policies to enable auditing in your environment, sending logs to the Log Analytics workspace for platform monitoring. If you select **Yes**, then you can skip the following steps on this guide: [Assign the Log Analytics policy](./use-git-pipeline.md#(Optional)-Assign-the-Log-Analytics-policy) and [Assign the diagnostics policy using GitHub actions](./use-git-pipeline.md#(Optional)-Assign-the-diagnostics-policy-using-GitHub-actions) (as template deployment will perform these actions).
+    b. If you select **No**, then the template deployment will not assign the policies to create the Log Analytics workspace and to enable auditing on the environment. Hence, you will need to perform the following steps described on this guide: [Assign the Log Analytics policy](./use-git-pipeline.md#(Optional)-Assign-the-Log-Analytics-policy) and [Assign the diagnostics policy using GitHub actions](./use-git-pipeline.md#(Optional)-Assign-the-diagnostics-policy-using-GitHub-actions).
 
     When you have made your selection (Yes/No), and click on **Next: Review + create**
 
