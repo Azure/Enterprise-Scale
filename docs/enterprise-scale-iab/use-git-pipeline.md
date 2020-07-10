@@ -1,7 +1,5 @@
 # Using GitHub to deploy changes to your Enterprise-Scale architecture
 
-Now that your DevOps environment and Azure tenant is setup, you could build an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/e2e-landing-zone-vwan-orchestration.parameters.json) to deploy a complex Azure architecture in your Azure tenant with minimal user input. Although this simplifies the setup process, by having a reusable ARM template, it comes with hurdles on how to handle changes as they occur outside the use of your ARM template.
-
 Now that your DevOps environment and Azure tenant is setup using an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/e2e-landing-zone-vwan-orchestration.parameters.json), you can make changes to the environment by using the Azure portal, the Azure CLI, PowerShell, or third-party tools that make use of the Azure Resource Manager API. Reconciling these changes back into your all-encompassing ARM template is not an easy task. One of the design goals on the Enterprise-Scale reference implementation is to provide a mechanism for reconciling changes.
 
 The Enterprise-Scale reference implementation leverages the GET and PUT schema used by Azure resources to export and import the state of an Azure environment. One of the benefits of this implementation approach is that regardless of how changes are made (Portal, CLI, PowerShell, ARM Template), you can consistently retrieve the current state of your Azure environment and version control it in Git as for Infrastructure-as-Code. This mechanism is the foundation of how configuration drift and reconciliation is achieved to provide an Enterprise-Scale approach to the operations of an Azure environment.
@@ -140,11 +138,6 @@ We will make policy assignments via GitHub Action process on these steps.
 
     d. Go to the folder `azops\Tenant Root Group\ES\ES-platform\ES-management\.AzState` and open the file `Microsoft.Management-managementGroups_ES.parameters.json` Paste the value into **policyAssignments** array and change the marked values.
 
-    > **NOTE:**
-    > We have already a policy assignment deployed on this scope make sure that you extend the json array correctly.
-
-    ![_Figure_](./media/wt-3.3-2.png)
-
     | Attribute          | Value |
     | :--                | :-- |
     | **Location**       | `<AzureRegion>` |
@@ -155,7 +148,8 @@ We will make policy assignments via GitHub Action process on these steps.
     | rgName             | `<yourRGname>` |
 
     > **Note**
-    > Location is where the managed service identity for this policy assignment will be created. |
+    > Location is where the managed service identity for this policy assignment will be created.
+    > We have already a policy assignment deployed on this scope make sure that you extend the json array correctly.
 
     e. Open the file `Microsoft.Authorization_policyAssignments-Deploy-FirewallPolicy.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
 

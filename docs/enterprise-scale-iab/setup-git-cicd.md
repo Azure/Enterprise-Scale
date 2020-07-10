@@ -4,7 +4,7 @@ One of the **design goals of** the Enterprise-Scale reference implementation is 
 
 In this exercise you will learn how to fully use the Enterprise-Scale GitHub repository to create a DevOps pipeline using GitHub Actions for deploying resources to Azure, and reconcile changes made through tools outside the DevOps pipeline.
 
-To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#DeploytheManagementGroupstructureandpolicy/PolicySetdefinitions) and an Azure subscription which has been moved under it. We will now be leveraging your GitHub repository to discover the contents of your tenant, and save your Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure environment.
+To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) and an Azure subscription which has been moved under it. We will now be leveraging your GitHub repository to discover the contents of your tenant, and save your Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure environment.
 
 ## Configure GitHub
 
@@ -14,7 +14,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
 1. In **Visual Studio Code**, click **Terminal > New Terminal**.
 
-2. In the **TERMINAL WINDOW (PowerShell 7)** or any other **PowerShell 7** shell, execute the following command to log into your Azure tenant by using your Azure AD tenant admin account. Follow [this instructions here](../Deploy/setup-github.md) to enable your Azure AD tenant admin to access resources.
+2. In the **TERMINAL WINDOW (PowerShell 7)** or any other **PowerShell 7** shell, execute the following command to log into your Azure tenant by using your Azure AD tenant admin account. Follow [this instructions here](../Deploy/setup-github.md#setup-github-and-azure-for-enterprise-scale) to enable your Azure AD tenant admin to access resources.
 
     ```PowerShell
     Connect-AzAccount -TenantId <your-tenant-id>
@@ -71,7 +71,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
     > **NOTE:**
     >If you prefer, execute the discovery process via Bash or PowerShell as described on this [article](../Deploy/discover-environment.md).
 
-    Open a terminal window in Visual Studio Code, or another shell of your preference, and execute the following command. Ensure that the GitHub Cli is installed, the instructions can be found [here](../Deploy/getting-started.md):
+    Open a terminal window in Visual Studio Code, or another shell of your preference, and execute the following command:
 
     ```bash
     gh api -X POST repos/<Your GitHub ID>/<Your Repo Name>/dispatches --field event_type="GitHub CLI"
@@ -115,7 +115,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
 ## Configure default deployment regions
 
-The ARM template deployment will be performed via GitHub Actions to a single region where the deployments will happen. This region needs to be the same you used for the initial ARM template deployment in step 4 in section *[Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions).
+The ARM template deployment will be performed via GitHub Actions to a single region where the deployments will happen. This region needs to be the same you used for the initial ARM template deployment in step 4 in section [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions).
 
 Please perform the following steps to configure the region for the template deployment:
 
