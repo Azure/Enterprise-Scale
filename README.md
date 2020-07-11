@@ -17,7 +17,7 @@
   * [Initialize Git With Current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
   * [Deploy Landing Zones](./docs/Deploy/deploy-landing-zones.md)
-<!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
+* [Enterprise-Scale "in-a-box" tutorial](./docs/enterprise-scale-iab/README.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
