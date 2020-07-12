@@ -241,24 +241,3 @@ This function will be the entry point of GitHub Actions when a pull request is a
 "Operationalize" Azure environment at-scale for day-to-day activities.
 
 All reference customers have decided to leverage PowerShell 7 and has mandated that all CI tasks must complete successfully on both Windows and Linux hosts simultaneously to ensure complete coverage. No local execution should be necessary after initialization and discovery activity is completed, and they will publish these CI tasks as GitHub Actions.
-
----
-
-## Navigation Menu
-
-* [Enterprise-Scale Architecture](../EnterpriseScale-Architecture.md)
-* [Reference implementations](./Readme.md)
-  * [Contoso Reference - Scope and Design](./contoso/Readme.md)
-  * [AdventureWorks Reference - Scope and Design](./adventureworks/README.md)
-  * [WingTip Reference - Scope and Design](./wingtip/README.md)
-* [Getting started](../Deploy/getting-started.md)
-  * [Setup GitHub and Azure for Enterprise-Scale](../Deploy/setup-github.md)
-  * [Deploy Enterprise-Scale reference implementation](../Deploy/configure-own-environment.md)
-  * [Initialize Git With Current Azure configuration](../Deploy/discover-environment.md)
-  * [Deploy new Policy assignment](../Deploy/deploy-new-policy-assignment.md)
-  * [Deploy Landing Zones](../Deploy/deploy-landing-zones.md)
-<!--  * [Deploy new Policy Definition](../Deploy/deploy-new-deploy-new-policy-definition.md) -->
-* [Known Issues](../EnterpriseScale-Known-Issues.md)
-* [How Do I Contribute?](../EnterpriseScale-Contribution.md)
-* [FAQ](../EnterpriseScale-FAQ.md)
-* [Roadmap](../EnterpriseScale-roadmap.md)
