@@ -61,4 +61,4 @@ Status: No fix as of yet.
 
 Issue: The discovery process discussed on [this](./Deploy/discover-environment.md) article will fail if there are Subscriptions or Management Groups with duplicated names. 
 
-Status: There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure Subscription names and Management Groups are unique in your Tenant regardless of the hierarchy prior to running the discovery process. 
+Status: There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure Subscription names and Management Groups are unique in your Tenant regardless of the hierarchy prior to running the discovery process.
