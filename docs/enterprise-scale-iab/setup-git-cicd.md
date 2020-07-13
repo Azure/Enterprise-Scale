@@ -66,27 +66,16 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     ![_Figure_](./media/wt-2.1-2.png)
 
-9. Now, we will run discovery, based on GitHub Actions, to discover your existing Azure environment and initialize your GitHub repo. For this exercise we will use GitHub CLI (please refer to the prerequisites [article](../Deploy/getting-started.md) to ensure you've the correct version installed).
+9. Now, we will run discovery, based on GitHub Actions, to discover existing Azure environment and initialize your GitHub repo. This uses the GitHub Actions `workflow_dispatch` trigger. This requires the latest `.github/workflows/azops.yml` file containing the `workflow_dispatch` section in the current repo.
 
-    > **NOTE:**
-    >If you prefer, execute the discovery process via Bash or PowerShell as described on this [article](../Deploy/discover-environment.md).
-
-    Open a terminal window in Visual Studio Code, or another shell of your preference, and execute the following command:
-
-    ```bash
-    gh api -X POST repos/<Your GitHub ID>/<Your Repo Name>/dispatches --field event_type="GitHub CLI"
-    ```
-
-    > **NOTE:**
-    > If you run this for the first time you must authenticate. Follow the steps in the command window. In the following screen you need to complete the authorization.
+    Go to the **Actions** tab in your GitHub repository and select the **AzOps** workflow. Click on **Run workflow**, select _Branch: main_ and _Action to trigger = pull_ and start the process with **Run workflow** button.
 
     ![_Figure_](./media/wt-2.1-3.png)
 
-    Go back to your terminal window and press enter.
+    > **NOTE:**
+    >If you prefer, execute the discovery process via commandline as described on this [article](../Deploy/discover-environment.md).
 
-    ![_Figure_](./media/wt-2.1-4.png)
-
-10. Go back to your GitHub repo and select the **Action** tab. You should now see an AzOps action running (or completed) with the name GitHub CLI.
+10. You should now see an GitHub Action running with the name **AzOps**.
 
     ![_Figure_](./media/wt-2.1-5.png)
 
