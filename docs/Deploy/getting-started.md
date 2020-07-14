@@ -31,6 +31,12 @@ Enterprise-Scale reference implementation requires that you [enable long paths i
 REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
 ```
 
+You will also need to execute the following command line from an elevated terminal:
+
+```bash
+git config --system core.longpaths true
+```
+
 ## Next steps
 
 Once you have the technical prerequisites in place, you can proceed to the next step, [Setup GitHub and Azure for Ensterprise-Scale](./setup-github.md).
