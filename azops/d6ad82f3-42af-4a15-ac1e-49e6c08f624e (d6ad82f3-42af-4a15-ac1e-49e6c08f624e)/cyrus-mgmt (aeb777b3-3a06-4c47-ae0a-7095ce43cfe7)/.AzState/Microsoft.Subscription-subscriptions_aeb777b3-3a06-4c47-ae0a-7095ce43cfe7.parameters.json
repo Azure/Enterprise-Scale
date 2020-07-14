@@ -1,0 +1,357 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Type": "/subscriptions",
+        "Id": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+        "Name": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+        "DisplayName": "cyrus-mgmt",
+        "Children": null,
+        "properties": {
+          "policyDefinitions": [
+            {
+              "Name": "28f1a243-e91b-4994-b94e-e4a55d6b3318",
+              "ResourceId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/28f1a243-e91b-4994-b94e-e4a55d6b3318",
+              "ResourceName": "28f1a243-e91b-4994-b94e-e4a55d6b3318",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+              "PolicyDefinitionId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/28f1a243-e91b-4994-b94e-e4a55d6b3318",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Cyrus-DINE-SqlDBRetention",
+                "Mode": "All",
+                "Parameters": {
+                  "SQLRetentionDays": {
+                    "type": "String",
+                    "metadata": {}
+                  }
+                },
+                "PolicyRule": {
+                  "if": {
+                    "field": "type",
+                    "equals": "Microsoft.Sql/servers/databases"
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies",
+                      "existenceCondition": {
+                        "anyOf": [
+                          {
+                            "field": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies/retentionDays",
+                            "less": "[int(parameters('SQLRetentionDays'))]"
+                          },
+                          {
+                            "field": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies/retentionDays",
+                            "greater": "[int(parameters('SQLRetentionDays'))]"
+                          }
+                        ]
+                      },
+                      "deployment": {
+                        "properties": {
+                          "mode": "incremental",
+                          "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                              "location": {
+                                "type": "string"
+                              },
+                              "sqlServerName": {
+                                "type": "string"
+                              },
+                              "sqlServerDataBaseName": {
+                                "type": "string"
+                              }
+                            },
+                            "variables": {},
+                            "resources": [
+                              {
+                                "name": "[concat( parameters('sqlServerName'),'/',parameters('sqlServerDataBaseName'),'/default')]",
+                                "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies",
+                                "apiVersion": "2018-06-01-preview",
+                                "properties": {
+                                  "retentionDays": "[int(parameters('SQLRetentionDays'))]"
+                                }
+                              }
+                            ],
+                            "outputs": {
+                              "RetentionDays": {
+                                "type": "int",
+                                "value": "[int(parameters('SQLRetentionDays'))]"
+                              }
+                            }
+                          },
+                          "parameters": {
+                            "location": {
+                              "value": "[field('location')]"
+                            },
+                            "sqlServerName": {
+                              "value": "[first(split(field('fullname'),'/'))]"
+                            },
+                            "sqlServerDataBaseName": {
+                              "value": "[field('name')]"
+                            }
+                          }
+                        }
+                      },
+                      "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "Name": "9f894f1f-860d-4a50-b90a-c681072a8332",
+              "ResourceId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/9f894f1f-860d-4a50-b90a-c681072a8332",
+              "ResourceName": "9f894f1f-860d-4a50-b90a-c681072a8332",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+              "PolicyDefinitionId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/9f894f1f-860d-4a50-b90a-c681072a8332",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Cyrus-Deny-LinuxNoDataDisk",
+                "Mode": "All",
+                "Parameters": {},
+                "PolicyRule": {
+                  "if": {
+                    "allof": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                      },
+                      {
+                        "field": "Microsoft.Compute/virtualMachines/storageProfile.dataDisks",
+                        "exists": "false"
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "deny"
+                  }
+                }
+              }
+            },
+            {
+              "Name": "cab81e16-02ab-464f-bccc-b3b843b25386",
+              "ResourceId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/cab81e16-02ab-464f-bccc-b3b843b25386",
+              "ResourceName": "cab81e16-02ab-464f-bccc-b3b843b25386",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+              "PolicyDefinitionId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/cab81e16-02ab-464f-bccc-b3b843b25386",
+              "Properties": {
+                "Description": "When a Key Vault is created without a firewall this will be added",
+                "DisplayName": "Cyrus-Append-KVFirewall",
+                "Mode": "All",
+                "Parameters": {},
+                "PolicyRule": {
+                  "if": {
+                    "anyOf": [
+                      {
+                        "allOf": [
+                          {
+                            "field": "Microsoft.KeyVault/vaults/networkAcls.ipRules[*].value",
+                            "notequals": "10.216.0.0/16"
+                          },
+                          {
+                            "field": "Microsoft.KeyVault/vaults/networkAcls.ipRules[*].value",
+                            "notequals": "172.18.0.0/16"
+                          },
+                          {
+                            "field": "Microsoft.KeyVault/vaults/networkAcls.ipRules[*].value",
+                            "notequals": "104.45.69.165/32"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "append",
+                    "details": [
+                      {
+                        "field": "Microsoft.KeyVault/vaults/networkAcls.ipRules[*]",
+                        "value": {
+                          "value": "10.216.0.0/16",
+                          "action": "Allow"
+                        }
+                      },
+                      {
+                        "field": "Microsoft.KeyVault/vaults/networkAcls.ipRules[*]",
+                        "value": {
+                          "value": "172.18.0.0/16",
+                          "action": "Allow"
+                        }
+                      },
+                      {
+                        "field": "Microsoft.KeyVault/vaults/networkAcls.ipRules[*]",
+                        "value": {
+                          "value": "104.45.69.165/32",
+                          "action": "Allow"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "Name": "f69b5b08-a8e3-4170-b1fc-cd05c8656316",
+              "ResourceId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/f69b5b08-a8e3-4170-b1fc-cd05c8656316",
+              "ResourceName": "f69b5b08-a8e3-4170-b1fc-cd05c8656316",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+              "PolicyDefinitionId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/f69b5b08-a8e3-4170-b1fc-cd05c8656316",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Cyrus-Deny-SQLRetention",
+                "Mode": "All",
+                "Parameters": {
+                  "denySQLRetentionDays": {
+                    "type": "String",
+                    "metadata": {
+                      "displayName": "How many days to force retention",
+                      "description": "How many days to force retention"
+                    }
+                  }
+                },
+                "PolicyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies"
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies/retentionDays",
+                          "equals": "[parameters('denySQLRetentionDays')]"
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "deny"
+                  }
+                }
+              }
+            },
+            {
+              "Name": "fbea841d-719c-4961-aeec-6808a8cf3382",
+              "ResourceId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/fbea841d-719c-4961-aeec-6808a8cf3382",
+              "ResourceName": "fbea841d-719c-4961-aeec-6808a8cf3382",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+              "PolicyDefinitionId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/fbea841d-719c-4961-aeec-6808a8cf3382",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Cyrus-DINE-SqlDBAudit",
+                "Mode": "All",
+                "Parameters": {},
+                "PolicyRule": {
+                  "if": {
+                    "field": "type",
+                    "equals": "Microsoft.Sql/servers/databases"
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.Sql/servers/databases/auditingSettings",
+                      "name": "default",
+                      "existenceCondition": {
+                        "allOf": [
+                          {
+                            "field": "Microsoft.Sql/servers/databases/auditingSettings/state",
+                            "equals": "enabled"
+                          },
+                          {
+                            "field": "Microsoft.Sql/servers/databases/auditingSettings/isAzureMonitorTargetEnabled",
+                            "equals": "true"
+                          }
+                        ]
+                      },
+                      "deployment": {
+                        "properties": {
+                          "mode": "incremental",
+                          "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                              "location": {
+                                "type": "string"
+                              },
+                              "sqlServerName": {
+                                "type": "string"
+                              },
+                              "sqlServerDataBaseName": {
+                                "type": "string"
+                              }
+                            },
+                            "variables": {
+                              "diagnosticSettingsName": "SQLSecurityAuditEvents_3d229c42-c7e7-4c97-9a99-ec0d0d8b86c1",
+                              "omsWorkspaceName": "893401651"
+                            },
+                            "resources": [
+                              {
+                                "name": "[concat( parameters('sqlServerName'),'/',parameters('sqlServerDataBaseName'),'/default')]",
+                                "type": "Microsoft.Sql/servers/databases/auditingSettings",
+                                "apiVersion": "2017-03-01-preview",
+                                "properties": {
+                                  "state": "enabled",
+                                  "auditActionsAndGroups": [
+                                    "BATCH_COMPLETED_GROUP",
+                                    "DATABASE_OBJECT_CHANGE_GROUP",
+                                    "SCHEMA_OBJECT_CHANGE_GROUP",
+                                    "BACKUP_RESTORE_GROUP",
+                                    "APPLICATION_ROLE_CHANGE_PASSWORD_GROUP",
+                                    "DATABASE_PRINCIPAL_CHANGE_GROUP",
+                                    "DATABASE_PRINCIPAL_IMPERSONATION_GROUP",
+                                    "DATABASE_ROLE_MEMBER_CHANGE_GROUP",
+                                    "USER_CHANGE_PASSWORD_GROUP",
+                                    "DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP",
+                                    "DATABASE_OBJECT_PERMISSION_CHANGE_GROUP",
+                                    "DATABASE_PERMISSION_CHANGE_GROUP",
+                                    "SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP",
+                                    "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+                                    "FAILED_DATABASE_AUTHENTICATION_GROUP"
+                                  ],
+                                  "isAzureMonitorTargetEnabled": true
+                                }
+                              }
+                            ],
+                            "outputs": {}
+                          },
+                          "parameters": {
+                            "location": {
+                              "value": "[field('location')]"
+                            },
+                            "sqlServerName": {
+                              "value": "[first(split(field('fullname'),'/'))]"
+                            },
+                            "sqlServerDataBaseName": {
+                              "value": "[field('name')]"
+                            }
+                          }
+                        }
+                      },
+                      "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "policySetDefinitions": [],
+          "policyAssignments": [],
+          "roleDefinitions": null,
+          "roleAssignments": null
+        }
+      }
+    }
+  }
+}
