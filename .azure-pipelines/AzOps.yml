@@ -1,0 +1,205 @@
+name: AzOps
+
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  AZOPS_DEBUG: 0
+  AZOPS_DEFAULT_DEPLOYMENT_REGION: northeurope
+  AZOPS_ENROLLMENT_ACCOUNT: ''
+  AZOPS_IGNORE_CONTEXT_CHECK: 0
+  AZOPS_INVALIDATE_CACHE: 1
+  AZOPS_OFFER_TYPE: MS-AZR-0017P
+  AZOPS_SKIP_POLICY: 0
+  AZOPS_SKIP_RESOURCE_GROUP: 1
+  AZOPS_STATE: azops
+  AZOPS_THROTTLE_LIMIT: 10
+  AZOPS_VERBOSE: 0
+  ContainerImage: <replaceme>/<replaceme>:<replaceme>
+  ContainerRegistry: AzOpsRegistry
+  DockerVersion: 19.03.11
+  GITHUB_USERNAME: AzOps
+  GITHUB_EMAIL: noreply@azure.com
+  GITHUB_PULL_REQUEST: Azure Change Notification
+  SCMPLATFORM: AzureDevOps
+  skipComponentGovernanceDetection: true
+
+jobs:
+- job: push
+  condition: and(eq(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.SourceBranch'], 'refs/heads/system'))
+  variables:
+    AzOpsMode: push
+  steps:
+    - checkout: self
+      persistCredentials: true
+
+    - task: PowerShell@2
+      displayName: Set BASE and HEAD variables
+      inputs:
+        targetType: inline
+        script: |
+          $head = "$(System.PullRequest.SourceBranch)".Replace("refs/heads/","")
+          $base = "$(System.PullRequest.TargetBranch)".Replace("refs/heads/","")
+          Write-Output "##vso[task.setvariable variable=AzopsHeadBranch;]$head"
+          Write-Output "##vso[task.setvariable variable=AzopsBaseBranch;]$base"
+    
+    - task: DockerInstaller@0
+      displayName: Install Docker
+      inputs:
+        dockerVersion: $(DockerVersion)
+        releaseType: stable
+        
+    - task: Docker@2
+      displayName: Docker login
+      inputs:
+        command: login
+        containerRegistry: $(ContainerRegistry)
+
+    - task: CmdLine@2
+      displayName: Docker pull
+      inputs:
+        script: |
+          docker pull $(ContainerImage)
+
+    - task: CmdLine@2
+      displayName: AzOps Run
+      inputs:
+        script: |
+          docker run --rm \
+            --volume=/root:/root \
+            --volume=`pwd`:`pwd` \
+            --workdir `pwd` \
+            --env AZOPS_DEFAULT_DEPLOYMENT_REGION \
+            --env AZOPS_ENROLLMENT_ACCOUNT \
+            --env AZOPS_IGNORE_CONTEXT_CHECK \
+            --env AZOPS_INVALIDATE_CACHE \
+            --env AZOPS_OFFER_TYPE \
+            --env AZOPS_SKIP_POLICY \
+            --env AZOPS_SKIP_RESOURCE_GROUP \
+            --env AZOPS_STATE \
+            --env AZOPS_THROTTLE_LIMIT \
+            --env AZURE_CREDENTIALS="$(AzureCredentials)" \
+            --env BUILD_REPOSITORY_ID \
+            --env DEBUG=$(AZOPS_DEBUG) \
+            --env GITHUB_BASE_REF=$(AzopsBaseBranch) \
+            --env GITHUB_EMAIL \
+            --env GITHUB_HEAD_REF=$(AzopsHeadBranch) \
+            --env GITHUB_PULL_REQUEST \
+            --env GITHUB_USERNAME \
+            --env INPUT_MODE=$(AzOpsMode) \
+            --env SCMPLATFORM \
+            --env SYSTEM_ACCESSTOKEN \
+            --env SYSTEM_PULLREQUEST_PULLREQUESTID \
+            --env SYSTEM_TEAMFOUNDATIONCOLLECTIONURI \
+            --env SYSTEM_TEAMPROJECTID \
+            --env VERBOSE=$(AZOPS_VERBOSE) \
+            $(ContainerImage)
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+    - task: Docker@2
+      displayName: Docker logout
+      condition: true
+      inputs:
+        command: logout
+        containerRegistry: $(ContainerRegistry)
+
+  # If you want review before triggering the push event, enable push_with_review block and disable push.
+  # Review will require, someone other than the creator or the PR to complete review.
+  # GitHub Action will run once PR is reviewed with comment that contains  "LGTM". 
+  # However, in order for GitHub Action status check to display in your PR, you have to enable branch access policy.
+  #
+  # push_with_review:
+  #   if: ${{ github.head_ref != 'system' && contains(github.event.review.body, 'LGTM')}}
+  #   name: Push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Actions checkout
+  #       uses: actions/checkout@v2
+  #     - name: GitHub context
+  #       env:
+  #         GITHUB_CONTEXT: ${{ toJson(github) }}
+  #       run: echo "$GITHUB_CONTEXT"
+  #     - name: Actions azops
+  #       uses: Azure/AzOps@main
+  #       with:
+  #         azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+  #         github_comments: ${{ github.event.pull_request._links.comments.href }}
+  #         github_issue: ${{ github.event.pull_request._links.issue.href }}
+  #         github_base_ref: ${{ github.event.pull_request.base.ref }}
+  #         github_head_ref: ${{ github.event.pull_request.head.ref }}
+  #         mode: push
+  #         verbose: "true"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+- job: pull
+  condition: and(eq(variables['Build.Reason'], 'Manual'), eq(variables['DoPull'], 'true'))
+  variables:
+    AzOpsMode: pull
+  steps:
+    - checkout: self
+      persistCredentials: true
+
+    - task: DockerInstaller@0
+      displayName: Install Docker
+      inputs:
+        dockerVersion: $(DockerVersion)
+        releaseType: stable
+        
+    - task: Docker@2
+      displayName: Docker login
+      inputs:
+        command: login
+        containerRegistry: $(ContainerRegistry)
+
+    - task: CmdLine@2
+      displayName: Docker pull
+      inputs:
+        script: |
+          docker pull $(ContainerImage)
+
+    - task: CmdLine@2
+      displayName: AzOps Run
+      inputs:
+        script: |
+          docker run --rm \
+            --volume=/root:/root \
+            --volume=`pwd`:`pwd` \
+            --workdir `pwd` \
+            --env AZOPS_DEFAULT_DEPLOYMENT_REGION \
+            --env AZOPS_ENROLLMENT_ACCOUNT \
+            --env AZOPS_IGNORE_CONTEXT_CHECK \
+            --env AZOPS_INVALIDATE_CACHE \
+            --env AZOPS_OFFER_TYPE \
+            --env AZOPS_SKIP_POLICY \
+            --env AZOPS_SKIP_RESOURCE_GROUP \
+            --env AZOPS_STATE \
+            --env AZOPS_THROTTLE_LIMIT \
+            --env AZURE_CREDENTIALS="$(AzureCredentials)" \
+            --env BUILD_REPOSITORY_ID \
+            --env DEBUG=$(AZOPS_DEBUG) \
+            --env GITHUB_BASE_REF=$(AzopsBaseBranch) \
+            --env GITHUB_EMAIL \
+            --env GITHUB_HEAD_REF=$(AzopsHeadBranch) \
+            --env GITHUB_PULL_REQUEST \
+            --env GITHUB_USERNAME \
+            --env INPUT_MODE=$(AzOpsMode) \
+            --env SCMPLATFORM \
+            --env SYSTEM_ACCESSTOKEN \
+            --env SYSTEM_PULLREQUEST_PULLREQUESTID \
+            --env SYSTEM_TEAMFOUNDATIONCOLLECTIONURI \
+            --env SYSTEM_TEAMPROJECTID \
+            --env VERBOSE=$(AZOPS_VERBOSE) \
+            $(ContainerImage)
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+    - task: Docker@2
+      displayName: Docker logout
+      condition: true
+      inputs:
+        command: logout
+        containerRegistry: $(ContainerRegistry)
