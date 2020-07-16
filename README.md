@@ -17,7 +17,7 @@
   * [Initialize Git With Current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy new Policy assignment](./docs/Deploy/deploy-new-policy-assignment.md)
   * [Deploy Landing Zones](./docs/Deploy/deploy-landing-zones.md)
-<!--  * [Deploy new Policy Definition](./docs/Deploy/deploy-new-deploy-new-policy-definition.md) -->
+* [Enterprise-Scale "in-a-box" tutorial](./docs/enterprise-scale-iab/README.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
@@ -40,7 +40,7 @@ The reference implementations in this repository is intended to support Enterpri
 
 ## Conditions for success
 
-To fully leverage this reference implementation in this repository, readers must have a collaborative engagement with key customer stakeholders across critical technical domains, such as identity, security, and networking. Ultimately, the success of cloud adoption hinges on cross-discipline cooperation within the organization, since key requisite Enterprise-Scale design decisions are cross cutting, and to be authoritative must involve domain Subject Matter Expertise (SME) and stakeholders within the customer. It is crucial that the organization has been defined their [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md) following the design principles and critical design areas.
+To fully leverage this reference implementation in this repository, readers must have a collaborative engagement with key customer stakeholders across critical technical domains, such as identity, security, and networking. Ultimately, the success of cloud adoption hinges on cross-discipline cooperation within the organization, since key requisite Enterprise-Scale design decisions are cross cutting, and to be authoritative must involve domain Subject Matter Expertise (SME) and stakeholders within the customer. It is crucial that the organization has defined their [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md) following the design principles and critical design areas.
 
 It is also assumed that readers have a broad understanding of key Azure constructs and services in order to fully contextualize the prescriptive recommendations contained within this playbook.
 

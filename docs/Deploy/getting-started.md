@@ -22,3 +22,21 @@ Minimum version of PowerShell: 7.0|  The latest version of PowerShell including 
 | Pester >= 4.10.1 |  ***Only required if you want to run pester-tests as a developer*** <br>`Install-Module -Name Pester -MinimumVersion 4.10.1 -Scope AllUsers`<br> You can confirm the version of the module you have by running <br>`Get-Module Pester -ListAvailable`. | [Docs](https://github.com/pester/Pester) |
 
 >:iphone: If you have Multi-factor authentication (MFA) enabled on any of your accounts, make sure that you have your token app/phone easily accessible before you start.
+
+## Enabling long paths on Windows
+
+Enterprise-Scale reference implementation requires that you [enable long paths in Windows](https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#enable-long-paths-in-windows-10-version-1607-and-later). To enable this, execute the following command from a terminal with elevated privileges:
+
+```bash
+REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
+```
+
+You will also need to execute the following command line from an elevated terminal:
+
+```bash
+git config --system core.longpaths true
+```
+
+## Next steps
+
+Once you have the technical prerequisites in place, you can proceed to the next step, [Setup GitHub and Azure for Ensterprise-Scale](./setup-github.md).

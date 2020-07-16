@@ -58,3 +58,7 @@ Once the discovery process has completed, select the PR that was automatically c
 2. Delete `system` branch.
 
 The current Azure environment is now represented in the `azops` folder of the main branch. You can invoke this action at any time, when you want to retrieve current Azure configuration when you suspect configuration drift due to OOB changes in Azure.
+
+## Next steps
+
+Once GitHub will reflect your existing Azure environment, you can [deploy new Policy assignment](./deploy-new-policy-assignment.md).

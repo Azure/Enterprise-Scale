@@ -1,6 +1,12 @@
 name: AzOps
 
 on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to trigger (pull or push)'     
+        required: true
+        default: 'pull' 
   repository_dispatch:
     types:
       - "Azure Activity Logs"
@@ -47,7 +53,7 @@ env:
 jobs:
 
   push:
-    if: github.head_ref != 'system' && github.event_name == 'pull_request'
+    if: github.head_ref != 'system' && github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'push'
     name: Push
     runs-on: ubuntu-latest
     steps:
@@ -79,7 +85,7 @@ jobs:
   #         mode: push
 
   pull:
-    if: github.event_name == 'repository_dispatch'
+    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'pull'
     name: Pull
     runs-on: ubuntu-latest
     steps:
