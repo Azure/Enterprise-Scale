@@ -92,3 +92,7 @@ In Enterprise-Scale reference implementation, changes in the platform are always
 
 
 >Note: For future, Azure Policy assignment please see the examples in the [Contoso reference article](../reference/contoso).
+
+## Next steps
+
+Once you have deployed new policy assignments, you can start [deploy Landing Zones](./deploy-landing-zones.md)
