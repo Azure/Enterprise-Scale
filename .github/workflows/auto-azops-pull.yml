@@ -1,0 +1,43 @@
+name: Auto-AzOps-Pull
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '*/30 * * * *'
+
+env:
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  AZOPS_STATE: "azops"
+  AZOPS_DEFAULT_DEPLOYMENT_REGION: "northeurope"
+  AZOPS_ENROLLMENT_ACCOUNT: ""
+  AZOPS_OFFER_TYPE: "MS-AZR-0017P"
+  AZOPS_IGNORE_CONTEXT_CHECK: "0"
+  AZOPS_INVALIDATE_CACHE: "1"
+  AZOPS_SKIP_RESOURCE_GROUP: "1"
+  AZOPS_SKIP_POLICY: "0"
+  AZOPS_THROTTLE_LIMIT: "10"
+  GITHUB_USERNAME: "AzOps"
+  GITHUB_EMAIL: "noreply@azure.com"
+  GITHUB_PULL_REQUEST: "Azure Change Notification"
+  GITHUB_CONTEXT: ${{ toJson(github) }}
+  GITHUB_ISSUE: ${{ github.event.pull_request._links.issue.href }}
+  GITHUB_COMMENTS: ${{ github.event.pull_request._links.comments.href }}
+  GITHUB_BASE_REF: ${{ github.event.pull_request.base.ref }}
+  GITHUB_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  VERBOSE: "0"
+  DEBUG: "0"
+
+jobs:
+  pull:
+    name: Pull
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actions checkout
+        uses: actions/checkout@v2
+      - name: GitHub context
+        run: echo "$GITHUB_CONTEXT"
+      - name: Actions azops
+        uses: Azure/AzOps@main
+        with:
+          mode: pull
