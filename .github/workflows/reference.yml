@@ -22,47 +22,39 @@ jobs:
         with:
           repository: Azure/AzOps
           path: azops
-      - name: Run script
+      - name: Checkout branch
         shell: bash
         run: |
           git checkout -b test
         working-directory: ./enterprise-scale
-      - name: Run script
+      - name: Initialize reference
         shell: pwsh
         run: |
-          # Task A
           $env:PSModulePath = $env:PSModulePath + ":/usr/share/az_4.3.0"
-          # Task B
           $credentials = ($env:AZURE_CREDENTIALS | ConvertFrom-Json)
           $credential = New-Object System.Management.Automation.PSCredential -ArgumentList $credentials.clientId, ($credentials.clientSecret | ConvertTo-SecureString -AsPlainText -Force)
           Connect-AzAccount -TenantId $credentials.tenantId -ServicePrincipal -Credential $credential -SubscriptionId $credentials.subscriptionId -WarningAction SilentlyContinue | Out-Null
-          # Task C
-          Set-Location "./azops"
-          Import-Module "./src/AzOps.psd1" -Force
-          # Task D
-          Set-Location "../enterprise-scale"
-          Remove-Item -Path "./azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560" -Recurse -Force
-          # Task E
+          Import-Module "./azops/src/AzOps.psd1" -Force
+          Remove-Item -Path "./enterprise-scale/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560" -Recurse -Force
           Initialize-AzOpsRepository -SkipResourceGroup -Rebuild -Verbose
-          # Task F
-          Get-ChildItem "./" -Force
-          Get-ChildItem "./azopsreference/" -Force
-          Get-ChildItem "./azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)/" -Force
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
           AZOPS_GENERALIZE_TEMPLATES: "1"
           AZOPS_STATE: "azopsreference"
-      - name: Run script
+      - name: Configure global
         shell: bash
         run: |
-          git config --global user.email noreply@github.com
-          git config --global user.name 'GitHub Actions'
-      - name: Run script
+          git config --global user.email noreply@azure.com
+          git config --global user.name 'AzOps'
+      - name: Create commit
         shell: bash
         run: |
-          ls -al
           git add ./azopsreference
           git commit -m 'Update azopsreference/'
           git push origin test --force
+        working-directory: ./enterprise-scale
+      - name: Create pull request
+        shell: bash
+        run: |
           gh pr create --title "AzOps Reference Automation" --body "Auto-generated PR triggered `nNew reference artifacts" --label "system" --repo $env:GITHUB_REPOSITORY
         working-directory: ./enterprise-scale
