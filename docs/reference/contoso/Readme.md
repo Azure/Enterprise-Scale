@@ -133,7 +133,6 @@ The following policies related to Management Group hierarchy and Subscription or
 | Enforce Subscription tags                         | Ensure all Subscriptions have the required tags               | Contoso Management Group      | All Subscriptions are tagged properly to identify business unit owner, intent, and cost centre. |
 | Move cancelled Subscriptions                      | Ensure cancelled Subscriptions are moved from Landing Zone    | Landing Zone Management Group | Any Subscription that get cancelled, will be moved to the Decommission Management Group         |
 | Allowed regions for [Resource Groups](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Allowed-RGLocation.parameters.json) and [Resources](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Allowed-ResourceLocation.parameters.json) | Ensure all Resources are created in the designated regions    | Contoso Management Group      | All Resources are compliant per their location                                                  |
-
 | Assign region policy per Subscription             | Ensure Subscriptions get policy with correct regions assigned | Contoso Management Group      | Subscriptions will support regions per their naming convention                                  |
 
 ## Network Topology and Connectivity
