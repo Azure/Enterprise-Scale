@@ -4,25 +4,25 @@
   "parameters": {
     "input": {
       "value": {
-        "Name": "Deploy-vWAN",
+        "Name": "Deploy-DDoSProtection",
         "ResourceType": "Microsoft.Authorization/policyDefinitions",
         "SubscriptionId": null,
         "Properties": {
-          "Description": null,
-          "DisplayName": "Deploy-vWAN",
+          "Description": "This policy deploys an Azure DDoS Protection Standard plan",
+          "DisplayName": "Deploy-DDoSProtection",
           "Mode": "All",
           "Parameters": {
-            "vwanname": {
+            "ddosName": {
               "type": "String",
               "metadata": {
-                "displayName": "vwanname",
+                "displayName": "ddosName",
                 "description": "Name of the Virtual WAN"
               }
             },
-            "vwanRegion": {
+            "ddosRegion": {
               "type": "String",
               "metadata": {
-                "displayName": "vwanRegion",
+                "displayName": "ddosRegion",
                 "description": "Select Azure region for Virtual WAN",
                 "strongType": "location"
               }
@@ -47,11 +47,11 @@
             "then": {
               "effect": "deployIfNotExists",
               "details": {
-                "type": "Microsoft.Network/virtualWans",
+                "type": "Microsoft.Network/ddosProtectionPlans",
                 "deploymentScope": "Subscription",
                 "existenceScope": "ResourceGroup",
-                "name": "[parameters('vwanname')]",
                 "resourceGroupName": "[parameters('rgName')]",
+                "name": "[parameters('ddosName')]",
                 "roleDefinitionIds": [
                   "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
                 ],
@@ -63,11 +63,11 @@
                       "rgName": {
                         "value": "[parameters('rgName')]"
                       },
-                      "vwanname": {
-                        "value": "[parameters('vwanname')]"
+                      "ddosname": {
+                        "value": "[parameters('ddosname')]"
                       },
-                      "vwanRegion": {
-                        "value": "[parameters('vwanRegion')]"
+                      "ddosregion": {
+                        "value": "[parameters('ddosRegion')]"
                       }
                     },
                     "template": {
@@ -77,15 +77,12 @@
                         "rgName": {
                           "type": "string"
                         },
-                        "vwanname": {
+                        "ddosname": {
                           "type": "string"
                         },
-                        "vwanRegion": {
+                        "ddosRegion": {
                           "type": "string"
                         }
-                      },
-                      "variables": {
-                        "vwansku": "Standard"
                       },
                       "resources": [
                         {
@@ -98,7 +95,7 @@
                         {
                           "type": "Microsoft.Resources/deployments",
                           "apiVersion": "2018-05-01",
-                          "name": "vwan",
+                          "name": "ddosprotection",
                           "resourceGroup": "[parameters('rgName')]",
                           "dependsOn": [
                             "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
@@ -111,15 +108,11 @@
                               "parameters": {},
                               "resources": [
                                 {
-                                  "type": "Microsoft.Network/virtualWans",
-                                  "apiVersion": "2019-09-01",
-                                  "location": "[parameters('vwanRegion')]",
-                                  "name": "[parameters('vwanname')]",
-                                  "properties": {
-                                    "virtualHubs": [],
-                                    "vpnSites": [],
-                                    "type": "[variables('vwansku')]"
-                                  }
+                                  "type": "Microsoft.Network/ddosProtectionPlans",
+                                  "apiVersion": "2019-12-01",
+                                  "name": "[parameters('ddosName')]",
+                                  "location": "[parameters('ddosRegion')]",
+                                  "properties": {}
                                 }
                               ],
                               "outputs": {}
