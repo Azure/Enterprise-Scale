@@ -1,0 +1,67 @@
+name: 'Export AzOps Reference'
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+
+jobs:
+  reference:
+    name: Reference
+    runs-on: ubuntu-latest
+    if: github.repository == 'Azure/Enterprise-Scale'
+    steps:
+      - name: Actions checkout
+        uses: actions/checkout@v2
+        with:
+          path: enterprise-scale
+      - name: Actions checkout
+        uses: actions/checkout@v2
+        with:
+          repository: Azure/AzOps
+          path: azops
+      - name: Checkout branch
+        shell: bash
+        run: |
+          git checkout -b system
+        working-directory: ./enterprise-scale
+      - name: Initialize reference
+        shell: pwsh
+        run: |
+          if ((Test-Path -Path "/usr/share/az_4.4.0") -eq $false) {
+            Save-Module -Name "Az.Accounts" -RequiredVersion "1.9.1" -Path "/usr/share/az_4.4.0" -Force
+            Save-Module -Name "Az.Resources" -RequiredVersion "2.3.0" -Path "/usr/share/az_4.4.0" -Force
+          }
+          $env:PSModulePath = $env:PSModulePath + ":/usr/share/az_4.4.0"
+          $credentials = ($env:AZURE_CREDENTIALS | ConvertFrom-Json)
+          $credential = New-Object System.Management.Automation.PSCredential -ArgumentList $credentials.clientId, ($credentials.clientSecret | ConvertTo-SecureString -AsPlainText -Force)
+          Connect-AzAccount -TenantId $credentials.tenantId -ServicePrincipal -Credential $credential -SubscriptionId $credentials.subscriptionId -WarningAction SilentlyContinue | Out-Null
+          Import-Module "./azops/src/AzOps.psd1" -Force
+          Set-Location "./enterprise-scale"
+          Remove-Item -Path "./azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560" -Recurse -Force
+          Initialize-AzOpsRepository -SkipResourceGroup -Rebuild -GeneralizeTemplates -Verbose
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          AZOPS_STATE: "azopsreference"
+      - name: Configure global
+        shell: bash
+        run: |
+          git config --global user.email noreply@azure.com
+          git config --global user.name 'AzOps'
+      - name: Create commit
+        shell: bash
+        run: |
+          git add ./azopsreference
+          git commit -m 'Update azopsreference/'
+          git push origin system
+        working-directory: ./enterprise-scale
+      - name: Create pull request
+        shell: bash
+        run: |
+          gh pr create --title "AzOps Reference Refresh" --body "Auto-generated PR - Refreshing AzOpsReference directory" --label "system" --reviewer uday31in,daltondhcp,ljtill,krnese --repo $GITHUB_REPOSITORY
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ./enterprise-scale
