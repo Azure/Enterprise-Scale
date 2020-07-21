@@ -16,12 +16,14 @@
               "type": "Integer",
               "metadata": {
                 "displayName": "Retention"
-              }
+              },
+              "defaultValue": 5
             },
             "storageAccountResourceId": {
               "type": "String",
               "metadata": {
-                "displayName": "Storage Account Resource Id"
+                "displayName": "Storage Account Resource Id",
+                "strongType": "Microsoft.Storage/storageAccounts"
               }
             },
             "trafficAnalyticsInterval": {
@@ -38,23 +40,10 @@
               },
               "defaultValue": false
             },
-            "flowAnalyticsWorkspaceId": {
+            "logAnalytics": {
               "type": "string",
               "metadata": {
-                "displayName": "Workspace GUID for Log Analytics"
-              },
-              "defaultValue": ""
-            },
-            "flowAnalyticsWorkspaceRegion": {
-              "type": "string",
-              "metadata": {
-                "displayName": "Region for Log Analytics workspace"
-              },
-              "defaultValue": ""
-            },
-            "flowAnalyticsWorkspaceResourceId": {
-              "type": "string",
-              "metadata": {
+                "strongType": "omsWorkspace",
                 "displayName": "Resource ID of Log Analytics workspace"
               },
               "defaultValue": ""
@@ -111,14 +100,8 @@
                       "trafficAnalyticsInterval": {
                         "value": "[parameters('trafficAnalyticsInterval')]"
                       },
-                      "flowAnalyticsWorkspaceId": {
-                        "value": "[parameters('flowAnalyticsWorkspaceId')]"
-                      },
-                      "flowAnalyticsWorkspaceRegion": {
-                        "value": "[parameters('flowAnalyticsWorkspaceRegion')]"
-                      },
-                      "flowAnalyticsWorkspaceResourceId": {
-                        "value": "[parameters('flowAnalyticsWorkspaceResourceId')]"
+                      "logAnalytics": {
+                        "value": "[parameters('logAnalytics')]"
                       }
                     },
                     "template": {
@@ -146,13 +129,7 @@
                         "trafficAnalyticsInterval": {
                           "type": "int"
                         },
-                        "flowAnalyticsWorkspaceId": {
-                          "type": "string"
-                        },
-                        "flowAnalyticsWorkspaceRegion": {
-                          "type": "string"
-                        },
-                        "flowAnalyticsWorkspaceResourceId": {
+                        "logAnalytics": {
                           "type": "string"
                         }
                       },
@@ -179,9 +156,9 @@
                               "networkWatcherFlowAnalyticsConfiguration": {
                                 "enabled": "[bool(parameters('flowAnalyticsEnabled'))]",
                                 "trafficAnalyticsInterval": "[parameters('trafficAnalyticsInterval')]",
-                                "workspaceId": "[if(not(empty(parameters('flowAnalyticsWorkspaceId'))), parameters('flowAnalyticsWorkspaceId'), json('null') )]",
-                                "workspaceRegion": "[if(not(empty(parameters('flowAnalyticsWorkspaceRegion'))), parameters('flowAnalyticsWorkspaceRegion'), json('null'))]",
-                                "workspaceResourceId": "[if(not(empty(parameters('flowAnalyticsWorkspaceResourceId'))), parameters('flowAnalyticsWorkspaceResourceId'), json('null'))]"
+                                "workspaceId": "[if(not(empty(parameters('logAnalytics'))), reference(parameters('logAnalytics'), '2020-03-01-preview', 'Full').properties.customerId, json('null')) ]",
+                                "workspaceRegion": "[if(not(empty(parameters('logAnalytics'))), reference(parameters('logAnalytics'), '2020-03-01-preview', 'Full').location, json('null')) ]",
+                                "workspaceResourceId": "[if(not(empty(parameters('logAnalytics'))), parameters('logAnalytics'), json('null'))]"
                               }
                             }
                           }
