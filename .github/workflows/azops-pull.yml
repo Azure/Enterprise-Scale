@@ -2,14 +2,23 @@ name: Auto-AzOps-Pull
 
 on:
   schedule:
-    # * is a special character in YAML so you have to quote this string
+    # This is an [optional] event to get latest Azure hierarchy of Management Group and Subscription in your Git in recurring manner. Default is 30 minutes.
+    # Adjust frequency based on your organization need. Please note that * is a special character in YAML so you have to quote this string.
     - cron:  '*/30 * * * *'
   workflow_dispatch:
+    # To invoke this action from portal
     inputs:
       action:
-        description: 'Action to trigger (pull or push)'
+        description: 'Action to trigger pull'
         required: true
         default: 'pull'
+  repository_dispatch:
+    # To invoke this action based on event/webhook
+    types:
+      - "Azure Activity Logs"
+      - "GitHub CLI"
+      - "PowerShell"
+      - "Bash"
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   AZOPS_STATE: "azops"
@@ -35,7 +44,8 @@ env:
 
 jobs:
   pull:
-    if:  github.repository != 'uday31in/Enterprise-Scale'
+    # condition to filter upstream repository
+    if:  github.repository != 'Azure/Enterprise-Scale'
     name: Pull
     runs-on: ubuntu-latest
     steps:

@@ -4,15 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'Action to trigger (pull or push)'     
+        description: 'Action to trigger (pull or push)'
         required: true
-        default: 'pull' 
-  repository_dispatch:
-    types:
-      - "Azure Activity Logs"
-      - "GitHub CLI"
-      - "PowerShell"
-      - "Bash"
+        default: 'push'
   pull_request:
     branches:
       - "main"
@@ -65,10 +59,12 @@ jobs:
         with:
           mode: push
 
-  # If you want review before triggering the push event, set push_with_review env to true.
+  # If you want review before triggering the push event, enable 'push_review' uncomment block below and comment 'push' block
   # Review will require, someone other than the creator of the pull request to complete review.
   # Workflow will run once pull request is reviewed with a comment that contains "LGTM".
   # In order for GitHub Actions status check to display in your PR, you have to enable branch access policy.
+  #
+  #
   # push_review:
   #   if: github.head_ref != 'system' && contains(github.event.review.body, 'LGTM')
   #   name: Push
@@ -82,17 +78,3 @@ jobs:
   #       uses: Azure/AzOps@main
   #       with:
   #         mode: push
-
-  pull:
-    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'pull'
-    name: Pull
-    runs-on: ubuntu-latest
-    steps:
-      - name: Actions checkout
-        uses: actions/checkout@v2
-      - name: GitHub context
-        run: echo "$GITHUB_CONTEXT"
-      - name: Actions azops
-        uses: Azure/AzOps@main
-        with:
-          mode: pull
