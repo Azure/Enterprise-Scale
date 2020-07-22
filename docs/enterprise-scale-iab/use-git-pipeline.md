@@ -4,7 +4,7 @@ Now that your DevOps environment and Azure tenant is setup using an all-encompas
 
 The Enterprise-Scale reference implementation leverages the GET and PUT schema used by Azure resources to export and import the state of an Azure environment. One of the benefits of this implementation approach is that regardless of how changes are made (Portal, CLI, PowerShell, ARM Template), you can consistently retrieve the current state of your Azure environment and version control it in Git as for Infrastructure-as-Code. This mechanism is the foundation of how configuration drift and reconciliation is achieved to provide an Enterprise-Scale approach to the operations of an Azure environment.
 
-By using the Enterprise-Scale reference implementation, environment can be definde based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState).
+By using the Enterprise-Scale reference implementation, environment can be definde based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
 
 Reference artifacts are ARM template parameter files that can be used with a [generic ARM template](https://github.com/Azure/AzOps/blob/main/template/tenant.json).
 
@@ -41,7 +41,7 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
     Provide a name to the branch and hit enter.
 
-2. Go to the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\management\.AzState` and open the file `Microsoft.Authorization_policyAssignments-Deploy-Log-Analytics.parameters.json`
+2. Go to the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\management (feab2d15-66b4-438b-accf-51f889b30ec3)\.AzState` and open the file `Microsoft.Authorization_policyAssignments-Deploy-Log-Analytics.parameters.json`
 
 3. Copy the section `input/value` section (incl. `{}`) of the file to your clipboard:
 
@@ -90,7 +90,7 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
 2. Create a new feature branch and give it a descriptive name (i.e. **policy-assignment-monitoring**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-3. Open the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\.AzState` in your **Visual Studio Code**. Copy the following section:
+3. Open the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` in your **Visual Studio Code**. Copy the following section:
 
     ![_Figure_](./media/wt-3.2-1.png)
 
@@ -122,7 +122,7 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
 In this section, we will focus on enabling networking for landing zones. In this tutorial, we only have a single subscription in the **ES-management** Management Group. In environments with multiple subscriptions, you would assign these policies at the **Connectivity** Management Group scope.
 
-Please follow the instructions from the previous sections to use git to assign policies as required in the steps below. You can obtain the sample policy assignments from [this](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/platform/connectivity/.AzState) link or from your local Git repository under `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState`.
+Please follow the instructions from the previous sections to use git to assign policies as required in the steps below. You can obtain the sample policy assignments from [this](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/platform%20(platform)/connectivity%20(99c2838f-a548-4884-a6e2-38c1f8fb4c0b)/.AzState) link or from your local Git repository under `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState`.
 
 We will make policy assignments via GitHub Action process on these steps.
 
@@ -132,7 +132,7 @@ We will make policy assignments via GitHub Action process on these steps.
 
     b. Create a new feature branch and give it a descriptive name (i.e. **policy-assignment-vwan**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-    c. Open the file `Microsoft.Authorization_policyAssignments-Deploy-vWAN.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState` in your **Visual Studio Code.**. Copy the following section:
+    c. Open the file `Microsoft.Authorization_policyAssignments-Deploy-vWAN.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` in your **Visual Studio Code.**. Copy the following section:
 
     ![_Figure_](./media/wt-3.3-1.png)
 
@@ -151,7 +151,7 @@ We will make policy assignments via GitHub Action process on these steps.
     > Location is where the managed service identity for this policy assignment will be created.
     > We have already a policy assignment deployed on this scope make sure that you extend the json array correctly.
 
-    e. Open the file `Microsoft.Authorization_policyAssignments-Deploy-FirewallPolicy.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
+    e. Open the file `Microsoft.Authorization_policyAssignments-Deploy-FirewallPolicy.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
 
     ![_Figure_](./media/wt-3.3-3.png)
 
@@ -182,7 +182,7 @@ We will make policy assignments via GitHub Action process on these steps.
 
     b. Create a new feature branch and give it a descriptive name (i.e.   **policy-assignment-vhub**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-    c. Open the file `Microsoft.Authorization_policyAssignments-Deploy-vHUB-NEU.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560\contoso\platform\connectivity\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
+    c. Open the file `Microsoft.Authorization_policyAssignments-Deploy-vHUB-NEU.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
 
     ![_Figure_](./media/wt-3.3-5.png)
 
