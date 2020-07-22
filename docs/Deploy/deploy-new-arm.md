@@ -2,7 +2,7 @@
 
 This article describes how AzOps pipeline can be used to deploy resources in Azure by using standard ARM template and parameter files. This capability enables to bring “your own” ARM template and parameter files to deploy resources at any scope.
 
-To deploy a standard ARM template and its corresponding parameters file by using the AzOps pipeline, it is only required to copy the ARM template and its corresponding parameter files into the desired scope in your local clone of your GitHub repo. For example, you can copy your ARM template at a management group or subscription scope, depending on the resources that you would like to deploy. Once you have copied your ARM template and parameters files at the desired scope submit a pull request. This will instruct AzOps to deploy the ARM template into the corresponding scope in Azure.
+To deploy a standard ARM template and its corresponding parameters file by using the AzOps pipeline, it is only required to copy the ARM template and its corresponding parameter files into the desired scope in your local clone of your GitHub repo. For example, you can copy your ARM template at root, management group or subscription scope, depending on the resources that you would like to deploy. Once you have copied your ARM template and parameters files at the desired scope submit a pull request. This will instruct AzOps to deploy the ARM template into the corresponding scope in Azure.
 
 To demonstrate this capability, we will use a custom ARM template to deploy a new resource group into a subscription. 
 
