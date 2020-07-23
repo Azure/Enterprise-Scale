@@ -7,6 +7,44 @@ These have been discovered whilst running the reference implementation, and cust
 
 Some of these issues may be resolved in future release, while others require input from specific Azure product teams.
 
+##  Management Group API Failures
+
+### Issue
+AzOps discovery can fail at random when the API either doesn't respond, or responds with an unexpected result (due to eventual consistency). This can cause tasks such as `Invoke-AzOpsRepository` to fail.
+
+This is likely to surface itself within Enterprise-Scale as a failed `AzOps` or `Auto-AzOps-Pull` GitHub Action, and will surface itself with an error message like the following examples:
+
+#### Example 1
+```bash
+[YYYY-MM-DD HH:mm:ss.ffff] (Get-AzOpsGitPullRefresh) Invoking repository initialization
+Write-AzOpsLog: /action/entrypoint.ps1:73
+Line |
+  73 |              Write-AzOpsLog -Level Error -Topic "entrypoint" -Message  …
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | [YYYY-MM-DD HH:mm:ss.ffff] (entrypoint) The property 'Id'
+     | cannot be found on this object. Verify that the property
+     | exists.
+```
+
+#### Example 2
+```bash
+[YYYY-MM-DD HH:mm:ss.ffff] (Get-AzOpsGitPullRefresh) Invoking repository initialization
+Write-AzOpsLog: /action/entrypoint.ps1:73
+Line |
+  73 |              Write-AzOpsLog -Level Error -Topic "entrypoint" -Message  …
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | [YYYY-MM-DD HH:mm:ss.ffff] (entrypoint) Cannot validate
+     | argument on parameter 'ManagementGroup'. The running command
+     | stopped because the preference variable
+     | "ErrorActionPreference" or common parameter is set to Stop:
+     | The operation was canceled.
+```
+
+### Status
+Recommended workaround is to re-run the pipeline. This can be triggered via another push or pull request, or manually by selecting "Re-run jobs" from within the failed workflow.
+
+This is under active investigation with the Management Group API product team.
+
 ## Subscription and Management Group with duplicate Display Name
 
 ### Area
@@ -88,40 +126,3 @@ The discovery process discussed on [this](./Deploy/discover-environment.md) arti
 
 ### Status
 There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure Subscription names and Management Groups are unique in your Tenant regardless of the hierarchy prior to running the discovery process.
-
-##  Management Group API Failures
-
-### Issue
-AzOps discovery can fail at random when the API either doesn't respond, or responds with an unexpected result (due to eventual consistency). This can cause tasks such as `Invoke-AzOpsRepository` to fail.
-
-This is likely to surface itself within Enterprise-Scale as a failed `AzOps` or `Auto-AzOps-Pull` GitHub Action, and will surface itself with an error message like the following examples:
-
-#### Example 1
-```bash
-[YYYY-MM-DD HH:mm:ss.ffff] (Get-AzOpsGitPullRefresh) Invoking repository initialization
-Write-AzOpsLog: /action/entrypoint.ps1:73
-Line |
-  73 |              Write-AzOpsLog -Level Error -Topic "entrypoint" -Message  …
-     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | [YYYY-MM-DD HH:mm:ss.ffff] (entrypoint) The property 'Id'
-     | cannot be found on this object. Verify that the property
-     | exists.
-```
-
-#### Example 2
-```bash
-[YYYY-MM-DD HH:mm:ss.ffff] (Get-AzOpsGitPullRefresh) Invoking repository initialization
-Write-AzOpsLog: /action/entrypoint.ps1:73
-Line |
-  73 |              Write-AzOpsLog -Level Error -Topic "entrypoint" -Message  …
-     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | [YYYY-MM-DD HH:mm:ss.ffff] (entrypoint) Cannot validate
-     | argument on parameter 'ManagementGroup'. The running command
-     | stopped because the preference variable
-     | "ErrorActionPreference" or common parameter is set to Stop:
-     | The operation was canceled.
-```
-
-### Status
-
-This is under active investigation with the Management Group API product team. In the meantime, we are considering options around implementing retry logic on known failure-points to limit the impact on customers.
