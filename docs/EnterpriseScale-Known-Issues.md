@@ -1,7 +1,11 @@
 
 # Reference Implementation - Known Issues
 
-The list below summarizes the known issues with reference implementation, when building and operationalize their Azure platform using first-party platform and product capabilities.
+The list below summarizes the known issues currently being worked on by the Enterprise-Scale team.
+
+These have been discovered whilst running the reference implementation, and customers may come across them when implementing Enterprise-Scale to build and operationalize their Azure platform.
+
+Some of these issues may be resolved in future release, while others require input from specific Azure product teams.
 
 ## Subscription and Management Group with duplicate Display Name
 
