@@ -5,7 +5,8 @@ The list below summarizes the known issues with reference implementation, when b
 
 ## Subscription and Management Group with duplicate Display Name
 
-Area: AzOps
+### Area
+AzOps
 
 ### Issue
 At present, if your environment contains Management Group or Subscription with duplicate Display Name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration.
@@ -15,7 +16,8 @@ There is work in progress to use Resource name instead of Display Name. There wi
 
 ## Subscription Creation
 
-Area: Microsoft.Subscription Resource Provider
+### Area
+Microsoft.Subscription Resource Provider
 
 ### Issue
 At present, it is not possible to provision new Subscription via ARM templates. Subscription creation requires an Enterprise Enrollment account to be migrated to a new billing account API in the backend.
@@ -25,7 +27,8 @@ We are working closely with engineering teams to enable this functionality for t
 
 ## Unable to use policy aliases on Microsoft.Resources/subscriptions
 
-Area: Microsoft.Subscription Resource Provider
+### Area
+Microsoft.Subscription Resource Provider
 
 ### Issue
 As duplicate Subscription names can exist in Azure, the Display Name of a Subscription cannot be used in policy rules. The Subscription ID must be used instead. This makes it hard to navigate through Subscriptions in policy evaluations, and to target the correct Subscription(s).
@@ -35,7 +38,8 @@ To deterministically target the platform Subscriptions with their specific polic
 
 ## Management group scoped deployments can deploy to tenant root scope
 
-Area: Azure Resource Manager template deployments
+### Area
+Azure Resource Manager template deployments
 
 ### Issue
 When doing nested deployment from Management Group scope without having the “scope” property specified on "Microsoft.Resources/deployments", ARM defaults to Tenant root and does a Tenant scope deployment.
@@ -45,7 +49,8 @@ No fix as of yet.
 
 ## Reference() function not respecting dependency graph [dependsOn]
 
-Area: Azure Resource Manager template deployments
+### Area
+Azure Resource Manager template deployments
 
 ### Issue
 When doing nested deployments from Tenant scope (e.g., policyAssignment and subsequent roleAssignment for the Managed Identity), the reference() function fails saying the policyAssignment cannot be found, even though it exists. A re-deployment works fine.
@@ -55,7 +60,8 @@ No fix as of yet. Workaround is to add a "delayFor" Resource deployment in seria
 
 ## Reference() function runs even though the Resource condition is false
 
-Area: Azure Resource Manager template deployments
+### Area
+Azure Resource Manager template deployments
 
 ### Issue
 When using “conditions” on Resources, and when it evaluates to false, the reference() function within the Resource properties is still executed which causes the deployment to fail.
