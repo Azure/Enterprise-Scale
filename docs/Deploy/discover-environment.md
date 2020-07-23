@@ -42,7 +42,7 @@ Invoke-RestMethod -Method "POST" @params
 curl -u "<GH UserName>:<PAT Token>" -H "Accept: application/vnd.github.everest-preview+json"  -H "Content-Type: application/json" https://api.github.com/repos/<Your GitHub ID>/<Your Repo Name>/dispatches --data '{"event_type": "Bash"}'
 ```
 
-Please check progress in the GitHub repo in the Actions tab and wait for it complete. At present, if your environment contains Management Group or Subscription with duplicate Display Name, initialization of discovery will fail. This is a precautionary check to avoid accidental misconfiguration and we highly recommend unique names for Management Groups and Subscriptions. There is work planned to override Display Name with ResourceName.
+Please check progress in the GitHub repo in the Actions tab and wait for it complete.
 
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
