@@ -21,6 +21,7 @@ This article will guide you through the process to configure your Azure environm
     ![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
 
 4. Create SPN (same step should be followed for user account used for portal deployment)
+>Note: The Service Principal requires "Owner" permission at the tenant root (/) in order to complete all the requisite steps (roleAssignments, creation of management groups, subscriptions, policyAssignments etc.), and the permission will be inherited to all child scopes in Azure. Similar, if you want a user to deploy the reference implementation(s) using Azure Portal, a roleAssignment at the tenant root (/) is required with "Owner".
 
      "App registration" needs to be enabled on the Azure AD Tenant to self-register an Application (Option 1).
 
