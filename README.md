@@ -12,7 +12,7 @@
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
 * [[OPTIONAL] Getting started with infrastructure-as-code](./docs/Deploy/getting-started.md)
-  * [Setup GitHub and Azure for AzOps GitHub Actions](./docs/Deploy/setup-github.md)
+  * [Configure Azure permissions for ARM tenant deployments & setup GitHub](./docs/Deploy/setup-github.md)
   * [Deploy Enterprise-Scale reference implementation](./docs/Deploy/configure-own-environment.md)
   * [Initialize Git With Current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy your own ARM templates with AzOps GitHub Actions](./docs/Deploy/deploy-new-arm.md)
