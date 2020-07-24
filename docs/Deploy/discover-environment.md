@@ -5,22 +5,43 @@ This article explains how to perform a discovery of your existing Azure environm
 
 ## Initialize existing environment
 
-Your repo should contain GitHub Action [/workflows/azops.yml](../../.github/workflows/azops.yml) that can pull latest configuration from Azure. Before invoking action, please ensure Actions are enabled for your repo. AzOps GitHub Action is maintained at [https://github.com/Azure/azops](https://github.com/Azure/azops).
+Your repo should contain a GitHub Action [.github/workflows/azops.yml](../../.github/workflows/azops.yml) that can pull the current platform configuration state from Azure.
 
-In a terminal, type the following commands by replacing the placeholders (<...>) with your actual values:
+Before invoking this action, [please ensure Actions are enabled for your repo](https://docs.github.com/en/github/administering-a-repository/disabling-or-limiting-github-actions-for-a-repository).
 
-### Github Cli (Does not Require PAT token)
+AzOps is maintained at [https://github.com/Azure/azops](https://github.com/Azure/azops).
+
+### How to trigger the Action...
+
+Depending on your preferred approach, there are a number of methods you can use to trigger the AzOps action in GitHub, including:
+
+1. Github Actions web page
+1. Github Cli
+1. PowerShell
+1. Bash
+
+These are documented in the following sections...
+
+#### Github Actions web page (Manual)
+
+1. Browse to the Actions tab of your repository at:<br> `github.com/<github_username>/<repository_name>/actions`
+1. From the list of Workflow, select `AzOps`
+1. Select `Run workflow`
+1. Check the branch and trigger entries<br><br>![Github Actions, Run workflow](./media/github-workflow-trigger-manual.png)<br>
+1. Click the `Run workflow` button
+
+#### Github Cli (Does not Require PAT token)
 
 ```bash
-gh api -X POST repos/<Your GitHub ID>/<Your Repo Name>/dispatches --field event_type="GitHub CLI"
-````
+gh api -X POST repos/<github_username>/<repository_name>/dispatches --field event_type="GitHub CLI"
+```
 
-### PowerShell
+#### PowerShell
 
 ```powershell
-$GitHubUserName = "<GH UserName or Github Enterprise Organisation Name>"
-$GitHubPAT = "<PAT TOKEN>"
-$GitHubRepoName = "<Repo Name>"
+$GitHubUserName = "<github_username>"
+$GitHubPAT = "<pat_token>"
+$GitHubRepoName = "<repository_name>"
 $uri = "https://api.github.com/repos/$GitHubUserName/$GitHubRepoName/dispatches"
 $params = @{
     Uri = $uri
@@ -36,18 +57,19 @@ $params = @{
 Invoke-RestMethod -Method "POST" @params
 ```
 
-### Bash
+#### Bash
 
 ```bash
-curl -u "<GH UserName>:<PAT Token>" -H "Accept: application/vnd.github.everest-preview+json"  -H "Content-Type: application/json" https://api.github.com/repos/<Your GitHub ID>/<Your Repo Name>/dispatches --data '{"event_type": "Bash"}'
+curl -u "<github_username>:<pat_token>" -H "Accept: application/vnd.github.everest-preview+json"  -H "Content-Type: application/json" https://api.github.com/repos/<github_username>/<repository_name>/dispatches --data '{"event_type": "Bash"}'
 ```
 
-Please check progress in the GitHub repo in the Actions tab and wait for it complete. At present, if your environment contains Management Group or Subscription with duplicate Display Name, initialization of discovery will fail. This is a precautionary check to avoid accidental misconfiguration and we highly recommend unique names for Management Groups and Subscriptions. There is work planned to override Display Name with ResourceName.
+### What to do next...
+Please check progress in the GitHub repo in the Actions tab and wait for it complete.
 
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
 * Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered and RESTful representation of the Resources are  saved as ARM Template parameters file.
-* If changes are detected that is not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
+* If changes are detected which are not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
 * Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`)
 
 ## Verify PR and merge with `main` branch
@@ -61,4 +83,4 @@ The current Azure environment is now represented in the `azops` folder of the ma
 
 ## Next steps
 
-Once GitHub will reflect your existing Azure environment, you can [deploy new Policy assignment](./deploy-new-policy-assignment.md).
+Once GitHub will reflect your existing Azure environment, you can [deploy a new Policy Assignment](./deploy-new-policy-assignment.md).
