@@ -1,27 +1,27 @@
-# Deploy your own ARM templates with AzOps pipeline
+# Deploy your own ARM templates with AzOps GitHub Actions
 
-This article describes how AzOps pipeline can be used to deploy resources in Azure by using ARM template and parameters files. This capability enables to bring “your own” ARM template to deploy resources in Azure at any scope.
+This article describes how AzOps GitHub Actions can be used to deploy resources in Azure by using ARM template and parameters files. This capability enables to bring “your own” ARM template to deploy resources in Azure at any scope.
 
-## About AzOps pipeline for custom ARM template deployments
+## About AzOps GitHub Actions for ARM template deployments
 
-AzOps is a deployment pipeline that is intended for the deployment of the Enterprise-Scale platform in Azure. AzOps is not intended to be used as a single deployment pipeline for the Enterprise-Scale platform as well as all application teams for deploying resources in their landing zones. However, individual application teams can implement their own AzOps pipeline to deploy resources in their landing zones if needed.
+AzOps GitHub Actions is a deployment pipeline that is intended for ARM template deployments in Azure. AzOps is not intended to be used as a single deployment pipeline for the Enterprise-Scale platform as well as all application teams for deploying resources in their landing zones. However, individual application teams can implement their own AzOps pipeline to deploy resources in their landing zones as needed.
 
 ## Deployment scopes with AzOps
 
 AzOps allows you to deploy your own templates at the following scopes:
 
    - Tenant Root (/)
-   - Management Group
-   - Subscription
-   - Resource group
+   - Management Groups
+   - Subscriptions
+   - Resource groups
 
 The following picture depicts these deployment scopes:
 
 ![_Figure_](./media/deployment-scopes.png)
 
-## How to deploy your own templates with AzOps
+## How to deploy ARM templates with AzOps
 
-To deploy an ARM template and its corresponding parameters file by using the AzOps pipeline, it is only required to copy the ARM template and parameters file into the desired scope in your local clone of your GitHub repo. Once you have copied your ARM template and parameters file at the desired scope submit a pull request. This will instruct AzOps to deploy the ARM template into the corresponding scope in Azure.
+To deploy an ARM template and its corresponding parameters file by using the AzOps GitHub Actions, it is only required to copy the ARM template and parameters file into the desired scope in your local clone of your GitHub repo. Once you have copied your ARM template and parameters file at the desired scope submit a pull request. This will instruct AzOps to deploy the ARM template into the corresponding scope in Azure.
 
 To demonstrate this capability, we will use a custom ARM template to deploy a policy definition at the management group scope. 
 
