@@ -1,6 +1,7 @@
-# Setup GitHub and Azure for Enterprise-Scale
+# Setup GitHub and Azure for AzOps GitHub Actions
 
-This article will guide you through the process to configure GitHub in preparation for Enterprise-Scale deployments.
+This article will guide you through the process to configure your Azure environment and GitHub in preparation to use [AzOps GitHub actions](https://github.com/Azure/AzOps/)
+>Note: The steps below requires you to use an identity that is local to the Azure AD, and *not* a Guest user account due to known restrictions.
 
 1. Create a new GitHub repository from [Enterprise-Scale GitHub repo](https://github.com/Azure/Enterprise-Scale) as a template in your GitHub organization.
 
