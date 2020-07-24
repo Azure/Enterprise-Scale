@@ -43,8 +43,23 @@ env:
   DEBUG: "0"
 
 jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      azurecredentials: ${{ steps.azurecredentials.outputs.azurecredentials }}
+    steps:
+      - name: Check if AZURE_CREDENTIALS secret is available
+        id: azurecredentials
+        env:
+            IS_AZURE_CREDENTIALS_SET: ${{ secrets.AZURE_CREDENTIALS }}
+        run: |
+            echo "Is AZURE_CREDENTIALS secret defined: ${{ env.IS_AZURE_CREDENTIALS_SET != '' }}"
+            echo "::set-output name=azurecredentials::${{ env.IS_AZURE_CREDENTIALS_SET != '' }}"
   pull:
-    if:  github.repository != 'Azure/Enterprise-Scale'
+    needs: [build]
+    # condition to filter upstream repository. Upstream repository is used as a template to clone hence no pull action is required.
+    if:  github.repository != 'Azure/Enterprise-Scale' && needs.build.outputs.azurecredentials == 'true'
     name: Pull
     runs-on: ubuntu-latest
     steps:
