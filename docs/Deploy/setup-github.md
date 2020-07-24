@@ -1,4 +1,4 @@
-# Setup GitHub and Azure for AzOps GitHub Actions
+# Configure Azure permissions for ARM tenant deployments & setup GitHub
 
 This article will guide you through the process to configure permissions to your Azure environment to do ARM tenant level deployments, and setup GitHub in preparation to use [AzOps GitHub actions](https://github.com/Azure/AzOps/)
 >Note: The steps below requires you to use an identity that is local to the Azure AD, and *not* a Guest user account due to known restrictions.
