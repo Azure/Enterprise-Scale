@@ -1,4 +1,3 @@
-
 # Reference Implementation - Known Issues
 
 The list below summarizes the known issues currently being worked on by the Enterprise-Scale team.
@@ -44,17 +43,6 @@ Line |
 Recommended workaround is to re-run the pipeline. This can be triggered via another push or pull request, or manually by selecting "Re-run jobs" from within the failed workflow.
 
 This is under active investigation with the Management Group API product team.
-
-## Subscription and Management Group with duplicate Display Name
-
-### Area
-AzOps
-
-### Issue
-At present, if your environment contains Management Group or Subscription with duplicate Display Name, initialization of discovery will fail. This is precautionary check to avoid accidental misconfiguration.
-
-### Status
-There is work in progress to use Resource name instead of Display Name. There will be runtime configuration option to override this behavior. We highly recommend to have unique Display Name for Management Groups and Subscription.
 
 ## Subscription Creation
 
@@ -118,11 +106,3 @@ We currently do not support Initialization across multiple Tenants. <br>Clear yo
 
 ### Status
 No fix as of yet.
-
-## Subscriptions or Management Group with duplicated names
-
-### Issue
-The discovery process discussed on [this](./Deploy/discover-environment.md) article will fail if there are Subscriptions or Management Groups with duplicated names. 
-
-### Status
-There is work planned to override Display Name with ResourceName for __Microsoft.Management/managementGroups__ and __Microsoft.Subscription/subscriptions__. Please ensure Subscription names and Management Groups are unique in your Tenant regardless of the hierarchy prior to running the discovery process.
