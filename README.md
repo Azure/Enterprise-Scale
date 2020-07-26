@@ -41,17 +41,12 @@ The reference implementations in this repository is intended to support Enterpri
 
 To fully leverage this reference implementation in this repository, readers must have a collaborative engagement with key customer stakeholders across critical technical domains, such as identity, security, and networking. Ultimately, the success of cloud adoption hinges on cross-discipline cooperation within the organization, since key requisite Enterprise-Scale design decisions are cross cutting, and to be authoritative must involve domain Subject Matter Expertise (SME) and stakeholders within the customer. It is crucial that the organization has defined their [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md) following the design principles and critical design areas.
 
-It is also assumed that readers have a broad understanding of key Azure constructs and services in order to fully contextualize the prescriptive recommendations contained within this playbook.
-
-## How to get started
-
-Organization can use Azure Portal or Infrastructure-as-Code to setup and configure Azure environment. It is also possible to **transition between portal and Infrastructure-as-Code (recommended)** when your ready to do so. 
-
+It is also assumed that readers have a broad understanding of key Azure constructs and services in order to fully contextualize the prescriptive recommendations contained within Enterprise-Scale.
 <!--
 ![Enterprise-Scale ](./docs/media/ES-process.png)
 -->
 
-### Deploying Enterprise-Scale Architecture in your own environment
+## Deploying Enterprise-Scale Architecture in your own environment
 
 The enterprise-scale architecture is modular by design and allow customers to start with foundational Landing Zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point.In this repository we are providing the following three templates representing different scenarios composed using ARM templates.
 
@@ -60,10 +55,6 @@ The enterprise-scale architecture is modular by design and allow customers to st
 | Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | [Detailed description](./docs/reference/contoso/Readme.md) |
 | AdventureWorks | On-premises connectivity with Hub & Spoke  | <!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detailed description](./docs/reference/adventureworks/README.md) |
 | WingTip | Azure without hybrid connectivity |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | [Detailed description](./docs/reference/wingtip/README.md) |
-
-### Getting Started with Infrastructure-as-Code
-
-This repository aims to provide on-ramp path to enable DevOps journey and facilitate the transition when organizations are ready to do so by discovering current configuration and provide continuous deployment using pipeline to push new configuration changes in Azure as well as pull any out-of-band configuration changes. This reference implementation removes the need for custom orchestration to deploy and configure Resources in Azure. Please see [this section](./docs/Deploy/configure-own-environment.md) to get started with Infrastructure-as-Code in your environment.
 
 ## Contributing
 
