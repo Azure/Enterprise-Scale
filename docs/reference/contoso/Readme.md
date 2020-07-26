@@ -830,7 +830,3 @@ By establishing a feedback loop we can ensure that:
 
 Through Azure Policy, changes to the Azure Resources within the Contoso Management Group scope are captured within the Log Analytics instance in the management Subscription. A Log Search Alert will notify
 Git by activating a webhook if a Resource configuration is updated or modified so that Resource state will be exported and made available as a pull\_request (PR) for review. This will allow repo owners to control whether to roll-forward the change by merging the PR or rollback by making new configuration changes that will override the out of band configuration change.
-
-## Next steps
-
-Once you have an environment with your desired Management Group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](../../Deploy/discover-environment.md).
