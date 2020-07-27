@@ -90,9 +90,8 @@ In Enterprise-Scale reference implementation, changes in the platform are always
 
 4. You can monitor the status in the Actions log. Once all the checks are successful you have to squash and merge your changes to the main branch.
 
-
 >Note: For future, Azure Policy assignment please see the examples in the [Contoso reference article](../reference/contoso).
 
 ## Next steps
 
-Once you have deployed new policy assignments, you can start [deploy Landing Zones](./deploy-landing-zones.md)
+Once you have deployed new policy assignments, you can start [deploy Landing Zones](../EnterpriseScale-Deploy-landing-zones.md)
