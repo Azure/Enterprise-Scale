@@ -1,25 +1,4 @@
 
-# What are Reference Implementations
-
-Enterprise-Scale design principles and implementation can be adopted by all customers no matter what size and history their Azure estate. The following customer reference implementations target different and most common customer scenarios for a Enterprise-Scale adoption.
-
-| Reference implementation | Description | ARM Template | Link |
-|:-------------------------|:-------------|:-------------|------|
-| Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | [Detailed description](./contoso/Readme.md) |
-| AdventureWorks | On-premises connectivity with Hub & Spoke  |<!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detailed description](./adventureworks/README.md) |
-| WingTip | Azure Only |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | [Detailed description](./wingtip/README.md) |
-
-# Reference Implementation
-
-Enterprise-scale reference implementation is rooted in the principle that **Everything in Azure is a Resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their Resources as part of their target state architecture at scale.
-
-Enable security, logging, networking, and any other plumbing needed for landing zones (i.e. Subscriptions) autonomously through policy enforcement. Companies will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy Driven Governance" to deploy all necessary platform resources for a landing zone using policy. 
-The core benefits of a policy-driven approach are manyfold but the most significant include:
-
-* Platform can provide an orchestration capability to bring target Resources (in this case a subscription) to a desired goal state.
-* Continuous conformance to ensure all platform-level Resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediation of Resources throughout the life-cycle of the Resource.
-* Platform enables autonomy regardless of the customer's scale point.
-
 ## File -> New -> Region
 
 Companies wants to leverage new Azure regions and deploy the workload closer to the user; and, they will be adding new Azure regions as business demand arises. As a part of Enterprise-Scale design principle of policy-driven governance, they will be assigning policies in their environment with a number of regions they would like to use and policies will ensure their Azure Environment is setup correctly:

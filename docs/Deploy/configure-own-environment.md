@@ -13,7 +13,3 @@ This will create a sample Management Group structure that you can use for starti
 ## Move Subscription under Management Groups
 
 Once the deployment is complete, ensure you move your Subscriptions under the desired Management Groups.
-
-## Next steps
-
-Once you have an environment with your desired Management Group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](./discover-environment.md).
