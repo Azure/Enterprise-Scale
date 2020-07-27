@@ -7,7 +7,7 @@
 ## Navigation Menu
 
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
-* [Configure Azure permission for ARM Template deployments](.docs/EnterpriseScale-Setup-azure.md)
+* [Configure Azure permission for ARM Template deployments](./docs/EnterpriseScale-Setup-azure.md)
 * [Deploy Reference Implementation](./docs/EnterpriseScale-Deploy-reference-implentations.md)
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
