@@ -31,8 +31,7 @@ The Enterprise-Scale architecture provides prescriptive guidance coupled with Az
 
 ---
 
-_The Enterprise-Scale architecture represents the strategic design path and target technical state for your Azure environment.
-_
+_The Enterprise-Scale architecture represents the strategic design path and target technical state for your Azure environment._
 
 ---
 
