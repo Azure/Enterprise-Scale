@@ -23,7 +23,7 @@ These are documented in the following section:
 
 #### Github Actions web page (Manual)
 
-1. Browse to the Actions tab of your repository at:<br> `github.com/<github_username>/<repository_name>/actions` use [this link](../../../../actions?query=workflow%3AAzOps-Pull) to navigate the workflow in this repository
+1. Browse to the Actions tab of your repository at:<br> `github.com/<github_username>/<repository_name>/actions` use [this link](../../../../actions?query=workflow%3AAzOps-Pull) to navigate to the workflow in this repository.
 2. From the list of Workflow, select `AzOps-Pull`
 3. Select `Run workflow`
 4. Check the branch and trigger entries<br><br>![Github Actions, Run workflow](./media/github-workflow-trigger-manual.png)<br>

@@ -15,7 +15,7 @@
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
 * [[Optional] Getting started with Infrastructure-as-code](./docs/Deploy/getting-started.md)
   * [Configure Azure permissions for ARM tenant deployments & setup GitHub](./docs/Deploy/setup-github.md)
-  * [Initialize Git with Current Azure configuration](./docs/Deploy/discover-environment.md)
+  * [Initialize Git with current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy your own ARM templates with AzOps GitHub Actions](./docs/Deploy/deploy-new-arm.md)
 * [Enterprise-Scale "in-a-box" tutorial](./docs/enterprise-scale-iab/README.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
