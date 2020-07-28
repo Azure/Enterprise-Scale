@@ -10,7 +10,7 @@ Before invoking this action, [please ensure Actions are enabled for your repo](h
 
 AzOps is maintained at [https://github.com/Azure/azops](https://github.com/Azure/azops).
 
-### How to trigger the Action...
+### How to trigger the Action
 
 Depending on your preferred approach, there are a number of methods you can use to trigger the AzOps action in GitHub, including:
 
@@ -68,15 +68,15 @@ Please check progress in the GitHub repo in the Actions tab and wait for it comp
 
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
-* Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered and RESTful representation of the Resources are  saved as ARM Template parameters file.
+* Current Management Group, Subscriptions, definitions and assignments are discovered and RESTful representation of the resources are  saved as ARM template parameters file.
 * If changes are detected which are not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
-* Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`)
+* Create a Pull Request (PR) with the name `Azure Change Notification` (`system` -> `main`)
 
-## Verify PR and merge with `main` branch
+## Verify PR and merge
 
-Once the discovery process has completed, select the PR that was automatically created (it will be called Azure Change Notification). You can verify the changes discovered by clicking in the Files tab within the PR. In order to accept these changes into your `main` branch:
+Once the discovery process has completed, select the PR that was automatically created (`Azure Change Notification`). Verify the changes discovered by clicking in the Files tab within the PR. In order to accept these changes into your `main` branch:
 
-1. Merge PR to `main`.
+1. Squash & merge PR into `main` branch.
 2. Delete `system` branch.
 
 The current Azure environment is now represented in the `azops` folder of the main branch. You can invoke this action at any time, when you want to retrieve current Azure configuration when you suspect configuration drift due to OOB changes in Azure.
