@@ -1,14 +1,14 @@
 # Configure Azure permissions for ARM tenant deployments
 
-This article will guide you through the process to configure permissions to your Azure environment to do ARM tenant level deployments
+This article will guide you through the process to configure permissions to your Azure environment to do ARM tenant level deployments.
 
 > Note: The steps below requires you to use an identity that is local to the Azure AD, and **_not_** Guest user account due to known restrictions.
 
-Enterprise-Scale reference implementation requires permission at tenant root "/" scope to be able to configure Management Group and create/move subscription. In order to grant permission at tenant root scope "/", users in "AAD Global Administrators" group can temporarily elevate access, to manage all Azure resources in the directory.
+Enterprise-Scale reference implementation requires permission at tenant root scope "/" to be able to configure Management Group and create/move subscription. In order to grant permission at tenant root scope "/", users in "AAD Global Administrators" group can temporarily elevate access, to manage all Azure resources in the directory.
 
 Once UAA role is enabled, User Access Administrator can grant **_other users and service principles_** within organization to deploy/manage Enterprise-Scale reference implementation by granting "Owner" permission at tenant root scope "/".
 
-Once permission is granted to other users and service principles, you can safely disable "User Access Administrator" permission. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
+Once permission is granted to other users and service principles, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
 
 ## 1. Elevate Access to manage Azure resources in the directory
 
@@ -16,16 +16,16 @@ Once permission is granted to other users and service principles, you can safely
 
 1.2 Open Azure Active Directory.
 
-1.3 Under Manage, select Properties.
+1.3 Under _Manage_, select _Properties_.
 ![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
 
-1.4 Under Access management for Azure resources, set the toggle to Yes.
+1.4 Under _Access management for Azure resources_, set the toggle to Yes.
 
 ![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
 
 ## 2. Grant Access to User at root scope "/" to deploy Enterprise-Scale reference implementation
 
-Please ensure you are logged in as a user with UAA Role enabled in AAD tenant and logged in user is not a guest user.
+Please ensure you are logged in as a user with UAA role enabled in AAD tenant and logged in user is not a guest user.
 
 Bash
 
@@ -47,4 +47,4 @@ Please note, it may take up to 15-30 minutes for permission to propagate at tena
 
 ## Next steps
 
-Please proceed with deploying reference implementation.
+Please proceed with [deploying reference implementation](./EnterpriseScale-Deploy-reference-implentations.md).

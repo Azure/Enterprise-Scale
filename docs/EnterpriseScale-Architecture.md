@@ -18,8 +18,10 @@ Every large enterprise software estate will encompass a myriad of application ar
 The principle purpose of the "Landing Zones" is therefore to ensure that when an application lands on Azure, the required "plumbing" is already in place, providing greater agility and compliance with enterprise security and governance requirements.
 
 ---
+
 _Using an analogy, this is similar to how city utilities such as water, gas, and electricity are accessible before new houses are constructed. In this context, the network, IAM, policies, management, and monitoring are shared 'utility' services that must be readily available to help streamline the application migration process._
-***
+
+---
 
 # Design Principles
 

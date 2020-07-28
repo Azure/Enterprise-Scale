@@ -9,11 +9,11 @@ This article will guide you through the process to configure permissions to your
 
 ## 2. Elevate Access to manage Azure resources in the directory
 
-To grant permission for SPN at root "/" scope, please [elevate your access to manage Azure resources](../../EnterpriseScale-Setup-azure.md).
+To grant permission for SPN at tenant root scope "/", please [elevate your access to manage Azure resources](../EnterpriseScale-Setup-azure.md).
 
 ## 3. Create SPN and Grant Permission
 
->Note: The Service Principal requires "Owner" permission at the tenant root (/) in order to complete all the requisite steps (roleAssignments, creation of management groups, subscriptions, policyAssignments etc.), and the permission will be inherited to all child scopes in Azure. Similar, if you want a user to deploy the reference implementation(s) using Azure Portal, a roleAssignment at the tenant root (/) is required with "Owner".
+>Note: The Service Principal requires "Owner" permission at the tenant root scope (/) in order to complete all the requisite steps (roleAssignments, creation of management groups, subscriptions, policyAssignments etc.), and the permission will be inherited to all child scopes in Azure. Similar, if you want a user to deploy the reference implementation(s) using Azure Portal, a roleAssignment at the tenant root (/) is required with "Owner".
 
 "App registration" needs to be enabled on the Azure AD Tenant to self-register an Application (Option 1).
 
