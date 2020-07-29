@@ -60,7 +60,7 @@ To demonstrate this capability, we will use a custom ARM template to deploy a po
         {
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2019-09-01",
-            "name": "[parameters('policyDescription')]",
+            "name": "[parameters('policyName')]",
             "properties": {
                 "description": "[parameters('policyDescription')]",
                 "displayName": "[parameters('policyName')]",
