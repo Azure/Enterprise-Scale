@@ -70,9 +70,9 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     ![_Figure_](./media/wt-2.1-2.5.png)
 
-10. Now, we will run discovery, based on GitHub Actions, to discover existing Azure environment and initialize your GitHub repo. This uses the GitHub Actions `workflow_dispatch` trigger. This requires the latest `.github/workflows/azops.yml` file containing the `workflow_dispatch` section in the current repo.
+10. Now, we will run discovery using GitHub Actions, this initializes your GitHub repo with your Azure environment. This uses the GitHub Actions `workflow_dispatch` trigger and requires requires the latest [`.github/workflows/azops-pull.yml`](../../../.github/workflows) file containing the `workflow_dispatch` section your current repo.
 
-    Go to the **Actions** tab in your GitHub repository and select the **AzOps** workflow. Click on **Run workflow**, select _Branch: main_ and _Action to trigger = pull_ and start the process with **Run workflow** button.
+    Go to the **Actions** tab in your GitHub repository and select the **AzOps-Pull** workflow. Click on **Run workflow**, select _Branch: main_ and _Action to trigger = pull_ and start the process with **Run workflow** button.
 
     ![_Figure_](./media/wt-2.1-3.png)
 
@@ -84,7 +84,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
     ![_Figure_](./media/wt-2.1-5.png)
 
     > **NOTE:**
-    > If the discovery process fails, just re-run discovery by executing the command line from the previous step.
+    > If the discovery process fails, just re-run the workflow.
 
 12. The GitHub Action in the previous step will create the following artifacts in your GitHub repository:
 
@@ -112,13 +112,13 @@ The ARM template deployment will be performed via GitHub Actions to a single reg
 
 Please perform the following steps to configure the region for the template deployment:
 
-1. Open the file **azops.yml** in the folder **/**.**github/workflows** in your Visual Studio Code.
+1. Open the files **azops-pull.yml** and **azops-push.yml** in the folder **/**.**github/workflows** in your Visual Studio Code.
 
-2. Change the **AZOPS_DEFAULT_DEPLOYMENT_REGION** attribute in the **env** section of the yml file.
+2. Change the **AZOPS_DEFAULT_DEPLOYMENT_REGION** attribute in the **env** section of **both** yml file.
 
     ![_Figure_](./media/wt-2.2-1.png)
 
-    For example, for a deployment in the North Europe Azure region, you would provide:
+    For example, for a deployment in the _North Europe_ Azure region, you would provide:
 
     `AZOPS_DEFAULT_DEPLOYMENT_REGION: "northeurope"`
 
