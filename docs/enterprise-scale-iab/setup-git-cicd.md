@@ -66,7 +66,11 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     ![_Figure_](./media/wt-2.1-2.png)
 
-9. Now, we will run discovery, based on GitHub Actions, to discover existing Azure environment and initialize your GitHub repo. This uses the GitHub Actions `workflow_dispatch` trigger. This requires the latest `.github/workflows/azops.yml` file containing the `workflow_dispatch` section in the current repo.
+9. In your GitHub repo, navigate to the main page of the repository. Click on **Settings** and scroll down to the **Merge button** section. Ensure the **Automatically delete head branches** option is selected.
+
+    ![_Figure_](./media/wt-2.1-2.5.png)
+
+10. Now, we will run discovery, based on GitHub Actions, to discover existing Azure environment and initialize your GitHub repo. This uses the GitHub Actions `workflow_dispatch` trigger. This requires the latest `.github/workflows/azops.yml` file containing the `workflow_dispatch` section in the current repo.
 
     Go to the **Actions** tab in your GitHub repository and select the **AzOps** workflow. Click on **Run workflow**, select _Branch: main_ and _Action to trigger = pull_ and start the process with **Run workflow** button.
 
@@ -75,14 +79,14 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
     > **NOTE:**
     >If you prefer, execute the discovery process via commandline as described on this [article](../Deploy/discover-environment.md).
 
-10. You should now see an GitHub Action running with the name **AzOps**.
+11. You should now see an GitHub Action running with the name **AzOps**.
 
     ![_Figure_](./media/wt-2.1-5.png)
 
     > **NOTE:**
     > If the discovery process fails, just re-run discovery by executing the command line from the previous step.
 
-11. The GitHub Action in the previous step will create the following artifacts in your GitHub repository:
+12. The GitHub Action in the previous step will create the following artifacts in your GitHub repository:
 
     - Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered, and RESTful representation of the resources are saved as ARM Template parameters file.
 
@@ -90,7 +94,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     - Create a Pull Request (PR) with the name Azure Change Notification **(system->main)**
 
-12. Select the **Pull Request** tab in your GitHub repository and if everything looks good, go ahead and merge **system** branch to the **main** branch. Once successfully merged, delete the **system** branch.
+13. Select the **Pull Request** tab in your GitHub repository and if everything looks good, go ahead and merge **system** branch to the **main** branch. Once successfully merged, delete the **system** branch.
 
     ![_Figure_](./media/wt-2.1-6.png)
 
@@ -98,7 +102,7 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     ![_Figure_](./media/wt-2.1-7.png)
 
-13. **Pull** the changes in the main branch to your local clone by launching the command palette **(CTRL + SHIFT + P)** in **Visual Studio Code** and type `Git: Pull` then press **Enter**. Alternatively, you can select the main branch at the bottom-left section in Visual Studio Code and then click on the Sync icon as depicted in the picture below.
+14. **Pull** the changes in the main branch to your local clone by launching the command palette **(CTRL + SHIFT + P)** in **Visual Studio Code** and type `Git: Pull` then press **Enter**. Alternatively, you can select the main branch at the bottom-left section in Visual Studio Code and then click on the Sync icon as depicted in the picture below.
 
     ![_Figure_](./media/wt-2.1-8.png)
 
