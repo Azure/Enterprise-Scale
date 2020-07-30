@@ -23,7 +23,7 @@ The following picture depicts these deployment scopes:
 
 ## How to deploy ARM templates with AzOps
 
-To deploy an ARM template and its corresponding parameters file by using the AzOps GitHub Actions, it is only required to copy the ARM template and parameters file into the desired scope in a feacture branch in your local clone of the GitHub repo. Once you have copied your ARM template and parameters file at the desired scope submit a pull request. This will instruct AzOps to deploy the ARM template into the corresponding scope in Azure.
+To deploy an ARM template and its corresponding parameters file by using the AzOps GitHub Actions, it is only required to copy the ARM template and parameters file into the desired scope in a feature branch in your local clone of the GitHub repo. Once you have copied your ARM template and parameters file at the desired scope submit a pull request. This will instruct AzOps to deploy the ARM template into the corresponding scope in Azure.
 
 To demonstrate this capability, we will use a custom ARM template to deploy a policy definition at the management group scope but you can use this process to deploy any resource type.
 
