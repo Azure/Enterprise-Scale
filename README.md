@@ -12,6 +12,7 @@
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
+  * [Trey Research Reference - Scope and Design](./docs/reference/treyresearch/README.md)
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
 * [[Optional] Getting started with Infrastructure-as-code](./docs/Deploy/getting-started.md)
   * [Configure Azure permissions for ARM tenant deployments & setup GitHub](./docs/Deploy/setup-github.md)
