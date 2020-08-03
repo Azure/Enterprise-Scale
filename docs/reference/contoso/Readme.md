@@ -1,7 +1,7 @@
 
 | Enterprise-Scale Design Principles | ARM Template | Scale without refactoring |
 |:-------------|:--------------|:--------------|
-|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fesux.json) | Yes |
+|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fes-vwan.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fportal-es-vwan.json) | Yes |
 
 # Deploy Enterprise-Scale with Azure VWAN
 
@@ -132,7 +132,7 @@ The following policies related to Management Group hierarchy and Subscription or
 | Enforce Subscription budget                       | Ensure all Subscriptions have a budget associated             | Contoso Management Group      | No Subscription will allow unlimited spending                                                   |
 | Enforce Subscription tags                         | Ensure all Subscriptions have the required tags               | Contoso Management Group      | All Subscriptions are tagged properly to identify business unit owner, intent, and cost centre. |
 | Move cancelled Subscriptions                      | Ensure cancelled Subscriptions are moved from Landing Zone    | Landing Zone Management Group | Any Subscription that get cancelled, will be moved to the Decommission Management Group         |
-| Allowed regions for [Resource Groups](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Allowed-RGLocation.parameters.json) and [Resources](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Allowed-ResourceLocation.parameters.json) | Ensure all Resources are created in the designated regions    | Contoso Management Group      | All Resources are compliant per their location                                                  |
+| Allowed regions for [Resource Groups](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Allowed-RGLocation.parameters.json) and [Resources](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Allowed-ResourceLocation.parameters.json) | Ensure all Resources are created in the designated regions    | Contoso Management Group      | All Resources are compliant per their location                                                  |
 | Assign region policy per Subscription             | Ensure Subscriptions get policy with correct regions assigned | Contoso Management Group      | Subscriptions will support regions per their naming convention                                  |
 
 ## Network Topology and Connectivity
@@ -187,13 +187,13 @@ North Europe:
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vWAN.parameters.json">Virtual WAN</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vWAN.parameters.json">Virtual WAN</a></td>
 <td>contoso-global-wan</td>
 <td><p>VWAN name: contoso-vwan</p>
 <p>Location: North Europe</p></td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json">Virtual HUB</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json">Virtual HUB</a></td>
 <td>contoso-global-wan</td>
 <td><p>Virtual WAN: contoso-vwan</p>
 <p>Location: North Europe</p>
@@ -203,13 +203,13 @@ North Europe:
 <p>VPN Gateway: Yes (2 scale units)</p></td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-FirewallPolicy.parameters.json">Azure Firewall Policy</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-FirewallPolicy.parameters.json">Azure Firewall Policy</a></td>
 <td>contoso-fw-policies</td>
 <td><p>Firewall Policy name: contoso-fw-policy-global</p>
 <p>Outbound rules: (as required, for example, allow outbound traffic to *.microsoft.com)</p></td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json#L290">Azure Firewall</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json#L290">Azure Firewall</a></td>
 <td>contoso-global-wan</td>
 <td>VHub name: contoso-vhub-neu</td>
 </tr>
@@ -219,7 +219,7 @@ North Europe:
 <td>Private DNS Zone name: azure.Contoso.com</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-DDoSProtection.parameters.json">Azure DDoS Standard</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-DDoSProtection.parameters.json">Azure DDoS Standard</a></td>
 <td>contoso-global-ddos</td>
 <td><p>Name: contoso-ddos-std-plan</p>
 <p>Region: North Europe</p></td>
@@ -251,7 +251,7 @@ West Europe:
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json">Virtual HUB</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json">Virtual HUB</a></td>
 <td>contoso-global-wan</td>
 <td><p>Virtual WAN: contoso-vwan</p>
 <p>Location: West Europe</p>
@@ -261,13 +261,13 @@ West Europe:
 <p>VPN Gateway: Yes (2 scale units)</p></td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-FirewallPolicy.parameters.json">Azure Firewall Policy</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-FirewallPolicy.parameters.json">Azure Firewall Policy</a></td>
 <td>contoso-fw-policies</td>
 <td><p>Firewall Policy name: contoso-fw-policy-weu</p>
 <p>Outbound rules: (as required, for example, allow outbound traffic to *.microsoft.com)</p></td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json#L290">Azure Firewall</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json#L290">Azure Firewall</a></td>
 <td>contoso-global-wan</td>
 <td>VHub name: contoso-vhub-weu</td>
 </tr>
@@ -298,7 +298,7 @@ North Central US:
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json">Virtual HUB</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json">Virtual HUB</a></td>
 <td>contoso-global-wan</td>
 <td><p>Virtual WAN: contoso-vwan</p>
 <p>Location: North Central US</p>
@@ -308,13 +308,13 @@ North Central US:
 <p>VPN Gateway: Yes (2 scale units)</p></td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-FirewallPolicy.parameters.json">Azure Firewall Policy</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-FirewallPolicy.parameters.json">Azure Firewall Policy</a></td>
 <td>contoso-fw-policies</td>
 <td><p>Firewall Policy name: contoso--fw-policy-ncus</p>
 <p>Outbound rules: (as required, for example, allow outbound traffic to *.microsoft.com)</p></td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json#L290">Azure Firewall</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vHUB.parameters.json#L290">Azure Firewall</a></td>
 <td>contoso-global-wan</td>
 <td>VHub name: contoso-vhub-ncus</td>
 </tr>
@@ -346,37 +346,37 @@ The following network-related policies will be assigned in the Contoso productio
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vNet.parameters.json">Enforce Virtual Network</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vNet.parameters.json">Enforce Virtual Network</a></td>
 <td>Ensure all Landing Zones have a Virtual Network</td>
 <td>Landing Zone Management Group</td>
 <td>All Landing Zones have a Virtual Network</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vNet.parameters.json">Enforce Virtual Network connectivity</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-vNet.parameters.json">Enforce Virtual Network connectivity</a></td>
 <td>Ensure all Landing Zones are connected to the connectivity Subscription</td>
 <td>Contoso Management Group</td>
 <td>All virtual networks are configured and connected per the desired state</td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Deny-IP-Forwarding.parameters.json">Deny IP forwarding on NIC</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Deny-IP-Forwarding.parameters.json">Deny IP forwarding on NIC</a></td>
 <td>Ensure IP forwarding cannot be enabled</td>
 <td>Landing Zone Management Group</td>
 <td>No IP forwarding enabled in Landing Zones</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Deny-RDP-From-Internet.parameters.json">Deny inbound RDP/SSH on NSGs</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Deny-RDP-From-Internet.parameters.json">Deny inbound RDP/SSH on NSGs</a></td>
 <td>Ensure NSGs can't open RDP/SSH from internet</td>
 <td>Landing Zone Management Group</td>
 <td>No inbound traffic from internet on management ports</td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deny-Subnet-Without-Nsg.parameters.json">Enforce NSG on every Subnet</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deny-Subnet-Without-Nsg.parameters.json">Enforce NSG on every Subnet</a></td>
 <td>Enforce default NSG is always associated to Subnet</td>
 <td>Landing Zone Management Group</td>
 <td>No Subnets without NSGs.</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Nsg-FlowLogs.parameters.json">Enable NSG flow logs</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Nsg-FlowLogs.parameters.json">Enable NSG flow logs</a></td>
 <td>Ensure NSG flow logs are being captured</td>
 <td>Landing Zone Management Group</td>
 <td>No NSG without NSG flow logs</td>
@@ -394,7 +394,7 @@ The following network-related policies will be assigned in the Contoso productio
 <td>All Virtual Networks with public IP addresses are protected against DDoS attacks</td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Deny-AppGW-Without-WAF.parameters.json">Ensure WAF policies are enabled on AppGW</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Deny-AppGW-Without-WAF.parameters.json">Ensure WAF policies are enabled on AppGW</a></td>
 <td>Ensure all AppGWs have WAF policies enabled</td>
 <td>Online Management Group</td>
 <td>All AppGWs deployed are protected with WAF</td>
@@ -432,7 +432,7 @@ Contoso has documented the Resources and parameters that it requires so that the
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Log-Analytics.parameters.json">Log Analytics workspace</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Log-Analytics.parameters.json">Log Analytics workspace</a></td>
 <td>weu-mgmt</td>
 <td><p>Workspace name: weu-la</p>
 <p>Location: West Europe</p></td>
@@ -489,7 +489,7 @@ The following policies related to management and monitoring will be assigned in 
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policySetDefinitions-Deploy-Diag-LogAnalytics.parameters.json">Enforce Log Analytics for platform logging</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policySetDefinitions-Deploy-Diag-LogAnalytics.parameters.json">Enforce Log Analytics for platform logging</a></td>
 <td>Ensure infrastructure for logging and security is in place for the Azure platform</td>
 <td>Management Subscription</td>
 <td>Deploys and configures Log Analytics for Contoso's Azure platform</td>
@@ -501,13 +501,13 @@ The following policies related to management and monitoring will be assigned in 
 <td>Resources deployed to weu-mgmt Resource Group to enable drift detection and reconciliation in Git</td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-ActivityLog.parameters.json">Enforce Activity Logs</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-ActivityLog.parameters.json">Enforce Activity Logs</a></td>
 <td>Enable and configure activity logs on every Subscription</td>
 <td>Contoso Management Group</td>
 <td>Ensures Activity Log from all Subscriptions are collected centrally</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-VM.parameters.json">Enforce VM logging</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-VM.parameters.json">Enforce VM logging</a></td>
 <td>Ensure all virtual machines are connected to Log Analytics</td>
 <td>Landing Zone Management Group</td>
 <td>Every virtual machine deployed into a Landing Zone will have the Log Analytics VM extension installed and be connected to a Log Analytics workspace</td>
@@ -519,7 +519,7 @@ The following policies related to management and monitoring will be assigned in 
 <td>Every Subscription with virtual networks will have associated network watchers deployed per region</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Windows-DomainJoin.parameters.json">Enforce AD Domain Join</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Windows-DomainJoin.parameters.json">Enforce AD Domain Join</a></td>
 <td>Deploys AD domain join VM extension</td>
 <td>Corp Management Group</td>
 <td>All VMs within Corp will be connected to Active Directory domain</td>
@@ -533,15 +533,15 @@ The following policies related to management and monitoring will be assigned in 
 <tr class="even">
 <td><p>Enforce diagnostics/metrics to platform workspace</p>
 <ul>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-NetworkSecurityGroups.parameters.json">NSG</a></p></li>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-PublicIP.parameters.json">Public IP</a></p></li>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-NIC.parameters.json">NIC</a></p></li>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-RecoveryVault.parameters.json">Recovery Vaults</a></p></li>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-KeyVault.parameters.json">KeyVault</a></p></li>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-TrafficManager.parameters.json">Traffic Manager</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-NetworkSecurityGroups.parameters.json">NSG</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-PublicIP.parameters.json">Public IP</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-NIC.parameters.json">NIC</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-RecoveryVault.parameters.json">Recovery Vaults</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-KeyVault.parameters.json">KeyVault</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-TrafficManager.parameters.json">Traffic Manager</a></p></li>
 <li><p>Express Route</p></li>
 <li><p>DNS</p></li>
-<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-ApplicationGateway.parameters.json">App Gateway</a></p></li>
+<li><p><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-ApplicationGateway.parameters.json">App Gateway</a></p></li>
 </ul></td>
 <td>Ensure supported Resources will ingest telemetry to Log Analytics</td>
 <td>Landing Zone Management Group</td>
@@ -580,8 +580,8 @@ The platform team will provide a HA/DR baseline for VM backup policies across Az
 
 | Policy                                                                   | Intent                                                          | Assignment scope                 | Result                                                                                                          |
 | ------------------------------------------------------------------------ | --------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [Deploy Backup Vault and enforce backup setting for Windows and Linux VMs](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-VM-Backup.parameters.json) | Deploy backup vault and enable backup                           | 'Landing Zones' Management Group | Every Resource Group with VMs in a Landing Zone Subscription has a backup vault to which all VMs are backed up. |
-| [Add diagnostic setting to backup vault](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-RecoveryVault.parameters.json)                                   | Link Backup Vault diagnostics to central Log Analytics instance | 'Landing Zones' Management Group | Platform team has horizontal view over all VM backup                                                            |
+| [Deploy Backup Vault and enforce backup setting for Windows and Linux VMs](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-VM-Backup.parameters.json) | Deploy backup vault and enable backup                           | 'Landing Zones' Management Group | Every Resource Group with VMs in a Landing Zone Subscription has a backup vault to which all VMs are backed up. |
+| [Add diagnostic setting to backup vault](../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-Diagnostics-RecoveryVault.parameters.json)                                   | Link Backup Vault diagnostics to central Log Analytics instance | 'Landing Zones' Management Group | Platform team has horizontal view over all VM backup                                                            |
 
 
 Contoso also recognizes the need to add backup capabilities to other Resource types other than Virtual Machines. However, given the highly specific nature of these backups and the different approaches an application team can take to backup, Contoso does not enforce these settings centrally.
@@ -635,13 +635,13 @@ The following policies related to security and governance will be assigned in th
 <td>Azure Sentinel is configured and deployed to the platform Log Analytics workspace</td>
 </tr>
 <tr class="odd">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Deploy-ASC-Standard.parameters.json">Enforce Azure Security Center</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Deploy-ASC-Standard.parameters.json">Enforce Azure Security Center</a></td>
 <td>Deploy ASC on every Azure Subscription</td>
 <td>Contoso Management Group</td>
 <td>All Subscriptions will have ASC enabled when they are created</td>
 </tr>
 <tr class="even">
-<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState/Microsoft.Authorization_policyAssignments-Deploy-ASC-Monitoring.parameters.json">Enforce Azure Security Monitoring</a></td>
+<td><a href="../../../../main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState/Microsoft.Authorization_policyAssignments-Deploy-ASC-Monitoring.parameters.json">Enforce Azure Security Monitoring</a></td>
 <td>Enable ASC monitoring on every Subscription</td>
 <td>Contoso Management Group</td>
 <td>All Subscriptions will have all the security monitors enabled</td>
@@ -830,7 +830,3 @@ By establishing a feedback loop we can ensure that:
 
 Through Azure Policy, changes to the Azure Resources within the Contoso Management Group scope are captured within the Log Analytics instance in the management Subscription. A Log Search Alert will notify
 Git by activating a webhook if a Resource configuration is updated or modified so that Resource state will be exported and made available as a pull\_request (PR) for review. This will allow repo owners to control whether to roll-forward the change by merging the PR or rollback by making new configuration changes that will override the out of band configuration change.
-
-## Next steps
-
-Once you have an environment with your desired Management Group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](../../Deploy/discover-environment.md).

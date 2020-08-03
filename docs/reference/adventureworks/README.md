@@ -28,7 +28,3 @@ See the following [instructions](https://docs.microsoft.com/en-us/azure/role-bas
 - Landing Zone Management Group for online applications that will be internet-facing, which doesn't require hybrid connectivity. This is where you will create your Subscriptions that will host your online workloads
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
-
-## Next steps
-
-Once you have an environment with your desired Management Group hierarchy, you can proceed to the next step, [Initialize Git With Current Azure configuration](../../Deploy/discover-environment.md).
