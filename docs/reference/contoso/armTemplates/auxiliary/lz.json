@@ -1,0 +1,264 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 5
+        },
+        "enableSqlAudit": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableSqlEncryption": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableVmBackup": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyRdp": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableStorageHttps": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyIpForwarding": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denySubnetWithoutNsg": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        }        
+    },
+    "variables": {
+        "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-landingzones')]",
+        "policyDefinitions": {
+            "deployVmBackup": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-AzureBackup-on-VM')]",
+            "denySubnetWithoutNsg": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg')]",
+            "denyRdp": "/providers/Microsoft.Authorization/policyDefinitions/e372f825-a257-4fb8-9175-797a8a8627d6",
+            "denyIpForwarding": "/providers/Microsoft.Authorization/policyDefinitions/88c0b9da-ce96-4b03-9635-f29a937e2900",
+            "deploySqlEncryption": "/providers/Microsoft.Authorization/policyDefinitions/86a912f6-9a06-4e26-b447-11b16ba8659f",
+            "deploySqlSecurity": "/providers/Microsoft.Authorization/policyDefinitions/f4c68484-132f-41f9-9b6d-3e4b1cb55036",
+            "deploySqlAuditing": "/providers/Microsoft.Authorization/policyDefinitions/a6fb4358-5bf4-4ad7-ba82-2cd2f41ce5e9",
+            "storageHttps": "/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9",
+            "deployStorageAtp": "/providers/Microsoft.Authorization/policyDefinitions/361c2074-3595-4e5d-8cab-4f21dffc835c"
+        },
+        "policyAssignmentNames": {
+            "deployVmBackup": "Deploy-VM-Backup",
+            "denySubnetWithoutNsg": "Deny-Subnet-Without-Nsg",
+            "denyRdp": "Deny-RDP-from-internet",
+            "denyIpForwarding": "Deny-IP-forwarding",
+            "deploySqlEncryption": "Enforce-SQL-Encryption",
+            "deploysqlSecurity": "Deploy-SQL-Security",
+            "deploySqlAuditing": "Deploy-SQL-DB-Auditing",
+            "storageHttps": "Deny-Storage-http",
+            "deployStorageAtp": "Deploy-Storage-ATP"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployVmBackup": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployVmBackup))]",
+            "deploySqlSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploysqlSecurity))]",
+            "deploySqlAuditing": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing))]",
+            "deployStorageAtp": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployStorageAtp))]",
+            "deploySqlEncryption": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlEncryption))]"
+        },
+        //"blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}"
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('enableVmBackup'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deployVmBackup]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-VM-Backup",
+                "displayName": "Deploy-VM-Backup",
+                "policyDefinitionId": "[variables('policyDefinitions').deployVmBackup]",
+                "scope": "[variables('scope')]",
+                "parameters": {}
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableVmBackup'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployVmBackup]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployVmBackup]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableVmBackup'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployVmBackup), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deploySqlAuditing]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-SQL-Audit",
+                "displayName": "Deploy-SQL-Audit",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySqlAuditing]",
+                "scope": "[variables('scope')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deploySqlAuditing]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlAuditing]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableSqlAudit'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
+        /*
+        {
+            "condition": "[equals(parameters('enableSqlSecurity'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deploySqlSecurity]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-SQL-Security",
+                "displayName": "Deploy-SQL-Security",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySqlSecurity]",
+                "scope": "[variables('scope')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableSqlSecurity'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deploySqlSecurity]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlSecurity]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableSqlSecurity'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploysqlSecurity), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },*/
+        {
+            "condition": "[equals(parameters('enableSqlEncryption'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deploySqlEncryption]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-SQL-Security",
+                "displayName": "Deploy-SQL-Security",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySqlEncryption]",
+                "scope": "[variables('scope')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableSqlEncryption'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deploySqlEncryption]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlEncryption]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableSqlEncryption'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlEncryption), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },                  
+        {
+            "condition": "[equals(parameters('enableStorageHttps'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').storageHttps]",
+            "location": "[deployment().location]",
+            "properties": {
+                "description": "Enforce-Secure-Storage",
+                "displayName": "Enforce-Secure-Storage",
+                "policyDefinitionId": "[variables('policyDefinitions').storageHttps]",
+                "scope": "[variables('scope')]"             
+            }
+        },
+        {
+            "condition": "[equals(parameters('denyIpForwarding'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').denyIpForwarding]",
+            "location": "[deployment().location]",
+            "properties": {
+                "description": "Deny-IP-Forwarding",
+                "displayName": "Deny-IP-Forwarding",
+                "policyDefinitionId": "[variables('policyDefinitions').denyIpForwarding]",
+                "scope": "[variables('scope')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('denySubnetWithoutNsg'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').denySubnetWithoutNsg]",
+            "location": "[deployment().location]",
+            "properties": {
+                "description": "Deny-Subnet-Without-Nsg",
+                "displayName": "Deny-Subnet-Without-Nsg",
+                "policyDefinitionId": "[variables('policyDefinitions').denySubnetWithoutNsg]",
+                "scope": "[variables('scope')]"
+            }
+        }        
+    ],
+    "outputs": {}
+}
