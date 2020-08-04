@@ -58,7 +58,7 @@ We also recommend you allow only `squash` merge types from branches into `main`.
 
 ### Discover Environment
 
-If the AzOps pipeline is triggered manually *AND* has the pipeline variable `DoPull` set to `true`, the pipeline will discover the Azure environment.
+If the 'AzOps Pull' pipeline is triggered manually the pipeline will discover the Azure environment.
 
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
