@@ -1,0 +1,52 @@
+name: AzOps
+
+trigger: none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  DOCKER_IMAGE: mscet/azops:main
+  DOCKER_VERSION: 19.03.12
+
+jobs:
+  - job: Push
+    condition: and(eq(variables['Build.Reason'], 'PullRequest'), ne(variables['System.PullRequest.SourceBranch'], 'refs/heads/system'))
+    steps:
+      - checkout: self
+        persistCredentials: true
+
+      - task: DockerInstaller@0
+        displayName: Install Docker
+        inputs:
+          dockerVersion: $(DOCKER_VERSION)
+          releaseType: stable
+
+      - task: Bash@3
+        displayName: Pull image
+        inputs:
+          targetType: "inline"
+          script: |
+            docker pull $(DOCKER_IMAGE)
+
+      - task: Bash@3
+        displayName: Run container
+        inputs:
+          targetType: "inline"
+          script: |
+            docker run --rm \
+              --volume=/root:/root \
+              --volume=`pwd`:`pwd` \
+              --workdir `pwd` \
+              --env-file "./settings.env" \
+              --env AZURE_CREDENTIALS="$(AZURE_CREDENTIALS)" \
+              --env AZDEVOPS_HEAD_REF=$(System.PullRequest.SourceBranch) \
+              --env AZDEVOPS_BASE_REF=$(System.PullRequest.TargetBranch) \
+              --env AZDEVOPS_API_URL=$(System.TeamFoundationCollectionUri) \
+              --env AZDEVOPS_PROJECT_ID=$(System.TeamProjectId) \
+              --env AZDEVOPS_REPOSITORY=$(Build.Repository.Name) \
+              --env AZDEVOPS_PULL_REQUEST_ID=$(System.PullRequest.PullRequestId) \
+              --env AZURE_DEVOPS_EXT_PAT="$(System.AccessToken)" \
+              --env AZDEVOPS_TOKEN="$(System.AccessToken)" \
+              --env INPUT_MODE="Push" \
+              $(DOCKER_IMAGE)

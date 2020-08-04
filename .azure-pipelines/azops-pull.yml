@@ -1,0 +1,45 @@
+name: AzOps
+
+trigger: none
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  DOCKER_IMAGE: mscet/azops:main
+  DOCKER_VERSION: 19.03.12
+
+jobs:
+  - job: Pull
+    condition: eq(variables['Build.Reason'], 'Manual')
+    steps:
+      - checkout: self
+        persistCredentials: true
+
+      - task: DockerInstaller@0
+        displayName: Install Docker
+        inputs:
+          dockerVersion: $(DOCKER_VERSION)
+          releaseType: stable
+
+      - task: Bash@3
+        displayName: Pull image
+        inputs:
+          targetType: "inline"
+          script: |
+            docker pull $(DOCKER_IMAGE)
+
+      - task: Bash@3
+        displayName: Run container
+        inputs:
+          targetType: "inline"
+          script: |
+            docker run --rm \
+              --volume=/root:/root \
+              --volume=`pwd`:`pwd` \
+              --workdir `pwd` \
+              --env-file "./settings.env" \
+              --env AZURE_CREDENTIALS="$(AZURE_CREDENTIALS)" \
+              --env AZURE_DEVOPS_EXT_PAT="$(System.AccessToken)" \
+              --env INPUT_MODE="Pull" \
+              $(DOCKER_IMAGE)
