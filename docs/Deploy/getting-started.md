@@ -1,7 +1,7 @@
 
-# Getting Started
+# Getting started with infrastructure-as-code
 
-This article describes how to get started with Enterprise-Scale reference implementation by walking you through prerequisites to deploy a platform-native reference implementation of Enterprise-Scale.
+This article describes how to get started with infrastructure as code in Azure, using ARM templates and AzOps GitHub Actions.
 > Note:  Before you start, please make sure that you have read and understood the overall design objective and scope of the reference implementation.
 
 ## Target audience
@@ -25,7 +25,7 @@ Minimum version of PowerShell: 7.0|  The latest version of PowerShell including 
 
 ## Enabling long paths on Windows
 
-Enterprise-Scale reference implementation requires that you [enable long paths in Windows](https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#enable-long-paths-in-windows-10-version-1607-and-later). To enable this, execute the following command from a terminal with elevated privileges:
+AzOps GitHub Action implementation requires that you [enable long paths in Windows](https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#enable-long-paths-in-windows-10-version-1607-and-later). To enable this, execute the following command from a terminal with elevated privileges:
 
 ```bash
 REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1 /f
@@ -39,4 +39,4 @@ git config --system core.longpaths true
 
 ## Next steps
 
-Once you have the technical prerequisites in place, you can proceed to the next step, [Setup GitHub and Azure for Ensterprise-Scale](./setup-github.md).
+Once you have the technical prerequisites in place, you can proceed to the next step, [Configure Azure permissions for ARM tenant deployments & setup GitHub](./setup-github.md).

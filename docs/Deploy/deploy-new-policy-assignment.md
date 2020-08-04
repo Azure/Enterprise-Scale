@@ -67,7 +67,7 @@ In Enterprise-Scale reference implementation, changes in the platform are always
    * Landing Zones Management Group scope
    * _Connectivity_ / _Management_ / _Identity_ Subscription scope
 
-    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560/contoso/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
+    Enterprise-Scale provides a set of sample Azure Policy assignments that you can use as reference when assigning policies to your environment. You can find these sample Policy assignment in the [azopsreference](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState) folder. Filter files with _policyAssignments_ in the name. After you copied the object replace all the values with the value  \<replace-me\>, these needs to be done mainly for the attributes `policyDefinitionId` and `scope`.
 
    * `policyDefinitionId`: Full Resource ID (including scope path) of the definition
    * `scope`: Assignment scope for the definition
@@ -90,9 +90,8 @@ In Enterprise-Scale reference implementation, changes in the platform are always
 
 4. You can monitor the status in the Actions log. Once all the checks are successful you have to squash and merge your changes to the main branch.
 
-
 >Note: For future, Azure Policy assignment please see the examples in the [Contoso reference article](../reference/contoso).
 
 ## Next steps
 
-Once you have deployed new policy assignments, you can start [deploy Landing Zones](./deploy-landing-zones.md)
+Once you have deployed new policy assignments, you can start [deploy Landing Zones](../EnterpriseScale-Deploy-landing-zones.md)
