@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "managementGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": "Please provide the management group id - similar to the management group selection above."
+            }
+        },
         "policyDefinition": {
             "type": "string",
             "allowedValues": [
@@ -183,7 +189,6 @@
             "Deploy Virtual Network": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-vNet.parameters.json')]",
             "Deploy Virtual WAN": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-vWAN.parameters.json')]",
             "Deploy Windows Domain Join VM extension": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-Windows-DomainJoin.parameters.json')]"
-
         },
         "policySelection": "[variables('policyMap')[parameters('policyDefinition')]]"
     },
@@ -192,7 +197,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "name": "[concat('EntScale', '-policyDef')  ]",
+            "name": "[concat('EntScale', '-policyDef-', guid(deployment().name))]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('managementGroupId'))]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
