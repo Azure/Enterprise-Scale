@@ -1,0 +1,81 @@
+name: AzOps
+
+trigger: none
+
+schedules:
+  - cron: "0 */6 * * *"
+    branches:
+      include:
+        - master
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  DOCKER_IMAGE: mscet/azops:main
+  DOCKER_VERSION: 19.03.12
+  SCM_PLATFORM: AzureDevOps
+  AZOPS_DEFAULT_DEPLOYMENT_REGION: northeurope
+  AZOPS_ENROLLMENT_ACCOUNT: ""
+  AZOPS_IGNORE_CONTEXT_CHECK: 0
+  AZOPS_INVALIDATE_CACHE: 1
+  AZOPS_OFFER_TYPE: MS-AZR-0017P
+  AZOPS_SKIP_POLICY: 0
+  AZOPS_SKIP_RESOURCE_GROUP: 1
+  AZOPS_STATE: azops
+  AZOPS_STRICT_MODE: 0
+  AZOPS_THROTTLE_LIMIT: 10
+  AZDEVOPS_USERNAME: AzOps
+  AZDEVOPS_EMAIL: noreply@azure.com
+  AZDEVOPS_PULL_REQUEST: "Azure Change Notification"
+  AZDEVOPS_AUTO_MERGE: 1
+  DEBUG: 0
+  VERBOSE: 0
+
+jobs:
+  - job: Pull
+    condition: eq(variables['Build.Reason'], 'Manual')
+    steps:
+      - checkout: self
+        persistCredentials: true
+      - task: DockerInstaller@0
+        displayName: Install Docker
+        inputs:
+          dockerVersion: $(DOCKER_VERSION)
+          releaseType: stable
+      - task: Bash@3
+        displayName: Pull image
+        inputs:
+          targetType: "inline"
+          script: |
+            docker pull $(DOCKER_IMAGE)
+      - task: Bash@3
+        displayName: Run container
+        inputs:
+          targetType: "inline"
+          script: |
+            docker run --rm \
+              --volume=/root:/root \
+              --volume=`pwd`:`pwd` \
+              --workdir `pwd` \
+              --env SCM_PLATFORM="AzureDevOps" \
+              --env INPUT_MODE="Pull" \
+              --env AZURE_CREDENTIALS="$(AZURE_CREDENTIALS)" \
+              --env AZURE_DEVOPS_EXT_PAT="$(System.AccessToken)" \
+              --env AZOPS_DEFAULT_DEPLOYMENT_REGION \
+              --env AZOPS_ENROLLMENT_ACCOUNT \
+              --env AZOPS_IGNORE_CONTEXT_CHECK \
+              --env AZOPS_INVALIDATE_CACHE \
+              --env AZOPS_OFFER_TYPE \
+              --env AZOPS_SKIP_POLICY \
+              --env AZOPS_SKIP_RESOURCE_GROUP \
+              --env AZOPS_STATE \
+              --env AZOPS_STRICT_MODE \
+              --env AZOPS_THROTTLE_LIMIT \
+              --env AZDEVOPS_USERNAME \
+              --env AZDEVOPS_EMAIL \
+              --env AZDEVOPS_PULL_REQUEST \
+              --env AZDEVOPS_AUTO_MERGE \
+              --env DEBUG \
+              --env VERBOSE \
+              $(DOCKER_IMAGE)
