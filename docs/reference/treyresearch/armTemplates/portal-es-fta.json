@@ -71,11 +71,11 @@
                         }
                     },                                 
                     {
-                        "name": "esLogAnalytics",
+                        "name": "esPlatformLogAnalytics",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Enable monitoring for your platform and resources",
                         "defaultValue": "Yes (recommended)",
-                        "toolTip": "If you select 'Yes', a Log Analytics workspace will be deployed in the Management Subscription and collection of your platform resources logs will be enabled.",
+                        "toolTip": "If you select 'Yes', a Log Analytics workspace will be deployed in the Management Subscription and a set of Azure Policies will be assigned to ensure Diagnostic Logs from your platform resources logs are collected.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -90,8 +90,28 @@
                         },
                         "visible": true
                     },
+                    {
+                        "name": "esPlatformSecurityLogs",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable collection of Security Logs",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "Select 'Yes' to collect access and audit logs from Platform subscriptions and resources",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },
 					{
-                        "name": "esAsc",
+                        "name": "esPlatformAsc",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Enable security monitoring for your platform and resources using Azure Security Center",
                         "defaultValue": "Yes, Free Tier",
@@ -115,29 +135,9 @@
                         "visible": true
                     },
 					{
-                        "name": "esAuditAKV",
+                        "name": "esPlatformCIS",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Audit key, certificate, and secret usage within each Key Vault.",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "Select 'Yes' to audit key, certificate, and secret usage within each Key Vault in all Platform subscriptions.",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-								{
-									"label": "No",
-									"value": "No"
-								}
-                            ]
-                        },
-                        "visible": true
-                    },
-					{
-                        "name": "esCIS",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Enforce and audit CIS benchmark controls.",
+                        "label": "Enforce and audit Azure Security Benchmark controls.",
                         "defaultValue": "Yes (recommended)",
                         "toolTip": "Select 'Yes' to enforce and audit CIS benchmark controls in all Platform subscriptions.",
                         "constraints": {
@@ -171,7 +171,7 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "Hybrid connectivity is required for migration scenarios and/or connectivity to on-premises, you can enable it during the setup by specifying the subscription id of your Connectivity Subscription.",
+                            "text": "Hybrid connectivity is required for migration scenarios and/or connectivity to on-premise. You can skip this step if you do not need hybrid connectivity from the start. You will always be able to enable Hybrid Connectivity later on when you needed. Note: Skip this step if you require Azure Virtual WAN.",
                             "uri": "https://github.com/juazasan/Enterprise-Scale/blob/trey-research-ri/docs/reference/Readme.md#platformSettings"
                         }
                     },
@@ -180,7 +180,7 @@
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Skip this step",
                         "defaultValue": "No",
-                        "toolTip": "Select 'No' if on-premise connectivity is not required from the start or if you require Virtual WAN. You will always be able to add this component later on.",
+                        "toolTip": "Select 'No' if on-premise connectivity is not required.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -497,13 +497,93 @@
                             "regex": "^[a-z0-9A-Z-]{10}$",
                             "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, leave the parameter completely empty."
                         }
-                    },                                 
+                    },
                     {
-                        "name": "esAzBackup",
+                        "name": "esLzNoPublicEndpoints",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure VMs are enabled for backup",
+                        "label": "Prevent my workloads from exposing Public Endpoints",
                         "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policy will be assigned to ensure no Public IPs can be provisioned and that all PaaS services use Private Endpoints",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },  
+                    {
+                        "name": "esLzLockDownPublicEndpoints",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Public Endpoints are Locked Down",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policy will be assigned to ensure access to your workloads Public Endpoints is locked down.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": "[equals(steps('lzGoalState').esLzNoPublicEndpoints, 'No')]"
+                    }, 
+                    {
+                        "name": "esLzLockDownVnet",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure my Virtual Networks are locked down",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policy will be assigned to ensure access Network Security Groups are assigned to your subnets and that IP Forwarding is not allowed.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },                                                 
+                    {
+                        "name": "esLzAzBackup",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure backup is enabled for all VMs",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, an Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },                              
+                    {
+                        "name": "esLzLogAnalytics",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable monitoring for all Workloads",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If you select 'Yes', a Log Analytics workspace will be deployed in the Management Subscription and collection of your platform resources logs will be enabled.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -518,12 +598,12 @@
                         },
                         "visible": true
                     },
-					{
-                        "name": "esDenyRdp",
+                    {
+                        "name": "esLzSecurityLogs",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Prevent inbound RDP from internet",
+                        "label": "Enable collection of Security Logs",
                         "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent inbound RDP from internet",
+                        "toolTip": "Select 'Yes' to collect access and audit logs for Platform subscriptions and resources",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -539,16 +619,20 @@
                         "visible": true
                     },
 					{
-                        "name": "esNsg",
+                        "name": "esLzAsc",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure subnets are associated with NSG",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure NSGs must be associated with subnets being created",
+                        "label": "Enable security monitoring using Azure Security Center",
+                        "defaultValue": "Yes, Free Tier",
+                        "toolTip": "Select 'Yes' and the preferred Tier (Standard or Free) to get Azure Security Center enabled automatically for all your subscriptions.",
                         "constraints": {
                             "allowedValues": [
                                 {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
+                                    "label": "Yes, Standard Tier (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "Yes, Free Tier",
+                                    "value": "Free"
                                 },
 								{
 									"label": "No",
@@ -559,11 +643,11 @@
                         "visible": true
                     },
 					{
-                        "name": "esIpForwarding",
+                        "name": "esLzCIS",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Prevent IP forwarding",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent IP forwarding",
+                        "label": "Enforce and audit Azure Security Benchmark controls.",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "Select 'Yes' to enforce and audit CIS benchmark controls in all Platform subscriptions.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -577,93 +661,13 @@
                             ]
                         },
                         "visible": true
-                    },
+                    },                      			
 					{
-                        "name": "esSqlEncryption",
+                        "name": "esLzHttps",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure Azure SQL is enabled with transparent data encryption",
+                        "label": "Ensure encryption of Data in Transit (HTTPS)",
                         "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-								{
-									"label": "No",
-									"value": "No"
-								}
-                            ]
-                        },
-                        "visible": true
-                    },
-					{
-                        "name": "esSqlAudit",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure auditing is enabled on Azure SQL",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure auditing is enabled on Azure SQLs",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-								{
-									"label": "No",
-									"value": "No"
-								}
-                            ]
-                        },
-                        "visible": true
-                    },					
-					{
-                        "name": "esHttpsStorage",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure secure connections (HTTPS) to storage accounts",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure storage can only be accessed using HTTPS",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-								{
-									"label": "No",
-									"value": "No"
-								}
-                            ]
-                        },
-                        "visible": true
-                    },           
-					{
-                        "name": "esAuditAKVlz",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Audit key, certificate, and secret usage within each Key Vault.",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "Select 'Yes' to audit key, certificate, and secret usage within each Key Vault.",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-								{
-									"label": "No",
-									"value": "No"
-								}
-                            ]
-                        },
-                        "visible": true
-                    },
-					{
-                        "name": "esCISlz",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Enforce and audit CIS benchmark controls.",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "Select 'Yes' to enforce and audit CIS benchmark controls.",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policies will be assigned to ensure your endpoints can only be accessed using an encrypted communication channel (TLS, https, etc.)",
                         "constraints": {
                             "allowedValues": [
                                 {
