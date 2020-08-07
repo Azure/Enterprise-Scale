@@ -2,7 +2,7 @@
 
 > Support for Azure DevOps is currently in ***preview***
 
-Please complete the following steps from the [setup GitHub](setup-github.md) page before continuing:
+Please complete prerequisites documented at [Configure Azure permissions for ARM tenant deployments](setup-github.md) page before continuing:
 
 * Step 3 - create SPN with tenant root '/' owner rights
 * Step 5 - Add the GitHub repo as an upstream remote (so you can pull in changes)
@@ -11,7 +11,7 @@ Follow this guide, then resume the main documentation set at the heading on the 
 
 ## Implementation notes
 
-The Enterprise Scale *AzOps* (CI/CD) process was designed foremost to run on GitHub.
+The [AzOps](https://github.com/Azure/AzOps/) (CI/CD) process was designed foremost to run on GitHub.
 However, we recognise that many of our customers have invested in Azure DevOps and wish to continue to work with it.
 
 The Azure DevOps (ADO) implementation uses the same Docker image and appropriates it for use in ADO.
@@ -62,7 +62,7 @@ If the 'AzOps Pull' pipeline is triggered manually the pipeline will discover th
 
 The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
 
-* Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered and RESTful representation of the resources are  saved as ARM Template parameters file.
+* Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered and RESTful representation of the resources are saved as ARM template parameters file.
 * If changes are detected that is not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
 * Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`)
 
