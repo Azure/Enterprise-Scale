@@ -43,29 +43,7 @@ See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to
 
 ## Next steps
 
-[![Add Connectivity (H&S)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-hs-fta.json)  
-
-[![Add Connectivity (vWAN)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-vwan-fta.json)  
-
-[![Add Landing Zone](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-LZ-fta.json)  
-
-### From a platform perspective:
-
-If you later want to add connectivity to your Enterprise-Scale architecture to support workloads requiring hybrid connectivity, you can:
-
-1. Create a new child management group called 'Connectivity' in the Platform management group
-2. Move/create new subscription into the Connectivity management group
-3. Deploy your desired networking topology, being VWAN (Microsoft managed) or hub & spoke (customer managed)
-4. Create new management group (Corp) in the landing zone management group, to separate connected workloads from online workloads.
-
-Optionally, you can enable the above using the following ARM templates:
-
-| Connectivity setup | Description | ARM Template |
-|:-------------------------|:-------------|:-------------|
-| Virtual WAN | Deploys requisite infrastructure for on-premises connectivity with Virtual WAN  |<!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) |
-| Hub & Spoke | Deploys requisite infrastructure for on-premises connectivity with Hub & Spoke  |<!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) |
-
-### From an application perspective:
+### Manage your Landing Zones
 
 Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and start deploying your workload.
 
@@ -81,3 +59,41 @@ Once you have deployed the reference implementation, you can create new subscrip
 1. In Azure portal, navigate to Management Groups
 2. Locate the subscription you want to move, and move it to the landing zone (Online) management group
 3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
+
+#### Create an additional Landing Zone template / schema / archetype / type
+
+[![Add Landing Zone](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-LZ-fta.json) 
+
+#### Create an additional Landing Zone template / schema / archetype / type leveraging advanced Governance and Security Controls
+
+TBD.
+
+#### Import an Landing Zone template from the ES catalog
+
+TBD.
+
+### Extend your Platform
+
+#### Deploy a Perimeter Firewall in Azure
+
+TBD.
+
+#### Add support for a new Region
+
+TBD.
+
+#### Enable Hybrid Connectivity in our environment
+
+If you want to add connectivity to your Enterprise-Scale architecture to support workloads requiring hybrid connectivity, you can:
+
+1. Create a new child management group called 'Connectivity' in the Platform management group
+2. Move/create new subscription into the Connectivity management group
+3. Deploy your desired networking topology, being VWAN (Microsoft managed) or hub & spoke (customer managed)
+4. Create new management group (Corp) in the landing zone management group, to separate connected workloads from online workloads.
+
+Optionally, you can enable the above using the following ARM templates:
+
+| Connectivity setup | Description | ARM Template |
+|:-------------------------|:-------------|:-------------|
+| Virtual WAN | Deploys requisite infrastructure for on-premises connectivity with Virtual WAN  | [![Add Connectivity (vWAN)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-vwan-fta.json)   |
+| Hub & Spoke | Deploys requisite infrastructure for on-premises connectivity with Hub & Spoke  | [![Add Connectivity (H&S)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-hs-fta.json)  |
