@@ -1,0 +1,581 @@
+{
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "lzSettings",
+                "label": "Enterprise-Scale Company prefix",
+                "subLabel": {
+                    "preValidation": "Provide a company prefix for the management group structure that will be created.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Company prefix",
+                "elements": [
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "Enterprise-Scale deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
+                            "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin"
+                        }
+                    },
+                    {
+                        "name": "esMgmtGroup",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Management Group prefix",
+                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9A-Z-]{1,5}$",
+                            "validationMessage": "The prefix must be 1-5 characters."
+                        }
+                    }   
+                ]
+            },                  
+            {
+                "name": "lzGoalState",
+                "label": "New Landing Zone template definition",
+                "subLabel": {
+                    "preValidation": "TBD.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "lzGs",
+                "elements": [       
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "Define a new Landing Zone template including a set of policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
+                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
+                        }
+                    },
+					{
+                        "name": "esLzTypeName",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Landing zone definition name",
+                        "toolTip": "Provide a name (up to 10 characters) to assign to this Landing Zone definition.",
+                        "defaultValue": "Production",
+                        "constraints": {
+                            "required": false,
+                            "regex": "^[a-z0-9A-Z-]{10}$",
+                            "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, leave the parameter completely empty."
+                        }
+                    },
+                    {
+                        "name": "esLzNoPublicEndpoints",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Prevent my workloads from exposing Public Endpoints",
+                        "defaultValue": "No",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policy will be assigned to ensure no Public IPs can be provisioned and that all PaaS services use Private Endpoints",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },  
+                    {
+                        "name": "esLzLockDownPublicEndpoints",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Public Endpoints are Locked Down",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policy will be assigned to ensure access to your workloads Public Endpoints is locked down.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": "[equals(steps('lzGoalState').esLzNoPublicEndpoints, 'No')]"
+                    }, 
+                    {
+                        "name": "esLzLockDownVnet",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure my Virtual Networks are locked down",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policy will be assigned to ensure access Network Security Groups are assigned to your subnets and that IP Forwarding is not allowed.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },                      			
+					{
+                        "name": "esLzHttps",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure encryption of Data in Transit (HTTPS)",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, a set of Azure Policies will be assigned to ensure your endpoints can only be accessed using an encrypted communication channel (TLS, https, etc.)",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },                                                 
+                    {
+                        "name": "esLzAzBackup",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure backup is enabled for all VMs",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, an Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },                              
+                    {
+                        "name": "esLzLogAnalytics",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable central monitoring for all Workloads",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If you select 'Yes', monitoring logs from these Landing Zones' subscriptions and resources will be collected.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esLzSecurityLogs",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable collection of Security Logs",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "Select 'Yes' to collect access and audit logs from these Landing Zones' subscriptions and resources",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },
+					{
+                        "name": "esLzAsc",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable security monitoring using Azure Security Center",
+                        "defaultValue": "Yes, Free Tier",
+                        "toolTip": "Select 'Yes' and the preferred Tier (Standard or Free) to get Azure Security Center enabled automatically for all these Landing Zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes, Standard Tier (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "Yes, Free Tier",
+                                    "value": "Free"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    },
+					{
+                        "name": "esLzCIS",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enforce and audit Azure Security Benchmark controls.",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "Select 'Yes' to enforce and audit CIS benchmark controls in all these Landing Zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+								{
+									"label": "No",
+									"value": "No"
+								}
+                            ]
+                        },
+                        "visible": true
+                    }
+                ]
+            },                    
+            {
+                "name": "lzDeploy",
+                "label": "Provision a Landing Zone",
+                "subLabel": {
+                    "preValidation": "TBD.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "lzDeploy",
+                "elements": [       
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "You can optionally provide a subscriptionId and get a landing zone actually provisioned.",
+                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
+                        }
+                    },
+                    {
+                        "name": "lzDeploySkip",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Skip provisioning a Landing Zone",
+                        "defaultValue": "No",
+                        "toolTip": "If 'Yes' is selected a Landing Zone will not be configured.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+					{
+                        "name": "lzSub",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Landing zone subscription id",
+                        "toolTip": "Provide the subscription id of an existing, empty subscription that you want to use as landing zone for your workload deployments.",
+                        "defaultValue": "",
+                        "visible": "[equals(steps('lzDeploy').lzDeploySkip, 'No')]",
+                        "constraints": {
+                            "required": "[equals(steps('lzDeploy').lzDeploySkip, 'No')]",
+                            "regex": "^[a-z0-9A-Z-]{36}$",
+                            "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, leave the parameter completely empty."
+                        }
+                    },
+                    {
+                        "name": "lzVnet",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Provision a Virtual Network within your Landing Zone",
+                        "defaultValue": "Yes",
+                        "toolTip": "If 'Yes' is selected a Virtual Network will be provisioned and configured.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ],
+                            "required": "[equals(steps('lzDeploy').lzDeploySkip, 'No')]"
+                        },
+                        "visible": "[equals(steps('lzDeploy').lzDeploySkip, 'No')]"
+                    },
+                    {
+                        "name": "lzVnetAddress",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Landing Zone Network's Address space",
+                        "toolTip": "Provide address prefix in CIDR notation (e.g 192.168.1.0/22)",
+                        "defaultValue": "192.168.0.0/16",
+                        "visible": "[equals(steps('lzDeploy').lzVnet, 'Yes')]",
+                        "constraints": {
+                            "required": "[equals(steps('lzDeploy').lzVnet, 'Yes')]",
+                            "validationMessage": "The Landing Zone network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                        }
+                    },                  
+                    {
+                        "name": "lzVnetRegion",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Landing Zone Network's Location",
+                        "defaultValue": "",
+                        "visible": "[equals(steps('lzDeploy').lzVnet, 'Yes')]",
+                        "toolTip": "Select the target region for this Landing Zone",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "East Asia",
+                                    "value": "eastasia"
+                                },
+                                {
+                                    "label": "Southeast Asia",
+                                    "value": "southeastasia"
+                                },
+                                {
+                                    "label": "Central US",
+                                    "value": "centralus"
+                                },
+                                {
+                                    "label": "East US",
+                                    "value": "eastus"
+                                },
+                                {
+                                    "label": "East US 2",
+                                    "value": "eastus2"
+                                },
+                                {
+                                    "label": "West US",
+                                    "value": "westus"
+                                },
+                                {
+                                    "label": "North Central US",
+                                    "value": "northcentralus"
+                                },
+                                {
+                                    "label": "South Central US",
+                                    "value": "southcentralus"
+                                },
+                                {
+                                    "label": "North Europe",
+                                    "value": "northeurope"
+                                },
+                                {
+                                    "label": "West Europe",
+                                    "value": "westeurope"
+                                },
+                                {
+                                    "label": "Japan West",
+                                    "value": "japanwest"
+                                },
+                                {
+                                    "label": "Japan East",
+                                    "value": "japaneast"
+                                },
+                                {
+                                    "label": "Brazil South",
+                                    "value": "brazilsouth"
+                                },
+                                {
+                                    "label": "Australia East",
+                                    "value": "australiaeast"
+                                },
+                                {
+                                    "label": "Australia Southeast",
+                                    "value": "australiasoutheast"
+                                },
+                                {
+                                    "label": "South India",
+                                    "value": "southindia"
+                                },
+                                {
+                                    "label": "Central India",
+                                    "value": "centralindia"
+                                },
+                                {
+                                    "label": "Canada East",
+                                    "value": "canadaeast"
+                                },
+                                {
+                                    "label": "UK South",
+                                    "value": "uksouth"
+                                },
+                                {
+                                    "label": "UK West",
+                                    "value": "ukwest"
+                                },
+                                {
+                                    "label": "West Central US",
+                                    "value": "westcentralus"
+                                },
+                                {
+                                    "label": "West US 2",
+                                    "value": "westus2"
+                                },
+                                {
+                                    "label": "Korea Central",
+                                    "value": "koreacentral"
+                                },
+                                {
+                                    "label": "Korea South",
+                                    "value": "koreasouth"
+                                },
+                                {
+                                    "label": "France Central",
+                                    "value": "francecentral"
+                                },
+                                {
+                                    "label": "France South",
+                                    "value": "francesouth"
+                                },
+                                {
+                                    "label": "Australia Central",
+                                    "value": "australiacentral"
+                                },
+                                {
+                                    "label": "UAE Central",
+                                    "value": "uaecentral"
+                                },
+                                {
+                                    "label": "UAE North",
+                                    "value": "uaenorth"
+                                },
+                                {
+                                    "label": "South Africa North",
+                                    "value": "southafricanorth"
+                                },
+                                {
+                                    "label": "South Africa West",
+                                    "value": "southafricawest"
+                                },
+                                {
+                                    "label": "Switzerland North",
+                                    "value": "switzerlandnorth"
+                                },
+                                {
+                                    "label": "Switzerland West",
+                                    "value": "switzerlandwest"
+                                },
+                                {
+                                    "label": "Germany North",
+                                    "value": "germanynorth"
+                                },
+                                {
+                                    "label": "Germany West Central",
+                                    "value": "germanywestcentral"
+                                },
+                                {
+                                    "label": "Norway West",
+                                    "value": "norwaywest"
+                                },
+                                {
+                                    "label": "Norway East",
+                                    "value": "norwayeast"
+                                }
+                            ],
+                            "required": "[equals(steps('lzDeploy').lzVnet, 'Yes')]"
+                        }
+                    },
+                    {
+                        "name": "lzWAF",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy a Web Application Firewall",
+                        "defaultValue": "No",
+                        "visible": "[equals(steps('lzDeploy').lzVnet, 'Yes')]",
+                        "toolTip": "If 'Yes' is selected, a Web Application Firewall will be deployed to the Landing Zone",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ],
+                            "required": "[equals(steps('lzDeploy').lzVnet, 'Yes')]"
+                        }
+                    },
+                    {
+                        "name": "lzWAFSubnetAddress",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Web Application Firewall Subnet's Address space",
+                        "toolTip": "Provide address prefix in CIDR notation (e.g 192.168.1.0/22)",
+                        "defaultValue": "192.168.0.0/16",
+                        "visible": "[equals(steps('lzDeploy').lzWAF, 'Yes')]",
+                        "constraints": {
+                            "required": "[equals(steps('lzDeploy').lzWAF, 'Yes')]",
+                            "validationMessage": "The Web Application Firewall Subnet's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                        }
+                    },
+                    {
+                        "name": "lzWAFType",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Web Application Firewall Front-end Type",
+                        "toolTip": "Specify 'External' if the WAF is expected to provide access to Public Facing Applications",
+                        "defaultValue": "External",
+                        "visible": "[equals(steps('lzDeploy').lzWAF, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Internal",
+                                    "value": "Internal"
+                                },
+                                {
+                                    "label": "External",
+                                    "value": "External"
+                                }
+                            ],
+                            "required": "[equals(steps('lzDeploy').lzWAF, 'Yes')]"
+                        }
+                    }
+                ]
+            }		            			
+        ],
+        "outputs": {
+            "setup": "[steps('esSetup').setup]",
+            "managementSubscriptionId": "[steps('esGoalState').esMgmtSub]",
+            "lzSubscriptionId": "[steps('lzGoalState').esLzSub]",
+            "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
+            "enableAsc": "[steps('esGoalState').esAsc]",
+            "enablePrivateEndpoint": "[steps('esGoalState').esPrivateEndpoint]",
+            "enableAzBackup": "[steps('esGoalState').esAzBackup]",
+            "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]",
+            "enableSqlAudit":"[steps('lzGoalState').esSqlAudit]",
+            "enableSqlEncryption": "[steps('lzGoalState').esSqlEncryption]",
+            "enableVmBackup": "[steps('lzGoalState').esAzBackup]",
+            "denyRdp": "[steps('lzGoalState').esDenyRdp]",
+            "enableStorageHttps": "[steps('lzGoalState').esHttpsStorage]",
+            "denyIpForwarding": "[steps('lzGoalState').esIpForwarding]",
+            "denySubnetWithoutNsg": "[steps('lzGoalState').esNsg]"
+
+        }
+    }
+}
