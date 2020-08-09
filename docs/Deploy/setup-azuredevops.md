@@ -9,11 +9,7 @@ Please complete the following steps at [Configure Azure permissions for ARM tena
 
 ## Implementation notes
 
-The [AzOps](https://github.com/Azure/AzOps/) (CI/CD) process was initially designed to run on GitHub. However, we recognise that many of our customers have invested in Azure DevOps and wish to continue to work with it.
-
-The Azure DevOps (ADO) implementation uses the same Docker image and appropriates it for use in ADO.
-
-This is achieved by passing in the correct environment variables for the process to work.
+The [AzOps](https://github.com/Azure/AzOps/) (CI/CD) process was initially designed to run on GitHub. However, we recognise that many of our customers have invested in Azure DevOps and wish to continue to work with it. The Azure DevOps (ADO) implementation uses the same Docker image and appropriates it for use in ADO. This is achieved by passing in the correct environment variables for the process to work.
 
 ## Supported scenarios
 
