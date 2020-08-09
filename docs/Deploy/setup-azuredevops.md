@@ -29,7 +29,7 @@ https://docs.microsoft.com/en-us/azure/devops/repos/git/import-git-repository
 
 ### Configure the pipelines
 
-Add two new pipelines, selecting the existing files _.azure-pipelines/azops-pull.yml_ & _.azure-pipelines/azops-push.yml_
+Add two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`
 
 Add a new variable to the pipelines:
 
