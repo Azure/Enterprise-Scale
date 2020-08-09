@@ -1,4 +1,4 @@
-# Azure DevOps Configuration
+# Azure DevOps - Setup Guide
 
 > Support for Azure DevOps is currently in ***preview***
 
@@ -31,7 +31,7 @@ https://docs.microsoft.com/en-us/azure/devops/repos/git/import-git-repository
 
 Add two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`.
 
-We recommend naming these pipelines `AzOps - Pull` and `AzOps - Push`.
+We recommend naming these pipelines `AzOps - Pull` & `AzOps - Push`.
 
 Add a new secret variable to each of the pipelines:
 
