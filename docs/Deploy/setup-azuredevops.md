@@ -13,7 +13,9 @@ The [AzOps](https://github.com/Azure/AzOps/) (CI/CD) process was initially desig
 
 ## Supported scenarios
 
-We currently support all AzOps scenarios, **except for pull request review**. This is in development and is estimated to be ready by 24 August 2020.
+We currently support all AzOps scenarios, **except for pull request review**. 
+
+> This is in development and is estimated to be ready by 24 August 2020.
 
 ## How to implement
 
