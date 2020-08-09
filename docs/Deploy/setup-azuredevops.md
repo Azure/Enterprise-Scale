@@ -29,11 +29,15 @@ https://docs.microsoft.com/en-us/azure/devops/repos/git/import-git-repository
 
 ### Configure the pipelines
 
-Add two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`
+Add two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`.
 
-Add a new variable to the pipelines:
+We recommend naming these pipelines `AzOps - Pull` and `AzOps - Push`.
 
-* AZURE_CREDENTIALS **(secret)** - Set this to the JSON string created by the steps in the [Configure Azure permissions for ARM tenant deployments & setup GitHub](setup-github.md) page
+Add a new secret variable to each of the pipelines:
+
+* AZURE_CREDENTIALS
+
+Set the value to the JSON string created by the steps in the [Configure Azure permissions for ARM tenant deployments & setup GitHub](setup-github.md) page.
 
  > Important: The JSON must have the double quotes escaped with a backslash, e.g. `"` becomes `\"`
 
@@ -41,26 +45,24 @@ Add a new variable to the pipelines:
 
 The build service account `<Project> Build Service (<Organization>)` must have the following permissions on the repository:
 
-* Contribute
-* Contribute to pull requests
-* Create branch
-* Force push
+* `<Project>\Contributors`
 
 ### Configure branch protection
 
-In order for the pull request pipeline to run, set the main branch to require build verification from the AzOps pipeline.
-We suggest that the build verification is set top optional at this time, as the pipeline performs a commit, which will invalidate the build verification if it is set to required.
+In order for the pull pipeline to run, set the `main` branch to require build verification.
+
+https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies
 
 We also recommend you allow only `squash` merge types from branches into `main`.
 
 ### Discover Environment
 
-If the 'AzOps Pull' pipeline is triggered manually the pipeline will discover the Azure environment.
+If the 'AzOps - Pull' pipeline is triggered manually the pipeline will discover the Azure environment.
 
-The following steps will be executed automatically to ensure that the current Azure environment is represented in your GitHub repository:
+The following steps will be executed automatically to ensure that the current Azure environment is represented in your Azure DevOps repository:
 
 * Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered and RESTful representation of the resources are saved as ARM template parameters file.
 * If changes are detected that is not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
-* Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`)
+* Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`) and auto-merge into `main`.
 
 Please now continue on the [Discover Environment](discover-environemnt.md#verify-pr-and-merge-with-main-branch) page, at the *"Verify PR and merge with `main` branch"* heading.
