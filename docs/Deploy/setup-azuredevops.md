@@ -25,7 +25,7 @@ We currently support all AzOps scenarios, **except for pull request review**. Th
 
 In your Azure DevOps project, import the [Enterprise-Scale](https://github.com/Azure/Enterprise-Scale) repository from GitHub.
 
-![Azure Repos](./media/import-repo.md)
+![Azure Repos](./media/import-repo.png)
 
 ### Configure the pipelines
 
