@@ -45,7 +45,7 @@ The build service account `<Project> Build Service (<Organization>)` must have t
 
 * `<Project>\Contributors`
 
-### Configure branch protection
+### Configure branch policies
 
 In order for the pull pipeline to run, set the `main` branch to require build verification.
 
