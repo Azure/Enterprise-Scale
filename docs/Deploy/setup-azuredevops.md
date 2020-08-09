@@ -23,13 +23,13 @@ We currently support all AzOps scenarios, **except for pull request review**. Th
 
 ### Import the repository
 
-In your Azure DevOps project, import the [Enterprise-Scale](https://github.com/Azure/Enterprise-Scale) repository from GitHub.
+Within the Azure DevOps project, import the [Enterprise-Scale](https://github.com/Azure/Enterprise-Scale) repository from GitHub.
 
-![Azure Repos](./media/import-repo.png)
+https://docs.microsoft.com/en-us/azure/devops/repos/git/import-git-repository
 
 ### Configure the pipelines
 
-Add two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`.
+Add two new pipelines, selecting the existing files _.azure-pipelines/azops-pull.yml_ & _.azure-pipelines/azops-push.yml_
 
 Add a new variable to the pipelines:
 
