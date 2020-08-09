@@ -1,7 +1,3 @@
-| Enterprise-Scale |
-|:--------------|
-|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fes-vwan.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fportal-es-vwan.json) |
-
 # Enterprise-Scale - Reference Implementation
 
 ## Navigation Menu
@@ -17,7 +13,7 @@
   * [Configure Azure permissions for ARM tenant deployments & setup GitHub](./docs/Deploy/setup-github.md)
   * [Initialize Git with current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy your own ARM templates with AzOps GitHub Actions](./docs/Deploy/deploy-new-arm.md)
-  * [PREVIEW - Configure Azure DevOps support](./docs/Deploy/setup-azuredevops.md)
+  * [[Preview] Configure Azure DevOps support](./docs/Deploy/setup-azuredevops.md)
 * [Enterprise-Scale "in-a-box" tutorial](./docs/enterprise-scale-iab/README.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
@@ -25,6 +21,12 @@
 * [Roadmap](./docs/EnterpriseScale-roadmap.md)
 
 ---
+
+## Quickstart
+
+| Enterprise-Scale |
+|:--------------|
+|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fes-vwan.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fportal-es-vwan.json) |
 
 ## Objective
 
