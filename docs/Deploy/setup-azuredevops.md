@@ -35,7 +35,7 @@ Add a new secret variable to each of the pipelines:
 
 * AZURE_CREDENTIALS
 
-Set the value to the JSON string created by the steps in the [Configure Azure permissions for ARM tenant deployments & setup GitHub](setup-github.md) page.
+Set the value to the JSON string created by the steps in the [GitHub - Setup Guide](setup-github.md).
 
  > Important: The JSON must have the double quotes escaped with a backslash, e.g. `"` becomes `\"`
 
