@@ -18,7 +18,7 @@
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
-* [Roadmap](./docs/EnterpriseScale-roadmap.md)
+* [Roadmap](./docs/EnterpriseScale-Roadmap.md)
 
 ---
 
