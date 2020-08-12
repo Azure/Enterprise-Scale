@@ -1,0 +1,218 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Type": "/subscriptions",
+        "Id": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d",
+        "Name": "b160d207-8416-419f-afba-2e33bc0c936d",
+        "DisplayName": "Management",
+        "Children": null,
+        "properties": {
+          "policyDefinitions": [
+            {
+              "Name": "arm-vmNamingConvention",
+              "ResourceId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyDefinitions/arm-vmNamingConvention",
+              "ResourceName": "arm-vmNamingConvention",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "b160d207-8416-419f-afba-2e33bc0c936d",
+              "PolicyDefinitionId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyDefinitions/arm-vmNamingConvention",
+              "Properties": {
+                "Description": "Naming convention policy for VMs",
+                "DisplayName": "arm-vmNamingConvention",
+                "Mode": "All",
+                "Parameters": null,
+                "PolicyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                      },
+                      {
+                        "not": {
+                          "field": "name",
+                          "like": "[concat(last(split(resourceGroup().name, '-')),'*')]"
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "deny"
+                  }
+                }
+              }
+            },
+            {
+              "Name": "DINE-AzMon-NSG",
+              "ResourceId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyDefinitions/DINE-AzMon-NSG",
+              "ResourceName": "DINE-AzMon-NSG",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "b160d207-8416-419f-afba-2e33bc0c936d",
+              "PolicyDefinitionId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyDefinitions/DINE-AzMon-NSG",
+              "Properties": {
+                "Description": "Policy to enforce AzMon on NSGs",
+                "DisplayName": "DINE-AzMon-NSG",
+                "Mode": "Indexed",
+                "Parameters": {
+                  "logAnalyticsWorkspace": {
+                    "type": "String",
+                    "metadata": {
+                      "displayName": "Log Analytics workspace resourceId",
+                      "description": "Select the Log Analyitcs workspace from dropdown list",
+                      "strongType": "omsWorkspace"
+                    }
+                  }
+                },
+                "PolicyRule": {
+                  "if": {
+                    "field": "type",
+                    "equals": "Microsoft.Network/networkSecurityGroups"
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.Insights/diagnosticSettings",
+                      "existenceCondition": {
+                        "allOf": [
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                            "equals": "true"
+                          },
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+                            "equals": "[parameters('logAnalyticsWorkspace')]"
+                          }
+                        ]
+                      },
+                      "deployment": {
+                        "properties": {
+                          "parameters": {
+                            "logAnalyticsWorkspace": {
+                              "value": "[parameters('logAnalyticsWorkspace')]"
+                            },
+                            "location": {
+                              "value": "[field('location')]"
+                            },
+                            "nsgName": {
+                              "value": "[field('name')]"
+                            }
+                          },
+                          "mode": "incremental",
+                          "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                              "nsgName": {
+                                "type": "string"
+                              },
+                              "logAnalyticsEurope": {
+                                "type": "string"
+                              },
+                              "logAnalyticsAmerica": {
+                                "type": "string"
+                              },
+                              "location": {
+                                "type": "string"
+                              }
+                            },
+                            "variables": {},
+                            "resources": [
+                              {
+                                "type": "Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings",
+                                "apiVersion": "2017-05-01-preview",
+                                "name": "[field('name')]/Microsoft.Insights/setByPolicy",
+                                "location": "[field('location')]",
+                                "dependsOn": [],
+                                "properties": {
+                                  "workspaceId": "[parameters('logAnalyticsWorkspace')]",
+                                  "logs": [
+                                    {
+                                      "category": "NetworkSecurityGroupEvent",
+                                      "enabled": true
+                                    },
+                                    {
+                                      "category": "NetworkSecurityGroupRuleCounter",
+                                      "enabled": true
+                                    }
+                                  ]
+                                }
+                              }
+                            ],
+                            "outputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "Name": "rgNamingConvention",
+              "ResourceId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyDefinitions/rgNamingConvention",
+              "ResourceName": "rgNamingConvention",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "b160d207-8416-419f-afba-2e33bc0c936d",
+              "PolicyDefinitionId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyDefinitions/rgNamingConvention",
+              "Properties": {
+                "Description": "Naming convention policy for RGs",
+                "DisplayName": "arm-rgNamingConvention",
+                "Mode": "Indexed",
+                "Parameters": null,
+                "PolicyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                      },
+                      {
+                        "not": {
+                          "field": "name",
+                          "like": "arm-we-prod1-fooapp-*"
+                        }
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "deny"
+                  }
+                }
+              }
+            }
+          ],
+          "policySetDefinitions": [],
+          "policyAssignments": [
+            {
+              "Identity": null,
+              "Location": null,
+              "Name": "DataProtectionSecurityCenter",
+              "PolicyAssignmentId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyAssignments/DataProtectionSecurityCenter",
+              "Properties": {
+                "Description": "This policy assignment was automatically created by Azure Security Center",
+                "DisplayName": "ASC DataProtection (subscription: b160d207-8416-419f-afba-2e33bc0c936d)",
+                "NotScopes": null,
+                "Parameters": null,
+                "PolicyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97",
+                "Scope": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d"
+              },
+              "ResourceGroupName": null,
+              "ResourceId": "/subscriptions/b160d207-8416-419f-afba-2e33bc0c936d/providers/Microsoft.Authorization/policyAssignments/DataProtectionSecurityCenter",
+              "ResourceName": "DataProtectionSecurityCenter",
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "Sku": {
+                "name": "A1",
+                "tier": "Standard"
+              },
+              "SubscriptionId": "b160d207-8416-419f-afba-2e33bc0c936d"
+            }
+          ],
+          "roleDefinitions": null,
+          "roleAssignments": null
+        }
+      }
+    }
+  }
+}
