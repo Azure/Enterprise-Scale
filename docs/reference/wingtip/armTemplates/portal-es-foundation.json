@@ -79,16 +79,27 @@
                         "visible": true
                     },
                     {
+                        "name": "mgmtSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
+                    },
+                    {
                         "name": "esMgmtSub",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Management subscription id",
-                        "toolTip": "Deployment of Log Analytics and platform monitoring requires you to provide the subscriptionId of an existing, empty subscription that you want to dedicate for management, which will be moved into the management group for platform management.",
-                        "defaultValue": "",
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Management subscription (required)",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]",
                         "constraints": {
-                            "required": true,
-                            "regex": "^[a-z0-9A-Z-]{36}$",
-                            "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, select 'No' on 'Deploy Log Analytics workspace'."
+                            "allowedValues": "[map(steps('esGoalState').mgmtSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": true
                         }
                     },					
                     {
@@ -137,15 +148,27 @@
                         }
                     },
                     {
+                        "name": "lzSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
+                    },
+                    {
                         "name": "esLzSub",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Landing zone subscription id (optional)",
-                        "toolTip": "Provide the subscription id of an existing, empty subscription that you want to use as landing zone for your workload deployments.",
-                        "defaultValue": "",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Landing zone subscription (optional)",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
                         "constraints": {
-                            "required": false,
-                            "regex": "^[a-z0-9A-Z-]{36}$",
-                            "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, leave the parameter completely empty."
+                            "allowedValues": "[map(steps('lzGoalState').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": false
                         }
                     },
                     {
