@@ -10,7 +10,7 @@ Before deploying this Enterprise-Scale "in-a-box" reference implementation, take
 >Important:
 >Before proceeding to the steps below, make sure that you have all the [prerequisites installed and configured](../Deploy/getting-started.md).
 
-This tutorial contains the following four sections which should be execute it in the given order below:
+This tutorial contains the following four sections which should be executed in the given order below:
 
 * [Deploy your tenant](./deploy-tenant.md)
 * [Setup GitHub CI/CD pipeline](./setup-git-cicd.md)
