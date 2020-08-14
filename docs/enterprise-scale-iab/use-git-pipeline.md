@@ -12,13 +12,13 @@ In subsequent exercises, we will continue to construct an Enterprise-Scale refer
 
 Use GitHub Actions to deploy policy assignments:
 
-* 1 (Optional) Creates management resources.
+* (Optional) Creates management resources.
   
-* 2 (Optional) Collect Azure Activity Logs in to Log Analytics.
+* (Optional) Collect Azure Activity Logs in to Log Analytics.
 
-* 3 (Optional) Enable Diagnostic Policy to enable monitoring.
+* (Optional) Enable Diagnostic Policy to enable monitoring.
 
-* 4 Author policy assignment ARM template to declare goal state of **connectivity** subscription (please note that the resources deployed on this step will cause additional cost on your subscription).
+* Author policy assignment ARM template to declare goal state of **connectivity** subscription (please note that the resources deployed on this step will cause additional cost on your subscription).
 
     a. Create vWAN
 

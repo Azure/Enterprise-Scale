@@ -90,20 +90,14 @@ The Discovery/Initialization process will run entirely on GitHub. Follow these s
 
     - Current Management Group, Subscriptions, Policy Definitions and Policy Assignments are discovered, and RESTful representation of the resources are saved as ARM Template parameters file.
 
-    - It will create **system** branch representing your current configuration as ARM template parameter file.
+    - It will create **system** branch representing your current configuration as ARM template parameter file and merge it automatically into **main**.
 
-    - Create a Pull Request (PR) with the name Azure Change Notification **(system->main)**
+> Note: When AzOps cannot perform the merge automatically it will create a _Azure Change Notification_ PR in your GitHub repository. This has then be resolved manually.
 
-13. Select the **Pull Request** tab in your GitHub repository and if everything looks good, go ahead and merge **system** branch to the **main** branch. Once successfully merged, delete the **system** branch.
-
-    ![_Figure_](./media/wt-2.1-6.png)
-
-    With this step you have completed the discovery and your **main** branch should contain an **azops** folder with a RESTful representation of the resources as ARM Template parameters file.
-
+With this step you have completed the discovery and your **main** branch should contain an **azops** folder with a RESTful ARM API representation of the resources as ARM Template parameters file.
     ![_Figure_](./media/wt-2.1-7.png)
 
-14. **Pull** the changes in the main branch to your local clone by launching the command palette **(CTRL + SHIFT + P)** in **Visual Studio Code** and type `Git: Pull` then press **Enter**. Alternatively, you can select the main branch at the bottom-left section in Visual Studio Code and then click on the Sync icon as depicted in the picture below.
-
+13. **Pull** the changes in the main branch to your local clone by launching the command palette **(CTRL + SHIFT + P)** in **Visual Studio Code** and type `Git: Pull` then press **Enter**. Alternatively, you can select the main branch at the bottom-left section in Visual Studio Code and then click on the Sync icon as depicted in the picture below.
     ![_Figure_](./media/wt-2.1-8.png)
 
 ## Configure default deployment regions
