@@ -64,7 +64,7 @@ Click now on **Next: Next: Landing zone configuration** to move to the next sect
 9. After the template has passed the validation click **Create**. This will deploy the initial Management Group structure together with the required Policy/PolicySet definitions. It will also move the subscription under the right Management Group and will also deploy a Log Analytics Workspace and enable platform monitoring. This process will take several minutes to complete.
 
     > Note: If you've done previous Enterprise-Scale in-a-box deployments on this AAD tenant, you may get an "Deployment already exists" error. If you get this error, refer to the Deployment region section under Troubleshooting.  
-    > There is a known issue, and in very few instances this process may fail when deploying PolicySet definitions. If you experience this problem, simply re-deploy the Template with the exact same parameters as you selected in your original deployment. You must select same region where you create first deployment.
+    > In very few instances this process may fail when deploying PolicySet definitions. If you experience this problem, simply re-deploy the template with the exact same parameters as you selected in your original deployment.
 
     ![_Figure_](./media/wt-1.2-7.png)
 
