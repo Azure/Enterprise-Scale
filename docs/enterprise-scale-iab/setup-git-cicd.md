@@ -6,11 +6,11 @@ In this exercise you will learn how to fully use the Enterprise-Scale GitHub rep
 
 > Note: Enterprise-Scale AzOps is also supported on Azure DevOps, the instructions to setup AzOps using Azure DevOps are [here](../deploy/setup-azuredevops.md).
 
-To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) and an Azure subscription which has been moved under it. We will now be leveraging your GitHub repository to discover the contents of your tenant, and save your Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure environment.
+To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) and an Azure subscription which has been moved under it. We will now be a GitHub repository in your organization to discover the tenant, and save a RESTfull representation of the Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure environment.
 
 ## Configure GitHub
 
-In this section we will create and configure a GitHub repository and run a discovery process of your Azure environment to initialize the repository with the current state of your environment. Once the state is represented in the GitHub repository, we will be able to deploy resources by using infrastructure-as-code directly via GitHub Actions. Discovery is a one-time process to ensure the current baseline is established.
+In this section we will create and configure a GitHub repository and run a discovery process of your Azure environment to initialize the repository with the current state of your environment. Once the state is represented in repository, we will be able to deploy resources by using infrastructure-as-code directly via GitHub Actions. Discovery is a one-time process to ensure the current baseline is established.
 
 ### Create a GitHub repository from Enterprise-Scale repo
 
@@ -45,6 +45,8 @@ To create a GitHub repository from the Enterprise-Scale repo as a template, exec
     Visual Studio Code will open the local copy of the repo. You should see a series of folders and files on the left section. Ensure that you have checkout your main branch:
 
     ![_Figure_](./media/wt-1.1-7.png)
+
+### Initialize repository
 
 The Discovery/Initialization process will run entirely on GitHub. This guide uses Visual Studio Code to illustrate the process, but any other editor or GitHub online editing experience can be used. Follow these steps below to initialize:
 

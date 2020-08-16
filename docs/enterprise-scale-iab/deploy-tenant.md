@@ -8,9 +8,9 @@ Once you have completed the first step (deploy your tenant), the second step [Se
 
 ## Deploy your Tenant
 
-This section is used to setup the exact environment you see in the [reference implementation](../reference/contoso/Readme.md) for the Enterprise-Scale approach, including the Management Group schema in [**deploy new policy assignments**](../Deploy/deploy-new-policy-assignment.md#deployment-artifact-overview) and the policy definitions and assignments listed [here](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
+This section is used to setup the exact environment you see in the [reference implementation](../reference/contoso/Readme.md) for the Enterprise-Scale approach, including the Management Group schema in [deploy new policy assignments](../Deploy/deploy-new-policy-assignment.md#deployment-artifact-overview) and the policy definitions and assignments listed [here](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
 
-Execute the following steps of the following sections to deploy this environment in your Azure Subscription.
+Execute the following steps to deploy this environment in your Azure Tenant/Subscription.
 
 ### Deploy the Management Group structure and policy/PolicySet definitions
 
@@ -52,16 +52,16 @@ ARM template.
 
 >Note: If Deploy Log Analytics are not selected (option:   **No**), then the template deployment will not assign the policies to create the Log Analytics workspace and to enable auditing on the environment. Hence, you will need to perform the following steps described on this guide: [Assign the Log Analytics policy](./use-git-pipeline.md#optional-assign-the-log-analytics-policy) and [Assign the diagnostics policy using GitHub actions](./use-git-pipeline.md#optional-Assign-the-diagnostics-policy-using-github-actions).
 
-7. On the **Connectivity (Virtual WAN)** continue with the default setting **Deploy Virtual VWAN** = **No**.
+7. On the **Connectivity (Virtual WAN)** continue with the default setting **Deploy Virtual VWAN** = **No**. The connectivity policies will be assigned later in this tutorial using the AzOps CI/CD pipeline.
 Click now on **Next: Next: Landing zone configuration** to move to the next section.
 
-8. As part of this tutorial we don't deploy any landing zone. In the **Landing zone configuration** section your tenant will be enabled to host Landing Zones which land on your Enterprise-Scale platform. Configure the section as illustrated in the following screenshot and leave the Landing zone subscription empty:
+8. As part of this tutorial we don't deploy any landing zone. In the **Landing zone configuration** section, your tenant will be enabled to host workload Landing Zones. Configure the section as illustrated in the following screenshot this will deploy the chosen policy assignment at the Landing Zone scope and leave the Landing zone subscription empty:
 
     ![_Figure_](./media/deploy-landingzone-policies.png)
 
     Click now on **Next : Review + create** to move to the next section.
 
-9.  After the template has passed the validation click **Create**. This will deploy the initial Management Group structure together with the required Policy/PolicySet definitions. It will also move the subscription under the right Management Group and will also deploy a Log Analytics Workspace and enable platform monitoring. This process will take several minutes to complete.
+9. After the template has passed the validation click **Create**. This will deploy the initial Management Group structure together with the required Policy/PolicySet definitions. It will also move the subscription under the right Management Group and will also deploy a Log Analytics Workspace and enable platform monitoring. This process will take several minutes to complete.
 
     > Note: If you've done previous Enterprise-Scale in-a-box deployments on this AAD tenant, you may get an "Deployment already exists" error. If you get this error, refer to the Deployment region section under Troubleshooting.  
     > There is a known issue, and in very few instances this process may fail when deploying PolicySet definitions. If you experience this problem, simply re-deploy the Template with the exact same parameters as you selected in your original deployment. You must select same region where you create first deployment.
@@ -69,7 +69,6 @@ Click now on **Next: Next: Landing zone configuration** to move to the next sect
     ![_Figure_](./media/wt-1.2-7.png)
 
 10. Once the deployment completes successfully, in the Azure Portal type **Management Groups** into the search box and open the **Management Groups** blade and click on the **ES** Management Group. You should see the following Management Group in your environment:
-
     ![_Figure_](./media/wt-1.2-8.png)
 
     > **NOTE:**
@@ -77,13 +76,12 @@ Click now on **Next: Next: Landing zone configuration** to move to the next sect
 
 11. In the **ES** Management Group click on **details** and then **Policies** and select the **Definitions** blade.
 
-12.  In the **Policy | Definitions** blade, under **Type**, select **Custom**. If the deployment was successful, you will see a list of Initiative and policy definitions as shown below.
-
-    ![_Figure_](./media/wt-1.2-9.png)
+12. In the **Policy | Definitions** blade, under **Type**, select **Custom**. If the deployment was successful, you will see a list of Initiative and policy definitions as shown below.
+    ![Deployed-policies](./media/deployed-policies.png)
 
 ## (Optional) Move a subscription to ES-management Management Group
 
-Only execute this section if you did not provide your Azure subscription ID in section [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) section.
+Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
 
 In this section, we will move your Azure subscription under the **ES-management** Management Group you created with the template deployment. For simplicity, we will use the portal in this exercise.
 
