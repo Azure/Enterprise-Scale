@@ -1,0 +1,123 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 5
+        },
+        "managementSubscriptionId": {
+            "type": "string",
+            "maxLength": 36
+        },
+        "enableLogAnalytics": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
+        }
+    },
+    "variables": {
+        "workspaceName": "[concat(parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId'))]",
+        "workspaceRegion": "[deployment().location]",
+        "automationAccountName": "[concat(parameters('topLevelManagementGroupPrefix'), '-a-', parameters('managementSubscriptionId'))]",
+        "automationRegion": "[deployment().location]",
+        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-mgmt')]",
+        "resourceDeploymentName": "[take(concat('EntScale-mgmt', deployment().name), 64)]"
+    },
+    "resources": [
+        {
+            "condition": "[equals(parameters('enableLogAnalytics'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-10",
+            "name": "[variables('resourceDeploymentName')]",
+            "location": "eastus",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2019-10-01",
+                            "name": "[variables('rgName')]",
+                            "location": "[deployment().location]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
+                            "resourceGroup": "[variables('rgName')]",
+                            "name": "log-analytics",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "variables": {},
+                                    "resources": [
+                                        {
+                                            "apiversion": "2015-10-31",
+                                            "location": "[variables('automationRegion')]",
+                                            "name": "[variables('automationAccountName')]",
+                                            "type": "Microsoft.Automation/automationAccounts",
+                                            "comments": "Automation account for ",
+                                            "properties": {
+                                                "sku": {
+                                                    "name": "OMS"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "apiVersion": "2017-03-15-preview",
+                                            "location": "[variables('workspaceRegion')]",
+                                            "name": "[variables('workspaceName')]",
+                                            "type": "Microsoft.OperationalInsights/workspaces",
+                                            "properties": {
+                                                "sku": {
+                                                    "name": "pernode"
+                                                },
+                                                "enableLogAccessUsingOnlyResourcePermissions": true
+                                            },
+                                            "resources": [
+                                                {
+                                                    "name": "Automation",
+                                                    "type": "linkedServices",
+                                                    "apiVersion": "2015-11-01-preview",
+                                                    "dependsOn": [
+                                                        "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('workspaceName'))]",
+                                                        "[resourceId('Microsoft.Automation/automationAccounts/', variables('AutomationAccountName'))]"
+                                                    ],
+                                                    "properties": {
+                                                        "resourceId": "[concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Automation/automationAccounts/', variables('AutomationAccountName'))]"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "outputs": {}
+                                }
+                            }
+                        }
+                    ],
+                    "outputs": {}
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
