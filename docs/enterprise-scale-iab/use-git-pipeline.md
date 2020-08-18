@@ -12,13 +12,13 @@ In subsequent exercises, we will continue to construct an Enterprise-Scale refer
 
 Use GitHub Actions to deploy policy assignments:
 
-* 1 (Optional) Creates management resources.
+* (Optional) Creates management resources.
   
-* 2 (Optional) Collect Azure Activity Logs in to Log Analytics.
+* (Optional) Collect Azure Activity Logs in to Log Analytics.
 
-* 3 (Optional) Enable Diagnostic Policy to enable monitoring.
+* (Optional) Enable Diagnostic Policy to enable monitoring.
 
-* 4 Author policy assignment ARM template to declare goal state of **connectivity** subscription (please note that the resources deployed on this step will cause additional cost on your subscription).
+* Author policy assignment ARM template to declare goal state of **connectivity** subscription (please note that the resources deployed on this step will cause additional cost on your subscription).
 
     a. Create vWAN
 
@@ -31,7 +31,7 @@ Use GitHub Actions to deploy policy assignments:
 
 ## (Optional) Assign the Log Analytics policy
 
-Only execute this section in case you selected **No** to create management resources in the [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) section.
+Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
 
 In the previous exercises you deployed policy and initiative (policy set) definitions in your Management Group with the reference implementation ARM template. However, these policies have not been assigned yet, and are not in use. In this exercise you will assign the initiative used for the **management** subscription in an Enterprise-Scale architecture deployment. To assign this initiative, execute the following steps.
 
@@ -82,7 +82,7 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
 ## (Optional) Assign the diagnostics policy using GitHub actions
 
-Only execute this section in case you selected **No** to create management resources in the [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) section.
+Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
 
 We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log Analytics and Enable Diagnostic** policy to enable monitoring.
 
@@ -118,7 +118,7 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
     It is important to note that if this policy assignment is specified at Management Group scope, all future subscription that move under the scope of this Management Group will automatically monitoring and diagnostics settings be enabled without any custom orchestration. In our case, all subscription existing under the **ES** (company root) Management Group scope will be enabled. That is a design goal of Enterprise-Scale reference implementation.
 
-## Assign the networking policies
+## Assign the connectivity policies
 
 In this section, we will focus on enabling networking for landing zones. In this tutorial, we only have a single subscription in the **ES-management** Management Group. In environments with multiple subscriptions, you would assign these policies at the **Connectivity** Management Group scope.
 
