@@ -79,16 +79,27 @@
                         "visible": true
                     },
                     {
+                        "name": "nwSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
+                    },
+                    {
                         "name": "esConnectivitySub",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Connectivity subscription id",
-                        "toolTip": "Provide the subscription id of an existing, empty subscription that you want to dedicate for connectivity, which will be moved into the management group for platform connectivity.",
-                        "defaultValue": "",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Connectivity subscription (required)",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
                         "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
                         "constraints": {
-                            "required": false,
-                            "regex": "^[a-z0-9A-Z-]{36}$",
-                            "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, Virtual WAN cannot be deployed."
+                            "allowedValues": "[map(steps('esGoalState').nwSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": true
                         }
                     },
                     {
