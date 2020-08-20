@@ -90,14 +90,14 @@ The Discovery/Initialization process will run entirely on GitHub. This guide use
    Paste the information that you got in the clipboard (the outcome from the last PowerShell step you executed). The outcome should look like this:
 
    ```PowerShell
-   [ordered]@{
-   "clientId":       $servicePrincipal.ApplicationId,
-   "displayName":    $servicePrincipal.DisplayName,
-   "name":           $servicePrincipal.ServicePrincipalNames[1],
-   "clientSecret":   [System.Net.NetworkCredential]::new("", $servicePrincipal.Secret).Password,
-   "tenantId":       (Get-AzContext).Tenant.Id,
-   "subscriptionId": (Get-AzContext).Subscription.Id
-   } | ConvertTo-Json
+   {
+   "clientId": "xxxx-xxxx-xxxx-xxxx-xxxxx",
+   "displayName": "es-xxxx",
+   "name": "http://es-xxxx",
+   "clientSecret": "xxxxxx-xxxx-xxxx-xxxx-xxxxxx",
+   "tenantId": "xxxxxx-xxxx-xxxx-xxxx-xxxxxx",
+   "subscriptionId": "xxxxxx-xxxx-xxxx-xxxx-xxxxxx"
+   }
    ```
 
 8. Once the secrets is created, you should see the following entries in the **Secrets** window.
