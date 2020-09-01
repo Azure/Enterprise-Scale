@@ -1,0 +1,399 @@
+{
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "lzSettings",
+                "label": "Enterprise-Scale Company prefix",
+                "subLabel": {
+                    "preValidation": "Provide a company prefix for the management group structure that will be created.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Company prefix",
+                "elements": [
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "Enterprise-Scale ARM deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
+                            "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin"
+                        }
+                    },
+                    {
+                        "name": "esMgmtGroup",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Management Group prefix",
+                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9A-Z-]{1,5}$",
+                            "validationMessage": "The prefix must be 1-5 characters."
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "esConnectivityGoalState",
+                "label": "Connectivity (Hub & Spoke)",
+                "subLabel": {
+                    "preValidation": "Select 'Yes' if goal state should be enforced during deployment. Select 'No' if you want to do it post deployment using Azure Policy.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "lzGs",
+                "elements": [
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "To enable Hub & Spoke connectivity, you must allocate a connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first networking hub and requisite settings. We recommend using a new Subscription with no existing resources.",
+                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                        }
+                    },
+                    {
+                        "name": "esHub",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy virtual hub",
+                        "defaultValue": "No",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy virtual network for hub",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "nwSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
+                    },
+                    {
+                        "name": "esConnectivitySub",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Connectivity subscription (required)",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": "[map(steps('esConnectivityGoalState').nwSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": true
+                        }
+                    },
+                    {
+                        "name": "esAddressHub",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Address space (required for virtual network hub)",
+                        "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
+                        "defaultValue": "10.100.0.0/16",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "constraints": {
+                            "required": true,
+                            "validationMessage": "The virtual hubs network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                        }
+                    },
+                    {
+                        "name": "esRegions",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Region for first virtual network hub",
+                        "defaultValue": "",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "East Asia",
+                                    "value": "eastasia"
+                                },
+                                {
+                                    "label": "Southeast Asia",
+                                    "value": "southeastasia"
+                                },
+                                {
+                                    "label": "Central US",
+                                    "value": "centralus"
+                                },
+                                {
+                                    "label": "East US",
+                                    "value": "eastus"
+                                },
+                                {
+                                    "label": "East US 2",
+                                    "value": "eastus2"
+                                },
+                                {
+                                    "label": "West US",
+                                    "value": "westus"
+                                },
+                                {
+                                    "label": "North Central US",
+                                    "value": "northcentralus"
+                                },
+                                {
+                                    "label": "South Central US",
+                                    "value": "southcentralus"
+                                },
+                                {
+                                    "label": "North Europe",
+                                    "value": "northeurope"
+                                },
+                                {
+                                    "label": "West Europe",
+                                    "value": "westeurope"
+                                },
+                                {
+                                    "label": "Japan West",
+                                    "value": "japanwest"
+                                },
+                                {
+                                    "label": "Japan East",
+                                    "value": "japaneast"
+                                },
+                                {
+                                    "label": "Brazil South",
+                                    "value": "brazilsouth"
+                                },
+                                {
+                                    "label": "Australia East",
+                                    "value": "australiaeast"
+                                },
+                                {
+                                    "label": "Australia Southeast",
+                                    "value": "australiasoutheast"
+                                },
+                                {
+                                    "label": "South India",
+                                    "value": "southindia"
+                                },
+                                {
+                                    "label": "Central India",
+                                    "value": "centralindia"
+                                },
+                                {
+                                    "label": "Canada East",
+                                    "value": "canadaeast"
+                                },
+                                {
+                                    "label": "UK South",
+                                    "value": "uksouth"
+                                },
+                                {
+                                    "label": "UK West",
+                                    "value": "ukwest"
+                                },
+                                {
+                                    "label": "West Central US",
+                                    "value": "westcentralus"
+                                },
+                                {
+                                    "label": "West US 2",
+                                    "value": "westus2"
+                                },
+                                {
+                                    "label": "Korea Central",
+                                    "value": "koreacentral"
+                                },
+                                {
+                                    "label": "Korea South",
+                                    "value": "koreasouth"
+                                },
+                                {
+                                    "label": "France Central",
+                                    "value": "francecentral"
+                                },
+                                {
+                                    "label": "France South",
+                                    "value": "francesouth"
+                                },
+                                {
+                                    "label": "Australia Central",
+                                    "value": "australiacentral"
+                                },
+                                {
+                                    "label": "UAE Central",
+                                    "value": "uaecentral"
+                                },
+                                {
+                                    "label": "UAE North",
+                                    "value": "uaenorth"
+                                },
+                                {
+                                    "label": "South Africa North",
+                                    "value": "southafricanorth"
+                                },
+                                {
+                                    "label": "South Africa West",
+                                    "value": "southafricawest"
+                                },
+                                {
+                                    "label": "Switzerland North",
+                                    "value": "switzerlandnorth"
+                                },
+                                {
+                                    "label": "Switzerland West",
+                                    "value": "switzerlandwest"
+                                },
+                                {
+                                    "label": "Germany North",
+                                    "value": "germanynorth"
+                                },
+                                {
+                                    "label": "Germany West Central",
+                                    "value": "germanywestcentral"
+                                },
+                                {
+                                    "label": "Norway West",
+                                    "value": "norwaywest"
+                                },
+                                {
+                                    "label": "Norway East",
+                                    "value": "norwayeast"
+                                }
+                            ],
+                            "required": false
+                        }
+                    },
+                    {
+                        "name": "esVpnGw",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy VPN Gateway",
+                        "defaultValue": "No",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esVpnGwType",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Select VPN type",
+                        "defaultValue": "Route Based",
+                        "visible": "[equals(steps('esConnectivityGoalState').esVpnGw, 'Yes')]",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway. Select whether it should be policy or route based.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Policy Based",
+                                    "value": "PolicyBased"
+                                },
+                                {
+                                    "label": "Route Based",
+                                    "value": "RouteBased"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAddressVpnOrEr",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Subnet for VPN/Express route",
+                        "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.1.0/24)",
+                        "defaultValue": "10.100.1.0/24",
+                        "visible": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
+                        "constraints": {
+                            "required": true,
+                            "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                        }
+                    },
+                    {
+                        "name": "esErGw",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy ExpressRoute Gateway",
+                        "defaultValue": "No",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route gateway",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAzFw",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy Azure Firewall",
+                        "defaultValue": "No",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAddressFw",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Subnet for Azure Firewall",
+                        "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/24)",
+                        "defaultValue": "10.100.0.0/24",
+                        "visible": "[equals(steps('esConnectivityGoalState').esAzFw, 'Yes')]",
+                        "constraints": {
+                            "required": true,
+                            "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                        }
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "vpnGwType": "[steps('esConnectivityGoalState').esVpnGwType]",
+            "subnetMaskForGw": "[steps('esConnectivityGoalState').esAddressVpnOrEr]",
+            "subnetMaskForAzFw": "[steps('esConnectivityGoalState').esAddressFw]",
+            "enableErGw": "[steps('esConnectivityGoalState').esErGw]",
+            "enableVpnGw": "[steps('esConnectivityGoalState').esVpnGw]",
+            "enableHub": "[steps('esConnectivityGoalState').esHub]",
+            "connectivitySubscriptionId": "[steps('esConnectivityGoalState').esConnectivitySub]",
+            "enableAzFw": "[steps('esConnectivityGoalState').esAzFw]",
+            "addressPrefix": "[steps('esConnectivityGoalState').esAddressHub]",
+            "location": "[steps('esConnectivityGoalState').esRegions]",
+            "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]"
+        }
+    }
+}
