@@ -64,9 +64,9 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
     ![_Figure_](./media/wt-3.1-4.png)
 
-    Once the policy is deployed with this pipeline the AzOps push process will also ensure policy compliance. Even if the services are deployed with the AzOps action it could take a while until the policy compliance status is reflected on your **ES-management** Management Group scope.
+    Once the policy is deployed with this pipeline the AzOps push process will also ensure policy compliance. The platform will evaluate compliance state. This will take some time (from minutes up to multiple hours) once the compliance state is evaluated you can remediate out of compliance resources via portal or follow [this instruction](./troubleshooting.md#Deploy-resource-specified-in-DINE-policies) and kickstart the process.
 
-    In the Azure Portal select the **ES-management** management and then click on **details** and then click on **Policies**:
+    Once the policy is remediated, in the Azure Portal select the **ES-management** management and then click on **details** and then click on **Policies**:
 
     ![_Figure_](./media/wt-3.1-5.png)
 
@@ -86,7 +86,7 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
 3. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` into the `.AzState` folder of the `ES` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES (ES)\.AzState`
 
-4. Change the following attributes highlighted in the copied file as  described in the table below:
+4. Change the following attributes highlighted in the copied file as described in the table below:
 
     ![_Figure_](./media/wt-3.2-1.png)
 
@@ -101,11 +101,13 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
 6. **Wait for deployment to succeed** and merge pull request to **main** branch. The **feature** branch can be deleted after the successful merge.
 
-    After a successful deployment, your subscription's Activity log will be connected to your Log Analytics workspace.
+    In this section we deployed the DINE policy for Diagnostics ActiveLogs settings for all subscriptions under the `ES` Management Group. The platform will evaluate compliance state. This will take some time (from minutes up to multiple hours) once the compliance state is evaluated you can remediate out of compliance resources via portal or follow [this instruction](./troubleshooting.md#Deploy-resource-specified-in-DINE-policies) to kickstart the process.
+
+    Once the policy is remediated the following Diagnostics settings should be deployed:
 
     ![_Figure_](./media/wt-3.2-3.png)
 
-    It is important to note that if this policy assignment is specified at Management Group scope, all future subscription that move under the scope of this Management Group will automatically monitoring and diagnostics settings be enabled without any custom orchestration. In our case, all subscription existing under the **ES** (company root) Management Group scope will be enabled. That is a design goal of Enterprise-Scale reference implementation.
+    >Note: It is important to note that if this policy assignment is specified at Management Group scope, all future subscription that move under the scope of this Management Group will automatically monitoring and diagnostics settings be enabled without any custom orchestration. In our case, all subscription existing under the **ES** (company root) Management Group scope will be enabled. That is a design goal of Enterprise-Scale reference implementation.
 
 ## Assign the connectivity policies
 
@@ -153,7 +155,11 @@ We will make policy assignments via GitHub Action process on these steps.
 
     f. Commit changes to your feature branch and create a pull request.
 
-    g. Wait for deployment to succeed and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge. After a successful deployment, a VWAN and Firewall Policy resources will be created in your Azure subscription:
+    g. Wait for deployment to succeed and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge.
+
+    h. In this section we deployed the DINE policy for a VWAN resource. This policy ensures that the VWAN and firewall policies are deployed in a compliant way. The platform will evaluate compliance state. This will take some time (from minutes up to multiple hours) once the compliance state is evaluated you can remediate out of compliance resources via portal or follow [this instruction](./troubleshooting.md#Deploy-resource-specified-in-DINE-policies) to kickstart the process.
+
+    Once the policy is remediated the following resources should be deployed:
 
     ![_Figure_](./media/wt-3.3-4.png)
 
@@ -182,7 +188,11 @@ We will make policy assignments via GitHub Action process on these steps.
 
     e. Commit changes to your feature branch and create a pull request.
 
-    f. **Wait for deployment to succeed** and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge. Please note that this is going to take some time to complete (about 40 minutes) as the VHub, Gateways and Azure Firewall are deployed. After a successful deployment, a VHub, VPN Gateway and Azure Firewall resources will be created in your Azure subscription:
+    f. **Wait for deployment to succeed** and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge.
+
+    g. In this section we deployed the DINE policy for a VHUB resource. This policy ensures that the VHUB will be deployed in a compliant way. The platform will evaluate compliance state. This will take some time (from minutes up to multiple hours) once the compliance state is evaluated you can remediate out of compliance resources via portal or follow [this instruction](./troubleshooting.md#Deploy-resource-specified-in-DINE-policies) to kickstart the process.
+
+    Once the policy is remediated the following resources should be deployed:
 
     ![_Figure_](./media/wt-3.3-6.png)
 
