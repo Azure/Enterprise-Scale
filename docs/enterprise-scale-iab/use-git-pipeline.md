@@ -41,32 +41,26 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
     Provide a name to the branch and hit enter.
 
-2. Go to the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\management (feab2d15-66b4-438b-accf-51f889b30ec3)\.AzState` and open the file `Microsoft.Authorization_policyAssignments-Deploy-Log-Analytics.parameters.json`
+2. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-Log-Analytics.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\management (feab2d15-66b4-438b-accf-51f889b30ec3)\.AzState` into the `.AzState` folder of the `ES-management` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES (ES)\ES-platform (ES-platform)\ES-management (ES-management)\.AzState`
 
-3. Copy the section `input/value` section (incl. `{}`) of the file to your clipboard:
+3. Change the following attributes highlighted in the copied file as  described in the table below:
 
     ![_Figure_](./media/wt-3.1-2.png)
 
-4. Go to the folder `azops\Tenant Root Group\ES\ES-platform\ES-management\.AzState` and open the file `Microsoft.Management-managementGroups_ES-management.parameters.json` . Paste the value into **policyAssignments** array and change the marked values.
-
-    ![_Figure_](./media/wt-3.1-3.png)
-
     | Attribute             | Value |
     | :--                   | :--  |
-    | **Location**          | `<AzureRegion>` |
+    | Location          | `<AzureRegion>` (where the managed service identity for this policy assignment will be created) |
     | Scope                 | `/providers/Microsoft.Management/managementGroups/ES-management` |
     | PolicyDefinitionId    | `/providers/Microsoft.Management/managementGroups/ES/providers/Microsoft.Authorization/policyDefinitions/Deploy-Log-Analytics` |
     | workspaceName         | `<yourLAWorkspaceName>` |
     | automationAccountName | `<yourAutomationAccountName>` |
     | workspaceRegion       | `<AzureRegion>` |
     | automationRegion      | `<AzureRegion>` |
+    | rgName      | `<resourceGroupName` |
 
-    > **Note**
-    > Location is where the managed service identity for this policy assignment will be created.
+4. Commit changes to the **feature** branch `Git: commit` and sync changes to your remote GitHub repository `Git: Push`
 
-5. Commit changes to the **feature** branch `Git: commit` and sync changes to your remote GitHub repository `Git: Push`
-
-6. Create a Pull Request `Git: Pull`, `Git: Publish` **feature** branch to the **main** branch, and wait until the wait for the AzOps push/pull action to complete successfully. Once successfully completed go ahead and merge the changes into **main**. The feature branch can be deleted after the successful merge.
+5. Create a Pull Request `Git: Pull`, `Git: Publish` **feature** branch to the **main** branch, and wait until the wait for the AzOps push/pull action to complete successfully. Once successfully completed go ahead and merge the changes into **main**. The feature branch can be deleted after the successful merge.
 
     ![_Figure_](./media/wt-3.1-4.png)
 
@@ -90,23 +84,18 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
 2. Create a new feature branch and give it a descriptive name (i.e. **policy-assignment-monitoring**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-3. Open the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` in your **Visual Studio Code**. Copy the following section:
+3. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` into the `.AzState` folder of the `ES` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES (ES)\.AzState`
+
+4. Change the following attributes highlighted in the copied file as  described in the table below:
 
     ![_Figure_](./media/wt-3.2-1.png)
 
-4. Go to the folder `azops\Tenant Root Group\ES\.AzState` and open the file `Microsoft.Management-managementGroups_<GUID>.parameters.json` . Paste the value into **policyAssignments** array and change the marked values.
-
-    ![_Figure_](./media/wt-3.2-2.png)
-
     | Attribute          | Value |
     | :--                | :--  |
-    | **Location**       | `<AzureRegion>` |
+    | Location       | `<AzureRegion>` (where the managed service identity for this policy assignment will be created) |
     | Scope              | `/providers/Microsoft.Management/managementGroups/ES` |
     | PolicyDefinitionId | `/providers/Microsoft.Management/managementGroups/ES/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-ActivityLog` |
     | logAnalytics/value | `/subscriptions/<subscription-id>/resourcegroups/<resourcegroupname>/providers/microsoft.operationalinsights/workspaces/<loganalyticswsname>` |
-
-    > **Note**
-    > Location is where the managed service identity for this policy assignment will be created.
 
 5. Commit changes to your feature branch and create a pull request.
 
@@ -132,34 +121,28 @@ We will make policy assignments via GitHub Action process on these steps.
 
     b. Create a new feature branch and give it a descriptive name (i.e. **policy-assignment-vwan**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-    c. Open the file `Microsoft.Authorization_policyAssignments-Deploy-vWAN.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` in your **Visual Studio Code.**. Copy the following section:
+    c. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-vWAN.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` into the `.AzState` folder of the `ES-management` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES\ES-platform\ES-management\.AzState`
+
+    d. Change the following attributes highlighted in the copied file as  described in the table below:
 
     ![_Figure_](./media/wt-3.3-1.png)
 
-    d. Go to the folder `azops\Tenant Root Group\ES\ES-platform\ES-management\.AzState` and open the file `Microsoft.Management-managementGroups_ES.parameters.json` Paste the value into **policyAssignments** array and change the marked values.
-
     | Attribute          | Value |
     | :--                | :-- |
-    | **Location**       | `<AzureRegion>` |
+    | Location       | `<AzureRegion>` (where the managed service identity for this policy assignment will be created) |
     | Scope              | `/providers/Microsoft.Management/managementGroups/ES-management` |
     | PolicyDefinitionId | `/providers/Microsoft.Management/managementGroups/ES/providers/Microsoft.Authorization/policyDefinitions/Deploy-vWAN` |
     | vwanName           | `<yourVWANname>`|
     | vwanRegion         | `<AzureRegion>` |
     | rgName             | `<yourRGname>` |
 
-    > **Note**
-    > Location is where the managed service identity for this policy assignment will be created.
-    > We have already a policy assignment deployed on this scope make sure that you extend the json array correctly.
-
-    e. Open the file `Microsoft.Authorization_policyAssignments-Deploy-FirewallPolicy.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
+    e. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-FirewallPolicy.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` into the `.AzState` folder of the `ES-management` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES\ES-platform\ES-management\.AzState`
 
     ![_Figure_](./media/wt-3.3-3.png)
 
-    f. Go to the folder `azops\Tenant Root Group\ES\ES-platform\ES-management\.AzState` and open the file `Microsoft.Management-managementGroups_ES.parameters.json`. Paste the value into **policyAssignments** array and change the following values:
-
     | Attribute          | Value |
     | :--                | :-- |
-    | **Location**       | `<AzureRegion>` |
+    | Location           | `<AzureRegion>` (where the managed service identity for this policy assignment will be created) |
     | Scope              | `/providers/Microsoft.Management/managementGroups/ES-management` |
     | PolicyDefinitionId | `/providers/Microsoft.Management/managementGroups/ES/providers/Microsoft.Authorization/policyDefinitions/Deploy-FirewallPolicy` |
     | firewallPolicyName | `<yourFirewallPolicyname>` |
@@ -167,12 +150,10 @@ We will make policy assignments via GitHub Action process on these steps.
     | fwPolicyRegion     | `<AzureRegion>` |
     | rgName             | `<yourRGname>` |
 
-    > **Note**
-    > Location is where the managed service > identity for this policy assignment will be created.
 
-    g. Save the `Microsoft.Management-managementGroups_ES.parameters.json` file, commit changes to your feature branch and create a pull request.
+    f. Commit changes to your feature branch and create a pull request.
 
-    h. Wait for deployment to succeed and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge. After a successful deployment, a VWAN and Firewall Policy resources will be created in your Azure subscription:
+    g. Wait for deployment to succeed and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge. After a successful deployment, a VWAN and Firewall Policy resources will be created in your Azure subscription:
 
     ![_Figure_](./media/wt-3.3-4.png)
 
@@ -182,29 +163,24 @@ We will make policy assignments via GitHub Action process on these steps.
 
     b. Create a new feature branch and give it a descriptive name (i.e.   **policy-assignment-vhub**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-    c. Open the file `Microsoft.Authorization_policyAssignments-Deploy-vHUB-NEU.parameters.json` in the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` in your **Visual Studio Code**. Copy the following section (ensure you include the `{` and `}` characters):
+    c. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-vHUB-NEU.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\platform (platform)\connectivity (99c2838f-a548-4884-a6e2-38c1f8fb4c0b)\.AzState` into the `.AzState` folder of the `ES` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES\ES-platform\ES-management\.AzState`
+
+    d. Change the following attributes highlighted in the copied file as  described in the table below:
 
     ![_Figure_](./media/wt-3.3-5.png)
 
-    d. Go to the folder `azops\Tenant Root Group\ES\ES-platform\ES-management\.AzState` and open the file `Microsoft.Management-managementGroups_ES.parameters.json`. Paste the value into **policyAssignments** array and change the marked values.
-
     | Attribute              | Value |
     | :--                    | :--  |
-    | **Location**           | `<AzureRegion>` |
+    | Location           | `<AzureRegion>` (where the managed service identity for this policy assignment will be created) |
     | Scope                  | `/providers/Microsoft.Management/managementGroups/ES-management` |
     | PolicyDefinitionId     | `/providers/Microsoft.Management/managementGroups/ES/providers/Microsoft.Authorization/policyDefinitions/Deploy-vHUB` |
     | vwanName               | Provide the VWAN name that you created in the previous step |
     | vhubname               | `<yourVHUBname>` |
     | vhub -> location       | `<AzureRegion>` |
     | vpngw -> name          | `<yourVPNGatewayname>` |
-    | azfw -> name           | `<yourAzureFirewallname>` |
-    | azfw -> firewallPolicy | Replace with resource ID of your Firewall Policy that you created in the previous step |
     | rgName                 | Provide the resource group name where you created the VWAN in the previous step |
 
-    > **Note**
-    > Location is where the managed service identity for this policy assignment will be created.
-
-    e. Save the `Microsoft.Management-managementGroups_ES.parameters.json` file, commit changes to your feature branch and create a pull request.
+    e. Commit changes to your feature branch and create a pull request.
 
     f. **Wait for deployment to succeed** and merge pull request to **main** branch. **Feature** branch can be deleted after the successful merge. Please note that this is going to take some time to complete (about 40 minutes) as the VHub, Gateways and Azure Firewall are deployed. After a successful deployment, a VHub, VPN Gateway and Azure Firewall resources will be created in your Azure subscription:
 
