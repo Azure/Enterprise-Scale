@@ -86,7 +86,7 @@ We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log
 
 3. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` into the `.AzState` folder of the `ES` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES (ES)\.AzState`
 
-4. Change the following attributes highlighted in the copied file as  described in the table below:
+4. Change the following attributes highlighted in the copied file as described in the table below:
 
     ![_Figure_](./media/wt-3.2-1.png)
 
