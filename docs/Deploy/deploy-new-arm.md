@@ -15,7 +15,7 @@ AzOps allows you to deploy your own templates at the following scopes:
 - Subscriptions
 - Resource groups (requires that resource groups are pulled to the git repository)
 
-Since Enterprise-Scale is focusing on platfrom capabilities, it is recommend to leverage the AzOps Git Actions to do Tenant Root (/), Management Group and Subscription scope deployments only.
+Since Enterprise-Scale is focusing on platform capabilities, it is recommend to leverage the AzOps Git Actions to do Tenant Root (/), Management Group and Subscription scope deployments only.
 
 The following picture depicts these deployment scopes:
 

@@ -10,7 +10,7 @@
                 "name": "lzSettings",
                 "label": "Enterprise-Scale Company prefix",
                 "subLabel": {
-                    "preValidation": "Provide a company prefix for the existing management group structure.",
+                    "preValidation": "Provide a company prefix for the management group structure that will be created.",
                     "postValidation": "Done"
                 },
                 "bladeTitle": "Company prefix",
@@ -21,27 +21,27 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "Enterprise-Scale ARM deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
+                            "text": "Enterprise-Scale deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
                             "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin"
                         }
                     },
                     {
                         "name": "esMgmtGroup",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Existing Management Group prefix",
-                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "label": "Existing ES Management Group prefix",
+                        "toolTip": "Provide the prefix of your ES management group structure, 1-5 characters.",
                         "defaultValue": "",
                         "constraints": {
                             "required": true,
                             "regex": "^[a-z0-9A-Z-]{1,5}$",
                             "validationMessage": "The prefix must be 1-5 characters."
                         }
-                    }
+                    }   
                 ]
             },
             {
                 "name": "esConnectivityGoalState",
-                "label": "Add connectivity (Virtual WAN) to Enterprise-Scale Foundation",
+                "label": "Add connectivity (Virtual WAN) to your environment",
                 "subLabel": {
                     "preValidation": "Select 'Yes' if goal state should be enforced during deployment. Select 'No' if you want to do it post deployment using Azure Policy.",
                     "postValidation": "Done"
@@ -54,61 +54,52 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "If you want to deploy Virtual WAN and requisite settings, you must also provide a subscriptionId that will be dedicated for connectivity, which will be placed into the connectivity management group",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "text": "Hybrid connectivity is required for migration scenarios and/or connectivity to on-premise. To enable Virtual WAN connectivity, you must allocate a Subscription, and ARM will deploy a Virtual WAN with the first Virtual Hub and requisite settings in it. We recommend using the Platform Subscription you provided when deploying ES or a new connectivity Subscription with no existing resources. If you provide a Subscription different from the Platform Subscription, a new Connectivity Management Group and the subscription will be moved under it.",
+                            "uri": "https://github.com/juazasan/Enterprise-Scale/blob/trey-research-ri/docs/reference/Readme.md#platformSettings"
                         }
                     },
                     {
-                        "name": "esVwan",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Virtual WAN",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Virtual WAN",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-                        "visible": true
+                        "name": "nwSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
                     },
                     {
                         "name": "esConnectivitySub",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Connectivity subscription id",
-                        "toolTip": "Provide the subscription id of an existing, empty subscription that you want to dedicate for connectivity, which will be moved into the management group for platform connectivity. If you don't want to bring a subscription at this time, leave this parameter empty as is.",
-                        "defaultValue": "",
-                        "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Connectivity subscription (required)",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
                         "constraints": {
-                            "required": false,
-                            "regex": "^[a-z0-9A-Z-]{36}$",
-                            "validationMessage": "A valid subscription id must contain 36 characters. If you don't want to bring a subscription at this point, leave the parameter completely empty."
+                            "allowedValues": "[map(steps('esConnectivityGoalState').nwSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": true
                         }
                     },
                     {
                         "name": "esAddress",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Address space (required for Virtual Hub)",
-                        "toolTip": "Provide address prefix in CIDR notation (e.g 192.168.1.0/24)",
+                        "label": "Address space (required for your Virtual WAN Hub)",
+                        "toolTip": "Provide address prefix in CIDR notation (e.g 192.168.1.0/22)",
                         "defaultValue": "192.168.0.0/16",
-                        "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
+                        "visible": true,
                         "constraints": {
-                            "required": false,
+                            "required": true,
                             "validationMessage": "The virtual hubs network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
                         }
-                    },
+                    },                  
                     {
                         "name": "esRegions",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Region for first virtual hub",
                         "defaultValue": "",
-                        "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHS, 'No')]",
                         "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                         "constraints": {
                             "allowedValues": [
@@ -261,16 +252,16 @@
                                     "value": "norwayeast"
                                 }
                             ],
-                            "required": false
+                            "required": "[equals(steps('esConnectivityGoalState').esHS, 'No')]"
                         }
                     },
                     {
                         "name": "esVpnGw",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy VPN Gateway",
-                        "defaultValue": "No",
-                        "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway",
+                        "label": "Enable VPN connectivity",
+                        "defaultValue": "Yes",
+                        "visible": true,
+                        "toolTip": "If 'Yes' is selected, a VPN gateway will be deployed",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -287,10 +278,10 @@
                     {
                         "name": "esErGw",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy ExpressRoute Gateway",
+                        "label": "Enable private connectivity using ExpressRoute",
                         "defaultValue": "No",
-                        "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route gateway",
+                        "visible": true,
+                        "toolTip": "If 'Yes' is selected, an Express Route gateway will be deployed",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -307,10 +298,10 @@
                     {
                         "name": "esAzFw",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Azure Firewall",
+                        "label": "Deploy a perimeter Firewall in Azure",
                         "defaultValue": "No",
-                        "visible": "[equals(steps('esConnectivityGoalState').esVwan, 'Yes')]",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall",
+                        "visible": true,
+                        "toolTip": "If 'Yes' is selected, an Azure Firewall will be deployed",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -325,7 +316,7 @@
                         }
                     }
                 ]
-            }
+            }	            			
         ],
         "outputs": {
             "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]",

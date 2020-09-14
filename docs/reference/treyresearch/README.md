@@ -1,58 +1,86 @@
-| Enterprise-Scale Design Principles | ARM Template | Scale without refactoring |
-|:-------------|:--------------|:--------------|
-|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-fta.json)  | Yes |
+| Enterprise-Scale Design Principles | ARM Template | Scale without refactoring | Deployment Experience |
+|:-------------|:--------------|:--------------|:--------------|
+|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json)  | Yes | Default |
+|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure (FTA Custom Experience)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-fta.json)  | Yes | Custom |
 
 
-# Deploy Enterprise-Scale for Small and Medium Enterprises
+# Deploy Enterprise-Scale for Small Enterprises
 
 The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture enables organizations to start as small as needed and scale alongside their business requirements regardless of scale point.
 
 ## Customer profile
 
-This reference implementation is ideal for customers who want to start with Landing Zones for their workload in Azure, where hybrid connectivity to their on-premise datacenter is not required from the start.
+This reference implementation provides a design path and initial technical state for Small and Medium Enterprises' Azure environment based on Azure Landing Zones Design Recommendations.
 
-## How to evolve and add support for hybrid connectivity later
+Enterprise-Scale Reference Implementation for Small Enterprises is meant for customers who are not expecting to deploy or migrate a large number of Workloads to Azure, and that do not have a large IT organization. Therefore the focus of this design is on simplicity, but at the same time to provide a Minimum Viable Product landing zone where production workloads can be deployed with confidence and managed by a small team.
 
-If the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, the architecture allows you to expand and implement networking without refactoring Azure Design with no disruption to what is already in Azure. The Enterprise-Scale architecture allows to create the Connectivity Subscription and place it into the platform Management Group and assign Azure Policies or/and deploy the target networking topology using either Virtual WAN or Hub and Spoke networking topology.
-For more details, see the *next steps* section at the end of this document.
-
-## Pre-requisites
-
-To deploy this ARM template, your user must have Owner permission at the Tenant root.
-See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access.
+That said, the architecture enables organizations to start as small as needed and scale alongside their business requirements regardless of scale point.
 
 ## What will be deployed?
 
-- A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.
-- Azure Policies that will enable autonomy for the platform and the Landing Zones.
-- [Optional] An Azure subscription dedicated for management, which enables core platform capabilities at scale such as:
-  - A Log Analytics workspace and an Automation account
-  - Azure Security Center monitoring
-  - Azure Security Center (Standard or Free tier)
-  - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
-- [Optional] A landing zone subscription for Azure native, internet-facing applications and Resources, and specific workload policies such as:
-  - Enforce VM backup
-  - Enforce secure access (HTTPS) to storage accounts
-  - Enforce auditing for Azure SQL
-  - Enforce encryption for Azure SQL
-  - Prevent IP forwarding
-  - Prevent inbound RDP from internet
-  - Ensure subnets are associated with NSG
+*Coming soon...*
 
-![Enterprise-Scale without connectivity](./media/es-without-networking.PNG)
+## How to evolve from the Reference Implementation
+
+See the *next steps* section at the end of this document.
+
+## Pre-requisites
+
+### Permissions required
+
+To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
+See the following [instructions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) on how to grant access.
+
+### Subscriptions required
+
+The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscription dedicated for your Platform resources, and an existing subscription that can be used as the initial landing zone for your applications. In order to provide the information, we require the subscription id to be provided to the parameters.
+
+To learn how to create new subscriptions programatically, please visit this [link](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/programmatically-create-subscription?tabs=rest).
+
+To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
+
+To find the subscriptionId's you want to provide, you can either navigate to Azure portal and retrive them from there, or use PowerShell/CLI:
+
+Azure CLI
+
+````bash
+az account list --query "[].[name, id]" --output table
+````
+
+Azure PowerShell
+
+````powershell
+Get-AzSubscription | Select Name, SubscriptionId
+````
+
+## Deployment Experience
+
+*Coming soon...*
+
+## Post-deployment configuration
+
+*Coming soon...*
 
 ## Next steps
 
 ### Manage your Landing Zones
 
-Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and start deploying your workload.
+Once you have deployed the reference implementation, you can provision additional Landing Zones and start deploying your workload.
 
-#### Create new subscriptions into the landing zone (Online) management group
+#### Provision additional Landing Zones 
 
-1. In Azure portal, navigate to Subscriptions
+You can provision additional Landing Zones by moving new or existing subscriptions to an existing landing zone management group (for instance Online).
+
+1. In Azure portal, navigate to Subscriptions.
 2. Click 'Add', and complete the required steps in order to create a new subscription.
-3. When the subscription has been created, go to Management Groups and move the subscription into the Landing Zone (Online) management group
-4. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the newly created subscription
+3. Go to Management Groups and move the subscription into the corresponding Landing Zone management group (for instance Online).
+4. Create a Virtual Network in the new subscription.
+5. Connect the new landing zone's Virtual Network to the virtual hub if hybrid connectivity is needed.
+6. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the newly created subscription.
+
+Optionally, once you had completed steps 1 and 2 above, you can automate the provisioning of additional Landing Zones using the following ARM template:
+
+[![Provision Landing Zone](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-add-lz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-lz.json) 
 
 #### Move existing subscriptions into the landing zone (Online) management group
 
@@ -60,36 +88,41 @@ Once you have deployed the reference implementation, you can create new subscrip
 2. Locate the subscription you want to move, and move it to the landing zone (Online) management group
 3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
 
-#### Create an additional Landing Zone template / schema / archetype / type
+#### Create an additional Landing Zone for a new type of workload
 
-[![Add Landing Zone](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-LZ-fta.json) 
+You can create landing zones with a different configuration by using the following ARM template:
+
+[![Add New Landing Zone Type](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-add-lz-template.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-lz-template.json) 
+
+### Deploy a Web Application Firewall to an existing Landing Zone
+
+*Coming soon...*
+
+### Deploy a Virtual Network to an existing Landing Zone
+
+*Coming soon...*
 
 #### Create an additional Landing Zone template / schema / archetype / type leveraging advanced Governance and Security Controls
 
-TBD.
+*Coming soon...*
 
-#### Import an Landing Zone template from the ES catalog
+#### Import a Landing Zone template from the ES catalog
 
-TBD.
+*Coming soon...*
 
 ### Extend your Platform
 
+### Enable Hybrid Connectivity using [Azure ExpressRoute](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-introduction)
+
+*Coming soon...*
+
 #### Deploy a Perimeter Firewall in Azure
 
-TBD.
+*Coming soon...*
 
-#### Add support for a new Region
+#### Enable Hybrid Connectivity to an Azure Region 
 
-TBD.
-
-#### Enable Hybrid Connectivity in our environment
-
-If you want to add connectivity to your Enterprise-Scale architecture to support workloads requiring hybrid connectivity, you can:
-
-1. Create a new child management group called 'Connectivity' in the Platform management group
-2. Move/create new subscription into the Connectivity management group
-3. Deploy your desired networking topology, being VWAN (Microsoft managed) or hub & spoke (customer managed)
-4. Create new management group (Corp) in the landing zone management group, to separate connected workloads from online workloads.
+If you skipped the deployment of the hybrid connectivity component when you bootstrapped your environment, or if you need to add support for additional regions, you can do it now by deploying a virtual hub, being VWAN (Microsoft managed) or hub & spoke (customer managed) as your desired networking topology, to the Platform subscription.
 
 Optionally, you can enable the above using the following ARM templates:
 
@@ -97,3 +130,6 @@ Optionally, you can enable the above using the following ARM templates:
 |:-------------------------|:-------------|:-------------|
 | Virtual WAN | Deploys requisite infrastructure for on-premises connectivity with Virtual WAN  | [![Add Connectivity (vWAN)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-vwan-fta.json)   |
 | Hub & Spoke | Deploys requisite infrastructure for on-premises connectivity with Hub & Spoke  | [![Add Connectivity (H&S)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-fta.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-hs-fta.json)  |
+
+Once the virtual hub had been deployed, you will need to connect the virtual hub with any of the existing Landing Zones (if any) that required hybrid connectivity by creating Virtual Network Peerings. See [Connect virtual networks with virtual network peering using the Azure portal](https://docs.microsoft.com/en-us/azure/virtual-network/tutorial-connect-virtual-networks-portal) for further details. 
+ 

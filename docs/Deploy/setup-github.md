@@ -48,9 +48,12 @@ Export the SPN information. Perform this step in the same PowerShell instance th
 } | ConvertTo-Json
 ```
 
-> Note: It can take up to 15 minutes for newly added permission to reflect for SPN
 
-## 4. Connect GitHub to Azure
+> Note: It can take up to 15 minutes for newly added permission to reflect for SPN
+## 4. Grant Azure Active Directory permissions for SPN
+To allow the SPN to read from Azure AD, [add the SPN the Azure AD role Directory Readers](../EnterpriseScale-Setup-aad-permissions.md).
+
+## 5. Connect GitHub to Azure
 
 To create the following secrets on GitHub, navigate to the main page of the repository and under your repository name, click **Settings**, click **Secrets**, and then click **New secret**.
 
@@ -75,7 +78,7 @@ To create the following secrets on GitHub, navigate to the main page of the repo
 ObjectId
 ```
 
-## 5. Configure your repo to update changes from upstream
+## 6. Configure your repo to update changes from upstream
 
 1. Add upstream repo to your local repository to get latest changes
 

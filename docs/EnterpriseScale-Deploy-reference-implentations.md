@@ -12,9 +12,9 @@ Enterprise-Scale design principles and implementation can be adopted by all cust
 |:-------------------------|:-------------|:-------------|------|
 | WingTip | Azure Only |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-foundation.json) | [Detailed description](./reference/wingtip/README.md) |
 | Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fes-vwan.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fcontoso%2FarmTemplates%2Fportal-es-vwan.json) | [Detailed description](./reference/contoso/Readme.md) |
-| AdventureWorks | On-premises connectivity with Hub & Spoke  |<!-- [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzOps%2Fmain%2Ftemplate%2Fux-hub-spoke.json) --> ETA (7/31) | [Detailed description](./reference/adventureworks/README.md) |
+| AdventureWorks | On-premises connectivity with Hub & Spoke  |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fadventureworks%2FarmTemplates%2Fes-hubspoke.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fadventureworks%2FarmTemplates%2Fportal-es-hubspoke.json) | [Detailed description](./reference/adventureworks/README.md) |
 
->Once the deployment is complete, please ensure required platform subscriptions are moved under the `Platform` Management Groups if you haven not done so as a part of deployment.
+>Once the deployment is complete, please ensure required platform subscriptions are moved under the `Platform` Management Groups if you have not done so as a part of deployment.
 
 Enterprise-Scale reference implementation is rooted in the principle that **Everything in Azure is a Resource**. All reference customers scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their resources as part of their target state architecture at-scale.
 
@@ -22,7 +22,7 @@ Reference implementations enables security, monitoring, networking, and any othe
 
 1. Platform can provide an orchestration capability to bring target Resources (in this case a subscription) to a desired goal state.
 
-2. Continuous conformance to ensure all platform-level Resources are compliant. Because the platform is aware of the goal state, the platform can assist by monitoring and remediation of Resources throughout the life-cycle of the Resource.
+2. Continuous conformance to ensure all platform-level Resources are compliant. Because the platform is aware of the goal state, the platform can assist with the monitoring and remediation of Resources throughout their life-cycle.
 
 3. Platform enables autonomy regardless of the customer's scale point.
 

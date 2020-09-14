@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "managementGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": "Please provide the management group id - similar to the management group selection above."
+            }
+        },
         "policyDefinition": {
             "type": "string",
             "allowedValues": [
@@ -17,6 +23,7 @@
                 "Deny Public Endpoint for SQL",
                 "Deny Public Endpoint for Storage",
                 "Deny Public IP",
+                "Deny Azure Automation child resources",
                 "Deploy ASC Continous Export",
                 "Deploy Azure Security Center",
                 "Deploy Azure Backup for VMs",
@@ -96,7 +103,7 @@
         "templateUri": "https://raw.githubusercontent.com/Azure/AzOps/main/template/template.json",
         "policyMap": {
             "Append Key Vault soft delete": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Append-KV-SoftDelete.parameters.json')]",
-            "Deny App Gw withouth WAF": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-AppGW-Without-WAF.parameters.json')]",
+            "Deny App GW without WAF": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-AppGW-Without-WAF.parameters.json')]",
             "Deny ER peering": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-ERPeering.parameters.json')]",
             "Deny private DNS zones": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-Private-DNS-Zones.parameters.json')]",
             "Deny Public Endpoint for AKS": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-PublicEndpoint-Aks.parameters.json')]",
@@ -108,6 +115,7 @@
             "Deny Public Endpoint for SQL": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-PublicEndpoint-Sql.parameters.json')]",
             "Deny Public Endpoint for Storage": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-PublicEndpoint-Storage.parameters.json')]",
             "Deny Public IP": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-PublicIP.parameters.json')]",
+            "Deny Azure Automation child resources": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-AA-child-resources.parameters.json')]",
             "Deny subnet without NSG": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deny-Subnet-Without-Nsg.parameters.json')]",
             "Deploy ASC Continous Export": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-ASC-CE.parameters.json')]",
             "Deploy Azure Security Center": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-ASC-Standard.parameters.json')]",
@@ -183,7 +191,6 @@
             "Deploy Virtual Network": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-vNet.parameters.json')]",
             "Deploy Virtual WAN": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-vWAN.parameters.json')]",
             "Deploy Windows Domain Join VM extension": "[concat(variables('policyUri'), 'Microsoft.Authorization_policyDefinitions-Deploy-Windows-DomainJoin.parameters.json')]"
-
         },
         "policySelection": "[variables('policyMap')[parameters('policyDefinition')]]"
     },
@@ -192,7 +199,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "name": "[concat('EntScale', '-policyDef')  ]",
+            "name": "[take(concat('EntScale', 'oob-sub-policyDef-', guid(deployment().name)), 64)]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('managementGroupId'))]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
