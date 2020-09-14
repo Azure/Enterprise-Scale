@@ -21,29 +21,29 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "Enterprise-Scale ARM deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
+                            "text": "Enterprise-Scale deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
                             "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin"
                         }
                     },
                     {
                         "name": "esMgmtGroup",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Management Group prefix",
-                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "label": "Existing ES Management Group prefix",
+                        "toolTip": "Provide the prefix of your ES management group structure, 1-5 characters.",
                         "defaultValue": "",
                         "constraints": {
                             "required": true,
                             "regex": "^[a-z0-9A-Z-]{1,5}$",
                             "validationMessage": "The prefix must be 1-5 characters."
                         }
-                    }
+                    }   
                 ]
             },
             {
                 "name": "esConnectivityGoalState",
-                "label": "Connectivity (Hub & Spoke)",
+                "label": "Enable Hybrid Connectivity (Hub & Spoke) in your environment",
                 "subLabel": {
-                    "preValidation": "Select 'Yes' if goal state should be enforced during deployment. Select 'No' if you want to do it post deployment using Azure Policy.",
+                    "preValidation": "TBD",
                     "postValidation": "Done"
                 },
                 "bladeTitle": "lzGs",
@@ -54,29 +54,9 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "To enable Hub & Spoke connectivity, you must allocate a connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first networking hub and requisite settings. We recommend using a new Subscription with no existing resources.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "text": "Hybrid connectivity is required for migration scenarios and/or connectivity to on-premise. To enable hybrid connectivity, you must allocate a Subscription, and ARM will deploy a virtual hub and requisite settings in it. We recommend using the Platform Subscription you provided when deploying ES or a new connectivity Subscription with no existing resources. If you provide a Subscription different from the Platform Subscription, a new Connectivity Management Group will be created and the subscription will be moved under it.",
+                            "uri": "https://github.com/juazasan/Enterprise-Scale/blob/trey-research-ri/docs/reference/Readme.md#platformSettings"
                         }
-                    },
-                    {
-                        "name": "esHub",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy virtual hub",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy virtual network for hub",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-                        "visible": true
                     },
                     {
                         "name": "nwSubsApi",
@@ -96,7 +76,7 @@
                         "filter": true,
                         "filterPlaceholder": "Filter items ...",
                         "multiLine": true,
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "visible": true,
                         "constraints": {
                             "allowedValues": "[map(steps('esConnectivityGoalState').nwSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                             "required": true
@@ -108,9 +88,9 @@
                         "label": "Address space (required for virtual network hub)",
                         "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
                         "defaultValue": "10.100.0.0/16",
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHubSkip, 'No')]",
                         "constraints": {
-                            "required": true,
+                            "required": "[equals(steps('esConnectivityGoalState').esHubSkip, 'No')]",
                             "validationMessage": "The virtual hubs network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
                         }
                     },
@@ -119,7 +99,7 @@
                         "type": "Microsoft.Common.DropDown",
                         "label": "Region for first virtual network hub",
                         "defaultValue": "",
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHubSkip, 'No')]",
                         "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                         "constraints": {
                             "allowedValues": [
@@ -279,9 +259,9 @@
                         "name": "esVpnGw",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy VPN Gateway",
-                        "defaultValue": "No",
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway",
+                        "defaultValue": "Yes",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHubSkip, 'No')]",
+                        "toolTip": "If 'Yes' is selected, a VPN gateway will be deployed.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -299,32 +279,20 @@
                         "name": "esVpnGwType",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Select VPN type",
-                        "defaultValue": "Route Based",
+                        "defaultValue": "Route Based (recommended)",
                         "visible": "[equals(steps('esConnectivityGoalState').esVpnGw, 'Yes')]",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway. Select whether it should be policy or route based.",
                         "constraints": {
                             "allowedValues": [
                                 {
-                                    "label": "Policy Based",
-                                    "value": "PolicyBased"
+                                    "label": "Route Based (recommended)",
+                                    "value": "RouteBased"
                                 },
                                 {
-                                    "label": "Route Based",
-                                    "value": "RouteBased"
+                                    "label": "Policy Based",
+                                    "value": "PolicyBased"
                                 }
                             ]
-                        }
-                    },
-                    {
-                        "name": "esAddressVpnOrEr",
-                        "type": "Microsoft.Common.TextBox",
-                        "label": "Subnet for VPN/Express route",
-                        "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.1.0/24)",
-                        "defaultValue": "10.100.1.0/24",
-                        "visible": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
-                        "constraints": {
-                            "required": true,
-                            "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
                         }
                     },
                     {
@@ -332,8 +300,8 @@
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy ExpressRoute Gateway",
                         "defaultValue": "No",
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route gateway",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHubSkip, 'No')]",
+                        "toolTip": "If 'Yes' is selected, an Express Route gateway will be deployed.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -348,12 +316,24 @@
                         }
                     },
                     {
+                        "name": "esAddressVpnOrEr",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Subnet for VPN/Express Route Gateways",
+                        "toolTip": "Provide an address prefix in CIDR notation (e.g 10.100.1.0/24)",
+                        "defaultValue": "10.100.1.0/24",
+                        "visible": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
+                        "constraints": {
+                            "required": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
+                            "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                        }
+                    },
+                    {
                         "name": "esAzFw",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Azure Firewall",
+                        "label": "Deploy a perimeter Firewall in Azure",
                         "defaultValue": "No",
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHubSkip, 'No')]",
+                        "toolTip": "If 'Yes' is selected, an Azure Firewall will be deployed in the virtual hub.",
                         "constraints": {
                             "allowedValues": [
                                 {
@@ -370,17 +350,17 @@
                     {
                         "name": "esAddressFw",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Subnet for Azure Firewall",
+                        "label": "Subnet for the Azure Firewall instance",
                         "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/24)",
                         "defaultValue": "10.100.0.0/24",
                         "visible": "[equals(steps('esConnectivityGoalState').esAzFw, 'Yes')]",
                         "constraints": {
-                            "required": true,
+                            "required": "[equals(steps('esConnectivityGoalState').esAzFw, 'Yes')]",
                             "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
                         }
                     }
                 ]
-            }
+            }		            			
         ],
         "outputs": {
             "vpnGwType": "[steps('esConnectivityGoalState').esVpnGwType]",
@@ -394,6 +374,7 @@
             "addressPrefix": "[steps('esConnectivityGoalState').esAddressHub]",
             "location": "[steps('esConnectivityGoalState').esRegions]",
             "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]"
+
         }
     }
 }
