@@ -1,7 +1,7 @@
 | Enterprise-Scale Design Principles | ARM Template | Scale without refactoring | Internal Note |
 |:-------------|:--------------|:--------------|:--------------|
 |![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json)  | Yes | Uses default ES Deployment UI |
-|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure (FTA Custom Experience)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-fta.json)  | Yes | Use custom Deployment UI |
+|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure (FTA Custom Experience)](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-fta.json)  | Yes | Uses custom Deployment UI |
 
 
 # Deploy Enterprise-Scale for Small Enterprises
@@ -82,12 +82,6 @@ Optionally, once you had completed steps 1 and 2 above, you can automate the pro
 
 [![Provision Landing Zone](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-add-lz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-lz.json) 
 
-#### Move existing subscriptions into the landing zone (Online) management group
-
-1. In Azure portal, navigate to Management Groups
-2. Locate the subscription you want to move, and move it to the landing zone (Online) management group
-3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
-
 #### Create an additional Landing Zone for a new type of workload
 
 You can create landing zones with a different configuration by using the following ARM template:
@@ -122,7 +116,7 @@ You can create landing zones with a different configuration by using the followi
 
 #### Enable Hybrid Connectivity to an Azure Region 
 
-If you skipped the deployment of the hybrid connectivity component when you bootstrapped your environment, or if you need to add support for additional regions, you can do it now by deploying a virtual hub, being VWAN (Microsoft managed) or hub & spoke (customer managed) as your desired networking topology, to the Platform subscription.
+If you skipped the deployment of the hybrid connectivity component when you bootstrapped your environment, or if you need to add support for additional regions, you can do it now by deploying a virtual hub, being VWAN (Microsoft managed) or hub & spoke (customer managed) as per your desired target networking topology, to the Platform subscription.
 
 Optionally, you can enable the above using the following ARM templates:
 
