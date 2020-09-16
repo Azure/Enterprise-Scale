@@ -88,11 +88,11 @@ You can create landing zones with a different configuration by using the followi
 
 [![Add New Landing Zone Type](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://ms.portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-add-lz-template.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fjuazasan%2FEnterprise-Scale%2Ffta%2Ftrey-research-ri-abstracted%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-add-lz-template.json) 
 
-### Deploy a Web Application Firewall to an existing Landing Zone
+#### Deploy a Web Application Firewall to an existing Landing Zone
 
 *Coming soon...*
 
-### Deploy a Virtual Network to an existing Landing Zone
+#### Deploy a Virtual Network to an existing Landing Zone
 
 *Coming soon...*
 
@@ -106,7 +106,7 @@ You can create landing zones with a different configuration by using the followi
 
 ### Extend your Platform
 
-### Enable Hybrid Connectivity using [Azure ExpressRoute](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-introduction)
+#### Enable Hybrid Connectivity using [Azure ExpressRoute](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-introduction)
 
 *Coming soon...*
 
