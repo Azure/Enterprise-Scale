@@ -45,6 +45,7 @@ The build service account `<Project> Build Service (<Organization>)` must have t
 
 * `<Project>\Contributors`
 
+
 ### Configure branch policies
 
 In order for the pull pipeline to run, set the `main` branch to require build verification.
@@ -63,4 +64,4 @@ The following steps will be executed automatically to ensure that the current Az
 * If changes are detected that is not represented in your `main` branch, it will create `system` branch representing your current configuration as ARM templates parameter file.
 * Create a Pull Request (PR) with the name `Azure Change Notification` (`system`  -> `main`) and auto-merge into `main`.
 
-Please now continue on the [Discover Environment](discover-environemnt.md#verify-pr-and-merge-with-main-branch) page, at the *"Verify PR and merge with `main` branch"* heading.
+Please now continue on the [Discover Environment](discover-environment.md#verify-pr-and-merge-with-main-branch) page, at the *"Verify PR and merge with `main` branch"* heading.
