@@ -203,166 +203,24 @@
                             "validationMessage": "The virtual hubs network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
                         }
                     },
+					{
+                        "name": "esLocationsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "locations?api-version=2019-11-01"
+                        }
+                    },
                     {
-                        "name": "esRegions",
+                        "name": "esNwLocation",
                         "type": "Microsoft.Common.DropDown",
-                        "label": "Region for first virtual network hub",
-                        "defaultValue": "",
-                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "label": "Region for the first virtual network hub",
                         "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                         "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "East Asia",
-                                    "value": "eastasia"
-                                },
-                                {
-                                    "label": "Southeast Asia",
-                                    "value": "southeastasia"
-                                },
-                                {
-                                    "label": "Central US",
-                                    "value": "centralus"
-                                },
-                                {
-                                    "label": "East US",
-                                    "value": "eastus"
-                                },
-                                {
-                                    "label": "East US 2",
-                                    "value": "eastus2"
-                                },
-                                {
-                                    "label": "West US",
-                                    "value": "westus"
-                                },
-                                {
-                                    "label": "North Central US",
-                                    "value": "northcentralus"
-                                },
-                                {
-                                    "label": "South Central US",
-                                    "value": "southcentralus"
-                                },
-                                {
-                                    "label": "North Europe",
-                                    "value": "northeurope"
-                                },
-                                {
-                                    "label": "West Europe",
-                                    "value": "westeurope"
-                                },
-                                {
-                                    "label": "Japan West",
-                                    "value": "japanwest"
-                                },
-                                {
-                                    "label": "Japan East",
-                                    "value": "japaneast"
-                                },
-                                {
-                                    "label": "Brazil South",
-                                    "value": "brazilsouth"
-                                },
-                                {
-                                    "label": "Australia East",
-                                    "value": "australiaeast"
-                                },
-                                {
-                                    "label": "Australia Southeast",
-                                    "value": "australiasoutheast"
-                                },
-                                {
-                                    "label": "South India",
-                                    "value": "southindia"
-                                },
-                                {
-                                    "label": "Central India",
-                                    "value": "centralindia"
-                                },
-                                {
-                                    "label": "Canada East",
-                                    "value": "canadaeast"
-                                },
-                                {
-                                    "label": "UK South",
-                                    "value": "uksouth"
-                                },
-                                {
-                                    "label": "UK West",
-                                    "value": "ukwest"
-                                },
-                                {
-                                    "label": "West Central US",
-                                    "value": "westcentralus"
-                                },
-                                {
-                                    "label": "West US 2",
-                                    "value": "westus2"
-                                },
-                                {
-                                    "label": "Korea Central",
-                                    "value": "koreacentral"
-                                },
-                                {
-                                    "label": "Korea South",
-                                    "value": "koreasouth"
-                                },
-                                {
-                                    "label": "France Central",
-                                    "value": "francecentral"
-                                },
-                                {
-                                    "label": "France South",
-                                    "value": "francesouth"
-                                },
-                                {
-                                    "label": "Australia Central",
-                                    "value": "australiacentral"
-                                },
-                                {
-                                    "label": "UAE Central",
-                                    "value": "uaecentral"
-                                },
-                                {
-                                    "label": "UAE North",
-                                    "value": "uaenorth"
-                                },
-                                {
-                                    "label": "South Africa North",
-                                    "value": "southafricanorth"
-                                },
-                                {
-                                    "label": "South Africa West",
-                                    "value": "southafricawest"
-                                },
-                                {
-                                    "label": "Switzerland North",
-                                    "value": "switzerlandnorth"
-                                },
-                                {
-                                    "label": "Switzerland West",
-                                    "value": "switzerlandwest"
-                                },
-                                {
-                                    "label": "Germany North",
-                                    "value": "germanynorth"
-                                },
-                                {
-                                    "label": "Germany West Central",
-                                    "value": "germanywestcentral"
-                                },
-                                {
-                                    "label": "Norway West",
-                                    "value": "norwaywest"
-                                },
-                                {
-                                    "label": "Norway East",
-                                    "value": "norwayeast"
-                                }
-                            ],
-                            "required": false
-                        }
+                            "allowedValues": "[map(steps('esConnectivityGoalState').esLocationsApi.value, (item) => parse(concat('{\"label\":\"', item.displayName, '\",\"value\":\"', item.name, '\"}')))]",
+                            "required": true
+                        },
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]"
                     },
                     {
                         "name": "esVpnGw",
@@ -666,7 +524,7 @@
             "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esConnectivitySub, steps('esGoalState').esMgmtSub)), steps('esConnectivityGoalState').esConnectivitySub, '')]",
             "enableAzFw": "[steps('esConnectivityGoalState').esAzFw]",
             "addressPrefix": "[steps('esConnectivityGoalState').esAddressHub]",
-            "location": "[steps('esConnectivityGoalState').esRegions]",
+            "location": "[steps('esConnectivityGoalState').esNwLocation]",
             "managementSubscriptionId": "[steps('esGoalState').esMgmtSub]",
             "lzSubscriptionId": "[if(or(not(equals(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), not(equals(steps('lzGoalState').esLzSub, steps('esConnectivityGoalState').esConnectivitySub))), steps('lzGoalState').esLzSub, '')]",
             "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
