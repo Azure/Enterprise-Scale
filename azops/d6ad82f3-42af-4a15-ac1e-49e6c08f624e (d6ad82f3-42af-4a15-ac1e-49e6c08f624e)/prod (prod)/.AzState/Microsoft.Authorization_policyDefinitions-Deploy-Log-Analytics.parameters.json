@@ -1,0 +1,215 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deploy-Log-Analytics",
+        "ResourceId": "/providers/Microsoft.Management/managementGroups/prod/providers/Microsoft.Authorization/policyDefinitions/Deploy-Log-Analytics",
+        "ResourceName": "Deploy-Log-Analytics",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "PolicyDefinitionId": "/providers/Microsoft.Management/managementGroups/prod/providers/Microsoft.Authorization/policyDefinitions/Deploy-Log-Analytics",
+        "Properties": {
+          "Description": null,
+          "DisplayName": "Deploy-LogAnalytics",
+          "Mode": "All",
+          "Parameters": {
+            "workspaceName": {
+              "type": "String",
+              "metadata": {
+                "displayName": "workspaceName",
+                "description": "Provide name for log analytics workspace"
+              }
+            },
+            "automationAccountName": {
+              "type": "String",
+              "metadata": {
+                "displayName": "automationAccountName",
+                "description": "Provide name for automation account"
+              }
+            },
+            "workspaceRegion": {
+              "type": "String",
+              "metadata": {
+                "displayName": "workspaceRegion",
+                "description": "Select Azure region for Log Analytics"
+              }
+            },
+            "automationRegion": {
+              "type": "String",
+              "metadata": {
+                "displayName": "automationRegion",
+                "description": "Select Azure region for Automation account"
+              }
+            },
+            "retentionInDays": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Data retention",
+                "description": "Select data retention (days) for Log Analytics."
+              }
+            },
+            "rgName": {
+              "type": "String",
+              "metadata": {
+                "displayName": "rgName",
+                "description": "Provide name for resource group."
+              }
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Resources/subscriptions"
+                }
+              ]
+            },
+            "then": {
+              "effect": "deployIfNotExists",
+              "details": {
+                "type": "Microsoft.OperationalInsights/workspaces",
+                "deploymentScope": "Subscription",
+                "existenceScope": "Subscription",
+                "roleDefinitionIds": [
+                  "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ],
+                "existenceCondition": {
+                  "allOf": [
+                    {
+                      "field": "name",
+                      "like": "[parameters('workspaceName')]"
+                    }
+                  ]
+                },
+                "deployment": {
+                  "location": "northeurope",
+                  "properties": {
+                    "mode": "incremental",
+                    "parameters": {
+                      "rgName": {
+                        "value": "[parameters('rgName')]"
+                      },
+                      "retentionInDays": {
+                        "value": "[parameters('retentionInDays')]"
+                      },
+                      "workspaceName": {
+                        "value": "[parameters('workspaceName')]"
+                      },
+                      "workspaceRegion": {
+                        "value": "[parameters('workspaceRegion')]"
+                      },
+                      "automationAccountName": {
+                        "value": "[parameters('automationAccountName')]"
+                      },
+                      "automationRegion": {
+                        "value": "[parameters('automationRegion')]"
+                      }
+                    },
+                    "template": {
+                      "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                      "contentVersion": "1.0.0.0",
+                      "parameters": {
+                        "rgName": {
+                          "type": "string"
+                        },
+                        "workspaceName": {
+                          "type": "string"
+                        },
+                        "workspaceRegion": {
+                          "type": "string"
+                        },
+                        "automationAccountName": {
+                          "type": "string"
+                        },
+                        "automationRegion": {
+                          "type": "string"
+                        },
+                        "retentionInDays": {
+                          "type": "string"
+                        }
+                      },
+                      "variables": {},
+                      "resources": [
+                        {
+                          "type": "Microsoft.Resources/resourceGroups",
+                          "apiVersion": "2018-05-01",
+                          "name": "[parameters('rgName')]",
+                          "location": "[deployment().location]",
+                          "properties": {}
+                        },
+                        {
+                          "type": "Microsoft.Resources/deployments",
+                          "apiVersion": "2018-05-01",
+                          "name": "log-analytics",
+                          "resourceGroup": "[parameters('rgName')]",
+                          "dependsOn": [
+                            "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+                          ],
+                          "properties": {
+                            "mode": "Incremental",
+                            "template": {
+                              "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                              "contentVersion": "1.0.0.0",
+                              "parameters": {},
+                              "variables": {},
+                              "resources": [
+                                {
+                                  "apiversion": "2015-10-31",
+                                  "location": "[parameters('AutomationRegion')]",
+                                  "name": "[parameters('AutomationAccountName')]",
+                                  "type": "Microsoft.Automation/automationAccounts",
+                                  "comments": "Automation account for ",
+                                  "properties": {
+                                    "sku": {
+                                      "name": "OMS"
+                                    }
+                                  }
+                                },
+                                {
+                                  "apiVersion": "2017-03-15-preview",
+                                  "location": "[parameters('workspaceRegion')]",
+                                  "name": "[parameters('workspaceName')]",
+                                  "type": "Microsoft.OperationalInsights/workspaces",
+                                  "properties": {
+                                    "sku": {
+                                      "name": "pernode"
+                                    },
+                                    "enableLogAccessUsingOnlyResourcePermissions": true,
+                                    "retentionInDays": "[int(parameters('retentionInDays'))]"
+                                  },
+                                  "resources": [
+                                    {
+                                      "name": "Automation",
+                                      "type": "linkedServices",
+                                      "apiVersion": "2015-11-01-preview",
+                                      "dependsOn": [
+                                        "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                                      ],
+                                      "properties": {
+                                        "resourceId": "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                                      }
+                                    }
+                                  ]
+                                }
+                              ],
+                              "outputs": {}
+                            }
+                          }
+                        }
+                      ],
+                      "outputs": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
