@@ -8,7 +8,7 @@
         "steps": [
             {
                 "name": "lzSettings",
-                "label": "Enterprise-Scale Company prefix",
+                "label": "Enterprise-Scale company prefix",
                 "subLabel": {
                     "preValidation": "Provide a company prefix for the management group structure that will be created.",
                     "postValidation": "Done"
@@ -66,7 +66,7 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "To enable platform monitoring, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources.",
+                            "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
                             "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
                         }
                     },
@@ -74,7 +74,7 @@
                         "name": "esLogAnalytics",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Log Analytics workspace and enable monitoring for your platform and resources",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continious compliance.",
                         "constraints": {
                             "allowedValues": [
@@ -90,6 +90,21 @@
                         },
                         "visible": true
                     },
+                    {
+                        "name": "esLogRetention",
+                        "type": "Microsoft.Common.Slider",
+                        "min": 30,
+                        "max": 730,
+                        "label": "Log Analytics Data Retention (days)",
+                        "subLabel": "Days",
+                        "defaultValue": 30,
+                        "showStepMarkers": false,
+                        "toolTip": "Select retention days for Azure logs. Default is 30 days.",
+                        "constraints": {
+                            "required": false
+                        },
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },           
                     {
                         "name": "mgmtSubsApi",
                         "type": "Microsoft.Solutions.ArmApiControl",
@@ -113,31 +128,7 @@
                             "allowedValues": "[map(steps('esGoalState').mgmtSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                             "required": true
                         }
-                    },					
-                    {
-                        "name": "esAsc",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Azure Security Center and enable security monitoring for your platform and resources",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes, Standard Tier (recommended)",
-                                    "value": "Standard"
-                                },
-                                {
-                                    "label": "Yes, Free Tier",
-                                    "value": "Free"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },
+                    },     			
                     {
                         "name": "textBlock1",
                         "type": "Microsoft.Common.TextBlock",
@@ -151,30 +142,10 @@
                         }
                     },
                     {
-                        "name": "esSecuritySolution",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Security solution",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },
-                    {
                         "name": "esAgentSolution",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Agent Health solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -194,7 +165,7 @@
                         "name": "esChangeTracking",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Change Tracking solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -214,7 +185,7 @@
                         "name": "esUpdateMgmt",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Update Management solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -234,7 +205,7 @@
                         "name": "esActivityLog",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Activity Log solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -254,7 +225,7 @@
                         "name": "esVmInsights",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy VM Insights solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -274,7 +245,7 @@
                         "name": "esAntiMalware",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Antimalware solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -294,7 +265,7 @@
                         "name": "esServiceMap",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Service Map solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -314,7 +285,7 @@
                         "name": "esSqlAssessment",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy SQL Assessment solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -329,7 +300,63 @@
                             ]
                         },
 						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    }
+                    },
+                    {
+                        "name": "textBlock0",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]",
+                        "options": {
+                            "text": "Select which Azure Security solutions you will enable.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/security/fundamentals/overview"
+                            }
+                        }
+                    },					
+                    {
+                        "name": "esAsc",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy Azure Security Center and enable security monitoring for your platform and resources",
+                        "defaultValue": "Yes, Standard Tier (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes, Standard Tier (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "Yes, Free Tier",
+                                    "value": "Free"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },                 
+                    {
+                        "name": "esSecuritySolution",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy Azure Sentinel",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    }					
                 ]
             },
             {
@@ -388,10 +415,70 @@
                         }
                     },
                     {
+                        "name": "esVmMonitoring",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure VMs (Windows & Linux) are being monitored",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
+                        "name": "esVmssMonitoring",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure VMSS (Windows & Linux) are being monitored",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
+                        "name": "esArcVmMonitoring",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure Arc VMs (Windows & Linux) are being monitored",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
                         "name": "esAzBackup",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure VMs are enabled for backup",
-                        "defaultValue": "No",
+                        "label": "Ensure Azure VMs (Windows & Linux) are enabled for Azure Backup",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
                         "constraints": {
                             "allowedValues": [
@@ -411,7 +498,7 @@
                         "name": "esDenyRdp",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Prevent inbound RDP from internet",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent inbound RDP from internet",
                         "constraints": {
                             "allowedValues": [
@@ -431,7 +518,7 @@
                         "name": "esNsg",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure subnets are associated with NSG",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure NSGs must be associated with subnets being created",
                         "constraints": {
                             "allowedValues": [
@@ -451,7 +538,7 @@
                         "name": "esIpForwarding",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Prevent IP forwarding",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent IP forwarding",
                         "constraints": {
                             "allowedValues": [
@@ -471,7 +558,7 @@
                         "name": "esSqlEncryption",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure Azure SQL is enabled with transparent data encryption",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -491,7 +578,7 @@
                         "name": "esSqlAudit",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure auditing is enabled on Azure SQL",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure auditing is enabled on Azure SQLs",
                         "constraints": {
                             "allowedValues": [
@@ -511,7 +598,7 @@
                         "name": "esHttpsStorage",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure secure connections (HTTPS) to storage accounts",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure storage can only be accessed using HTTPS",
                         "constraints": {
                             "allowedValues": [
@@ -551,7 +638,11 @@
             "denyRdp": "[steps('lzGoalState').esDenyRdp]",
             "enableStorageHttps": "[steps('lzGoalState').esHttpsStorage]",
             "denyIpForwarding": "[steps('lzGoalState').esIpForwarding]",
-            "denySubnetWithoutNsg": "[steps('lzGoalState').esNsg]"
+            "denySubnetWithoutNsg": "[steps('lzGoalState').esNsg]",
+            "retentionInDays": "[string(steps('esGoalState').esLogRetention)]",
+            "enableVmMonitoring": "[steps('lzGoalState').esVmMonitoring]",
+            "enableVmssMonitoring": "[steps('lzGoalState').esVmssMonitoring]",
+            "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]"
         }
     }
 }
