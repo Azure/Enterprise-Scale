@@ -1,0 +1,1550 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "organizationName": {
+            "type": "string",
+            "defaultValue": "contoso",
+            "minLength": 3,
+            "maxLength": 10
+        },
+        "sharedServicesRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for the shared services Resource Group"
+            },
+            "defaultValue": "-SharedSvcs-rg"
+        },
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for the Log Analytics workspace"
+            },
+            "defaultValue": "-sharedsvcs-log"
+        },
+        "storageAcountName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourceLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the Azure region for your deployments and resources."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for the Key Vault"
+            },
+            "defaultValue": "-sharedsvcs-kv"
+        },
+        "objectIdForAccessPolicy": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the objectId of the principal who will have permissions to KV access policy."
+            }
+        },
+        "azureMigrateRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for the Azure Migrate Resource Group"
+            },
+            "defaultValue": "-Migrate"
+        },
+        "VNetRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for the Virtual Network Resource Group"
+            },
+            "defaultValue": "-Vnet-rg"
+        },
+        "VNetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for the Virtual Network Resource Group"
+            },
+            "defaultValue": "-Vnet"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployAzureMigrate": "Deploy-AzureMigrate",
+            "deployLogAnalytics": "Deploy-LogAnalytics",
+            "deployKeyVault": "Deploy-KeyVault",
+            "deployVnet": "Deploy-Vnet",
+            "deploystorageAcount": "Deploy-StorageAccount"
+        },
+        "policyAssignments": {
+            "deployAzureMigrate": "Assign-AzureMigrate",
+            "deployLogAnalytics": "Assign-LogAnalytics",
+            "deployKeyVault": "Assign-KeyVault",
+            "deployVnet": "Assign-Vnet",
+            "deploystorageAcount": "Assign-StorageAccount"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyDefinitions').deployAzureMigrate]",
+            "properties": {
+                "displayName": "Deploy Azure Migrate if not exist on Subscription",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "azureMigrateRgName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide Migrate name that will be created for the Subscription",
+                            "displayName": "Resource name for Azure Migrate that will be created"
+                        }
+                    },
+                    "resourceLocation": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide location for Resources"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.Migrate/migrateProjects",
+                            "deploymentScope": "Subscription",
+                            "existenceScope": "Subscription",
+                            "roleDefinitionIds": [
+                                "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "name",
+                                        "like": "[[parameters('azureMigrateRgName')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "location": "[deployment().location]",
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "azureMigrateRgName": {
+                                            "value": "[[parameters('azureMigrateRgName')]"
+                                        },
+                                        "resourceLocation": {
+                                            "value": "[[parameters('resourceLocation')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "azureMigrateRgName": {
+                                                "type": "string"
+                                            },
+                                            "resourceLocation": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {
+                                        },
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Resources/resourceGroups",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[parameters('azureMigrateRgName')]",
+                                                "location": "[[parameters('resourceLocation')]",
+                                                "properties": {
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Resources/deployments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[concat('migrate', uniqueString('mig'))]",
+                                                "resourceGroup": "[[parameters('azureMigrateRgName')]",
+                                                "dependsOn": [
+                                                    "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('azureMigrateRgName'))]"
+                                                ],
+                                                "properties": {
+                                                    "mode": "Incremental",
+                                                    "template": {
+                                                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                                        "contentVersion": "1.0.0.0",
+                                                        "parameters": {
+                                                        },
+                                                        "variables": {
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects",
+                                                                "apiVersion": "2019-06-01",
+                                                                "name": "[[parameters('azureMigrateRgName')]",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "copy": {
+                                                                    "name": "MIG-VM-Project",
+                                                                    "count": 1
+                                                                },
+                                                                "dependsOn": [
+                                                                ],
+                                                                "properties": {
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects/Solutions",
+                                                                "apiVersion": "2019-06-01",
+                                                                "name": "[[concat(parameters('azureMigrateRgName'),'/Servers-Assessment-ServerAssessment')]",
+                                                                "copy": {
+                                                                    "name": "MIG-VM-Solution",
+                                                                    "count": 1
+                                                                },
+                                                                "dependsOn": [
+                                                                    "MIG-VM-Project"
+                                                                ],
+                                                                "properties": {
+                                                                    "tool": "ServerAssessment",
+                                                                    "purpose": "Assessment",
+                                                                    "goal": "Servers",
+                                                                    "status": "Active",
+                                                                    "details": null
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects/Solutions",
+                                                                "apiVersion": "2019-06-01",
+                                                                "name": "[[concat(parameters('azureMigrateRgName'),'/Servers-Discovery-ServerDiscovery')]",
+                                                                "copy": {
+                                                                    "name": "MIG-VM-ServerDiscovery",
+                                                                    "count": 1
+                                                                },
+                                                                "dependsOn": [
+                                                                    "MIG-VM-Solution"
+                                                                ],
+                                                                "properties": {
+                                                                    "tool": "ServerDiscovery",
+                                                                    "purpose": "Discovery",
+                                                                    "goal": "Servers",
+                                                                    "status": "Inactive",
+                                                                    "details": null
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects/Solutions",
+                                                                "apiVersion": "2019-06-01",
+                                                                "name": "[[concat(parameters('azureMigrateRgName'),'/Servers-Migration-ServerMigration')]",
+                                                                "copy": {
+                                                                    "name": "MIG-VM-ServerMigration",
+                                                                    "count": 1
+                                                                },
+                                                                "dependsOn": [
+                                                                    "MIG-VM-ServerDiscovery"
+                                                                ],
+                                                                "properties": {
+                                                                    "tool": "ServerMigration",
+                                                                    "purpose": "Migration",
+                                                                    "goal": "Servers",
+                                                                    "status": "Active",
+                                                                    "details": null
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects/Solutions",
+                                                                "apiVersion": "2019-06-01",
+                                                                "name": "[[concat(parameters('azureMigrateRgName'),'/Databases-Assessment-DataMigrationAssistant')]",
+                                                                "copy": {
+                                                                    "name": "MIG-DB-Assistant",
+                                                                    "count": 1
+                                                                },
+                                                                "dependsOn": [
+                                                                    "MIG-VM-ServerMigration"
+                                                                ],
+                                                                "properties": {
+                                                                    "tool": "DataMigrationAssistant",
+                                                                    "purpose": "Assessment",
+                                                                    "goal": "Databases",
+                                                                    "status": "Active",
+                                                                    "details": null
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects/Solutions",
+                                                                "apiVersion": "2019-06-01",
+                                                                "name": "[[concat(parameters('azureMigrateRgName'),'/Databases-Migration-DatabaseMigrationService')]",
+                                                                "copy": {
+                                                                    "name": "MIG-DB-Service",
+                                                                    "count": 1
+                                                                },
+                                                                "dependsOn": [
+                                                                    "MIG-DB-Assistant"
+                                                                ],
+                                                                "properties": {
+                                                                    "tool": "DatabaseMigrationService",
+                                                                    "purpose": "Migration",
+                                                                    "goal": "Databases",
+                                                                    "status": "Active",
+                                                                    "details": null
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Migrate/MigrateProjects/providers/locks",
+                                                                "apiVersion": "2016-09-01",
+                                                                "name": "[[concat(parameters('azureMigrateRgName'), '/Microsoft.Authorization/AzureMigrateDoNotDelete')]",
+                                                                "dependsOn": [
+                                                                    "MIG-DB-Service"
+                                                                ],
+                                                                "comments": "Resource lock Azure Migrate",
+                                                                "properties": {
+                                                                    "level": "CannotDelete"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "outputs": {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignments').deployAzureMigrate]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyDefinitions').deployAzureMigrate]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "This policy deploys Azure Migrate",
+                "displayName": "Policy to deploy Azure Migrate for the Subscription",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployAzureMigrate)]",
+                "parameters": {
+                    "azureMigrateRgName": {
+                        "value": "[concat(parameters('organizationName'),parameters('azureMigrateRgName'))]"
+                    },
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyAssignments').deployAzureMigrate]"
+            ],
+            "name": "Deploy-Assign-AzureMigrate",
+            "properties": {
+                "mode": "incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string",
+                            "metadata": {
+                                "description": "input parameter for RESTful representation"
+                            }
+                        }
+                    },
+                    "variables": {
+                        "policyAssignments": {
+                            "deployAzureMigrate": "Assign-AzureMigrate"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2019-04-01-preview",
+                            "name": "[[guid(concat(variables('policyAssignments').deployAzureMigrate,parameters('name')))]",
+                            "properties": {
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[reference(concat('/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployAzureMigrate), '2019-09-01').policyRule.then.details.roleDefinitionIds[0]]",
+                                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployAzureMigrate), '2019-09-01', 'Full' ).identity.principalId)]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployAzureMigrate), '2019-09-01', 'Full' ).identity.principalId)]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "azMigratePolicyResourceDeployment",
+            "dependsOn": [
+                "[variables('policyAssignments').deployAzureMigrate]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "template": "[reference(variables('policyDefinitions').deployAzureMigrate, '2019-09-01').policyRule.then.details.deployment.properties.template]",
+                "parameters": "[reference(variables('policyAssignments').deployAzureMigrate, '2019-09-01').parameters]"
+            }
+        },
+        {   "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyDefinitions').deployKeyVault]",
+            "properties": {
+                "displayName": "Deploy Azure Key Vault if not exist on Subscription",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "keyVaultName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide Key Vault name that will be created for the Subscription",
+                            "displayName": "Resource name for the Key Vault that will be created"
+                        }
+                    },
+                    "objectIdForAccessPolicy": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide objectId of principal with access to policy",
+                            "displayName": "Principal with access to policy"
+                        }
+                    },
+                    "sharedServicesRgName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide name for Resource Group"
+                        }
+                    },
+                    "resourceLocation": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide location for resources"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.KeyVault/vaults",
+                            "deploymentScope": "Subscription",
+                            "existenceScope": "Subscription",
+                            "roleDefinitionIds": [
+                                "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "name",
+                                        "like": "[[parameters('keyVaultName')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "location": "[deployment().location]",
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "sharedServicesRgName": {
+                                            "value": "[[parameters('sharedServicesRgName')]"
+                                        },
+                                        "keyVaultName": {
+                                            "value": "[[parameters('keyVaultName')]"
+                                        },
+                                        "objectIdForAccessPolicy": {
+                                            "value": "[[parameters('objectIdForAccessPolicy')]"
+                                        },
+                                        "resourceLocation": {
+                                            "value": "[[parameters('resourceLocation')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "sharedServicesRgName": {
+                                                "type": "string"
+                                            },
+                                            "keyVaultName": {
+                                                "type": "string"
+                                            },
+                                            "resourceLocation": {
+                                                "type": "string"
+                                            },
+                                            "objectIdForAccessPolicy": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {
+                                        },
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Resources/resourceGroups",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[parameters('sharedServicesRgName')]",
+                                                "location": "[[parameters('resourceLocation')]",
+                                                "properties": {
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Resources/deployments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[concat('kv', uniqueString('dep'))]",
+                                                "resourceGroup": "[[parameters('sharedServicesRgName')]",
+                                                "dependsOn": [
+                                                    "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('sharedServicesRgName'))]"
+                                                ],
+                                                "properties": {
+                                                    "mode": "Incremental",
+                                                    "template": {
+                                                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                                        "contentVersion": "1.0.0.0",
+                                                        "parameters": {
+                                                        },
+                                                        "variables": {
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "type": "Microsoft.KeyVault/vaults",
+                                                                "name": "[[parameters('keyVaultName')]",
+                                                                "apiVersion": "2016-10-01",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "tags": {
+                                                                    "displayName": "KeyVault"
+                                                                },
+                                                                "properties": {
+                                                                    "createMode": "default",
+                                                                    "enabledForDeployment": true,
+                                                                    "enabledForDiskEncryption": true,
+                                                                    "enabledForTemplateDeployment": true,
+                                                                    "tenantId": "[[subscription().tenantId]",
+                                                                    "sku": {
+                                                                        "name": "premium",
+                                                                        "family": "A"
+                                                                    },
+                                                                    "networkAcls": {
+                                                                        "defaultAction": "Allow",
+                                                                        "bypass": "AzureServices",
+                                                                        "virtualNetworkRules": [
+                                                                        ],
+                                                                        "ipRules": [
+                                                                        ]
+                                                                    },
+                                                                    "accessPolicies": [
+                                                                        {
+                                                                            "objectId": "[[parameters('objectIdForAccessPolicy')]",
+                                                                            "tenantId": "[[subscription().tenantId]",
+                                                                            "permissions": {
+                                                                                "keys": [
+                                                                                    "get",
+                                                                                    "list",
+                                                                                    "update",
+                                                                                    "create",
+                                                                                    "import",
+                                                                                    "delete",
+                                                                                    "recover",
+                                                                                    "backup",
+                                                                                    "restore"
+                                                                                ],
+                                                                                "secrets": [
+                                                                                    "get",
+                                                                                    "list",
+                                                                                    "set",
+                                                                                    "delete",
+                                                                                    "recover",
+                                                                                    "backup",
+                                                                                    "restore"
+                                                                                ],
+                                                                                "certificates": [
+                                                                                    "get",
+                                                                                    "list",
+                                                                                    "update",
+                                                                                    "create",
+                                                                                    "import",
+                                                                                    "delete",
+                                                                                    "recover",
+                                                                                    "deleteissuers",
+                                                                                    "recover",
+                                                                                    "managecontacts",
+                                                                                    "manageissuers",
+                                                                                    "getissuers",
+                                                                                    "listissuers",
+                                                                                    "setissuers"
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.KeyVault/vaults/providers/locks",
+                                                                "apiVersion": "2016-09-01",
+                                                                "name": "[[concat(parameters('keyVaultName'), '/Microsoft.Authorization/keyVaultDoNotDelete')]",
+                                                                "dependsOn": [
+                                                                    "[[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+                                                                ],
+                                                                "comments": "Resource lock on key vault",
+                                                                "properties": {
+                                                                    "level": "CannotDelete"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "outputs": {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignments').deployKeyVault]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyDefinitions').deployKeyVault]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "This policy deploys Key Vault",
+                "displayName": "Policy to deploy Key Vault for the Subscription",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployKeyVault)]",
+                "parameters": {
+                    "sharedServicesRgName": {
+                        "value": "[concat(parameters('organizationName'),parameters('sharedServicesRgName'))]"
+                    },
+                    "keyVaultName": {
+                        "value": "[concat(parameters('organizationName'),parameters('keyVaultName'))]"
+                    },
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    },
+                    "objectIdForAccessPolicy": {
+                        "value": "[parameters('objectIdForAccessPolicy')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyAssignments').deployKeyVault]"
+            ],
+            "name": "Deploy-Assign-KeyVault",
+            "properties": {
+                "mode": "incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string",
+                            "metadata": {
+                                "description": "Input parameter for RESTful representation"
+                            }
+                        }
+                    },
+                    "variables": {
+                        "policyAssignments": {
+                            "deployKeyVault": "Assign-KeyVault"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2019-04-01-preview",
+                            "name": "[[guid(concat(variables('policyAssignments').deployKeyVault,parameters('name')))]",
+                            "properties": {
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[reference(concat('/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployKeyVault), '2019-09-01').policyRule.then.details.roleDefinitionIds[0]]",
+                                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployKeyVault), '2019-09-01', 'Full' ).identity.principalId)]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployKeyVault), '2019-09-01', 'Full' ).identity.principalId)]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "keyVaultPolicyResourceDeployment",
+            "dependsOn": [
+                "[variables('policyAssignments').deployKeyVault]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "template": "[reference(variables('policyDefinitions').deployKeyVault, '2019-09-01').policyRule.then.details.deployment.properties.template]",
+                "parameters": "[reference(variables('policyAssignments').deployKeyVault, '2019-09-01').parameters]"
+            }
+        },
+        { 
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyDefinitions').deployLogAnalytics]",
+            "properties": {
+                "displayName": "Deploy Azure Log Analytics if not exist on Subscription",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "workspaceName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide Log Analytics workspace name that will be created for the Subscription",
+                            "displayName": "Resource name Log Analytics workspace that will be created"
+                        }
+                    },
+                    "resourceLocation": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Select Azure region for Log Analytics workspace",
+                            "strongType": "location",
+                            "displayName": "Location for Log Analytics workspace"
+                        }
+                    },
+                    "sharedServicesrgName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide name for Resource Group"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.OperationalInsights/workspaces",
+                            "deploymentScope": "Subscription",
+                            "existenceScope": "Subscription",
+                            "roleDefinitionIds": [
+                                "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "name",
+                                        "like": "[[parameters('workspaceName')]"
+                                    },
+                                    {
+                                        "field": "location",
+                                        "equals": "[[parameters('resourceLocation')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "location": "[deployment().location]",
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "sharedServicesRgName": {
+                                            "value": "[[parameters('sharedServicesRgName')]"
+                                        },
+                                        "workspaceName": {
+                                            "value": "[[parameters('workspaceName')]"
+                                        },
+                                        "location": {
+                                            "value": "[[parameters('resourceLocation')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "sharedServicesRgName": {
+                                                "type": "string"
+                                            },
+                                            "workspaceName": {
+                                                "type": "string"
+                                            },
+                                            "resourceLocation": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {
+                                        },
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Resources/resourceGroups",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[parameters('sharedServicesRgName')]",
+                                                "location": "[[parameters('resourceLocation')]",
+                                                "properties": {
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Resources/deployments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[concat('mgmt', uniqueString('dep'))]",
+                                                "resourceGroup": "[[parameters('sharedServicesRgName')]",
+                                                "dependsOn": [
+                                                    "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('sharedServicesRgName'))]"
+                                                ],
+                                                "properties": {
+                                                    "mode": "Incremental",
+                                                    "template": {
+                                                        "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+                                                        "contentVersion": "1.0.0.0",
+                                                        "parameters": {
+                                                        },
+                                                        "variables": {
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "apiVersion": "2017-03-15-preview",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "name": "[[parameters('workspaceName')]",
+                                                                "type": "Microsoft.OperationalInsights/workspaces",
+                                                                "properties": {
+                                                                    "sku": {
+                                                                        "name": "pergb2018"
+                                                                    },
+                                                                    "enableLogAccessUsingOnlyResourcePermissions": true
+                                                                }
+                                                            }
+                                                        ],
+                                                        "outputs": {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignments').deployLogAnalytics]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyDefinitions').deployLogAnalytics]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "This policy deploys Log Analytics",
+                "displayName": "Policy to deploy Log Analytics for the Subscription",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployLogAnalytics)]",
+                "parameters": {
+                    "sharedServicesRgName": {
+                        "value": "[concat(parameters('organizationName'),parameters('sharedServicesRgName'))]"
+                    },
+                    "workspaceName": {
+                        "value": "[concat(parameters('organizationName'),parameters('workspaceName'))]"
+                    },
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyAssignments').deployLogAnalytics]"
+            ],
+            "name": "Deploy-Assign-LogAnalytics",
+            "properties": {
+                "mode": "incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string",
+                            "metadata": {
+                                "description": "input parameter for RESTful representation"
+                            }
+                        }
+                    },
+                    "variables": {
+                        "policyAssignments": {
+                            "deployLogAnalytics": "Assign-LogAnalytics"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2019-04-01-preview",
+                            "name": "[[guid(concat(variables('policyAssignments').deployLogAnalytics,parameters('name')))]",
+                            "properties": {
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[reference(concat('/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployLogAnalytics), '2019-09-01').policyRule.then.details.roleDefinitionIds[0]]",
+                                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployLogAnalytics), '2019-09-01', 'Full' ).identity.principalId)]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployLogAnalytics), '2019-09-01', 'Full' ).identity.principalId)]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "logAnalyticsPolicyResourceDeployment",
+            "dependsOn": [
+                "[variables('policyAssignments').deployLogAnalytics]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "template": "[reference(variables('policyDefinitions').deployLogAnalytics, '2019-09-01').policyRule.then.details.deployment.properties.template]",
+                "parameters": "[reference(variables('policyAssignments').deployLogAnalytics, '2019-09-01').parameters]"
+            }
+        },
+        {   
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyDefinitions').deployVnet]",
+            "properties": {
+                "displayName": "Deploy Azure Virtual Network if not exist on Subscription",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "VNetName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide Virtual Network name that will be created for the Subscription",
+                            "displayName": "Resource name Virtual Network that will be created"
+                        }
+                    },
+                    "resourceLocation": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Select Azure region for Virtual Network",
+                            "strongType": "location",
+                            "displayName": "Location for Virtual Network"
+                        }
+                    },
+                    "VNetRgName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide name for Resource Group"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "deploymentScope": "Subscription",
+                            "existenceScope": "Subscription",
+                            "roleDefinitionIds": [
+                                "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "name",
+                                        "like": "[[parameters('VNetName')]"
+                                    },
+                                    {
+                                        "field": "location",
+                                        "equals": "[[parameters('resourceLocation')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "location": "[deployment().location]",
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "VNetRgName": {
+                                            "value": "[[parameters('VNetRgName')]"
+                                        },
+                                        "VNetName": {
+                                            "value": "[[parameters('VNetName')]"
+                                        },
+                                        "location": {
+                                            "value": "[[parameters('resourceLocation')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "VNetRgName": {
+                                                "type": "string"
+                                            },
+                                            "VNetName": {
+                                                "type": "string"
+                                            },
+                                            "resourceLocation": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {
+                                            "NSGCore": "[[concat(parameters('VNetName'), '-Core-NSG')]",
+                                            "NSGJumpbox": "[[concat(parameters('VNetName'), '-Jumpbox-NSG')]"
+                                        },
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Resources/resourceGroups",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[parameters('VNetRgName')]",
+                                                "location": "[[parameters('resourceLocation')]",
+                                                "properties": {
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Resources/deployments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[concat('mgmt', uniqueString('net'))]",
+                                                "resourceGroup": "[[parameters('VNetRgName')]",
+                                                "dependsOn": [
+                                                    "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('VNetRgName'))]"
+                                                ],
+                                                "properties": {
+                                                    "mode": "Incremental",
+                                                    "template": {
+                                                        "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+                                                        "contentVersion": "1.0.0.0",
+                                                        "parameters": {
+                                                        },
+                                                        "variables": {
+                                                            "NSGCore": "[[concat(parameters('VNetName'), '-Core-NSG')]",
+                                                            "NSGJumpbox": "[[concat(parameters('VNetName'), '-Jumpbox-NSG')]"
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "type": "Microsoft.Network/networkSecurityGroups",
+                                                                "apiVersion": "2018-10-01",
+                                                                "name": "[[variables('NSGCore')]",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "tags": {
+                                                                    "displayName": "Core NSG"
+                                                                },
+                                                                "properties": {
+                                                                    "securityRules": [
+                                                                    ]
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Network/networkSecurityGroups",
+                                                                "apiVersion": "2018-10-01",
+                                                                "name": "[[variables('NSGJumpbox')]",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "tags": {
+                                                                    "displayName": "Jump NSG"
+                                                                },
+                                                                "properties": {
+                                                                    "securityRules": [
+                                                                    ]
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Network/virtualNetworks",
+                                                                "apiVersion": "2018-10-01",
+                                                                "name": "[[parameters('VNetName')]",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "dependsOn": [
+                                                                    "[[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSGCore'))]",
+                                                                    "[[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSGJumpbox'))]"
+                                                                ],
+                                                                "tags": {
+                                                                    "displayName": "Virtual Network"
+                                                                },
+                                                                "properties": {
+                                                                    "addressSpace": {
+                                                                        "addressPrefixes": [
+                                                                            "10.0.0.0/16"
+                                                                        ]
+                                                                    },
+                                                                    "subnets": [
+                                                                        {
+                                                                            "name": "GatewaySubnet",
+                                                                            "properties": {
+                                                                                "addressPrefix": "10.0.0.0/26"
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "name": "AzureFirewallSubnet",
+                                                                            "properties": {
+                                                                                "addressPrefix": "10.0.0.64/26"
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "name": "JumpboxSubnet",
+                                                                            "properties": {
+                                                                                "addressPrefix": "10.0.0.128/26",
+                                                                                "networkSecurityGroup": {
+                                                                                    "id": "[[[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSGJumpbox'))]"
+                                                                                }
+
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "name": "CoreSubnet",
+                                                                            "properties": {
+                                                                                "addressPrefix": "10.0.4.0/22",
+                                                                                "networkSecurityGroup": {
+                                                                                    "id": "[[[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSGCore'))]"
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                    ]
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Network/virtualNetworks/providers/locks",
+                                                                "apiVersion": "2016-09-01",
+                                                                "name": "[[concat(parameters('VNetName'), '/Microsoft.Authorization/AzureVNet-DoNotDelete')]",
+                                                                "dependsOn": [
+                                                                    "[[resourceId('Microsoft.Network/virtualNetworks', parameters('VNetName'))]"
+                                                                ],
+                                                                "properties": {
+                                                                    "level": "CannotDelete"
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Network/networkSecurityGroups/providers/locks",
+                                                                "apiVersion": "2016-09-01",
+                                                                "name": "[[concat(variables('NSGCore'), '/Microsoft.Authorization/CoreNSG-DoNotDelete')]",
+                                                                "dependsOn": [
+                                                                    "[[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSGCore'))]"
+                                                                ],
+                                                                "properties": {
+                                                                    "level": "CannotDelete"
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Network/networkSecurityGroups/providers/locks",
+                                                                "apiVersion": "2016-09-01",
+                                                                "name": "[[concat(variables('NSGJumpbox'), '/Microsoft.Authorization/CoreNSG-DoNotDelete')]",
+                                                                "dependsOn": [
+                                                                    "[[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSGJumpbox'))]"
+                                                                ],
+                                                                "properties": {
+                                                                    "level": "CannotDelete"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "outputs": {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignments').deployVnet]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyDefinitions').deployVnet]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "This policy deploys a Virtual Network",
+                "displayName": "Policy to deploy a Virtual Network for the Subscription",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployVnet)]",
+                "parameters": {
+                    "VNetRgName": {
+                        "value": "[concat(parameters('organizationName'),parameters('VNetRgName'))]"
+                    },
+                    "VNetName": {
+                        "value": "[concat(parameters('organizationName'),parameters('VNetName'))]"
+                    },
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyAssignments').deployVnet]"
+            ],
+            "name": "Deploy-Assign-Vnet",
+            "properties": {
+                "mode": "incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string",
+                            "metadata": {
+                                "description": "input parameter for RESTful representation"
+                            }
+                        }
+                    },
+                    "variables": {
+                        "policyAssignments": {
+                            "deployVnet": "Assign-Vnet"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2019-04-01-preview",
+                            "name": "[[guid(concat(variables('policyAssignments').deployVnet,parameters('name')))]",
+                            "properties": {
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[reference(concat('/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deployVnet), '2019-09-01').policyRule.then.details.roleDefinitionIds[0]]",
+                                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployVnet), '2019-09-01', 'Full' ).identity.principalId)]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deployVnet), '2019-09-01', 'Full' ).identity.principalId)]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "VnetPolicyResourceDeployment",
+            "dependsOn": [
+                "[variables('policyAssignments').deployVnet]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "template": "[reference(variables('policyDefinitions').deployVnet, '2019-09-01').policyRule.then.details.deployment.properties.template]",
+                "parameters": "[reference(variables('policyAssignments').deployVnet, '2019-09-01').parameters]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyDefinitions').deploystorageAcount]",
+            "properties": {
+                "displayName": "Deploy Storage Account if not exist on Subscription",
+                "mode": "All",
+                "policyType": "Custom",
+                "parameters": {
+                    "storageAcountName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide Storage Account name that will be created for the Subscription",
+                            "displayName": "Resource name Storage Account that will be created"
+                        }
+                    },
+                    "resourceLocation": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Select Azure region for Storage Account",
+                            "strongType": "location",
+                            "displayName": "Location for Storage Account"
+                        }
+                    },
+                    "sharedServicesrgName": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Provide name for Resource Group"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "deploymentScope": "Subscription",
+                            "existenceScope": "Subscription",
+                            "roleDefinitionIds": [
+                                "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "name",
+                                        "like": "[[parameters('storageAcountName')]"
+                                    },
+                                    {
+                                        "field": "location",
+                                        "equals": "[[parameters('resourceLocation')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "location": "[deployment().location]",
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "sharedServicesRgName": {
+                                            "value": "[[parameters('sharedServicesRgName')]"
+                                        },
+                                        "storageAcountName": {
+                                            "value": "[[parameters('storageAcountName')]"
+                                        },
+                                        "location": {
+                                            "value": "[[parameters('resourceLocation')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "sharedServicesRgName": {
+                                                "type": "string"
+                                            },
+                                            "storageAcountName": {
+                                                "type": "string"
+                                            },
+                                            "resourceLocation": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {
+                                        },
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Resources/resourceGroups",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[parameters('sharedServicesRgName')]",
+                                                "location": "[[parameters('resourceLocation')]",
+                                                "properties": {
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Resources/deployments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[concat('mgmt', uniqueString('store'))]",
+                                                "resourceGroup": "[[parameters('sharedServicesRgName')]",
+                                                "dependsOn": [
+                                                    "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('sharedServicesRgName'))]"
+                                                ],
+                                                "properties": {
+                                                    "mode": "Incremental",
+                                                    "template": {
+                                                        "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
+                                                        "contentVersion": "1.0.0.0",
+                                                        "parameters": {
+                                                        },
+                                                        "variables": {
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "apiVersion": "2018-07-01",
+                                                                "location": "[[parameters('resourceLocation')]",
+                                                                "name": "[[parameters('storageAcountName')]",
+                                                                "type": "Microsoft.Storage/storageAccounts",
+                                                                "sku": {
+                                                                    "name": "Standard_LRS"
+                                                                },
+                                                                "kind": "StorageV2",
+                                                                "properties": {
+                                                                    "encryption": {
+                                                                        "keySource": "Microsoft.Storage",
+                                                                        "services": {
+                                                                            "blob": {
+                                                                                "enabled": true
+                                                                            },
+                                                                            "file": {
+                                                                                "enabled": true
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "supportsHttpsTrafficOnly": true
+                                                                }
+                                                            },
+                                                            {
+                                                                "type": "Microsoft.Storage/storageAccounts/providers/locks",
+                                                                "apiVersion": "2016-09-01",
+                                                                "name": "[[concat(parameters('storageAcountName'), '/Microsoft.Authorization/storageDoNotDelete')]",
+                                                                "dependsOn": [
+                                                                    "[[concat('Microsoft.Storage/storageAccounts/', parameters('storageAcountName'))]"
+                                                                ],
+                                                                "properties": {
+                                                                    "level": "CannotDelete"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "outputs": {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignments').deploystorageAcount]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyDefinitions').deploystorageAcount]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "This policy deploys a Storage Account",
+                "displayName": "Policy to deploy a Storage Account for the Subscription",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deploystorageAcount)]",
+                "parameters": {
+                    "sharedServicesRgName": {
+                        "value": "[concat(parameters('organizationName'),parameters('sharedServicesRgName'))]"
+                    },
+                    "storageAcountName": {
+                        "value": "[toLower(substring(concat(parameters('organizationName'),uniqueString(parameters('storageAcountName'))), 0, 13))]"
+                    },
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('policyAssignments').deploystorageAcount]"
+            ],
+            "name": "Deploy-Assign-storageAccount",
+            "properties": {
+                "mode": "incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string",
+                            "metadata": {
+                                "description": "input parameter for RESTful representation"
+                            }
+                        }
+                    },
+                    "variables": {
+                        "policyAssignments": {
+                            "deploystorageAcount": "Assign-storageAccount"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2019-04-01-preview",
+                            "name": "[[guid(concat(variables('policyAssignments').deploystorageAcount,parameters('name')))]",
+                            "properties": {
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[reference(concat('/providers/Microsoft.Authorization/policyDefinitions/', variables('policyDefinitions').deploystorageAcount), '2019-09-01').policyRule.then.details.roleDefinitionIds[0]]",
+                                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deploystorageAcount), '2019-09-01', 'Full' ).identity.principalId)]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignments').deploystorageAcount), '2019-09-01', 'Full' ).identity.principalId)]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "storageAccountPolicyResourceDeployment",
+            "dependsOn": [
+                "[variables('policyAssignments').deploystorageAcount]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "template": "[reference(variables('policyDefinitions').deploystorageAcount, '2019-09-01').policyRule.then.details.deployment.properties.template]",
+                "parameters": "[reference(variables('policyAssignments').deploystorageAcount, '2019-09-01').parameters]"
+            }
+        }
+    ]
+}
