@@ -217,7 +217,8 @@
     "variables": {
         "azPolicyEnvMapping": {
             "https://management.azure.com/": "auxiliary/policies.json",
-            "https://management.azure.cn/": "auxiliary/mkPolicies.json"
+            "https://management.chinacloudapi.cn": "auxiliary/mkPolicies.json",
+            "https://management.azgov.com": "auxiliary/"
         },
         "azEnvPolicy": "[variables('azPolicyEnvMapping')[environment().resourceManager]]",
         "deploymentUris": {
@@ -283,6 +284,32 @@
             }
         },
         {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('delayFor', copyIndex())]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').policyDeploymentName]"
+            ],
+            "copy": {
+                "batchSize": 1,
+                "count": 20,
+                "mode": "Serial",
+                "name": "DeploymentDelay"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {
             "condition": "[not(empty(parameters('managementSubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
@@ -309,7 +336,8 @@
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-management')]",
             "name": "[variables('deploymentNames').monitoringDeploymentName]",
             "dependsOn": [
-                "[variables('deploymentNames').policyDeploymentName]"
+                "[variables('deploymentNames').policyDeploymentName]",
+                "DeploymentDelay"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -394,7 +422,8 @@
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-landingzones')]",
             "name": "[variables('deploymentNames').lzDeploymentName]",
             "dependsOn": [
-                "[variables('deploymentNames').policyDeploymentName]"
+                "[variables('deploymentNames').policyDeploymentName]",
+                "DeploymentDelay"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -438,7 +467,8 @@
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "name": "[variables('deploymentNames').diagAndSecDeploymentName]",
             "dependsOn": [
-                "[variables('deploymentNames').monitoringDeploymentName]"
+                "[variables('deploymentNames').monitoringDeploymentName]",
+                "DeploymentDelay"
             ],
             "location": "[deployment().location]",
             "properties": {
