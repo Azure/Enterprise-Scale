@@ -1,0 +1,265 @@
+{
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "lzSettings",
+                "label": "Enterprise-Scale company prefix",
+                "subLabel": {
+                    "preValidation": "Provide a company prefix for the management group structure that will be created.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Company prefix",
+                "elements": [
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "Enterprise-Scale ARM deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
+                            "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin"
+                        }
+                    },
+                    {
+                        "name": "textBlock0",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Enterprise-Scale will create the management group hierarchy under the Tenant Root Group with the prefix provided at this step.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
+                            }
+                        }
+                    },
+                    {
+                        "name": "esMgmtGroup",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Management Group prefix",
+                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9A-Z-]{1,5}$",
+                            "validationMessage": "The prefix must be 1-5 characters."
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "lzGoalState",
+                "label": "Landing Zone Corp configuration",
+                "subLabel": {
+                    "preValidation": "Select 'Yes' if goal state should be enforced during deployment. Select 'No' if you want to do it post deployment using Azure Policy.",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "lzGs",
+                "elements": [
+                    {
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "You can optionally provide a subscriptionId for your first landing zone, and also assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
+                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
+                        }
+                    },
+                    {
+                        "name": "lzSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
+                    },
+                    {
+                        "name": "esLzSub",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Landing zone subscription (optional)",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
+                        "constraints": {
+                            "allowedValues": "[map(steps('lzGoalState').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": false
+                        }
+                    },
+                    {
+                        "name": "textBlock3",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Select which of the the recommended policies you will assign to your landing zones.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance"
+                            }
+                        }
+                    },
+                    {
+                        "name": "esAzBackup",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure VMs (Windows & Linux) are enabled for Azure Backup",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esDenyRdp",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Prevent inbound RDP from internet",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent inbound RDP from internet",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esNsg",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure subnets are associated with NSG",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure NSGs must be associated with subnets being created",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esIpForwarding",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Prevent IP forwarding",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent IP forwarding",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esSqlEncryption",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure SQL is enabled with transparent data encryption",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esSqlAudit",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure auditing is enabled on Azure SQL",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure auditing is enabled on Azure SQLs",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "esHttpsStorage",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure secure connections (HTTPS) to storage accounts",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure storage can only be accessed using HTTPS",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+                        "visible": true
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "managementSubscriptionId": "[steps('esGoalState').esMgmtSub]",
+            "lzSubscriptionId": "[if(not(equals(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), steps('lzGoalState').esLzSub, '')]",
+            "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]",
+            "enableSqlAudit": "[steps('lzGoalState').esSqlAudit]",
+            "enableSqlEncryption": "[steps('lzGoalState').esSqlEncryption]",
+            "enableVmBackup": "[steps('lzGoalState').esAzBackup]",
+            "denyRdp": "[steps('lzGoalState').esDenyRdp]",
+            "enableStorageHttps": "[steps('lzGoalState').esHttpsStorage]",
+            "denyIpForwarding": "[steps('lzGoalState').esIpForwarding]",
+            "denySubnetWithoutNsg": "[steps('lzGoalState').esNsg]"
+        }
+    }
+}
