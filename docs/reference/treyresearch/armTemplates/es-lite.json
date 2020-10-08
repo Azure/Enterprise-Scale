@@ -17,6 +17,14 @@
                 "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for management. If you don't want to bring a subscription, leave this parameter empty as is."
             }
         },
+        "connectivitySubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for networking."
+            }
+        },
         "lzSubscriptionId": {
             "type": "string",
             "defaultValue": "",
@@ -36,16 +44,105 @@
                 "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
         },
-        "enableAsc": {
+        "retentionInDays": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableSecuritySolution": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
                 "No"
+            ]
+        },
+        "enableAgentHealth": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableChangeTracking": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableUpdateMgmt": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
             ],
-            "metadata": {
-                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
-            }
+            "defaultValue": "Yes"
+        },
+        "enableActivityLog": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableAntiMalware": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableVmInsights": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableServiceMap": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableSqlAssessment": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },               
+        "addressPrefix": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableVpnGw": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableErGw": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[deployment().location]"
         },
         "enableHub": {
             "type": "string",
@@ -56,22 +153,6 @@
             "defaultValue": "No"
         },
         "enableAzFw": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "No"
-        },
-        "enableVpnGw": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "No"
-        },
-        "enableErGw": {
             "type": "string",
             "allowedValues": [
                 "Yes",
@@ -94,101 +175,42 @@
         "subnetMaskForGw": {
             "type": "string",
             "defaultValue": ""
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[deployment().location]"
-        },
-        "addressPrefix": {
-            "type": "string",
-            "metadata": {
-                "displayName": "addressPrefix",
-                "description": "Address prefix of the HUB"
-            },
-            "defaultValue": "192.168.0.0/24"
-        },
-        "newLzMgmtGroup": {
-            "type": "string",
-            "defaultValue": ""
-        }        
+        }
     },
     "variables": {
-        "monitoring": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalytics.json')]",
-        "security": "[uri(deployment().properties.templateLink.uri, 'auxiliary/security.json')]",
-        "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/hubspoke-connectivity.json')]",
+        "deploymentUris": {
+            "managementGroups": "[uri(deployment().properties.templateLink.uri, 'auxiliary/mgmtGroups.json')]",
+            "monitoring": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalytics.json')]",
+            "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalyticsSolutions.json')]",
+            "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/hubspoke-connectivity.json')]"
+        },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', parameters('managementSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', 'na')]",
-        "lzMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', parameters('lzSubscriptionId'))]",
-        "noLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', 'nalz')]",
-        "lzNewMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', parameters('newLzMgmtGroup'), '/', parameters('lzSubscriptionId'))]",
-        "noNewLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', parameters('newLzMgmtGroup'), '/', 'nalz')]",
-        "monitoringDeploymentName": "[take(concat('EntScale-Monitoring', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-        "secDeploymentName": "[take(concat('EntScale-Sec', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-        "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+        "lzMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones', '/', parameters('lzSubscriptionId'))]",
+        "noLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones', '/', 'nalz')]",
+        "deploymentNames": {
+            "mgmtGroupDeploymentName": "[take(concat('EntScale-Mgs', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "policyDeploymentName": "[take(concat('EntScale-Policy', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "monitoringDeploymentName": "[take(concat('EntScale-Monitoring', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "monitoringSolutionsDeploymentName": "[take(concat('EntScale-Solutions', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+        }
     },
     "resources": [
         {
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[parameters('enterpriseScaleCompanyPrefix')]",
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', parameters('enterpriseScaleCompanyPrefix'))]"
-            ],
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').mgmtGroupDeploymentName]",
+            "location": "[deployment().location]",
             "properties": {
-                "details": {
-                    "parent": {
-                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones')]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', parameters('enterpriseScaleCompanyPrefix'))]"
-            ],
-            "properties": {
-                "details": {
-                    "parent": {
-                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online')]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones'))]"
-            ],
-            "properties": {
-                "details": {
-                    "parent": {
-                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones'))]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-corp')]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones'))]"
-            ],
-            "properties": {
-                "details": {
-                    "parent": {
-                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones'))]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').managementGroups]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
                 }
             }
@@ -199,88 +221,120 @@
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('managementSubscriptionId'))), variables('moveSubscription'), variables('noSubscription'))]",
             "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', concat(parameters('enterpriseScaleCompanyPrefix'), '-platform'))]"
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "properties": {}
         },
         {
-            "condition": "[not(empty(parameters('newLzMgmtGroup')))]",
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', parameters('newLzMgmtGroup'))]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones'))]"
-            ],
-            "properties": {
-                "details": {
-                    "parent": {
-                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', concat(parameters('enterpriseScaleCompanyPrefix'), '-landingzones'))]"
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[and(not(empty(parameters('lzSubscriptionId'))), not(empty(parameters('newLzMgmtGroup'))))]",
-            "type": "Microsoft.Management/managementGroups/subscriptions",
-            "apiVersion": "2020-05-01",
-            "name": "[if(not(empty(parameters('lzSubscriptionId'))), variables('lzNewMoveSubscription'), variables('noNewLzSubscription'))]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', concat(parameters('enterpriseScaleCompanyPrefix'), '-', parameters('newLzMgmtGroup')))]"
-            ],
-            "properties": {}
-        },
-        {
-            "condition": "[and(not(empty(parameters('lzSubscriptionId'))), empty(parameters('newLzMgmtGroup')))]",
+            "condition": "[not(empty(parameters('lzSubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('lzSubscriptionId'))), variables('lzMoveSubscription'), variables('noLzSubscription'))]",
             "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', concat(parameters('enterpriseScaleCompanyPrefix'), '-online'))]"
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "properties": {}
         },
         {
-            "condition": "[equals(parameters('enableAsc'), 'Yes')]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
-            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
-            "name": "[variables('secDeploymentName')]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
+            "name": "[variables('deploymentNames').monitoringDeploymentName]",
             "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]"
+                "[tenantResourceId('Microsoft.Management/managementGroups/subscriptions', variables('moveSubscription'))]"
             ],
             "location": "[deployment().location]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('security')]"
+                    "uri": "[variables('deploymentUris').monitoring]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
-                    "enableAsc": {
-                        "value": "[parameters('enableAsc')]"
+                    "enableLogAnalytics": {
+                        "value": "[parameters('enableLogAnalytics')]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "retentionInDays": {
+                        "value": "[parameters('retentionInDays')]"
                     }
                 }
             }
-        },             
+        },
         {
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableHub'), 'Yes'))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableAntiMalware'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
-            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
-            "name": "[variables('connectivityDeploymentName')]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
             "dependsOn": [
-                "[variables('monitoringDeploymentName')]",
-                "[tenantResourceId('Microsoft.Management/managementGroups/subscriptions/', concat(parameters('enterpriseScaleCompanyPrefix'), '-platform'), parameters('managementSubscriptionId'))]"
+                "[variables('deploymentNames').monitoringDeploymentName]"
             ],
             "location": "[deployment().location]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('connectivity')]"
+                    "uri": "[variables('deploymentUris').monitoringSolutions]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "enableSecuritySolution": {
+                        "value": "[parameters('enableSecuritySolution')]"
+                    },
+                    "enableAgentHealth": {
+                        "value": "[parameters('enableAgentHealth')]"
+                    },
+                    "enableChangeTracking": {
+                        "value": "[parameters('enableChangeTracking')]"
+                    },
+                    "enableUpdateMgmt": {
+                        "value": "[parameters('enableUpdateMgmt')]"
+                    },
+                    "enableActivityLog": {
+                        "value": "[parameters('enableActivityLog')]"
+                    },
+                    "enableAntiMalware": {
+                        "value": "[parameters('enableAntiMalware')]"
+                    },
+                    "enableVmInsights": {
+                        "value": "[parameters('enableVmInsights')]"
+                    },
+                    "enableServiceMap": {
+                        "value": "[parameters('enableServiceMap')]"
+                    },
+                    "enableSqlAssessment": {
+                        "value": "[parameters('enableSqlAssessment')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
+            "name": "[variables('deploymentNames').connectivityDeploymentName]",
+            "dependsOn": [
+                "[variables('deploymentNames').monitoringSolutionsDeploymentName]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').connectivity]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
@@ -305,7 +359,7 @@
                         "value": "[parameters('location')]"
                     },
                     "connectivitySubscriptionId": {
-                        "value": "[parameters('managementSubscriptionId')]"
+                        "value": "[parameters('connectivitySubscriptionId')]"
                     },
                     "vpnGwType": {
                         "value": "[parameters('vpnGwType')]"
@@ -315,35 +369,6 @@
                     },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-05-01",
-            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
-            "name": "[variables('monitoringDeploymentName')]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups/subscriptions/', concat(parameters('enterpriseScaleCompanyPrefix'), '-platform'), parameters('managementSubscriptionId'))]"
-            ],
-            "location": "[deployment().location]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('monitoring')]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enableLogAnalytics": {
-                        "value": "[parameters('enableLogAnalytics')]"
-                    },
-                    "managementSubscriptionId": {
-                        "value": "[parameters('managementSubscriptionId')]"
                     }
                 }
             }
