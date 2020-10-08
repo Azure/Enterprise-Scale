@@ -1,10 +1,10 @@
 # Enterprise-Scale "in-a-box" deployment
 
-Enterprise-Scale-in-a-box deployment is a two-step approach.
+Enterprise-Scale-in-a-box reference implemntaion is a three-step hands on exercise.
 
-The **Deploy your tenant** scenario initializes a new Enterprise-Scale (ES) Management Group structure and all custom Azure Policy and PolicySet (aka Policy Initiative) definitions at the ES Management Group scope.
+In the first step you will (**Deploy your tenant**), then [**Setup a GitHub CI/CD Pipeline**](./setup-git-cicd.md), and finally [**Use GitHub to deploy changes to your Enterprise-scale architecture**](./use-git-pipeline.md). We'll walk you through the setup of an DevOps pipeline based on GitHub Actions to accomplish the provisioning of Azure Policy assignments.
 
-Once you have completed the first step (deploy your tenant), the second step [Setup GitHub Action for CI/CD](./setup-git-cicd.md) and [Using GitHub to deploy changes to your Enterprise-Scale architecture](./use-git-pipeline.md), will walk you through the setup of an DevOps pipeline based on GitHub Actions to do the Azure Policy assignments.
+The **Deploy your tenant** exercise initializes a new Enterprise-Scale (ES) Management Group structure and all custom Azure Policy and PolicySet (aka Policy Initiative) definitions at the ES Management Group scope.
 
 ## Deploy your Tenant
 
