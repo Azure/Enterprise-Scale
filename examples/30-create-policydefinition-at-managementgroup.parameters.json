@@ -1,0 +1,191 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Tailspin",
+        "DisplayName": "Tailspin",
+        "ParentId": "/providers/Microsoft.Management/managementGroups/3fc1081d-6105-4e19-b60c-1ec1252cf560",
+        "Type": "/providers/Microsoft.Management/managementGroups",
+        "Children": [
+          {
+            "Type": "/providers/Microsoft.Management/managementGroups",
+            "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-landingzones",
+            "Name": "Tailspin-landingzones",
+            "DisplayName": "Tailspin-Landing Zones",
+            "Children": [
+              {
+                "Type": "/providers/Microsoft.Management/managementGroups",
+                "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-sap",
+                "Name": "Tailspin-sap",
+                "DisplayName": "Tailspin-sap",
+                "Children": null
+              },
+              {
+                "Type": "/providers/Microsoft.Management/managementGroups",
+                "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-online",
+                "Name": "Tailspin-online",
+                "DisplayName": "Tailspin-online",
+                "Children": null
+              },
+              {
+                "Type": "/providers/Microsoft.Management/managementGroups",
+                "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-corp",
+                "Name": "Tailspin-corp",
+                "DisplayName": "Tailspin-corp",
+                "Children": null
+              }
+            ]
+          },
+          {
+            "Type": "/providers/Microsoft.Management/managementGroups",
+            "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-decomissioned",
+            "Name": "Tailspin-decomissioned",
+            "DisplayName": "Tailspin-decomissioned",
+            "Children": null
+          },
+          {
+            "Type": "/providers/Microsoft.Management/managementGroups",
+            "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-sandboxes",
+            "Name": "Tailspin-sandboxes",
+            "DisplayName": "Tailspin-sandboxes",
+            "Children": null
+          },
+          {
+            "Type": "/providers/Microsoft.Management/managementGroups",
+            "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-platform",
+            "Name": "Tailspin-platform",
+            "DisplayName": "Tailspin-platform",
+            "Children": [
+              {
+                "Type": "/providers/Microsoft.Management/managementGroups",
+                "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-connectivity",
+                "Name": "Tailspin-connectivity",
+                "DisplayName": "Tailspin-connectivity",
+                "Children": null
+              },
+              {
+                "Type": "/providers/Microsoft.Management/managementGroups",
+                "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-identity",
+                "Name": "Tailspin-identity",
+                "DisplayName": "Tailspin-identity",
+                "Children": null
+              },
+              {
+                "Type": "/providers/Microsoft.Management/managementGroups",
+                "Id": "/providers/Microsoft.Management/managementGroups/Tailspin-management",
+                "Name": "Tailspin-management",
+                "DisplayName": "Tailspin-management",
+                "Children": null
+              }
+            ]
+          }                  
+        ],
+        "properties": {
+          "policyDefinitions": [
+            {
+              "Name": "Deploy-Diagnostics-KeyVault",
+              "ResourceType": "Microsoft.Management/managementGroups",
+              "ExtensionResourceType": "Microsoft.Authorization/policyDefinitions",
+              "Properties": {
+                "displayName": "Deploy-Diagnostics-KeyVault",
+                "policyType": "Custom",
+                "mode": "All",
+                "description": "Apply diagnostic settings for Key Vaults - Log Analytics",
+                "parameters": {
+                  "logAnalytics": {
+                    "type": "String",
+                    "metadata": {
+                      "displayName": "Log Analytics workspace",
+                      "description": "Select the Log Analytics workspace from dropdown list",
+                      "strongType": "omsWorkspace"
+                    }
+                  }
+                },
+                "policyRule": {
+                  "if": {
+                    "field": "type",
+                    "equals": "Microsoft.KeyVault/vaults"
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.Insights/diagnosticSettings",
+                      "name": "setByPolicy",
+                      "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                      ],
+                      "deployment": {
+                        "properties": {
+                          "mode": "incremental",
+                          "template": {
+                            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                              "resourceName": {
+                                "type": "string"
+                              },
+                              "logAnalytics": {
+                                "type": "string"
+                              },
+                              "location": {
+                                "type": "string"
+                              }
+                            },
+                            "variables": {},
+                            "resources": [
+                              {
+                                "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+                                "apiVersion": "2017-05-01-preview",
+                                "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/setByPolicy')]",
+                                "location": "[parameters('location')]",
+                                "dependsOn": [],
+                                "properties": {
+                                  "workspaceId": "[parameters('logAnalytics')]",
+                                  "metrics": [
+                                    {
+                                      "category": "AllMetrics",
+                                      "enabled": true,
+                                      "retentionPolicy": {
+                                        "days": 0,
+                                        "enabled": false
+                                      },
+                                      "timeGrain": null
+                                    }
+                                  ],
+                                  "logs": [
+                                    {
+                                      "category": "AuditEvent",
+                                      "enabled": true
+                                    }
+                                  ]
+                                }
+                              }
+                            ],
+                            "outputs": {}
+                          },
+                          "parameters": {
+                            "logAnalytics": {
+                              "value": "[parameters('logAnalytics')]"
+                            },
+                            "location": {
+                              "value": "[field('location')]"
+                            },
+                            "resourceName": {
+                              "value": "[field('name')]"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }         
+          ]
+        }
+      }
+    }
+  }
+}
