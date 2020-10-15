@@ -11,3 +11,15 @@ Provisioning Landing Zone(s) will mean either **creating new subscription** or *
 Depending upon reference implementations deployed, navigate to appropriate management group under "Landing Zones" management group and create or move existing subscription. This can be done via Azure Portal or PowerShell/CLI.
 
 Business units and/or application portfolio owners can use their preferred tool chain - ARM, PowerShell, Terraform, Portal, CLI etc. for subsequent resource deployments within their Landing Zone(s).
+
+## [Preview] Create Enterprise-Scale landing zones using Azure Portal
+
+The following deployment experiences can be leveraged to create multiple landing zones (subscriptions) and target individual management groups (e.g., 'online', 'corp' etc.).
+
+This [document](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription?tabs=rest-getEnrollments%2Crest-EA%2Crest-getBillingAccounts%2Crest-getBillingProfiles%2Crest-MCA%2Crest-getBillingAccount-MPA%2Crest-getCustomers%2Crest-getIndirectResellers%2Crest-MPA) outlines the requirements depending on the agreement type you have, and the RBAC permissions needed.
+
+| Agreement types | ARM Template |
+|:-------------------------|:-------------|
+| Enterprise Agreement (EA) |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json)
+| Microsoft Customer Agreement  | Coming soon
+| Microsoft Partner Agreement | Coming soon
