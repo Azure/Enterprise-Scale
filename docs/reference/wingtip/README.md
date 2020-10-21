@@ -32,13 +32,13 @@ To learn how to create new subscriptions using Azure portal, please visit this [
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.
 - Azure Policies that will enable autonomy for the platform and the Landing Zones.
-- [Optional] An Azure subscription dedicated for management, which enables core platform capabilities at scale such as:
+- [Optional] An Azure subscription dedicated for management, which enables core platform capabilities at scale using Azure Policy such as:
   - A Log Analytics workspace and an Automation account
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
   - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
-- [Optional] A landing zone subscription for Azure native, internet-facing applications and Resources, and specific workload policies such as:
+- [Optional] A landing zone subscription for Azure native, internet-facing applications and Resources, and specific workload Azure Policies such as:
   - Enforce VM monitoring (Windows & Linux)
   - Enforce VMSS monitoring (Windows & Linux)
   - Enforce Azure Arc VM monitoring (Windows & Linux)
@@ -112,7 +112,7 @@ Once you have deployed the reference implementation, you can create new subscrip
 
 1. In Azure portal, navigate to Subscriptions
 2. Click 'Add', and complete the required steps in order to create a new subscription.
-3. When the subscription has been created, go to Management Groups and move the subscription into the Landing Zone (Online) management group
+3. When the subscription has been created, go to Management Groups and move the subscription into the Landing Zone (online) management group
 4. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the newly created subscription
 
 #### Move existing subscriptions into the landing zone (Online) management group
@@ -120,3 +120,17 @@ Once you have deployed the reference implementation, you can create new subscrip
 1. In Azure portal, navigate to Management Groups
 2. Locate the subscription you want to move, and move it to the landing zone (Online) management group
 3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
+
+#### [Preview] Create N number of subscriptions into targeted management groups using Azure Portal
+
+The following deployment experiences can be leveraged to create multiple landing zones (subscriptions) and target Landing Zone management groups (online).
+
+##### Pre-requesites
+
+This [document](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription?tabs=rest-getEnrollments%2Crest-EA%2Crest-getBillingAccounts%2Crest-getBillingProfiles%2Crest-MCA%2Crest-getBillingAccount-MPA%2Crest-getCustomers%2Crest-getIndirectResellers%2Crest-MPA) outlines the requirements depending on the agreement type you have, and the RBAC permissions needed.
+
+| Agreement types | ARM Template |
+|:-------------------------|:-------------|
+| Enterprise Agreement (EA) |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json)
+| Microsoft Customer Agreement  | Coming soon
+| Microsoft Partner Agreement | Coming soon
