@@ -54,40 +54,6 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 ![Enterprise-Scale without connectivity](./media/es-without-networking.PNG)
 
-## Deployment experience
-
-When you click on [Deploy to Azure](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-foundation.json), the portal will open the deployment experience for Enterprise-Scale.
-
-On the 'Basics' page, ensure you are signed into the correct directory (tenant), and select the region that will be used for template deployments (we recommend you to select the region where you ideally want to deploy your platform resources).
-
-### Basics
-
-![Basics](./media/deploy1.PNG)
-
-When you click next, you must provide the company prefix for the management group hiearchy that will be created under the default "Tenant Root Group". The prefix can be between 1-5 characters.
-
-### Enterprise-Scale Company prefix
-
-![Enterprise-Scale Company prefix](./media/deploy2.PNG)
-
-For "Platform management, security, and governance" step, you must provide a subscription where the setup will deploy Log Analytics workspace and an Azure Automation account and enable all-up monitoring and security for your platform and resources, enforced using Azure Policy.
-This will ensure that any resource being created into the environment later on, will automatically be monitored and secured.
-
-### Platform management, security, and governance
-
-![Platform management](./media/deploy3.PNG)
-
-The last step is to optionally enable recommended Azure policies for your initial landing zone, and you can also provide a subscriptionId of an existing subscription that will be moved into the designated child management group (online) in your landing zone management group.
-This is where you will deploy your workloads post deployment. If you need to scale, you will simply add more subscriptions into the management group (online).
-
-### Landing zone configuration
-
-![Landing zone](./media/deploy4.PNG)
-
-When you have completed the steps, a final validation is done to ensure you have the appropriate RBAC permissions on the involved scopes to do a successful deployments. Once validated, you can review your input and make any changes as needed, and click "Create" to start your Enterprise-Scale deployment.
-
-![Deploy](./media/deploy5.PNG)
-
 ## Next steps
 
 ### From a platform perspective:
