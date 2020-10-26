@@ -66,28 +66,6 @@ As duplicate Subscription names can exist in Azure, the Display Name of a Subscr
 ### Status
 To deterministically target the platform Subscriptions with their specific policies, their workaround is to have a dedicated Management Group for each Platform Subscription, child to the platform Management Group
 
-## Management group scoped deployments can deploy to tenant root scope
-
-### Area
-Azure Resource Manager template deployments
-
-### Issue
-When doing nested deployment from Management Group scope without having the “scope” property specified on "Microsoft.Resources/deployments", ARM defaults to Tenant root and does a Tenant scope deployment.
-
-### Status
-No fix as of yet.
-
-## Reference() function not respecting dependency graph [dependsOn]
-
-### Area
-Azure Resource Manager template deployments
-
-### Issue
-When doing nested deployments from Tenant scope (e.g., policyAssignment and subsequent roleAssignment for the Managed Identity), the reference() function fails saying the policyAssignment cannot be found, even though it exists. A re-deployment works fine.
-
-### Status
-No fix as of yet. Workaround is to add a "delayFor" Resource deployment in serial mode with batch size set to 1
-
 ## Reference() function runs even though the Resource condition is false
 
 ### Area
