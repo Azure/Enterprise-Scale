@@ -74,7 +74,7 @@ Optionally, you can enable the above using the following ARM templates:
 
 ### From an application perspective:
 
-Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workload.
+Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workload.
 
 #### Create new subscriptions into the landing zone (Online) management group
 
