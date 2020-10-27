@@ -1,7 +1,5 @@
 # Azure DevOps - Setup Guide
 
-> Support for Azure DevOps is currently in ***preview***
-
 Please complete the following steps at [Configure Azure permissions for ARM tenant deployments](setup-github.md) page before continuing:
 
 * Step 3 - Create SPN and Grant Permission

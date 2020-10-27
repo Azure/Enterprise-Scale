@@ -13,7 +13,7 @@
   * [Configure Azure permissions for ARM tenant deployments & setup GitHub](./docs/Deploy/setup-github.md)
   * [Initialize Git with current Azure configuration](./docs/Deploy/discover-environment.md)
   * [Deploy your own ARM templates with AzOps GitHub Actions](./docs/Deploy/deploy-new-arm.md)
-  * [[Preview] Configure Azure DevOps support](./docs/Deploy/setup-azuredevops.md)
+  * [Configure Azure DevOps support](./docs/Deploy/setup-azuredevops.md)
 * [Enterprise-Scale "in-a-box" tutorial](./docs/enterprise-scale-iab/README.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
@@ -40,7 +40,20 @@ _The Enterprise-Scale architecture represents the strategic design path and targ
 
 Not all enterprises adopt Azure in the same way, so the Enterprise-Scale architecture may vary between customers. Ultimately, the technical considerations and design recommendations of the Enterprise-Scale architecture may lead to different trade-offs based on the customer's scenario. Some variation is expected, but if core recommendations are followed, the resulting target architecture will put the customer on a path to sustainable scale.
 
-The reference implementations in this repository are intended to support Enterprise-Scale Azure adoption by taking learnings from previous engineering engagements and provide architecture design pattern.
+The Enterprise-Scale reference implementations in this repository are intended to support Enterprise-Scale Azure adoption and provides prescriptive guidance based on authoratative design for the Azure platform as a whole.
+
+| Key customer landing zone requirement | Enterprise-Scale reference implementations |
+|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Timelines to reach security and compliance requirements for a workload | Enabling all recommendations during setup, will ensure resources are compliant from a monitoring and security perspective |
+| Provides a baseline architecture using multi-subscription design | Yes, for the entire Azure tenant regardless of customer’s scale-point |
+| Best-practices from cloud provider | Yes, proven and validated with customers |
+| Be aligned with cloud provider’s platform roadmap | Yes |
+| UI Experience and simplified setup | Yes, Azure portal |
+| All critical services are present and properly configured according to recommend best practices for identity & access management, governance, security, network and logging | Yes, using a multi-subscription design, aligned with Azure platform roadmap |
+| Automation capabilities (IaC/DevOps) | Yes: ARM, Policy, GitHub/Azure DevOps CICD pipeline option included |
+| Provides long-term self-sufficiency | Yes, enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency, the RIs are there to get you started |
+| Enables migration velocity across the organization | Yes, enterprise-scale architecture -> 1:N landing zones, Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
+| Achieves operational excellence | Yes. Enables autonomy for platform and application teams with a policy driven governance and management |
 
 ## Conditions for success
 

@@ -55,6 +55,17 @@ At present, it is not possible to provision new Subscription via ARM templates. 
 ### Status
 We are working closely with engineering teams to enable this functionality for the Contoso Tenant. As a workaround, Subscriptions are created using GitHub Actions, having a Service Principal to call the POST API.
 
+## Deploying the reference implementation fails due to 'Policy <name> cannot be found (404)'
+
+### Area
+ARM backend storage
+
+### Issue
+When deploying to a region that is paired (e.g., EastUS, which is paired with EastUs2), resources deployed in deployment 1 who's referenced in deployment 2 may fail due to replication latency in ARM backend storage. This will cause the overall deployment to fail
+
+### Status
+While this is being fixed, it is recommended to re-run the deployment of the reference implementation with the same input parameter, and the deployment should succeed.
+
 ## Unable to use policy aliases on Microsoft.Resources/subscriptions
 
 ### Area
