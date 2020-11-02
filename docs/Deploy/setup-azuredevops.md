@@ -35,8 +35,6 @@ Add a new secret variable to each of the pipelines:
 
 Set the value to the JSON string created by the steps in the [GitHub - Setup Guide](setup-github.md).
 
- > Important: The JSON must have the double quotes escaped with a backslash, e.g. `"` becomes `\"`
-
 ### Configure repository permissions
 
 The build service account `<Project> Build Service (<Organization>)` must have the following permissions on the repository:
