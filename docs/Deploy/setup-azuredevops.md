@@ -31,7 +31,7 @@ We recommend naming these pipelines `AzOps - Pull` & `AzOps - Push`.
 
 Add a new secret variable to each of the pipelines:
 
-* AZURE_CREDENTIALS
+* AZURE_CREDENTIALS   (escape the quotes in the json string from `"` to  `\"` )
 
 Set the value to the JSON string created by the steps in the [GitHub - Setup Guide](setup-github.md).
 
