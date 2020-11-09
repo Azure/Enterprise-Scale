@@ -1,0 +1,58 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deny-Non-RBAC-AKS",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": null,
+          "DisplayName": "Deny-Non-RBAC-AKS",
+          "Mode": "All",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "Audit",
+                "Disabled",
+                "Deny"
+              ],
+              "defaultValue": "Audit"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.ContainerService/managedClusters"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "field": "Microsoft.ContainerService/managedClusters/enableRBAC",
+                      "exists": "false"
+                    },
+                    {
+                      "field": "Microsoft.ContainerService/managedClusters/enableRBAC",
+                      "equals": "false"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}
