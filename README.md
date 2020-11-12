@@ -32,6 +32,8 @@
 
 The Enterprise-Scale architecture provides prescriptive guidance coupled with Azure best practices, and it follows design principles across the critical design areas for organizations to define their Azure architecture. It will continue to evolve alongside the Azure platform and is ultimately defined by the various design decisions that organizations must make to define their Azure journey.
 
+![hippo](./ESLZ.gif)
+
 ---
 
 _The Enterprise-Scale architecture represents the strategic design path and target technical state for your Azure environment._
