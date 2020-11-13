@@ -68,9 +68,8 @@
             }
         },
         "lzSubscriptionId": {
-            "type": "string",
-            "maxLength": 36,
-            "defaultValue": ""
+            "type": "array",
+            "defaultValue": []
         }
     },
     "variables": {
@@ -106,10 +105,12 @@
             "deployResourceRiagnostics": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').resourceDiagnostics))]"
         },
         "blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}",
-        "lzAscResourceDeploymentName": "[take(concat('asc-lz', deployment().location, deployment().name), 64)]",
-        "lzActivityResourceDeploymentName": "[take(concat('activity-lz', deployment().location, deployment().name), 64)]",
-        "mgAscResourceDeploymentName": "[take(concat('asc-mgmt', deployment().location, deployment().name), 64)]",
-        "mgActivityResourceDeploymentName": "[take(concat('activity-mgmt', deployment().location, deployment().name), 64)]"
+        "lzAscResourceDeploymentName": "[take(concat('asc-lz', deployment().location, deployment().name), 40)]",
+        "lzActivityResourceDeploymentName": "[take(concat('activity-lz', deployment().location, deployment().name), 40)]",
+        "mgAscResourceDeploymentName": "[take(concat('asc-mgmt', deployment().location, deployment().name), 40)]",
+        "mgActivityResourceDeploymentName": "[take(concat('activity-mgmt', deployment().location, deployment().name), 40)]",
+        "noLzActivityDeployment": "naActivity",
+        "noLzAscDeployment": "naAsc"
     },
     "resources": [
         {
@@ -130,6 +131,9 @@
                 "parameters": {
                     "logAnalytics": {
                         "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                    },
+                    "logsEnabled": {
+                        "value": "True"
                     }
                 }
             }
@@ -437,12 +441,16 @@
             "condition": "[and(not(empty(parameters('lzSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[variables('lzActivityResourceDeploymentName')]",
+            "name": "[if(not(empty(parameters('lzSubscriptionId'))), concat(variables('lzActivityResourceDeploymentName'), copyIndex()), variables('noLzActivityDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
             ],
-            "subscriptionId": "[parameters('lzSubscriptionId')]",
+            "copy": {
+                "name": "lzActivityCopy",
+                "count": "[length(parameters('lzSubscriptionId'))]"
+            },
+            "subscriptionId": "[if(not(empty(parameters('lzSubscriptionId'))), parameters('lzSubscriptionId')[copyIndex()], '')]",
             "properties": {
                 "mode": "incremental",
                 "template": "[if(equals(parameters('enableLogAnalytics'), 'Yes'), reference(variables('policyDefinitions').deployAzureActivityLog, '2018-05-01').policyRule.then.details.deployment.properties.template, variables('blankTemplateEscaped'))]",
@@ -453,12 +461,16 @@
             "condition": "[and(not(empty(parameters('lzSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[variables('lzAscResourceDeploymentName')]",
+            "name": "[if(not(empty(parameters('lzSubscriptionId'))), concat(variables('lzAscResourceDeploymentName'), copyIndex()), variables('noLzAscDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
             ],
-            "subscriptionId": "[parameters('lzSubscriptionId')]",
+            "copy": {
+                "name": "lzAscCopy",
+                "count": "[length(parameters('lzSubscriptionId'))]"
+            },
+            "subscriptionId": "[if(not(empty(parameters('lzSubscriptionId'))), parameters('lzSubscriptionId')[copyIndex()], '')]",
             "properties": {
                 "mode": "incremental",
                 "template": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
