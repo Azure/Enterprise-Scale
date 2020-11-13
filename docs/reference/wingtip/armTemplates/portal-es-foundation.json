@@ -374,7 +374,7 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "You can optionally provide a subscriptionId for your first landing zone, and also assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
+                            "text": "You can optionally add existing subscriptions that will be moved to the online landing zone management group, and also assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
                             "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
                         }
                     },
@@ -389,9 +389,9 @@
                     {
                         "name": "esLzSub",
                         "type": "Microsoft.Common.DropDown",
-                        "label": "Landing zone subscription (optional)",
+                        "label": "Landing zone subscriptions (optional)",
                         "toolTip": "",
-                        "multiselect": false,
+                        "multiselect": true,
                         "selectAll": true,
                         "filter": true,
                         "filterPlaceholder": "Filter items ...",
@@ -473,6 +473,26 @@
                             ]
                         },
 						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
+                        "name": "esAksPolicy",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Kubernetes (AKS) for Azure Policy",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": true
                     },
                     {
                         "name": "esAzBackup",
@@ -619,7 +639,7 @@
         ],
         "outputs": {
             "managementSubscriptionId": "[steps('esGoalState').esMgmtSub]",
-            "lzSubscriptionId": "[if(not(equals(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), steps('lzGoalState').esLzSub, '')]",
+            "lzSubscriptionId": "[if(not(contains(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), steps('lzGoalState').esLzSub, '')]",
             "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
             "enableAsc": "[steps('esGoalState').esAsc]",
             "enableSecuritySolution": "[steps('esGoalState').esSecuritySolution]",
@@ -635,6 +655,7 @@
             "enableSqlAudit": "[steps('lzGoalState').esSqlAudit]",
             "enableSqlEncryption": "[steps('lzGoalState').esSqlEncryption]",
             "enableVmBackup": "[steps('lzGoalState').esAzBackup]",
+            "enableAksPolicy": "[steps('lzGoalState').esAksPolicy]",
             "denyRdp": "[steps('lzGoalState').esDenyRdp]",
             "enableStorageHttps": "[steps('lzGoalState').esHttpsStorage]",
             "denyIpForwarding": "[steps('lzGoalState').esIpForwarding]",
