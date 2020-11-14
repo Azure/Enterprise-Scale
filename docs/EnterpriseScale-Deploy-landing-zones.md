@@ -12,6 +12,19 @@ Depending upon reference implementations deployed, navigate to appropriate manag
 
 Business units and/or application portfolio owners can use their preferred tool chain - ARM, PowerShell, Terraform, Portal, CLI etc. for subsequent resource deployments within their Landing Zone(s).
 
+### Create new subscriptions into the **Landing zones** > **Corp** or **Online** management group
+
+1. In Azure portal, navigate to Subscriptions
+2. Click 'Add', and complete the required steps in order to create a new subscription.
+3. When the subscription has been created, go to Management Groups and move the subscription into the **Landing zones** > **Corp** or **Online** management group
+4. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the newly created subscription
+
+### Move existing subscriptions into the **Landing zones** > **Corp** or **Online** management group
+
+1. In Azure portal, navigate to Management Groups
+2. Locate the subscription you want to move, and move it to the **Landing zones** > **Corp** or **Online** management group
+3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
+
 ## [Preview] Create Enterprise-Scale landing zones using Azure Portal
 
 The following deployment experiences can be leveraged to create multiple landing zones (subscriptions) and target individual management groups (e.g., 'online', 'corp' etc.).
