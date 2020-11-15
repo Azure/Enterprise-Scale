@@ -225,12 +225,36 @@
             }
         },
         {
+            "condition": "[equals(parameters('enableAscFree'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[variables('deploymentNames').securityCenterDeploymentName]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').securityCenter]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
             "condition": "[not(empty(parameters('managementSubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('managementSubscriptionId'))), variables('moveSubscription'), variables('noSubscription'))]",
             "dependsOn": [
-                "[variables('deploymentNames').mgmtGroupDeploymentName]"
+                "[variables('deploymentNames').mgmtGroupDeploymentName]",
+                "[if(equals(parameters('enableAscFree'), 'Yes'), variables('deploymentNames').securityCenterDeploymentName, '')]"
             ],
             "properties": {}
         },
@@ -240,7 +264,8 @@
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('lzSubscriptionId'))), variables('lzMoveSubscription'), variables('noLzSubscription'))]",
             "dependsOn": [
-                "[variables('deploymentNames').mgmtGroupDeploymentName]"
+                "[variables('deploymentNames').mgmtGroupDeploymentName]",
+                "[if(equals(parameters('enableAscFree'), 'Yes'), variables('deploymentNames').securityCenterDeploymentName, '')]"
             ],
             "properties": {}
         },
@@ -272,26 +297,6 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[equals(parameters('enableAscFree'), 'Yes')]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "location": "[deployment().location]",
-            "name": "[variables('deploymentNames').securityCenterDeploymentName]",
-            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').securityCenter]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
                 }
             }
