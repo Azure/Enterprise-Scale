@@ -48,11 +48,11 @@
             "type": "string",
             "defaultValue": ""
         },
-        "enableAsc": {
+        "enableAscFree": {
             "type": "string",
-            "defaultValue": "Free",
+            "defaultValue": "Yes",
             "allowedValues": [
-                "Free",
+                "Yes",
                 "No"
             ]
         },
@@ -127,7 +127,7 @@
                 "No"
             ],
             "defaultValue": "Yes"
-        },               
+        },
         "addressPrefix": {
             "type": "string",
             "defaultValue": ""
@@ -190,7 +190,8 @@
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'auxiliary/mgmtGroups.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalytics.json')]",
             "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalyticsSolutions.json')]",
-            "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/hubspoke-connectivity.json')]"
+            "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/hubspoke-connectivity.json')]",
+            "securityCenter": "[uri(deployment().properties.templateLink.uri, 'auxiliary/ascfree.json')]"
         },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', parameters('managementSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', 'na')]",
@@ -201,11 +202,11 @@
             "policyDeploymentName": "[take(concat('EntScale-Policy', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "monitoringDeploymentName": "[take(concat('EntScale-Monitoring', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "monitoringSolutionsDeploymentName": "[take(concat('EntScale-Solutions', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+            "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "securityCenterDeploymentName": "[take(concat('EntScale-Asc', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
         }
     },
-    "resources": [
-        {
+    "resources": [{
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').mgmtGroupDeploymentName]",
@@ -246,9 +247,9 @@
         {
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-05-01",
-            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
+            "apiVersion": "2020-06-01",
             "name": "[variables('deploymentNames').monitoringDeploymentName]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-platform')]",
             "dependsOn": [
                 "[tenantResourceId('Microsoft.Management/managementGroups/subscriptions', concat(parameters('enterpriseScaleCompanyPrefix'), '-platform'), parameters('managementSubscriptionId'))]"
             ],
@@ -271,6 +272,26 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableAscFree'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[variables('deploymentNames').securityCenterDeploymentName]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').securityCenter]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
                 }
             }
