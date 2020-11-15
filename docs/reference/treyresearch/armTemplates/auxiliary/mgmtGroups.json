@@ -7,6 +7,16 @@
             "metadata": {
                 "description": "Provide suffix for the management group structure."
             }
+        },
+        "landingZoneMgs": {
+            "type": "array",
+            "defaultValue": [
+                "production",
+                "non-production"
+            ],
+            "metadata": {
+                "description": "These are the landing zone management groups."
+            }
         }
     },
     "variables": {
@@ -89,6 +99,28 @@
                 "details": {
                     "parent": {
                     "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+                    }
+                }
+            }
+        },
+        {
+            // Create child management groups for landing zones
+            "condition": "[not(empty(parameters('landingZoneMgs')))]",
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('landingZoneMgs')[copyIndex()])]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').landingZone)]"
+            ],
+            "copy": {
+                "name": "lzMgCopy",
+                "count": "[length(parameters('landingZoneMgs'))]"
+            },
+            "properties": {
+                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('landingZoneMgs')[copyIndex()])]",
+                "details": {
+                    "parent": {
+                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').landingZone)]"
                     }
                 }
             }
