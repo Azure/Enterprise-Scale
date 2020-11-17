@@ -6,7 +6,7 @@ This repo is supported by Microsoft Support and users will be able to engage Mic
 
 Following list of issues are within the scope of Microsoft support:
 
-- Portal deployment of 4 Reference implementation - WingTip, Contoso and AdventureWorks
+- Portal deployment of Reference implementations - WingTip, Contoso and AdventureWorks
 - Underlying Resource or Resource Provider issues when deploying template (e.g. Management Groups, Policies, Log Analytics Workspace, Virtual WAN, Virtual Network) for any deployment failure
 - Subscription Creation via portal experience
 - UI elements (e.g., ArmApiController) used in ARM Template
