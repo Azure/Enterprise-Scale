@@ -18,28 +18,13 @@ The architecture enables organizations to start as small as needed and scale alo
 To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
 See the following [instructions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) on how to grant access.
 
-## Subscriptions required 
+### Optional prerequisites
 
-The Azure portal's deployment experience allows you to bring in an existing (preferably empty) subscription dedicated to your Platform resources and a subscription used as the initial landing zone for your applications. To provide the information, we require the subscription id to be provided to the parameters.
+The deployment experience in Azure portal allows you to bring in existing (preferably empty) subscriptions dedicated for platform management, connectivity and identity. It also allows you to bring existing subscriptions that can be used as the initial landing zones for your applications.
 
 To learn how to create new subscriptions programatically, please visit this [link](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/programmatically-create-subscription?tabs=rest).
 
 To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
-
-To find the subscriptionId's you want to provide, you can either navigate to Azure portal and retrive them from there, or use PowerShell/CLI:
-
-Azure CLI
-
-````bash
-az account list --query "[].[name, id]" --output table
-````
-
-Azure PowerShell
-
-````powershell
-Get-AzSubscription | Select Name, SubscriptionId
-````
-
 
 ## What will be deployed?
 
@@ -49,7 +34,9 @@ Get-AzSubscription | Select Name, SubscriptionId
 
 ### Manage your Landing Zones
 
-Once you have deployed the reference implementation, you can provision additional Landing Zones and start deploying your workload.
+Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the **Landing Zones** > **Online** or **Corp**  management group, and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workloads.
+
+Refer to the [Create Landing Zone(s)](../../EnterpriseScale-Deploy-landing-zones.md) article for guidance to create Landing Zones.
 
 #### Provision additional Landing Zones 
 
