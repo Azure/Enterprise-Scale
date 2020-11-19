@@ -2,7 +2,7 @@
 |:-------------|:--------------|:--------------|
 |![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)| [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json)  | Yes |
 
-# Enterprise-scale for small enterprises
+# Deploy Enterprise-scale for small enterprises
 The Enterprise-scale architecture is modular by design. It allows organizations to start with foundational landing zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed. The architecture enables organizations to start as small as needed and scale alongside their business requirements irrespective of scale point.
 
 ## Customer profile
