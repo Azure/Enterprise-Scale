@@ -31,12 +31,11 @@ To learn how to create new subscriptions using Azure portal, please visit this [
 By default, all recommendations are enabled and you must explicitly disable them if you don't want it to be deployed and configured.
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
-- Azure Policies that will enable autonomy for the platform and the landing zones.
 - An Azure subscription dedicated for management and connectivity, such as:  
-  - A Log Analytics workspace and an Automation account
+  - A Log Analytics workspace including the following solutions Agent Health Assessment, Anti Malware, Azure Activity, Change Tracking, Security, Service Map, SQL Assessment, Udate Assessment and VM Insights
+  - An Automation account
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
-  - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
   - A hub virtual network
   - Azure Firewall
