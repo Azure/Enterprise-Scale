@@ -30,6 +30,9 @@ To learn how to create new subscriptions using Azure portal, please visit this [
 
 *coming soon*
 
+
+![Enterprise-Scale with connectivity](./TR Enterprise-scale architecture.jpg)
+
 ## Next steps
 
 ### Manage your Landing Zones
