@@ -10,7 +10,7 @@ This reference implementation provides a design path and initial technical state
 
 Enterprise-Scale Reference Implementation for Small Enterprises is meant for customers who are not expecting to deploy or migrate many Workloads to Azure and do not have a large IT organization. Therefore, this design focuses on simplicity and provides a Minimum Viable Product landing zone where production workloads can be deployed with confidence and managed by a small team.
 
-That said, the architecture enables organizations to start as small as needed and scale alongside their business requirements regardless of scale point
+The architecture enables organizations to start as small as needed and scale alongside their business requirements regardless of scale point
 
 
 ## Pre-requisites
