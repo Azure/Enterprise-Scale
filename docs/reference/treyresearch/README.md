@@ -31,7 +31,7 @@ To learn how to create new subscriptions using Azure portal, please visit this [
 *coming soon*
 
 
-<img src = "./TR-ES-architecture.png">
+<img src = "./media/ES-TR-architecture.png" width= 50% >
 
 ## Next steps
 
