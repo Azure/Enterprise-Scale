@@ -25,7 +25,7 @@ ARM template.
 
     ![_Figure_](./media/wt-1.2-2.png)
 
-3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure.
+3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure by following guidance on [configuring Azure permissions for ARM tenant deployments](../EnterpriseScale-Setup-azure.md).
 
 4. On the **Custom deployment** blade, in the Basics section, fill in the **Region** and click on **Next: Enterprise Scale Company Prefix.**
 
