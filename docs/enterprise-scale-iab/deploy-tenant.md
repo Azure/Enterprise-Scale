@@ -81,7 +81,7 @@ Click now on **Next: Next: Landing zone configuration** to move to the next sect
 
 ## (Optional) Move a subscription to ES-management Management Group
 
-Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
+Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#deploy-the-management-group-structure-and-policypolicyset-definitions) step.
 
 In this section, we will move your Azure subscription under the **ES-management** Management Group you created with the template deployment. For simplicity, we will use the portal in this exercise.
 
