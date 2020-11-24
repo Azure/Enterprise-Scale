@@ -1,0 +1,307 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Type": "/subscriptions",
+        "Id": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0",
+        "Name": "0a938bc2-0bb8-4688-bd37-9964427fe0b0",
+        "DisplayName": "ARMMSP",
+        "Children": null,
+        "properties": {
+          "policyDefinitions": [
+            {
+              "Name": "81c43877-c8b6-4c89-8c42-f1391225be30",
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/81c43877-c8b6-4c89-8c42-f1391225be30",
+              "ResourceName": "81c43877-c8b6-4c89-8c42-f1391225be30",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "0a938bc2-0bb8-4688-bd37-9964427fe0b0",
+              "PolicyDefinitionId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/81c43877-c8b6-4c89-8c42-f1391225be30",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "storageHttps",
+                "Mode": "Indexed",
+                "Parameters": {
+                  "policyEffect": {
+                    "type": "String",
+                    "metadata": {
+                      "displayName": "PolicyEffect",
+                      "description": "Deny, audit, or disable the policy."
+                    },
+                    "allowedValues": [
+                      "Deny",
+                      "Audit",
+                      "Disabled"
+                    ],
+                    "defaultValue": "Deny"
+                  }
+                },
+                "PolicyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts"
+                      },
+                      {
+                        "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                        "notEquals": "true"
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "[parameters('policyEffect')]"
+                  }
+                }
+              }
+            },
+            {
+              "Name": "keyvaultDiag",
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/keyvaultDiag",
+              "ResourceName": "keyvaultDiag",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "0a938bc2-0bb8-4688-bd37-9964427fe0b0",
+              "PolicyDefinitionId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/keyvaultDiag",
+              "Properties": {
+                "Description": "key vault policy",
+                "DisplayName": "Deploy-Diag-KeyVault",
+                "Mode": "Indexed",
+                "Parameters": {
+                  "logAnalytics": {
+                    "type": "String",
+                    "metadata": {
+                      "strongType": "omsWorkspace"
+                    }
+                  }
+                },
+                "PolicyRule": {
+                  "if": {
+                    "field": "type",
+                    "equals": "Microsoft.KeyVault/vaults"
+                  },
+                  "then": {
+                    "effect": "deployIfNotExists",
+                    "details": {
+                      "type": "Microsoft.Insights/diagnosticSettings",
+                      "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                      ],
+                      "existenceCondition": {
+                        "allOf": [
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                            "equals": "true"
+                          },
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                            "equals": "true"
+                          },
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+                            "equals": "[parameters('logAnalytics')]"
+                          }
+                        ]
+                      },
+                      "deployment": {
+                        "properties": {
+                          "mode": "incremental",
+                          "parameters": {
+                            "logAnalytics": {
+                              "value": "[parameters('logAnalytics')]"
+                            },
+                            "location": {
+                              "value": "[field('location')]"
+                            },
+                            "vaultName": {
+                              "value": "[field('name')]"
+                            }
+                          },
+                          "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                              "vaultName": {
+                                "type": "string"
+                              },
+                              "logAnalytics": {
+                                "type": "string"
+                              },
+                              "location": {
+                                "type": "string"
+                              }
+                            },
+                            "resources": [
+                              {
+                                "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+                                "apiVersion": "2017-05-01-preview",
+                                "name": "[concat(parameters('vaultName'), '/', 'Microsoft.Insights/setByPolicy')]",
+                                "location": "[parameters('location')]",
+                                "properties": {
+                                  "workspaceId": "[parameters('logAnalytics')]",
+                                  "metrics": [
+                                    {
+                                      "category": "AllMetrics",
+                                      "enabled": true,
+                                      "retentionPolicy": {
+                                        "enabled": false,
+                                        "days": 0
+                                      }
+                                    }
+                                  ],
+                                  "logs": [
+                                    {
+                                      "category": "AuditEvent",
+                                      "enabled": true
+                                    }
+                                  ]
+                                }
+                              }
+                            ],
+                            "outputs": {}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "Name": "testhttp",
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/testhttp",
+              "ResourceName": "testhttp",
+              "ResourceType": "Microsoft.Authorization/policyDefinitions",
+              "SubscriptionId": "0a938bc2-0bb8-4688-bd37-9964427fe0b0",
+              "PolicyDefinitionId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/testhttp",
+              "Properties": {
+                "Description": "Deny storage",
+                "DisplayName": "Deny Storage without https",
+                "Mode": "Indexed",
+                "Parameters": null,
+                "PolicyRule": {
+                  "if": {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts"
+                      },
+                      {
+                        "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                        "notEquals": "true"
+                      }
+                    ]
+                  },
+                  "then": {
+                    "effect": "Deny"
+                  }
+                }
+              }
+            }
+          ],
+          "policySetDefinitions": [],
+          "policyAssignments": [
+            {
+              "Identity": {
+                "principalId": "794ed759-d78e-4e49-9024-8f0dd60a854a",
+                "tenantId": "d6ad82f3-42af-4a15-ac1e-49e6c08f624e",
+                "type": "SystemAssigned"
+              },
+              "Location": "eastus",
+              "Name": "46f2fc651b0f4c7294393886",
+              "PolicyAssignmentId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/46f2fc651b0f4c7294393886",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Deploy SQL DB transparent data encryption",
+                "NotScopes": null,
+                "Parameters": {},
+                "PolicyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/86a912f6-9a06-4e26-b447-11b16ba8659f",
+                "Scope": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0"
+              },
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/46f2fc651b0f4c7294393886",
+              "ResourceName": "46f2fc651b0f4c7294393886",
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "Sku": {
+                "name": "A0",
+                "tier": "Free"
+              }
+            },
+            {
+              "Identity": null,
+              "Location": null,
+              "Name": "5a6ae5ea-49b3-563e-aa23-679105d4df80",
+              "PolicyAssignmentId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/5a6ae5ea-49b3-563e-aa23-679105d4df80",
+              "Properties": {
+                "Description": "MyAssignment",
+                "DisplayName": "httpsAssignment",
+                "NotScopes": null,
+                "Parameters": null,
+                "PolicyDefinitionId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/testhttp",
+                "Scope": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0"
+              },
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/5a6ae5ea-49b3-563e-aa23-679105d4df80",
+              "ResourceName": "5a6ae5ea-49b3-563e-aa23-679105d4df80",
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "Sku": {
+                "name": "A0",
+                "tier": "Free"
+              }
+            },
+            {
+              "Identity": null,
+              "Location": null,
+              "Name": "d70e257bde634a66a9655f7c",
+              "PolicyAssignmentId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/d70e257bde634a66a9655f7c",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "storageHttps",
+                "NotScopes": null,
+                "Parameters": {},
+                "PolicyDefinitionId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/81c43877-c8b6-4c89-8c42-f1391225be30",
+                "Scope": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0"
+              },
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/d70e257bde634a66a9655f7c",
+              "ResourceName": "d70e257bde634a66a9655f7c",
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "Sku": {
+                "name": "A0",
+                "tier": "Free"
+              }
+            },
+            {
+              "Identity": {
+                "principalId": "30e81211-fa68-43a9-a268-07ee5e239217",
+                "tenantId": "d6ad82f3-42af-4a15-ac1e-49e6c08f624e",
+                "type": "SystemAssigned"
+              },
+              "Location": "eastus",
+              "Name": "f578c5aa291c408aa8e70f39",
+              "PolicyAssignmentId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/f578c5aa291c408aa8e70f39",
+              "Properties": {
+                "Description": null,
+                "DisplayName": "Deploy-Diag-KeyVault",
+                "NotScopes": null,
+                "Parameters": {
+                  "logAnalytics": {
+                    "value": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/resourcegroups/logs/providers/microsoft.operationalinsights/workspaces/knlogs100"
+                  }
+                },
+                "PolicyDefinitionId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyDefinitions/keyvaultDiag",
+                "Scope": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0"
+              },
+              "ResourceId": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/providers/Microsoft.Authorization/policyAssignments/f578c5aa291c408aa8e70f39",
+              "ResourceName": "f578c5aa291c408aa8e70f39",
+              "ResourceType": "Microsoft.Authorization/policyAssignments",
+              "Sku": {
+                "name": "A0",
+                "tier": "Free"
+              }
+            }
+          ],
+          "roleDefinitions": [],
+          "roleAssignments": []
+        }
+      }
+    }
+  }
+}

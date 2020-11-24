@@ -1,0 +1,102 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "28f1a243-e91b-4994-b94e-e4a55d6b3318",
+        "ResourceId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/28f1a243-e91b-4994-b94e-e4a55d6b3318",
+        "ResourceName": "28f1a243-e91b-4994-b94e-e4a55d6b3318",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": "aeb777b3-3a06-4c47-ae0a-7095ce43cfe7",
+        "PolicyDefinitionId": "/subscriptions/aeb777b3-3a06-4c47-ae0a-7095ce43cfe7/providers/Microsoft.Authorization/policyDefinitions/28f1a243-e91b-4994-b94e-e4a55d6b3318",
+        "Properties": {
+          "Description": null,
+          "DisplayName": "Cyrus-DINE-SqlDBRetention",
+          "Mode": "All",
+          "Parameters": {
+            "SQLRetentionDays": {
+              "type": "String",
+              "metadata": {}
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "field": "type",
+              "equals": "Microsoft.Sql/servers/databases"
+            },
+            "then": {
+              "effect": "deployIfNotExists",
+              "details": {
+                "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies",
+                "existenceCondition": {
+                  "anyOf": [
+                    {
+                      "field": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies/retentionDays",
+                      "less": "[int(parameters('SQLRetentionDays'))]"
+                    },
+                    {
+                      "field": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies/retentionDays",
+                      "greater": "[int(parameters('SQLRetentionDays'))]"
+                    }
+                  ]
+                },
+                "deployment": {
+                  "properties": {
+                    "mode": "incremental",
+                    "template": {
+                      "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                      "contentVersion": "1.0.0.0",
+                      "parameters": {
+                        "location": {
+                          "type": "string"
+                        },
+                        "sqlServerName": {
+                          "type": "string"
+                        },
+                        "sqlServerDataBaseName": {
+                          "type": "string"
+                        }
+                      },
+                      "variables": {},
+                      "resources": [
+                        {
+                          "name": "[concat( parameters('sqlServerName'),'/',parameters('sqlServerDataBaseName'),'/default')]",
+                          "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies",
+                          "apiVersion": "2018-06-01-preview",
+                          "properties": {
+                            "retentionDays": "[int(parameters('SQLRetentionDays'))]"
+                          }
+                        }
+                      ],
+                      "outputs": {
+                        "RetentionDays": {
+                          "type": "int",
+                          "value": "[int(parameters('SQLRetentionDays'))]"
+                        }
+                      }
+                    },
+                    "parameters": {
+                      "location": {
+                        "value": "[field('location')]"
+                      },
+                      "sqlServerName": {
+                        "value": "[first(split(field('fullname'),'/'))]"
+                      },
+                      "sqlServerDataBaseName": {
+                        "value": "[field('name')]"
+                      }
+                    }
+                  }
+                },
+                "roleDefinitionIds": [
+                  "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
