@@ -1,6 +1,6 @@
-| Enterprise-Scale Design Principles | ARM Template | Scale without refactoring |
+| Enterprise-Scale Design Principles | ARM Templates | Scale without refactoring |
 |:-------------|:--------------|:--------------|
-|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-foundation.json)  | Yes |
+|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)|[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-foundation.json) | Yes |
 
 # Deploy Enterprise-Scale foundation
 
@@ -22,37 +22,29 @@ See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to
 
 ### Optional pre-requsites
 
-The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscription dedicated for platform management, and an existing subscription that can be used as the initial landing zone for your applications. In order to provide the information, we require the subscription id to be provided to the parameters.
+The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscription dedicated for platform management, and an existing subscription that can be used as the initial landing zone for your applications.
 
 To learn how to create new subscriptions programatically, please visit this [link](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/programmatically-create-subscription?tabs=rest).
 
 To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
-To find the subscriptionId's you want to provide, you can either navigate to Azure portal and retrive them from there, or use PowerShell/CLI:
-
-Azure CLI
-
-````bash
-az account list --query "[].[name, id]" --output table
-````
-
-Azure PowerShell
-
-````powershell
-Get-AzSubscription | Select Name, SubscriptionId
-````
-
 ## What will be deployed?
 
-- A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.
-- Azure Policies that will enable autonomy for the platform and the Landing Zones.
-- [Optional] An Azure subscription dedicated for management, which enables core platform capabilities at scale such as:
+By default, all recommendations are enabled and you must explicitly disable them if you don't want it to be deployed and configured. 
+
+- A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation
+- Azure Policies that will enable autonomy for the platform and the landing zones.
+- An Azure subscription dedicated for management, which enables core platform capabilities at scale using Azure Policy such as:
   - A Log Analytics workspace and an Automation account
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
+  - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
-- [Optional] A landing zone subscription for Azure native, internet-facing applications and Resources, and specific workload policies such as:
-  - Enforce VM backup
+- A landing zone subscription for Azure native, internet-facing applications and Resources, and specific workload Azure Policies such as:
+  - Enforce VM monitoring (Windows & Linux)
+  - Enforce VMSS monitoring (Windows & Linux)
+  - Enforce Azure Arc VM monitoring (Windows & Linux)
+  - Enforce VM backup (Windows & Linux)
   - Enforce secure access (HTTPS) to storage accounts
   - Enforce auditing for Azure SQL
   - Enforce encryption for Azure SQL
@@ -61,40 +53,6 @@ Get-AzSubscription | Select Name, SubscriptionId
   - Ensure subnets are associated with NSG
 
 ![Enterprise-Scale without connectivity](./media/es-without-networking.PNG)
-
-## Deployment experience
-
-When you click on [Deploy to Azure](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-foundation.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-foundation.jso), the portal will open the deployment experience for Enterprise-Scale.
-
-On the 'Basics' page, ensure you are signed into the correct directory (tenant), and select the region that will be used for template deployments (we recommend you to select the region where you ideally want to deploy your first resources).
-
-### Basics
-
-![Basics](./media/deploy1.PNG)
-
-When you click next, you must provide the company prefix for the management group hiearchy that will be created under the default "Tenant Root Group". The prefix can be between 1-5 characters.
-
-### Enterprise-Scale Company prefix
-
-![Enterprise-Scale Company prefix](./media/deploy2.PNG)
-
-For "Platform management, security, and governance", you can optionally deploy Log Analytics workspace and enable all-up monitoring for your platform and resources.
-If "Yes" is selected, you must provide a subscriptionId for the subscription that will be dedicated for platform management.
-Optionally, you can also enable Azure Security Center and security monitoring for the platform as part of this process.
-
-### Platform management, security, and governance
-
-![Platform management](./media/deploy3.PNG)
-
-The last step is to optionally enable recommended Azure policies for your initial landing zone, and you can also provide a subscriptionId of an existing subscription that will be moved into the designated child management group in your landing zone management group.
-
-### Landing zone configuration
-
-![Landing zone](./media/deploy4.PNG)
-
-When you have completed the steps, a final validation is done to ensure you have the appropriate RBAC permissions on the involved scopes to do a successful deployments. Once validated, you can review your input and make any changes as needed, and click "Create" to start your Enterprise-Scale deployment.
-
-![Deploy](./media/deploy5.PNG)
 
 ## Next steps
 
@@ -116,17 +74,6 @@ Optionally, you can enable the above using the following ARM templates:
 
 ### From an application perspective:
 
-Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and start deploying your workload.
+Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workloads.
 
-#### Create new subscriptions into the landing zone (Online) management group
-
-1. In Azure portal, navigate to Subscriptions
-2. Click 'Add', and complete the required steps in order to create a new subscription.
-3. When the subscription has been created, go to Management Groups and move the subscription into the Landing Zone (Online) management group
-4. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the newly created subscription
-
-#### Move existing subscriptions into the landing zone (Online) management group
-
-1. In Azure portal, navigate to Management Groups
-2. Locate the subscription you want to move, and move it to the landing zone (Online) management group
-3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
+Refer to the [Create Landing Zone(s)](../../EnterpriseScale-Deploy-landing-zones.md) article for guidance to create Landing Zones.

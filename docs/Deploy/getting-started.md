@@ -40,4 +40,4 @@ Minimum version of PowerShell: 7.0|  The latest version of PowerShell including 
 
 ## Next steps
 
-Once you have the technical prerequisites in place, you can proceed to the next step, [Configure Azure permissions for ARM tenant deployments & setup GitHub](./setup-github.md).
+Once you have the technical prerequisites in place, you can proceed to the next step, lets go back to [Introduction to Enterprise-Scale "in-a-box"](https://github.com/Azure/Enterprise-Scale/blob/main/docs/enterprise-scale-iab/README.md) and [deploy your Enterprise-scale Tenant](https://github.com/Azure/Enterprise-Scale/blob/main/docs/enterprise-scale-iab/deploy-tenant.md).

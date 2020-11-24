@@ -1,6 +1,6 @@
 # Deploy Policy assignment
 
-This article will explain how to deploy Policy assignments for `Platform` and `Landing Zones` in your Azure environments that has been discovery in the [previous article](discover-environment.md). The following approach will deploy Policy assignment and deploy the target state defined in the policy.
+This article will explain how to deploy Policy assignments for `Platform` and `Landing Zones` in your Azure environments that has been discovered in the [previous article](discover-environment.md). The following approach will deploy Policy assignment and deploy the target state defined in the policy.
 
 ## Deployment artifact overview
 

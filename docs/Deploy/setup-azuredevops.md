@@ -1,7 +1,5 @@
 # Azure DevOps - Setup Guide
 
-> Support for Azure DevOps is currently in ***preview***
-
 Please complete the following steps at [Configure Azure permissions for ARM tenant deployments](setup-github.md) page before continuing:
 
 * Step 3 - Create SPN and Grant Permission
@@ -33,11 +31,9 @@ We recommend naming these pipelines `AzOps - Pull` & `AzOps - Push`.
 
 Add a new secret variable to each of the pipelines:
 
-* AZURE_CREDENTIALS
+* AZURE_CREDENTIALS   (escape the quotes in the json string from `"` to  `\"` )
 
 Set the value to the JSON string created by the steps in the [GitHub - Setup Guide](setup-github.md).
-
- > Important: The JSON must have the double quotes escaped with a backslash, e.g. `"` becomes `\"`
 
 ### Configure repository permissions
 
