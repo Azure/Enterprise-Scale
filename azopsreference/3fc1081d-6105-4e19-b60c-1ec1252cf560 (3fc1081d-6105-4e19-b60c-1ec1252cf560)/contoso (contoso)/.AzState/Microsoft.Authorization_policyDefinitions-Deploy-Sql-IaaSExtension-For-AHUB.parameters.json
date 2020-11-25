@@ -18,7 +18,18 @@
                 "displayName": "SQL VM Tag Name",
                 "description": "Name of the tag that you use to identify SQL IaaS VMs to which Azure Hybrid Benefit will be applied, i.e., isSqlVM"
               }
-            }      
+            },
+            "sqlManagement": {
+              "type": "String",
+              "allowedValues": [
+                "Lightweight",
+                "Full"
+              ],        
+              "metadata": {
+                "displayName": "SQL Management",
+                "description": "Lightweight, or Full SQL Management. Note: Choosing Full SQL Management would restart the SQL Server in your VM"
+              }
+            }            
           },
           "PolicyRule": {
             "if": {
@@ -61,7 +72,10 @@
                       },
                       "location": {
                         "value": "[field('location')]"
-                      }                      
+                      },
+                      "sqlManagement": {
+                        "value": "[parameters('sqlManagement')]"
+                      }
                     },                    
                     "template": {
                       "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -75,7 +89,10 @@
                         },                        
                         "location": {
                           "type": "string"
-                        }
+                        },
+                        "sqlManagement": {
+                          "type": "string"
+                        }                        
                       },
                       "variables": {
                         "rgName": "[split(parameters('resourceId'),'/')[4]]"
@@ -88,7 +105,7 @@
                           "location": "[parameters('location')]",
                           "properties": {
                             "virtualMachineResourceId": "[concat(subscription().id, '/resourceGroups/', variables('rgName'), '/providers','/Microsoft.Compute/virtualMachines/', parameters('resourceName'))]",
-                            "sqlManagement": "Full",
+                            "sqlManagement": "[parameters('sqlManagement')]",
                             "SqlServerLicenseType": "AHUB"
                           }
                         }                        
