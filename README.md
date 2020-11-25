@@ -19,7 +19,7 @@
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [FAQ](./docs/EnterpriseScale-FAQ.md)
 * [Roadmap](./docs/EnterpriseScale-Roadmap.md)
-* [Microsoft Support Policy](./support.md)
+* [Microsoft Support Policy](./SUPPORT.md)
 
 ---
 
