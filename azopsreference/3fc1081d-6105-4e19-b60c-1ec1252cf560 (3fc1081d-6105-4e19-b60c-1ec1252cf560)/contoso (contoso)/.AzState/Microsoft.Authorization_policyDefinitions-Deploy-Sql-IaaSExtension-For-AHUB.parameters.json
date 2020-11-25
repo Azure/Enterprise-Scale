@@ -1,0 +1,107 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deploy-Sql-IaaSExtension-For-AHUB",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Deploy SQL IaaS Extension to enable SQL Server VMs with the Azure Hybrid Benefit",
+          "DisplayName": "Deploy-Sql-IaaSExtension-For-AHUB",
+          "Mode": "All",
+          "Parameters": { 
+            "tagName": {
+              "type": "String",
+              "metadata": {
+                "displayName": "SQL VM Tag Name",
+                "description": "Name of the tag that you use to identify SQL IaaS VMs to which Azure Hybrid Benefit will be applied, i.e., isSqlVM"
+              }
+            }      
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Compute/virtualMachines"
+                },
+                {
+                  "field": "[concat('tags[', parameters('tagName'), ']')]",
+                  "equals": "true"
+                }                
+              ]
+            },
+            "then": {
+              "effect": "deployIfNotExists",
+              "details": {
+                "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+                "name": "[field('name')]",
+                "existenceCondition": {
+                  "allOf": [
+                    {
+                      "field": "Microsoft.SqlVirtualMachine/sqlVirtualMachines/provisioningState",
+                      "equals": "Succeeded"
+                    }
+                  ]
+                },
+                "roleDefinitionIds": [
+                  "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ],
+                "deployment": {
+                  "properties": {
+                    "mode": "incremental",
+                    "parameters": {
+                      "resourceName": {
+                        "value": "[field('name')]"
+                      },
+                      "resourceId": {
+                        "value": "[field('id')]"
+                      },
+                      "location": {
+                        "value": "[field('location')]"
+                      }                      
+                    },                    
+                    "template": {
+                      "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                      "contentVersion": "1.0.0.0",
+                      "parameters": {
+                        "resourceName": {
+                          "type": "string"
+                        },
+                        "resourceId": {
+                          "type": "string"
+                        },                        
+                        "location": {
+                          "type": "string"
+                        }
+                      },
+                      "variables": {
+                        "rgName": "[split(parameters('resourceId'),'/')[4]]"
+                      },
+                      "resources": [
+                        {
+                          "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+                          "apiVersion": "2017-03-01-preview",
+                          "name": "[parameters('resourceName')]",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "virtualMachineResourceId": "[concat(subscription().id, '/resourceGroups/', variables('rgName'), '/providers','/Microsoft.Compute/virtualMachines/', parameters('resourceName'))]",
+                            "sqlManagement": "Full",
+                            "SqlServerLicenseType": "AHUB"
+                          }
+                        }                        
+                      ],
+                      "outputs": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
