@@ -31,7 +31,7 @@ Use GitHub Actions to deploy policy assignments:
 
 ## (Optional) Assign the Log Analytics policy
 
-Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
+Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) step.
 
 In the previous exercises you deployed policy and initiative (policy set) definitions in your Management Group with the reference implementation ARM template. However, these policies have not been assigned yet, and are not in use. In this exercise you will assign the initiative used for the **management** subscription in an Enterprise-Scale architecture deployment. To assign this initiative, execute the following steps.
 
@@ -76,7 +76,7 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
 ## (Optional) Assign the diagnostics policy using GitHub actions
 
-Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
+Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) step.
 
 We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log Analytics and Enable Diagnostic** policy to enable monitoring.
 
