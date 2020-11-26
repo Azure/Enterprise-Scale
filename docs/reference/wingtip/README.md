@@ -74,31 +74,6 @@ Optionally, you can enable the above using the following ARM templates:
 
 ### From an application perspective:
 
-Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workload.
+Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workloads.
 
-#### Create new subscriptions into the landing zone (Online) management group
-
-1. In Azure portal, navigate to Subscriptions
-2. Click 'Add', and complete the required steps in order to create a new subscription.
-3. When the subscription has been created, go to Management Groups and move the subscription into the Landing Zone (online) management group
-4. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the newly created subscription
-
-#### Move existing subscriptions into the landing zone (Online) management group
-
-1. In Azure portal, navigate to Management Groups
-2. Locate the subscription you want to move, and move it to the landing zone (Online) management group
-3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
-
-#### [Preview] Create N number of subscriptions into targeted management groups using Azure Portal
-
-The following deployment experiences can be leveraged to create multiple landing zones (subscriptions) and target Landing Zone management groups (online).
-
-##### Pre-requesites
-
-This [document](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription?tabs=rest-getEnrollments%2Crest-EA%2Crest-getBillingAccounts%2Crest-getBillingProfiles%2Crest-MCA%2Crest-getBillingAccount-MPA%2Crest-getCustomers%2Crest-getIndirectResellers%2Crest-MPA) outlines the requirements depending on the agreement type you have, and the RBAC permissions needed.
-
-| Agreement types | ARM Template |
-|:-------------------------|:-------------|
-| Enterprise Agreement (EA) |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json)
-| Microsoft Customer Agreement  | Coming soon
-| Microsoft Partner Agreement | Coming soon
+Refer to the [Create Landing Zone(s)](../../EnterpriseScale-Deploy-landing-zones.md) article for guidance to create Landing Zones.

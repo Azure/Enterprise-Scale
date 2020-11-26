@@ -4,7 +4,7 @@ Now that your DevOps environment and Azure tenant is setup using an all-encompas
 
 The Enterprise-Scale reference implementation leverages the GET and PUT schema used by Azure resources to export and import the state of an Azure environment. One of the benefits of this implementation approach is that regardless of how changes are made (Portal, CLI, PowerShell, ARM Template), you can consistently retrieve the current state of your Azure environment and version control it in Git as for Infrastructure-as-Code. This mechanism is the foundation of how configuration drift and reconciliation is achieved to provide an Enterprise-Scale approach to the operations of an Azure environment.
 
-By using the Enterprise-Scale reference implementation, environment can be definde based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
+By using the Enterprise-Scale reference implementation, environment can be defined based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
 
 Reference artifacts are ARM template parameter files that can be used with a [generic ARM template](https://github.com/Azure/AzOps/blob/main/template/tenant.json).
 

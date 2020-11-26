@@ -78,6 +78,11 @@ To create the following secrets on GitHub, navigate to the main page of the repo
 ObjectId
 ```
 
+* Name: AZURE_ENVIRONMENT [Optional]
+
+    This parameter allows you to change the actual azure environment you deploy to. By default, it will deploy to the Azure Cloud.
+    Supported values: AzureUSGovernment, AzureCloud, AzureChinaCloud
+
 ## 6. Configure your repo to update changes from upstream
 
 1. Add upstream repo to your local repository to get latest changes

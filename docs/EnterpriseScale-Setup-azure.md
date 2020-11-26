@@ -36,6 +36,15 @@ az role assignment create  --scope '/' --role 'Owner' --assignee-object-id $(az 
 PowerShell
 
 ````powershell
+#sign in to azure from Powershell (NOTE: no need to have AzureAD module to use AzAD commands as they are part of Az.Resource module). In powershell 7.x you will be redirected to webbrowser for authentication, if required
+Connect-AzAccount
+
+#check if you have proper subscription selected and select the right one if required
+Get-AzSubscription | Select-Object SubscriptionId, Name
+
+#select right and replace SubscriptionId result of previous
+Select-AzSubscription '<SubscriptionId>'
+
 #get object Id of the user
 $user = Get-AzADUser -UserPrincipalName '<replace-me>@<my-aad-domain.com>'
 
