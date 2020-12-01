@@ -58,7 +58,7 @@ The identity team will create an Azure AD only group for each of the roles above
 | \<\<Subscription -Name\>\>-DevOps | Subscription             | DevOps             |
 | \<\<Subscription -Name\>\>-AppOps | Subscription             | AppOps             |
 | SecOps                            | Contoso Management Group | SecOps             |
-| NetOps | Contoso Management Group | NetOps             |
+| NetOps                            | Contoso Management Group | NetOps             |
 | Platform Owner                    | Tenant Root ("/")        | Owner (Built-in)   |
 
 
