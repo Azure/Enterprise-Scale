@@ -26,13 +26,84 @@
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
-                "Standard",
-                "Free",
+                "Yes",
                 "No"
             ],
             "metadata": {
                 "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
+        },
+        "enableAscForServers": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForAppServices": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForStorage": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForSql": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForKeyVault": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForArm": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForDns": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForKubernetes": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForRegistries": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
         },
         "enableArcMonitoring": {
             "type": "string",
@@ -362,7 +433,7 @@
         },        
         {
             // Conditional assignment of policy to enforce Azure Security Center on subscriptions
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
             "name": "[variables('policyAssignmentNames').azureSecurity]",
@@ -371,38 +442,44 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "description": "Deploy-ASC",
-                "displayName": "Deploy-ASC",
+                "description": "Deploy-ASC-Defender",
+                "displayName": "Deploy-ASC-Defender",
                 "policyDefinitionId": "[variables('policyDefinitions').deployAzureSecurity]",
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "pricingTierVms": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForServers')]"
                     },
                     "pricingTierSqlServers": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForSql')]"
                     },
                     "pricingTierAppServices": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForAppServices')]"
                     },
                     "pricingTierStorageAccounts": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForStorage')]"
                     },
                     "pricingTierContainerRegistry": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForRegistries')]"
                     },
                     "pricingTierKeyVaults": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForKeyVault')]"
                     },
                     "pricingTierKubernetesService": {
-                        "value": "[parameters('enableAsc')]"
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "pricingTierArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "pricingTierDns": {
+                        "value": "[parameters('enableAscForDns')]"
                     }
                 }
             }
         },
         {
             // Role assignment of the conditional ASC policy assignment
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNames').deployAzureSecurity]",
@@ -412,12 +489,12 @@
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
-                "principalId": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+                "principalId": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
             }
         },
         {
             // Conditional assignment of policy to enable ASC monitoring
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
             "name": "[variables('policyAssignmentNames').ascMonitoring]",
@@ -485,7 +562,7 @@
         },
         {
             // Conditional ARM deployments to invoke template from ASC on management subscription
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('mgAscResourceDeploymentName')]",
@@ -496,13 +573,13 @@
             "subscriptionId": "[parameters('managementSubscriptionId')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))),reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
+                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')) ,reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
             }
         },
         {
             // Conditional ARM deployments to invoke template from ASC on identity subscription
-            "condition": "[and(not(empty(parameters('identitySubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('identitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[if(not(empty(parameters('identitySubscriptionId'))), variables('idAscResourceDeploymentName'), variables('noIdAscDeployment'))]",
@@ -513,13 +590,13 @@
             "subscriptionId": "[parameters('identitySubscriptionId')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('identitySubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('identitySubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))),reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "template": "[if(and(not(empty(parameters('identitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
+                "parameters": "[if(and(not(empty(parameters('identitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes')) ,reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
             }
         },
         {
             // Conditional ARM deployments to invoke template from ASC on connectivity subscription
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[if(not(empty(parameters('connectivitySubscriptionId'))), variables('connAscResourceDeploymentName'), variables('noConnAscDeployment'))]",
@@ -530,8 +607,8 @@
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('connectivitySubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('connectivitySubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))),reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "template": "[if(and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
+                "parameters": "[if(and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
             }
         },        
         {
@@ -578,7 +655,7 @@
         },
         {
             // Conditional ARM deployments to invoke template from ASC on online subscription(s)
-            "condition": "[and(not(empty(parameters('onlineLzSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('onlineLzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(variables('lzAscResourceDeploymentName'), copyIndex()), variables('noOnlineLzAscDeployment'))]",
@@ -593,13 +670,13 @@
             "subscriptionId": "[if(not(empty(parameters('onlineLzSubscriptionId'))), parameters('onlineLzSubscriptionId')[copyIndex()], '')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))),reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
+                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
             }
         },
         {
             // Conditional ARM deployments to invoke template from ASC on corp subscription(s)
-            "condition": "[and(not(empty(parameters('corpLzSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free')))]",
+            "condition": "[and(not(empty(parameters('corpLzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(variables('lzAscResourceDeploymentName'), copyIndex()), variables('noCorpLzAscDeployment'))]",
@@ -614,8 +691,8 @@
             "subscriptionId": "[if(not(empty(parameters('corpLzSubscriptionId'))), parameters('corpLzSubscriptionId')[copyIndex()], '')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))),or(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))),reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
+                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
             }
         }                     
     ],
