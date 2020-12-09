@@ -29,7 +29,7 @@ Most organizations may have an existing Azure footprint, one or more subscriptio
 By default, all recommendations are enabled. You must explicitly disable them if you don't want them to be deployed and configured.
 
 - A scalable Management Group hierarchy allows you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.  
-  - An Azure subscription dedicated to platform, connectivity, and identity. The subscription host core platform capabilities at scale, such as:  
+- An Azure subscription dedicated to platform, connectivity, and identity. The subscription host core platform capabilities at scale, such as:  
   -	A Log Analytics workspace and an Automation account  
   -	Azure Security monitoring  
   -	Azure Security Center (Standard or Free tier)  
