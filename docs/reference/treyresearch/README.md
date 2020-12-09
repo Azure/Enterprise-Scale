@@ -28,23 +28,19 @@ Most organizations may have an existing Azure footprint, one or more subscriptio
 ## What will be deployed?
 By default, all recommendations are enabled. You must explicitly disable them if you don't want them to be deployed and configured.
 
-* A scalable Management Group hierarchy allows you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.  
-* An Azure subscription dedicated to platform, connectivity, and identity. The subscription host core platform capabilities at scale, such as:  
- *	A Log Analytics workspace and an Automation account  
- *	Azure Security monitoring  
- *	Azure Security Center (Standard or Free tier)  
- *	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics  
- *	A virtual hub network  
- *	Azure Firewall  
- *	VPN Gateway  
-*	An Azure subscription dedicated to landing zones. The subscription host Azure workloads.   
+- A scalable Management Group hierarchy allows you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.  
+  - An Azure subscription dedicated to platform, connectivity, and identity. The subscription host core platform capabilities at scale, such as:  
+  -	A Log Analytics workspace and an Automation account  
+  -	Azure Security monitoring  
+  -	Azure Security Center (Standard or Free tier)  
+  -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics  
+  -	A virtual hub network  
+  -	Azure Firewall  
+  -	VPN Gateway  
+-	An Azure subscription dedicated to landing zones. The subscription host Azure workloads.   
 
-TR-ES.png
 
 ![Trey Research](media/TR-ES.png)
-
-
-
 
 # Next Step
 
