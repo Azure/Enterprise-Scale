@@ -41,7 +41,9 @@ By default, all recommendations are enabled. You must explicitly disable them if
 
 TR-ES.png
 
-![Trey Research](/media/TR-ES.png)
+![Trey Research](media/TR-ES.png)
+
+
 
 
 # Next Step
