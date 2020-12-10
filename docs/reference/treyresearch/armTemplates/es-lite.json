@@ -48,13 +48,17 @@
             "type": "string",
             "defaultValue": ""
         },
-        "enableAscFree": {
+        "enableAsc": {
             "type": "string",
-            "defaultValue": "Yes",
+            "defaultValue": "No",
             "allowedValues": [
-                "Yes",
+                "Standard",
+                "Free",
                 "No"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableSecuritySolution": {
             "type": "string",
@@ -186,12 +190,19 @@
         }
     },
     "variables": {
+        "azPolicyEnvMapping": {
+            "https://management.azure.com/": "auxiliary/policies.json",
+            "https://management.chinacloudapi.cn": "auxiliary/mkPolicies.json",
+            "https://management.azgov.com": "auxiliary/"
+        },
+        "azEnvPolicy": "[variables('azPolicyEnvMapping')[environment().resourceManager]]",
         "deploymentUris": {
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'auxiliary/mgmtGroups.json')]",
+            "policyDefinitions": "[concat(uri(deployment().properties.templateLink.uri, variables('azEnvPolicy')))]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalytics.json')]",
             "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalyticsSolutions.json')]",
             "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/hubspoke-connectivity.json')]",
-            "securityCenter": "[uri(deployment().properties.templateLink.uri, 'auxiliary/ascfree.json')]"
+            "diagnosticsAndSecurity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/diagnosticsAndSecurity.json')]"
         },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', parameters('managementSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', 'na')]",
@@ -202,8 +213,8 @@
             "policyDeploymentName": "[take(concat('EntScale-Policy', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "monitoringDeploymentName": "[take(concat('EntScale-Monitoring', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "monitoringSolutionsDeploymentName": "[take(concat('EntScale-Solutions', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "securityCenterDeploymentName": "[take(concat('EntScale-Asc', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+            "diagAndSecDeploymentName": "[take(concat('EntScale-DiagSec', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
         }
     },
     "resources": [{
@@ -225,11 +236,10 @@
             }
         },
         {
-            "condition": "[equals(parameters('enableAscFree'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').policyDeploymentName]",
             "location": "[deployment().location]",
-            "name": "[variables('deploymentNames').securityCenterDeploymentName]",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "dependsOn": [
                 "[variables('deploymentNames').mgmtGroupDeploymentName]"
@@ -238,7 +248,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').securityCenter]"
+                    "uri": "[variables('deploymentUris').policyDefinitions]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
@@ -248,13 +258,38 @@
             }
         },
         {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('delayFor', copyIndex())]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').policyDeploymentName]"
+            ],
+            "copy": {
+                "batchSize": 1,
+                "count": 20,
+                "mode": "Serial",
+                "name": "DeploymentDelay"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {
             "condition": "[not(empty(parameters('managementSubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('managementSubscriptionId'))), variables('moveSubscription'), variables('noSubscription'))]",
             "dependsOn": [
-                "[variables('deploymentNames').mgmtGroupDeploymentName]",
-                "[if(equals(parameters('enableAscFree'), 'Yes'), variables('deploymentNames').securityCenterDeploymentName, '')]"
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "properties": {}
         },
@@ -264,8 +299,7 @@
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('lzSubscriptionId'))), variables('lzMoveSubscription'), variables('noLzSubscription'))]",
             "dependsOn": [
-                "[variables('deploymentNames').mgmtGroupDeploymentName]",
-                "[if(equals(parameters('enableAscFree'), 'Yes'), variables('deploymentNames').securityCenterDeploymentName, '')]"
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "properties": {}
         },
@@ -354,6 +388,51 @@
                 }
             }
         },
+        {
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), or(equals(parameters('enableLogAnalytics'), 'Yes'), and(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "name": "[variables('deploymentNames').diagAndSecDeploymentName]",
+            "dependsOn": [
+                "[variables('deploymentNames').monitoringDeploymentName]",
+                "DeploymentDelay"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').diagnosticsAndSecurity]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enableLogAnalytics": {
+                        "value": "[parameters('enableLogAnalytics')]"
+                    },
+                    "enableAsc": {
+                        "value": "[parameters('enableAsc')]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "lzSubscriptionId": {
+                        "value": "[parameters('lzSubscriptionId')]"
+                    },
+                    "enableVmMonitoring": {
+                        "value": "[parameters('enableVmMonitoring')]"
+                    },
+                    "enableVmssMonitoring": {
+                        "value": "[parameters('enableVmssMonitoring')]"
+                    },
+                    "enableArcMonitoring": {
+                        "value": "[parameters('enableArcMonitoring')]"
+                    }
+                }
+            }
+        },        
         {
             "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
