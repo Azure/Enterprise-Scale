@@ -1,12 +1,12 @@
 # Using GitHub to deploy changes to your Enterprise-Scale architecture
 
-Now that your DevOps environment and Azure tenant is setup using an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/e2e-landing-zone-vwan-orchestration.parameters.json), you can make changes to the environment by using the Azure portal, the Azure CLI, PowerShell, or third-party tools that make use of the Azure Resource Manager API. Reconciling these changes back into your all-encompassing ARM template is not an easy task. One of the design goals on the Enterprise-Scale reference implementation is to provide a mechanism for reconciling changes.
+Now that your DevOps environment and Azure tenant is setup using an all-encompassing [ARM Template](https://github.com/Azure/AzOps/blob/main/template/ux-vwan.json), you can make changes to the environment by using the Azure portal, the Azure CLI, PowerShell, or third-party tools that make use of the Azure Resource Manager API. Reconciling these changes back into your all-encompassing ARM template is not an easy task. One of the design goals on the Enterprise-Scale reference implementation is to provide a mechanism for reconciling changes.
 
 The Enterprise-Scale reference implementation leverages the GET and PUT schema used by Azure resources to export and import the state of an Azure environment. One of the benefits of this implementation approach is that regardless of how changes are made (Portal, CLI, PowerShell, ARM Template), you can consistently retrieve the current state of your Azure environment and version control it in Git as for Infrastructure-as-Code. This mechanism is the foundation of how configuration drift and reconciliation is achieved to provide an Enterprise-Scale approach to the operations of an Azure environment.
 
-By using the Enterprise-Scale reference implementation, environment can be definde based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
+By using the Enterprise-Scale reference implementation, environment can be defined based on Enterprise-Scale design principles and Management Group hierarchy and policies based on reference [artifacts](../../azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/contoso%20(contoso)/.AzState).
 
-Reference artifacts are ARM template parameter files that can be used with a [generic ARM template](https://github.com/Azure/AzOps/blob/main/template/tenant.json).
+Reference artifacts are ARM template parameter files that can be used with a [generic ARM template](https://github.com/Azure/AzOps/blob/main/template/template.json).
 
 In subsequent exercises, we will continue to construct an Enterprise-Scale reference implementation in your own environment by following these high-level steps:
 
