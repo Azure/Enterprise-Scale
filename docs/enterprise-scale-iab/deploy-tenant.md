@@ -25,7 +25,7 @@ ARM template.
 
     ![_Figure_](./media/wt-1.2-2.png)
 
-3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure.
+3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure by following guidance on [configuring Azure permissions for ARM tenant deployments](../EnterpriseScale-Setup-azure.md).
 
 4. On the **Custom deployment** blade, in the Basics section, fill in the **Region** and click on **Next: Enterprise Scale Company Prefix.**
 
@@ -81,7 +81,7 @@ Click now on **Next: Next: Landing zone configuration** to move to the next sect
 
 ## (Optional) Move a subscription to ES-management Management Group
 
-Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
+Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#deploy-the-management-group-structure-and-policypolicyset-definitions) step.
 
 In this section, we will move your Azure subscription under the **ES-management** Management Group you created with the template deployment. For simplicity, we will use the portal in this exercise.
 
