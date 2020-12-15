@@ -42,7 +42,7 @@ To create a GitHub repository from the Enterprise-Scale repo as a template, exec
 
     ![_Figure_](./media/wt-1.1-6.png)
 
-    Visual Studio Code will open the local copy of the repo. You should see a series of folders and files on the left section. Ensure that you have checkout your main branch:
+    Visual Studio Code will open the local copy of the repo. You should see a series of folders and files on the left section. Ensure that you have checked out your main branch:
 
     ![_Figure_](./media/wt-1.1-7.png)
 
@@ -146,7 +146,7 @@ Please perform the following steps to configure the region for the template depl
 
 1. Open the files **azops-pull.yml** and **azops-push.yml** in the folder **/**.**github/workflows** in your Visual Studio Code.
 
-2. Change the **AZOPS_DEFAULT_DEPLOYMENT_REGION** attribute in the **env** section of **both** yml file.
+2. Change the **AZOPS_DEFAULT_DEPLOYMENT_REGION** attribute in the **env** section of yml files.
 
     ![_Figure_](./media/wt-2.2-1.png)
 
