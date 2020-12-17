@@ -1,0 +1,50 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deny-PublicEndpoint-PostgreSql",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "This policy denies creation of Postgre SQL DB accounts with exposed public endpoints",
+          "DisplayName": "Public network access should be disabled for PostgreSql",
+          "Mode": "All",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "Audit",
+                "Deny",
+                "Disabled"
+              ],
+              "defaultValue": "Deny"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.DBforPostgreSQL/servers"
+                },
+                {
+                  "field": "Microsoft.DBforPostgreSQL/servers/publicNetworkAccess",
+                  "notequals": "Disabled"
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}
