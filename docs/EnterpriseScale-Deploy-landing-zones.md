@@ -25,7 +25,7 @@ Business units and/or application portfolio owners can use their preferred tool 
 2. Locate the subscription you want to move, and move it to the **Landing zones** > **Corp** or **Online** management group
 3. Assign RBAC permissions for the application team/user(s) who will be deploying resources to the subscription
 
-## [Preview] Create Enterprise-Scale landing zones using Azure Portal
+## Create Enterprise-Scale landing zones using Azure Portal
 
 The following deployment experiences can be leveraged to create multiple landing zones (subscriptions) and target individual management groups (e.g., 'online', 'corp' etc.).
 
