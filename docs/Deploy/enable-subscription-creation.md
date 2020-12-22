@@ -127,4 +127,4 @@ The platform team will use DevOps process to create a landing zone for the App t
 - [Create new empty subscription into a management group](../../examples/landing-zones/empty-subscription/)
 - [Create new connected subscription into a management group](../../examples/landing-zones/connected-subscription/)
 
-When then ARM template is created with recommendation in the [landing zone example folder](../../examples/landing-zones), subscriptions can be created with AzOps following [this documentation](./deploy-new-arm.md).
+When the ARM templates are created to deploy a subscription following the recommendation in the [landing zone example folder](../../examples/landing-zones), subscriptions can be created on Azure using AzOps following [this documentation](./deploy-new-arm.md).
