@@ -9,6 +9,10 @@ When deploying the Enterprise-Scale reference implementations, the definition wi
 
 Also, a connectivity subscription must exist in the <prefix>-connectivity management group containing the virtual network hub you will connect the corp connected landing zones (subscriptions) to.
 
+## Policy Driven Governance
+
+One of the design principles of Enterprise-Scale is to use Policy Driven Governance to ensure autonomy and a secure, compliant goal state for the Azure platform and the landing zones (subscriptions). This template will ensure that the virtual network is created in the landing zone and also subject to continuous compliance by Azure Policy, so organizations can ensure their corp connected landing zones are connected to the connectivity hub through the life-cycle of the landing zone.
+
 ## Parameters
 
 - "subscriptionAliasName": It is recommended that the subscription alias name is the same as the displayName to ensure easier manageability
