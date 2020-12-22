@@ -116,10 +116,10 @@
         },        
         {
             // Create child management groups for platform resources
-            "condition": "[greater(length(parameters('platformMgs')),0)]",
+            "condition": "[not(empty(parameters('platformMgs')))]",
             "type": "Microsoft.Management/managementGroups",
             "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('platformMgs')[copyIndex()])]",
+            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', if(greater(length(parameters('platformMgs')),0),parameters('platformMgs')[copyIndex()],'dummy'))]",
             "dependsOn": [
                 "[tenantResourceId('Microsoft.Management/managementGroups', variables('enterpriseScaleManagementGroups').platform)]"
             ],
@@ -128,7 +128,7 @@
                 "count": "[length(parameters('platformMgs'))]"
             },
             "properties": {
-                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('platformMgs')[copyIndex()])]",
+                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', if(greater(length(parameters('platformMgs')),0),parameters('platformMgs')[copyIndex()],'dummy'))]",
                 "details": {
                     "parent": {
                         "id": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').platform)]"
