@@ -33,6 +33,8 @@ To demonstrate this capability, we will use a custom ARM template to deploy a po
 
 2. Create a new ARM template file with an optional parameter file if required (for example, policyDef-NamingConvention.json and policyDef-NamingConvention.parameters.json) in the scope folder __azops\Tenant Root Group (GUID)\path-to-your-managementGroup\managementGroup (displayName)__.
 
+    In the [example folder](../../examples) several examples are published how to deploy platform resource.
+
     The picture below depicts an example configuration, where it is desired to deploy this policy definition at the **esiab** management group:
 
     ![_Figure_](./media/sample-deployment-scope.png)
