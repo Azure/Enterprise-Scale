@@ -123,5 +123,5 @@ After the role is successfully assigned you can use this Service Principal to cr
 
 The platform team will use DevOps process to create a landing zone for the App team. Different examples are published in this repository to automate landing zone creation.
 
-- [Create new empty subscription into a management group](../examples/landing-zones/empty-subscription/)
-- [Create new connected subscription into a management group](../examples/landing-zones/connected-subscription/)
+- [Create new empty subscription into a management group](../../examples/landing-zones/empty-subscription/)
+- [Create new connected subscription into a management group](../../examples/landing-zones/connected-subscription/)
