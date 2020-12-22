@@ -15,7 +15,7 @@ Also, a connectivity subscription must exist in the <prefix>-connectivity manage
 - "billingAccountId": Provide the full resourceId for the enrollmentAccount. E.g., "/providers/Microsoft.Billing/billingAccounts/<billingAccountName>/enrollmentAccounts/<enrollmentAccountName>"
 - "targetManagementGroup" Provide the full resourceId for the target management group in order to place the subscription directly under a management group. E.g., "/providers/Microsoft.Management/managementGroups/<mgmtGroupId>"
 - "lzVnetCidr": Provide the CIDR for the landing zone vNet that will be created
-- "lzVnetCidr": Provide the region for where the virtual network will be created
+- "lzVnetRegion": Provide the region for where the virtual network will be created
 - "esConnectivityHubId": Provide the resourceId of the existing virtual network in the connectivity subscription
 
 ````json
