@@ -5,25 +5,14 @@
         "topLevelManagementGroupPrefix": {
             "type": "string",
             "metadata": {
-                "description": "Provide prefix for the management group structure."
-            }
-        },
-        "platformMgs": {
-            "type": "array",
-            "defaultValue": [
-                "management",
-                "connectivity",
-                "identity"
-            ],
-            "metadata": {
-                "description": "Management groups for platform specific purposes, such as management, networking, identity etc."
+                "description": "Provide suffix for the management group structure."
             }
         },
         "landingZoneMgs": {
             "type": "array",
             "defaultValue": [
-                "online",
-                "corp"
+                "production",
+                "nonproduction"
             ],
             "metadata": {
                 "description": "These are the landing zone management groups."
@@ -110,28 +99,6 @@
                 "details": {
                     "parent": {
                     "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
-                    }
-                }
-            }
-        },        
-        {
-            // Create child management groups for platform resources
-            "condition": "[not(empty(parameters('platformMgs')))]",
-            "type": "Microsoft.Management/managementGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('platformMgs')[copyIndex()])]",
-            "dependsOn": [
-                "[tenantResourceId('Microsoft.Management/managementGroups', variables('enterpriseScaleManagementGroups').platform)]"
-            ],
-            "copy": {
-                "name": "platformMgCopy",
-                "count": "[length(parameters('platformMgs'))]"
-            },
-            "properties": {
-                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('platformMgs')[copyIndex()])]",
-                "details": {
-                    "parent": {
-                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').platform)]"
                     }
                 }
             }
