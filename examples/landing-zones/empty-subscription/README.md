@@ -2,8 +2,6 @@
 
 The ARM template provided in this folder can be used to create new, empty subscriptions into the targeted management group.
 
-To deploy using AzOps, please see the following documentation and guidance available [here](./docs/Deploy/deploy-new-sub.md)
-
 ## Parameters
 
 - "subscriptionAliasName": It is recommended that the subscription alias name is the same as the displayName to ensure easier manageability
@@ -53,9 +51,9 @@ This ARM template is using the "scope escape" property on the resource in order 
             }
         }
 ````
-## Deploy using AzOps <coming>
+## Deploy using AzOps
 
-See these instructions for how to use this template with the AzOps GitHub Actions/DevOps pipeline
+See these [instructions](../../../docs/Deploy/enable-subscription-creation.md) for how to use this template with the AzOps GitHub Actions/DevOps pipeline.
 
 ## Deploy using Azure PowerShell
 
