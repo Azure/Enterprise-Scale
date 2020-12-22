@@ -25,12 +25,58 @@
                 "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for networking."
             }
         },
-        "lzSubscriptionId": {
+        "identitySubscriptionId": {
             "type": "string",
             "defaultValue": "",
             "maxLength": 36,
             "metadata": {
-                "description": "Provide the subscription id fo an existing, empty subscription you want to move in as your first landing zone."
+                "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for identity."
+            }
+        },
+        "denySubnetWithoutNsgForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "denyRdpForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "denyPipForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableVmBackupForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "onlineLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first online landing zones."
+            }
+        },
+        "corpLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first corp landing zones."
             }
         },
         "enableLogAnalytics": {
@@ -52,13 +98,116 @@
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
-                "Standard",
-                "Free",
+                "Yes",
                 "No"
             ],
             "metadata": {
                 "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
+        },
+        "enableAksPolicy": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForServers": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForAppServices": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForStorage": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForSql": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForKeyVault": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForArm": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForDns": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForKubernetes": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForRegistries": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "denyAksPrivileged": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyAksPrivilegedEscalation": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyHttpIngressForAks": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
         },
         "enableArcMonitoring": {
             "type": "string",
@@ -221,22 +370,6 @@
             ],
             "defaultValue": "No"
         },
-        "enableVwan": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "No"
-        },
-        "enableAzFw": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "No"
-        },
         "addressPrefix": {
             "type": "string",
             "defaultValue": ""
@@ -260,6 +393,22 @@
         "location": {
             "type": "string",
             "defaultValue": "[deployment().location]"
+        },
+        "enableVwan": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableAzFw": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
         }
     },
     "variables": {
@@ -276,14 +425,17 @@
             "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'auxiliary/logAnalyticsSolutions.json')]",
             "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/vwan-connectivity.json')]",
             "diagnosticsAndSecurity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/diagnosticsAndSecurity.json')]",
-            "landingZone": "[uri(deployment().properties.templateLink.uri, 'auxiliary/lz.json')]"
+            "landingZone": "[uri(deployment().properties.templateLink.uri, 'auxiliary/lz.json')]",
+            "identity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/identity.json')]"
         },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-management', '/', parameters('managementSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-management', '/', 'na')]",
-        "lzMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', parameters('lzSubscriptionId'))]",
-        "noLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', 'nalz')]",
+        "noOnlineLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', 'nalz')]",
+        "noCorpLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', 'nalz')]",
         "connectivityMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity', '/', parameters('connectivitySubscriptionId'))]",
         "noConnectivitySubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity', '/', 'naconn')]",
+        "identityMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-identity', '/', parameters('identitySubscriptionId'))]",
+        "noIdentitySubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-identity', '/', 'naid')]",
         "deploymentNames": {
             "mgmtGroupDeploymentName": "[take(concat('EntScale-Mgs', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "policyDeploymentName": "[take(concat('EntScale-Policy', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
@@ -291,7 +443,8 @@
             "monitoringSolutionsDeploymentName": "[take(concat('EntScale-Solutions', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "diagAndSecDeploymentName": "[take(concat('EntScale-DiagSec', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "lzDeploymentName": "[take(concat('EntScale-LZ', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+            "lzDeploymentName": "[take(concat('EntScale-LZ', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "identityDeploymentName": "[take(concat('EntScale-ID', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
         }
     },
     "resources": [
@@ -372,15 +525,43 @@
             "properties": {}
         },
         {
-            "condition": "[not(empty(parameters('lzSubscriptionId')))]",
+            "condition": "[not(empty(parameters('identitySubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
-            "name": "[if(not(empty(parameters('lzSubscriptionId'))), variables('lzMoveSubscription'), variables('noLzSubscription'))]",
+            "name": "[if(not(empty(parameters('identitySubscriptionId'))), variables('identityMoveSubscription'), variables('noIdentitySubscription'))]",
             "dependsOn": [
                 "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "properties": {}
         },
+        {
+            "condition": "[not(empty(parameters('onlineLzSubscriptionId')))]",
+            "type": "Microsoft.Management/managementGroups/subscriptions",
+            "apiVersion": "2020-05-01",
+            "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', parameters('onlineLzSubscriptionId')[copyIndex()]), variables('noOnlineLzSubscription'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
+            ],
+            "copy": {
+                "name": "onlineLzMove",
+                "count": "[length(parameters('onlineLzSubscriptionId'))]"
+            },
+            "properties": {}
+        },
+        {
+            "condition": "[not(empty(parameters('corpLzSubscriptionId')))]",
+            "type": "Microsoft.Management/managementGroups/subscriptions",
+            "apiVersion": "2020-05-01",
+            "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', parameters('corpLzSubscriptionId')[copyIndex()]), variables('noCorpLzSubscription'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
+            ],
+            "copy": {
+                "name": "onlineLzMove",
+                "count": "[length(parameters('corpLzSubscriptionId'))]"
+            },
+            "properties": {}
+        },        
         {
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
@@ -468,7 +649,43 @@
             }
         },
         {
-            "condition": "[or(or(equals(parameters('enableVmBackup'), 'Yes'), equals(parameters('enableSqlAudit'), 'Yes')), equals(parameters('enableSqlEncryption'), 'Yes'), equals(parameters('enableStorageHttps'), 'Yes'))]",
+            "condition": "[not(empty(parameters('identitySubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-identity')]",
+            "name": "[variables('deploymentNames').identityDeploymentName]",
+            "dependsOn": [
+                "[variables('deploymentNames').policyDeploymentName]",
+                "DeploymentDelay"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').identity]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "denyRdpForIdentity": {
+                        "value": "[parameters('denyRdpForIdentity')]"
+                    },
+                    "denySubnetWithoutNsgForIdentity": {
+                        "value": "[parameters('denySubnetWithoutNsgForIdentity')]"
+                    },
+                    "denyPipForIdentity": {
+                        "value": "[parameters('denyPipForIdentity')]"
+                    },
+                    "enableVmBackupForIdentity": {
+                        "value": "[parameters('enableVmBackupForIdentity')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[or(or(or(or(or(or(equals(parameters('enableVmBackup'), 'Yes'), equals(parameters('enableSqlAudit'), 'Yes')), equals(parameters('denyAksPrivilegedEscalation'), 'Yes'), equals(parameters('denyHttpIngressForAks'), 'Yes')), equals(parameters('denyAksPrivileged'), 'Yes'), equals(parameters('denyAksPrivileged'), 'Yes')), equals(parameters('denySubnetWithoutNsg'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Yes')), equals(parameters('enableSqlEncryption'), 'Yes'), equals(parameters('enableStorageHttps'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-landingzones')]",
@@ -488,6 +705,15 @@
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
+                    "denyHttpIngressForAks": {
+                        "value": "[parameters('denyHttpIngressForAks')]"
+                    },
+                    "denyAksPrivilegedEscalation": {
+                        "value": "[parameters('denyAksPrivilegedEscalation')]"
+                    },
+                    "denyAksPrivileged": {
+                        "value": "[parameters('denyAksPrivileged')]"
+                    },
                     "enableSqlAudit": {
                         "value": "[parameters('enableSqlAudit')]"
                     },
@@ -499,6 +725,9 @@
                     },
                     "denyRdp": {
                         "value": "[parameters('denyRdp')]"
+                    },
+                    "enableAksPolicy": {
+                        "value": "[parameters('enableAksPolicy')]"
                     },
                     "enableStorageHttps": {
                         "value": "[parameters('enableStorageHttps')]"
@@ -513,7 +742,7 @@
             }
         },
         {
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), or(equals(parameters('enableLogAnalytics'), 'Yes'), and(equals(parameters('enableAsc'), 'Standard'), equals(parameters('enableAsc'), 'Free'))))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), or(equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAsc'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
@@ -539,11 +768,47 @@
                     "enableAsc": {
                         "value": "[parameters('enableAsc')]"
                     },
+                    "enableAscForServers": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "enableAscForAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "enableAscForStorage": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "enableAscForSql": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "enableAscForKeyVault": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "enableAscForArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "enableAscForDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    },
+                    "enableAscForKubernetes": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "enableAscForRegistries": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
                     "managementSubscriptionId": {
                         "value": "[parameters('managementSubscriptionId')]"
                     },
-                    "lzSubscriptionId": {
-                        "value": "[parameters('lzSubscriptionId')]"
+                    "onlineLzSubscriptionId": {
+                        "value": "[parameters('onlineLzSubscriptionId')]"
+                    },
+                    "corpLzSubscriptionId": {
+                        "value": "[parameters('corpLzSubscriptionId')]"
+                    },
+                    "identitySubscriptionId": {
+                        "value": "[parameters('identitySubscriptionId')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
                     },
                     "enableVmMonitoring": {
                         "value": "[parameters('enableVmMonitoring')]"
@@ -553,9 +818,6 @@
                     },
                     "enableArcMonitoring": {
                         "value": "[parameters('enableArcMonitoring')]"
-                    },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
                     }
                 }
             }
