@@ -1,6 +1,8 @@
 # Enable Service Principal to create landing zones
 
-This article describes how AzOps GitHub Actions can be used to create landing zones (subscriptions) into Management Groups using ARM templates.
+This article describes how AzOps GitHub Actions can be used to create landing zones (subscriptions) into management groups using ARM templates. In the following steps we'll assign the role to a SPN as illustrated in the following article:
+
+![EA account / Service Principal](media/ea-account-spn.png)
 
 ## Pre-requisites
 
@@ -125,3 +127,5 @@ The platform team will use DevOps process to create a landing zone for the App t
 
 - [Create new empty subscription into a management group](../../examples/landing-zones/empty-subscription/)
 - [Create new connected subscription into a management group](../../examples/landing-zones/connected-subscription/)
+
+When then ARM template is created with recommendation in the [landing zone example folder](../../examples/landing-zones), subscriptions can be created with AzOps following [this documentation](./deploy-new-arm.md).
