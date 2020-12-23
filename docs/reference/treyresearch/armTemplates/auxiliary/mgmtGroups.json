@@ -36,7 +36,8 @@
             "landingZone": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'landingzones')]",
             "decommissioned": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'decommissioned')]",
             "sandboxes": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'sandboxes')]"
-        }
+        },
+        "noPlatformMgs": "[concat(parameters('topLevelManagementGroupPrefix'), '-noPlatformMgs')]"
     },
     "resources": [
         {
@@ -119,7 +120,7 @@
             "condition": "[not(empty(parameters('platformMgs')))]",
             "type": "Microsoft.Management/managementGroups",
             "apiVersion": "2020-05-01",
-            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', if(greater(length(parameters('platformMgs')),0),parameters('platformMgs')[copyIndex()],'dummy'))]",
+            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', if(greater(length(parameters('platformMgs')),0),parameters('platformMgs')[copyIndex()],variables('noPlatformMgs')))]",
             "dependsOn": [
                 "[tenantResourceId('Microsoft.Management/managementGroups', variables('enterpriseScaleManagementGroups').platform)]"
             ],
@@ -128,7 +129,7 @@
                 "count": "[length(parameters('platformMgs'))]"
             },
             "properties": {
-                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', if(greater(length(parameters('platformMgs')),0),parameters('platformMgs')[copyIndex()],'dummy'))]",
+                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', if(greater(length(parameters('platformMgs')),0),parameters('platformMgs')[copyIndex()],variables('noPlatformMgs')))]",
                 "details": {
                     "parent": {
                         "id": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').platform)]"
