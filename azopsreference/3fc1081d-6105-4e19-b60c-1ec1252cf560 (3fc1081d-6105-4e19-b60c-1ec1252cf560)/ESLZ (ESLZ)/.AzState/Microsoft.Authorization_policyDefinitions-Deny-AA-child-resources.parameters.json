@@ -1,0 +1,53 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deny-AA-child-resources",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "This policy denies the creation of child resources on the Automation Account",
+          "DisplayName": "No child resources in Automation Account",
+          "Mode": "All",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "Audit",
+                "Deny",
+                "Disabled"
+              ],
+              "defaultValue": "Deny"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "in": [
+                    "Microsoft.Automation/automationAccounts/runbooks",
+                    "Microsoft.Automation/automationAccounts/variables",
+                    "Microsoft.Automation/automationAccounts/modules",
+                    "Microsoft.Automation/automationAccounts/credentials",
+                    "Microsoft.Automation/automationAccounts/connections",
+                    "Microsoft.Automation/automationAccount/certificates"
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}
