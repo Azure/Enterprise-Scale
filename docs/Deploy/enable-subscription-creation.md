@@ -8,7 +8,7 @@ This article describes how AzOps GitHub Actions can be used to create landing zo
 
 Before getting started with this guide ensure that AzOps has been setup and configured for the target environment. Documentation for [GitHub](setup-github.md) and [Azure DevOps](setup-azuredevops.md) provides more details. Later in this guide the Service Principal created for AzOps will be used to create landing zones (subscription).
 
-For the Service Principal permissions to create subscriptions, access to and enrollment account that has a billing id associated is required.
+For the Service Principal permissions to create subscriptions, access to an enrollment account that has a billing id associated is required.
 
 >Note: When using this Service Principal the subscription will be created under specified billing scope of enrollment account. Multiple enrollment account permissions can granted to a Service Principal. The billing scope will be specified in the template further down in this guide.
 
