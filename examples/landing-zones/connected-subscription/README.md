@@ -16,8 +16,8 @@ One of the design principles of Enterprise-Scale is to use Policy Driven Governa
 ## Parameters
 
 - "subscriptionAliasName": It is recommended that the subscription alias name is the same as the displayName to ensure easier manageability
-- "billingAccountId": Provide the full resourceId for the enrollmentAccount. E.g., "/providers/Microsoft.Billing/billingAccounts/<billingAccountName>/enrollmentAccounts/<enrollmentAccountName>"
-- "targetManagementGroup" Provide the full resourceId for the target management group in order to place the subscription directly under a management group. E.g., "/providers/Microsoft.Management/managementGroups/<mgmtGroupId>"
+- "billingAccountId": Provide the full resourceId for the enrollmentAccount. E.g., "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/enrollmentAccounts/{enrollmentAccountName}"
+- "targetManagementGroup" Provide the last segment of the management group resourceId for the target management group in order to place the subscription directly under a management group. E.g., "/providers/Microsoft.Management/managementGroups/{mgmtGroupId}" where "mgmtGroupId" is the expected input.
 - "lzVnetCidr": Provide the CIDR for the landing zone vNet that will be created
 - "lzVnetRegion": Provide the region for where the virtual network will be created
 - "esConnectivityHubId": Provide the resourceId of the existing virtual network in the connectivity subscription
