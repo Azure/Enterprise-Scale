@@ -5,7 +5,7 @@ The ARM template provided in this folder can be used to create new, empty subscr
 ## Parameters
 
 - "subscriptionAliasName": It is recommended that the subscription alias name is the same as the displayName to ensure easier manageability
-- "billingAccountId": Provide the full resourceId for the enrollmentAccount. E.g., "/providers/Microsoft.Billing/billingAccounts/<billingAccountName>/enrollmentAccounts/<enrollmentAccountName>"
+- "billingAccountId": Provide the full resourceId for the enrollmentAccount. E.g., "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/enrollmentAccounts/{enrollmentAccountName}"
 - "targetManagementGroup": Provide the last segment of the management group resourceId for the target management group in order to place the subscription directly under a management group. E.g., "/providers/Microsoft.Management/managementGroups/{mgmtGroupId}" where "mgmtGroupId" is the expected input.
 - "tagValue": Provide a value for the tag to identify the 'application key' for the subscription.
 
