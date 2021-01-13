@@ -31,18 +31,18 @@ By default, all recommendations are enabled. You must explicitly disable them if
 - A scalable Management Group hierarchy allows you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.  
 - An Azure subscription dedicated to platform, connectivity, and identity. The subscription host core platform capabilities at scale, such as:  
   -	A Log Analytics workspace and an Automation account  
-  -	Azure Security monitoring  
+  -	Azure Security monitoring.  
   -	Azure Security Center (Standard or Free tier)  
   -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics  
   -	A virtual hub network  
   -	Azure Firewall  
   -	VPN Gateway  
--	An Azure subscription dedicated to landing zones. The subscription host Azure workloads.   
+-	An Azure subscription dedicated to landing zones. The subscription hosts Azure workloads.   
 
 
 ![Trey Research](media/TR-ES.png)
 
-# Next Step
+# Next Steps
 
 ## Cost Management
 Track resource usage and manage costs across all your clouds with a single, unified view, and access rich operational and financial insights to make informed decisions. See more about Cost Management at [Microsoft Docs](https://docs.microsoft.com/en-us/rest/api/cost-management/).
