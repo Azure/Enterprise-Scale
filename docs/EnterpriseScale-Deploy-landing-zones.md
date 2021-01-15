@@ -29,8 +29,6 @@ Business units and/or application portfolio owners can use their preferred tool 
 
 The following deployment experiences can be leveraged to create multiple landing zones (subscriptions) and target individual management groups (e.g., 'online', 'corp' etc.).
 
-This [document](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription?tabs=rest-getEnrollments%2Crest-EA%2Crest-getBillingAccounts%2Crest-getBillingProfiles%2Crest-MCA%2Crest-getBillingAccount-MPA%2Crest-getCustomers%2Crest-getIndirectResellers%2Crest-MPA) outlines the requirements depending on the agreement type you have, and the RBAC permissions needed.
-
 To deploy the ARM templates below to create new subscriptions, you must have Management Group Contributor or Owner permission on the Management Group where you will invoke the deployment and the targeted Management Groups for the new subscriptions.
 
 | Agreement types | ARM Template |
