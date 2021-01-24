@@ -7,10 +7,10 @@ The following workloads outlined here provides best-practices, and curated deplo
 ## AKS (Kubernetes)
 
 Deploy Kubernetes to Azure and integrate with ARM, Azure AD, Azure Policy, and Azure Monitor to ensure you have a production ready Kubernetes cluster in your landing zone
-
+a
 | Landing zone | ARM Template | Details |
 |:-------------------------|:-------------|:-----------|
-| Online |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json) | Detailed description
+| Online |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2Faks%2FarmTemplates%2Fonline-aks.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2Faks%2FarmTemplates%2Fportal-online-aks.json) | [Detailed description](../workloads/AKS/README.md)
 | Corp  | Coming soon | Detailed description
 
 ### SAP (coming soon)
