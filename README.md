@@ -9,6 +9,7 @@
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
+* [Deploy workloads into Landing Zones](./docs/EnterpriseScale-Deploy-workloads.md)
 * [[Optional] Getting started with Infrastructure-as-code](./docs/Deploy/getting-started.md)
   * [Configure Azure permissions for ARM tenant deployments & setup GitHub](./docs/Deploy/setup-github.md)
   * [Configure Service Principal permissions for subscription creation](./docs/Deploy/enable-subscription-creation.md)
