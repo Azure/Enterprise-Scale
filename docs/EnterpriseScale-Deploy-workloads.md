@@ -8,17 +8,17 @@ The following workloads outlined here provides best-practices, and curated deplo
 
 Deploy Kubernetes to Azure and integrate with ARM, Azure AD, Azure Policy, and Azure Monitor to ensure you have a production ready Kubernetes cluster in your landing zone
 
-| Landing zone | ARM Template |
-|:-------------------------|:-------------|
-| Online |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json)
-| Corp  | Coming soon
+| Landing zone | ARM Template | Details |
+|:-------------------------|:-------------|:-----------|
+| Online |[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json) | Detailed description
+| Corp  | Coming soon | Detailed description
 
 ### SAP (coming soon)
 
 Details coming soon
 
-| Landing zone | ARM Template |
-|:-------------------------|:-------------|
+| Landing zone | ARM Template | Details |
+|:-------------------------|:-------------|:-----------|
 | Online | Coming soon
 | Corp  | Coming soon
 
@@ -27,8 +27,8 @@ Details coming soon
 
 Details coming soon
 
-| Landing zone | ARM Template |
-|:-------------------------|:-------------|
+| Landing zone | ARM Template | Details |
+|:-------------------------|:-------------|:-----------|
 | Online | Coming soon
 | Corp  | Coming soon
 
@@ -37,7 +37,7 @@ Details coming soon
 
 Details coming soon
 
-| Landing zone | ARM Template |
-|:-------------------------|:-------------|
+| Landing zone | ARM Template | Details
+|:-------------------------|:-------------|:-----------|
 | Online | Coming soon
 | Corp  | Coming soon
