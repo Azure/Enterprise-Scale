@@ -79,6 +79,13 @@
                 "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first corp landing zones."
             }
         },
+        "corpConnectedLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first corp landing zones and connect to virtual networking hub."
+            }
+        },
         "enableLogAnalytics": {
             "type": "string",
             "defaultValue": "No",
@@ -442,12 +449,14 @@
             "connectivity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/hubspoke-connectivity.json')]",
             "diagnosticsAndSecurity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/diagnosticsAndSecurity.json')]",
             "landingZone": "[uri(deployment().properties.templateLink.uri, 'auxiliary/lz.json')]",
-            "identity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/identity.json')]"
+            "identity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/identity.json')]",
+            "corpConnectedLzs": "[uri(deployment().properties.templateLink.uri, 'auxiliary/corp-peering-copy.json')]"
         },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-management', '/', parameters('managementSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-management', '/', 'na')]",
         "noOnlineLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', 'nalz')]",
         "noCorpLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', 'nalz')]",
+        "noCorpConnectedLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', 'naconnect')]",
         "connectivityMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity', '/', parameters('connectivitySubscriptionId'))]",
         "noConnectivitySubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-connectivity', '/', 'naconn')]",
         "identityMoveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-identity', '/', parameters('identitySubscriptionId'))]",
@@ -458,9 +467,10 @@
             "monitoringDeploymentName": "[take(concat('EntScale-Monitoring', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "monitoringSolutionsDeploymentName": "[take(concat('EntScale-Solutions', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "diagAndSecDeploymentName": "[take(concat('EntScale-DiagSec', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "connectivityDeploymentName": "[take(concat('EntScale-conn', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "connectivityDeploymentName": "[take(concat('EntScale-Networking', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "lzDeploymentName": "[take(concat('EntScale-LZ', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "identityDeploymentName": "[take(concat('EntScale-ID', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+            "identityDeploymentName": "[take(concat('EntScale-Identity', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "corpConnectedDeploymentName": "[take(concat('EntScale-lz-connectivity', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
         }
     },
     "resources": [
@@ -573,11 +583,25 @@
                 "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "copy": {
-                "name": "onlineLzMove",
+                "name": "corpLzMove",
                 "count": "[length(parameters('corpLzSubscriptionId'))]"
             },
             "properties": {}
-        },        
+        },
+        {
+            "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId')))]",
+            "type": "Microsoft.Management/managementGroups/subscriptions",
+            "apiVersion": "2020-05-01",
+            "name": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs), variables('noCorpConnectedLzSubscription'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').mgmtGroupDeploymentName]"
+            ],
+            "copy": {
+                "name": "connectedCorpLzMove",
+                "count": "[length(parameters('corpConnectedLzSubscriptionId'))]"
+            },
+            "properties": {}
+        },
         {
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
@@ -820,6 +844,9 @@
                     "corpLzSubscriptionId": {
                         "value": "[parameters('corpLzSubscriptionId')]"
                     },
+                    "corpConnectedLzSubscriptionId": {
+                        "value": "[parameters('corpConnectedLzSubscriptionId')]"
+                    },
                     "identitySubscriptionId": {
                         "value": "[parameters('identitySubscriptionId')]"
                     },
@@ -898,6 +925,39 @@
                     },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(not(empty(parameters('corpConnectedLzSubscriptionId'))),equals(parameters('enableHub'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-corp')]",
+            "name": "[variables('deploymentNames').corpConnectedDeploymentName]",
+            "dependsOn": [
+                "[variables('deploymentNames').connectivityDeploymentName]",
+                "[variables('deploymentNames').diagAndSecDeploymentName]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpConnectedLzs]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "corpConnectedLzSubscriptionId": {
+                        "value": "[parameters('corpConnectedLzSubscriptionId')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
                 }
             }

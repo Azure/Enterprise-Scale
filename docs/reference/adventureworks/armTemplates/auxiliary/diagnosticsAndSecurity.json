@@ -146,6 +146,10 @@
             "type": "array",
             "defaultValue": []
         },
+        "corpConnectedLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": []
+        },
         "identitySubscriptionId": {
             "type": "string",
             "defaultValue": ""
@@ -188,22 +192,28 @@
             "deployResourceRiagnostics": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').resourceDiagnostics))]"
         },
         "blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}",
-        "lzAscResourceDeploymentName": "[take(concat('asc-lz', deployment().location, deployment().name), 40)]",
-        "lzActivityResourceDeploymentName": "[take(concat('activity-lz', deployment().location, deployment().name), 40)]",
-        "mgAscResourceDeploymentName": "[take(concat('asc-mgmt', deployment().location, deployment().name), 40)]",
-        "mgActivityResourceDeploymentName": "[take(concat('activity-mgmt', deployment().location, deployment().name), 40)]",
-        "idAscResourceDeploymentName": "[take(concat('asc-identity', deployment().location, deployment().name), 40)]",
-        "idActivityResourceDeploymentName": "[take(concat('activity-identity', deployment().location, deployment().name), 40)]",
-        "connAscResourceDeploymentName": "[take(concat('asc-conn', deployment().location, deployment().name), 40)]",
-        "connActivityResourceDeploymentName": "[take(concat('activity-conn', deployment().location, deployment().name), 40)]",
-        "noOnlineLzActivityDeployment": "naOnlineActivity",
-        "noOnlineLzAscDeployment": "naOnlineAsc",
-        "noCorpLzActivityDeployment": "naCorpActivity",
-        "noCorpLzAscDeployment": "naCorpAsc",
-        "noIdActivityDeployment": "noIdActivity",
-        "noIdAscDeployment": "noIdAsc",
-        "noConnActivityDeployment": "noConnActivity",
-        "noConnAscDeployment": "noConnAscDeployment"
+        "onlineAscDeploymentName": "[take(concat('asc-online', deployment().location, deployment().name), 40)]",
+        "onlineActivityDeploymentName": "[take(concat('activity-online', deployment().location, deployment().name), 40)]",
+        "corpAscDeploymentName": "[take(concat('asc-corp', deployment().location, deployment().name), 40)]",
+        "corpActivityDeploymentName": "[take(concat('activity-corp', deployment().location, deployment().name), 40)]",
+        "mgmtAscResourceName": "[take(concat('asc-mgmt', deployment().location, deployment().name), 40)]",
+        "mgmtActivityDeploymentName": "[take(concat('activity-mgmt', deployment().location, deployment().name), 40)]",
+        "identityAscDeploymentName": "[take(concat('asc-identity', deployment().location, deployment().name), 40)]",
+        "identityActivityDeploymentName": "[take(concat('activity-identity', deployment().location, deployment().name), 40)]",
+        "connectivityAscDeploymentName": "[take(concat('asc-conn', deployment().location, deployment().name), 40)]",
+        "connectivityActivityDeploymentName": "[take(concat('activity-conn', deployment().location, deployment().name), 40)]",
+        "corpConnectedAscDeploymentName": "[take(concat('asc-corp-conn', deployment().location, deployment().name), 40)]",
+        "corpConnectedActivityDeploymentName": "[take(concat('activity-corp-conn', deployment().location, deployment().name), 40)]",
+        "noCorpConnectedAscDeployment": "naCorpConnectedAsc",
+        "noCorpConnectedActivityDeployment": "naCorpConnectedActivity",
+        "noOnlineActivityDeployment": "naOnlineActivity",
+        "noOnlineAscDeployment": "naOnlineAsc",
+        "noCorpActivityDeployment": "naCorpActivity",
+        "noCorpAscDeployment": "naCorpAsc",
+        "noIdentityActivityDeployment": "noIdActivity",
+        "noIdentityAscDeployment": "noIdAsc",
+        "noConnectivityActivityDeployment": "noConnActivity",
+        "noConnectivityAscDeployment": "noConnAscDeployment"
     },
     "resources": [
         {
@@ -514,7 +524,7 @@
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[variables('mgActivityResourceDeploymentName')]",
+            "name": "[variables('mgmtActivityDeploymentName')]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
@@ -531,7 +541,7 @@
             "condition": "[and(not(empty(parameters('identitySubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('identitySubscriptionId'))), variables('idActivityResourceDeploymentName'), variables('noIdActivityDeployment'))]",
+            "name": "[if(not(empty(parameters('identitySubscriptionId'))), variables('identityActivityDeploymentName'), variables('noIdentityActivityDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
@@ -548,7 +558,7 @@
             "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('connectivitySubscriptionId'))), variables('connActivityResourceDeploymentName'), variables('noConnActivityDeployment'))]",
+            "name": "[if(not(empty(parameters('connectivitySubscriptionId'))), variables('connectivityActivityDeploymentName'), variables('noConnectivityActivityDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
@@ -565,7 +575,7 @@
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[variables('mgAscResourceDeploymentName')]",
+            "name": "[variables('mgmtAscResourceName')]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
@@ -582,7 +592,7 @@
             "condition": "[and(not(empty(parameters('identitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('identitySubscriptionId'))), variables('idAscResourceDeploymentName'), variables('noIdAscDeployment'))]",
+            "name": "[if(not(empty(parameters('identitySubscriptionId'))), variables('identityAscDeploymentName'), variables('noIdentityAscDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
@@ -599,7 +609,7 @@
             "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('connectivitySubscriptionId'))), variables('connAscResourceDeploymentName'), variables('noConnAscDeployment'))]",
+            "name": "[if(not(empty(parameters('connectivitySubscriptionId'))), variables('connectivityAscDeploymentName'), variables('noConnectivityAscDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
@@ -616,7 +626,7 @@
             "condition": "[and(not(empty(parameters('onlineLzSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(variables('lzActivityResourceDeploymentName'), copyIndex()), variables('noOnlineLzActivityDeployment'))]",
+            "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(variables('onlineActivityDeploymentName'), copyIndex()), variables('noOnlineActivityDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
@@ -633,11 +643,11 @@
             }
         },        
         {
-            // Conditional ARM deployments to invoke template from ActivityLog diagnostics on corp subscription(s)
+            // Conditional ARM deployments to invoke template from ActivityLog diagnostics on corp (not connected) subscription(s)
             "condition": "[and(not(empty(parameters('corpLzSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(variables('lzActivityResourceDeploymentName'), copyIndex()), variables('noCorpLzActivityDeployment'))]",
+            "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(variables('corpActivityDeploymentName'), copyIndex()), variables('noCorpActivityDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
@@ -654,11 +664,32 @@
             }
         },
         {
+            // Conditional ARM deployments to invoke template from ActivityLog diagnostics on corp connected subscription(s)
+            "condition": "[and(not(empty(parameters('corpConnectedLzSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), concat(variables('corpConnectedActivityDeploymentName'), copyIndex()), variables('noCorpConnectedActivityDeployment'))]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureActivityLog)]"
+            ],
+            "copy": {
+                "name": "lzCorpActivityCopy",
+                "count": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), length(parameters('corpConnectedLzSubscriptionId')), 1)]"
+            },
+            "subscriptionId": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '')]",
+            "properties": {
+                "mode": "incremental",
+                "template": "[if(and(not(empty(parameters('corpConnectedLzSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')), reference(variables('policyDefinitions').deployAzureActivityLog, '2018-05-01').policyRule.then.details.deployment.properties.template, variables('blankTemplateEscaped'))]",
+                "parameters": "[if(and(not(empty(parameters('corpConnectedLzSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureActivityLog), '2018-05-01').parameters, json('null'))]"
+            }
+        },
+        {
             // Conditional ARM deployments to invoke template from ASC on online subscription(s)
             "condition": "[and(not(empty(parameters('onlineLzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(variables('lzAscResourceDeploymentName'), copyIndex()), variables('noOnlineLzAscDeployment'))]",
+            "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(variables('onlineAscDeploymentName'), copyIndex()), variables('noOnlineAscDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
@@ -675,11 +706,11 @@
             }
         },
         {
-            // Conditional ARM deployments to invoke template from ASC on corp subscription(s)
+            // Conditional ARM deployments to invoke template from ASC on corp (not connected) subscription(s)
             "condition": "[and(not(empty(parameters('corpLzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(variables('lzAscResourceDeploymentName'), copyIndex()), variables('noCorpLzAscDeployment'))]",
+            "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(variables('corpAscDeploymentName'), copyIndex()), variables('noCorpAscDeployment'))]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
@@ -694,7 +725,28 @@
                 "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
                 "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
             }
-        }                     
+        },
+        {
+            // Conditional ARM deployments to invoke template from ASC on corp connected subscription(s)
+            "condition": "[and(not(empty(parameters('corpConnectedLzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), concat(variables('corpConnectedAscDeploymentName'), copyIndex()), variables('noCorpAscDeployment'))]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/roleAssignments/', variables('roleAssignmentNames').deployAzureSecurity)]"
+            ],
+            "copy": {
+                "name": "lzCorpAscCopy",
+                "count": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), length(parameters('corpConnectedLzSubscriptionId')), 1)]"
+            },
+            "subscriptionId": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '')]",
+            "properties": {
+                "mode": "incremental",
+                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
+                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+            }
+        }                  
     ],
     "outputs": {}
 }
