@@ -17,18 +17,18 @@
                 "description": "Provide the subscription id of an existing, empty subscription you want to dedicate to host the Platform resources."
             }
         },
-        "prodLzSubscriptionId": {
+        "onlineLzSubscriptionId": {
             "type": "array",
             "defaultValue": [],
             "metadata": {
-                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first production landing zones."
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first online landing zones."
             }
         },
-        "nonprodLzSubscriptionId": {
+        "corpLzSubscriptionId": {
             "type": "array",
             "defaultValue": [],
             "metadata": {
-                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first non-production landing zones."
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first corp landing zones."
             }
         },
         "enableLogAnalytics": {
@@ -326,8 +326,8 @@
         },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', parameters('platformSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-platform', '/', 'na')]",
-        "noprodLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-production', '/', 'nalz')]",
-        "nononprodLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-nonproduction', '/', 'nalz')]",
+        "noOnlineLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', 'nalz')]",
+        "noCorpLzSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', 'nalz')]",
         "deploymentNames": {
             "mgmtGroupDeploymentName": "[take(concat('EntScale-Mgs', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "policyDeploymentName": "[take(concat('EntScale-Policy', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
@@ -358,7 +358,7 @@
                         "value": []
                     },
                     "landingZoneMgs": {
-                        "value": ["production", "nonproduction"]
+                        "value": ["online", "corp"]
                     }
                 }
             }
@@ -422,30 +422,30 @@
             "properties": {}
         },
         {
-            "condition": "[not(empty(parameters('prodLzSubscriptionId')))]",
+            "condition": "[not(empty(parameters('onlineLzSubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
-            "name": "[if(not(empty(parameters('prodLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-production', '/', parameters('prodLzSubscriptionId')[copyIndex()]), variables('noprodLzSubscription'))]",
+            "name": "[if(not(empty(parameters('onlineLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-online', '/', parameters('onlineLzSubscriptionId')[copyIndex()]), variables('noOnlineLzSubscription'))]",
             "dependsOn": [
                 "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "copy": {
                 "name": "onlineLzMove",
-                "count": "[length(parameters('prodLzSubscriptionId'))]"
+                "count": "[length(parameters('onlineLzSubscriptionId'))]"
             },
             "properties": {}
         },
         {
-            "condition": "[not(empty(parameters('nonprodLzSubscriptionId')))]",
+            "condition": "[not(empty(parameters('corpLzSubscriptionId')))]",
             "type": "Microsoft.Management/managementGroups/subscriptions",
             "apiVersion": "2020-05-01",
-            "name": "[if(not(empty(parameters('nonprodLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-nonproduction', '/', parameters('nonprodLzSubscriptionId')[copyIndex()]), variables('nononprodLzSubscription'))]",
+            "name": "[if(not(empty(parameters('corpLzSubscriptionId'))), concat(parameters('enterpriseScaleCompanyPrefix'), '-corp', '/', parameters('corpLzSubscriptionId')[copyIndex()]), variables('noCorpLzSubscription'))]",
             "dependsOn": [
                 "[variables('deploymentNames').mgmtGroupDeploymentName]"
             ],
             "copy": {
-                "name": "onlineLzMove",
-                "count": "[length(parameters('nonprodLzSubscriptionId'))]"
+                "name": "corpLzMove",
+                "count": "[length(parameters('corpLzSubscriptionId'))]"
             },
             "properties": {}
         },
@@ -668,10 +668,10 @@
                         "value": "[variables('enableAscDefenderForWorkloads')]"
                     },
                     "onlineLzSubscriptionId": {
-                        "value": "[parameters('prodLzSubscriptionId')]"
+                        "value": "[parameters('onlineLzSubscriptionId')]"
                     },
                     "corpLzSubscriptionId": {
-                        "value": "[parameters('nonprodLzSubscriptionId')]"
+                        "value": "[parameters('corpLzSubscriptionId')]"
                     },
                     "identitySubscriptionId": {
                         "value": ""
