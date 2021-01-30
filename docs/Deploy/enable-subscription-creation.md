@@ -28,9 +28,7 @@ $spnObjectId = ""
 $currentContext = Get-AzContext
 
 # Fetching new token
-$azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-$profileClient = [Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient]::new($azureRmProfile)
-$token = $profileClient.AcquireAccessToken($currentContext.Tenant.Id)
+$token = Get-AzAccessToken
 ```
 
 ### List all the billing accounts and enrolment accounts
@@ -44,7 +42,7 @@ The following scripts lists the billing account and enrollment account and assig
 $listOperations = @{
     Uri     = "https://management.azure.com/providers/Microsoft.Billing/billingaccounts?api-version=2020-05-01"
     Headers = @{
-        Authorization  = "Bearer $($token.AccessToken)"
+        Authorization  = "Bearer $($token.Token)"
         'Content-Type' = 'application/json'
     }
     Method  = 'GET'
@@ -75,7 +73,7 @@ Both role definitions have the `Microsoft.Subscription/subscriptions/write` perm
 $listRbacObj = @{
     Uri = "https://management.azure.com/$($enrollmentAccountId)/billingRoleDefinitions?api-version=2019-10-01-preview"
     Headers = @{
-        Authorization  = "Bearer $($token.AccessToken)"
+        Authorization  = "Bearer $($token.Token)"
         'Content-Type' = 'application/json'
     }
     Method = "GET"
@@ -106,7 +104,7 @@ $rbacGuid = New-Guid
 $assignRbac = @{
     Uri = "https://management.azure.com/$($enrollmentAccountId)/billingRoleAssignments/$($rbacGuid)?api-version=2019-10-01-preview"
     Headers = @{
-        Authorization  = "Bearer $($token.AccessToken)"
+        Authorization  = "Bearer $($token.Token)"
         'Content-Type' = 'application/json'
     }
     Method = "PUT"
