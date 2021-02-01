@@ -12,6 +12,8 @@ For the Service Principal permissions to create subscriptions, access to an enro
 
 >Note: When using this Service Principal the subscription will be created under specified billing scope of enrollment account. Multiple enrollment account permissions can granted to a Service Principal. The billing scope will be specified in the template further down in this guide.
 
+Creating Azure subscriptions programmatically is allowed on specific types of Azure agreement types (EA, MCA, MPA, etc.). Refer to guidance on [Creating Azure subscriptions programatically](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription) to know supported agreement types.
+
 ## Create Landing Zones (Subscriptions) with AzOps GitHub Actions
 
 To grant your (AzOps) Service Principal permissions to create subscriptions under the enrolment account following these steps:
