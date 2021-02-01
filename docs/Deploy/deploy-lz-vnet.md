@@ -33,12 +33,10 @@ VPN), across landing zones, as well as internet-outbound traffic via a
 central Azure Firewall or NVA as depicted in the pictures below:
 
 ![](./media/vnet_image1.png)
+Figure 1: VWAN-based corp-connected VNet
 
-Figure 1: VWAN-based corp-connected VNet Figure 2
 ![](./media/vnet_image2.png)
-
-Figure 2: Hub-spoke based
-corp-connected VNet
+Figure 2: Hub-spoke based corp-connected VNet
 
 As part of our Enterprise-Scale reference implementations, we have
 shipped examples on how to manage these deployments at-scale using Azure
