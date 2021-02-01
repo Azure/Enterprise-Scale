@@ -32,10 +32,10 @@ zones will have transit connectivity to on-premises (via ExpressRoute or
 VPN), across landing zones, as well as internet-outbound traffic via a
 central Azure Firewall or NVA as depicted in the pictures below:
 
-![](media\vnet_image1.png)
+![](./media/vnet_image1.png)
 
 Figure 1: VWAN-based corp-connected VNet Figure 2
-![](media\vnet_image2.png)
+![](./media/vnet_image2.png)
 
 Figure 2: Hub-spoke based
 corp-connected VNet
@@ -66,14 +66,14 @@ highlighted steps.
 Subscription creation is covered in [the following
 doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subscription-creation.md).
 
-![](media\vnet_image3.png)
+![](./media/vnet_image3.png)
 
 1.  Assign policy to landing zone/subscription
 
     **a)**  Find the following policy and assign it to the newly created
         subscription
 
-    ![](media\vnet_image4.png)
+    ![](./media/vnet_image4.png)
 
     **b)**  Provide all required parameters and adjust settings for
      [GatewayTransit and UseRemoteGateway](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
@@ -83,15 +83,15 @@ doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subs
     > **Important:** Double check that the CIDR range provided is not used
     > anywhere else in your network.
 
-    ![](media\vnet_image5.png)
+    ![](./media/vnet_image5.png)
 
     **c)**  Change the "Managed Identity location" for the MI that will be used
         for subsequent deployments to the desired region and then create the
         assignment.
 
-    ![](media\vnet_image6.png)
+    ![](./media/vnet_image6.png)
 
-    ![](media\vnet_image7.png)
+    ![](./media/vnet_image7.png)
 
     **PowerShell**
     ```powershell
@@ -152,12 +152,12 @@ doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subs
     the policy assignment. If the assignment was done with the portal,
     it will have an automatically generated name as highlighted in below
     screenshot.
-    ![](media\vnet_image8.png)
+    ![](./media/vnet_image8.png)
 
     **b)**  In the Azure portal, navigate to the Connectivity subscription and
     assign the Contributor role to the managed identity.
 
-    ![](media\vnet_image9.png)
+    ![](./media/vnet_image9.png)
 
     **PowerShell**
     ```powershell
@@ -174,16 +174,16 @@ doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subs
     **a)** Under Policy -\> Remediation in the portal, find and select your
 previously created assignment.
 
-    ![](media\vnet_image10.png)
+    ![](./media/vnet_image10.png)
 
     **b)** Click on remediate to kick off the deployment task of the VNet and
     the Hub Peering. It will usually take 2-3 minutes and you can follow the
     progress under 'remediation tasks'.
 
-    ![](media\vnet_image11.png)
-    ![](media\vnet_image12.png)
+    ![](./media/vnet_image11.png)
+    ![](./media/vnet_image12.png)
 
-    ![](media\vnet_image13.png)
+    ![](./media/vnet_image13.png)
 
     **PowerShell**
 
