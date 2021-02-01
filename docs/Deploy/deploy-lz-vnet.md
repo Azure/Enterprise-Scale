@@ -52,12 +52,12 @@ workings of the policies, we recommend you to explore our
 Implementations](https://github.com/azure/enterprise-scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 which will give you a "one-click" end-to-end deployment experience.
 
-# Azure Policy -- Landing Zone VNet Deployment
+## Azure Policy - Landing Zone VNet Deployment
 
 We currently provide two policies to deploy VNets in landing zone and
 peer them to either traditional VNet hubs or Azure Virtual Wan Hubs.
 
-## [Deploy-VNet](https://github.com/Azure/Enterprise-Scale/blob/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/ESLZ%20(ESLZ)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-VNET-HubSpoke.parameters.json)-HubSpoke -- Assignment at subscription: 
+### [Deploy-VNet](https://github.com/Azure/Enterprise-Scale/blob/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/ESLZ%20(ESLZ)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-VNET-HubSpoke.parameters.json)-HubSpoke -- Assignment at subscription:
 
 Depicted below is the high-level workflow to create Landing Zone VNets
 connected to connectivity hub with policy. This article will cover the
@@ -66,147 +66,131 @@ highlighted steps.
 Subscription creation is covered in [the following
 doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subscription-creation.md).
 
-![](media\vnet_image3.png){width="5.835416666666666in"
-height="2.3351793525809272in"}
+![](media\vnet_image3.png)
 
 1.  Assign policy to landing zone/subscription
 
-    1.  Find the following policy and assign it to the newly created
+    **a)**  Find the following policy and assign it to the newly created
         subscription
 
-![](media\vnet_image4.png){width="5.166666666666667in"
-height="2.9820680227471565in"}
+    ![](media\vnet_image4.png)
 
-2.  Provide all required parameters and adjust settings for
-    > [GatewayTransit and
-    > UseRemoteGateway](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
-    > if you have a VPN or ExpressRoute gateway that you plan to use for
-    > on-premises connectivity in the hub network.
+    **b)**  Provide all required parameters and adjust settings for
+     [GatewayTransit and UseRemoteGateway](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
+     if you have a VPN or ExpressRoute gateway that you plan to use for
+     on-premises connectivity in the hub network.
 
-> **Important:** Double check that the CIDR range provided is not used
-> anywhere else in your network.
->
-> ![](media\vnet_image5.png){width="6.268055555555556in"
-> height="3.9895833333333335in"}
+    > **Important:** Double check that the CIDR range provided is not used
+    > anywhere else in your network.
 
-3.  Change the "Managed Identity location" for the MI that will be used
-    for subsequent deployments to the desired region and then create the
-    assignment.
+    ![](media\vnet_image5.png)
 
-![](media\vnet_image6.png){width="6.268055555555556in"
-height="4.73125in"}
+    **c)**  Change the "Managed Identity location" for the MI that will be used
+        for subsequent deployments to the desired region and then create the
+        assignment.
 
-![](media\vnet_image7.png){width="5.479166666666667in"
-height="5.019028871391076in"}
+    ![](media\vnet_image6.png)
 
-> **PowerShell**
-```powershell
-#Get Policy Definition to Assign
-$PolicyDefinition = Get-AzPolicyDefinition -Id /providers/Microsoft.Management/managementGroups/Corp/providers/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke
+    ![](media\vnet_image7.png)
 
-#Get Subscription where policy should be assigned to assign the policy
-$Subscription = Get-AzSubscription -SubscriptionName "LZ2"
+    **PowerShell**
+    ```powershell
+    #Get Policy Definition to Assign
+    $PolicyDefinition = Get-AzPolicyDefinition -Id /providers/Microsoft.Management/managementGroups/Corp/providers/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke
 
-#Create parameter object for the assignment
-$ParametersJson = @"
-{
-    "vNetName": {
-      "value": "LZ2-VNet"
-    },
-    "vNetRgName": {
-      "value": "LZ2-Network"
-    },
-    "vNetLocation": {
-      "value": "westeurope"
-    },
-    "vNetCidrRange": {
-      "value": "10.243.0.0/24"
-    },
-    "hubResourceId": {
-      "value": "/subscriptions/d1411a38-ff6c-4daf-8008-1d165bb753c9/resourceGroups/365-hub/providers/Microsoft.Network/virtualNetworks/365-hub-weu"
-    },
-    "hubPeerAllowGatewayTransit": {
-      "value": true
-    },
-    "lzVnetUseRemoteGateway": {
-      "value": false
-    }
-  }
-"@
+    #Get Subscription where policy should be assigned to assign the policy
+    $Subscription = Get-AzSubscription -SubscriptionName "LZ2"
 
-#Assign the policy to the subscription
-$Assignment = New-AzPolicyAssignment -Name 'Deploy-VNet-HubSpoke-LZ2' `
-                       -DisplayName 'Deploy-VNet-HubSpoke-LZ2' `
-                       -Scope "/subscriptions/$($Subscription.SubscriptionId)"`
-                       -PolicyDefinition $PolicyDefinition `
-                       -PolicyParameter $ParametersJson `
-                       -AssignIdentity `
-                       -Location westeurope
+    #Create parameter object for the assignment
+    $ParametersJson = @"
+    {
+        "vNetName": {
+          "value": "LZ2-VNet"
+        },
+        "vNetRgName": {
+          "value": "LZ2-Network"
+        },
+        "vNetLocation": {
+          "value": "westeurope"
+        },
+        "vNetCidrRange": {
+          "value": "10.243.0.0/24"
+        },
+        "hubResourceId": {
+          "value": "/subscriptions/d1411a38-ff6c-4daf-8008-1d165bb753c9/resourceGroups/365-hub/providers/Microsoft.Network/virtualNetworks/365-hub-weu"
+        },
+        "hubPeerAllowGatewayTransit": {
+          "value": true
+        },
+        "lzVnetUseRemoteGateway": {
+          "value": false
+        }
+      }
+    "@
 
-#Create required role assignment for policy assignment 
-New-AzRoleAssignment -RoleDefinitionId "$($PolicyDefinition.Properties.PolicyRule.then.details.roleDefinitionIds.split("/")[-1])" `
-                     -ObjectId $assignment.Identity.principalId -Scope $Assignment.Properties.Scope 
-```
+    #Assign the policy to the subscription
+    $Assignment = New-AzPolicyAssignment -Name 'Deploy-VNet-HubSpoke-LZ2' `
+                           -DisplayName 'Deploy-VNet-HubSpoke-LZ2' `
+                           -Scope "/subscriptions/$($Subscription.SubscriptionId)"`
+                           -PolicyDefinition $PolicyDefinition `
+                           -PolicyParameter $ParametersJson `
+                           -AssignIdentity `
+                           -Location westeurope
+
+    #Create required role assignment for policy assignment 
+    New-AzRoleAssignment -RoleDefinitionId "$($PolicyDefinition.Properties.PolicyRule.then.details.roleDefinitionIds.split("/")[-1])" `
+                         -ObjectId $assignment.Identity.principalId -Scope $Assignment.Properties.Scope 
+    ```
 2.  Create role assignment for managed identity in connectivity
     subscription
 
-To be able to create the peering from the hub side, the policy
-assignment managed identity needs "Contributor" permissions in the
-connectivity subscription.
+    To be able to create the peering from the hub side, the policy
+    assignment managed identity needs "Contributor" permissions in the
+    connectivity subscription.
 
-1.  Edit the previously created policy assignment and copy the name of
+    **a)** Edit the previously created policy assignment and copy the name of
     the policy assignment. If the assignment was done with the portal,
     it will have an automatically generated name as highlighted in below
     screenshot.
+    ![](media\vnet_image8.png)
 
-> ![](media\vnet_image8.png){width="5.561093613298338in"
-> height="3.0208333333333335in"}
-
-2.  In the Azure portal, navigate to the Connectivity subscription and
+    **b)**  In the Azure portal, navigate to the Connectivity subscription and
     assign the Contributor role to the managed identity.
 
-> ![](media\vnet_image9.png){width="4.5in"
-> height="5.177083333333333in"}
+    ![](media\vnet_image9.png)
 
-**PowerShell**
+    **PowerShell**
+    ```powershell
+    #Get HubResourceId from Parameters Json 
+    $HubResourceId = ($ParametersJson | ConvertFrom-Json).hubresourceId.value
+    #Assign role 
+    New-AzRoleAssignment -RoleDefinitionName "Network Contributor" `
+                         -ObjectId $assignment.Identity.principalId -Scope $HubResourceId
+    ```
 
-\#Get HubResourceId from Parameters Json 
-
-\$HubResourceId = (\$ParametersJson \| ConvertFrom-Json).hubresourceId.value
-
-\#Assign role 
-
-New-AzRoleAssignment -RoleDefinitionName \"Network Contributor\" \`
-
-                     -ObjectId \$assignment.Identity.principalId -Scope \$HubResourceId
 
 3.  Remediate policy to kick off deployment
 
-3.1 Under Policy -\> Remediation in the portal, find and select your
+    **a)** Under Policy -\> Remediation in the portal, find and select your
 previously created assignment.
 
-![](media\vnet_image10.png){width="6.268055555555556in"
-height="2.13125in"}
+    ![](media\vnet_image10.png)
 
-3.2 Click on remediate to kick off the deployment task of the VNet and
-the Hub Peering. It will usually take 2-3 minutes and you can follow the
-progress under 'remediation tasks'.
+    **b)** Click on remediate to kick off the deployment task of the VNet and
+    the Hub Peering. It will usually take 2-3 minutes and you can follow the
+    progress under 'remediation tasks'.
 
-![](media\vnet_image11.png){width="5.8792979002624675in"
-height="3.8333333333333335in"}
+    ![](media\vnet_image11.png)
+    ![](media\vnet_image12.png)
 
-![](media\vnet_image12.png){width="6.208216316710411in"
-height="5.1875in"}
+    ![](media\vnet_image13.png)
 
-![](media\vnet_image13.png){width="6.268055555555556in"
-height="0.6979166666666666in"}
+    **PowerShell**
 
-**PowerShell**
+    ```powershell
+    #Start policy remediation
+    Start-AzPolicyRemediation -PolicyAssignmentId $Assignment.PolicyAssignmentId -Name $Assignment.Name 
+    #Get remediation status
+    Get-AzPolicyRemediation -Name $Assignment.Name 
+    ```
 
-\#Start policy remediation
-
-Start-AzPolicyRemediation -PolicyAssignmentId \$Assignment.PolicyAssignmentId -Name \$Assignment.Name 
-
-\#Get remediation status
-
-Get-AzPolicyRemediation -Name \$Assignment.Name 
