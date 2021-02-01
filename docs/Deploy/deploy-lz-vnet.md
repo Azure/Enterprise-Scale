@@ -55,13 +55,13 @@ which will give you a "one-click" end-to-end deployment experience.
 ## Azure Policy - Landing Zone VNet Deployment
 
 We currently provide two policies to deploy VNets in landing zone and
-peer them to either traditional VNet hubs or Azure Virtual Wan Hubs.
+peer them to either traditional VNet hubs or Azure Virtual Wan Hubs. The policy definition can be found [here](https://github.com/Azure/Enterprise-Scale/blob/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/ESLZ%20(ESLZ)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-VNET-HubSpoke.parameters.json).
 
-### [Deploy-VNet](https://github.com/Azure/Enterprise-Scale/blob/main/azopsreference/3fc1081d-6105-4e19-b60c-1ec1252cf560%20(3fc1081d-6105-4e19-b60c-1ec1252cf560)/ESLZ%20(ESLZ)/.AzState/Microsoft.Authorization_policyDefinitions-Deploy-VNET-HubSpoke.parameters.json)-HubSpoke -- Assignment at subscription:
+### Deploy-VNet-HubSpoke -- Assignment at subscription
 
 Depicted below is the high-level workflow to create Landing Zone VNets
 connected to connectivity hub with policy. This article will cover the
-highlighted steps.
+highlighted steps. 
 
 Subscription creation is covered in [the following
 doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subscription-creation.md).
