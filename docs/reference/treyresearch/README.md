@@ -37,23 +37,25 @@ By default, all recommendations are enabled. You must explicitly disable them if
   -	A virtual hub network  
   -	Azure Firewall  
   -	VPN Gateway  
--	An Azure subscription dedicated to landing zones. The subscription hosts Azure workloads.   
+-	An Azure subscription dedicated to landing zones. The subscription host Azure workloads.   
 
 
-![Trey Research](media/TR-ES.png)
+![Trey Research](media/20210202-TR01.png)
 
-# Next Steps
+## Next Step
 
-## Cost Management
+### From a management perspective
+
+#### Cost Management
 Track resource usage and manage costs across all your clouds with a single, unified view, and access rich operational and financial insights to make informed decisions. See more about Cost Management at [Microsoft Docs](https://docs.microsoft.com/en-us/rest/api/cost-management/).
 
-## Backup and protect your workloads
+#### Backup and protect your workloads
 The Azure Backup service provides simple, secure, and cost-effective solutions to back up your data and recover it from the Microsoft Azure cloud. See more about backup and data protection at [Microsoft Docs](https://docs.microsoft.com/en-us/azure/backup/backup-overview).
 
-## Configure security roles for your Azure resources 
+#### Configure security roles for your Azure resources 
 Azure role-based access control (Azure RBAC) is a system that provides fine-grained access management of Azure resources. Using Azure RBAC, you can segregate your team's duties and grant only the amount of access to users that they need to perform their jobs. See more about security roles at [Microsoft Docs](https://docs.microsoft.com/en-us/azure/role-based-access-control/).
 
-## Manage your Landing Zones
+#### Manage your Landing Zones
 Create an additional Landing Zone for a new type of workload. You can create landing zones with a different configuration by using the following [ARM template](
 https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true) 
 
