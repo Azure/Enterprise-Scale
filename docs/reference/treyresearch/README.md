@@ -40,7 +40,7 @@ By default, all recommendations are enabled. You must explicitly disable them if
 -	An Azure subscription dedicated to landing zones. The subscription host Azure workloads.   
 
 
-![Trey Research](media/20210113-TR01.png)
+![Trey Research](media/20210202-TR01.png)
 
 ## Next Step
 
