@@ -44,14 +44,6 @@ Recommended workaround is to re-run the pipeline. This can be triggered via anot
 
 This is under active investigation with the Management Group API product team.
 
-## Subscription Creation
-
-### Area
-Microsoft.Subscription Resource Provider
-
-### Issue
-At present, it is not possible to provision new Subscription via ARM templates. Subscription creation requires an Enterprise Enrollment account to be migrated to a new billing account API in the backend.
-
 ### Status
 We are working closely with engineering teams to enable this functionality for the Contoso Tenant. As a workaround, Subscriptions are created using GitHub Actions, having a Service Principal to call the POST API.
 

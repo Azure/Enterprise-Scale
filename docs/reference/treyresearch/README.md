@@ -11,12 +11,12 @@ This reference implementation provides a design path and initial technical state
 This architecture focuses on simplicity and provides a landing zone where a small team can confidently deploy and manage workloads.
 
 ## How to evolve later
-If the business requirements change over time, the architecture allows for creating additional subscriptions and placing them into the suitable management group and assigning Azure policies. 
+If the business requirements change over time, the architecture allows for creating additional subscriptions and placing them into the suitable management group and assigning Azure policies. For more details, see the next steps section at the end of this document.
 
 ## Pre-requisites
 To deploy this ARM template, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) on how to grant access before you proceed.
 
-### Optional pre-requisites
+## Optional pre-requisites
 The Azure portal's deployment experience allows you to bring in existing (preferably empty) subscriptions dedicated to platform management and your applications' initial landing zone.
 
 To learn how to create new subscriptions programmatically, please visit [Microsoft Docs](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/programmatically-create-subscription?tabs=rest). 
@@ -31,7 +31,7 @@ By default, all recommendations are enabled. You must explicitly disable them if
 - A scalable Management Group hierarchy allows you to operationalize at scale using centrally managed Azure RBAC and Azure Policy.  
 - An Azure subscription dedicated to platform, connectivity, and identity. The subscription host core platform capabilities at scale, such as:  
   -	A Log Analytics workspace and an Automation account  
-  -	Azure Security monitoring  
+  -	Azure Security monitoring.  
   -	Azure Security Center (Standard or Free tier)  
   -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics  
   -	A virtual hub network  
