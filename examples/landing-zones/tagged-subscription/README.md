@@ -1,12 +1,13 @@
-# Create new empty subscription into a management group
+# Create new subscription with a tag into a management group
 
-The ARM template provided in this folder can be used to create new, empty subscriptions into the targeted management group.
+The ARM template provided in this folder can be used to create new, empty subscriptions with a tag into the targeted management group.
 
 ## Parameters
 
 - "subscriptionAliasName": It is recommended that the subscription alias name is the same as the displayName to ensure easier manageability
 - "billingAccountId": Provide the full resourceId for the enrollmentAccount. E.g., "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/enrollmentAccounts/{enrollmentAccountName}"
 - "targetManagementGroup": Provide the last segment of the management group resourceId for the target management group in order to place the subscription directly under a management group. E.g., "/providers/Microsoft.Management/managementGroups/{mgmtGroupId}" where "mgmtGroupId" is the expected input.
+- "tagValue": Provide a value for the tag to identify the 'application key' for the subscription.
 
 ````json
 
@@ -14,19 +15,25 @@ The ARM template provided in this folder can be used to create new, empty subscr
         "subscriptionAliasName": {
             "type": "string",
             "metadata": {
-                "description": "Provide a name for the alias. This name will also be the display name of the subscription."
-            }
-        },
-        "billingAccountId": {
-            "type": "string",
-            "metadata": {
-                "description": "Provide the full resourceId of the MCA or the enrollment account id used for subscription creation."
+                "description": "Provide alias (and displayName) for the subscription"
             }
         },
         "targetManagementGroup": {
             "type": "string",
             "metadata": {
-                "description": "Provide the resourceId of the target management group to place the subscription."
+                "details": "Select targeted management group that the subscription will land into"
+            }
+        },
+        "billingAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId for the enrollment account or MCA"
+            }
+        },
+        "tagValue": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide a value of the required application key tag."
             }
         }
     },
@@ -62,7 +69,7 @@ New-AzManagementGroupDeployment `
             -Name <name> `
             -Location -<location> `
             -ManagementGroupId <mgmtGroupId> `
-            -TemplateUri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json"
+            -TemplateUri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/tagged-subscription/taggedSubscription.json"
 ````
 
 ## Deploy using Azure CLI
@@ -72,4 +79,4 @@ az deployment mg create \
   --name <name> \
   --location <location> \
   --management-group-id <mgmtGroupId> \
-  --template-uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json"
+  --template-uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/tagged-subscription/taggedSubscription.json"

@@ -2927,7 +2927,7 @@
             }
           },
           "name": "Deny-RDP-From-Internet"
-        },
+        },        
         {
           "properties": {
             "Description": "Deploys the diagnostic settings for Batch to stream to a Log Analytics workspace when any Batch which is missing this diagnostic settings is created or updated. The policy wil  set the diagnostic with all metrics and category enabled",
@@ -4505,7 +4505,7 @@
                 "details": {
                   "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f"
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
                     "properties": {
@@ -4616,7 +4616,7 @@
                 "details": {
                   "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f"
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
                     "properties": {
@@ -4727,7 +4727,7 @@
                 "details": {
                   "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f"
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
                     "properties": {
@@ -4838,7 +4838,7 @@
                 "details": {
                   "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f"
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
                     "properties": {
@@ -4949,7 +4949,7 @@
                 "details": {
                   "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f"
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
                     "properties": {
@@ -5008,8 +5008,8 @@
         },
         {
           "properties": {
-            "Description": "Deploys the configurations of a Private DNS Zone Group by a parameter for Storage-Blob Private Endpoint. Used enforce the configuration to a single Private DNS Zone. ",
-            "DisplayName": "Deploy DNS  Zone Group for Storage-Blob Private Endpoint",
+            "Description": "Deploys the configurations of a Private DNS Zone Group by a parameter for Storage-Table Private Endpoint. Used enforce the configuration to a single Private DNS Zone. ",
+            "DisplayName": "Deploy DNS  Zone Group for Storage-Table Private Endpoint",
             "Mode": "Indexed",
             "Parameters": {
               "privateDnsZoneId": {
@@ -5060,7 +5060,7 @@
                 "details": {
                   "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f"
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
                     "properties": {
@@ -6263,7 +6263,7 @@
                   "existenceScope": "ResourceGroup",
                   "resourceGroupName": "[[parameters('rgName')]",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
                   ],
                   "deployment": {
                     "location": "northeurope",
@@ -9359,7 +9359,7 @@
               }
             }
           },
-          "name": "Deny-ERPeering"
+          "name": "Deny-VNet-Peering"
         },
         {
           "properties": {
@@ -10000,6 +10000,95 @@
           },
           "name": "Deny-Subnet-Without-Nsg"
         },
+        {
+          "properties": {
+            "displayName": "Subnets should have a User Defined Route",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "This policy denies the creation of a subsnet with out a User Defined Route.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Network"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Network/virtualNetworks/subnets"
+                  },
+                  {
+                    "field": "Microsoft.Network/virtualNetworks/subnets/routeTable.id",
+                    "exists": "false"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Subnet-Without-Udr"
+        },
+        {
+          "Properties": {
+            "Description": "This policy denies the creation of vNet Peerings outside of the same subscriptions under the assigned scope.",
+            "DisplayName": "Deny vNet peering cross subscription.",
+            "Mode": "Indexed",
+            "metadata": {
+              "version": "1.0.0.0",
+              "category": "Network"
+            },
+            "Parameters": {
+                "effect": {
+                    "type": "String",
+                    "metadata": {
+                        "displayName": "Effect",
+                        "description": "Enable or disable the execution of the policy"
+                    },
+                    "allowedValues": [
+                        "Audit",
+                        "Deny",
+                        "Disabled"
+                    ],
+                    "defaultValue": "Deny"
+                }
+            },
+            "PolicyRule": {
+                "if": {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+                        },
+                        {
+                            "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+                            "notcontains": "[[subscription().id]"
+                        }
+                    ]
+                },
+                "then": {
+                    "effect": "[[parameters('effect')]"
+                }
+            }
+        },
+        "name": "Deny-VNET-Peer-Cross-Sub"
+        },        
         {
           "properties": {
             "Description": "Deploys the diagnostic settings for Network Security Groups to stream to a Log Analytics workspace when any Network Security Groups which is missing this diagnostic settings is created or updated. The policy wil  set the diagnostic with all metrics and category enabled",
@@ -14401,7 +14490,7 @@
                   "name": "[[parameters('vwanname')]",
                   "resourceGroupName": "[[parameters('rgName')]",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
                   ],
                   "deployment": {
                     "location": "northeurope",
@@ -14579,7 +14668,7 @@
                   "existenceScope": "ResourceGroup",
                   "ResourceGroupName": "[[parameters('rgName')]",
                   "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
                   ],
                   "deployment": {
                     "location": "northeurope",

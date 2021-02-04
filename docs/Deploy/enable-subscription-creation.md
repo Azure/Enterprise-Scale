@@ -8,9 +8,11 @@ This article describes how AzOps GitHub Actions can be used to create landing zo
 
 Before getting started with this guide ensure that AzOps has been setup and configured for the target environment. Documentation for [GitHub](setup-github.md) and [Azure DevOps](setup-azuredevops.md) provides more details. Later in this guide the Service Principal created for AzOps will be used to create landing zones (subscription).
 
-For the Service Principal permissions to create subscriptions, access to and enrollment account that has a billing id associated is required.
+For the Service Principal permissions to create subscriptions, access to an enrollment account that has a billing id associated is required.
 
 >Note: When using this Service Principal the subscription will be created under specified billing scope of enrollment account. Multiple enrollment account permissions can granted to a Service Principal. The billing scope will be specified in the template further down in this guide.
+
+Creating Azure subscriptions programmatically is allowed on specific types of Azure agreement types (EA, MCA, MPA, etc.). Refer to guidance on [Creating Azure subscriptions programatically](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription) to know supported agreement types.
 
 ## Create Landing Zones (Subscriptions) with AzOps GitHub Actions
 
@@ -28,9 +30,7 @@ $spnObjectId = ""
 $currentContext = Get-AzContext
 
 # Fetching new token
-$azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-$profileClient = [Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient]::new($azureRmProfile)
-$token = $profileClient.AcquireAccessToken($currentContext.Tenant.Id)
+$token = Get-AzAccessToken
 ```
 
 ### List all the billing accounts and enrolment accounts
@@ -44,7 +44,7 @@ The following scripts lists the billing account and enrollment account and assig
 $listOperations = @{
     Uri     = "https://management.azure.com/providers/Microsoft.Billing/billingaccounts?api-version=2020-05-01"
     Headers = @{
-        Authorization  = "Bearer $($token.AccessToken)"
+        Authorization  = "Bearer $($token.Token)"
         'Content-Type' = 'application/json'
     }
     Method  = 'GET'
@@ -75,7 +75,7 @@ Both role definitions have the `Microsoft.Subscription/subscriptions/write` perm
 $listRbacObj = @{
     Uri = "https://management.azure.com/$($enrollmentAccountId)/billingRoleDefinitions?api-version=2019-10-01-preview"
     Headers = @{
-        Authorization  = "Bearer $($token.AccessToken)"
+        Authorization  = "Bearer $($token.Token)"
         'Content-Type' = 'application/json'
     }
     Method = "GET"
@@ -106,7 +106,7 @@ $rbacGuid = New-Guid
 $assignRbac = @{
     Uri = "https://management.azure.com/$($enrollmentAccountId)/billingRoleAssignments/$($rbacGuid)?api-version=2019-10-01-preview"
     Headers = @{
-        Authorization  = "Bearer $($token.AccessToken)"
+        Authorization  = "Bearer $($token.Token)"
         'Content-Type' = 'application/json'
     }
     Method = "PUT"

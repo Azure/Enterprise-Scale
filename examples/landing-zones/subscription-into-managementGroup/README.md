@@ -1,6 +1,6 @@
-# Create new empty subscription into a management group
+# Create new subscription and move into existing management group
 
-The ARM template provided in this folder can be used to create new, empty subscriptions into the targeted management group.
+The ARM template provided in this folder can be used to create new, empty subscriptions and move it into the targeted management group.
 
 ## Parameters
 
@@ -14,19 +14,19 @@ The ARM template provided in this folder can be used to create new, empty subscr
         "subscriptionAliasName": {
             "type": "string",
             "metadata": {
-                "description": "Provide a name for the alias. This name will also be the display name of the subscription."
-            }
-        },
-        "billingAccountId": {
-            "type": "string",
-            "metadata": {
-                "description": "Provide the full resourceId of the MCA or the enrollment account id used for subscription creation."
+                "description": "Provide alias (and displayName) for the subscription"
             }
         },
         "targetManagementGroup": {
             "type": "string",
             "metadata": {
-                "description": "Provide the resourceId of the target management group to place the subscription."
+                "details": "Select targeted management group that the subscription will land into"
+            }
+        },
+        "billingAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId for the enrollment account or MCA"
             }
         }
     },
@@ -46,8 +46,7 @@ This ARM template is using the "scope escape" property on the resource in order 
             "properties": {
                 "workLoad": "Production",
                 "displayName": "[parameters('subscriptionAliasName')]",
-                "billingScope": "[parameters('billingAccountId')]",
-                "managementGroupId": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('targetManagementGroup'))]"
+                "billingScope": "[parameters('billingAccountId')]"
             }
         }
 ````
@@ -62,7 +61,7 @@ New-AzManagementGroupDeployment `
             -Name <name> `
             -Location -<location> `
             -ManagementGroupId <mgmtGroupId> `
-            -TemplateUri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json"
+            -TemplateUri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/subscription-into-managementGroup/subscriptionIntoManagementGroup.json"
 ````
 
 ## Deploy using Azure CLI
@@ -72,4 +71,4 @@ az deployment mg create \
   --name <name> \
   --location <location> \
   --management-group-id <mgmtGroupId> \
-  --template-uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json"
+  --template-uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/subscription-into-managementGroup/subscriptionIntoManagementGroup.json"
