@@ -24,7 +24,7 @@ To deploy this ARM template, your user/service principal must have Owner permiss
 
 The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscription dedicated to host your Platform (Management, Connectivity and Identity) resources. It also allows you to bring existing subscriptions that can be used as the initial landing zones for your applications.
 
-To learn how to create new subscriptions programmatically, please visit [Microsoft Docs](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/programmatically-create-subscription?tabs=rest). 
+To learn how to create new subscriptions programmatically, please visit [Microsoft Docs](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription).
 
 To learn how to create new subscriptions using the Azure portal, please visit [Microsoft Docs](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/). 
 
@@ -50,8 +50,8 @@ By default, all recommendations are enabled. You must explicitly disable them if
     -	Azure Security Center (Standard or Free tier)
     -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
   - On the other hand, Azure Policies that will apply to all your landing zones. That includes Online, Corp and additional Landing Zone's types you may add in the future:
-    - Enforce VM monitoring (Windows & Linux)
-    - Enforce VM backup (Windows & Linux)
+    - Enforce VM in-guest monitoring (Windows & Linux)
+    - Enforce Backup for all virtual machines (Windows & Linux) by deploying a recovery services vault in the same location and resource group as the virtual machine
     - Prevent inbound RDP from Internet
     - Ensure subnets are associated with NSG
     - Prevent IP forwarding
