@@ -32,61 +32,7 @@ Lack of auditing and diagnostics information at granular level can impact operat
 It is desirable that once Azure services are provisioned, they provide detailed information about Azure platform they interact with.
 Such information can be broadly divided into logs and metrics. Each Azure service can be further categorized into its sub-components (e.g. An Azure Public IP resource has `DDoSProtectionNotifications`, `DDoSMitigationReports` and `DDoSMitigationFlowLogs` as its sub-components. Collecting diagnostic information at these sub-categories can greatly enhance auditing and debugging experience.
 
- ESLZ deploys a custom Policy Initiative to enforce logs and metrics collection at a deeper level which helps enterprises gather logs and metrics per Azure Service as shown below.
-
-| Azure Service  | Log Categories           |Metrics        |
-|:-------------|:------------------------|:----------------|
-Azure Automation|JobLogs JobStreams DscNodeStatus|AllMetrics
-Azure Container Instance||AllMetrics
-Azure Container Registry||AllMetrics
-Azure Activity Log|Administrative Security ServiceHealth Alert Recommendation Policy Autoscale ResourceHealth|
-Azure Kubernetes Service|kube-audit kube-apiserver kube-controller-manager kube-scheduler cluster-autoscaler|AllMetrics
-Azure Analysis Services|Engine Service|AllMetrics
-Azure API Management|GatewayLogs|Gateway Requests Capacity EventHub Events
-Azure ApplicationGateway|ApplicationGatewayAccessLog ApplicationGatewayPerformanceLog ApplicationGatewayFirewallLog|AllMetrics
-Azure Batch|ServiceLog|AllMetrics
-Azure Content Delivery Network|CoreAnalytics|
-Azure Cognitive Services|Audit RequestResponse|AllMetrics
-Azure CosmosDB|DataPlaneRequests MongoRequests QueryRuntimeStatistics|Requests
-Azure Data Factory|ActivityRuns PipelineRuns TriggerRuns|AllMetrics
-Azure Data Lake Store|Audit Requests|AllMetrics
-Azure Data Lake Analytics|Audit Requests|AllMetrics
-Azure Event Grid||AllMetrics
-Azure Event Hub|ArchiveLogs OperationalLogs AutoScaleLogs|AllMetrics
-Azure ExpressRoute|PeeringRouteLog|AllMetrics
-Azure Firewall|AzureFirewallApplicationRule AzureFirewallNetworkRule AzureFirewallDnsProxy|AllMetrics
-Azure HDInsight||AllMetrics
-Azure IoT Hub|Connections DeviceTelemetry C2DCommands DeviceIdentityOperations FileUploadOperations Routes D2CTwinOperations C2DTwinOperations TwinQueries JobsOperations DirectMethods E2EDiagnostics Configurations|AllMetrics
-Azure KeyVault|AuditEvent|AllMetrics
-Azure Load Balancer|LoadBalancerAlertEvent LoadBalancerProbeHealthStatus|AllMetrics
-Azure LogicApps (ISE)|IntegrationAccountTrackingEvents|
-Azure LogicApps (WF)|WorkflowRuntime|AllMetrics
-Azure Machine Learning|AmlComputeClusterEvent AmlComputeClusterNodeEvent AmlComputeJobEvent AmlComputeCpuGpuUtilization AmlRunStatusChangedEvent|Run Model Quota Resource
-Azure MySQL|MySqlSlowLogs|AllMetrics
-Azure Network Security Groups|NetworkSecurityGroupEvent NetworkSecurityGroupRuleCounter|
-Azure NIC||AllMetrics
-Azure PostgreSQL|PostgreSQLLogs|AllMetrics
-Azure PowerBI (Embedded)|Engine|AllMetrics
-Azure PublicIP|DDoSProtectionNotifications DDoSMitigationFlowLogs DDoSMitigationReports|AllMetrics
-Azure RecoveryVault|CoreAzureBackup AddonAzureBackupAlerts AddonAzureBackupJobs AddonAzureBackupPolicy AddonAzureBackupProtectedInstance AddonAzureBackupStorage|
-Azure Redis Cache||AllMetrics
-Azure Relay||AllMetrics
-Azure Search Services|OperationLogs|AllMetrics
-Azure Service Bus|OperationalLogs|AllMetrics
-Azure SignalR||AllMetrics
-Azure SQL Database|SQLInsights AutomaticTuning QueryStoreRuntimeStatistics QueryStoreWaitStatistics Errors DatabaseWaitStatistics Timeouts Blocks Deadlocks SQLSecurityAuditEvents|AllMetrics
-Azure SQL Elastic Pool||AllMetrics
-Azure SQL Database Managed Instance|ResourceUsageStats SQLSecurityAuditEvents|
-Azure Stream Analytics|Execution Authoring|AllMetrics
-Azure Time Series Insights||AllMetrics
-Azure Traffic Manager|ProbeHealthStatusEvents|AllMetrics
-Azure Virtual Network|VMProtectionAlerts|AllMetrics
-Azure VM||AllMetrics
-Azure VMSS||AllMetrics
-Azure VNet Gateway|GatewayDiagnosticLog IKEDiagnosticLog P2SDiagnosticLog RouteDiagnosticLog RouteDiagnosticLog TunnelDiagnosticLog|AllMetrics
-Azure Web Server Farm||AllMetrics
-Azure Web Site||AllMetrics
-|<img width=250/>|<img width=50/>|<img width=40/>|
+ ESLZ deploys a custom Policy Initiative to enforce logs and metrics collection at a deeper level which helps enterprises gather logs and metrics per Azure Service. This initiative includes a policy for every Azure service. Key log categories for each Azure service and all metrics are collected automatically through these policies.
 
 ## Provide comprehensive security for SQL Databases
 
@@ -200,16 +146,7 @@ Azure Private Link and Azure Private Endpoint provide access to Azure Platform-a
 
 Azure Private DNS Zone Group helps is grouping the Private Link connections by Azure Services (blob, queue, table, sql, etc.) using an Azure Private Zone per service.
 
-Enterprises can create central Azure Private Zones and ESLZ custom policies will auto-provision connections between Private Link/Endpoint and Private DNS Zone for following Azure services.
-
-|Azure Service    |
-|:----------------|
-Azure Storage Blob|
-Azure Storage File|
-Azure Storage Queue|
-Azure Storage Table|
-Azure KeyVault|
-Azure SQL Database|
+Enterprises can create central Azure Private Zones and ESLZ custom policies will auto-provision connections between Private Link/Endpoint and Private DNS Zone for Azure services.
 
 ## Centrally manage firewall rules
 
