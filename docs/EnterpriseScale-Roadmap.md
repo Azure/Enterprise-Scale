@@ -6,7 +6,7 @@ We intend to update the content within this repo in alignment with Azure Semeste
 | Milestone | Scope | Status |
 |----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------|
 | Design Principles and Architecture Guidelines | Enterprise-Scale design principles and architecture guidelines for Azure. | Complete (January, 2020)|
-| Automated build/test for code and deployment artefact for community contribution | Validate and test deployment artefact in test engineering Tenant to ensure quality and end to end deployment. | Complete (March, 2020) |
+| Automated build/test for code and deployment artifact for community contribution | Validate and test deployment artifact in test engineering Tenant to ensure quality and end to end deployment. | Complete (March, 2020) |
 | Contoso Scope and Design | Prescriptive first-party reference implementation for the Enterprise-Scale architecture guidelines. Real-world example of applying Enterprise-Scale design principles to make contextualized decisions across all 8 design areas and define their target state. | Complete (March, 2020) |
 | Contoso Reference Implementation | End to end reference implementation to supplement Architecture and Design recommendations. | Complete (April, 2020) |
 | Publish Enterprise-Scale GitHub Action in Actions marketplace | This enables Resource discovery, deployments and operationalize IaC. | Complete (June, 2020) |

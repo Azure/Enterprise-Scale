@@ -67,7 +67,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring"
                         }
                     },
                     {
@@ -551,13 +551,13 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable Hub & Spoke connectivity, you must allocate a connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first networking hub and requisite settings. We recommend using a new Subscription with no existing resources.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity#traditional-azure-networking-topology"
                         }
                     },
                     {
                         "name": "esHub",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy virtual hub",
+                        "label": "Deploy virtual hub network",
                         "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy virtual network for hub",
                         "constraints": {
@@ -601,7 +601,7 @@
                     {
                         "name": "esAddressHub",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Address space (required for virtual network hub)",
+                        "label": "Address space (required for hub virtual hub)",
                         "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
                         "defaultValue": "10.100.0.0/16",
                         "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
@@ -751,7 +751,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable identity (AuthN/AuthZ) for workloads in landing zones, you must allocate an identity Subscription that is dedicated to host your Active Directory domain controllers. Please note, this Subscription will be moved to the identity Management Group, and ARM will assign the selected policies. We recommend using a new Subscription with no existing resources.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/identity-and-access-management"
                         }
                     },
                     {
@@ -908,18 +908,137 @@
                         "options": {
                             "icon": "Info",
                             "text": "You can optionally provide subscriptions for your first landing zones for both 'online' and 'corp' and assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance"
+                        }
+                    },
+					{
+                        "name": "corpText",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Select the subscriptions you want to move to corp management group.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
+                            }
+                        }
+                    },
+					{
+                        "name": "esLzConnectivity",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Connect corp landing zones to the connectivity hub (optional)?",
+                        "defaultValue": "[if(equals(steps('esConnectivityGoalState').esHub, 'Yes'), 'Yes (recommended)', 'No')]",
+                        "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]"
+                    },
+                    {
+                        "name": "lzCorpSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
                         }
                     },
                     {
+                        "name": "esCorpLzSub",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Corp landing zone subscriptions (optional)",
+                        "toolTip": "",
+                        "multiselect": true,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": "[or(equals(steps('esConnectivityGoalState').esHub, 'No'), equals(steps('lzGoalState').esLzConnectivity, 'No'))]",
+                        "constraints": {
+                            "allowedValues": "[map(steps('lzGoalState').lzCorpSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                            "required": false
+                        }
+                    },					
+					{
+						"name": "lzConnectedSubs",
+						"type": "Microsoft.Common.EditableGrid",
+						"ariaLabel": "Add existing subscriptions into the management group landing zone and provide address space for virtual network peering",
+						"label": "Corp connected landing zone subscriptions (optional)",
+						"visible": "[equals(steps('lzGoalState').esLzConnectivity, 'Yes')]",
+						"constraints": {
+							"width": "Full",
+							"rows": {
+								"count": {
+									"min": 1,
+									"max": 10
+								}
+							},
+							"columns": [
+								{
+									"id": "subs",
+									"header": "Subscription",
+									"width": "1fr",
+									"element": {
+										"name": "esLzConnectedSub",
+										"type": "Microsoft.Common.DropDown",
+										"label": "Landing zone subscription",
+										"toolTip": "",
+										"multiselect": false,
+										"selectAll": false,
+										"filter": true,
+										"filterPlaceholder": "Filter items ...",
+										"multiLine": false,
+										"constraints": {
+											"allowedValues": "[map(steps('lzGoalState').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+											"required": false
+										}
+									}
+								},
+								{
+									"id": "addresses",
+									"header": "Virtual Network Address space",
+									"width": "1fr",
+									"element": {
+										"type": "Microsoft.Common.TextBox",
+										"placeholder": "Ensure there are no overlapping IP addresses!",
+										"constraints": {
+											"required": true,
+											"validations": [
+												{
+													"message": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+												}
+											]
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+                        "name": "lzSubsApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "subscriptions?api-version=2020-01-01"
+                        }
+                    },
+					{
                         "name": "onlineText",
                         "type": "Microsoft.Common.TextBlock",
-                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]",
+                        "visible": true,
                         "options": {
                             "text": "Select the subscriptions you want to move to online management group.",
                             "link": {
                                 "label": "Learn more",
-                                "uri": "https://docs.microsoft.com/azure/azure-monitor/insights/solutions"
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
                             }
                         }
                     },
@@ -944,42 +1063,6 @@
                         "visible": true,
                         "constraints": {
                             "allowedValues": "[map(steps('lzGoalState').lzOnlineSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
-                            "required": false
-                        }
-                    },
-                    {
-                        "name": "corpText",
-                        "type": "Microsoft.Common.TextBlock",
-                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]",
-                        "options": {
-                            "text": "Select the subscriptions you want to move to corp management group.",
-                            "link": {
-                                "label": "Learn more",
-                                "uri": "https://docs.microsoft.com/azure/azure-monitor/insights/solutions"
-                            }
-                        }
-                    },
-                    {
-                        "name": "lzCorpSubsApi",
-                        "type": "Microsoft.Solutions.ArmApiControl",
-                        "request": {
-                            "method": "GET",
-                            "path": "subscriptions?api-version=2020-01-01"
-                        }
-                    },
-                    {
-                        "name": "esCorpLzSub",
-                        "type": "Microsoft.Common.DropDown",
-                        "label": "Corp landing zone subscriptions (optional)",
-                        "toolTip": "",
-                        "multiselect": true,
-                        "selectAll": true,
-                        "filter": true,
-                        "filterPlaceholder": "Filter items ...",
-                        "multiLine": true,
-                        "visible": true,
-                        "constraints": {
-                            "allowedValues": "[map(steps('lzGoalState').lzCorpSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                             "required": false
                         }
                     },
@@ -1332,7 +1415,8 @@
             "retentionInDays": "[string(steps('esGoalState').esLogRetention)]",
             "enableVmMonitoring": "[steps('lzGoalState').esVmMonitoring]",
             "enableVmssMonitoring": "[steps('lzGoalState').esVmssMonitoring]",
-            "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]"
+            "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]",
+			"corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub, steps('esGoalState').esMgmtSub)), not(contains(steps('lzGoalState').esCorpLzSub, steps('esConnectivityGoalState').esConnectivitySub))), steps('lzGoalState').lzConnectedSubs, '')]"
         }
     }
 }
