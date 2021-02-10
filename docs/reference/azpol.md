@@ -12,18 +12,7 @@ Production workloads using public IPs without proper security measures in place 
 
 There is a custom ESLZ policy on denying creation of public IP address which prevents pubic IP getting created in a scope targeted by policy. Enterprises can easily prevent Virtual Machines (VMs) getting created with public IP using this policy.
 
-Similarly there is a custom ESLZ Policy Initiative (also referred as PolicySet) which  helps enterprises prevent Azure services getting created with a public IP address in the first place. Following key Azure services are prevented ever getting created with a Public IP address.
-
-| Azure Service|
-|:-------------|
-Azure CosmosDB|
-Azure MariaDB|
-Azure MySQL|
-Azure PostgreSql|
-Azure KeyVault|
-Azure SQL Database|
-Azure Storage|
-Azure Kubernetes Service|
+Similarly there is a custom ESLZ Policy Initiative (also referred as PolicySet) which  helps enterprises prevent Azure services getting created with a public IP address in the first place.
 
 ## Enforce audit and log information collection
 
