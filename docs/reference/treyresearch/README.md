@@ -8,9 +8,11 @@ The Enterprise-Scale architecture is modular by design. It allows organizations 
 
 ## Customer profile
 
-This reference implementation provides a design path and initial technical state for Small and Medium Enterprises Azure environment based on Azure Landing Zones Design Recommendations.
+This reference implementation provides a design path and initial technical state for Small and Medium Enterprises to start with foundational landing zones that support their application portfolios. This reference implementation is meant for organizations that do not have a large IT team and do not require fine grained administration delegation models. Hence, Management, Connectivity and Identity resources are consolidated in a single Platform Subscription.
 
-This architecture focuses on simplicity and provides a landing zone where a small team can confidently deploy and manage workloads.
+This reference implementation is also well suited for customers who want to start with Landing Zones for their net new deployment/development in Azure by implementing a network architecture based on the traditional hub and spoke network topology.
+
+Note: Alternatively, if you need to implement an operating model which facilitates segregating Platform administration duties among different teams, then we suggest considering leveraging [Adventure Works](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) or [WigTips](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) reference implementations.
 
 ## How to evolve later
 
@@ -76,17 +78,3 @@ Azure role-based access control (Azure RBAC) is a system that provides fine-grai
 Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the **Landing Zones** > **Online** or **Corp**  management group, and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workloads.
 
 Refer to the [Create Landing Zone(s)](../../EnterpriseScale-Deploy-landing-zones.md) article for guidance to create Landing Zones.
-
-### From a management perspective:
-
-#### Backup and protect your workloads
-
-The Azure Backup service provides simple, secure, and cost-effective solutions to back up your data and recover it from the Microsoft Azure cloud. See more about backup and data protection at [Microsoft Docs](https://docs.microsoft.com/en-us/azure/backup/backup-overview).
-
-#### Cost Management
-
-Track resource usage and manage costs across all your clouds with a single, unified view, and access rich operational and financial insights to make informed decisions. See more about Cost Management at [Microsoft Docs](https://docs.microsoft.com/en-us/rest/api/cost-management/).
-
-
-
-
