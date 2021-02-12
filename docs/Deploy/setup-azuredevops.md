@@ -1,16 +1,18 @@
 # Azure DevOps - Setup Guide
 
+The [AzOps](https://github.com/Azure/AzOps/) (CI/CD) process was initially designed to run on GitHub. However, we recognise that many customers have invested in Azure DevOps and continue to work with it. As AzOps is packaged in a Container, we can leverage it in an Azure DevOps (ADO) pipeline in the same way that we do with a GitHub action.
+
 ## Supported scenarios
 
 We currently support all AzOps scenarios. However, the Pull Request procedure slightly deviates from the review process in GitHub.
-It it's default configuration, Azure DevOps starts the build validation process when a Pull Request is created. To support the same AzOps push scenario, the manual review process (approval) has to be completed before the `AzOps - Push` pipeline will start. 
+In its default configuration, Azure DevOps starts the build validation process when a Pull Request is created. To support the same AzOps push scenario, the manual review process (approval) has to be completed before the `AzOps - Push` pipeline will start.
 Azure DevOps `environments` support `Approvals and checks` which we will be leveraged for the Pull Request flow.
 
 ## Prerequisites
 
-Please complete the following steps to create a Service Principal with the correct access for use in the Azure deployment pipelines. A PowerShell script is provided below that simplifies this process.
+Please complete the following steps to create a Service Principal with the correct access for use in the Azure deployment pipelines. A PowerShell script is provided below that simplifies this process. The script does require th
 
-You may need to elevate your access to Azure, before being able to Create a root scoped assignment https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md
+You may need to elevate your access to Azure before being able to create a root scoped assignment https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md
 
 1. Create your AzOps service principal
 1. Assign the root scoped Azure RBAC permission
@@ -35,8 +37,10 @@ Write-Output $servicePrincipalJson
 # Configure the AzureAD directory role #
 ########################################
 
+#Install the Module *If Required*
 Install-Module -Name AzureAD #Do this in PowerShell as admin
 
+#Connect to Azure Active Directory
 $AzureAdCred = Get-Credential
 Connect-AzureAD -Credential $AzureAdCred
 
@@ -45,6 +49,7 @@ $aadServicePrincipal = Get-AzureADServicePrincipal -Filter "DisplayName eq 'AzOp
 
 #Get Azure AD Directory Role
 $DirectoryRole = Get-AzureADDirectoryRole -Filter "DisplayName eq 'Directory Readers'"
+$DirectoryRole = Get-AzureADDirectoryRole | -Filter "DisplayName eq 'Directory Readers'"
 
 if ($DirectoryRole -eq $NULL) {
     Write-Output "Directory Reader role not found. This usually occurs when the role has not yet been used in your directory"
@@ -55,23 +60,30 @@ else {
     Add-AzureADDirectoryRoleMember -ObjectId $DirectoryRole.ObjectId -RefObjectId $aadServicePrincipal.ObjectId
 }
 
-#############################################################
-# Display Service Principal Creds for Azure DevOps Variable #
-#############################################################
+###################################################################
+# Display Service Principal Credentials for Azure DevOps Variable #
+###################################################################
 
 $escapedServicePrincipalJson = $servicePrincipalJson.Replace('"','\"')
 Write-Output $escapedServicePrincipalJson
 ```
 
-## 1. Create the repository
+## 1. Create the Azure DevOps project
 
-Within the Azure DevOps project, import the [Enterprise-Scale](https://github.com/Azure/Enterprise-Scale) repository from GitHub. Instructions are [here](https://docs.microsoft.com/azure/devops/repos/git/import-git-repository).
+If you don't already have an Azure DevOps Project;
+Go to [dev.azure.com](https://dev.azure.com), log in to the organisation and create a new private Project
+
+## 2. Create the repository
+
+Within the Azure DevOps project, import the [Enterprise-Scale](https://github.com/Azure/Enterprise-Scale) repository from GitHub. Repository importing documentation can be found [here](https://docs.microsoft.com/azure/devops/repos/git/import-git-repository).
 
 ![Importing a repository](../media/ado-import-repo.png)
 
-## 2. Configure the pipelines
+## 3. Configure the pipelines
 
-Add two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`. It is a good practice to name these pipelines `AzOps - Pull` and `AzOps - Push` respectively.
+*Create* two new pipelines, selecting the existing files `.azure-pipelines/azops-pull.yml` & `.azure-pipelines/azops-push.yml`.
+It is a good practice to name these pipelines `AzOps - Pull` and `AzOps - Push` respectively (in both the YAML file, and the pipeline itself after you create it).
+
 ![Creating a pipeline](../media/ado-pipeline-create.png)
 
 When creating the pipelines, define a new secret variable to each of the pipelines:
@@ -80,36 +92,41 @@ When creating the pipelines, define a new secret variable to each of the pipelin
 
 ![Pipeline variable](../media/ado-pipeline-variable.png)
 
-## 3. Configure the Environment Approvers
+## 4. Configure the Environment Approvers
 
-_Optional step to configure approval steps_
-The `AzOps - Push` push pipeline creates an ADO environment on this environment select `Approvals and checks` and configure an Approval for a user or group.
+In Environments, open `AzureEnv` and select `Approvals and checks`, then configure an Approval for a user or group.
 
 ![Environment approval](../media/ado-env-approval.png)
 
-## 4. Configure repository permissions
+## 5. Configure repository permissions
 
-The build service account  must have the following permissions on the repository:
+The build service account must have the following permissions on the repository:
 
 * `<Project>\Contributors`
 
-Verify the name of the build service account in the *Repository* - *Manage Repository* - *Permissions* screen.
+In the *Repository* - *Manage Repository* - *Permissions* screen, ensure that in the Repository permissions that the Contributors group has the `Force Push` permission set to Allow.  
+
+![Force Push](../media/ado-repo-forcepush.png)
+
+Whilst on the Repository Permissions screen, find the Build User in the list and copy their name for the next step.
 
 ![Build service username](../media/ado-repo-buildservice.png)
 
-Add the user to the Contributor group in *Project Settings* - *Permissions*.
+Finally, add the user to the Contributor group in *Project Settings* - *Permissions* - *Contributors* - *Members*.
+
 ![Permissions](../media/ado-permissions-group.png)
 
-Additionally, ensure that in the Repository permissions that the Contributors group has the `Force Push` permission set to Allow.  
+### 6. Configure repository branch policies
 
-### 5. Configure repository branch policies
+In order for the `AzOps Push` pipeline to run, set the repository `main` branch to [require build verification](https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies).
 
-In order for the pull pipeline to run, set the `main` branch to [require build verification](https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies).
+![Build Policy](../media/ado-add-build-policy.png)
+
 It is also recommend to allow only `squash` merge types from branches into `main`.
 
 ![Repo policy](../media/ado-repo-policy.png)
 
-### 6. Discover Environment
+### 7. Discover Environment
 
 At this stage we're ready to discover your environment with the Pull pipeline.  However, if you have a greenfield environment with no Management Groups configured then its advised that you select a Enterprise Scale [Reference Implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) to Deploy to Azure.
 
