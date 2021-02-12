@@ -118,7 +118,7 @@ Finally, add the user to the Contributor group in *Project Settings* - *Permissi
 
 ### 6. Configure repository branch policies
 
-In order for the `AzOps Push` pipeline to run, set the repository `main` branch to [require build verification](https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies).
+In order for the `AzOps Push` pipeline to run, set the repository `main` branch to [require build verification](https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies) using the default settings.
 
 ![Build Policy](../media/ado-add-build-policy.png)
 
@@ -128,7 +128,7 @@ It is also recommend to allow only `squash` merge types from branches into `main
 
 ### 7. Discover Environment
 
-At this stage we're ready to discover your environment with the Pull pipeline.  However, if you have a greenfield environment with no Management Groups configured then its advised that you select a Enterprise Scale [Reference Implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) to Deploy to Azure.
+At this stage we're ready to discover your environment with the `AzOps - Pull` pipeline.  However, if you have a greenfield environment with no Management Groups configured then its advised that you select a Enterprise Scale [Reference Implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) to deploy to Azure.
 
 Manually trigger the `AzOps - Pull` pipeline. The pipeline will run, and discover the existing Azure environment.
 
