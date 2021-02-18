@@ -54,6 +54,10 @@ New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
 
 Please note, it may take up to 15-30 minutes for permission to propagate at tenant root scope. It is highly recommended that you log out and log back in.
 
+### Creating a scoped role assignment
+
+For simplicity, the root tenant scope is used in the deployment of the Reference examples and in the RBAC Azure permissions. However you are able to limit the scope of the Role Assignment to a subsection of the Management Group hierarchy. Eg. `"/providers/Microsoft.Management/managementGroups/YourMgGroup"`.
+
 ## Next steps
 
 Please proceed with [deploying reference implementation](./EnterpriseScale-Deploy-reference-implentations.md).
