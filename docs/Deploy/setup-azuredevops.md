@@ -150,6 +150,10 @@ Once the discovery process has completed, select the Pull Request that was autom
 
 The current Azure environment is now represented in your repository, there will be an `azops` folder of the `main` branch. By default the `AzOps Pull` pipeline will run every 6 hours, however you can invoke this action at any time when you suspect configuration drift due to Out of Band changes in Azure.
 
+## Next steps
+
+Once Azure DevOps reflects your existing Azure environment, you can [deploy a new Policy Assignment](./deploy-new-policy-assignment.md).
+
 ## Troubleshooting
 
 ### TF401027: You need the Git 'ForcePush' permission to perform this action
