@@ -56,7 +56,8 @@ Please note, it may take up to 15-30 minutes for permission to propagate at tena
 
 ### Creating a scoped role assignment
 
-For simplicity, the root tenant scope is used in the deployment of the Reference examples and in the RBAC Azure permissions. However you are able to limit the scope of the Role Assignment to a subsection of the Management Group hierarchy. Eg. `"/providers/Microsoft.Management/managementGroups/YourMgGroup"`.
+The Owner privileged root tenant scope *is required* in the deployment of the [Reference examples](EnterpriseScale-Deploy-reference-implentations.md).  However post deployment, and as your use of Enterprise Scale matures, you are able to limit the scope of the Service Principal Role Assignment to a subsection of the Management Group hierarchy.
+Eg. `"/providers/Microsoft.Management/managementGroups/YourMgGroup"`.
 
 ## Next steps
 
