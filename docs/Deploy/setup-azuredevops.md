@@ -3,6 +3,7 @@
 Please complete the following steps at [Configure Azure permissions for ARM tenant deployments](setup-github.md) page before continuing:
 
 * Step 3 - Create SPN and Grant Permission
+* Step 4 - Grant Azure Active Directory permissions for SPN
 * Step 5 - Configure your repo to update changes from upstream
 
 ## Implementation notes
