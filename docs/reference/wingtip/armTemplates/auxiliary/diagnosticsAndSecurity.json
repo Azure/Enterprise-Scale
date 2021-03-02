@@ -4,12 +4,18 @@
     "parameters": {
         "topLevelManagementGroupPrefix": {
             "type": "string",
-            "maxLength": 5
+            "maxLength": 5,
+            "metadata": {
+                "description": "Provide top level management group prefix to route deployments in the hierarchy."
+            }
         },
         "managementSubscriptionId": {
             "type": "string",
             "maxLength": 36,
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the subscription id for the dedicated management subscription"
+            }
         },
         "enableLogAnalytics": {
             "type": "string",
@@ -19,7 +25,7 @@
                 "No"
             ],
             "metadata": {
-                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
         },
         "enableAsc": {
@@ -30,7 +36,7 @@
                 "No"
             ],
             "metadata": {
-                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
         },
         "enableAscForServers": {
@@ -39,7 +45,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForAppServices": {
             "type": "string",
@@ -47,7 +56,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForStorage": {
             "type": "string",
@@ -55,7 +67,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForSql": {
             "type": "string",
@@ -63,7 +78,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForKeyVault": {
             "type": "string",
@@ -71,7 +89,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForArm": {
             "type": "string",
@@ -79,7 +100,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForDns": {
             "type": "string",
@@ -87,7 +111,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForKubernetes": {
             "type": "string",
@@ -95,7 +122,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableAscForRegistries": {
             "type": "string",
@@ -103,7 +133,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
         },
         "enableArcMonitoring": {
             "type": "string",
@@ -140,7 +173,10 @@
         },
         "lzSubscriptionId": {
             "type": "array",
-            "defaultValue": []
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription id's of the subscription you want to move into the online landing zone management group"
+            }
         }
     },
     "variables": {
@@ -373,6 +409,7 @@
             }
         },        
         {
+            // Conditional assignment of policy to enforce resource diagnostics for the Azure tenant
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -394,6 +431,7 @@
             }
         },
         {
+            // Role assignment of the conditional resource diagnostics policy assignment
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
@@ -408,6 +446,7 @@
             }
         },        
         {
+            // Conditional assignment of policy to enforce Azure Security Center on the subscriptions in the Azure tenant
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -453,6 +492,7 @@
             }
         },
         {
+            // Role assignment of the conditional ASC policy assignment
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
@@ -467,6 +507,7 @@
             }
         },
         {
+            // Conditional assignment of policy to enforce Azure Security Center Monitoring on the subscriptions in the Azure tenant
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -483,6 +524,7 @@
             }
         },         
         {
+            // Conditional invokation of DINE policy targeting subscriptions
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -499,6 +541,7 @@
             }
         },
         {
+            // Conditional invokation of DINE policy targeting subscriptions
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -515,6 +558,7 @@
             }
         },
         {
+            // Conditional invokation of DINE policy targeting subscriptions
             "condition": "[and(not(empty(parameters('lzSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -535,6 +579,7 @@
             }
         },
         {
+            // Conditional invokation of DINE policy targeting subscriptions
             "condition": "[and(not(empty(parameters('lzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
