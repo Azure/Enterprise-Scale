@@ -4,13 +4,16 @@
     "parameters": {
         "topLevelManagementGroupPrefix": {
             "type": "string",
-            "maxLength": 5
+            "maxLength": 5,
+            "metadata": {
+                "description": "Provide top level management group prefix to route deployments in the hierarchy."
+            }
         },
         "addressPrefix": {
             "type": "string",
             "metadata": {
                 "displayName": "addressPrefix",
-                "description": "Address prefix of the VHUB"
+                "description": "Address prefix of the HUB"
             }
         },
         "location": {
@@ -27,7 +30,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the virtual network hub should be deployed or not."
+            }
         },
         "enableAzFw": {
             "type": "string",
@@ -35,7 +41,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the Azure Firewall should be deployed or not."
+            }
         },
         "enableVpnGw": {
             "type": "string",
@@ -43,7 +52,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the VPN Gateway should be deployed or not."
+            }
         },
         "enableErGw": {
             "type": "string",
@@ -51,12 +63,17 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the ExpressRoute Gateway should be deployed or not."
+            }
         },
         "connectivitySubscriptionId": {
             "type": "string",
             "defaultValue": "",
-            "maxLength": 36
+            "metadata": {
+                "description": "Provide the subscription id for the dedicated connectivity subscription."
+            }
         },
         "vpnGwType": {
             "type": "string",
@@ -64,15 +81,24 @@
                 "PolicyBased",
                 "RouteBased"
             ],
-            "defaultValue": "RouteBased"
+            "defaultValue": "RouteBased",
+            "metadata": {
+                "description": "Determine which type of Gateway that will be used."
+            }
         },
         "subnetMaskForAzFw": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subnet for Azure Firewall."
+            }
         },
         "subnetMaskForGw": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subnet for VPN/ER."
+            }
         }
     },
     "variables": {
@@ -90,10 +116,28 @@
         "azErGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
         "azFwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallSubnet')]",
         "azFwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwIpName'))]",
-        "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke'), 64)]"
+        "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke'), 64)]",
+        // Creating variable that later will be used in conjunction with the union() function to cater for conditional subnet creation while ensuring idempotency
+        "gwSubnet": [
+            {
+                "name": "GatewaySubnet",
+                "properties": {
+                    "addressPrefix": "[parameters('subnetMaskForGw')]"
+                }
+            }
+        ],
+        "fwSubnet": [
+            {
+                "name": "AzureFirewallSubnet",
+                "properties": {
+                    "addressPrefix": "[parameters('subnetMaskForAzFw')]"
+                }
+            }
+        ]
     },
     "resources": [
         {
+            // Conditionally deploy virtual network hub
             "condition": "[and(equals(parameters('enableHub'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -139,31 +183,15 @@
                                                     "addressPrefixes": [
                                                         "[parameters('addressPrefix')]"
                                                     ]
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), not(empty(parameters('subnetMaskForAzFw'))))]",
-                                            "type": "Microsoft.Network/virtualNetworks/subnets",
-                                            "apiVersion": "2020-04-01",
-                                            "name": "[concat(variables('hubName'), '/', 'AzureFirewallSubnet')]",
-                                            "dependsOn": [
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
-                                            ],
-                                            "properties": {
-                                                "addressPrefix": "[parameters('subnetMaskForAzFw')]"
-                                            }
-                                        },
-                                        {
-                                            "condition": "[and(or(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableErGw'), 'Yes')), not(empty(parameters('subnetMaskForGw'))))]",
-                                            "type": "Microsoft.Network/virtualNetworks/subnets",
-                                            "apiVersion": "2020-04-01",
-                                            "name": "[concat(variables('hubName'), '/', 'GatewaySubnet')]",
-                                            "dependsOn": [
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
-                                            ],
-                                            "properties": {
-                                                "addressPrefix": "[parameters('subnetMaskForGw')]"
+                                                },
+                                                "subnets": "[
+                                                             union(
+                                                                  if(
+                                                                      not(
+                                                                          empty(parameters('subnetMaskForGw'))), variables('gwSubnet'), json('[]')), 
+                                                                          if(
+                                                                              not(
+                                                                                  empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')))]"
                                             }
                                         },
                                         {
@@ -184,7 +212,7 @@
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'), '/subnets/GatewaySubnet')]"
+                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
                                             "properties": {
                                                 "gatewayType": "Vpn",
@@ -227,7 +255,8 @@
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'), '/subnets/GatewaySubnet')]"
+                                                "[concat('Microsoft.Network/virtualNetworkGateways/', variables('vpngwname'))]",
+                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
                                             "properties": {
                                                 "gatewayType": "ExpressRoute",
@@ -272,7 +301,7 @@
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIpAddresses/', variables('azFwIpName'))]",
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'), '/subnets/AzureFirewallSubnet')]"
+                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
                                             "properties": {
                                                 "sku": {
@@ -291,8 +320,7 @@
                                                             }
                                                         }
                                                     }
-                                                ],
-                                                "firewallPolicy": ""
+                                                ]
                                             }
                                         }
                                     ]

@@ -1,0 +1,138 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionAliasName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide alias (and displayName) for the subscription"
+            }
+        },
+        "targetManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "details": "Select targeted management group that the subscription will land into"
+            }
+        },
+        "billingAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId for the enrollment account or MCA"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('create-', parameters('subscriptionAliasName'))]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('targetManagementGroup'))]",
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    // Sharing parameter values from outer to inner execution scope
+                    "subAliasName": {
+                        "value": "[parameters('subscriptionAliasName')]"
+                    },
+                    "billingId": {
+                        "value": "[parameters('billingAccountId')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        // parameters for inner scope
+                        "subAliasName": {
+                            "type": "string"
+                        },
+                        "billingId": {
+                            "type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "scope": "/", // routing the request to tenant root
+                            "name": "[parameters('subAliasName')]",
+                            "type": "Microsoft.Subscription/aliases",
+                            "apiVersion": "2020-09-01",
+                            "properties": {
+                                "workLoad": "Production",
+                                "displayName": "[parameters('subAliasName')]",
+                                "billingScope": "[parameters('billingId')]"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        // Referencing the guid generated for the subscription to be used in subsequent (optional) deployments to this subscription
+                        "subscriptionId": {
+                            "type": "string",
+                            "value": "[reference(parameters('subAliasName')).subscriptionId]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            // Creating deployment to place the new/existing subscription into the management group
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('targetManagementGroup'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-08-01",
+            "name": "[concat('tag-', parameters('subscriptionAliasName'))]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'create-', parameters('subscriptionAliasName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    // Value coming from the previous deployment's output inner scope to be used to target subscription deployments
+                    "targetSubscriptionId": {
+                        "value": "[reference(concat('create-', parameters('subscriptionAliasName'))).outputs.subscriptionId.value]"
+                    },
+                    "mgmtGroupId": {
+                        "value": "[parameters('targetManagementGroup')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                         // parameters for inner scope
+                        "targetSubscriptionId": {
+                            "type": "string"
+                        },
+                        "mgmtGroupId": {
+                            "type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            // Place subscription into the management group
+                            "scope": "/",
+                            "type": "Microsoft.Management/managementGroups/subscriptions",
+                            "apiVersion": "2020-10-01",
+                            "name": "[concat(parameters('mgmtGroupId'), '/', parameters('targetSubscriptionId'))]",
+                            "location": "[deployment().location]",
+                            "properties": {}
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "subscriptionIdOuter": {
+            "type": "string",
+            "value": "[reference(concat('create-', parameters('subscriptionAliasName'))).outputs.subscriptionId.value]"
+        }
+    }
+}
