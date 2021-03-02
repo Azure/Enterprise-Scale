@@ -31,7 +31,9 @@ $servicePrincipalJson = [ordered]@{
     tenantId = (Get-AzContext).Tenant.Id
     subscriptionId = (Get-AzContext).Subscription.Id
 } | ConvertTo-Json
-Write-Output $servicePrincipalJson
+#Write-Output $servicePrincipalJson
+$escapedServicePrincipalJson = $servicePrincipalJson.Replace('"','\"')
+Write-Output $escapedServicePrincipalJson
 
 ########################################
 # Configure the AzureAD directory role #
@@ -49,7 +51,7 @@ $aadServicePrincipal = Get-AzureADServicePrincipal -Filter "DisplayName eq 'AzOp
 
 #Get Azure AD Directory Role
 $DirectoryRole = Get-AzureADDirectoryRole -Filter "DisplayName eq 'Directory Readers'"
-$DirectoryRole = Get-AzureADDirectoryRole | -Filter "DisplayName eq 'Directory Readers'"
+#$DirectoryRole = Get-AzureADDirectoryRole | Where-Object {$_.DisplayName -eq "Directory Readers"} #If the line above doesn't work with the Filter param, then do this.
 
 if ($DirectoryRole -eq $NULL) {
     Write-Output "Directory Reader role not found. This usually occurs when the role has not yet been used in your directory"
@@ -60,12 +62,6 @@ else {
     Add-AzureADDirectoryRoleMember -ObjectId $DirectoryRole.ObjectId -RefObjectId $aadServicePrincipal.ObjectId
 }
 
-###################################################################
-# Display Service Principal Credentials for Azure DevOps Variable #
-###################################################################
-
-$escapedServicePrincipalJson = $servicePrincipalJson.Replace('"','\"')
-Write-Output $escapedServicePrincipalJson
 ```
 
 ## 1. Create the Azure DevOps project
@@ -117,9 +113,9 @@ Finally, add the user to the Contributor group in *Project Settings* - *Permissi
 
 ![Permissions](../media/ado-permissions-group.png)
 
-### 6. (optional) Configure repository branch policies
+### 6. Configure repository branch policies
 
-In order for the `AzOps Push` pipeline to run, set the repository `main` branch to [require build verification](https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies) using the default settings.
+In order for the `AzOps Push` pipeline to run, set the repository `main` branch to [require build verification](https://docs.microsoft.com/en-us/azure/devops/repos/git/branch-policies) using most of default settings, but do define a path filter `/azops/*`.
 
 ![Build Policy](../media/ado-add-build-policy.png)
 
@@ -160,6 +156,10 @@ Once Azure DevOps reflects your existing Azure environment, you can [deploy a ne
 
 As part of Step 4, you need to either allow the Build Service, or the Contributor group `Force Push` on the main branch.
 
-### The Directory Role `Directory Readers` is not returned by Get-AzureADDirectoryRole 
+### The Directory Role `Directory Readers` is not returned by Get-AzureADDirectoryRole
 
 The Get-AzureADDirectoryRole only returns roles which have at least one assignment, to use the script to make the role assignment you need to have already been to the Azure Portal and assigned the role previously.
+
+### Conversion from JSON failed with error: Input string is not a valid number - AzOps Pull Run Container
+
+Ensure that you're using the *$escapedServicePrincipalJson* variable string from the script at the beginning of this article. If you use an unescaped JSON string then this error will occur.
