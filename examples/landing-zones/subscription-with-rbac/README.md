@@ -15,7 +15,7 @@ The ARM template provided in this folder can be used to create new subscription 
             "type": "string",
             "maxLength": 10,
             "metadata": {
-                "description": "Provide a prefix (max 10 characters) for the Management Group hierarchy that will be created."
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
             }
         },
         "subscriptionAliasName": {
