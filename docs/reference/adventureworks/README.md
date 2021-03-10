@@ -4,7 +4,9 @@
 
 # Deploy Enterprise-Scale with hub and spoke architecture
 
-The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on the traditional hub and spoke network topology if customers require hybrid connectivity to on-premises locations from the begining.  
+The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on the traditional hub and spoke network topology if customers require hybrid connectivity to on-premises locations from the begining.
+
+This reference implementation also allows the deployment of platform services across Availability Zones (such as VPN or ExpressRoute gateways) to increase availability uptime of such services. 
 
 ## Customer profile
 
@@ -42,9 +44,9 @@ By default, all recommendations are enabled and you must explicitly disable them
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
 - An Azure subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   - A hub virtual network
-  - Azure Firewall
-  - ExpressRoute Gateway
-  - VPN Gateway
+  - Azure Firewall (optional - deployment across Availability Zones)
+  - ExpressRoute Gateway (optional - deployment across Availability Zones)
+  - VPN Gateway (optional - deployment across Availability Zones)
   - Azure Private DNS Zones for Private Link
 - (Optionally) An Azure subscription dedicated for **identity** in case your organization requires to have Active Directory Domain Controllers in a dedicated subscription.
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.

@@ -4,7 +4,10 @@
     "parameters": {
         "topLevelManagementGroupPrefix": {
             "type": "string",
-            "maxLength": 10
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide top level management group prefix to route deployments in the hierarchy."
+            }
         },
         "addressPrefix": {
             "type": "string",
@@ -27,7 +30,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the virtual network hub should be deployed or not."
+            }
         },
         "enableAzFw": {
             "type": "string",
@@ -35,7 +41,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the Azure Firewall should be deployed or not."
+            }
         },
         "enableVpnGw": {
             "type": "string",
@@ -43,7 +52,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the VPN Gateway should be deployed or not."
+            }
         },
         "enableErGw": {
             "type": "string",
@@ -51,12 +63,17 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the ExpressRoute Gateway should be deployed or not."
+            }
         },
         "connectivitySubscriptionId": {
             "type": "string",
             "defaultValue": "",
-            "maxLength": 36
+            "metadata": {
+                "description": "Provide the subscription id for the dedicated connectivity subscription."
+            }
         },
         "vpnGwType": {
             "type": "string",
@@ -64,15 +81,32 @@
                 "PolicyBased",
                 "RouteBased"
             ],
-            "defaultValue": "RouteBased"
+            "defaultValue": "RouteBased",
+            "metadata": {
+                "description": "Determine which type of Gateway that will be used."
+            }
         },
         "subnetMaskForAzFw": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subnet for Azure Firewall."
+            }
         },
         "subnetMaskForGw": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subnet for VPN/ER."
+            }
+        },
+        "vpnOrErZones": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "firewallZones": {
+            "type": "array",
+            "defaultValue": []
         }
     },
     "variables": {
@@ -91,6 +125,7 @@
         "azFwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallSubnet')]",
         "azFwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwIpName'))]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke'), 64)]",
+        // Creating variable that later will be used in conjunction with the union() function to cater for conditional subnet creation while ensuring idempotency
         "gwSubnet": [
             {
                 "name": "GatewaySubnet",
@@ -106,10 +141,29 @@
                     "addressPrefix": "[parameters('subnetMaskForAzFw')]"
                 }
             }
-        ]
+        ],
+        "sku": {
+            "0": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "1": {
+                "name": "ErGw1AZ",
+                "tier": "ErGw1AZ"
+            },
+            "2": {
+                "name": "ErGw2AZ",
+                "tier": "ErGw2AZ"
+            },
+            "3": {
+                "name": "ErGw3AZ",
+                "tier": "ErGw3AZ"
+            }
+        }
     },
     "resources": [
         {
+            // Conditionally deploy virtual network hub
             "condition": "[and(equals(parameters('enableHub'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -172,8 +226,11 @@
                                             "type": "Microsoft.Network/publicIpAddresses",
                                             "location": "[parameters('location')]",
                                             "name": "[variables('azVpnGwIpName')]",
+                                            "sku": {
+                                                "name": "[if(not(empty(parameters('vpnOrErZones'))), 'Standard', 'Basic')]"
+                                            },                                  
                                             "properties": {
-                                                "publicIPAllocationMethod": "Dynamic"
+                                                "publicIPAllocationMethod": "[if(not(empty(parameters('vpnOrErZones'))), 'Static', 'Dynamic')]"
                                             }
                                         },
                                         {
@@ -188,6 +245,7 @@
                                             ],
                                             "properties": {
                                                 "gatewayType": "Vpn",
+                                                "vpnGatewayGeneration": "Generation2",
                                                 "vpnType": "[parameters('vpnGwType')]",
                                                 "ipConfigurations": [
                                                     {
@@ -204,8 +262,8 @@
                                                     }
                                                 ],
                                                 "sku": {
-                                                    "name": "VpnGw1",
-                                                    "tier": "VpnGw1"
+                                                    "name": "[if(not(empty(parameters('vpnOrErZones'))), 'VpnGw2AZ', 'VpnGw1')]",
+                                                    "tier": "[if(not(empty(parameters('vpnOrErZones'))), 'VpnGw2AZ', 'VpnGw1')]"
                                                 }
                                             }
                                         },
@@ -215,8 +273,11 @@
                                             "type": "Microsoft.Network/publicIpAddresses",
                                             "location": "[parameters('location')]",
                                             "name": "[variables('azErGwIpName')]",
+                                            "sku": {
+                                                "name": "[if(not(empty(parameters('vpnOrErZones'))), 'Standard', 'Basic')]"
+                                            },                                  
                                             "properties": {
-                                                "publicIPAllocationMethod": "Dynamic"
+                                                "publicIPAllocationMethod": "[if(not(empty(parameters('vpnOrErZones'))), 'Static', 'Dynamic')]"
                                             }
                                         },
                                         {
@@ -246,10 +307,7 @@
                                                         }
                                                     }
                                                 ],
-                                                "sku": {
-                                                    "name": "Standard",
-                                                    "tier": "Standard"
-                                                }
+                                                "sku": "[variables('sku')[string(length(parameters('vpnOrErZones')))]]"
                                             }
                                         },
                                         {
@@ -260,7 +318,7 @@
                                             "location": "[parameters('location')]",
                                             "sku": {
                                                 "name": "Standard"
-                                            },
+                                            },                                  
                                             "properties": {
                                                 "publicIPAllocationMethod": "Static"
                                             }
@@ -271,15 +329,12 @@
                                             "type": "Microsoft.Network/azureFirewalls",
                                             "name": "[variables('azfwname')]",
                                             "location": "[parameters('location')]",
+                                            "zones": "[if(not(empty(parameters('firewallZones'))), parameters('firewallZones'), json('null'))]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIpAddresses/', variables('azFwIpName'))]",
                                                 "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
                                             "properties": {
-                                                "sku": {
-                                                    "Name": "AZFW_VNet",
-                                                    "Tier": "Standard"
-                                                },
                                                 "ipConfigurations": [
                                                     {
                                                         "name": "[variables('azFwIpName')]",

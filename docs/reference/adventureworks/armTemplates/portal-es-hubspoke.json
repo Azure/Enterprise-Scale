@@ -622,13 +622,14 @@
                         "name": "esNwLocation",
                         "type": "Microsoft.Common.DropDown",
                         "label": "Region for the first virtual network hub",
+                        "filter": true,
                         "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                         "constraints": {
                             "allowedValues": "[map(steps('esConnectivityGoalState').esLocationsApi.value, (item) => parse(concat('{\"label\":\"', item.displayName, '\",\"value\":\"', item.name, '\"}')))]",
                             "required": true
                         },
                         "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]"
-                    },
+                    },                   
                     {
                         "name": "esVpnGw",
                         "type": "Microsoft.Common.OptionsGroup",
@@ -645,6 +646,33 @@
                                 {
                                     "label": "No",
                                     "value": "No"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esGwOrErAz",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Select Availability Zones for the Virtual Network Gateway/ExpressRoute Gateway",
+                        "defaultValue": "None",
+                        "multiselect": true,
+                        "selectAll": true,
+                        "filter": true,
+                        "visible": "[and(or(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), equals(steps('esConnectivityGoalState').esErGw, 'Yes')), or(or(or(or(or(or(or(or(equals(steps('esConnectivityGoalState').esNwLocation, 'canadacentral'), equals(steps('esConnectivityGoalState').esNwLocation, 'centralus')), equals(steps('esConnectivityGoalState').esNwLocation, 'eastus'), equals(steps('esConnectivityGoalState').esNwLocation, 'eastus2')), equals(steps('esConnectivityGoalState').esNwLocation, 'southcentralus'), equals(steps('esConnectivityGoalState').esNwLocation, 'westus2')), equals(steps('esConnectivityGoalState').esNwLocation, 'francecentral'), equals(steps('esConnectivityGoalState').esNwLocation, 'germanywestcentral')), equals(steps('esConnectivityGoalState').esNwLocation, 'northeurope'), equals(steps('esConnectivityGoalState').esNwLocation, 'westeurope')), equals(steps('esConnectivityGoalState').esNwLocation, 'uksouth'), equals(steps('esConnectivityGoalState').esNwLocation, 'southafricanorth')), equals(steps('esConnectivityGoalState').esNwLocation, 'japaneast'), equals(steps('esConnectivityGoalState').esNwLocation, 'southeastasia')), equals(steps('esConnectivityGoalState').esNwLocation, 'southeastasia'), equals(steps('esConnectivityGoalState').esNwLocation, 'australiaeast')))]", 
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Virtual Gateway/Express Route Gateway to the selected region and availability zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Zone 1",
+                                    "value": "1"
+                                },
+                                {
+                                    "label": "Zone 2",
+                                    "value": "2"
+                                },
+                                {
+                                    "label": "Zone 3",
+                                    "value": "3"
                                 }
                             ]
                         }
@@ -672,7 +700,7 @@
                     {
                         "name": "esAddressVpnOrEr",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Subnet for VPN/Express route",
+                        "label": "Subnet for VPN/ExpressRoute Gateways",
                         "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.1.0/24)",
                         "defaultValue": "10.100.1.0/24",
                         "visible": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
@@ -721,6 +749,33 @@
                             ]
                         }
                     },
+					{
+                        "name": "esFwAz",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Select Availability Zones for the Azure Firewall",
+                        "defaultValue": "None",
+                        "multiselect": true,
+                        "selectAll": true,
+                        "filter": true,
+                        "visible": "[and(equals(steps('esConnectivityGoalState').esAzFw, 'Yes'), or(or(or(or(or(or(or(or(equals(steps('esConnectivityGoalState').esNwLocation, 'canadacentral'), equals(steps('esConnectivityGoalState').esNwLocation, 'centralus')), equals(steps('esConnectivityGoalState').esNwLocation, 'eastus'), equals(steps('esConnectivityGoalState').esNwLocation, 'eastus2')), equals(steps('esConnectivityGoalState').esNwLocation, 'southcentralus'), equals(steps('esConnectivityGoalState').esNwLocation, 'westus2')), equals(steps('esConnectivityGoalState').esNwLocation, 'francecentral'), equals(steps('esConnectivityGoalState').esNwLocation, 'germanywestcentral')), equals(steps('esConnectivityGoalState').esNwLocation, 'northeurope'), equals(steps('esConnectivityGoalState').esNwLocation, 'westeurope')), equals(steps('esConnectivityGoalState').esNwLocation, 'uksouth'), equals(steps('esConnectivityGoalState').esNwLocation, 'southafricanorth')), equals(steps('esConnectivityGoalState').esNwLocation, 'japaneast'), equals(steps('esConnectivityGoalState').esNwLocation, 'southeastasia')), equals(steps('esConnectivityGoalState').esNwLocation, 'southeastasia'), equals(steps('esConnectivityGoalState').esNwLocation, 'australiaeast')))]", 
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall to the selected region and availability zones.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Zone 1",
+                                    "value": "1"
+                                },
+                                {
+                                    "label": "Zone 2",
+                                    "value": "2"
+                                },
+                                {
+                                    "label": "Zone 3",
+                                    "value": "3"
+                                }
+                            ]
+                        }
+                    }, 
                     {
                         "name": "esAddressFw",
                         "type": "Microsoft.Common.TextBox",
@@ -1416,6 +1471,8 @@
             "enableVmMonitoring": "[steps('lzGoalState').esVmMonitoring]",
             "enableVmssMonitoring": "[steps('lzGoalState').esVmssMonitoring]",
             "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]",
+            "vpnOrErZones": "[steps('esConnectivityGoalState').esGwOrErAz]",
+            "firewallZones": "[steps('esConnectivityGoalState').esGwOrErAz]",
 			"corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub, steps('esGoalState').esMgmtSub)), not(contains(steps('lzGoalState').esCorpLzSub, steps('esConnectivityGoalState').esConnectivitySub))), steps('lzGoalState').lzConnectedSubs, '')]"
         }
     }
