@@ -1,10 +1,10 @@
 # Enterprise-Scale "in-a-box" deployment
 
-Enterprise-Scale-in-a-box deployment is a two-step approach.
+Enterprise-Scale-in-a-box reference implementaion is a three-step hands on exercise.
 
-The **Deploy your tenant** scenario initializes a new Enterprise-Scale (ES) Management Group structure and all custom Azure Policy and PolicySet (aka Policy Initiative) definitions at the ES Management Group scope.
+In the first step you will (**Deploy your tenant**), then [**Setup a GitHub CI/CD Pipeline**](./setup-git-cicd.md), and finally [**Use GitHub to deploy changes to your Enterprise-scale architecture**](./use-git-pipeline.md). We'll walk you through the setup of an DevOps pipeline based on GitHub Actions to accomplish the provisioning of Azure Policy assignments.
 
-Once you have completed the first step (deploy your tenant), the second step [Setup GitHub Action for CI/CD](./setup-git-cicd.md) and [Using GitHub to deploy changes to your Enterprise-Scale architecture](./use-git-pipeline.md), will walk you through the setup of an DevOps pipeline based on GitHub Actions to do the Azure Policy assignments.
+The **Deploy your tenant** exercise initializes a new Enterprise-Scale (ES) Management Group structure and all custom Azure Policy and PolicySet (aka Policy Initiative) definitions at the ES Management Group scope.
 
 ## Deploy your Tenant
 
@@ -25,7 +25,7 @@ ARM template.
 
     ![_Figure_](./media/wt-1.2-2.png)
 
-3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure.
+3. Ensure your user (or the user you select to authenticate to the Azure portal) has been granted **Tenant Root** `/` access in Azure by following guidance on [configuring Azure permissions for ARM tenant deployments](../EnterpriseScale-Setup-azure.md).
 
 4. On the **Custom deployment** blade, in the Basics section, fill in the **Region** and click on **Next: Enterprise Scale Company Prefix.**
 
@@ -81,7 +81,7 @@ Click now on **Next: Next: Landing zone configuration** to move to the next sect
 
 ## (Optional) Move a subscription to ES-management Management Group
 
-Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#Deploy-the-Management-Group-structure-and-policy/PolicySet-definitions) step.
+Only execute this section if you did not provide your Azure subscription in **Platform management, security and governance** section in the [**Deploy the Management Group structure and policy/PolicySet definitions**](#deploy-the-management-group-structure-and-policypolicyset-definitions) step.
 
 In this section, we will move your Azure subscription under the **ES-management** Management Group you created with the template deployment. For simplicity, we will use the portal in this exercise.
 

@@ -1,0 +1,51 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "audit-vnet-peering",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Audit if corp landing zones are not connected to the connectivity hub",
+          "DisplayName": "Audit corp LZ connectivity",
+          "Mode": "All",
+          "Parameters": {
+            "connectivityHubId": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Provide the resourceId for the virtual network in the connectivity hub"
+              }
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "field": "type",
+              "equals": "Microsoft.Resources/subscriptions"
+            },
+            "then": {
+              "effect": "auditIfNotExists",
+              "details": {
+                "type": "Microsoft.Network/virtualNetworks",
+                "existenceScope": "Subscription",
+                "existenceCondition": {
+                  "allOf": [
+                    {
+                      "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+                      "equals": "[parameters('connectivityHubId')]"
+                    },
+                    {
+                      "field": "type",
+                      "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

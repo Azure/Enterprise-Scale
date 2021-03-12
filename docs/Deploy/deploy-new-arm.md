@@ -15,7 +15,7 @@ AzOps allows you to deploy your own templates at the following scopes:
 - Subscriptions
 - Resource groups (requires that resource groups are pulled to the git repository)
 
-Since Enterprise-Scale is focusing on platfrom capabilities, it is recommend to leverage the AzOps Git Actions to do Tenant Root (/), Management Group and Subscription scope deployments only.
+Since Enterprise-Scale is focusing on platform capabilities, it is recommend to leverage the AzOps Git Actions to do Tenant Root (/), Management Group and Subscription scope deployments only.
 
 The following picture depicts these deployment scopes:
 
@@ -31,84 +31,17 @@ To demonstrate this capability, we will use a custom ARM template to deploy a po
 
 1. Create a new feature branch. One way to create a feature branch from Visual Studio Code is by launching the command palette (CTRL + SHIFT + P) and select Git: Create Branch.
 
-2. Create two new files (for example, policyDef-NamingConvention.json and policyDef-NamingConvention.parameters.json) in the __azops\Tenant Root Group (GUID)\path-to-your-managementGroup\managementGroup (displayName)__ folder with the following contents:
+2. Create a new ARM template file with an optional parameter file if required (for example, policyDef-NamingConvention.json and policyDef-NamingConvention.parameters.json) in the scope folder __azops\Tenant Root Group (GUID)\path-to-your-managementGroup\managementGroup (displayName)__.
 
-     policyDef-NamingConvention.json
-    ```json
-    {
-    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "policyName": {
-            "type": "string",
-            "metadata": {
-                "description": "Provide name for the policyDefinition."
-            }
-        },
-        "policyDescription": {
-            "type": "string",
-            "metadata": {
-                "description": "Provide a description for the policy."
-            }
-        },
-        "namePattern": {
-            "type": "string",
-            "metadata": {
-                "description": "Provide naming pattern."
-            }
-        }
-    },
-    "resources": [
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2019-09-01",
-            "name": "[parameters('policyName')]",
-            "properties": {
-                "description": "[parameters('policyDescription')]",
-                "displayName": "[parameters('policyName')]",
-                "policyRule": {
-                    "if": {
-                        "not": {
-                            "field": "name",
-                            "like": "[parameters('namePattern')]"
-                        }
-                    },
-                    "then": {
-                        "effect": "deny"
-                    }
-                }
-            }
-        }
-      ]
-    }
-    ```
+    In the [example folder](../../examples) several examples are published how to deploy platform resource.
 
-    policyDef-NamingConvention.parameters.json
-     ```json
-    {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "policyName": {
-            "value": "enforce-resource-naming"
-        },
-        "policyDescription": {
-            "value": "Policy to enforce naming convention pattern."
-        },
-        "namePattern": {
-            "value": "es*"
-        }
-      }
-    }
-    ```  
+    The picture below depicts an example configuration, where it is desired to deploy this policy definition at the **esiab** management group:
 
-     The picture below depicts an example configuration, where it is desired to deploy this policy definition at the **esiab** management group:
+    ![_Figure_](./media/sample-deployment-scope.png)
 
-     ![_Figure_](./media/sample-deployment-scope.png)
-
-     > Important:  
-     > The parameters file must have the same name as your template file, and must be followed by .parameters.json. In our example, if the template file is called policyDef-NamingConvention.json, the parameters file must be called policyDef-NamingConvention.**parameters**.json.
-     > Ensure that the provided template files correspond with the deployment scope. (e.g. subscription scope deployment require subscription ARM deployment template)
+    > Important:  
+    > The parameters file must have the same name as your template file, and must be followed by .parameters.json. In our example, if the template file is called policyDef-NamingConvention.json, the parameters file must be called policyDef-NamingConvention.**parameters**.json.
+    > Ensure that the provided template files correspond with the deployment scope. (e.g. subscription scope deployment require subscription ARM deployment template)
 
 3. Commit changes to your feature branch and create a pull request.
 

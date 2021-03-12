@@ -1,0 +1,259 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Managed Cluster resource."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of AKS resource."
+            }
+        },
+        "dnsPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+            }
+        },
+        "osDiskSizeGB": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "Disk size (in GiB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+            },
+            "minValue": 0,
+            "maxValue": 1023
+        },
+        "kubernetesVersion": {
+            "type": "string",
+            "defaultValue": "1.18.10",
+            "metadata": {
+                "description": "The version of Kubernetes."
+            }
+        },
+        "networkPlugin": {
+            "type": "string",
+            "defaultValue": "kubenet",
+            "allowedValues": [
+                "azure",
+                "kubenet"
+            ],
+            "metadata": {
+                "description": "Network plugin used for building Kubernetes network."
+            }
+        },
+        "enableAzurePolicy": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Boolean flag to turn on and off Azure Policy addon."
+            }
+        },
+        "enableOmsAgent": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Boolean flag to turn on and off omsagent addon."
+            }
+        },
+        "useExistingWorkspace": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "omsWorkspaceId": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Specify the resource id of the OMS workspace."
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2"
+        },
+        "enableAcr": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "identity": {
+            "type": "object",
+            "defaultValue": {
+                "value": {
+                    "type": "SystemAssigned"
+                }
+            }
+        }
+    },
+    "variables": {
+        "acrName": "[concat(parameters('resourceName'), 'acr')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-09-01",
+            "type": "Microsoft.ContainerService/managedClusters",
+            "location": "[parameters('location')]",
+            "name": "[parameters('resourceName')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', concat(parameters('resourceName'), subscription().subscriptionId))]",
+                "containerSolutionToExistingLa"
+            ],
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                "enableRBAC": true,
+                "dnsPrefix": "[parameters('dnsPrefix')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+                        "count": 3,
+                        "vmSize": "[parameters('vmSize')]",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "type": "VirtualMachineScaleSets",
+                        "mode": "System",
+                        "maxPods": 30,
+                        "availabilityZones": [
+                            "1",
+                            "2",
+                            "3"
+                        ]
+                    }
+                ],
+                "networkProfile": {
+                    "loadBalancerSku": "standard",
+                    "networkPlugin": "[if(equals(parameters('networkPlugin'), 'none'), json(''), parameters('networkPlugin'))]"
+                },
+                "aadProfile": {
+                    "managed": true
+                },
+                "apiServerAccessProfile": {
+                    "enablePrivateCluster": false
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": false
+                    },
+                    "azurePolicy": {
+                        "enabled": "[parameters('enableAzurePolicy')]"
+                    },
+                    "omsagent": {
+                        "enabled": "[parameters('enableOmsAgent')]",
+                        "config": {
+                            "logAnalyticsWorkspaceResourceID": "[if(equals(parameters('useExistingWorkspace'), 'No'), resourceId('Microsoft.OperationalInsights/workspaces', concat(parameters('resourceName'), subscription().subscriptionId)), parameters('omsWorkspaceId').id)]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(not(equals(parameters('useExistingWorkspace'), 'Yes')), empty(parameters('omsWorkspaceId')))]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2020-03-01-preview",
+            "name": "[concat(parameters('resourceName'), subscription().subscriptionId)]",
+            "properties": {
+                "sku": {
+                    "name": "Standalone"
+                }
+            }
+        },
+        {
+            "condition": "[and(not(equals(parameters('useExistingWorkspace'), 'Yes')), empty(parameters('omsWorkspaceId')))]",
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[resourceGroup().location]",
+            "name": "[concat('ContainerInsights', '(', parameters('resourceName'), subscription().subscriptionId, ')')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', concat(parameters('resourceName'), subscription().subscriptionId))]"
+            ],
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', concat(parameters('resourceName'), subscription().subscriptionId))]"
+            },
+            "plan": {
+                "name": "[concat('ContainerInsights', '(', parameters('resourceName'), subscription().subscriptionId, ')')]",
+                "product": "[concat('OMSGallery/', 'ContainerInsights')]",
+                "promotionCode": "",
+                "publisher": "Microsoft"
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('useExistingWorkspace'), 'Yes'), not(empty(parameters('omsWorkspaceId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-10",
+            "name": "containerSolutionToExistingLa",
+            "resourceGroup": "[if(not(empty(parameters('omsWorkspaceId'))), split(parameters('omsWorkspaceId').id, '/')[4], 'na')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "apiVersion": "2015-11-01-preview",
+                            "name": "[concat('ContainerInsights', '(', split(parameters('omsWorkspaceId').id, '/')[8], ')')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "workspaceResourceId": "[parameters('omsWorkspaceId').id]"
+                            },
+                            "plan": {
+                                "name": "[concat('ContainerInsights', '(', split(parameters('omsWorkspaceId').id, '/')[8], ')')]",
+                                "product": "[concat('OMSGallery/', 'ContainerInsights')]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[parameters('enableAcr')]",
+            "type": "Microsoft.ContainerRegistry/registries",
+            "apiVersion": "2019-05-01",
+            "name": "[variables('acrName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "adminUserEnabled": false
+            }
+        },
+        {
+            "condition": "[parameters('enableAcr')]",
+            "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(variables('acrName'), '/Microsoft.Authorization/', 'da4b1df1-af30-4020-8914-89ba622bb05c')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ContainerRegistry/registries/', variables('acrName'))]",
+                "[resourceId('Microsoft.ContainerService/managedClusters/', parameters('resourceName'))]"
+            ],
+            "properties": {
+                "principalId": "[reference(resourceId('Microsoft.ContainerService/managedClusters/', parameters('resourceName')), '2020-09-01').identityProfile.kubeletidentity.objectId]",
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                "scope": "[resourceId('Microsoft.ContainerRegistry/registries/', variables('acrName'))]"
+            }
+        }
+    ],
+    "outputs": {
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('resourceName'))).fqdn]"
+        }
+    }
+}

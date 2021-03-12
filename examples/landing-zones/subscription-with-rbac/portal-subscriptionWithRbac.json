@@ -1,0 +1,201 @@
+{
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "lzSettings",
+                "label": "Billing and Enrolment account",
+                "bladeTitle": "Company prefix",
+                "elements": [
+                    {
+                        "name": "textBlock0",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Provide the Enterprise-Scale prefix for your management group and select the billing account and enrollment account you want to use for subscription provisioning.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants"
+                            }
+                        }
+                    },
+					{
+						"name": "esPrefix",
+						"type": "Microsoft.Common.TextBox",
+						"label": "Enterprise-Scale company prefix",
+						"placeholder": "ESLZ",
+						"defaultValue": "",
+						"toolTip": "Use only allowed characters",
+						"constraints": {
+							"required": true,
+							"regex": "^[a-z0-9A-Z-]{1,10}$",
+							"validationMessage": "The prefix must be 1-10 characters."
+						},
+						"visible": true
+            		},
+                    {
+                        "name": "mgApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "providers/Microsoft.Management/managementGroups?api-version=2020-02-01"
+                        }
+                    },
+                    {
+                        "name": "esBillingApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "providers/Microsoft.Billing/billingAccounts?api-version=2020-05-01"
+                        }
+                    },
+                    {
+                        "name": "esBillingAccount",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Billing Account",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
+                        "constraints": {
+                            "allowedValues": "[map(steps('lzSettings').esBillingApi.value, (billing) => parse(concat('{\"label\":\"', billing.properties.displayName, '\",\"description\":\"', billing.id, '\",\"value\":\"', toLower(billing.id), '\"}')) )]",
+                            "required": true
+                        }
+                    },
+                    {
+                        "name": "esEaApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "[concat(steps('lzSettings').esBillingAccount, '/enrollmentAccounts/', '?api-version=2019-10-01-preview')]"
+                        }
+                    },
+                    {
+                        "name": "esEa",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Enrollment Account",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
+                        "constraints": {
+                            "allowedValues": "[map(steps('lzSettings').esEaApi.value, (ea) => parse(concat('{\"label\":\"', ea.properties.displayName, '\",\"description\":\"', ea.id, '\",\"value\":\"', toLower(ea.id), '\"}')) )]",
+                            "required": true
+                        }
+                    }
+                ]
+            },
+			{
+                "name": "lzTarget",
+                "label": "ESLZ Landing Zone kiosk",
+                "bladeTitle": "Company prefix",
+                "elements": [
+                    {
+                        "name": "mgApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "providers/Microsoft.Management/managementGroups?api-version=2020-02-01"
+                        }
+                    },
+					{
+						"name": "lzType",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Select landing zone type",
+						"defaultValue": "",
+						"toolTip": "",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Corp",
+									"value": "corp"
+								},
+								{
+									"label": "Online",
+									"value": "Online"
+								},
+								{
+									"label": "Sandbox",
+									"value": "sandboxes"
+								}
+							],
+							"required": true
+						},
+						"visible": true
+					},
+					{
+						"name": "esSubAliasName",
+						"type": "Microsoft.Common.TextBox",
+						"label": "Provide prefix for your landing zone",
+						"placeholder": "",
+						"defaultValue": "",
+						"toolTip": "Use only allowed characters",
+						"constraints": {
+							"required": true,
+							"regex": "^[a-z0-9A-Z-]{1,10}$",
+							"validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-10 characters long."
+						},
+						"visible": true
+					},
+					{
+						"name": "spnBlock",
+						"type": "Microsoft.Common.TextBlock",
+						"visible": true,
+						"options": {
+							"text": "You can optionally create a new - or use an existing Service Principal that will be granted access to the newly created landing zone to be use in context DevOps pipelines and GitHub actions for IaC for your workload deployments.",
+							"link": {
+								"label": "Learn more",
+								"uri": "https://docs.microsoft.com/azure/devops/pipelines/library/connect-to-azure?view=azure-devops#create-an-azure-resource-manager-service-connection-with-an-existing-service-principal"
+							}
+						}
+					},
+					{
+						"name": "lzServicePrincipal",
+						"type": "Microsoft.Common.ServicePrincipalSelector",
+						"label": {
+							"password": "Password",
+							"certificateThumbprint": "Certificate thumbprint",
+							"authenticationType": "Authentication Type",
+							"sectionHeader": "Service Principal"
+						},
+						"toolTip": {
+							"password": "Password",
+							"certificateThumbprint": "Certificate thumbprint",
+							"authenticationType": "Authentication Type"
+						},
+						"defaultValue": {
+							"principalId": "<default guid>",
+							"name": "(New) default App Id"
+						},
+						"constraints": {
+							"required": true,
+							"regex": "^[a-zA-Z0-9]{8,}$",
+							"validationMessage": "Password must be at least 8 characters long, contain only numbers and letters"
+						},
+						"options": {
+							"hideCertificate": true
+						},
+						"visible": true
+					}							
+                ]
+            }
+        ],
+        "outputs": {
+            "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esPrefix]",
+			"subscriptionAliasName": "[steps('lzTarget').esSubAliasName]",
+			"billingAccountId": "[steps('lzSettings').esEa]",
+			"targetManagementGroup": "[steps('lzTarget').lzType]",
+			"principalId": "[steps('lzTarget').lzServicePrincipal.objectId]"
+        }
+    }
+}

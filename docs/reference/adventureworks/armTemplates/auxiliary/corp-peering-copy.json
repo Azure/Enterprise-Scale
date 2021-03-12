@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "corpConnectedLzSubscriptionId": {
+            "type": "array",
+            "defaultvalue": [],
+            "metadata": {
+                "description": "Provide an array of subscription id's that will be used for corp connected landing zones"
+            }
+        },
+        "connectivitySubscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide subscription id for the dedicated connectivity subscription"
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the location used for the virtual network hub."
+            }
+        }
+    },
+    "variables": {
+        "deploymentUri": "[uri(deployment().properties.templateLink.uri, '../auxiliary/corp-policy-peering.json')]"
+        },
+        "resources": [
+            {
+                // Conditionally deployment of corp connected landing zones
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2020-06-01",
+                "name": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), concat('peeringcopy', copyIndex()), 'na')]",
+                "location": "[parameters('location')]",
+                "copy": {
+                    "name": "lzCorpConnectedCopy",
+                    "count": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), length(parameters('corpConnectedLzSubscriptionId')), 1)]"
+                },
+                "subscriptionId": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '')]",
+                "properties": {
+                    "mode": "Incremental",
+                    "templateLink": {
+                        "contentVersion": "1.0.0.0",
+                        "uri": "[variables('deploymentUri')]"
+                    },
+                    "parameters": {
+                        "connectivitySubscriptionId": {
+                            "value": "[parameters('connectivitySubscriptionId')]"
+                        },
+                        "topLevelManagementGroupPrefix": {
+                            "value": "[parameters('topLevelManagementGroupPrefix')]"
+                        },
+                        "location": {
+                            "value": "[parameters('location')]"
+                        },
+                        "addresses": {
+                            "value": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].addresses]"
+                        }
+                    }
+                }
+            }
+        ],
+        "outputs": {
+        }
+}

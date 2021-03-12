@@ -8,7 +8,7 @@
         "steps": [
             {
                 "name": "lzSettings",
-                "label": "Enterprise-Scale Company prefix",
+                "label": "Enterprise-Scale company prefix",
                 "subLabel": {
                     "preValidation": "Provide a company prefix for the management group structure that will be created.",
                     "postValidation": "Done"
@@ -41,12 +41,12 @@
                         "name": "esMgmtGroup",
                         "type": "Microsoft.Common.TextBox",
                         "label": "Management Group prefix",
-                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "toolTip": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale.",
                         "defaultValue": "",
                         "constraints": {
                             "required": true,
-                            "regex": "^[a-z0-9A-Z-]{1,5}$",
-                            "validationMessage": "The prefix must be 1-5 characters."
+                            "regex": "^[a-z0-9A-Z-]{1,10}$",
+                            "validationMessage": "The prefix must be 1-10 characters."
                         }
                     }
                 ]
@@ -66,7 +66,7 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "To enable platform monitoring, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources.",
+                            "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
                             "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
                         }
                     },
@@ -74,7 +74,7 @@
                         "name": "esLogAnalytics",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Log Analytics workspace and enable monitoring for your platform and resources",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continious compliance.",
                         "constraints": {
                             "allowedValues": [
@@ -90,6 +90,21 @@
                         },
                         "visible": true
                     },
+                    {
+                        "name": "esLogRetention",
+                        "type": "Microsoft.Common.Slider",
+                        "min": 30,
+                        "max": 730,
+                        "label": "Log Analytics Data Retention (days)",
+                        "subLabel": "Days",
+                        "defaultValue": 30,
+                        "showStepMarkers": false,
+                        "toolTip": "Select retention days for Azure logs. Default is 30 days.",
+                        "constraints": {
+                            "required": false
+                        },
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },           
                     {
                         "name": "mgmtSubsApi",
                         "type": "Microsoft.Solutions.ArmApiControl",
@@ -113,31 +128,7 @@
                             "allowedValues": "[map(steps('esGoalState').mgmtSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                             "required": true
                         }
-                    },					
-                    {
-                        "name": "esAsc",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Azure Security Center and enable security monitoring for your platform and resources",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes, Standard Tier (recommended)",
-                                    "value": "Standard"
-                                },
-                                {
-                                    "label": "Yes, Free Tier",
-                                    "value": "Free"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },
+                    },     			
                     {
                         "name": "textBlock1",
                         "type": "Microsoft.Common.TextBlock",
@@ -151,30 +142,10 @@
                         }
                     },
                     {
-                        "name": "esSecuritySolution",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Security solution",
-                        "defaultValue": "No",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },
-                    {
                         "name": "esAgentSolution",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Agent Health solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -194,7 +165,7 @@
                         "name": "esChangeTracking",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Change Tracking solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -214,7 +185,7 @@
                         "name": "esUpdateMgmt",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Update Management solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -234,7 +205,7 @@
                         "name": "esActivityLog",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Activity Log solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -254,7 +225,7 @@
                         "name": "esVmInsights",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy VM Insights solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -274,7 +245,7 @@
                         "name": "esAntiMalware",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Antimalware solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -294,7 +265,7 @@
                         "name": "esServiceMap",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Service Map solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -314,7 +285,7 @@
                         "name": "esSqlAssessment",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy SQL Assessment solution",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -329,7 +300,239 @@
                             ]
                         },
 						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    }
+                    },
+                    {
+                        "name": "textBlock0",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]",
+                        "options": {
+                            "text": "Select which Azure Security solutions you will enable.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/security/fundamentals/overview"
+                            }
+                        }
+                    },					
+                    {
+                        "name": "esAsc",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy Azure Security Center and enable security monitoring for your platform and resources",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+					{
+						"name": "esAscVms",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for servers",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for all servers.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscApps",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for AppServices",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for AppServices.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscStorage",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for Storage",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Storage.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscSql",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for SQL",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscKeyVault",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for Key Vault",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Key Vault.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscArm",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for Azure Resource Manager",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Resource Manager.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscDns",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for DNS",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for DNS.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscKubernetes",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for Kubernetes",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Kubernetes.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+					{
+						"name": "esAscRegistries",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for Container registries",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Container registries.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},					                  
+                    {
+                        "name": "esSecuritySolution",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy Azure Sentinel",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    }					
                 ]
             },
             {
@@ -347,7 +550,7 @@
                         "visible": true,
                         "options": {
                             "icon": "Info",
-                            "text": "You can optionally provide a subscriptionId for your first landing zone, and also assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
+                            "text": "You can optionally add existing subscriptions that will be moved to the online landing zone management group, and also assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
                             "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
                         }
                     },
@@ -362,9 +565,9 @@
                     {
                         "name": "esLzSub",
                         "type": "Microsoft.Common.DropDown",
-                        "label": "Landing zone subscription (optional)",
+                        "label": "Landing zone subscriptions (optional)",
                         "toolTip": "",
-                        "multiselect": false,
+                        "multiselect": true,
                         "selectAll": true,
                         "filter": true,
                         "filterPlaceholder": "Filter items ...",
@@ -388,10 +591,150 @@
                         }
                     },
                     {
+                        "name": "esVmMonitoring",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure VMs (Windows & Linux) are being monitored",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
+                        "name": "esVmssMonitoring",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure VMSS (Windows & Linux) are being monitored",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
+                        "name": "esArcVmMonitoring",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure Azure Arc VMs (Windows & Linux) are being monitored",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    },
+                    {
+                        "name": "esAksPolicy",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Kubernetes (AKS) for Azure Policy",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": true
+                    },
+                    {
+                        "name": "esAksPriv",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Prevent privileged containers in Kubernetes clusters",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, policy will be assigned to prevent privileged containers in AKS",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": true
+                    },
+                    {
+                        "name": "esAksNoPriv",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Prevent privileged escalation in Kubernetes clusters",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, policy will be assigned to prevent privileged escalations in AKS",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": true
+                    },                    
+                    {
+                        "name": "esAksIngress",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure HTTPS ingress is enforced in Kubernetes clusters",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, HTTPS ingress will be required in AKS",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        },
+						"visible": true
+                    },                    
+                    {
                         "name": "esAzBackup",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Ensure VMs are enabled for backup",
-                        "defaultValue": "No",
+                        "label": "Ensure Azure VMs (Windows & Linux) are enabled for Azure Backup",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
                         "constraints": {
                             "allowedValues": [
@@ -411,7 +754,7 @@
                         "name": "esDenyRdp",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Prevent inbound RDP from internet",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent inbound RDP from internet",
                         "constraints": {
                             "allowedValues": [
@@ -431,7 +774,7 @@
                         "name": "esNsg",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure subnets are associated with NSG",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure NSGs must be associated with subnets being created",
                         "constraints": {
                             "allowedValues": [
@@ -451,7 +794,7 @@
                         "name": "esIpForwarding",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Prevent IP forwarding",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent IP forwarding",
                         "constraints": {
                             "allowedValues": [
@@ -471,7 +814,7 @@
                         "name": "esSqlEncryption",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure Azure SQL is enabled with transparent data encryption",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                         "constraints": {
                             "allowedValues": [
@@ -491,7 +834,7 @@
                         "name": "esSqlAudit",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure auditing is enabled on Azure SQL",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure auditing is enabled on Azure SQLs",
                         "constraints": {
                             "allowedValues": [
@@ -511,7 +854,7 @@
                         "name": "esHttpsStorage",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure secure connections (HTTPS) to storage accounts",
-                        "defaultValue": "No",
+                        "defaultValue": "Yes (recommended)",
                         "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure storage can only be accessed using HTTPS",
                         "constraints": {
                             "allowedValues": [
@@ -532,9 +875,18 @@
         ],
         "outputs": {
             "managementSubscriptionId": "[steps('esGoalState').esMgmtSub]",
-            "lzSubscriptionId": "[steps('lzGoalState').esLzSub]",
+            "lzSubscriptionId": "[if(not(contains(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), steps('lzGoalState').esLzSub, '')]",
             "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
             "enableAsc": "[steps('esGoalState').esAsc]",
+            "enableAscForServers": "[steps('esGoalState').esAscVms]",
+            "enableAscForAppServices": "[steps('esGoalState').esAscApps]",
+            "enableAscForStorage": "[steps('esGoalState').esAscStorage]",
+            "enableAscForSql": "[steps('esGoalState').esAscSql]",
+            "enableAscForKeyVault": "[steps('esGoalState').esAscKeyVault]",
+            "enableAscForArm": "[steps('esGoalState').esAscArm]",
+            "enableAscForDns": "[steps('esGoalState').esAscDns]",
+            "enableAscForKubernetes": "[steps('esGoalState').esAscKubernetes]",
+            "enableAscForRegistries": "[steps('esGoalState').esAscRegistries]",
             "enableSecuritySolution": "[steps('esGoalState').esSecuritySolution]",
             "enableAgentHealth": "[steps('esGoalState').esAgentSolution]",
             "enableChangeTracking": "[steps('esGoalState').esChangeTracking]",
@@ -548,10 +900,18 @@
             "enableSqlAudit": "[steps('lzGoalState').esSqlAudit]",
             "enableSqlEncryption": "[steps('lzGoalState').esSqlEncryption]",
             "enableVmBackup": "[steps('lzGoalState').esAzBackup]",
+            "enableAksPolicy": "[steps('lzGoalState').esAksPolicy]",
+            "denyAksPrivileged": "[steps('lzGoalState').esAksPriv]",
+            "denyAksPrivilegedEscalation": "[steps('lzGoalState').esAksNoPriv]",
+            "denyHttpIngressForAks": "[steps('lzGoalState').esAksIngress]",
             "denyRdp": "[steps('lzGoalState').esDenyRdp]",
             "enableStorageHttps": "[steps('lzGoalState').esHttpsStorage]",
             "denyIpForwarding": "[steps('lzGoalState').esIpForwarding]",
-            "denySubnetWithoutNsg": "[steps('lzGoalState').esNsg]"
+            "denySubnetWithoutNsg": "[steps('lzGoalState').esNsg]",
+            "retentionInDays": "[string(steps('esGoalState').esLogRetention)]",
+            "enableVmMonitoring": "[steps('lzGoalState').esVmMonitoring]",
+            "enableVmssMonitoring": "[steps('lzGoalState').esVmssMonitoring]",
+            "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]"
         }
     }
 }

@@ -1,0 +1,151 @@
+{
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "lzSettings",
+                "label": "Create Enterprise-Scale landing zones",
+                "bladeTitle": "Company prefix",
+                "elements": [
+                    {
+                        "name": "textBlock0",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Select the billing account and enrollment account used for subscription provisioning.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants"
+                            }
+                        }
+                    },
+                    {
+                        "name": "mgApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "providers/Microsoft.Management/managementGroups?api-version=2020-02-01"
+                        }
+                    },
+                    {
+                        "name": "esBillingApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "providers/Microsoft.Billing/billingAccounts?api-version=2020-05-01"
+                        }
+                    },
+                    {
+                        "name": "esBillingAccount",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Billing Account",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
+                        "constraints": {
+                            "allowedValues": "[map(steps('lzSettings').esBillingApi.value, (billing) => parse(concat('{\"label\":\"', billing.properties.displayName, '\",\"description\":\"', billing.id, '\",\"value\":\"', toLower(billing.id), '\"}')) )]",
+                            "required": true
+                        }
+                    },
+                    {
+                        "name": "esEaApi",
+                        "type": "Microsoft.Solutions.ArmApiControl",
+                        "request": {
+                            "method": "GET",
+                            "path": "[concat(steps('lzSettings').esBillingAccount, '/enrollmentAccounts/', '?api-version=2019-10-01-preview')]"
+                        }
+                    },
+                    {
+                        "name": "esEa",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "Enrollment Account",
+                        "toolTip": "",
+                        "multiselect": false,
+                        "selectAll": true,
+                        "filter": true,
+                        "filterPlaceholder": "Filter items ...",
+                        "multiLine": true,
+                        "visible": true,
+                        "constraints": {
+                            "allowedValues": "[map(steps('lzSettings').esEaApi.value, (ea) => parse(concat('{\"label\":\"', ea.properties.displayName, '\",\"description\":\"', ea.id, '\",\"value\":\"', toLower(ea.id), '\"}')) )]",
+                            "required": true
+                        }
+                    },
+					{
+						"name": "textBlock1",
+						"type": "Microsoft.Common.TextBlock",
+						"visible": true,
+						"options": {
+							"text": "Select target management group for each subscription you will create",
+							"link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
+                            }
+						}
+					},
+                    {
+                        "name": "esSubscription",
+                        "type": "Microsoft.Common.EditableGrid",
+                        "ariaLabel": "Select management group and provide subscription name",
+                        "label": "Subscriptions",
+                        "constraints": {
+                            "width": "Medium",
+                            "rows": {
+                                "count": {
+                                    "min": 1,
+                                    "max": 10
+                                }
+                            },
+                            "columns": [
+                                {
+                                    "id": "esMgSelection",
+                                    "header": "Management group",
+                                    "width": "1fr",
+                                    "element": {
+                                        "name": "dropDown1",
+                                        "type": "Microsoft.Common.DropDown",
+                                        "placeholder": "Select Management Group",
+                                        "constraints": {
+                                            "allowedValues": "[map(steps('lzSettings').mgApi.value, (mg) => parse(concat('{\"label\":\"', mg.name, '\",\"description\":\"', mg.id, '\",\"value\":\"', toLower(mg.name), '\"}')) )]",
+                                            "required": true
+                                        }
+                                    }
+                                },
+                                {
+                                    "id": "esSubName",
+                                    "header": "Subscription name",
+                                    "width": "1fr",
+                                    "element": {
+                                        "type": "Microsoft.Common.TextBox",
+                                        "placeholder": "Subscription name...",
+                                        "constraints": {
+                                            "required": true,
+                                            "validations": [
+                                                {
+                                                    "regex": "^[a-z0-9A-Z]{1,30}$",
+                                                    "message": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "subscriptions": "[steps('lzSettings').esSubscription]",
+            "billingAccount": "[steps('lzSettings').esEa]"
+        }
+    }
+}
