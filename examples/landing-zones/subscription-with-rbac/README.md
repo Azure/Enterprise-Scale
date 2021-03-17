@@ -13,9 +13,9 @@ The ARM template provided in this folder can be used to create new subscription 
     "parameters": {
         "enterpriseScaleCompanyPrefix": {
             "type": "string",
-            "maxLength": 5,
+            "maxLength": 10,
             "metadata": {
-                "description": "Provide the ESLZ company prefix, 5 characters max."
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
             }
         },
         "subscriptionAliasName": {
