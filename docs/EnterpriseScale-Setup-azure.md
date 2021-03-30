@@ -6,7 +6,7 @@ This article will guide you through the process to configure permissions to your
 
 Enterprise-Scale reference implementation requires permission at tenant root scope "/" to be able to configure Management Group and create/move subscription. In order to grant permission at tenant root scope "/", users in "AAD Global Administrators" group can temporarily elevate access, to manage all Azure resources in the directory.
 
-Once UAA role is enabled, User Access Administrator can grant **_other users and service principles_** within organization to deploy/manage Enterprise-Scale reference implementation by granting "Owner" permission at tenant root scope "/".
+Once the User Access Administrator (UAA) role is enabled, a UAA can grant **_other users and service principles_** within organization to deploy/manage Enterprise-Scale reference implementation by granting "Owner" permission at tenant root scope "/".
 
 Once permission is granted to other users and service principles, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
 
@@ -36,6 +36,15 @@ az role assignment create  --scope '/' --role 'Owner' --assignee-object-id $(az 
 PowerShell
 
 ````powershell
+#sign in to azure from Powershell (NOTE: no need to have AzureAD module to use AzAD commands as they are part of Az.Resource module). In powershell 7.x you will be redirected to webbrowser for authentication, if required
+Connect-AzAccount
+
+#check if you have proper subscription selected and select the right one if required
+Get-AzSubscription | Select-Object SubscriptionId, Name
+
+#select right and replace SubscriptionId result of previous
+Select-AzSubscription '<SubscriptionId>'
+
 #get object Id of the user
 $user = Get-AzADUser -UserPrincipalName '<replace-me>@<my-aad-domain.com>'
 
@@ -44,6 +53,11 @@ New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
 ````
 
 Please note, it may take up to 15-30 minutes for permission to propagate at tenant root scope. It is highly recommended that you log out and log back in.
+
+### Creating a scoped role assignment
+
+The Owner privileged root tenant scope *is required* in the deployment of the [Reference implementation](EnterpriseScale-Deploy-reference-implentations.md).  However post deployment, and as your use of Enterprise Scale matures, you are able to limit the scope of the Service Principal Role Assignment to a subsection of the Management Group hierarchy.
+Eg. `"/providers/Microsoft.Management/managementGroups/YourMgGroup"`.
 
 ## Next steps
 

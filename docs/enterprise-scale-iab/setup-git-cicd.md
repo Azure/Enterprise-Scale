@@ -4,7 +4,7 @@ One of the **design goals of** the Enterprise-Scale reference implementation is 
 
 In this exercise you will learn how to fully use the Enterprise-Scale GitHub repository to create a DevOps pipeline using GitHub Actions for deploying resources to Azure, and reconcile changes made through tools outside the DevOps pipeline.
 
-> Note: Enterprise-Scale AzOps is also supported on Azure DevOps, the instructions to setup AzOps using Azure DevOps are [here](../deploy/setup-azuredevops.md).
+> Note: Enterprise-Scale AzOps is also supported on Azure DevOps, the instructions to setup AzOps using Azure DevOps are [here](../Deploy/setup-azuredevops.md).
 
 To better understand this process, in this section you will leverage the **ES-management** Management Group that was created in the previous step [Deploy the Management Group structure and policy/PolicySet definitions](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) and an Azure subscription which has been moved under it. We will now be a GitHub repository in your organization to discover the tenant, and save a RESTfull representation of the Azure environment in a GitHub repository, make changes to it and then get them deployed to your Azure environment.
 
@@ -42,7 +42,7 @@ To create a GitHub repository from the Enterprise-Scale repo as a template, exec
 
     ![_Figure_](./media/wt-1.1-6.png)
 
-    Visual Studio Code will open the local copy of the repo. You should see a series of folders and files on the left section. Ensure that you have checkout your main branch:
+    Visual Studio Code will open the local copy of the repo. You should see a series of folders and files on the left section. Ensure that you have checked out your main branch:
 
     ![_Figure_](./media/wt-1.1-7.png)
 
@@ -146,7 +146,7 @@ Please perform the following steps to configure the region for the template depl
 
 1. Open the files **azops-pull.yml** and **azops-push.yml** in the folder **/**.**github/workflows** in your Visual Studio Code.
 
-2. Change the **AZOPS_DEFAULT_DEPLOYMENT_REGION** attribute in the **env** section of **both** yml file.
+2. Change the **AZOPS_DEFAULT_DEPLOYMENT_REGION** attribute in the **env** section of yml files.
 
     ![_Figure_](./media/wt-2.2-1.png)
 

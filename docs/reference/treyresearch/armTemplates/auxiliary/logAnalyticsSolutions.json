@@ -1,0 +1,317 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string"
+        },
+        "managementSubscriptionId": {
+            "type": "string"
+        },
+        "workspaceName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId'))]"
+        },
+        "workspaceRegion": {
+            "type": "string",
+            "defaultValue": "[deployment().location]"
+        },
+        "enableSecuritySolution": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableAgentHealth": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableChangeTracking": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableUpdateMgmt": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableActivityLog": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableAntiMalware": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableVmInsights": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableServiceMap": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableSqlAssessment": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        }
+    },
+    "variables": {
+        "laResourceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]",
+        "solutions": {
+            "security": {
+                "name": "[concat('Security', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "Security"
+            },
+            "agentHealth": {
+                "name": "[concat('AgentHealthAssessment', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "AgentHealthAssessment"
+            },
+            "changeTracking": {
+                "name": "[concat('ChangeTracking', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "ChangeTracking"
+            },
+            "updateMgmt": {
+                "name": "[concat('Updates', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "Updates"
+            },
+            "azureActivity": {
+                "name": "[concat('AzureActivity', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "AzureActivity"
+            },
+            "sqlAssessment": {
+                "name": "[concat('SQLAssessment', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "SQLAssessment"
+            },
+            "antiMalware": {
+                "name": "[concat('AntiMalware', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "AntiMalware"
+            },
+            "vmInsights": {
+                "name": "[concat('VMInsights', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "VMInsights"
+            },
+            "serviceMap": {
+                "name": "[concat('ServiceMap', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "ServiceMap"
+            },
+            "securityInsights": {
+                "name": "[concat('SecurityInsights', '(', parameters('workspaceName'), ')')]",
+                "marketplaceName": "SecurityInsights"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[take(concat('EntScale-', 'solutions-', guid(deployment().name)), 63)]",
+            "resourceGroup": "[concat(parameters('topLevelManagementGroupPrefix'), '-mgmt')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "condition": "[equals(parameters('enableAgentHealth'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').agentHealth.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').agentHealth.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').agentHealth.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableAntiMalware'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').antiMalware.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').antiMalware.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').antiMalware.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableActivityLog'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').azureActivity.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').azureActivity.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').azureActivity.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableChangeTracking'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').changeTracking.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').changeTracking.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').changeTracking.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableVmInsights'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').vmInsights.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').vmInsights.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').vmInsights.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecuritySolution'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').security.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').security.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').security.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecuritySolution'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').securityInsights.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').securityInsights.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').securityInsights.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableServiceMap'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').serviceMap.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').serviceMap.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').serviceMap.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSqlAssessment'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').sqlAssessment.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').sqlAssessment.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').sqlAssessment.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableUpdateMgmt'), 'Yes')]",
+                            "apiVersion": "2015-11-01-preview",
+                            "type": "Microsoft.OperationsManagement/solutions",
+                            "name": "[variables('solutions').updateMgmt.name]",
+                            "location": "[parameters('workspaceRegion')]",
+                            "properties": {
+                                "workspaceResourceId": "[variables('laResourceId')]"
+                            },
+                            "plan": {
+                                "name": "[variables('solutions').updateMgmt.name]",
+                                "product": "[concat('OMSGallery/', variables('solutions').updateMgmt.marketplaceName)]",
+                                "promotionCode": "",
+                                "publisher": "Microsoft"
+                            }
+                        }                                                       
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

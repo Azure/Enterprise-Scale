@@ -1,0 +1,152 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "denyRdpForIdentity": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether policy to deny inbound RDP should be assigned or not."
+            }
+        },
+        "denySubnetWithoutNsgForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether policy to deny subnet without NSG should be assigned or not."
+            }
+        },
+        "denyPipForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether policy to deny puplic IP should be assigned or not."
+            }
+        },
+        "enableVmBackupForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether policy to enable VM backup should be assigned or not."
+            }
+        }
+    },
+    "variables": {
+        "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-identity')]",
+        "policyDefinitions": {
+            "denySubnetWithoutNsg": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg')]",
+            "denyPip": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-PublicIP')]",
+            "denyRdp": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet')]",
+            "deployVmBackup": "/providers/Microsoft.Authorization/policyDefinitions/98d0b9f8-fd90-49c9-88e2-d3baf3b0dd86"
+        },
+        "policyAssignmentNames": {
+            "denySubnetWithoutNsg": "Deny-Subnet-Without-Nsg",
+            "denyRdp": "Deny-RDP-from-internet",
+            "denyPip": "Deny-Public-IP",
+            "deployVmBackup": "Deploy-VM-Backup"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployVmBackup": "[guid(concat(parameters('toplevelManagementGroupPrefix'), 'identity', variables('policyAssignmentNames').deployVmBackup))]"
+        }
+        //"blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}"
+    },
+    "resources": [
+        {
+            // Conditionally enable policy to enforce VM Backup
+            "condition": "[equals(parameters('enableVmBackupForIdentity'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deployVmBackup]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-VM-Backup",
+                "displayName": "Deploy-VM-Backup",
+                "policyDefinitionId": "[variables('policyDefinitions').deployVmBackup]",
+                "scope": "[variables('scope')]",
+                "parameters": {}
+            }
+        },
+        {
+            // Conditionally assign roleAssignment for the policy that will enforce VM Backup
+            "condition": "[equals(parameters('enableVmBackupForIdentity'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployVmBackup]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployVmBackup]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableVmBackupForIdentity'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployVmBackup), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
+        {
+            // Conditionally assign policy to prevent creation of puplic IP addresses
+            "condition": "[equals(parameters('denyPipForIdentity'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').denyPip]",
+            "properties": {
+                "description": "Deny-Public-IP",
+                "displayName": "Deny-Public-IP",
+                "policyDefinitionId": "[variables('policyDefinitions').denyPip]",
+                "scope": "[variables('scope')]"
+            }
+        },
+        {
+            // Conditionally assign policy to prevent inbound RDP 
+            "condition": "[equals(parameters('denyRdpForIdentity'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').denyRdp]",
+            "properties": {
+                "description": "Deny-RDP-from-Internet",
+                "displayName": "Deny-RDP-from-Internet",
+                "policyDefinitionId": "[variables('policyDefinitions').denyRdp]",
+                "scope": "[variables('scope')]"
+            }
+        },
+        {
+            // Conditionally assign policy to prevent subnet creation without associated NSG
+            "condition": "[equals(parameters('denySubnetWithoutNsgForIdentity'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').denySubnetWithoutNsg]",
+            "properties": {
+                "description": "Deny-Subnet-Without-Nsg",
+                "displayName": "Deny-Subnet-Without-Nsg",
+                "policyDefinitionId": "[variables('policyDefinitions').denySubnetWithoutNsg]",
+                "scope": "[variables('scope')]"
+            }
+        }        
+    ],
+    "outputs": {}
+}

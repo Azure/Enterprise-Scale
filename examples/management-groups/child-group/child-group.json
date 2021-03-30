@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "mgmtGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide a unique name for the management group."
+            }
+        },
+        "parentMgmtGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the management group where you are invoking the deployment."
+            }
+        }
+    },
+    "resources": [
+        {
+            "scope": "/", // routing the request to the tenant root
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('mgmtGroupName')]",
+            "properties": {
+                "displayName": "[parameters('mgmtGroupName')]",
+                "details": {
+                    "parent": {
+                        "id": "[if(not(empty(parameters('parentMgmtGroupId'))), concat('/providers/Microsoft.Management/managementGroups/', parameters('parentMgmtGroupId')), json('null'))]"
+                    }
+                }
+            }
+        }
+    ]
+}

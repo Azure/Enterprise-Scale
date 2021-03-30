@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptions": {
+            "type": "array"
+        },
+        "billingAccount": {
+            "type": "string"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            // Routing the request to the tenant root to PUT subscriptions
+            "scope": "/",
+            "name": "[concat(parameters('subscriptions')[copyIndex()].esSubName)]",
+            "type": "Microsoft.Subscription/aliases",
+            "apiVersion": "2020-09-01",
+            "copy": {
+                "name": "eslzSubCopy",
+                "count": "[length(parameters('subscriptions'))]"
+            },
+            "properties": {
+                "workLoad": "Production",
+                "displayName": "[concat(parameters('subscriptions')[copyIndex()].esSubName)]",
+                "billingScope": "[parameters('billingAccount')]",
+                "managementGroupId": "[tenantResourceId('Microsoft.Management/managementGroups/', concat(parameters('subscriptions')[copyIndex()].esMgSelection))]"
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

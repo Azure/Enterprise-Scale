@@ -5,7 +5,7 @@ Companies wants to leverage new Azure regions and deploy the workload closer to 
 
 ### Management
 
-All reference customers have decided to use a single Log Analytics workspace. When the first region is enabled, they will deploy Log Analytics workspace in their management subscription. No action will be required when enabling subsequent Azure regions as Azure Policy will ensure all platform logging is routed to the workspace.
+All reference customers have decided to use a single Log Analytics workspace. When the first region is enabled, they will deploy Log Analytics workspace in their management subscription. No action will be required when enabling subsequent Azure regions as Azure Policy will ensure all platform logging is routed to the workspace. Azure Policy is extensively used for various management operations. Refer to [How does Azure Policies in Enterprise-scale Landing Zone help?](./azpol.md) to learn more about various management and deployment operations enabled in Enterprise Scale landing zone via Azure Policy .
 
 ### Networking
 
