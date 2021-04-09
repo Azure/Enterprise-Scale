@@ -114,7 +114,7 @@ To create a new Service Principal, a new blade will open and you must first regi
 
 4. Copy the secret value to clipboard
 
-![New Secret3](./media/secretValue.png)
+![New Secret3](./media/secretValue.PNG)
 
 5. Close the Service Principal interface by clicking at the 'X' at the upper right corner
 
