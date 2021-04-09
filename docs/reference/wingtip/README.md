@@ -34,11 +34,8 @@ The Management Group structure implemented with Enterprise-Scale is as follows:
 * Top-level Management Group (directly under the tenant root group) is created with a prefix provided by the organization, which purposely will avoid the usage of the root group to allow organizations to move existing Azure subscriptions into the hierarchy, and also enables future scenarios. This Management Group is parent to all the other Management Groups created by Enterprise-Scale
 * Platform: This Management Group contains all the platform child Management Groups, such as Management, Connectivity, and Identity. Common Azure Policies for the entire platform is assigned at this level
 * Management: This Management Group contains the dedicated subscription for management, monitoring, and security, which will host Azure Log Analytics, Azure Automation, and Azure Sentinel. Specific Azure policies are assigned to harden and manage the resources in the management subscription.
-* Connectivity: This Management Group contains the dedicated subscription for connectivity, which will host the Virtual WAN/Virtual Network for the hub, Azure Firewall, DNS, Express Route, VPN Gateway etc. Specific Azure policies are assigned to harden and manage the resources in the connectivity subscription.
-* Identity: This Management Group contains the dedicated subscription for identity, which is a placeholder for Windows Server Active Directory VMs, or Azure Active Directory Domain Services to enable AuthN/AuthZ for workloads within the landing zones. Specific Azure policies are assigned to harden and manage the resources in the identity subscription.
 * Landing Zones: This is the parent Management Group for all the landing zone subscriptions and will have workload agnostic Azure Policies assigned to ensure workloads are secure and compliant.
 * Online: This is the dedicated Management Group for Online landing zones, meaning workloads that may require direct inbound/outbound connectivity.
-* Corp: This is the dedicated Management Group for Corp landing zones, meaning workloads that requires connectivity/hybrid connectivity with the corporate network thru the hub in the connectivity subscription.
 * Sandboxes: This is the dedicated Management Group for subscriptions that will solely be used for testing and exploration by an organization’s application teams. These subscriptions will be securely disconnected from the Corp and Online landing zones.
 * Decommissioned: This is the dedicated Management Group for landing zones that are being cancelled, which then will be moved to this Management Group before deleted by Azure after 30-60 days.
 
@@ -53,20 +50,11 @@ By default, all recommendations are enabled, and you must explicitly disable the
   * Azure Security Center (Standard or Free tier)
   * Azure Sentinel
   * Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
-* When deploying Adventure Works and Contoso: An Azure subscription dedicated for Connectivity, which deploys core Azure networking resources such as:
-  * A hub virtual network
-  * Azure Firewall
-  * ExpressRoute Gateway
-  * VPN Gateway
-  * Azure Private DNS Zones for Private Link
 * (Optionally) An Azure subscription dedicated for Identity in case your organization requires to have Active Directory Domain Controllers in a dedicated subscription.
 * (Optionally) Integrate your Azure environment with GitHub (Azure DevOps will come later), where you provide the PA Token to create a new repository and automatically discover and merge your deployment into Git.
-* Landing Zone Management Group for Corp connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
-  * This is where you will create your subscriptions that will host your corp-connected workloads.
 * Landing Zone Management Group for Online applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
   * This is where you will create your Subscriptions that will host your online workloads.
 * Landing zone subscriptions for Azure native, internet-facing Online applications and resources.
-* Landing zone subscriptions for Corp connected applications and resources, including a virtual network that will be connected to the hub via VNet peering.
 * Azure Policies for online and corp-connected landing zones, which include:
   * Enforce VM monitoring (Windows & Linux)
   *	Enforce VMSS monitoring (Windows & Linux)
