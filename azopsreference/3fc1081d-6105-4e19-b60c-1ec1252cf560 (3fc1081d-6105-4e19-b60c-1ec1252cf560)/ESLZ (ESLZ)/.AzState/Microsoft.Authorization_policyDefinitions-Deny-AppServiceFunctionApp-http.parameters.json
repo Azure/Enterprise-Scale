@@ -1,0 +1,54 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deny-AppServiceFunctionApp-http",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Use of HTTPS ensures server/service authentication and protects data in transit from network layer eavesdropping attacks.",
+          "DisplayName": "Function App should only be accessible over HTTPS",
+          "Mode": "Indexed",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "Audit",
+                "Disabled",
+                "Deny"
+              ],
+              "defaultValue": "Deny"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Web/sites"
+                },
+                {
+                  "field": "kind",
+                  "like": "functionapp*"
+                },
+                {
+                  "field": "Microsoft.Web/sites/httpsOnly",
+                  "equals": "false"
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}
