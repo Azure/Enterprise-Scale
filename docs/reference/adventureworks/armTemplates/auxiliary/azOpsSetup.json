@@ -1,0 +1,134 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string"
+        },
+        "principalId": {
+            "type": "array"
+        },
+        "principalSecret": {
+            "type": "secureString",
+            "metadata": {
+                "description": "Provide the secret for the service principal."
+            }
+        },
+        "gitHubUserNameOrOrg": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the username or org name for GitHub"
+            }
+        },
+        "paToken": {
+            "type": "secureString",
+            "metadata": {
+                "description": "Provide the PA Token to authorize Git and create new repository for the organization/user"
+            }
+        },
+        "subscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the subscriptionId which will be used to initialize Git during deployment runtime."
+            }
+        },
+        "appId": {
+            "type": "string"
+        },
+        "repositoryName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "deploymentUris": {
+            "azOpsSetup": "[uri(deployment().properties.templateLink.uri, 'azOpsArm.json')]"
+        },
+        "deploymentNames": {
+            "spnRbac": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('formattedPrincipalId')))]",
+            "azOpsSub": "[take(concat(parameters('topLevelManagementGroupPrefix'), '-', deployment().location, 'azOpsSub'), 64)]",
+            "azOpsRg": "[take(concat(parameters('topLevelManagementGroupPrefix'), '-', deployment().location, 'azOpsRg'), 64)]"
+            },
+        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-AzOps')]",
+        "formattedPrincipalId": "[replace(replace(replace(string(parameters('principalId')), '\"', ''), '[', ''), ']', '')]",
+        "roleDefinitionOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('roleDefinitionOwner'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('formattedPrincipalId')))]",
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[variables('roleDefinitionId')]",
+                "principalId": "[variables('formattedPrincipalId')]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').azOpsSub]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/roleAssignments',guid(concat(parameters('topLevelManagementGroupPrefix'), variables('formattedPrincipalId'))))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2020-10-01",
+                            "name": "[variables('rgName')]",
+                            "location": "[deployment().location]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2020-06-01",
+                            "name": "[variables('deploymentNames').azOpsRg]",
+                            "resourceGroup": "[variables('rgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "templateLink": {
+                                    "contentVersion": "1.0.0.0",
+                                    "uri": "[variables('deploymentUris').azOpsSetup]"
+                                },
+                                "parameters": {
+                                    "paToken": {
+                                        "value": "[parameters('paToken')]"
+                                    },
+                                    "principalId": {
+                                        "value": "[parameters('principalId')]"
+                                    },
+                                    "principalSecret": {
+                                        "value": "[parameters('principalSecret')]"
+                                    },
+                                    "gitHubUserNameOrOrg": {
+                                        "value": "[parameters('gitHubUserNameOrOrg')]"
+                                    },
+                                    "topLevelManagementGroupPrefix": {
+                                        "value": "[parameters('topLevelManagementGroupPrefix')]"
+                                    },
+                                    "appId": {
+                                        "value": "[parameters('appId')]"
+                                    },
+                                    "repositoryName": {
+                                        "value": "[parameters('repositoryName')]"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

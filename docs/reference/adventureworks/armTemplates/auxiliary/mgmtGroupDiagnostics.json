@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 5
+        },
+        "managementSubscriptionId": {
+            "type": "string",
+            "maxLength": 36
+        },
+        "enableLogAnalytics": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
+        }
+    },
+    "variables": {
+        "laWorkspaceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]",
+        "mgmtGroups": [
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-platform')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-management')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-connectivity')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-identity')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-landingzones')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-online')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-corp')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-sandboxes')]",
+            "[concat(parameters('topLevelManagementGroupPrefix'), '-decommissioned')]",
+            "[parameters('topLevelManagementGroupPrefix')]"
+        ]
+    },
+    "resources": [
+        {
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', variables('mgmtGroups')[copyIndex()])]",
+            "name": "[concat('mgmtGroupLogsToLa', copyIndex())]",
+            "type": "Microsoft.Insights/diagnosticSettings",
+            "apiVersion": "2020-01-01-preview",
+            "location": "Global",
+            "copy": {
+                "name": "mgmtDiagCopy",
+                "count": "[length(variables('mgmtGroups'))]"
+            },
+            "properties": {
+                "workspaceId": "[variables('laWorkspaceId')]",
+                "logs": [
+                    {
+                        "category": "Administrative",
+                        "enabled": true
+                    },
+                    {
+                        "category": "Policy",
+                        "enabled": true
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
