@@ -1,0 +1,71 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deny-SqlMi-minTLS",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Setting minimal TLS version to 1.2 improves security by ensuring your SQL Managed Instance can only be accessed from clients using TLS 1.2. Using versions of TLS less than 1.2 is not reccomended since they have well documented security vunerabilities.",
+          "DisplayName": "SQL Managed Instance should have the minimal TLS version set to the highest version",
+          "Mode": "Indexed",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "Audit",
+                "Disabled",
+                "Deny"
+              ],
+              "defaultValue": "Audit"
+            },
+            "minimalTlsVersion": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Select version for SQL server",
+                "description": "Select version minimum TLS version SQL servers to enforce"
+              },
+              "allowedValues": [
+                "1.2",
+                "1.1",
+                "1.0"
+              ],
+              "defaultValue": "1.2"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Sql/managedInstances"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "field": "Microsoft.Sql/managedInstances/minimalTlsVersion",
+                      "exists": "false"
+                    },
+                    {
+                      "field": "Microsoft.Sql/managedInstances/minimalTlsVersion",
+                      "notequals": "[parameters('minimalTlsVersion')]"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}
