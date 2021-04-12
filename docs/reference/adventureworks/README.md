@@ -42,6 +42,7 @@ By default, all recommendations are enabled and you must explicitly disable them
   - Azure Security Center (Standard or Free tier)
   - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
+- (Optionally) Integrate your Azure environment with GitHub (Azure DevOps will come later), where you provide the PA Token to create a new repository and automatically discover and merge your deployment into Git.
 - An Azure subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   - A hub virtual network
   - Azure Firewall (optional - deployment across Availability Zones)
