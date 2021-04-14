@@ -333,6 +333,19 @@
                         },
 						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
+                    {
+                        "name": "esAscEmail",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Azure Security Center Email Contact",
+                        "toolTip": "Email address to get email notifications from Azure Security Center",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": "[if((steps('esGoalState').esAsc, 'Yes'), 'true', 'false')]",
+                            "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                            "validationMessage": "Please provide a valid email address"
+                        }
+                    }
 					{
 						"name": "esAscVms",
 						"type": "Microsoft.Common.OptionsGroup",
@@ -396,9 +409,29 @@
 					{
 						"name": "esAscSql",
 						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for SQL",
+						"label": "Enable Azure Defender for Azure SQL Database",
 						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL.",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Azure SQL Database.",
+						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes (recommended)",
+									"value": "Standard"
+								},
+								{
+									"label": "No, Azure Defender Off",
+									"value": "Free"
+								}
+							]
+						}
+					},
+                    {
+						"name": "esAscSqlonVm",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable Azure Defender for SQL servers on machines",
+						"defaultValue": "Yes (recommended)",
+						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL servers on machines.",
 						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
 						"constraints": {
 							"allowedValues": [
@@ -1620,10 +1653,12 @@
             "denyPipForIdentity": "[steps('esIdentityGoalState').esIdDenyPublicIp]",
             "enableVmBackupForIdentity": "[steps('esIdentityGoalState').esIdAzBackup]",
             "enableAsc": "[steps('esGoalState').esAsc]",
+            "emailContactAsc": "[steps('esGoalState').esAscEmail]",
             "enableAscForServers": "[steps('esGoalState').esAscVms]",
             "enableAscForAppServices": "[steps('esGoalState').esAscApps]",
             "enableAscForStorage": "[steps('esGoalState').esAscStorage]",
             "enableAscForSql": "[steps('esGoalState').esAscSql]",
+            "enableAscForSqlonVm": "[steps('esGoalState').esAscSqlonVm]",
             "enableAscForKeyVault": "[steps('esGoalState').esAscKeyVault]",
             "enableAscForArm": "[steps('esGoalState').esAscArm]",
             "enableAscForDns": "[steps('esGoalState').esAscDns]",
