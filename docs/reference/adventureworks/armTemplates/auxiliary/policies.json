@@ -2196,108 +2196,106 @@
         },
         {
           "properties": {
-            "properties": {
-              "description": "Deploy Azure Security Center Security Contacts",
-              "displayName": "Deploy Azure Security Center Security Contacts",
-              "mode": "All",
-              "parameters": {
-                "emailSecurityContact": {
-                  "type": "string",
-                  "metadata": {
-                    "displayName": "Security contacts email address",
-                    "description": "Provide email address for Azure Security Center contact details"
-                  }
-                },
-                "effect": {
-                  "type": "string",
-                  "defaultValue": "DeployIfNotExists",
-                  "allowedValues": [
-                    "DeployIfNotExists",
-                    "Disabled"
-                  ],
-                  "metadata": {
-                    "displayName": "Effect",
-                    "description": "Enable or disable the execution of the policy"
-                  }
+            "description": "Deploy Azure Security Center Security Contacts",
+            "displayName": "Deploy Azure Security Center Security Contacts",
+            "mode": "All",
+            "parameters": {
+              "emailSecurityContact": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Security contacts email address",
+                  "description": "Provide email address for Azure Security Center contact details"
                 }
               },
-              "metadata": {
-                "version": "1.0.0",
-                "category": "Security Center"
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
               },
-              "policyRule": {
-                "if": {
-                  "allOf": [
-                    {
-                      "field": "type",
-                      "equals": "Microsoft.Resources/subscriptions"
-                    }
-                  ]
-                },
-                "then": {
-                  "effect": "[[parameters('effect')]",
-                  "details": {
-                    "type": "Microsoft.Security/securityContacts",
-                    "deploymentScope": "Subscription",
-                    "existenceScope": "Subscription",
-                    "roleDefinitionIds": [
-                      "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
-                    ],
-                    "existenceCondition": {
-                      "allOf": [
-                        {
-                          "field": "Microsoft.Security/securityContacts/email",
-                          "contains": "[[parameters('emailSecurityContact')]"
-                        },
-                        {
-                          "field": "type",
-                          "equals": "Microsoft.Security/securityContacts"
-                        },
-                        {
-                          "field": "Microsoft.Security/securityContacts/alertNotifications",
-                          "equals": "On"
-                        },
-                        {
-                          "field": "Microsoft.Security/securityContacts/alertsToAdmins",
-                          "equals": "On"
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/securityContacts",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/securityContacts/email",
+                        "contains": "[[parameters('emailSecurityContact')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/securityContacts"
+                      },
+                      {
+                        "field": "Microsoft.Security/securityContacts/alertNotifications",
+                        "equals": "On"
+                      },
+                      {
+                        "field": "Microsoft.Security/securityContacts/alertsToAdmins",
+                        "equals": "On"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "westeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "emailSecurityContact": {
+                          "value": "[[parameters('emailSecurityContact')]"
                         }
-                      ]
-                    },
-                    "deployment": {
-                      "location": "westeurope",
-                      "properties": {
-                        "mode": "incremental",
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
                         "parameters": {
                           "emailSecurityContact": {
-                            "value": "[[parameters('emailSecurityContact')]"
+                            "type": "string",
+                            "metadata": {
+                              "description": "Security contacts email address"
+                            }
                           }
                         },
-                        "template": {
-                          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                          "contentVersion": "1.0.0.0",
-                          "parameters": {
-                            "emailSecurityContact": {
-                              "type": "string",
-                              "metadata": {
-                                "description": "Security contacts email address"
-                              }
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/securityContacts",
+                            "name": "default",
+                            "apiVersion": "2017-08-01-preview",
+                            "properties": {
+                              "email": "[[parameters('emailSecurityContact')]",
+                              "alertNotifications": "On",
+                              "alertsToAdmins": "On"
                             }
-                          },
-                          "variables": {},
-                          "resources": [
-                            {
-                              "type": "Microsoft.Security/securityContacts",
-                              "name": "default",
-                              "apiVersion": "2017-08-01-preview",
-                              "properties": {
-                                "email": "[[parameters('emailSecurityContact')]",
-                                "alertNotifications": "On",
-                                "alertsToAdmins": "On"
-                              }
-                            }
-                          ],
-                          "outputs": {}
-                        }
+                          }
+                        ],
+                        "outputs": {}
                       }
                     }
                   }
