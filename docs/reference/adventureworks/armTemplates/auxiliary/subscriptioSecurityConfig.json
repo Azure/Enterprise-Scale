@@ -128,9 +128,201 @@
                 "Free"
             ],
             "defaultValue": "Standard"
+        },
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "workspaceResourceId": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Log Analytics workspace",
+                "description": "The Log Analytics workspace of where the data should be exported to.",
+                "strongType": "Microsoft.OperationalInsights/workspaces",
+                "assignPermissions": true
+            }
+        },
+        "guidValue": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
         }
     },
-    "variables": {},
+    "variables": {
+        "resourceGroupName": "[concat(parameters('topLevelManagementGroupPrefix'), '-asc-export')]",
+        "resourceGroupLocation": "[deployment().location]",
+        "exportedDataTypes": "[createArray('Security recommendations', 'Security alerts', 'Overall secure score', 'Secure score controls', 'Regulatory compliance', 'Overall secure score - snapshot', 'Secure score controls - snapshot', 'Regulatory compliance - snapshot')]",
+        "isSecurityFindingsEnabled": "true",
+        "recommendationNames": "[createArray()]",
+        "recommendationSeverities": "[createArray('High', 'Medium', 'Low')]",
+        "alertSeverities": "[createArray('High', 'Medium', 'Low')]",
+        "secureScoreControlsNames": "[createArray()]",
+        "regulatoryComplianceStandardsNames": "[createArray()]",
+
+
+        "scopeDescription": "scope for subscription {0}",
+        "subAssessmentRuleExpectedValue": "/assessments/{0}/",
+        "recommendationNamesLength": "[length(variables('recommendationNames'))]",
+        "secureScoreControlsNamesLength": "[length(variables('secureScoreControlsNames'))]",
+        "secureScoreControlsLengthIfEmpty": "[if(equals(variables('secureScoreControlsNamesLength'), 0), 1, variables('secureScoreControlsNamesLength'))]",
+        "regulatoryComplianceStandardsNamesLength": "[length(variables('regulatoryComplianceStandardsNames'))]",
+        "regulatoryComplianceStandardsNamesLengthIfEmpty": "[if(equals(variables('regulatoryComplianceStandardsNamesLength'), 0), 1, variables('regulatoryComplianceStandardsNamesLength'))]",
+        "recommendationSeveritiesLength": "[length(variables('recommendationSeverities'))]",
+        "alertSeveritiesLength": "[length(variables('alertSeverities'))]",
+        "recommendationNamesLengthIfEmpty": "[if(equals(variables('recommendationNamesLength'), 0), 1, variables('recommendationNamesLength'))]",
+        "recommendationSeveritiesLengthIfEmpty": "[if(equals(variables('recommendationSeveritiesLength'), 0), 1, variables('recommendationSeveritiesLength'))]",
+        "alertSeveritiesLengthIfEmpty": "[if(equals(variables('alertSeveritiesLength'), 0), 1, variables('alertSeveritiesLength'))]",
+        "totalRuleCombinationsForOneRecommendationName": "[variables('recommendationSeveritiesLengthIfEmpty')]",
+        "totalRuleCombinationsForOneRecommendationSeverity": 1,
+        "exportedDataTypesLength": "[length(variables('exportedDataTypes'))]",
+        "exportedDataTypesLengthIfEmpty": "[if(equals(variables('exportedDataTypesLength'), 0), 1, variables('exportedDataTypesLength'))]",
+        "dataTypeMap": {
+            "Security recommendations": "Assessments",
+            "Security alerts": "Alerts",
+            "Overall secure score": "SecureScores",
+            "Secure score controls": "SecureScoreControls",
+            "Regulatory compliance": "RegulatoryComplianceAssessment",
+            "Overall secure score - snapshot": "SecureScoresSnapshot",
+            "Secure score controls - snapshot": "SecureScoreControlsSnapshot",
+            "Regulatory compliance - snapshot": "RegulatoryComplianceAssessmentSnapshot"
+        },
+        "alertSeverityMap": {
+            "High": "high",
+            "Medium": "medium",
+            "Low": "low"
+        },
+        "ruleSetsForAssessmentsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForAssessmentsArr",
+                    "count": "[mul(variables('recommendationNamesLengthIfEmpty'),variables('recommendationSeveritiesLengthIfEmpty'))]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "[if(equals(variables('recommendationNamesLength'),0),'type','name')]",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('recommendationNamesLength'),0),'Microsoft.Security/assessments',variables('recommendationNames')[mod(div(copyIndex('ruleSetsForAssessmentsArr'),variables('totalRuleCombinationsForOneRecommendationName')),variables('recommendationNamesLength'))])]",
+                                "operator": "Contains"
+                            },
+                            {
+                                "propertyJPath": "properties.metadata.severity",
+                                "propertyType": "string",
+                                "expectedValue": "[variables('recommendationSeverities')[mod(div(copyIndex('ruleSetsForAssessmentsArr'),variables('totalRuleCombinationsForOneRecommendationSeverity')),variables('recommendationSeveritiesLength'))]]",
+                                "operator": "Equals"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "customRuleSetsForSubAssessmentsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForSubAssessmentsArr",
+                    "count": "[variables('recommendationNamesLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "id",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('recommendationNamesLength'), 0), json('null'), replace(variables('subAssessmentRuleExpectedValue'),'{0}', variables('recommendationNames')[copyIndex('ruleSetsForSubAssessmentsArr')]))]",
+                                "operator": "Contains"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "ruleSetsForAlertsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForAlertsArr",
+                    "count": "[variables('alertSeveritiesLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "Severity",
+                                "propertyType": "string",
+                                "expectedValue": "[variables('alertSeverityMap')[variables('alertSeverities')[mod(copyIndex('ruleSetsForAlertsArr'),variables('alertSeveritiesLengthIfEmpty'))]]]",
+                                "operator": "Equals"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "customRuleSetsForSecureScoreControlsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForSecureScoreControlsArr",
+                    "count": "[variables('secureScoreControlsLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "name",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('secureScoreControlsNamesLength'), 0), json('null'), variables('secureScoreControlsNames')[copyIndex('ruleSetsForSecureScoreControlsArr')])]",
+                                "operator": "Equals"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "customRuleSetsForRegulatoryComplianceObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForRegulatoryCompliancArr",
+                    "count": "[variables('regulatoryComplianceStandardsNamesLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "id",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('regulatoryComplianceStandardsNamesLength'), 0), json('null'), variables('regulatoryComplianceStandardsNames')[copyIndex('ruleSetsForRegulatoryCompliancArr')])]",
+                                "operator": "Contains"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "ruleSetsForSecureScoreControlsObj": "[if(equals(variables('secureScoreControlsNamesLength'), 0), json('null'), variables('customRuleSetsForSecureScoreControlsObj').ruleSetsForSecureScoreControlsArr)]",
+        "ruleSetsForSecureRegulatoryComplianceObj": "[if(equals(variables('regulatoryComplianceStandardsNamesLength'), 0), json('null'), variables('customRuleSetsForRegulatoryComplianceObj').ruleSetsForRegulatoryCompliancArr)]",
+        "ruleSetsForSubAssessmentsObj": "[if(equals(variables('recommendationNamesLength'), 0), json('null'), variables('customRuleSetsForSubAssessmentsObj').ruleSetsForSubAssessmentsArr)]",
+        "subAssessmentSource": [
+            {
+                "eventSource": "SubAssessments",
+                "ruleSets": "[variables('ruleSetsForSubAssessmentsObj')]"
+            }
+        ],
+        "ruleSetsMap": {
+            "Security recommendations": "[variables('ruleSetsForAssessmentsObj').ruleSetsForAssessmentsArr]",
+            "Security alerts": "[variables('ruleSetsForAlertsObj').ruleSetsForAlertsArr]",
+            "Overall secure score": null,
+            "Secure score controls": "[variables('ruleSetsForSecureScoreControlsObj')]",
+            "Regulatory compliance": "[variables('ruleSetsForSecureRegulatoryComplianceObj')]",
+            "Overall secure score - snapshot": null,
+            "Secure score controls - snapshot": "[variables('ruleSetsForSecureScoreControlsObj')]",
+            "Regulatory compliance - snapshot": "[variables('ruleSetsForSecureRegulatoryComplianceObj')]"
+        },
+        "sourcesWithoutSubAssessments": {
+            "copy": [
+                {
+                    "name": "sources",
+                    "count": "[variables('exportedDataTypesLengthIfEmpty')]",
+                    "input": {
+                        "eventSource": "[variables('dataTypeMap')[variables('exportedDataTypes')[copyIndex('sources')]]]",
+                        "ruleSets": "[variables('ruleSetsMap')[variables('exportedDataTypes')[copyIndex('sources')]]]"
+                    }
+                }
+            ]
+        },
+        "sourcesWithSubAssessments": "[concat(variables('subAssessmentSource'),variables('sourcesWithoutSubAssessments').sources)]",
+        "sources": "[if(equals(variables('isSecurityFindingsEnabled'),bool('true')),variables('sourcesWithSubAssessments'),variables('sourcesWithoutSubAssessments').sources)]"
+    },
     "resources": [
         {
             "type": "Microsoft.Security/pricings",
@@ -245,7 +437,7 @@
             "name": "default",
             "apiVersion": "2020-01-01-preview",
             "properties": {
-                "emails": "[[parameters('emailSecurityContact')]",
+                "emails": "[parameters('emailSecurityContact')]",
                 "notificationsByRole": {
                     "state": "On",
                     "roles": [
@@ -255,6 +447,59 @@
                 "alertNotifications": {
                     "state": "On",
                     "minimalSeverity": "High"
+                }
+            }
+        },
+        {
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2019-10-01",
+            "location": "[variables('resourceGroupLocation')]",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('nestedAutomationDeployment', '_', parameters('guidValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('resourceGroupName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "tags": {},
+                            "apiVersion": "2019-01-01-preview",
+                            "location": "[variables('resourceGroupLocation')]",
+                            "name": "ExportToWorkspace",
+                            "type": "Microsoft.Security/automations",
+                            "dependsOn": [],
+                            "properties": {
+                                "description": "Export Azure Security Center data to Log Analytics workspace via policy",
+                                "isEnabled": true,
+                                "scopes": [
+                                    {
+                                        "description": "[replace(variables('scopeDescription'),'{0}', subscription().subscriptionId)]",
+                                        "scopePath": "[subscription().id]"
+                                    }
+                                ],
+                                "sources": "[variables('sources')]",
+                                "actions": [
+                                    {
+                                        "actionType": "Workspace",
+                                        "workspaceResourceId": "[parameters('workspaceResourceId')]"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
                 }
             }
         }
