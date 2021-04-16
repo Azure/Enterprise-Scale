@@ -544,11 +544,21 @@
                     {
                         "name": "info",
                         "type": "Microsoft.Common.InfoBox",
-                        "visible": true,
+                        "visible": "[not(empty(steps('esGoalState').esMgmtSub))]",
                         "options": {
                             "icon": "Info",
                             "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
-                            "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin"
+                            "uri": "https://github.com/azure/azops-accelerator/wiki/introduction"
+                        }
+                    },
+					{
+                        "name": "correction",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": "[empty(steps('esGoalState').esMgmtSub)]",
+                        "options": {
+                            "icon": "Warning",
+                            "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
+                            "uri": "https://github.com/azure/azops-accelerator/wiki/introduction"
                         }
                     },
                     {
@@ -570,7 +580,7 @@
                             ],
                             "required": true
                         },
-                        "visible": true
+                        "visible": "[not(empty(steps('esGoalState').esMgmtSub))]"
                     },
                     {
                         "name": "Instructions",
@@ -678,43 +688,6 @@
                             }
                         ],
                         "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]"
-                    },
-                    {
-                        "name": "subContext",
-                        "type": "Microsoft.Common.TextBlock",
-                        "visible": "[and(equals(steps('lzDevOps').cicdOption, 'Yes'), empty(steps('esGoalState').esMgmtSub))]",
-                        "options": {
-                            "text": "Provide a subscription that will be used to orchestrate the Git initialization.",
-                            "link": {
-                                "label": "Learn more",
-                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
-                            }
-                        }
-                    },
-                    {
-                        "name": "mgmtGitApi",
-                        "type": "Microsoft.Solutions.ArmApiControl",
-                        "request": {
-                            "method": "GET",
-                            "path": "subscriptions?api-version=2020-01-01"
-                        }
-                    },
-                    {
-                        "name": "esGitSub",
-                        "type": "Microsoft.Common.DropDown",
-                        "label": "Subscription used for Git initialization",
-                        "toolTip": "",
-                        "multiselect": false,
-                        "selectAll": true,
-                        "filter": true,
-                        "filterPlaceholder": "Filter items ...",
-                        "multiLine": true,
-                        "defaultValue": "[if(not(empty(steps('esGoalState').esMgmtSub)), steps('esGoalState').esMgmtSub, '')]",
-                        "visible": "[and(equals(steps('lzDevOps').cicdOption, 'Yes'), empty(steps('esGoalState').esMgmtSub))]",
-                        "constraints": {
-                            "allowedValues": "[map(steps('lzDevOps').mgmtGitApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
-                            "required": true
-                        }
                     }
                 ]
             },         
@@ -1662,7 +1635,6 @@
             "principalSecret": "[steps('lzDevOps').spnSection.esServicePrincipal.password]",
             "gitHubUserNameOrOrg": "[steps('lzDevOps').esGit]",
             "appId": "[steps('lzDevOps').spnSection.esServicePrincipal.appId]",
-            "subscriptionId": "[if(not(empty(steps('esGoalState').esMgmtSub)), steps('esGoalState').esMgmtSub, if(not(empty(steps('lzDevOps').esGitSub)), steps('lzDevOps').esGitSub, ''))]",
             "enableAzOps": "[steps('lzDevOps').cicdOption]",
             "repositoryName": "[steps('lzDevOps').esGitRepoName]"
         }
