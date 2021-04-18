@@ -108,7 +108,7 @@ The Discovery/Initialization process will run entirely on GitHub. This guide use
 
     ![_Figure_](./media/wt-2.1-2.5.png)
 
-10. Now, we will run discovery using GitHub Actions, this initializes your GitHub repo with your Azure environment. This uses the GitHub Actions `workflow_dispatch` trigger and requires requires the latest [`.github/workflows/azops-pull.yml`](../../../.github/workflows) file containing the `workflow_dispatch` section your current repo.
+10. Now, we will run discovery using GitHub Actions, this initializes your GitHub repo with your Azure environment. This uses the GitHub Actions `workflow_dispatch` trigger and requires the latest [`.github/workflows/azops-pull.yml`](../../../.github/workflows) file containing the `workflow_dispatch` section your current repo.
 
     Go to the **Actions** tab in your GitHub repository and select the **AzOps-Pull** workflow. Click on **Run workflow**, select _Branch: main_ and _Action to trigger = pull_ and start the process with **Run workflow** button.
 
