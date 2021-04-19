@@ -67,7 +67,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring"
                         }
                     },
                     {
@@ -334,6 +334,19 @@
 						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
 					{
+                        "name": "esAscEmail",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Azure Security Center Email Contact",
+                        "toolTip": "Email address to get email notifications from Azure Security Center",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                            "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                            "validationMessage": "Please provide a valid email address"
+                        }
+                    },
+                    {
 						"name": "esAscVms",
 						"type": "Microsoft.Common.OptionsGroup",
 						"label": "Enable Azure Defender for servers",
@@ -396,9 +409,29 @@
 					{
 						"name": "esAscSql",
 						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for SQL",
+                        "label": "Enable Azure Defender for Azure SQL Database",
 						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL.",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Azure SQL Database.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscSqlOnVm",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for SQL servers on machines",
+						"defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL servers on machines.",
 						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
 						"constraints": {
 							"allowedValues": [
@@ -863,7 +896,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable identity (AuthN/AuthZ) for workloads in landing zones, you must allocate an identity Subscription that is dedicated to host your Active Directory domain controllers. Please note, this Subscription will be moved to the identity Management Group, and ARM will assign the selected policies. We recommend using a new Subscription with no existing resources.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/identity-and-access-management"
                         }
                     },
                     {
@@ -1020,7 +1053,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "You can optionally provide subscriptions for your first landing zones for both 'online' and 'corp' and assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/ES-schema.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance"
                         }
                     },
                     {
@@ -1031,7 +1064,7 @@
                             "text": "Select the subscriptions you want to move to online management group.",
                             "link": {
                                 "label": "Learn more",
-                                "uri": "https://docs.microsoft.com/azure/azure-monitor/insights/solutions"
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
                             }
                         }
                     },
@@ -1067,7 +1100,7 @@
                             "text": "Select the subscriptions you want to move to corp management group.",
                             "link": {
                                 "label": "Learn more",
-                                "uri": "https://docs.microsoft.com/azure/azure-monitor/insights/solutions"
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
                             }
                         }
                     },
@@ -1408,10 +1441,12 @@
             "denyPipForIdentity": "[steps('esIdentityGoalState').esIdDenyPublicIp]",
             "enableVmBackupForIdentity": "[steps('esIdentityGoalState').esIdAzBackup]",
             "enableAsc": "[steps('esGoalState').esAsc]",
+            "emailContactAsc": "[steps('esGoalState').esAscEmail]",
             "enableAscForServers": "[steps('esGoalState').esAscVms]",
             "enableAscForAppServices": "[steps('esGoalState').esAscApps]",
             "enableAscForStorage": "[steps('esGoalState').esAscStorage]",
             "enableAscForSql": "[steps('esGoalState').esAscSql]",
+            "enableAscForSqlOnVm": "[steps('esGoalState').esAscSqlOnVm]",
             "enableAscForKeyVault": "[steps('esGoalState').esAscKeyVault]",
             "enableAscForArm": "[steps('esGoalState').esAscArm]",
             "enableAscForDns": "[steps('esGoalState').esAscDns]",
