@@ -68,6 +68,17 @@
                 "description": "Select whether the ExpressRoute Gateway should be deployed or not."
             }
         },
+        "enableDdoS": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether the DDoS Standard protection plan should be enabled or not."
+            }
+        },
         "connectivitySubscriptionId": {
             "type": "string",
             "defaultValue": "",
@@ -110,9 +121,21 @@
         }
     },
     "variables": {
+        "policyDefinitions": {
+            "dDoSPolicyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d"
+        },
+        "policyAssignmentNames": {
+            "deployDdoS": "Enable-DDoS-VNET"
+        },
+        "roleAssignmentNames": {
+            "deployDdoS": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployDdoS, 'platform'))]"
+        },
+        "rbacNetworkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7",
         "vpngwname": "[concat(parameters('topLevelManagementGroupPrefix'), '-vpngw-', parameters('location'))]",
         "erGwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ergw-', parameters('location'))]",
         "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-connectivity')]",
+        "dDoSRgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos')]",
+        "dDoSName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos-', parameters('location'))]",
         "hubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
         "azVpnGwIpName": "[concat(variables('vpngwname'), '-pip')]",
         "azVpnGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
@@ -125,6 +148,7 @@
         "azFwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallSubnet')]",
         "azFwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwIpName'))]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke'), 64)]",
+        "dDosResourceDeploymentName": "[take(concat(deployment().name, 'ddos'), 64)]",
         // Creating variable that later will be used in conjunction with the union() function to cater for conditional subnet creation while ensuring idempotency
         "gwSubnet": [
             {
@@ -159,9 +183,101 @@
                 "name": "ErGw3AZ",
                 "tier": "ErGw3AZ"
             }
+        },
+        "ddosProtectionPlanId": {
+            "id": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('dDoSRgName'), '/providers/Microsoft.Network/ddosProtectionPlans/', variables('dDoSName'))]"
         }
     },
     "resources": [
+        {
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableHub'), 'Yes'))]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').deployDdoS]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployDdoS]",
+                "displayName": "[variables('policyAssignmentNames').deployDdoS]",
+                "policyDefinitionId": "[variables('policyDefinitions').dDoSPolicyDefinitionId]",
+                "parameters": {
+                    "ddosPlan": {
+                        "value": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('dDoSRgName'), '/providers/Microsoft.Network/ddosProtectionPlans/', variables('dDoSName'))]"
+                    },
+                    "effect": {
+                        "value": "Modify"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableHub'), 'Yes'))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployDdoS]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployDdoS)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacNetworkContributor'))]",
+                "principalId": "[if(and(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableHub'), 'Yes')), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployDdoS), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
+        {
+            // Conditionally enable DDoS Protection plan
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableHub'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "[concat('EntScale', 'connectivityDdoS')]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2019-10-01",
+                            "location": "[deployment().location]",
+                            "name": "[variables('dDoSRgName')]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
+                            "name": "[variables('dDosResourceDeploymentName')]",
+                            "resourceGroup": "[variables('dDoSRgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('dDoSRgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/ddosProtectionPlans",
+                                            "apiVersion": "2019-02-01",
+                                            "name": "[variables('dDoSName')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
         {
             // Conditionally deploy virtual network hub
             "condition": "[and(equals(parameters('enableHub'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
@@ -169,6 +285,9 @@
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
             "name": "[concat('EntScale', '-connectivityHubSub')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', concat('EntScale', 'connectivityDdoS'))]"
+            ],
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
             "properties": {
                 "mode": "Incremental",
@@ -217,7 +336,9 @@
                                                                           empty(parameters('subnetMaskForGw'))), variables('gwSubnet'), json('[]')), 
                                                                           if(
                                                                               not(
-                                                                                  empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')))]"
+                                                                                  empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')))]",
+                                                "enableDdosProtection": "[if(equals(parameters('enableDdoS'), 'Yes'), 'true', 'false')]",
+                                                "ddosProtectionPlan": "[if(equals(parameters('enableDdoS'), 'Yes'), variables('ddosProtectionPlanId'), json('null'))]"
                                             }
                                         },
                                         {
