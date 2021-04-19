@@ -196,7 +196,7 @@
             "denyAksPriv": "/providers/Microsoft.Authorization/policyDefinitions/95edb821-ddaf-4404-9732-666045e056b4",
             "denyAksNoPrivEsc": "/providers/Microsoft.Authorization/policyDefinitions/1c6e92c9-99f0-4e55-9cf2-0c234dc48f99",
             "denyHttpIngressAks": "/providers/Microsoft.Authorization/policyDefinitions/1a5b4dca-0b6f-4cf5-907c-56316bc1bf3d",
-            "dDoSPolicyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d"
+            "deployDoS": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d"
         },
         "policyAssignmentNames": {
             "deployEncryptionInTransit": "Enforce-TLS-SSL",
@@ -217,6 +217,7 @@
             "deployDdoS": "Enable-DDoS-VNET"
         },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "rbacNetworkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7",
         "roleAssignmentNames": {
             "deployEncryptionInTransit": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').deployEncryptionInTransit))]",
             "deployVmBackup": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployVmBackup))]",
@@ -229,43 +230,72 @@
             "deployDdOsConnectivityMg": "[guid(concat(parameters('topLevelManagementGroupPrefix'), '-connectivity'))]"
         },
         "deploymentUris":{
-            "lzCorp": "[uri(deployment().properties.templateLink.uri, 'lz-corp.json')]"
+            "lzOnline": "[uri(deployment().properties.templateLink.uri, 'lz-online.json')]"
         },
         "deploymentNames": {
-            "policyForCorp": "[concat('EntScale-', 'corp-policy-', deployment().location)]",
-            "policyForPrivateEndpointToCorp": "[concat('EntScale-', 'deny-public-endpoint-', deployment().location)]"
-        }
+            "policyForOnline": "[concat('EntScale-', 'online-policy-', deployment().location)]"
+        },
+        "dDoSRgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos')]",
+        "dDoSName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos-', parameters('location'))]"
         //"blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}"
     },
     "resources": [
         {
-            "condition": "[or(equals(parameters('enableLzDdoS'), 'Yes'), equals(parameters('denyPublicEndpoints'), 'Yes'))]",
+            "condition": "[and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deployDdoS]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployDdoS]",
+                "displayName": "[variables('policyAssignmentNames').deployDdoS]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployDoS]",
+                "parameters": {
+                    "ddosPlan": {
+                        "value": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('dDoSRgName'), '/providers/Microsoft.Network/ddosProtectionPlans/', variables('dDoSName'))]"
+                    },
+                    "effect": {
+                        "value": "Modify"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployDdoS]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployDdoS)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacNetworkContributor'))]",
+                "principalId": "[if(and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId')))), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployDdoS), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('denyPublicEndpoints'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-corp')]",
-            "name": "[variables('deploymentNames').policyForCorp]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-online')]",
+            "name": "[variables('deploymentNames').policyForOnline]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').lzCorp]"
+                    "uri": "[variables('deploymentUris').lzOnline]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('topLevelManagementGroupPrefix')]"
                     },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "enableLzDdoS": {
-                        "value": "[parameters('enableLzDdoS')]"
-                    },
                     "denyPublicEndpoints": {
                         "value": "[parameters('denyPublicEndpoints')]"
-                    },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
                     }
                 }
             }
