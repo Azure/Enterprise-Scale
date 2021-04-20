@@ -820,6 +820,26 @@
                         "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]"
                     },
                     {
+                        "name": "esDdoS",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable DDoS Protection Standard",
+                        "defaultValue": "Yes (recommended)",
+                        "visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]",
+                        "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Protection Standard will be enabled.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },                              
+                    {
                         "name": "esVpnGw",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy VPN Gateway",
@@ -1323,6 +1343,66 @@
                         }
                     },
                     {
+                        "name": "esLzDdoS",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable DDoS Protection Standard",
+                        "defaultValue": "Yes (recommended)",
+                        "visible": "[and(equals(steps('esConnectivityGoalState').esHub, 'Yes'), equals(steps('esConnectivityGoalState').esDdoS, 'Yes'))]",
+                        "toolTip": "If 'Yes' is selected when also adding a connectivity subscription earlier, DDoS Protection Standard will be enabled.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },
+					{
+                        "name": "esLzPrivateLink",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Prevent usage of Public Endpoints for PaaS services in the online landing zones",
+                        "defaultValue": "Yes (recommended)",
+                        "visible": true,
+                        "toolTip": "If 'Yes' is selected then Azure Policy will prevent PaaS resources to use public endpoints.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },
+					{
+                        "name": "esEncryptionInTransit",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Ensure encryption in transit is enabled for PaaS services",
+                        "defaultValue": "Yes (recommended)",
+                        "visible": true,
+                        "toolTip": "If 'Yes' is selected then Azure Policy will ensure PaaS resources uses TLS and SSL.",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ]
+                        }
+                    },					
+                    {
                         "name": "esVmMonitoring",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Ensure Azure VMs (Windows & Linux) are being monitored",
@@ -1612,6 +1692,7 @@
             "enableErGw": "[steps('esConnectivityGoalState').esErGw]",
             "enableVpnGw": "[steps('esConnectivityGoalState').esVpnGw]",
             "enableHub": "[steps('esConnectivityGoalState').esHub]",
+            "enableDdoS": "[steps('esConnectivityGoalState').esDdoS]",
             "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esConnectivitySub, steps('esGoalState').esMgmtSub)), steps('esConnectivityGoalState').esConnectivitySub, '')]",
             "enableAzFw": "[steps('esConnectivityGoalState').esAzFw]",
             "addressPrefix": "[steps('esConnectivityGoalState').esAddressHub]",
@@ -1650,6 +1731,9 @@
             "enableSqlAudit": "[steps('lzGoalState').esSqlAudit]",
             "enableSqlEncryption": "[steps('lzGoalState').esSqlEncryption]",
             "enableVmBackup": "[steps('lzGoalState').esAzBackup]",
+			"enableLzDdoS": "[steps('lzGoalState').esLzDdoS]",
+			"denyPublicEndpoints": "[steps('lzGoalState').esLzPrivateLink]",
+			"enableEncryptionInTransit": "[steps('lzGoalState').esEncryptionInTransit]",
             "enableAksPolicy": "[steps('lzGoalState').esAksPolicy]",
             "denyAksPrivileged": "[steps('lzGoalState').esAksPriv]",
             "denyAksPrivilegedEscalation": "[steps('lzGoalState').esAksNoPriv]",
