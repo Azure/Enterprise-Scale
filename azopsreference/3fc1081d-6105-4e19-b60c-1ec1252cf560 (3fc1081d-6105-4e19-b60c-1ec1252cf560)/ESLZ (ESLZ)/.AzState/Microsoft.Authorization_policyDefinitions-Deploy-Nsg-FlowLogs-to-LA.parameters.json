@@ -1,0 +1,229 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deploy-Nsg-FlowLogs-to-LA",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Deploys NSG flow logs and traffic analytics to Log Analytics with a specfied retention period.",
+          "DisplayName": "Deploys NSG flow logs and traffic analytics to Log Analytics",
+          "Mode": "Indexed",
+          "Parameters": {
+            "retention": {
+              "type": "Integer",
+              "metadata": {
+                "displayName": "Retention"
+              },
+              "defaultValue": 5
+            },
+            "interval": {
+              "type": "Integer",
+              "metadata": {
+                "displayName": "Traffic Analytics processing interval mins (10/60)"
+              },
+              "defaultValue": 60
+            },
+            "workspace": {
+              "type": "String",
+              "metadata": {
+                "strongType": "omsWorkspace",
+                "displayName": "Resource ID of Log Analytics workspace",
+                "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID."
+              },
+              "defaultValue": ""
+            },
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "DeployIfNotExists",
+                "Disabled"
+              ],
+              "defaultValue": "DeployIfNotExists"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Network/networkSecurityGroups"
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]",
+              "details": {
+                "type": "Microsoft.Network/networkWatchers/flowlogs",
+                "name": "[if(empty(coalesce(field('Microsoft.Network/networkSecurityGroups/flowLogs[*].id'))), 'null/null', concat(split(first(field('Microsoft.Network/networkSecurityGroups/flowLogs[*].id')), '/')[8], '/', split(first(field('Microsoft.Network/networkSecurityGroups/flowLogs[*].id')), '/')[10]))]",
+                "existenceCondition": {
+                  "allOf": [
+                    {
+                      "field": "Microsoft.Network/networkWatchers/flowLogs/enabled",
+                      "equals": "true"
+                    }
+                  ]
+                },
+                "existenceScope": "resourceGroup",
+                "roleDefinitionIds": [
+                  "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7",
+                  "/providers/Microsoft.Authorization/roleDefinitions/81a9662b-bebf-436f-a333-f67b29880f12",
+                  "/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+                  "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab",
+                  "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ],
+                "resourceGroupName": "[if(empty(coalesce(field('Microsoft.Network/networkSecurityGroups/flowLogs'))), 'NetworkWatcherRG', split(first(field('Microsoft.Network/networkSecurityGroups/flowLogs[*].id')), '/')[4])]",
+                "deploymentScope": "subscription",
+                "deployment": {
+                  "location": "northeurope",
+                  "properties": {
+                    "mode": "Incremental",
+                    "parameters": {
+                      "location": {
+                        "value": "[field('location')]"
+                      },
+                      "networkSecurityGroup": {
+                        "value": "[field('id')]"
+                      },
+                      "workspace": {
+                        "value": "[parameters('workspace')]"
+                      },
+                      "retention": {
+                        "value": "[parameters('retention')]"
+                      },
+                      "interval": {
+                        "value": "[parameters('interval')]"
+                      }
+                    },
+                    "template": {
+                      "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                      "contentVersion": "1.0.0.0",
+                      "parameters": {
+                        "location": {
+                          "type": "String"
+                        },
+                        "networkSecurityGroup": {
+                          "type": "String"
+                        },
+                        "workspace": {
+                          "type": "String"
+                        },
+                        "retention": {
+                          "type": "int"
+                        },
+                        "interval": {
+                          "type": "int"
+                        },
+                        "time": {
+                          "type": "String",
+                          "defaultValue": "[utcNow()]"
+                        }
+                      },
+                      "variables": {
+                        "resourceGroupName": "[split(parameters('networkSecurityGroup'), '/')[4]]",
+                        "securityGroupName": "[split(parameters('networkSecurityGroup'), '/')[8]]",
+                        "storageAccountName": "[concat('es', uniqueString(variables('securityGroupName'), parameters('time')))]"
+                      },
+                      "resources": [
+                        {
+                          "type": "Microsoft.Resources/deployments",
+                          "apiVersion": "2019-10-01",
+                          "name": "[concat(variables('resourceGroupName'), '.', variables('securityGroupName'))]",
+                          "resourceGroup": "[variables('resourceGroupName')]",
+                          "properties": {
+                            "mode": "Incremental",
+                            "template": {
+                              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                              "contentVersion": "1.0.0.0",
+                              "resources": [
+                                {
+                                  "type": "Microsoft.Storage/storageAccounts",
+                                  "apiVersion": "2019-06-01",
+                                  "name": "[variables('storageAccountName')]",
+                                  "location": "[parameters('location')]",
+                                  "properties": {},
+                                  "kind": "StorageV2",
+                                  "sku": {
+                                    "name": "Standard_LRS",
+                                    "tier": "Standard"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "type": "Microsoft.Resources/deployments",
+                          "apiVersion": "2019-10-01",
+                          "name": "[concat('NetworkWatcherRG', '.', variables('securityGroupName'))]",
+                          "resourceGroup": "NetworkWatcherRG",
+                          "properties": {
+                            "mode": "Incremental",
+                            "template": {
+                              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                              "contentVersion": "1.0.0.0",
+                              "resources": [
+                                {
+                                  "type": "Microsoft.Network/networkWatchers",
+                                  "apiVersion": "2020-05-01",
+                                  "name": "[concat('NetworkWatcher_', toLower(parameters('location')))]",
+                                  "location": "[parameters('location')]",
+                                  "properties": {},
+                                  "resources": [
+                                    {
+                                      "type": "flowLogs",
+                                      "apiVersion": "2019-11-01",
+                                      "name": "[concat(variables('securityGroupName'), '-Network-flowlog')]",
+                                      "location": "[parameters('location')]",
+                                      "properties": {
+                                        "enabled": true,
+                                        "format": {
+                                          "type": "JSON",
+                                          "version": 2
+                                        },
+                                        "retentionPolicy": {
+                                          "days": "[parameters('retention')]",
+                                          "enabled": true
+                                        },
+                                        "flowAnalyticsConfiguration": {
+                                          "networkWatcherFlowAnalyticsConfiguration": {
+                                            "enabled": true,
+                                            "trafficAnalyticsInterval": "[parameters('interval')]",
+                                            "workspaceResourceId": "[parameters('workspace')]"
+                                          }
+                                        },
+                                        "storageId": "[concat(subscription().id, '/resourceGroups/', variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+                                        "targetResourceId": "[parameters('networkSecurityGroup')]"
+                                      },
+                                      "dependsOn": [
+                                        "[concat('NetworkWatcher_', toLower(parameters('location')))]"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          "dependsOn": [
+                            "[concat(variables('resourceGroupName'), '.', variables('securityGroupName'))]"
+                          ]
+                        }
+                      ],
+                      "outputs": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
