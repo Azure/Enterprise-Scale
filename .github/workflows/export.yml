@@ -1,56 +1,219 @@
-name: 'AzOps-Export'
+---
+name: "Export"
 
 on:
-  schedule:
-    # This is an upstream  repo specific action to allow exporting Azure Policy and anonymize Enterprise-Scale artefact.
-    - cron:  '0 */6 * * *'
+
+  #
+  # Workflow Dispatch
+  # This is to invoke the action from the GitHub UI
+  #
+
   workflow_dispatch:
-    inputs:
-      action:
-        description: 'Action to trigger pull'
-        required: true
-        default: 'pull'
-      logLevel:
-        description: "Log level"
-        required: true
-        default: "warning"
+
+  #
+  # Schedule
+  # This is an optional trigger to pull the latest Azure
+  # hierarchy into the Git repository in a recurring
+  # manner.
+  #
+  # Default: Every 6 hours
+  #
+
+  schedule:
+    - cron: "0 */6 * * *"
+
 env:
-  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  AZOPS_STATE: "azopsreference"
-  AZOPS_GENERALIZE_TEMPLATES: "1"
-  AZOPS_DEFAULT_DEPLOYMENT_REGION: "northeurope"
-  AZOPS_ENROLLMENT_ACCOUNT: ""
-  AZOPS_OFFER_TYPE: "MS-AZR-0017P"
-  AZOPS_IGNORE_CONTEXT_CHECK: "0"
-  AZOPS_INVALIDATE_CACHE: "1"
-  AZOPS_SKIP_RESOURCE_GROUP: "1"
-  AZOPS_SKIP_POLICY: "0"
-  AZOPS_THROTTLE_LIMIT: "10"
-  GITHUB_USERNAME: "AzOps"
-  GITHUB_EMAIL: "noreply@azure.com"
-  GITHUB_PULL_REQUEST: "Azure Change Notification"
-  GITHUB_CONTEXT: ${{ toJson(github) }}
-  GITHUB_ISSUE: ${{ github.event.pull_request._links.issue.href }}
-  GITHUB_COMMENTS: ${{ github.event.pull_request._links.comments.href }}
-  GITHUB_BASE_REF: ${{ github.event.pull_request.base.ref }}
-  GITHUB_HEAD_REF: ${{ github.event.pull_request.head.ref }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_AUTO_MERGE: "0"
-  VERBOSE: "0"
-  DEBUG: "0"
+
+  #
+  # Folder Name
+  # By default we generate the hierachy within the
+  # 'azops' folder within the root of the repository.
+  # If this property is modified, the config value within
+  # the settings.json file - Core.State will also need
+  # to be changed.
+  #
+  # Default: root
+  #
+
+  folder: "reference"
+
+  #
+  # Branch Name
+  # As part of the Pull workflow we check a temporary branch
+  # this branch was previously know as system, this value can
+  # be changed if this name is already reserved for other systems
+  # within the repository.
+  #
+  # Default: automated
+  #
+
+  branch: "automated"
+
+  #
+  # Commit Message
+  # During the Pull workflow, the changes are commited to the
+  # temporary branch, the message which is applied within the
+  # Git history can be changed as needed.
+  #
+  # Default: Automated commit
+  #
+
+  commit_message: "Automated commit"
+
+  #
+  # Pull Request
+  # The generated Pull Request for the Pull workflow can be
+  # modified to help indicate when changes we're merged in the
+  # Git history.
+  #
+  # Default: Automated state
+  #
+
+  pull_request: "Automated State"
 
 jobs:
-  pull:
-    timeout-minutes: 60
-    if:  github.repository == 'Azure/Enterprise-Scale'
-    name: Pull
-    runs-on: ubuntu-latest
+
+  export:
+
+    #
+    # Export
+    #
+
+    name: "Export"
+    runs-on: ubuntu-20.04
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - name: Actions checkout
+
+      #
+      # Checkout
+      # Checks-out the repository
+      #
+
+      - name: "Checkout"
         uses: actions/checkout@v2
-      - name: GitHub context
-        run: echo "$GITHUB_CONTEXT"
-      - name: Actions azops
-        uses: Azure/AzOps@main
         with:
-          mode: pull
+          fetch-depth: 0
+
+      #
+      # Configure
+      # Set global options
+      #
+
+      - name: "Configure"
+        run: |
+          git config user.name github-actions
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        shell: bash
+
+      #
+      # Checkout
+      # Switch branches
+      #
+
+      - name: "Checkout"
+        run: |
+          git checkout -b ${{ env.branch }}
+        shell: bash
+
+      #
+      # Dependencies
+      # Install required runtime modules
+      #
+
+      - name: "Dependencies"
+        run: |
+          Install-Module -Name AzOps -Force
+        shell: pwsh
+
+      #
+      # Connect
+      # Authenticate Azure context
+      #
+
+      - name: "Connect"
+        run: |
+          $credential = New-Object PSCredential -ArgumentList $env:ARM_CLIENT_ID, (ConvertTo-SecureString -String $env:ARM_CLIENT_SECRET -AsPlainText -Force)
+          Connect-AzAccount -TenantId $env:ARM_TENANT_ID -ServicePrincipal -Credential $credential -SubscriptionId $env:ARM_SUBSCRIPTION_ID
+        shell: pwsh
+
+      #
+      # Initialize
+      # Generate new state data
+      #
+
+      - name: "Initialize"
+        run: |
+          Import-PSFConfig -Path settings.json -Schema MetaJson
+          Initialize-AzOpsRepository -Rebuild
+          Get-Job | Remove-Job -Force
+        shell: pwsh
+
+      #
+      # Status
+      # Check for data changes
+      #
+
+      - name: "Status"
+        id: status
+        run: |
+          STATUS=$(git status --short)
+          echo $STATUS
+          if [ -z "$STATUS" ]
+          then
+            echo "::set-output name=state::stop"
+          else
+            echo "::set-output name=state::continue"
+          fi
+        shell: bash
+
+      #
+      # Add
+      # Add file content to index
+      #
+
+      - name: "Add"
+        if: steps.status.outputs.state == 'continue'
+        run: |
+          git add "./${{ env.folder }}"
+        shell: bash
+
+      #
+      # Commit
+      # Record changes to the repository
+      #
+
+      - name: "Commit"
+        run: |
+          git commit -m "${{ env.commit_message }}"
+        shell: bash
+        if: steps.status.outputs.state == 'continue'
+
+      #
+      # Push
+      # Update remote refs along with associated objects
+      #
+
+      - name: "Push"
+        run: |
+          git push origin ${{ env.branch }} -f
+        shell: bash
+        if: steps.status.outputs.state == 'continue'
+
+      #
+      # Merge
+      # Automatically merge the head branch into base
+      #
+
+      - name: "Merge"
+        run: |
+          gh pr create --title "${{ env.pull_request }}" --body "-" --base ${{ github.ref }} --head ${{ env.branch }}
+          gh pr merge "${{ env.branch }}" --squash --delete-branch
+        shell: bash
+        if: steps.status.outputs.state == 'continue'
