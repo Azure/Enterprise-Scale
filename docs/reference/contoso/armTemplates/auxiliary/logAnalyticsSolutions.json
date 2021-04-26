@@ -17,7 +17,7 @@
         },
         "workspaceName": {
             "type": "string",
-            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId'))]",
+            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-la')]",
             "metadata": {
                 "description": "Provide resource name for the Log Analytics workspace. When deployed using ES RI, this name it provided deterministically based on ESLZ prefix."
             }
@@ -84,17 +84,6 @@
                 "description": "Select whether activity log solution should be enabled or not."
             }
         },
-        "enableAntiMalware": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes",
-            "metadata": {
-                "description": "Select whether antimalware solution should be enabled or not."
-            }
-        },
         "enableVmInsights": {
             "type": "string",
             "allowedValues": [
@@ -130,7 +119,7 @@
         }
     },
     "variables": {
-        "laResourceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]",
+        "laResourceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]",
         "solutions": {
             "security": {
                 "name": "[concat('Security', '(', parameters('workspaceName'), ')')]",
@@ -155,10 +144,6 @@
             "sqlAssessment": {
                 "name": "[concat('SQLAssessment', '(', parameters('workspaceName'), ')')]",
                 "marketplaceName": "SQLAssessment"
-            },
-            "antiMalware": {
-                "name": "[concat('AntiMalware', '(', parameters('workspaceName'), ')')]",
-                "marketplaceName": "AntiMalware"
             },
             "vmInsights": {
                 "name": "[concat('VMInsights', '(', parameters('workspaceName'), ')')]",
@@ -201,23 +186,6 @@
                             "plan": {
                                 "name": "[variables('solutions').agentHealth.name]",
                                 "product": "[concat('OMSGallery/', variables('solutions').agentHealth.marketplaceName)]",
-                                "promotionCode": "",
-                                "publisher": "Microsoft"
-                            }
-                        },
-                        {
-                            // Conditionally deploy solution for antimalware
-                            "condition": "[equals(parameters('enableAntiMalware'), 'Yes')]",
-                            "apiVersion": "2015-11-01-preview",
-                            "type": "Microsoft.OperationsManagement/solutions",
-                            "name": "[variables('solutions').antiMalware.name]",
-                            "location": "[parameters('workspaceRegion')]",
-                            "properties": {
-                                "workspaceResourceId": "[variables('laResourceId')]"
-                            },
-                            "plan": {
-                                "name": "[variables('solutions').antiMalware.name]",
-                                "product": "[concat('OMSGallery/', variables('solutions').antiMalware.marketplaceName)]",
                                 "promotionCode": "",
                                 "publisher": "Microsoft"
                             }
