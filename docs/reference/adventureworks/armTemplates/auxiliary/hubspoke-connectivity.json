@@ -46,6 +46,17 @@
                 "description": "Select whether the Azure Firewall should be deployed or not."
             }
         },
+        "enableAzFwDnsProxy": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the Azure Firewall should be used as DNS Proxy or not."
+            }
+        },
         "enableVpnGw": {
             "type": "string",
             "allowedValues": [
@@ -136,6 +147,7 @@
         "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-connectivity')]",
         "dDoSRgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos')]",
         "dDoSName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos-', parameters('location'))]",
+        "azFwPolicyName": "[concat(parameters('topLevelManagementGroupPrefix'), '-azfwpolicy-', parameters('location'))]",
         "hubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
         "azVpnGwIpName": "[concat(variables('vpngwname'), '-pip')]",
         "azVpnGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
@@ -186,6 +198,12 @@
         },
         "ddosProtectionPlanId": {
             "id": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('dDoSRgName'), '/providers/Microsoft.Network/ddosProtectionPlans/', variables('dDoSName'))]"
+        },
+        "azFirewallPolicyId": {
+            "id": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]"
+        },
+        "azFirewallDnsSettings": {
+                "enableProxy": true
         }
     },
     "resources": [
@@ -446,12 +464,23 @@
                                         },
                                         {
                                             "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), not(empty(parameters('subnetMaskForAzFw'))))]",
+                                            "type": "Microsoft.Network/firewallPolicies",
+                                            "apiVersion": "2020-11-01",
+                                            "name": "[variables('azFwPolicyName')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "dnsSettings": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('azFirewallDnsSettings'), json('null'))]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), not(empty(parameters('subnetMaskForAzFw'))))]",
                                             "apiVersion": "2020-05-01",
                                             "type": "Microsoft.Network/azureFirewalls",
                                             "name": "[variables('azfwname')]",
                                             "location": "[parameters('location')]",
                                             "zones": "[if(not(empty(parameters('firewallZones'))), parameters('firewallZones'), json('null'))]",
                                             "dependsOn": [
+                                                "[concat('Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]",
                                                 "[concat('Microsoft.Network/publicIpAddresses/', variables('azFwIpName'))]",
                                                 "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
@@ -468,7 +497,8 @@
                                                             }
                                                         }
                                                     }
-                                                ]
+                                                ],
+                                                "firewallPolicy": "[variables('azFirewallPolicyId')]"
                                             }
                                         }
                                     ]
