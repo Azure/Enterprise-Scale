@@ -24,7 +24,7 @@ Login with the enrollment account (e.g. with `Login-AzAccount`) and execute the 
 
 ```powershell
 # Provide the objectId of the service principal to grant access to enrolment account. 
-$spnObjectId = ""
+$spnObjectId = (Get-AzADServicePrincipal -DisplayName "MyAzOpsSPN").Id
 
 # Get context for the signed in enrolment account
 $currentContext = Get-AzContext

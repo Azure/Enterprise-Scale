@@ -100,7 +100,7 @@
         "retentionInDays": {
             "type": "string",
             "defaultValue": ""
-        },        
+        },
         "enableAsc": {
             "type": "string",
             "defaultValue": "No",
@@ -119,6 +119,13 @@
                 "Yes",
                 "No"
             ]
+        },
+        "emailContactAsc": {
+            "type": "string",
+            "metadata": {
+                "description": "Email address for Azure Security Center contact details."
+            },
+            "defaultValue": ""
         },
         "enableAscForServers": {
             "type": "string",
@@ -145,6 +152,14 @@
             ]
         },
         "enableAscForSql": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForSqlOnVm": {
             "type": "string",
             "defaultValue": "Free",
             "allowedValues": [
@@ -248,8 +263,16 @@
             "metadata": {
                 "description": "If 'Yes' is selected, policy will be assigned to enforce VMSS monitoring."
             }
-        }, 
+        },
         "enableSecuritySolution": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableEncryptionInTransit": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -289,14 +312,6 @@
             ],
             "defaultValue": "Yes"
         },
-        "enableAntiMalware": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
-        },
         "enableVmInsights": {
             "type": "string",
             "allowedValues": [
@@ -320,7 +335,7 @@
                 "No"
             ],
             "defaultValue": "Yes"
-        },               
+        },
         "enableSqlAudit": {
             "type": "string",
             "defaultValue": "No",
@@ -353,7 +368,23 @@
                 "No"
             ]
         },
+        "denyPublicEndpoints": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "enableStorageHttps": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableLzDdoS": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -417,6 +448,14 @@
             ],
             "defaultValue": "No"
         },
+        "enableDdoS": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "vpnGwType": {
             "type": "string",
             "allowedValues": [
@@ -440,8 +479,44 @@
         "firewallZones": {
             "type": "array",
             "defaultValue": []
+        },
+        "paToken": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "principalId": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "appId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "principalSecret": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "gitHubUserNameOrOrg": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "repositoryName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableAzOps": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36
         }
-
     },
     "variables": {
         "azPolicyEnvMapping": {
@@ -459,7 +534,8 @@
             "diagnosticsAndSecurity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/diagnosticsAndSecurity.json')]",
             "landingZone": "[uri(deployment().properties.templateLink.uri, 'auxiliary/lz.json')]",
             "identity": "[uri(deployment().properties.templateLink.uri, 'auxiliary/identity.json')]",
-            "corpConnectedLzs": "[uri(deployment().properties.templateLink.uri, 'auxiliary/corp-peering-copy.json')]"
+            "corpConnectedLzs": "[uri(deployment().properties.templateLink.uri, 'auxiliary/corp-peering-copy.json')]",
+            "azOps": "[uri(deployment().properties.templateLink.uri, 'auxiliary/azOpsSetup.json')]"
         },
         "moveSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-management', '/', parameters('managementSubscriptionId'))]",
         "noSubscription": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-management', '/', 'na')]",
@@ -479,7 +555,8 @@
             "connectivityDeploymentName": "[take(concat('EntScale-Networking', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "lzDeploymentName": "[take(concat('EntScale-LZ', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
             "identityDeploymentName": "[take(concat('EntScale-Identity', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
-            "corpConnectedDeploymentName": "[take(concat('EntScale-lz-connectivity', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
+            "corpConnectedDeploymentName": "[take(concat('EntScale-lz-connectivity', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "azOpsDeploymentName": "[take(concat('EntScale-AzOps', '-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix'))), 64)]"
         }
     },
     "resources": [
@@ -526,7 +603,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[concat('delayFor', copyIndex())]",
+            "name": "[concat('preparingToLaunch', copyIndex())]",
             "location": "[deployment().location]",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "dependsOn": [
@@ -536,7 +613,7 @@
                 "batchSize": 1,
                 "count": 20,
                 "mode": "Serial",
-                "name": "DeploymentDelay"
+                "name": "policyCompletion"
             },
             "properties": {
                 "mode": "Incremental",
@@ -619,7 +696,7 @@
             "name": "[variables('deploymentNames').monitoringDeploymentName]",
             "dependsOn": [
                 "[variables('deploymentNames').policyDeploymentName]",
-                "DeploymentDelay"
+                "policyCompletion"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -645,7 +722,7 @@
             }
         },
         {
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableAntiMalware'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "subscriptionId": "[parameters('managementSubscriptionId')]",
@@ -682,9 +759,6 @@
                     "enableActivityLog": {
                         "value": "[parameters('enableActivityLog')]"
                     },
-                    "enableAntiMalware": {
-                        "value": "[parameters('enableAntiMalware')]"
-                    },
                     "enableVmInsights": {
                         "value": "[parameters('enableVmInsights')]"
                     },
@@ -705,7 +779,7 @@
             "name": "[variables('deploymentNames').identityDeploymentName]",
             "dependsOn": [
                 "[variables('deploymentNames').policyDeploymentName]",
-                "DeploymentDelay"
+                "policyCompletion"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -734,14 +808,14 @@
             }
         },
         {
-            "condition": "[or(or(or(or(or(or(equals(parameters('enableVmBackup'), 'Yes'), equals(parameters('enableSqlAudit'), 'Yes')), equals(parameters('denyAksPrivilegedEscalation'), 'Yes'), equals(parameters('denyHttpIngressForAks'), 'Yes')), equals(parameters('denyAksPrivileged'), 'Yes'), equals(parameters('denyAksPrivileged'), 'Yes')), equals(parameters('denySubnetWithoutNsg'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Yes')), equals(parameters('enableSqlEncryption'), 'Yes'), equals(parameters('enableStorageHttps'), 'Yes'))]",
+            "condition": "[or(or(or(or(or(or(or(equals(parameters('enableEncryptionInTransit'), 'Yes'), equals(parameters('denyPublicEndpoints'), 'Yes')), equals(parameters('enableVmBackup'), 'Yes'), equals(parameters('enableSqlAudit'), 'Yes')), equals(parameters('denyAksPrivilegedEscalation'), 'Yes'), equals(parameters('denyHttpIngressForAks'), 'Yes')), equals(parameters('denyAksPrivileged'), 'Yes'), equals(parameters('denyAksPrivileged'), 'Yes')), equals(parameters('denySubnetWithoutNsg'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Yes')), equals(parameters('enableSqlEncryption'), 'Yes'), equals(parameters('enableStorageHttps'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-landingzones')]",
             "name": "[variables('deploymentNames').lzDeploymentName]",
             "dependsOn": [
                 "[variables('deploymentNames').policyDeploymentName]",
-                "DeploymentDelay"
+                "policyCompletion"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -786,6 +860,21 @@
                     },
                     "denySubnetWithoutNsg": {
                         "value": "[parameters('denySubnetWithoutNsg')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "enableLzDdoS": {
+                        "value": "[parameters('enableLzDdoS')]"
+                    },
+                    "denyPublicEndpoints": {
+                        "value": "[parameters('denyPublicEndpoints')]"
+                    },
+                    "enableEncryptionInTransit": {
+                        "value": "[parameters('enableEncryptionInTransit')]"
                     }
                 }
             }
@@ -797,8 +886,7 @@
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "name": "[variables('deploymentNames').diagAndSecDeploymentName]",
             "dependsOn": [
-                "[variables('deploymentNames').monitoringDeploymentName]",
-                "DeploymentDelay"
+                "[variables('deploymentNames').monitoringDeploymentName]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -817,6 +905,9 @@
                     "enableAsc": {
                         "value": "[parameters('enableAsc')]"
                     },
+                    "emailContactAsc": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
                     "enableAscForServers": {
                         "value": "[parameters('enableAscForServers')]"
                     },
@@ -828,6 +919,9 @@
                     },
                     "enableAscForSql": {
                         "value": "[parameters('enableAscForSql')]"
+                    },
+                    "enableAscForSqlOnVm": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
                     },
                     "enableAscForKeyVault": {
                         "value": "[parameters('enableAscForKeyVault')]"
@@ -880,7 +974,8 @@
             "apiVersion": "2020-05-01",
             "name": "[if(not(empty(parameters('connectivitySubscriptionId'))), variables('connectivityMoveSubscription'), variables('noConnectivitySubscription'))]",
             "dependsOn": [
-                "DeploymentDelay"
+                "[variables('deploymentNames').policyDeploymentName]",
+                "policyCompletion"
             ],
             "properties": {}
         },
@@ -891,8 +986,7 @@
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'), '-connectivity')]",
             "name": "[variables('deploymentNames').connectivityDeploymentName]",
             "dependsOn": [
-                "[variables('deploymentNames').diagAndSecDeploymentName]",
-                "DeploymentDelay"
+                "[variables('deploymentNames').diagAndSecDeploymentName]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -919,6 +1013,9 @@
                     },
                     "enableErGw": {
                         "value": "[parameters('enableErGw')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
@@ -973,6 +1070,59 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('enableAzOps'), 'Yes'), not(empty(parameters('principalSecret'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "name": "[variables('deploymentNames').azOpsDeploymentName]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').lzDeploymentName]",
+                "[variables('deploymentNames').diagAndSecDeploymentName]",
+                "[variables('deploymentNames').mgmtGroupDeploymentName]",
+                "[variables('deploymentNames').monitoringDeploymentName]",
+                "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
+                "[variables('deploymentNames').policyDeploymentName]",
+                "[variables('deploymentNames').connectivityDeploymentName]",
+                "[variables('deploymentNames').corpConnectedDeploymentName]",
+                "[variables('deploymentNames').identityDeploymentName]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azOps]"
+                },
+                "parameters": {
+                    "paToken": {
+                        "value": "[parameters('paToken')]"
+                    },
+                    "principalId": {
+                        "value": "[parameters('principalId')]"
+                    },
+                    "principalSecret": {
+                        "value": "[parameters('principalSecret')]"
+                    },
+                    "gitHubUserNameOrOrg": {
+                        "value": "[parameters('gitHubUserNameOrOrg')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('subscriptionId')]"
+                    },
+                    "appId": {
+                        "value": "[parameters('appId')]"
+                    },
+                    "repositoryName": {
+                        "value": "[parameters('repositoryName')]"
                     }
                 }
             }
