@@ -11,7 +11,7 @@
   * [Trey Research - Scope and Design](./docs/reference/treyresearch/README.md)
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
 * [Deploy workloads into Landing Zones](./docs/EnterpriseScale-Deploy-workloads.md)
-* [Getting started with Infrastructure-as-code](https://github.com/Azure/AzOps-Accelerator/wiki)
+* [Getting started with Infrastructure-as-Code](https://github.com/Azure/AzOps-Accelerator/wiki)
 * [Enterprise-Scale "in-a-box" tutorial](./docs/enterprise-scale-iab/README.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
