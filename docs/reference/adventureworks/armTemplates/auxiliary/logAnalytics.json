@@ -4,11 +4,17 @@
     "parameters": {
         "topLevelManagementGroupPrefix": {
             "type": "string",
-            "maxLength": 5
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
         },
         "managementSubscriptionId": {
             "type": "string",
-            "maxLength": 36
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subscription id for the dedicated management subscription."
+            }
         },
         "enableLogAnalytics": {
             "type": "string",
@@ -22,7 +28,10 @@
             }
         },
         "retentionInDays": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Select retention days for the logs in Log Analytics. This string will be converted to Int during deployment."
+            }
         }
     },
     "variables": {
@@ -40,6 +49,7 @@
     },
     "resources": [
         {
+            // Conditionally assign policy to enable Log Analytics and Azure Automation
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -55,10 +65,10 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-management')]",
                 "parameters": {
                     "workspaceName": {
-                        "value": "[concat(parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId'))]"
+                        "value": "[concat(parameters('topLevelManagementGroupPrefix'), '-la')]"
                     },
                     "automationAccountName": {
-                        "value": "[concat(parameters('topLevelManagementGroupPrefix'), '-a-', parameters('managementSubscriptionId'))]"
+                        "value": "[concat(parameters('topLevelManagementGroupPrefix'), '-aa')]"
                     },
                     "workspaceRegion": {
                         "value": "[deployment().location]"
@@ -76,6 +86,7 @@
             }
         },
         {
+            // Conditionally make role assignment for the policy that will deploy Log Analytics and Azure Automation
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
@@ -90,6 +101,7 @@
             }
         },
         {
+            // Conditionally invoke the template in the 'deployIfNotExist' policy to deploy Log Analytics and Azure Automation
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",

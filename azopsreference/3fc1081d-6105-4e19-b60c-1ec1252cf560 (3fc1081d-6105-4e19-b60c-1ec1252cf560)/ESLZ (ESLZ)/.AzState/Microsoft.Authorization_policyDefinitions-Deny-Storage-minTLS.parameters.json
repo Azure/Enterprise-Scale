@@ -1,0 +1,87 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Deny-Storage-minTLS",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Audit requirement of Secure transfer in your storage account. Secure transfer is an option that forces your storage account to accept requests only from secure connections (HTTPS). Use of HTTPS ensures authentication between the server and the service and protects data in transit from network layer attacks such as man-in-the-middle, eavesdropping, and session-hijacking",
+          "DisplayName": "Storage Account set to minumum TLS and Secure transfer should be enabled",
+          "Mode": "Indexed",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "The effect determines what happens when the policy rule is evaluated to match"
+              },
+              "allowedValues": [
+                "Audit",
+                "Deny",
+                "Disabled"
+              ],
+              "defaultValue": "Deny"
+            },
+            "minimumTlsVersion": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Storage Account select minimum TLS version",
+                "description": "Select version  minimum TLS version on Azure Storage Account to enforce"
+              },
+              "allowedValues": [
+                "TLS1_2",
+                "TLS1_1",
+                "TLS1_0"
+              ],
+              "defaultValue": "TLS1_2"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Storage/storageAccounts"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "value": "[requestContext().apiVersion]",
+                          "less": "2019-04-01"
+                        },
+                        {
+                          "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                          "exists": "false"
+                        }
+                      ]
+                    },
+                    {
+                      "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                      "equals": "false"
+                    },
+                    {
+                      "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
+                      "notequals": "[parameters('minimumTlsVersion')]"
+                    },
+                    {
+                      "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
+                      "exists": "false"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Append-Redis-sslEnforcement",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Append a specific min TLS version requirement and enforce SSL on Azure Cache for Redis. Enables secure server to client by enforce  minimal Tls Version to secure the connection between your database server and your client applications helps protect against 'man in the middle' attacks by encrypting the data stream between the server and your application. This configuration enforces that SSL is always enabled for accessing your database server.",
+          "DisplayName": "Azure Cache for Redis Append a specific min TLS version requirement and enforce TLS.",
+          "Mode": "Indexed",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect Azure Cache for Redis",
+                "description": "Enable or disable the execution of the policy minimum TLS version Azure Cache for Redis"
+              },
+              "allowedValues": [
+                "Append",
+                "Disabled"
+              ],
+              "defaultValue": "Append"
+            },
+            "minimumTlsVersion": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Select version for Redis server",
+                "description": "Select version minimum TLS version Azure Cache for Redis to enforce"
+              },
+              "allowedValues": [
+                "1.2",
+                "1.1",
+                "1.0"
+              ],
+              "defaultValue": "1.2"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Cache/redis"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "field": "Microsoft.Cache/Redis/minimumTlsVersion",
+                      "notequals": "[parameters('minimumTlsVersion')]"
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]",
+              "details": [
+                {
+                  "field": "Microsoft.Cache/Redis/minimumTlsVersion",
+                  "value": "[parameters('minimumTlsVersion')]"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

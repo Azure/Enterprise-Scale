@@ -1,0 +1,68 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "input": {
+      "value": {
+        "Name": "Append-AppService-latestTLS",
+        "ResourceType": "Microsoft.Authorization/policyDefinitions",
+        "SubscriptionId": null,
+        "Properties": {
+          "Description": "Append the AppService sites object to ensure that min Tls version is set to required minimum TLS version. Please note Append does not enforce compliance use then deny.",
+          "DisplayName": "AppService append sites with minimum TLS version to enforce.",
+          "Mode": "Indexed",
+          "Parameters": {
+            "effect": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+              },
+              "allowedValues": [
+                "Append",
+                "Disabled"
+              ],
+              "defaultValue": "Append"
+            },
+            "minTlsVersion": {
+              "type": "String",
+              "metadata": {
+                "displayName": "Select version minimum TLS Web App config",
+                "description": "Select version  minimum TLS version for a  Web App config to enforce"
+              },
+              "allowedValues": [
+                "1.2",
+                "1.0",
+                "1.1"
+              ],
+              "defaultValue": "1.2"
+            }
+          },
+          "PolicyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Web/sites/config"
+                },
+                {
+                  "field": "Microsoft.Web/sites/config/minTlsVersion",
+                  "notEquals": "[parameters('minTlsVersion')]"
+                }
+              ]
+            },
+            "then": {
+              "effect": "[parameters('effect')]",
+              "details": [
+                {
+                  "field": "Microsoft.Web/sites/config/minTlsVersion",
+                  "value": "[parameters('minTlsVersion')]"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

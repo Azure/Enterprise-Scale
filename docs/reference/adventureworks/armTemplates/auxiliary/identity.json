@@ -4,7 +4,10 @@
     "parameters": {
         "topLevelManagementGroupPrefix": {
             "type": "string",
-            "maxLength": 5
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
         },
         "denyRdpForIdentity": {
             "type": "string",
@@ -12,7 +15,10 @@
             "allowedValues": [
                 "Yes",
                 "No"
-            ]
+            ],
+            "metadata": {
+                "description": "Select whether policy to deny inbound RDP should be assigned or not."
+            }
         },
         "denySubnetWithoutNsgForIdentity": {
             "type": "string",
@@ -20,7 +26,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether policy to deny subnet without NSG should be assigned or not."
+            }
         },
         "denyPipForIdentity": {
             "type": "string",
@@ -28,7 +37,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether policy to deny puplic IP should be assigned or not."
+            }
         },
         "enableVmBackupForIdentity": {
             "type": "string",
@@ -36,7 +48,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "No"
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether policy to enable VM backup should be assigned or not."
+            }
         }
     },
     "variables": {
@@ -61,6 +76,7 @@
     },
     "resources": [
         {
+            // Conditionally enable policy to enforce VM Backup
             "condition": "[equals(parameters('enableVmBackupForIdentity'), 'Yes')]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -78,6 +94,7 @@
             }
         },
         {
+            // Conditionally assign roleAssignment for the policy that will enforce VM Backup
             "condition": "[equals(parameters('enableVmBackupForIdentity'), 'Yes')]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
@@ -92,6 +109,7 @@
             }
         },
         {
+            // Conditionally assign policy to prevent creation of puplic IP addresses
             "condition": "[equals(parameters('denyPipForIdentity'), 'Yes')]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -104,6 +122,7 @@
             }
         },
         {
+            // Conditionally assign policy to prevent inbound RDP 
             "condition": "[equals(parameters('denyRdpForIdentity'), 'Yes')]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -116,6 +135,7 @@
             }
         },
         {
+            // Conditionally assign policy to prevent subnet creation without associated NSG
             "condition": "[equals(parameters('denySubnetWithoutNsgForIdentity'), 'Yes')]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
