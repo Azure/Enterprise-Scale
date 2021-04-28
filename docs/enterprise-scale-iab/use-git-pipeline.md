@@ -78,13 +78,13 @@ In the previous exercises you deployed policy and initiative (policy set) defini
 
 Only execute this section in case you selected **No** for the **Deploy Log Analytics workspace** in **Platform management, security and governance** section of the [**Deploy the Management Group structure and policy/PolicySet definitions**](./deploy-tenant.md#deploy-the-management-group-structure-and-policypolicyset-definitions) step.
 
-We will use GitHub Actions to assign the **Collect Azure Activity Logs in to Log Analytics and Enable Diagnostic** policy to enable monitoring.
+We will use GitHub Actions to assign the **Deploy Diagnostic Settings for Activity Log to Log Analytics workspace** policy to enable monitoring.
 
 1. Pull latest master branch locally by running ```git checkout main``` and ```git pull```
 
 2. Create a new feature branch and give it a descriptive name (i.e. **policy-assignment-monitoring**). Checkout this new branch, ```git checkout <new-branch-name>```
 
-3. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-Diag-ActivityLog.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` into the `.AzState` folder of the `ES` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES (ES)\.AzState`
+3. Copy the file `Microsoft.Authorization_policyAssignments-Deploy-AzActivity-Log.parameters.json` from the folder `azopsreference\3fc1081d-6105-4e19-b60c-1ec1252cf560 (3fc1081d-6105-4e19-b60c-1ec1252cf560)\contoso (contoso)\.AzState` into the `.AzState` folder of the `ES` management group folder. (e.g. `azops\Tenant Root Group (<tenant-id>)\ES (ES)\.AzState`
 
 4. Change the following attributes highlighted in the copied file as described in the table below:
 
