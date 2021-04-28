@@ -4,12 +4,18 @@
     "parameters": {
         "topLevelManagementGroupPrefix": {
             "type": "string",
-            "maxLength": 5
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
         },
         "managementSubscriptionId": {
             "type": "string",
             "maxLength": 36,
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the subscription id for the dedicated management subscription"
+            }
         },
         "enableLogAnalytics": {
             "type": "string",
@@ -19,7 +25,7 @@
                 "No"
             ],
             "metadata": {
-                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
         },
         "enableAsc": {
@@ -30,16 +36,26 @@
                 "No"
             ],
             "metadata": {
-                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
         },
+        "emailContactAsc": {
+            "type": "string",
+            "metadata": {
+                "description": "Email address for Azure Security Center contact details."
+            }
+        },
+
         "enableAscForServers": {
             "type": "string",
             "defaultValue": "Free",
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for Virtual Machines"
+            }
         },
         "enableAscForAppServices": {
             "type": "string",
@@ -47,7 +63,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for App Services"
+            }
         },
         "enableAscForStorage": {
             "type": "string",
@@ -55,7 +74,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for Storage Accounts"
+            }
         },
         "enableAscForSql": {
             "type": "string",
@@ -63,7 +85,21 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for Azure SQL Databases"
+            }
+        },
+        "enableAscForSqlOnVm": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for Azure SQL on VMs"
+            }
         },
         "enableAscForKeyVault": {
             "type": "string",
@@ -71,7 +107,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for Azure Key Vault"
+            }
         },
         "enableAscForArm": {
             "type": "string",
@@ -79,7 +118,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for ARM"
+            }
         },
         "enableAscForDns": {
             "type": "string",
@@ -87,7 +129,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for DNS"
+            }
         },
         "enableAscForKubernetes": {
             "type": "string",
@@ -95,7 +140,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for AKS"
+            }
         },
         "enableAscForRegistries": {
             "type": "string",
@@ -103,7 +151,10 @@
             "allowedValues": [
                 "Standard",
                 "Free"
-            ]
+            ],
+            "metadata": {
+                "description": "Azure Defender pricing tier for ACR"
+            }
         },
         "enableArcMonitoring": {
             "type": "string",
@@ -140,7 +191,10 @@
         },
         "lzSubscriptionId": {
             "type": "array",
-            "defaultValue": []
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription id's of the subscription you want to move into the online landing zone management group"
+            }
         }
     },
     "variables": {
@@ -151,7 +205,7 @@
             "linuxArcMonitoring": "/providers/Microsoft.Authorization/policyDefinitions/9d2b61b4-1d14-4a63-be30-d4498e7ad2cf",
             "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a",
             "vmssMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad",
-            "deployAzureSecurity": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Standard')]",
+            "deployAzureSecurity": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-ASC-Config')]",
             "ascMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8"
         },
         "policyAssignmentNames": {
@@ -161,7 +215,7 @@
             "linuxArcMonitoring": "Deploy-LX-Arc-Monitoring",
             "vmssMonitoring": "Deploy-VMSS-Monitoring",
             "resourceDiagnostics": "Deploy-Resource-Diag",
-            "azureSecurity": "Deploy-ASC-Security",
+            "azureSecurity": "Deploy-ASC-Configuration",
             "ascMonitoring": "Deploy-ASC-Monitoring"
         },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
@@ -201,7 +255,7 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "logAnalytics": {
-                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
                     },
                     "logsEnabled": {
                         "value": "True"
@@ -241,7 +295,7 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "logAnalytics_1": {
-                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
                     }
                 }
             }
@@ -278,7 +332,7 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "logAnalytics_1": {
-                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
                     }
                 }
             }
@@ -315,7 +369,7 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "logAnalytics": {
-                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
                     }
                 }
             }
@@ -352,7 +406,7 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "logAnalytics": {
-                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
                     }
                 }
             }
@@ -373,6 +427,7 @@
             }
         },        
         {
+            // Conditional assignment of policy to enforce Azure Resource Diagnostics to Log Analytics
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -388,12 +443,13 @@
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
                     "logAnalytics": {
-                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]"
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
                     }
                 }
             }
         },
         {
+            // Role assignment of the conditional Azure Resource Diagnostics policy assignment
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
@@ -408,6 +464,7 @@
             }
         },        
         {
+            // Conditional assignment of policy to enforce Azure Security Center on subscriptions
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -417,11 +474,17 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "description": "Deploy-ASC-Defender",
-                "displayName": "Deploy-ASC-Defender",
+                "description": "Deploy-ASC-Configuration for Azure Defender and Security Contacts",
+                "displayName": "Deploy-ASC-Configuration",
                 "policyDefinitionId": "[variables('policyDefinitions').deployAzureSecurity]",
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
                 "parameters": {
+                    "emailSecurityContact": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "logAnalytics": {
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
+                    },
                     "pricingTierVms": {
                         "value": "[parameters('enableAscForServers')]"
                     },
@@ -440,19 +503,23 @@
                     "pricingTierKeyVaults": {
                         "value": "[parameters('enableAscForKeyVault')]"
                     },
+                    "pricingTierSqlServerVirtualMachines": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
                     "pricingTierKubernetesService": {
                         "value": "[parameters('enableAscForKubernetes')]"
                     },
-                    "pricingTierDns": {
-                        "value": "[parameters('enableAscForDns')]"
-                    },
                     "pricingTierArm": {
                         "value": "[parameters('enableAscForArm')]"
+                    },
+                    "pricingTierDns": {
+                        "value": "[parameters('enableAscForDns')]"
                     }
                 }
             }
         },
         {
+            // Role assignment of the conditional ASC policy assignment
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
@@ -467,6 +534,7 @@
             }
         },
         {
+            // Conditional assignment of policy to enable ASC monitoring
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
@@ -476,13 +544,34 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "description": "ASC-Monitoring",
-                "displayName": "ASC-Monitoring",
+                "description": "Azure Security Benchmark policy initiative",
+                "displayName": "Azure Security Benchmark",
                 "policyDefinitionId": "[variables('policyDefinitions').ascMonitoring]",
-                "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+                "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
+                "parameters": {
+                    "identityDesignateLessThanOwnersMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "useRbacRulesMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "useServicePrincipalToProtectSubscriptionsMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "identityEnableMFAForOwnerPermissionsMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "networkWatcherShouldBeEnabledMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "autoProvisioningOfTheLogAnalyticsAgentShouldBeEnabledOnYourSubscriptionMonitoringEffect": {
+                        "value": "Disabled"
+                    }
+                }
             }
         },         
         {
+            // Conditional ARM deployments to invoke template from ActivityLog diagnostics on management subscription
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -499,6 +588,7 @@
             }
         },
         {
+            // Conditional ARM deployments to invoke template from ASC on management subscription
             "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -510,11 +600,55 @@
             "subscriptionId": "[parameters('managementSubscriptionId')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[uri(deployment().properties.templateLink.uri, 'subscriptioSecurityConfig.json')]"
+                },
+                "parameters": {
+                    "emailSecurityContact": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "pricingTierVMs": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "pricingTierSqlServers": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "pricingTierAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "pricingTierStorageAccounts": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "pricingTierSqlServerVirtualMachines": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
+                    "pricingTierKubernetesService": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "pricingTierContainerRegistry": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
+                    "pricingTierKeyVaults": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "pricingTierDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    },
+                    "pricingTierArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('topLevelManagementGroupPrefix')]"
+                    },
+                    "workspaceResourceId":{
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
+                    }
+                }
             }
         },
         {
+            // Conditional ARM deployments to invoke template from ActivityLog diagnostics on corp connected subscription(s)
             "condition": "[and(not(empty(parameters('lzSubscriptionId'))),equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -535,6 +669,7 @@
             }
         },
         {
+            // Conditional invokation of DINE policy targeting subscriptions
             "condition": "[and(not(empty(parameters('lzSubscriptionId'))), equals(parameters('enableAsc'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -550,8 +685,51 @@
             "subscriptionId": "[if(not(empty(parameters('lzSubscriptionId'))), parameters('lzSubscriptionId')[copyIndex()], '')]",
             "properties": {
                 "mode": "incremental",
-                "template": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(variables('policyDefinitions').deployAzureSecurity, '2018-05-01').policyRule.then.details.deployment.properties.template, 'na')]",
-                "parameters": "[if(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableAsc'), 'Yes')), reference(concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01').parameters, json('null'))]"
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[uri(deployment().properties.templateLink.uri, 'subscriptioSecurityConfig.json')]"
+                },
+                "parameters": {
+                    "emailSecurityContact": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "pricingTierVMs": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "pricingTierSqlServers": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "pricingTierAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "pricingTierStorageAccounts": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "pricingTierSqlServerVirtualMachines": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
+                    "pricingTierKubernetesService": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "pricingTierContainerRegistry": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
+                    "pricingTierKeyVaults": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "pricingTierDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    },
+                    "pricingTierArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('topLevelManagementGroupPrefix')]"
+                    },
+                    "workspaceResourceId":{
+                        "value": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]"
+                    }
+                }
             }
         }             
     ],

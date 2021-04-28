@@ -3,18 +3,31 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
         },
         "managementSubscriptionId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subscription id for the dedicated management subscription."
+            }
         },
         "workspaceName": {
             "type": "string",
-            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId'))]"
+            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-la')]",
+            "metadata": {
+                "description": "Provide resource name for the Log Analytics workspace. When deployed using ES RI, this name it provided deterministically based on ESLZ prefix."
+            }
         },
         "workspaceRegion": {
             "type": "string",
-            "defaultValue": "[deployment().location]"
+            "defaultValue": "[deployment().location]",
+            "metadata": {
+                "description": "Select Azure region for the Log Analytics workspace. Default, we will use same region as deployment."
+            }
         },
         "enableSecuritySolution": {
             "type": "string",
@@ -22,7 +35,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether security solutions should be enabled or not."
+            }
         },
         "enableAgentHealth": {
             "type": "string",
@@ -30,7 +46,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether agent health solution should be enabled or not."
+            }
         },
         "enableChangeTracking": {
             "type": "string",
@@ -38,7 +57,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether change tracking solution should be enabled or not."
+            }
         },
         "enableUpdateMgmt": {
             "type": "string",
@@ -46,7 +68,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether update mgmt solution should be enabled or not."
+            }
         },
         "enableActivityLog": {
             "type": "string",
@@ -54,15 +79,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
-        },
-        "enableAntiMalware": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether activity log solution should be enabled or not."
+            }
         },
         "enableVmInsights": {
             "type": "string",
@@ -70,7 +90,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether VM insights solution should be enabled or not."
+            }
         },
         "enableServiceMap": {
             "type": "string",
@@ -78,7 +101,10 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether service map solution should be enabled or not."
+            }
         },
         "enableSqlAssessment": {
             "type": "string",
@@ -86,11 +112,14 @@
                 "Yes",
                 "No"
             ],
-            "defaultValue": "Yes"
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Select whether sql assessment solution should be enabled or not."
+            }
         }
     },
     "variables": {
-        "laResourceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la-', parameters('managementSubscriptionId')))]",
+        "laResourceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]",
         "solutions": {
             "security": {
                 "name": "[concat('Security', '(', parameters('workspaceName'), ')')]",
@@ -115,10 +144,6 @@
             "sqlAssessment": {
                 "name": "[concat('SQLAssessment', '(', parameters('workspaceName'), ')')]",
                 "marketplaceName": "SQLAssessment"
-            },
-            "antiMalware": {
-                "name": "[concat('AntiMalware', '(', parameters('workspaceName'), ')')]",
-                "marketplaceName": "AntiMalware"
             },
             "vmInsights": {
                 "name": "[concat('VMInsights', '(', parameters('workspaceName'), ')')]",
@@ -149,6 +174,7 @@
                     "variables": {},
                     "resources": [
                         {
+                            // Conditionally deploy solution for agent health
                             "condition": "[equals(parameters('enableAgentHealth'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -165,22 +191,7 @@
                             }
                         },
                         {
-                            "condition": "[equals(parameters('enableAntiMalware'), 'Yes')]",
-                            "apiVersion": "2015-11-01-preview",
-                            "type": "Microsoft.OperationsManagement/solutions",
-                            "name": "[variables('solutions').antiMalware.name]",
-                            "location": "[parameters('workspaceRegion')]",
-                            "properties": {
-                                "workspaceResourceId": "[variables('laResourceId')]"
-                            },
-                            "plan": {
-                                "name": "[variables('solutions').antiMalware.name]",
-                                "product": "[concat('OMSGallery/', variables('solutions').antiMalware.marketplaceName)]",
-                                "promotionCode": "",
-                                "publisher": "Microsoft"
-                            }
-                        },
-                        {
+                            // Conditionally deploy solution for activity log
                             "condition": "[equals(parameters('enableActivityLog'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -197,6 +208,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for change tracking
                             "condition": "[equals(parameters('enableChangeTracking'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -213,6 +225,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for vm insights
                             "condition": "[equals(parameters('enableVmInsights'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -229,6 +242,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for security
                             "condition": "[equals(parameters('enableSecuritySolution'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -245,6 +259,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for sentinel
                             "condition": "[equals(parameters('enableSecuritySolution'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -261,6 +276,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for service map
                             "condition": "[equals(parameters('enableServiceMap'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -277,6 +293,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for sql assessment
                             "condition": "[equals(parameters('enableSqlAssessment'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",
@@ -293,6 +310,7 @@
                             }
                         },
                         {
+                            // Conditionally deploy solution for update management
                             "condition": "[equals(parameters('enableUpdateMgmt'), 'Yes')]",
                             "apiVersion": "2015-11-01-preview",
                             "type": "Microsoft.OperationsManagement/solutions",

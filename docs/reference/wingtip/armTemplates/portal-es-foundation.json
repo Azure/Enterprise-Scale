@@ -41,12 +41,12 @@
                         "name": "esMgmtGroup",
                         "type": "Microsoft.Common.TextBox",
                         "label": "Management Group prefix",
-                        "toolTip": "Provide a prefix for management group structure, 1-5 characters.",
+                        "toolTip": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale.",
                         "defaultValue": "",
                         "constraints": {
                             "required": true,
-                            "regex": "^[a-z0-9A-Z-]{1,5}$",
-                            "validationMessage": "The prefix must be 1-5 characters."
+                            "regex": "^[a-z0-9A-Z-]{1,10}$",
+                            "validationMessage": "The prefix must be 1-10 characters."
                         }
                     }
                 ]
@@ -67,7 +67,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring"
                         }
                     },
                     {
@@ -104,7 +104,7 @@
                             "required": false
                         },
                         "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },           
+                    },
                     {
                         "name": "mgmtSubsApi",
                         "type": "Microsoft.Solutions.ArmApiControl",
@@ -128,7 +128,7 @@
                             "allowedValues": "[map(steps('esGoalState').mgmtSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                             "required": true
                         }
-                    },     			
+                    },
                     {
                         "name": "textBlock1",
                         "type": "Microsoft.Common.TextBlock",
@@ -159,7 +159,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esChangeTracking",
@@ -179,7 +179,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esUpdateMgmt",
@@ -199,7 +199,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esActivityLog",
@@ -219,7 +219,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esVmInsights",
@@ -239,27 +239,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },
-                    {
-                        "name": "esAntiMalware",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Antimalware solution",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esServiceMap",
@@ -279,7 +259,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esSqlAssessment",
@@ -299,7 +279,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "textBlock0",
@@ -312,7 +292,7 @@
                                 "uri": "https://docs.microsoft.com/azure/security/fundamentals/overview"
                             }
                         }
-                    },					
+                    },
                     {
                         "name": "esAsc",
                         "type": "Microsoft.Common.OptionsGroup",
@@ -331,188 +311,221 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
-					{
-						"name": "esAscVms",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for servers",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for all servers.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscApps",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for AppServices",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for AppServices.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscStorage",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for Storage",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Storage.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscSql",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for SQL",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscKeyVault",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for Key Vault",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Key Vault.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscArm",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for Azure Resource Manager",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Resource Manager.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscDns",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for DNS",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for DNS.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscKubernetes",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for Kubernetes",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Kubernetes.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},
-					{
-						"name": "esAscRegistries",
-						"type": "Microsoft.Common.OptionsGroup",
-						"label": "Enable Azure Defender for Container registries",
-						"defaultValue": "Yes (recommended)",
-						"toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Container registries.",
-						"visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
-						"constraints": {
-							"allowedValues": [
-								{
-									"label": "Yes (recommended)",
-									"value": "Standard"
-								},
-								{
-									"label": "No, Azure Defender Off",
-									"value": "Free"
-								}
-							]
-						}
-					},					                  
+                    {
+                        "name": "esAscEmail",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Azure Security Center Email Contact",
+                        "toolTip": "Email address to get email notifications from Azure Security Center",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                            "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                            "validationMessage": "Please provide a valid email address"
+                        }
+                    },
+                    {
+                        "name": "esAscVms",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for servers",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for all servers.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscApps",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for AppServices",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for AppServices.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscStorage",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for Storage",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Storage.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscSql",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for Azure SQL Database",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Azure SQL Database.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscSqlOnVm",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for SQL servers on machines",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL servers on machines.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscKeyVault",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for Key Vault",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Key Vault.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscArm",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for Azure Resource Manager",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Resource Manager.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscDns",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for DNS",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for DNS.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscKubernetes",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for Kubernetes",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Kubernetes.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscRegistries",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for Container registries",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Container registries.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
                     {
                         "name": "esSecuritySolution",
                         "type": "Microsoft.Common.OptionsGroup",
@@ -531,8 +544,164 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    }					
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                    }
+                ]
+            },
+            {
+                "name": "lzDevOps",
+                "label": "Platform DevOps and Automation",
+                "subLabel": {},
+                "bladeTitle": "lz Dev Ops",
+                "elements": [
+                    {
+                        "name": "info",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": "[not(empty(steps('esGoalState').esMgmtSub))]",
+                        "options": {
+                            "icon": "Info",
+                            "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
+                            "uri": "https://github.com/azure/azops-accelerator/wiki/introduction"
+                        }
+                    },
+					{
+                        "name": "correction",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": "[empty(steps('esGoalState').esMgmtSub)]",
+                        "options": {
+                            "icon": "Warning",
+                            "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
+                            "uri": "https://github.com/azure/azops-accelerator/wiki/introduction"
+                        }
+                    },
+                    {
+                        "name": "cicdOption",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Deploy integrated CICD pipeline?",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Yes"
+                                },
+                                {
+                                    "label": "No",
+                                    "value": "No"
+                                }
+                            ],
+                            "required": true
+                        },
+                        "visible": "[not(empty(steps('esGoalState').esMgmtSub))]"
+                    },
+                    {
+                        "name": "Instructions",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]",
+                        "options": {
+                            "text": "Provide the credentials to initialize the repository with the ARM templates for Enterprise-Scale.",
+                            "link": {
+                                "label": "Learn more",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
+                            }
+                        }
+                    },
+                    {
+                        "name": "optionsGroup1",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Select CICD option",
+                        "defaultValue": "GitHub Actions",
+                        "toolTip": "Enterprise-Scale will provide options for both GitHub Actions and Azure DevOps pipelines. For now, only GitHub Actions is available",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "GitHub Actions",
+                                    "value": "actions"
+                                }
+                            ],
+                            "required": true
+                        },
+                        "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]"
+                    },
+                    {
+                        "name": "esGit",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "GitHub organization or username",
+                        "toolTip": "Provide Git org/username.",
+                        "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9A-Z-]{1,15}$",
+                            "validationMessage": "The prefix must be 1-5 characters."
+                        }
+                    },
+                    {
+                        "name": "esGitRepoName",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "New GitHub repository name",
+                        "toolTip": "Provide a name for the new repository that will be created",
+                        "defaultValue": "",
+                        "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]",
+                        "placeholder": "",
+                        "constraints": {
+                            "required": true,
+                            "regex": "^[a-z0-9A-Z-]{1,15}$",
+                            "validationMessage": "The prefix must be 1-5 characters."
+                        }
+                    },
+                    {
+                        "name": "esPaToken",
+                        "type": "Microsoft.Common.PasswordBox",
+                        "label": {
+                            "password": "GitHub personal access token",
+                            "confirmPassword": "Confirm PA Token"
+                        },
+                        "toolTip": "Provide the personal access token to access your GitHub account or organization. For more information see this link: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token",
+                        "constraints": {
+                            "required": true,
+                            "validationMessage": "Password must be at least 8 characters long, contain only numbers and letters"
+                        },
+                        "options": {
+                            "hideConfirmation": true
+                        },
+                        "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]"
+                    },
+                    {
+                        "name": "spnSection",
+                        "type": "Microsoft.Common.Section",
+                        "label": "",
+                        "elements": [
+                            {
+                                "name": "esServicePrincipal",
+                                "type": "Microsoft.Common.ServicePrincipalSelector",
+                                "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]",
+                                "label": {
+                                    "password": "Password",
+                                    "certificateThumbprint": "Certificate thumbprint",
+                                    "authenticationType": "Authentication Type",
+                                    "sectionHeader": "Service Principal"
+                                },
+                                "toolTip": {
+                                    "password": "Provide the application secret as it will be used to authenticate with Azure AD",
+                                    "certificateThumbprint": "Certificate thumbprint",
+                                    "authenticationType": "Authentication Type"
+                                },
+                                "defaultValue": {
+                                    "principalId": "<default guid>",
+                                    "name": "(New) default App Id"
+                                },
+                                "constraints": {
+                                    "required": true
+                                },
+                                "options": {
+                                    "hideCertificate": true
+                                }
+                            }
+                        ],
+                        "visible": "[equals(steps('lzDevOps').cicdOption, 'Yes')]"
+                    }
                 ]
             },
             {
@@ -608,7 +777,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esVmssMonitoring",
@@ -628,7 +797,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esArcVmMonitoring",
@@ -648,7 +817,7 @@
                                 }
                             ]
                         },
-						"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
                         "name": "esAksPolicy",
@@ -668,7 +837,7 @@
                                 }
                             ]
                         },
-						"visible": true
+                        "visible": true
                     },
                     {
                         "name": "esAksPriv",
@@ -688,7 +857,7 @@
                                 }
                             ]
                         },
-						"visible": true
+                        "visible": true
                     },
                     {
                         "name": "esAksNoPriv",
@@ -708,8 +877,8 @@
                                 }
                             ]
                         },
-						"visible": true
-                    },                    
+                        "visible": true
+                    },
                     {
                         "name": "esAksIngress",
                         "type": "Microsoft.Common.OptionsGroup",
@@ -728,8 +897,8 @@
                                 }
                             ]
                         },
-						"visible": true
-                    },                    
+                        "visible": true
+                    },
                     {
                         "name": "esAzBackup",
                         "type": "Microsoft.Common.OptionsGroup",
@@ -878,10 +1047,12 @@
             "lzSubscriptionId": "[if(not(contains(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), steps('lzGoalState').esLzSub, '')]",
             "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
             "enableAsc": "[steps('esGoalState').esAsc]",
+            "emailContactAsc": "[steps('esGoalState').esAscEmail]",
             "enableAscForServers": "[steps('esGoalState').esAscVms]",
             "enableAscForAppServices": "[steps('esGoalState').esAscApps]",
             "enableAscForStorage": "[steps('esGoalState').esAscStorage]",
             "enableAscForSql": "[steps('esGoalState').esAscSql]",
+            "enableAscForSqlOnVm": "[steps('esGoalState').esAscSqlOnVm]",
             "enableAscForKeyVault": "[steps('esGoalState').esAscKeyVault]",
             "enableAscForArm": "[steps('esGoalState').esAscArm]",
             "enableAscForDns": "[steps('esGoalState').esAscDns]",
@@ -893,7 +1064,6 @@
             "enableUpdateMgmt": "[steps('esGoalState').esUpdateMgmt]",
             "enableActivityLog": "[steps('esGoalState').esActivityLog]",
             "enableVmInsights": "[steps('esGoalState').esVmInsights]",
-            "enableAntiMalware": "[steps('esGoalState').esAntiMalware]",
             "enableServiceMap": "[steps('esGoalState').esServiceMap]",
             "enableSqlAssessment": "[steps('esGoalState').esSqlAssessment]",
             "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]",
@@ -911,7 +1081,15 @@
             "retentionInDays": "[string(steps('esGoalState').esLogRetention)]",
             "enableVmMonitoring": "[steps('lzGoalState').esVmMonitoring]",
             "enableVmssMonitoring": "[steps('lzGoalState').esVmssMonitoring]",
-            "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]"
+            "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]",
+            "paToken": "[steps('lzDevOps').esPaToken]",
+            "principalId": "[steps('lzDevOps').spnSection.esServicePrincipal.objectId]",
+            "principalSecret": "[steps('lzDevOps').spnSection.esServicePrincipal.password]",
+            "gitHubUserNameOrOrg": "[steps('lzDevOps').esGit]",
+            "appId": "[steps('lzDevOps').spnSection.esServicePrincipal.appId]",
+            "enableAzOps": "[steps('lzDevOps').cicdOption]",
+            "subscriptionId": "[steps('esGoalState').esMgmtSub]",
+            "repositoryName": "[steps('lzDevOps').esGitRepoName]"
         }
     }
 }

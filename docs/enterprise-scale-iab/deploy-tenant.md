@@ -1,6 +1,6 @@
 # Enterprise-Scale "in-a-box" deployment
 
-Enterprise-Scale-in-a-box reference implemntaion is a three-step hands on exercise.
+Enterprise-Scale-in-a-box reference implementaion is a three-step hands on exercise.
 
 In the first step you will (**Deploy your tenant**), then [**Setup a GitHub CI/CD Pipeline**](./setup-git-cicd.md), and finally [**Use GitHub to deploy changes to your Enterprise-scale architecture**](./use-git-pipeline.md). We'll walk you through the setup of an DevOps pipeline based on GitHub Actions to accomplish the provisioning of Azure Policy assignments.
 

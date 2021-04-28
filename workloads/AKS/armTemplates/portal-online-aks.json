@@ -1,0 +1,265 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "aksBasics",
+                "label": "AKS Setup (Online)",
+                "elements": [
+					{
+                        "name": "infoBox1",
+                        "type": "Microsoft.Common.InfoBox",
+                        "visible": true,
+                        "options": {
+                            "icon": "Info",
+                            "text": "Configure the basic settings for your AKS cluster that will be deployed to an online landing zone. Note that recommended settings are enabled by default, such as RBAC and Azure Policy.",
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization#subscription-organization-and-governance"
+                        }
+                    },
+					{
+						"name": "aksName",
+						"type": "Microsoft.Common.TextBox",
+						"label": "AKS cluster name",
+						"placeholder": "",
+						"defaultValue": "",
+						"toolTip": "Use only allowed characters",
+						"constraints": {
+							"required": true,
+							"regex": "^[a-z0-9A-Z]{1,30}$",
+							"validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+						},
+						"visible": true
+					},
+					{
+						"name": "aksDns",
+						"type": "Microsoft.Common.TextBox",
+						"label": "AKS DNS prefix",
+						"placeholder": "",
+						"defaultValue": "",
+						"toolTip": "Use only allowed characters",
+						"constraints": {
+							"required": true,
+							"regex": "^[a-z0-9A-Z]{1,30}$",
+							"validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+						},
+						"visible": true
+					},
+					{
+						"name": "aksVersion",
+						"type": "Microsoft.Common.DropDown",
+						"label": "AKS version",
+						"placeholder": "",
+						"defaultValue": "1.18.10 (default)",
+						"toolTip": "",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "1.19.3",
+									"value": "1.19.3"
+								},
+								{
+									"label": "1.19.1",
+									"value": "1.19.1"
+								},
+								{
+									"label": "1.18.10 (default)",
+									"value": "1.18.10"
+								},
+								{
+									"label": "1.17.13",
+									"value": "1.17.13"
+								}
+							],
+							"required": true
+						},
+						"visible": true
+					},
+					{
+						"name": "aksSize",
+						"type": "Microsoft.Compute.SizeSelector",
+						"label": "AKS cluster size",
+						"toolTip": "",
+						"recommendedSizes": [
+							"Standard_D1",
+							"Standard_D2",
+							"Standard_D3"
+						],
+						"constraints": {
+							"allowedSizes": [],
+							"excludedSizes": [],
+							"numAvailabilityZonesRequired": 3,
+							"zone": "3"
+						},
+						"options": {
+							"hideDiskTypeFilter": false
+						},
+						"osPlatform": "Linux",
+						"count": 2,
+						"visible": true
+            		},
+					{
+						"name": "aksIdentity",
+						"type": "Microsoft.ManagedIdentity.IdentitySelector",
+						"label": "Managed Identity Configuration",
+						"toolTip": {
+							"systemAssignedIdentity": "Enable system assigned identity for AKS to manage cloud resources attached to the cluster."
+						},
+						"defaultValue": {
+							"systemAssignedIdentity": "On"
+						},
+						"options": {
+							"hideSystemAssignedIdentity": false,
+							"hideUserAssignedIdentity": true
+						},
+						"visible": true
+					},
+					{
+						"name": "aksRbac",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "AKS authentication and authorization",
+						"defaultValue": "Role-based access control (RBAC)",
+						"toolTip": "",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Role-based access control (RBAC)",
+									"value": true
+								}
+							],
+							"required": true
+						},
+						"visible": true
+					}
+                ]
+            },
+			{
+				"name": "aksIntegration",
+				"label": "AKS Integration",
+				"elements": [
+					{
+						"name": "acrText",
+						"type": "Microsoft.Common.TextBlock",
+						"visible": true,
+						"options": {
+							"text": "Azure Container Registry enables seamless deployments from a private image registry. Select the checkbox to connect your AKS cluster.",
+							"link": {
+								"label": "Learn more",
+								"uri": "https://docs.microsoft.com/azure/aks/cluster-container-registry-integration"
+							}
+						}
+            		},
+					{
+						"name": "aksAcr",
+						"type": "Microsoft.Common.CheckBox",
+						"label": "Enable Azure Container Registry.",
+						"constraints": {
+							"required": false,
+							"validationMessage": "Select if Azure Container Registry should be created."
+						}
+					},
+					{
+						"name": "monitoringText",
+						"type": "Microsoft.Common.TextBlock",
+						"visible": true,
+						"options": {
+							"text": "Azure Monitor provides a curated monitoring experience for your AKS cluster. Select whether to use an existing Log Analytics workspace in the landing zone or create a new workspace for this AKS cluster.",
+							"link": {
+								"label": "Learn more",
+								"uri": "https://azure.microsoft.com/blog/monitoring-azure-kubernetes-service-aks-with-azure-monitor-container-health-preview/"
+							}
+						}
+            		},
+					{
+						"name": "aksMon",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Enable AKS monitoring",
+						"defaultValue": "Yes",
+						"toolTip": "",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes",
+									"value": true
+								},
+								{
+									"label": "No",
+									"value": false
+								}
+							],
+							"required": true
+						},
+						"visible": true
+            		},
+					{
+						"name": "aksWorkspace",
+						"type": "Microsoft.Common.OptionsGroup",
+						"label": "Use existing Log Analytics workspace",
+						"defaultValue": "No",
+						"toolTip": "",
+						"constraints": {
+							"allowedValues": [
+								{
+									"label": "Yes",
+									"value": "Yes"
+								},
+								{
+									"label": "No",
+									"value": "No"
+								}
+							],
+							"required": true
+						},
+						"visible": "[equals(steps('aksIntegration').aksMon, true)]"
+            		},
+					{
+						"name": "workspaceSelector",
+						"type": "Microsoft.Solutions.ResourceSelector",
+						"label": "Select Log Analytics workspace",
+						"resourceType": "Microsoft.OperationalInsights/workspaces",
+						"visible": "[equals(steps('aksIntegration').aksWorkspace, 'Yes')]",
+						"required": true,
+						"options": {
+							"filter": {
+								"subscription": "onBasics",
+								"location": "onBasics"
+							}
+						}
+					}
+				]
+			},
+            {
+                "name": "tags",
+                "label": "Tags",
+                "elements": [
+                    {
+                        "name": "tagsByResource",
+                        "type": "Microsoft.Common.TagsByResource",
+                        "resources": [
+                            "Microsoft.ContainerRegistry/registries",
+                            "Microsoft.ContainerService/managedClusters"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+			"dnsPrefix": "[steps('aksBasics').aksDns]",
+			"resourceName": "[steps('aksBasics').aksName]",
+            "location": "[location()]",
+			"vmSize": "[steps('aksBasics').aksSize]",
+			"identity": "[steps('aksBasics').aksIdentity]",
+			"kubernetesVersion": "[steps('aksBasics').aksVersion]",
+			"enableRBAC": "[steps('aksBasics').aksRbac]",
+			"enableAcr": "[steps('aksIntegration').aksAcr]",
+			"enableOmsAgent": "[steps('aksIntegration').aksMon]",
+			"useExistingWorkspace": "[steps('aksIntegration').aksWorkspace]",
+			"omsWorkspaceId": "[steps('aksIntegration').workspaceSelector]",
+            "tagsByResource": "[steps('tags').tagsByResource]"
+        }
+    }
+}
