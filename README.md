@@ -2,6 +2,7 @@
 
 ## Navigation Menu
 
+* [Enterprise-Scale Landing Zones - User Guide](https://github.com/Azure/Enterprise-Scale/wiki#enterprise-scale-landing-zones-user-guide)
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
 * [Configure Azure permission for ARM Template deployments](./docs/EnterpriseScale-Setup-azure.md)
 * [Deploy Reference Implementation](./docs/EnterpriseScale-Deploy-reference-implentations.md)
