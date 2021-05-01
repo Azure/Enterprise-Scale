@@ -40,7 +40,7 @@ Write-Output $escapedServicePrincipalJson
 ########################################
 
 #Install the Module *If Required*
-Install-Module -Name AzureAD #Do this in PowerShell as admin
+Install-Module -Name AzureAD #Do this in WindowsPowerShell as admin
 
 #Connect to Azure Active Directory
 $AzureAdCred = Get-Credential
