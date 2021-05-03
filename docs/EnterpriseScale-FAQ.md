@@ -25,9 +25,9 @@ We do not recommend nor support customization of these templates, as they are ra
 
 ### How long does it take to deploy Enterprise-Scale?
 
-Depending on the reference implementation and which options you enable, it vary from 30 minutes, to 5 minutes.
-Example: deploying Adventure Works with all options enabled, including connecvitity with zonal deployment of VPN and ER Gateways, with corp connected (peered) landing zones can take 40 minutes.
-Deploying Adventure Works without connectivity will take 5 minutes.
+Depending on the reference implementation and which options you enable, it vary from 40~ minutes, to 5~ minutes.
+Example: deploying Adventure Works with all options enabled, including connecvitity with zonal deployment of VPN and ER Gateways, with corp connected (peered) landing zones can take 40~ minutes.
+Deploying Adventure Works without connectivity will take 5~ minutes.
 
 ### What's the recommendaiton to get Enterprise-Scale into my repository so I can operationalize the Azure platform post deployment?
 
