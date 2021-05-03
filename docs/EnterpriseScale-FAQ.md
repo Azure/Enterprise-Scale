@@ -18,9 +18,9 @@ When deploying Enterprise-Scale, the UX is populateing the list of subscriptions
 4) Click Save
 5) Click Review + create, and submit the deployment
 
-### Can we take the ARM templates for ESLZ and check them into our repository and deploy it from there, instead of via the Azure Portal?
+### Can we take the ARM templates for Enterprise-Scale reference implementations and check them into our repository and deploy it from there, instead of via the Azure Portal?
 
-All ARM templates for the Entperrise-Scale reference implementations are developed for - and optimized for a curated deployment experience in the Azure portal.
+All ARM templates for the Enterprise-Scale reference implementations are developed for - and optimized for a curated deployment experience in the Azure portal.
 We do not recommend nor support customization of these templates, as they are rather complex given the options we provide, which also leads to a lot of logical operators and conditions in the expressions we are using. Further, as they are optimized for portal deployment and to setup the entire Azure tenant with platform and landing zones, there's a lot of sequencing that are happening across the various ARM scopes (management groups, subscriptions, and resource groups). Taking the same templates for day 2 and day N operations will require you to re-deploy the entire tenant for minor changes.
 
 ### How long does it take to deploy Enterprise-Scale?
@@ -32,4 +32,4 @@ Deploying Adventure Works without connectivity will take 5 minutes.
 ### What's the recommendaiton to get Enterprise-Scale into my repository so I can operationalize the Azure platform post deployment?
 
 We recommend integrating with AzOps (GitHub Actions) during deployment to get your CI/CD pipeline bootstrapped. This will give you all the ARM templates represented at their respective scopes (management group, subscription, resource group) in Git.
-For more information, see the following [link](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale#platform-devops-and-automation)
+For more information, see the following [link.](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale#platform-devops-and-automation)
