@@ -1,6 +1,6 @@
 ## FAQ
 
-This page will list frequently asked question for Enterprise-scale design as well as Contoso Implementation.
+This page will list frequently asked question for Enterprise-Scale reference implementations
 ### What does "Landing Zone" map to in Azure in the context of Enterprise-Scale?
 
 From Enterprise-Scale point of view, Subscription is the "Landing Zone" in Azure.
