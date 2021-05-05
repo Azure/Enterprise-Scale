@@ -17923,6 +17923,555 @@
             }
           },
           "name": "Deploy-Storage-sslEnforcement"
+        },
+        {
+          "properties": {
+            "displayName": "Audit-MachineLearning-PrivateEndpointId",
+            "mode": "Indexed",
+            "description": "Audit public endpoints that are created in other subscriptions for machine learning.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled"
+                ],
+                "defaultValue": "Audit"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces"
+                  },
+                  {
+                    "count": {
+                      "field": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections[*]",
+                      "where": {
+                        "field": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections[*].privateEndpoint.id",
+                        "notContains": "[[subscription().id]"
+                      }
+                    },
+                    "greaterOrEquals": 1
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Audit-MachineLearning-PrivateEndpointId"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearning-HbiWorkspace",
+            "mode": "Indexed",
+            "description": "Enforce high business impact machine learning workspaces across the environment.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/hbiWorkspace",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/hbiWorkspace",
+                        "notEquals": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearning-HbiWorkspace"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearning-PublicAccessWhenBehindVnet",
+            "mode": "Indexed",
+            "description": "Deny public access behind vnet for machine learning workspaces.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/allowPublicAccessWhenBehindVnet",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/allowPublicAccessWhenBehindVnet",
+                        "notEquals": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearning-PublicAccessWhenBehindVnet"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearningAks",
+            "mode": "Indexed",
+            "description": "Deny AKS creation (not attaching) in machine learning.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                  },
+                  {
+                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                    "equals": "AKS"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/computes/resourceId",
+                        "exists": false
+                      },
+                      {
+                        "value": "[[empty(field('Microsoft.MachineLearningServices/workspaces/computes/resourceId'))]",
+                        "equals": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearningAks"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearningCompute-SubnetId",
+            "mode": "Indexed",
+            "description": "Deny public ip for machine learning compute clusters and instances.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                  },
+                  {
+                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                    "in": [
+                      "AmlCompute",
+                      "ComputeInstance"
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/computes/subnet.id",
+                        "exists": false
+                      },
+                      {
+                        "value": "[[empty(field('Microsoft.MachineLearningServices/workspaces/computes/subnet.id'))]",
+                        "equals": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearningCompute-SubnetId"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearningCompute-VmSize",
+            "mode": "Indexed",
+            "description": "Limit allowed vm sizes for machine learning compute clusters and instances.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedVmSizes": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed VM Sizes for Aml Compute Clusters and Instances",
+                  "description": "Specifies the allowed VM Sizes for Aml Compute Clusters and Instances"
+                },
+                "defaultValue": [
+                  "Standard_D1_v2",
+                  "Standard_D2_v2",
+                  "Standard_D3_v2",
+                  "Standard_D4_v2",
+                  "Standard_D11_v2",
+                  "Standard_D12_v2",
+                  "Standard_D13_v2",
+                  "Standard_D14_v2",
+                  "Standard_DS1_v2",
+                  "Standard_DS2_v2",
+                  "Standard_DS3_v2",
+                  "Standard_DS4_v2",
+                  "Standard_DS5_v2",
+                  "Standard_DS11_v2",
+                  "Standard_DS12_v2",
+                  "Standard_DS13_v2",
+                  "Standard_DS14_v2",
+                  "Standard_M8-2ms",
+                  "Standard_M8-4ms",
+                  "Standard_M8ms",
+                  "Standard_M16-4ms",
+                  "Standard_M16-8ms",
+                  "Standard_M16ms",
+                  "Standard_M32-8ms",
+                  "Standard_M32-16ms",
+                  "Standard_M32ls",
+                  "Standard_M32ms",
+                  "Standard_M32ts",
+                  "Standard_M64-16ms",
+                  "Standard_M64-32ms",
+                  "Standard_M64ls",
+                  "Standard_M64ms",
+                  "Standard_M64s",
+                  "Standard_M128-32ms",
+                  "Standard_M128-64ms",
+                  "Standard_M128ms",
+                  "Standard_M128s",
+                  "Standard_M64",
+                  "Standard_M64m",
+                  "Standard_M128",
+                  "Standard_M128m",
+                  "Standard_D1",
+                  "Standard_D2",
+                  "Standard_D3",
+                  "Standard_D4",
+                  "Standard_D11",
+                  "Standard_D12",
+                  "Standard_D13",
+                  "Standard_D14",
+                  "Standard_DS15_v2",
+                  "Standard_NV6",
+                  "Standard_NV12",
+                  "Standard_NV24",
+                  "Standard_F2s_v2",
+                  "Standard_F4s_v2",
+                  "Standard_F8s_v2",
+                  "Standard_F16s_v2",
+                  "Standard_F32s_v2",
+                  "Standard_F64s_v2",
+                  "Standard_F72s_v2",
+                  "Standard_NC6s_v3",
+                  "Standard_NC12s_v3",
+                  "Standard_NC24rs_v3",
+                  "Standard_NC24s_v3",
+                  "Standard_NC6",
+                  "Standard_NC12",
+                  "Standard_NC24",
+                  "Standard_NC24r",
+                  "Standard_ND6s",
+                  "Standard_ND12s",
+                  "Standard_ND24rs",
+                  "Standard_ND24s",
+                  "Standard_NC6s_v2",
+                  "Standard_NC12s_v2",
+                  "Standard_NC24rs_v2",
+                  "Standard_NC24s_v2",
+                  "Standard_ND40rs_v2",
+                  "Standard_NV12s_v3",
+                  "Standard_NV24s_v3",
+                  "Standard_NV48s_v3"
+                ]
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                  },
+                  {
+                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                    "in": [
+                      "AmlCompute",
+                      "ComputeInstance"
+                    ]
+                  },
+                  {
+                    "field": "Microsoft.MachineLearningServices/workspaces/computes/vmSize",
+                    "notIn": "[[parameters('allowedVmSizes')]"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearningCompute-VmSize"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearningComputeCluster-RemoteLoginPortPublicAccess",
+            "mode": "Indexed",
+            "description": "Deny public access of clusters via SSH.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                  },
+                  {
+                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                    "equals": "AmlCompute"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
+                        "notEquals": "Disabled"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearningComputeCluster-RemoteLoginPortPublicAccess"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-MachineLearningComputeCluster-Scale",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforce scale settings for machine learning compute clusters.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Machine Learning"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "maxNodeCount": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum Node Count",
+                  "description": "Specifies the maximum node count of AML Clusters"
+                },
+                "defaultValue": 10
+              },
+              "minNodeCount": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Minimum Node Count",
+                  "description": "Specifies the minimum node count of AML Clusters"
+                },
+                "defaultValue": 0
+              },
+              "maxNodeIdleTimeInSecondsBeforeScaleDown": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum Node Idle Time in Seconds Before Scaledown",
+                  "description": "Specifies the maximum node idle time in seconds before scaledown"
+                },
+                "defaultValue": 900
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                  },
+                  {
+                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                    "equals": "AmlCompute"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.maxNodeCount",
+                        "greater": "[[parameters('maxNodeCount')]"
+                      },
+                      {
+                        "field": "Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.minNodeCount",
+                        "greater": "[[parameters('minNodeCount')]"
+                      },
+                      {
+                        "value": "[[int(last(split(replace(replace(replace(replace(replace(replace(replace(field('Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.nodeIdleTimeBeforeScaleDown'), 'P', '/'), 'Y', '/'), 'M', '/'), 'D', '/'), 'T', '/'), 'H', '/'), 'S', ''), '/')))]",
+                        "greater": "[[parameters('maxNodeIdleTimeInSecondsBeforeScaleDown')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-MachineLearningComputeCluster-Scale"
         }
       ]
     },
