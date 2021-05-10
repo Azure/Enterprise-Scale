@@ -8,6 +8,12 @@
                 "description": "Provide alias (and displayName) for the subscription"
             }
         },
+        "eslzPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the Enterprise-Scale prefix so the deployment can target the policyDefinition correctly."
+            }
+        },
         "targetManagementGroup": {
             "type": "string",
             "metadata": {
@@ -131,6 +137,9 @@
                     },
                     "esHubId": {
                         "value": "[parameters('esConnectivityHubId')]"
+                    },
+                    "eslzName": {
+                        "value": "[parameters('eslzPrefix')]"
                     }
                 },
                 "template": {
@@ -148,6 +157,9 @@
                             "type": "string"
                         },
                         "esHubId": {
+                            "type": "string"
+                        },
+                        "eslzName": {
                             "type": "string"
                         }
                     },
@@ -173,6 +185,9 @@
                                     },
                                     "esHubIdInner": {
                                         "value": "[parameters('esHubId')]"
+                                    },
+                                    "eslzNameInner": {
+                                        "value": "[parameters('eslzName')]"
                                     }
                                 },
                                 "template": {
@@ -188,13 +203,16 @@
                                         },
                                         "esHubIdInner": {
                                             "type": "string"
+                                        },
+                                        "eslzNameInner": {
+                                            "type": "string"
                                         }
                                     },
                                     "variables": {
                                         // These variables doesn't need to be changed as they are unique and deterministic per deployment and scope
-                                        "vNetPolicyDefinition": "/providers/Microsoft.Management/managementGroups/ESLZ/providers/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke",
+                                        "vNetPolicyDefinition": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('eslzNameInner'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke')]",
                                         "vNetPolicyAssignment": "Deploy-vNet-to-hub",
-                                        "connectivityManagementGroup": "eslz-connectivity",
+                                        "connectivityManagementGroup": "[concat(parameters('eslzNameInner'), '-connectivity')]",
                                         "rbacNameForLz": "[guid(subscription().id)]",
                                         "rbacNameForNConnectivity": "[guid(concat(parameters('lzCidrInner'), deployment().name))]"
                                     },
