@@ -7,7 +7,7 @@
 - [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
 
 ---
-Enterprise-Scale can be deployed both from the Azure portal directly, or from GitHub: https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment
+Enterprise-Scale can be deployed both from the Azure portal directly, or from [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 
 ![Graphical user interface, text, application  Description automatically generated](./media/clip_image004.jpg)
 
@@ -173,7 +173,7 @@ You can optionally bring in N number of subscriptions that will be bootstrapped 
 
 ![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
 
-### Review + create.
+### Review + create
 
 *Review + Create* page will validate your permission and configuration before you can click deploy. Once it has been validated successfully, you can click *Create..*
 

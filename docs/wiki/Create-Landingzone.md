@@ -1,0 +1,146 @@
+##In this Section
+
+- [Create Landing zones (subscription) using AzOps](#create-landing-zones-subscription-using-azops)
+- [Pre-requisites](#pre-requisites)
+- [Enable Service Principal to create landing zones](#enable-service-principal-to-create-landing-zones)
+- [ARM template repository](#arm-template-repository)
+- [Create a landing zone using AzOps](#create-a-landing-zone-using-azops)
+
+---
+
+## Create Landing zones (subscription) using AzOps
+
+Managing all the platform resources in a a single repository is one of the guiding principle for PlatformOps to manage the platform. Subscriptions representing landing zones are resource types manage by the PlatformOps team. As every other platform resource type subscriptions are created using the ARM API. For Subscriptions the API and versions vary and depend on the commercial contract.
+
+- [Enterprise Enrollment (EA)](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-enterprise-agreement)
+- [Microsoft Customer Agreement (MCA)](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-customer-agreement)
+- [Microsoft Partner Agreement (MPA)](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-partner-agreement)
+
+This article describes the flow to create subscriptions/landing zones in an Enterprise Enrollment (EA). Natively in Azure, *enrollment owner* have the permission to create and own subscriptions. *Enrollment owners* are user identities in Azure AD and in order to create subscriptions in an fully automated process the permission to create subscription need to be delegate to a Service Principal (SPN) or Managed Service Identity (MSI).
+
+One of the benefits using this approach is the management of platform security and governance in a single place and built into the platform repository and pipeline(s).
+
+## Pre-requisites
+
+Before getting started with this first steps ensure that AzOps has been [setup and configured for the target environment](Deploying-Enterprise-Scale.md#validation-post-deployment-github). In this documentation the same Service Principal will be used to to assign the permission to create landing zones (subscription).
+
+For the Service Principal permissions to create subscriptions, access to an *enrollment account* that has a billing id associated is required.
+
+>Note: When using this Service Principal the subscription will be created under specified billing scope of *enrollment account*. Multiple enrollment account permissions can be granted to a Service Principal. The billing scope will be specified in the ARM template during the subscription creation process.
+
+Creating Azure subscriptions programmatically is allowed on specific types of Azure agreement types (EA, MCA, MPA). Refer to guidance on [Creating Azure subscriptions programmatically](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription) to know supported agreement types.
+
+## Enable Service Principal to create landing zones
+
+This section describes how AzOps is used to create subscriptions (landing zones) under management groups using ARM templates. In the following steps the *Enrollment account subscription creator* role will be assigned to a SPN as illustrated in the following article:
+
+![EA account / Service Principal](media/ea-account-spn.png)
+
+**Login and fetch access token**
+Login with the *enrollment account* (e.g. with `Login-AzAccount`) and execute the following commands to fetch a valid access token for the account:
+
+```powershell
+# Provide the objectId of the AzOps service principal to grant access to enrolment account. 
+$spnObjectId = (Get-AzADServicePrincipal -DisplayName "MyAzOpsSPN").Id
+
+# Get context for the signed in enrolment account
+$currentContext = Get-AzContext
+
+# Fetching new token
+$token = Get-AzAccessToken
+```
+
+**List all the billing accounts and enrolment accounts**
+As a next step, list and identify the "billing account" and *enrollment account* the user has access to. These two information are required to request the roles available and to assign the permissions to the Service Principal.
+
+The following scripts lists the *billing account* and "enrollment account" and assigns it to a variables which will be used later in this guide.
+
+```powershell
+# Request billing accounts that the identity has access to
+$listOperations = @{
+    Uri     = "https://management.azure.com/providers/Microsoft.Billing/billingaccounts?api-version=2020-05-01"
+    Headers = @{
+        Authorization  = "Bearer $($token.Token)"
+        'Content-Type' = 'application/json'
+    }
+    Method  = 'GET'
+}
+$listBillingAccount = Invoke-RestMethod @listOperations
+
+# List billing accounts
+$listBillingAccount | ConvertTo-Json -Depth 100
+
+# Select first billing account and the corresponding enrollment account
+$billingAccount = $listBillingAccount.value[0].id
+$enrollmentAccountId = $listBillingAccount.value[0].properties.enrollmentAccounts[0].id
+```
+
+**Read existing role definitions for the enrolment account**
+Multiple role definitions exists on an *enrollment account*. When this article was written the following role definitions exist:
+
+| Role name                               | ID                                   |
+| :-------------------------------------- | :----------------------------------- |
+| Enrollment account owner                | c15c22c0-9faf-424c-9b7e-bd91c06a240b |
+| Enrollment account subscription creator | a0bcee42-bf30-4d1b-926a-48d21664ef71 |
+
+Both role definitions have the `Microsoft.Subscription/subscriptions/write` permission required to create subscriptions. *Enrollment account subscription creator* can be assigned to a Service Principal.
+
+```powershell
+# Get billing roleDefinitions available at scope
+$listRbacObj = @{
+    Uri = "https://management.azure.com/$($enrollmentAccountId)/billingRoleDefinitions?api-version=2019-10-01-preview"
+    Headers = @{
+        Authorization  = "Bearer $($token.Token)"
+        'Content-Type' = 'application/json'
+    }
+    Method = "GET"
+}
+$listRbac = Invoke-WebRequest @listRbacObj
+$listRbac.Content | ConvertFrom-Json | ConvertTo-Json -Depth 100
+```
+
+**Assign permission (role assignment)**
+As a last step the Service Principal will be granted access to the *enrolment account* by assigning a role with the `Microsoft.Subscription/subscriptions/write` permission. Built-in role *Enrollment account subscription creator (GUID: a0bcee42-bf30-4d1b-926a-48d21664ef71)* is required.
+
+```powershell
+# roledefinitonId (billingRoleDefinitions) has be equal to the role id of the "enrollment account subscription creator" role listed in the rbacContent object
+$roleAssignmentBody = @"
+{
+    "properties": {
+        "principalId": "$($spnObjectId)",
+        "roleDefinitionId": "$($enrollmentAccountId)/billingRoleDefinitions/a0bcee42-bf30-4d1b-926a-48d21664ef71"
+      }
+}
+"@
+
+# Generate new GUID for the role assignment
+$rbacGuid = New-Guid
+
+# Assign 'Enrollment account subscription creator' role to the SPN
+$assignRbac = @{
+    Uri = "https://management.azure.com/$($enrollmentAccountId)/billingRoleAssignments/$($rbacGuid)?api-version=2019-10-01-preview"
+    Headers = @{
+        Authorization  = "Bearer $($token.Token)"
+        'Content-Type' = 'application/json'
+    }
+    Method = "PUT"
+    Body = $roleAssignmentBody
+    UseBasicParsing = $true
+}
+$assignedRbac = Invoke-RestMethod @assignRbac
+```
+
+After the role is successfully assigned Service Principal can be used to create subscriptions (landing zones).
+
+>Note: The Service Principal can be granted access to multiple *enrolment accounts*. To enable this, execute this sequence multiple times (once per *enrollment account*).
+
+## ARM template repository
+
+PlatformOps will use DevOps process (CI/CD) to create a subscriptions (landing zones) using AzOps before handing it out to application teams. Different examples are published in the Enterprise-Scale repository to automate landing zone creation.
+
+- [Create new empty subscription into a management group](https://github.com/azure/enterprise-scale/examples/landing-zones/empty-subscription/)
+- [Create new connected subscription into a management group](https://github.com/azure/enterprise-scale/examples/landing-zones/connected-subscription/)
+
+## Create a landing zone using AzOps
+
+When the ARM templates are created to deploy a subscription following the recommendation in the [landing zone example folder](../../examples/landing-zones), subscriptions can be created on Azure using AzOps following [this documentation](./deploy-new-arm.md).

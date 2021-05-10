@@ -1,7 +1,9 @@
-# Enterprise-Scale Landing Zones User Guide 
+# Enterprise-Scale Landing Zones User Guide
+
 The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-to-end documentation for the Enterprise-Scale deployment and configuration experience to accelerate both adoption and deployment. 
 
 ## Navigation
+
 * [What is Enterprise-Scale?](./What-is-Enterprise-Scale)
   * [What is Enterprise-Scale reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
@@ -17,3 +19,5 @@ The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-
   * [Validation post deployment (GitHub)](./Deploying-Enterprise-Scale#validation-post-deployment-github)
   * [Post deployment activities](./Deploying-Enterprise-Scale#post-deployment-activities)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-Enterprise-Scale#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
+* [Create subscriptions / landing zones using AzOps](./Create-Landingzone.md)
+  * [](./Create-Landingzone.md)
