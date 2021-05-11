@@ -1,7 +1,15 @@
 ## In this Section
 
+- [In this Section](#in-this-section)
 - [Enterprise-Scale design principles](#enterprise-scale-design-principles)
+  - [:book: Subscription Democratization](#book-subscription-democratization)
+  - [:book: Policy Driven Governance](#book-policy-driven-governance)
+  - [:book: Single Control and Management Plane](#book-single-control-and-management-plane)
+  - [:book: Application Centric and Archetype-neutral](#book-application-centric-and-archetype-neutral)
+  - [:book: Azure native design and aligned with platform roadmap](#book-azure-native-design-and-aligned-with-platform-roadmap)
 - [Separating platform and landing zones](#separating-platform-and-landing-zones)
+- [Platform responsibilities and functions](#platform-responsibilities-and-functions)
+- [Landing zone owners responsibilities](#landing-zone-owners-responsibilities)
 - [Enterprise-Scale Management Group Structure](#enterprise-scale-management-group-structure)
 - [What happens when you deploy Enterprise-Scale?](#what-happens-when-you-deploy-enterprise-scale)
 
