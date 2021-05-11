@@ -14,7 +14,7 @@ This reference implementation is also well suited for customers who want to star
 
 Note: Alternatively, if you need to implement an operating model which facilitates segregating Platform administration duties among different teams, then we suggest considering leveraging [Adventure Works](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) or [WingTip](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) reference implementations.
 
-Please refer to [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale) for detailed information on prerequisites and deployment steps.
+Please refer to [Enterprise-Scale Landing Zones User Guide](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale) for detailed information on prerequisites and deployment steps.
 
 ## How to evolve later
 
