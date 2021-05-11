@@ -134,10 +134,9 @@ After the role is successfully assigned Service Principal can be used to create 
 
 ## ARM template repository
 
-PlatformOps will use DevOps process (CI/CD) to create a subscriptions (landing zones) using AzOps before handing it out to application teams. Different examples are published in the Enterprise-Scale repository to automate landing zone creation.
+PlatformOps will use AzOps CI/CD pipelines to create subscriptions (landing zones) before handing it out to application teams. [Steps below](#create-a-subscription-landing-zone-using-azops) will use this approach to create a subscription.
 
-- [Create new empty subscription into a management group](https://github.com/azure/enterprise-scale/examples/landing-zones/empty-subscription/)
-- [Create new connected subscription into a management group](https://github.com/azure/enterprise-scale/examples/landing-zones/connected-subscription/)
+>Hint: Different examples are published in the Enterprise-Scale repository to automate landing zone creation [here](https://github.com/Azure/Enterprise-Scale/tree/main/examples/landing-zones).
 
 ## Create a subscription (landing zone) using AzOps
 
@@ -155,7 +154,50 @@ The following steps will deploy an empty subscription under the '*company-prefix
 
 > Git command: `git checkout -b new-landing-zone`)
 
-2. Copy the file [emptySubscription.json](https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json) and save it to the '*company-prefix*-online' folder in the folder structure.
+2. Copy the file [emptySubscription.json](https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json) or the example below and save it to the '*company-prefix*-online' folder in the folder structure.
+
+ARM template to create an empty subscription:
+```json
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionAliasName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide a name for the alias. This name will also be the display name of the subscription."
+            }
+        },
+        "billingAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the full resourceId of the MCA or the enrollment account id used for subscription creation."
+            }
+        },
+        "targetManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId of the target management group to place the subscription."
+            }
+        }
+    },
+    "resources": [
+        {
+            "scope": "/", // routing the request to tenant root
+            "name": "[parameters('subscriptionAliasName')]",
+            "type": "Microsoft.Subscription/aliases",
+            "apiVersion": "2020-09-01",
+            "properties": {
+                "workLoad": "Production",
+                "displayName": "[parameters('subscriptionAliasName')]",
+                "billingScope": "[parameters('billingAccountId')]",
+                "managementGroupId": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('targetManagementGroup'))]"
+            }
+        }
+    ],
+    "outputs": {}
+}
+```
 
 3. Create a `emptySubscription.parameters.json` file in the same folder with the parameters below and update the values appropriate.
 
