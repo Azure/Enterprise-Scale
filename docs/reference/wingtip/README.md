@@ -10,6 +10,8 @@ The Enterprise-Scale architecture is modular by design and allow organizations t
 
 This reference implementation is ideal for customers who want to start with Landing Zones for their workloads in Azure, where hybrid connectivity to their on-premises datacenter is not required from the start.
 
+Please refer to [Enterprise-Scale Landing Zones User Guide](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale) for detailed information on prerequisites and deployment steps.
+
 ## How to evolve and add support for hybrid connectivity later
 
 If the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, the architecture allows you to expand and implement networking without refactoring Azure Design with no disruption to what is already in Azure. The Enterprise-Scale architecture allows to create the Connectivity Subscription and place it into the platform Management Group and assign Azure Policies or/and deploy the target networking topology using either Virtual WAN or Hub and Spoke networking topology.
@@ -28,7 +30,7 @@ To learn how to create new subscriptions programatically, please visit this [lin
 
 To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
-## Enterprise-Scale Management Group Structure
+<!-- ## Enterprise-Scale Management Group Structure
 
 The Management Group structure implemented with Enterprise-Scale is as follows:
 * Top-level Management Group (directly under the tenant root group) is created with a prefix provided by the organization, which purposely will avoid the usage of the root group to allow organizations to move existing Azure subscriptions into the hierarchy, and also enables future scenarios. This Management Group is parent to all the other Management Groups created by Enterprise-Scale
@@ -37,9 +39,9 @@ The Management Group structure implemented with Enterprise-Scale is as follows:
 * Landing Zones: This is the parent Management Group for all the landing zone subscriptions and will have workload agnostic Azure Policies assigned to ensure workloads are secure and compliant.
 * Online: This is the dedicated Management Group for Online landing zones, meaning workloads that may require direct inbound/outbound connectivity.
 * Sandboxes: This is the dedicated Management Group for subscriptions that will solely be used for testing and exploration by an organization’s application teams. These subscriptions will be securely disconnected from the Corp and Online landing zones.
-* Decommissioned: This is the dedicated Management Group for landing zones that are being cancelled, which then will be moved to this Management Group before deleted by Azure after 30-60 days.
+* Decommissioned: This is the dedicated Management Group for landing zones that are being cancelled, which then will be moved to this Management Group before deleted by Azure after 30-60 days. -->
 
-## What happens when you deploy Enterprise-Scale?
+## What will be deployed?
 
 By default, all recommendations are enabled, and you must explicitly disable them if you don't want them to be deployed and configured.
 * A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
@@ -68,71 +70,6 @@ By default, all recommendations are enabled, and you must explicitly disable the
   * Ensure subnets are associated with NSG
 
 ![Enterprise-Scale without connectivity](./media/es-without-networking.PNG)
-
-## Deployment
-
-When you click on Deploy to Azure for this reference implementation, the Azure portal will load the deployment experience into your default Azure tenant. In case you have access to multiple tenants, ensure you are selecting the right one.
-
-### Basics
-
-On the Basics blade, select the Region. This region will primarily be used to place the deployment resources in an Azure region, but also used as the initial region for some of the resources that are deployed, such as Azure Log Analytics and Azure automation.
-
-![Enterprise-Scale region](./media/basics.PNG)
-
-### Enterprise-Scale company prefix
-
-Provide a prefix that will be used to create the management group hierarchy, and platform resources.
-
-![Enterprise-Scale prefix](./media/prefix.PNG)
-
-### Platform management, security, and governance
-
-On the Platform management, security, and governance blade, you will configure the core components to enable platform monitoring and security. The options you enable will also be enforced using Azure Policy to ensure resources, landing zones, and more are continuously compliant as your deployments scales and grows. To enable this, you must provide a dedicated (empty) subscription that will be used to host the requisite infrastructure.
-
-![Enterprise-Scale platform](./media/platform.PNG)
-
-### Platform DevOps and Automation
-
-You can choose to bootstrap your CICD pipeline (GitHub with GitHub actions). Provide your GitHub user/org name, the preferred name of the GitHub repository that is to be created, as well as the PA token that the deployment will use to create a new repository and discover the Enterprise-Scale deployment ARM templates and merge them into your main branch.
-You can either create a new Service Principal - or use an existing one that will be granted *Owner* permission on the management group hieararchy that will be created, so your CICD pipeline can discover and deploy ARM templates to all scopes (management groups, subscriptions, and resource groups).
-
-![Enterprise-Scale devops](./media/existingSpn.PNG)
-
-To create a new Service Principal, a new blade will open and you must first register the application, and create a new secret that you must *copy and paste* back to the deployment experience and provide as password.
-
-1. Create new Service Principal, and click *Register*
-
-![New SPN](./media/newSpn.PNG)
-
-2. A new interface will open, where you must create a new secret. Note that the secret can not be retrieved after this, so it is important you copy and store this. You must paste the secret into the SPN password.
-
-![New Secret1](./media/createSecret.png)
-
-3. Create the secret
-
-![New Secret2](./media/addClientSecret.PNG)
-
-4. Copy the secret value to clipboard
-
-![New Secret3](./media/secretValue.PNG)
-
-5. Close the Service Principal interface by clicking at the 'X' at the upper right corner
-
-![Exit](./media/exit.PNG)
-
-5. Paste the secret into the SPN password
-
-![Copy](./media/copySecret.PNG)
-
-### Landing zone configuration
-
-You can optionally bring in N number of subscriptions that will be bootstrapped as landing zones, governed by Azure Policy. Select which policy you want to assign broadly to all of your landing zones. 
-
-![Lz configuration](./media/lz.PNG)
-
-### Review + create
-
-Review + Create page will validate your permission and configuration before you can click deploy. Once it has been validated successfully, you can click Create.
 
 ## Next steps
 
