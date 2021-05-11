@@ -4,7 +4,7 @@
 - [Pre-requisites](#pre-requisites)
 - [Enable Service Principal to create landing zones](#enable-service-principal-to-create-landing-zones)
 - [ARM template repository](#arm-template-repository)
-- [Create a landing zone using AzOps](#create-a-landing-zone-using-azops)
+- [Create a subscription (landing zone) using AzOps](#create-a-subscription-landing-zone-using-azops)
 
 ---
 
@@ -42,9 +42,6 @@ Login with the *enrollment account* (e.g. with `Login-AzAccount`) and execute th
 ```powershell
 # Provide the objectId of the AzOps service principal to grant access to enrolment account. 
 $spnObjectId = (Get-AzADServicePrincipal -DisplayName "MyAzOpsSPN").Id
-
-# Get context for the signed in enrolment account
-$currentContext = Get-AzContext
 
 # Fetching new token
 $token = Get-AzAccessToken
@@ -141,6 +138,50 @@ PlatformOps will use DevOps process (CI/CD) to create a subscriptions (landing z
 - [Create new empty subscription into a management group](https://github.com/azure/enterprise-scale/examples/landing-zones/empty-subscription/)
 - [Create new connected subscription into a management group](https://github.com/azure/enterprise-scale/examples/landing-zones/connected-subscription/)
 
-## Create a landing zone using AzOps
+## Create a subscription (landing zone) using AzOps
 
-When the ARM templates are created to deploy a subscription following the recommendation in the [landing zone example folder](../../examples/landing-zones), subscriptions can be created on Azure using AzOps following [this documentation](./deploy-new-arm.md).
+Creating a subscription (landing zone) is a simple as creating any other resource in Azure. The same sequence of steps will be needed as used for other platform resource deployments (e.g. [deploy a policyAssignments](./Deploying-Enterprise-Scale.md#create-new-policy-assignment-for-validation)).
+
+To successfully deploy a subscription using AzOps the following steps will be required:
+
+- 'Connect' AzOps to the Azure Environment, ensure that ['Pull' workflow runs successfully](./Deploying-Enterprise-Scale.md#validation-post-deployment-github)
+- Enable the AzOps SPN for subscription creation as documented [here](#enable-service-principal-to-create-landing-zones)
+- Ensure that SPN has Owner permissions at the target management group the subscription will be deployed under
+
+The following steps will deploy an empty subscription under the '*company-prefix*-online' management group
+
+1. Create a new branch 'new-landing-zone' in your AzOps Git repository and make it current
+
+> Git command: `git checkout -b new-landing-zone`)
+
+2. Copy the file [emptySubscription.json](https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/landing-zones/empty-subscription/emptySubscription.json) and save it to the '*company-prefix*-online' folder in the folder structure.
+
+3. Create a `emptySubscription.parameters.json` file in the same folder with the parameters below and update the values appropriate.
+
+- `subscriptionAliasName` - Tenant wide unique alias for the subscription. Will also become the display name for the subscription.
+- `billingAccountId` - Provide the full resourceId of the MCA or the enrollment account id used for subscription creation (e.g. `/providers/Microsoft.Billing/billingAccounts/<billingAccountId>/enrollmentAccounts/<enrollmentAccountId`)
+- `targetManagementGroup` - Provide the resourceId of the target management group to place the subscription.
+
+``` json
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionAliasName": {
+            "value": "" 
+        },
+        "billingAccountId": {
+            "value": "" 
+        },
+        "targetManagementGroup": {
+            "value": "" 
+        }
+    }
+}
+```
+
+4. Commit the new content to the branch and create a PR (`new-landing-zone` branch -> `main`)
+
+> Hint: As part of the PR validation AzOps deploys the new subscriptions and merges the changes to the `main` branch.
+
+5. Validate in subscription creation was successful using the Azure Portal
