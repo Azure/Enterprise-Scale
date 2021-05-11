@@ -26,4 +26,4 @@ Reference implementations enables security, monitoring, networking, and any othe
 
 3. Platform enables autonomy regardless of the customer's scale point.
 
-To know and learn more about ARM templates used for above reference implementation, please follow [this](./Deploy/ES-schema.md) article.
+To know and learn more about ARM templates used for above reference implementation, please follow [this](./Deploy/es-schema.md) article.

@@ -18,5 +18,5 @@ Further; platform resource in the context of Enterprise-scale are deployed prima
 How-to documentation to deploy these templates using a platform CI/CD pipeline AzOps:  
 
 - [Deploy your own ARM templates with AzOps GitHub Actions](../docs/Deploy/deploy-new-arm.md)
-- [Enable Service Principal to create landing zones](../docs/Deploy/enable-subscription-creation.md)
+- [Enable Service Principal to create landing zones](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#enable-service-principal-to-create-landing-zones)
 - [Landing zone creation](./landing-zones)

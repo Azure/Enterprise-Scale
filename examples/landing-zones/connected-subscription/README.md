@@ -155,7 +155,7 @@ This ARM template will pass states from outer to inner during the deployment in 
 
 ## Deploy using AzOps
 
-See these [instructions](../../../docs/Deploy/enable-subscription-creation.md) for how to use this template with the AzOps GitHub Actions/DevOps pipeline.
+See these [instructions](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones) for how to use this template with the AzOps GitHub Actions/DevOps pipeline.
 
 ## Deploy using Azure PowerShell
 
