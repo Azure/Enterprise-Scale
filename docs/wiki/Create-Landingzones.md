@@ -1,15 +1,15 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
-- [Create Landing zones (subscription) using AzOps](#create-landing-zones-subscription-using-azops)
+- [Create landing zones (subscription) using AzOps](#create-landing-zones-subscription-using-azops)
 - [Pre-requisites](#pre-requisites)
 - [Enable Service Principal to create landing zones](#enable-service-principal-to-create-landing-zones)
 - [ARM template repository](#arm-template-repository)
-- [Create a subscription (landing zone) using AzOps](#create-a-subscription-landing-zone-using-azops)
+- [Create a new landing zone (subscriptions)](#create-a-new-landing-zone-subscriptions)
 
 ---
 
-## Create Landing zones (subscription) using AzOps
+## Create landing zones (subscription) using AzOps
 
 Managing all the platform resources in a a single repository is one of the guiding principle for PlatformOps to manage the platform. Subscriptions representing landing zones are resource types manage by the PlatformOps team. As every other platform resource type subscriptions are created using the ARM API. For Subscriptions the API and versions vary and depend on the commercial contract.
 
@@ -48,7 +48,7 @@ $spnObjectId = (Get-AzADServicePrincipal -DisplayName "MyAzOpsSPN").Id
 $token = Get-AzAccessToken
 ```
 
-**List all the billing accounts and enrolment accounts**
+**List all the billing accounts and enrollment accounts**
 As a next step, list and identify the "billing account" and *enrollment account* the user has access to. These two information are required to request the roles available and to assign the permissions to the Service Principal.
 
 The following scripts lists the *billing account* and "enrollment account" and assigns it to a variables which will be used later in this guide.
@@ -138,7 +138,7 @@ PlatformOps will use AzOps CI/CD pipelines to create subscriptions (landing zone
 
 >Hint: Different examples are published in the Enterprise-Scale repository to automate landing zone creation [here](https://github.com/Azure/Enterprise-Scale/tree/main/examples/landing-zones).
 
-## Create a subscription (landing zone) using AzOps
+## Create a new landing zone (subscriptions)
 
 Creating a subscription (landing zone) is a simple as creating any other resource in Azure. The same sequence of steps will be needed as used for other platform resource deployments (e.g. [deploy a policyAssignments](./Deploying-Enterprise-Scale.md#create-new-policy-assignment-for-validation)).
 

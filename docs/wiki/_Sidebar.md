@@ -17,7 +17,7 @@
   * [Post deployment activities](./Deploying-Enterprise-Scale#post-deployment-activities)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-Enterprise-Scale#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
 * [Create subscriptions / landing zones using AzOps](./Create-Landingzones.md)
-  * [Create Landing zones (subscription) using AzOps](./Create-Landingzones.md#create-landing-zones-subscription-using-azops)
+  * [Create landing zones (subscription) using AzOps](./Create-Landingzones.md#create-landing-zones-subscription-using-azops)
   * [Pre-requisites](./Create-Landingzones.md#pre-requisites)
   * [Enable Service Principal to create landing zones](./Create-Landingzones.md#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](./Create-Landingzones.md#arm-template-repository)
