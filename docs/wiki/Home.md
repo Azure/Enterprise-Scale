@@ -1,7 +1,9 @@
-# Enterprise-Scale Landing Zones User Guide 
+# Enterprise-Scale Landing Zones User Guide
+
 The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-to-end documentation for the Enterprise-Scale deployment and configuration experience to accelerate both adoption and deployment. 
 
 ## Navigation
+
 * [What is Enterprise-Scale?](./What-is-Enterprise-Scale)
   * [What is Enterprise-Scale reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
@@ -17,3 +19,9 @@ The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-
   * [Validation post deployment (GitHub)](./Deploying-Enterprise-Scale#validation-post-deployment-github)
   * [Post deployment activities](./Deploying-Enterprise-Scale#post-deployment-activities)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-Enterprise-Scale#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
+* [Create subscriptions / landing zones using AzOps](./Create-Landingzones.md)
+  * [Create landing zones (subscription) using AzOps](./Create-Landingzones.md#create-landing-zones-subscription-using-azops)
+  * [Pre-requisites](./Create-Landingzones.md#pre-requisites)
+  * [Enable Service Principal to create landing zones](./Create-Landingzones.md#enable-service-principal-to-create-landing-zones)
+  * [ARM template repository](./Create-Landingzones.md#arm-template-repository)
+  * [Create a new landing zone (subscriptions)](./Create-Landingzones.md#create-a-new-landing-zone-subscriptions)
