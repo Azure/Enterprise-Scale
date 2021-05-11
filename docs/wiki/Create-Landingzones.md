@@ -140,7 +140,7 @@ PlatformOps will use AzOps CI/CD pipelines to create subscriptions (landing zone
 
 ## Create a new landing zone (subscriptions)
 
-Creating a subscription (landing zone) is a simple as creating any other resource in Azure. The same sequence of steps will be needed as used for other platform resource deployments (e.g. [deploy a policyAssignments](./Deploying-Enterprise-Scale.md#create-new-policy-assignment-for-validation)).
+Creating a landing zone (subscription) is as simple as creating any other resource in Azure. The same sequence of steps will be needed as used for other platform resource deployments (e.g. [deploy a policyAssignments](./Deploying-Enterprise-Scale.md#create-new-policy-assignment-for-validation)).
 
 To successfully deploy a subscription using AzOps the following steps will be required:
 
