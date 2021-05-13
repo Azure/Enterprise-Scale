@@ -50,3 +50,21 @@ Examples:
 ### Why are there custom policy definitions as part of Enterprise-Scale Landing Zones?
 
 We work with - and learn from our customers and partners, and ensures that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Entperprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continiously moving these policies to built-ins.
+
+### What does Policy Driven Governance means, and how does it work?
+
+Azure Policy and deployIfNotExist enables the autonomy in the platform, and reduces the operational burden as you scale your deployments and subscriptions in the Enterprise-Scale architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy.
+Some examples:
+
+* A new subscription (landing zone) is created and placed into the targeted management group (online, corp, sandbox etc.). Azure Policy will then ensure that Azure Security Center is enabled for the subscription, the diagnostic setting for the Activity Log is routed to the platform Log Analytics Workspace, budget is applied, and virtual network peering is done properly back to the connectivity subscription. Instead of repeating and duplicating code and efforts when a new subscription is being created, Azure Policy is assigned at the management group to automatically bring the subscriptions into their compliant goal state.
+
+* An application team is deploying a workload composed of SQL Databases, Virtual Machines, Network Security Groups, and Load Balancers into their landing zone. Azure Policy will ensure that all these resources have the right logging and security enabled from a platform perspective (e.g., NetworkSecurityGroupEvent log category for Network Security Group is routed to the platform Log Analytics workspace, Azure Monitor VM Extensions are added to the Virtual Machine, auditing is enabled for the SQL Database).
+
+### Are we supposed to use Azure Policy for workload deployments?
+
+The short answer to this is: No.
+Azure Policy is not doing workload deployments, but ensures workloads that are being deployed (regardless of *how*) will be compliant per the organization's security and compliance requirements. Also, it ensures application teams can chose their preferred tooling and clients for deployments, instead of relying on central IT to provide artifacts, pipelines, tools etc.
+
+### What if I already have resources in my landing zones, and later add a policy?
+
+This is very common, and expected as new Azure services are being enabled and used, and you need to govern them. When assigning a policy to a scope (management group) that contains subscriptoins with resources subject to that policy, the assignment will start an initial *scan* of the scope, and report on compliant and non-compliant resources. Depending on the policy effect (deny, audit, append, modify, deployIfNotExist, and auditIfNotExist), you can remediate and bring the resources into a compliant state automatically.
