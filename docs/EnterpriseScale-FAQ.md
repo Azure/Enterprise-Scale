@@ -68,3 +68,10 @@ Azure Policy is not doing workload deployments, but ensures workloads that are b
 ### What if I already have resources in my landing zones, and later add a policy?
 
 This is very common, and expected as new Azure services are being enabled and used, and you need to govern them. When assigning a policy to a scope (management group) that contains subscriptoins with resources subject to that policy, the assignment will start an initial *scan* of the scope, and report on compliant and non-compliant resources. Depending on the policy effect (deny, audit, append, modify, deployIfNotExist, and auditIfNotExist), you can remediate and bring the resources into a compliant state automatically.
+
+Once a policy is assigned, it will take immediate effect for all new *writes* (create/update) to that scope subject to the policy rule.
+Example:
+
+* Assigning a policy that deploys Azure Monitor VM extension to a management group containing subscriptions with virtual machines, will detect all virtual machines that does not have the Azure Monitor VM extenstion enabled, and mark them as non-compliant. These virtual machines can now be remediated so the Azure Monitor VM extension gets enabled, and the virtual machines will be compliant.
+
+* For all new VM create/update requests to those subscriptions subject to the policy, the policy will act as soon as the VM create request has completed successfully, and there is no need to remediate or take any actions.
