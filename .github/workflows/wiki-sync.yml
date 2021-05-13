@@ -1,0 +1,52 @@
+name: Docs/Wiki Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/wiki/**"
+
+env:
+  wiki_source_repo: "Azure/enterprise-scale"
+  wiki_source_repo_dir: "Azure/enterprise-scale/docs/wiki"
+  wiki_target_repo: "Azure/enterprise-scale.wiki"
+  github_user_name: "github-actions"
+  github_email: "41898282+github-actions[bot]@users.noreply.github.com"
+  github_commit_message: "Wiki Sync from docs/wiki"
+
+jobs:
+  sync-wiki:
+    name: Sync docs/wiki to Wiki
+    if: github.repository == 'Azure/Enterprise-Scale'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.wiki_source_repo }}
+          path: ${{ env.wiki_source_repo }}
+
+      - name: Checkout Wiki Repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.wiki_target_repo }}
+          path: ${{ env.wiki_target_repo }}
+
+      - name: Configure Local Git
+        run: |
+          git config --global user.name $github_user_name
+          git config --global user.email $github_email
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+
+      - name: Sync docs/wiki Into Wiki Repo
+        run: |
+          rsync -avzr --delete --exclude='.git/' "$wiki_source_repo_dir/" "$wiki_target_repo"
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+
+      - name: Stage & Push Files Into Wiki Repo
+        run: |
+          git add .
+          git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+          git push --set-upstream https://$GITHUB_TOKEN@github.com/$wiki_target_repo.git master
+        working-directory: ${{ env.wiki_target_repo }}

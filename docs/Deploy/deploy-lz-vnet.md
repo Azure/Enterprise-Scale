@@ -1,5 +1,6 @@
 
 # Enterprise-Scale Landing Zone VNet Deployments
+
 This article describes how to manage Landing Zone VNet deployments in
 Enterprise-Scale environments using policy-driven governance.
 
@@ -11,31 +12,30 @@ deploy our landing zones. That process, often referred to "File -\> New
 -\> Landing Zone" encompasses the recurring activities that are required
 to instantiate a new landing zone.
 
-In Corp connected landing zone scenarios, regardless of chosen [Azure
-network
-topology](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity#define-an-azure-network-topology)
+In Corp connected landing zone scenarios, regardless of chosen [Azure network topology](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity#define-an-azure-network-topology)
 (hub-spoke or Virtual WAN), there is an additional set of network
 related deployments that needs to happen to ensure that the landing zone
 is ready for the application teams to use, such as;
 
--   Deploy a virtual network (VNet) in the landing zone subscription.
+- Deploy a virtual network (VNet) in the landing zone subscription.
 
--   Connect the landing zone VNet to a hub VNet or vWAN virtual hub via
-    VNet peering.
+- Connect the landing zone VNet to a hub VNet or vWAN virtual hub via VNet peering.
 
--   Deploy a Network Security Group (NSG) with default security rules.
+- Deploy a Network Security Group (NSG) with default security rules.
 
--   \[Hub-spoke only\] Deploy a UDR with default route to firewall/NVA
+- \[Hub-spoke only\] Deploy a UDR with default route to firewall/NVA
 
 Once these network resources are deployed, the corp-connected landing
 zones will have transit connectivity to on-premises (via ExpressRoute or
 VPN), across landing zones, as well as internet-outbound traffic via a
 central Azure Firewall or NVA as depicted in the pictures below:
 
-![](./media/vnet_image1.png)<br>
+![VWAN connected](./media/vnet_image1.png)
+
 ***Figure 1: VWAN-based corp-connected VNet***
 
-![](./media/vnet_image2.png)<br>
+![Hub & Spoke connected](./media/vnet_image2.png)
+
 ***Figure 2: Hub-spoke based corp-connected VNet***
 
 As part of our Enterprise-Scale reference implementations, we have
@@ -59,39 +59,39 @@ peer them to either traditional VNet hubs or Azure Virtual Wan Hubs. The policy 
 
 Depicted below is the high-level workflow to create Landing Zone VNets
 connected to connectivity hub with policy. This article will cover the
-highlighted steps. 
+highlighted steps.
 
-Subscription creation is covered in [the following
-doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subscription-creation.md).
+Subscription creation is covered in [the following doc](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones).
 
-![](./media/vnet_image3.png)
+![Deploy Hub&Spoke](./media/vnet_image3.png)
 
-1.  Assign policy to landing zone/subscription
+1. Assign policy to landing zone/subscription
 
     **a)**  Find the following policy and assign it to the newly created
         subscription
 
-    ![](./media/vnet_image4.png)
+    ![Assign policy](./media/vnet_image4.png)
 
     **b)**  Provide all required parameters and adjust settings for
-     [GatewayTransit and UseRemoteGateway](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
+     [GatewayTransit and UseRemoteGateway](https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
      if you have a VPN or ExpressRoute gateway that you plan to use for
      on-premises connectivity in the hub network.
 
     > **Important:** Double check that the CIDR range provided is not used
     > anywhere else in your network.
 
-    ![](./media/vnet_image5.png)
+    ![Assign policy](./media/vnet_image5.png)
 
     **c)**  Change the "Managed Identity location" for the MI that will be used
         for subsequent deployments to the desired region and then create the
         assignment.
 
-    ![](./media/vnet_image6.png)
+    ![Assign policy](./media/vnet_image6.png)
 
-    ![](./media/vnet_image7.png)
+    ![Assign policy](./media/vnet_image7.png)
 
     **PowerShell**
+
     ```powershell
     #Get Policy Definition to Assign
     $PolicyDefinition = Get-AzPolicyDefinition -Id /providers/Microsoft.Management/managementGroups/Corp/providers/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke
@@ -139,7 +139,8 @@ doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subs
     New-AzRoleAssignment -RoleDefinitionId "$($PolicyDefinition.Properties.PolicyRule.then.details.roleDefinitionIds.split("/")[-1])" `
                          -ObjectId $assignment.Identity.principalId -Scope $Assignment.Properties.Scope 
     ```
-2.  Create role assignment for managed identity in connectivity
+
+2. Create role assignment for managed identity in connectivity
     subscription
 
     To be able to create the peering from the hub side, the policy
@@ -150,14 +151,15 @@ doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subs
     the policy assignment. If the assignment was done with the portal,
     it will have an automatically generated name as highlighted in below
     screenshot.
-    ![](./media/vnet_image8.png)
+    ![Role assignment](./media/vnet_image8.png)
 
     **b)**  In the Azure portal, navigate to the Connectivity subscription and
     assign the Contributor role to the managed identity.
 
-    ![](./media/vnet_image9.png)
+    ![Role assignment](./media/vnet_image9.png)
 
     **PowerShell**
+
     ```powershell
     #Get HubResourceId from Parameters Json 
     $HubResourceId = ($ParametersJson | ConvertFrom-Json).hubresourceId.value
@@ -166,22 +168,21 @@ doc](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/enable-subs
                          -ObjectId $assignment.Identity.principalId -Scope $HubResourceId
     ```
 
-
-3.  Remediate policy to kick off deployment
+3. Remediate policy to kick off deployment
 
     **a)** Under Policy -\> Remediation in the portal, find and select your
 previously created assignment.
 
-    ![](./media/vnet_image10.png)
+    ![Remediation](./media/vnet_image10.png)
 
     **b)** Click on remediate to kick off the deployment task of the VNet and
     the Hub Peering. It will usually take 2-3 minutes and you can follow the
     progress under 'remediation tasks'.
 
-    ![](./media/vnet_image11.png)
-    ![](./media/vnet_image12.png)
+    ![Remediation](./media/vnet_image11.png)
+    ![Remediation](./media/vnet_image12.png)
 
-    ![](./media/vnet_image13.png)
+    ![Remediation](./media/vnet_image13.png)
 
     **PowerShell**
 
@@ -191,4 +192,3 @@ previously created assignment.
     #Get remediation status
     Get-AzPolicyRemediation -Name $Assignment.Name 
     ```
-
