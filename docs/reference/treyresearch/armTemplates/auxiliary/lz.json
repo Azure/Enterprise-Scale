@@ -131,6 +131,28 @@
                 "description": "If 'Yes' is selected, policy will be assigned to enforce Arc monitoring."
             }
         },
+        "denyPublicEndpoints": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select if policy to deny public endpoint should be assigned or not."
+            }
+        },
+        "enableEncryptionInTransit": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select if encryption in transit policy should be assigned or not."
+            }
+        },
         "enableVmMonitoring": {
             "type": "string",
             "defaultValue": "No",
@@ -157,6 +179,8 @@
     "variables": {
         "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-', parameters('targetManagementGroup'))]",
         "policyDefinitions": {
+            "deployEncryptionInTransit": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit')]",
+            "denyPublicEndpoint": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deny-PublicEndpoints')]",
             "deployVmBackup": "/providers/Microsoft.Authorization/policyDefinitions/98d0b9f8-fd90-49c9-88e2-d3baf3b0dd86",
             "denySubnetWithoutNsg": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg')]",
             "denyRdp": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet')]",
@@ -176,6 +200,8 @@
             "vmssMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad"
         },
         "policyAssignmentNames": {
+            "deployEncryptionInTransit": "Enforce-TLS-SSL",
+            "denyPublicEndpoint": "Deny-Public-Endpoints",
             "deployVmBackup": "Deploy-VM-Backup",
             "denySubnetWithoutNsg": "Deny-Subnet-Without-Nsg",
             "denyRdp": "Deny-RDP-from-internet",
@@ -196,6 +222,7 @@
         },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
+            "deployEncryptionInTransit": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').deployEncryptionInTransit))]",
             "deployVmBackup": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployVmBackup))]",
             "deploySqlSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploysqlSecurity))]",
             "deploySqlAuditing": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing))]",
@@ -210,6 +237,49 @@
         //"blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}"
     },
     "resources": [
+        {
+            "condition": "[equals(parameters('denyPublicEndpoints'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').denyPublicEndpoint]",
+            "location": "[deployment().location]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').denyPublicEndpoint]",
+                "displayName": "[variables('policyAssignmentNames').denyPublicEndpoint]",
+                "policyDefinitionId": "[variables('policyDefinitions').denyPublicEndpoint]",
+                "parameters": {}
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableEncryptionInTransit'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+                "displayName": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployEncryptionInTransit]",
+                "parameters": {}
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableEncryptionInTransit'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployEncryptionInTransit]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployEncryptionInTransit)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableEncryptionInTransit'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployEncryptionInTransit), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
         {
             "condition": "[equals(parameters('denyRdp'), 'Yes')]",
             "type": "Microsoft.Authorization/policyAssignments",
