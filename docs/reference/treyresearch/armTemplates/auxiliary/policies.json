@@ -949,6 +949,14 @@
                   "displayName": "hubResourceId",
                   "description": "Resource ID for the HUB vNet"
                 }
+              },
+              "dnsServers": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "DNSServers",
+                  "description": "Default domain servers for the vNET."
+                },
+                "defaultValue": []
               }
             },
             "metadata": {
@@ -1006,6 +1014,9 @@
                         },
                         "hubResourceId": {
                           "value": "[[parameters('hubResourceId')]"
+                        },
+                        "dnsServers": {
+                          "value": "[[parameters('dnsServers')]"
                         }
                       },
                       "template": {
@@ -1030,6 +1041,10 @@
                           },
                           "hubResourceId": {
                             "type": "String"
+                          },
+                          "dnsServers": {
+                            "type": "Array",
+                            "defaultValue": []
                           }
                         },
                         "variables": {},
@@ -1093,6 +1108,9 @@
                                         "addressPrefixes": [
                                           "[[parameters('vNetCidrRange')]"
                                         ]
+                                      },
+                                      "dhcpOptions": {
+                                        "dnsServers": "[[parameters('dnsServers')]"
                                       }
                                     }
                                   },
@@ -2193,6 +2211,125 @@
             }
           },
           "name": "Deploy-Diagnostics-Website"
+        },
+                {
+          "properties": {
+            "description": "Deploy Azure Security Center Security Contacts",
+            "displayName": "Deploy Azure Security Center Security Contacts",
+            "mode": "All",
+            "parameters": {
+              "emailSecurityContact": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Security contacts email address",
+                  "description": "Provide email address for Azure Security Center contact details"
+                }
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/securityContacts",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/securityContacts/email",
+                        "contains": "[[parameters('emailSecurityContact')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/securityContacts"
+                      },
+                      {
+                        "field": "Microsoft.Security/securityContacts/alertNotifications",
+                        "equals": "On"
+                      },
+                      {
+                        "field": "Microsoft.Security/securityContacts/alertsToAdmins",
+                        "equals": "On"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "emailSecurityContact": {
+                          "value": "[[parameters('emailSecurityContact')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "emailSecurityContact": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Security contacts email address"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/securityContacts",
+                            "name": "default",
+                            "apiVersion": "2020-01-01-preview",
+                            "properties": {
+                              "emails": "[[parameters('emailSecurityContact')]",
+                              "notificationsByRole": {
+                                "state": "On",
+                                "roles": [
+                                  "Owner"
+                                ]
+                              },
+                              "alertNotifications": {
+                                "state": "On",
+                                "minimalSeverity": "High"
+                              }
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-SecurityContacts"
         },
         {
           "properties": {
@@ -20893,6 +21030,285 @@
             ]
           },
           "name": "Enforce-EncryptTransit"
+        },
+        {
+          "properties": {
+            "description": "Deploy Azure Security Center configuration",
+            "displayName": "Deploy Azure Security Center configuration",
+            "parameters": {
+              "emailSecurityContact": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Security contacts email address",
+                  "description": "Provide email address for Azure Security Center contact details"
+                }
+              },
+              "logAnalytics": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Primary Log Analytics workspace",
+                  "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
+                  "strongType": "omsWorkspace"
+                }
+              },
+              "ascExportResourceGroupName": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Resource Group name for the export to Log Analytics workspace configuration",
+                  "description": "The resource group name where the export to Log Analytics workspace configuration is created. If you enter a name for a resource group that doesn't exist, it'll be created in the subscription. Note that each resource group can only have one export to Log Analytics workspace configured."
+                }
+              },
+              "ascExportResourceGroupLocation": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Resource Group location for the export to Log Analytics workspace configuration",
+                  "description": "The location where the resource group and the export to Log Analytics workspace configuration are created."
+                }
+              },
+              "pricingTierVMs": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for Virtual Machines",
+                  "description": "Azure Defender pricing tier for Virtual Machines"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierSqlServers": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for SQL Servers",
+                  "description": "Azure Defender pricing tier for SQL Servers"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierAppServices": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for App Services",
+                  "description": "Azure Defender pricing tier for App Services"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierStorageAccounts": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for Storage Accounts",
+                  "description": "Azure Defender pricing tier for Storage Accounts"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierSqlServerVirtualMachines": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for SQL Server Virtual Machines",
+                  "description": "Azure Defender pricing tier for SQL Server Virtual Machines"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierKubernetesService": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for AKS",
+                  "description": "Azure Defender pricing tier for AKS"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierContainerRegistry": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for ACR",
+                  "description": "Azure Defender pricing tier for ACR"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierKeyVaults": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for AKV",
+                  "description": "Azure Defender pricing tier for AKV"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierDns": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for DNS",
+                  "description": "Azure Defender pricing tier for DNS"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierArm": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for Azure Resource Manager",
+                  "description": "Azure Defender pricing tier for Azure Resource Manager"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "PolicyDefinitions": [
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-VMs')]",
+                "policyDefinitionReferenceId": "defenderForVM",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierVMs')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-Sql')]",
+                "policyDefinitionReferenceId": "defenderForSqlServers",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierSqlServers')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-AppSrv')]",
+                "policyDefinitionReferenceId": "defenderForAppServices",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierAppServices')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-SA')]",
+                "policyDefinitionReferenceId": "defenderForStorageAccounts",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierStorageAccounts')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-SQLVM')]",
+                "policyDefinitionReferenceId": "defenderForSqlServerVirtualMachines",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierSqlServerVirtualMachines')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-AKS')]",
+                "policyDefinitionReferenceId": "defenderForKubernetesService",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierKubernetesService')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-ACR')]",
+                "policyDefinitionReferenceId": "defenderForContainerRegistry",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierContainerRegistry')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-AKV')]",
+                "policyDefinitionReferenceId": "defenderForKeyVaults",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierKeyVaults')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-DNS')]",
+                "policyDefinitionReferenceId": "defenderForDns",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierDns')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-ARM')]",
+                "policyDefinitionReferenceId": "defenderForArm",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierArm')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-SecurityContacts')]",
+                "policyDefinitionReferenceId": "securityEmailContact",
+                "parameters": {
+                  "emailSecurityContact": {
+                    "value": "[[parameters('emailSecurityContact')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
+                "policyDefinitionReferenceId": "ascExport",
+                "parameters": {
+                  "resourceGroupName": {
+                    "value": "[[parameters('ascExportResourceGroupName')]"
+                  },
+                  "resourceGroupLocation": {
+                    "value": "[[parameters('ascExportResourceGroupLocation')]"
+                  },
+                  "workspaceResourceId": {
+                    "value": "[[parameters('logAnalytics')]"
+
+                  }
+                }
+              }
+            ]
+          },
+          "name": "Deploy-ASC-Config"
         }
       ]
     }
