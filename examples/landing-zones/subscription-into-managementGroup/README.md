@@ -52,7 +52,7 @@ This ARM template is using the "scope escape" property on the resource in order 
 ````
 ## Deploy using AzOps
 
-See these [instructions](../../../docs/Deploy/enable-subscription-creation.md) for how to use this template with the AzOps GitHub Actions/DevOps pipeline.
+See these [instructions](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones) for how to use this template with the AzOps GitHub Actions/DevOps pipeline.
 
 ## Deploy using Azure PowerShell
 

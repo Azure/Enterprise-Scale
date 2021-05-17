@@ -67,7 +67,7 @@
                         "options": {
                             "icon": "Info",
                             "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
-                            "uri": "https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/Readme.md"
+                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring"
                         }
                     },
                     {
@@ -242,26 +242,6 @@
                         "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
-                        "name": "esAntiMalware",
-                        "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Deploy Antimalware solution",
-                        "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                        "constraints": {
-                            "allowedValues": [
-                                {
-                                    "label": "Yes (recommended)",
-                                    "value": "Yes"
-                                },
-                                {
-                                    "label": "No",
-                                    "value": "No"
-                                }
-                            ]
-                        },
-                        "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
-                    },
-                    {
                         "name": "esServiceMap",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Deploy Service Map solution",
@@ -334,6 +314,19 @@
                         "visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
                     },
                     {
+                        "name": "esAscEmail",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Azure Security Center Email Contact",
+                        "toolTip": "Email address to get email notifications from Azure Security Center",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "defaultValue": "",
+                        "constraints": {
+                            "required": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                            "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                            "validationMessage": "Please provide a valid email address"
+                        }
+                    },
+                    {
                         "name": "esAscVms",
                         "type": "Microsoft.Common.OptionsGroup",
                         "label": "Enable Azure Defender for servers",
@@ -396,9 +389,29 @@
                     {
                         "name": "esAscSql",
                         "type": "Microsoft.Common.OptionsGroup",
-                        "label": "Enable Azure Defender for SQL",
+                        "label": "Enable Azure Defender for Azure SQL Database",
                         "defaultValue": "Yes (recommended)",
-                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL.",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for Azure SQL Database.",
+                        "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
+                        "constraints": {
+                            "allowedValues": [
+                                {
+                                    "label": "Yes (recommended)",
+                                    "value": "Standard"
+                                },
+                                {
+                                    "label": "No, Azure Defender Off",
+                                    "value": "Free"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "esAscSqlOnVm",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Enable Azure Defender for SQL servers on machines",
+                        "defaultValue": "Yes (recommended)",
+                        "toolTip": "If 'Yes' is selected, Azure Defender will be enabled for SQL servers on machines.",
                         "visible": "[equals(steps('esGoalState').esAsc, 'Yes')]",
                         "constraints": {
                             "allowedValues": [
@@ -1034,10 +1047,12 @@
             "lzSubscriptionId": "[if(not(contains(steps('lzGoalState').esLzSub, steps('esGoalState').esMgmtSub)), steps('lzGoalState').esLzSub, '')]",
             "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
             "enableAsc": "[steps('esGoalState').esAsc]",
+            "emailContactAsc": "[steps('esGoalState').esAscEmail]",
             "enableAscForServers": "[steps('esGoalState').esAscVms]",
             "enableAscForAppServices": "[steps('esGoalState').esAscApps]",
             "enableAscForStorage": "[steps('esGoalState').esAscStorage]",
             "enableAscForSql": "[steps('esGoalState').esAscSql]",
+            "enableAscForSqlOnVm": "[steps('esGoalState').esAscSqlOnVm]",
             "enableAscForKeyVault": "[steps('esGoalState').esAscKeyVault]",
             "enableAscForArm": "[steps('esGoalState').esAscArm]",
             "enableAscForDns": "[steps('esGoalState').esAscDns]",
@@ -1049,7 +1064,6 @@
             "enableUpdateMgmt": "[steps('esGoalState').esUpdateMgmt]",
             "enableActivityLog": "[steps('esGoalState').esActivityLog]",
             "enableVmInsights": "[steps('esGoalState').esVmInsights]",
-            "enableAntiMalware": "[steps('esGoalState').esAntiMalware]",
             "enableServiceMap": "[steps('esGoalState').esServiceMap]",
             "enableSqlAssessment": "[steps('esGoalState').esSqlAssessment]",
             "enterpriseScaleCompanyPrefix": "[steps('lzSettings').esMgmtGroup]",
