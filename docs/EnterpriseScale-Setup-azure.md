@@ -30,7 +30,14 @@ Please ensure you are logged in as a user with UAA role enabled in AAD tenant an
 Bash
 
 ````bash
-az role assignment create  --scope '/' --role 'Owner' --assignee-object-id $(az ad user show -o tsv --query objectId --id '<replace-me>@<my-aad-domain.com>')
+#sign into AZ CLI, this will redirect you to a webbrowser for authentication, if required
+az login
+
+#if you do not want to use a web browser you can use the following bash
+read -sp "Azure password: " AZ_PASS && echo && az login -u <username> -p $AZ_PASS
+
+##assign Owner role to Tenant root scope ("/") as a User Access Administrator (gets object Id of the current user (az login))
+az role assignment create  --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query objectId)
 ````
 
 PowerShell
