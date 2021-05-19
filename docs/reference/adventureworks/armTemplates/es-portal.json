@@ -114,30 +114,19 @@
                             },
                             "visible": "[equals(steps('esGoalState').esLogAnalytics,'Yes')]"
                         },
-                        {
-                            "name": "mgmtSubsApi",
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2020-01-01"
-                            }
-                        },
-                        {
-                            "name": "esMgmtSub",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Management subscription",
-                            "toolTip": "",
-                            "multiselect": false,
-                            "selectAll": true,
-                            "filter": true,
-                            "filterPlaceholder": "Filter items ...",
-                            "multiLine": true,
-                            "visible": "[equals(steps('esGoalState').esLogAnalytics,'Yes')]",
-                            "constraints": {
-                                "allowedValues": "[map(steps('esGoalState').mgmtSubsApi.value,(sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
-                                "required": true
-                            }
-                        },
+						{
+							"name": "esMgmtSubSection",
+							"type": "Microsoft.Common.Section",
+							"label": "Management subscription",
+							"elements": [
+								{
+									"type":"Microsoft.Common.SubscriptionSelector",
+									"name": "esMgmtSub",
+									"label": "Management subscription"
+								}
+							],
+							"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+            			},
                         {
                             "name": "monitoring",
                             "type": "Microsoft.Common.TextBlock",
@@ -566,7 +555,7 @@
                         {
                             "name": "info",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[not(empty(steps('esGoalState').esMgmtSub))]",
+                            "visible": "[not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub))]",
                             "options": {
                                 "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
@@ -576,7 +565,7 @@
                         {
                             "name": "correction",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[empty(steps('esGoalState').esMgmtSub)]",
+                            "visible": "[empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)]",
                             "options": {
                                 "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
@@ -602,7 +591,7 @@
                                 ],
                                 "required": true
                             },
-                            "visible": "[not(empty(steps('esGoalState').esMgmtSub))]"
+                            "visible": "[not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub))]"
                         },
                         {
                             "name": "Instructions",
@@ -643,7 +632,7 @@
                             "constraints": {
                                 "required": true,
                                 "regex": "^[a-z0-9A-Z-]{1,15}$",
-                                "validationMessage": "The prefix must be 1-5 characters."
+                                "validationMessage": "The GitHub org/username must be 1-15 characters."
                             }
                         },
                         {
@@ -657,7 +646,7 @@
                             "constraints": {
                                 "required": true,
                                 "regex": "^[a-z0-9A-Z-]{1,15}$",
-                                "validationMessage": "The prefix must be 1-5 characters."
+                                "validationMessage": "The repository name must be 1-15 characters."
                             }
                         },
                         {
@@ -1897,15 +1886,15 @@
                 "enableVpnGw": "[steps('esConnectivityGoalState').esVpnGw]",
                 "enableHub": "[steps('esConnectivityGoalState').esHub]",
                 "enableDdoS": "[steps('esConnectivityGoalState').esDdoS]",
-                "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esConnectivitySub,steps('esGoalState').esMgmtSub)),steps('esConnectivityGoalState').esConnectivitySub,'')]",
+                "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esConnectivitySub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),steps('esConnectivityGoalState').esConnectivitySub,'')]",
                 "enableAzFw": "[steps('esConnectivityGoalState').esAzFw]",
                 "enableAzFwDnsProxy": "[steps('esConnectivityGoalState').esAzFwDns]",
                 "addressPrefix": "[steps('esConnectivityGoalState').esAddressHub]",
                 "location": "[steps('esConnectivityGoalState').esNwLocation]",
-                "managementSubscriptionId": "[steps('esGoalState').esMgmtSub]",
-                "identitySubscriptionId": "[if(or(not(equals(steps('esIdentityGoalState').esIdentitySub,steps('esGoalState').esMgmtSub)),not(equals(steps('esIdentityGoalState').esIdentitySub,steps('esConnectivityGoalState').esConnectivitySub))),steps('esIdentityGoalState').esIdentitySub,'')]",
-                "onlineLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esOnlineLzSub,steps('esGoalState').esMgmtSub)),not(contains(steps('lzGoalState').esOnlineLzSub,steps('esConnectivityGoalState').esConnectivitySub))),steps('lzGoalState').esOnlineLzSub,'')]",
-                "corpLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSub)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esConnectivitySub))),steps('lzGoalState').esCorpLzSub,'')]",
+                "managementSubscriptionId": "[steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId]",
+                "identitySubscriptionId": "[if(or(not(equals(steps('esIdentityGoalState').esIdentitySub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(equals(steps('esIdentityGoalState').esIdentitySub,steps('esConnectivityGoalState').esConnectivitySub))),steps('esIdentityGoalState').esIdentitySub,'')]",
+                "onlineLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esOnlineLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esOnlineLzSub,steps('esConnectivityGoalState').esConnectivitySub))),steps('lzGoalState').esOnlineLzSub,'')]",
+                "corpLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esConnectivitySub))),steps('lzGoalState').esCorpLzSub,'')]",
                 "enableLogAnalytics": "[steps('esGoalState').esLogAnalytics]",
                 "denyRdpForIdentity": "[steps('esIdentityGoalState').esIdDenyRdp]",
                 "denySubnetWithoutNsgForIdentity": "[steps('esIdentityGoalState').esIdDenySubnetNsg]",
@@ -1952,14 +1941,14 @@
                 "enableArcMonitoring": "[steps('lzGoalState').esArcVmMonitoring]",
                 "vpnOrErZones": "[steps('esConnectivityGoalState').esGwRegionalOrAz]",
                 "firewallZones": "[steps('esConnectivityGoalState').esFwAz]",
-                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSub)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esConnectivitySub))),steps('lzGoalState').lzConnectedSubs,'')]",
+                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esConnectivitySub))),steps('lzGoalState').lzConnectedSubs,'')]",
                 "paToken": "[steps('lzDevOps').esPaToken]",
                 "principalId": "[steps('lzDevOps').spnSection.esServicePrincipal.objectId]",
                 "principalSecret": "[steps('lzDevOps').spnSection.esServicePrincipal.password]",
                 "gitHubUserNameOrOrg": "[steps('lzDevOps').esGit]",
                 "appId": "[steps('lzDevOps').spnSection.esServicePrincipal.appId]",
                 "enableAzOps": "[steps('lzDevOps').cicdOption]",
-                "subscriptionId": "[steps('esGoalState').esMgmtSub]",
+                "subscriptionId": "[steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId]",
                 "repositoryName": "[steps('lzDevOps').esGitRepoName]",
                 "gwRegionalOrAz": "[steps('esConnectivityGoalState').esGwRegionalOrAz]",
                 "gwAzSku": "[steps('esConnectivityGoalState').esGwAzSku]",
