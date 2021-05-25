@@ -1,12 +1,18 @@
 # Policies included in Enterprise-Scale Landing Zones reference implementations
 
+Azure Policy and deployIfNotExist enables the autonomy in the platform, and reduces the operational burden as you scale your deployments and subscriptions in the Enterprise-Scale architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy
+
+## Why are there custom policy definitions as part of Enterprise-Scale Landing Zones?
+
+We work with - and learn from our customers and partners, and ensures that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Entperprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continiously moving these policies to built-ins.
+
 The following tables shows:
 
-* Custom policyDefinitions included in the Enterprise-Scale reference implementations
-* Custom policySetDefinitions (Policy Initiatives) included in the Enterprise-Scale reference implementations
-* Optional policyAssignments included in the Enterprise-Scale reference implementations
-* Usage of built-in policies included in the Enterprise-Scale reference implementations
+* [Custom policyDefinitions](#eslz-custom-policy-definitions) included in the Enterprise-Scale reference implementations
+* [Custom policySetDefinitions](#eslz-custom-policy-set-definitions) (Policy Initiatives) included in the Enterprise-Scale reference implementations
+* [Policy assignments of built-in policies](#eslz-policy-assignments-for-built-in-policy-definitions-and-policy-set-definitions) in Enterprise-Scale reference implementations
 
+## ESLZ Custom Policy Definitions
 
 |Name<br /><sub>(Azure portal)</sub> |Description |Effect(s) |Version | State | Can optionally be assigned when deploying ESLZ | Assignment scope
 |---|---|---|---|---|---|---| 
@@ -138,3 +144,31 @@ The following tables shows:
 | KeyVault SoftDelete should be enabled | Ensures that Key Vaults are created with soft-delete enabled | append | 1.0.0 | Custom policy | No | Intermediate Root Management Group
 | AppService append sites with minimum TLS version to enforce | Append the AppService sites object to ensure that min Tls version is set to required minimum TLS version | append, disabled | 1.0.0 | Custom policy | Yes, recommended | Landing Zones Management Group
 | AppService append enable https only setting to enforce https setting | Appends the AppService sites object to ensure that  HTTPS only is enabled for  server/service authentication and protects data in transit from network layer eavesdropping attacks | append, disabled | 1.0.0 | Custom policy | Yes, recommended | Landing Zones Management Group
+
+## ESLZ Custom Policy Set Definitions
+
+|Name<br /><sub>(Azure portal)</sub> |Description |Effect(s) |Version | State | Can optionally be assigned when deploying ESLZ | Assignment scope
+|---|---|---|---|---|---|---| 
+| Deny or Deploy and Append TLS requirements and SSL enforcement on resources without encryption in transit | Choose either Deploy if not exist and append in combination with audit or Select Deny in the Policy effect. Deny polices shift left. Deploy if not exist and append enforce but can be changed | append, audit, auditIfNotExists, deployIfNotExists, deny | 1.0.0 | Custom policySet | Yes, recommended | Landing Zones management group
+| Deploy Azure Security Center Configuration | Configures all the ASC settings, such as Azure Defender per individual service, security contacts, and export from ASC to Log Analytics workspace | deployIfNotExists, disabled | 1.0.0 | Custom policySet| Yes, recommended | Intermediate root Management Group
+| Public network access should be disabled for PaaS services | Initiative that includes multiple policyDefinitions towards PaaS services to prevent usage of public endpoints | deny, disabled | 1.0.0 | Custom policySet| Yes, recommended | Corp Management Group
+| Deploy Diangostic Settings to Azure Services | Initiative containing all the DINE policies for diagnostics settings for individual Azure services | deployIfNotExists, disabled | 1.0.0 | Yes, recommended | Intermediate root Management Group
+| Deploy SQL Database built-in SQL security configuration | Initiative for built-in SQL security configuration, such as auditing, alert, TDE and SQL vulnerability | deployIfNotExists, disabled | 1.0.0 | Custom policySet| No | Landing Zone Management Group
+| Deny or Audit resources without encryption with a customer-managed key | Initiative with multiple policyDefinitions towards PaaS services supporting usage of customer-managed keys | deny, audit, disabled | 1.0.0 | Custom policySet| No | Landing Zones Management Group
+
+## ESLZ Policy Assignments for built-in policy definitions and policy set definitions
+
+|Name<br /><sub>(Azure portal)</sub> |Description |Effect(s) |Version | State | Can optionally be assigned when deploying ESLZ | Assignment scope
+|---|---|---|---|---|---|---| 
+| Azure Security Benchmark | The Azure Security Benchmark initiative represents the policies and controls implementing security recommendations defined in Azure Security Benchmark v2, see https://aka.ms/azsecbm. This also serves as the Azure Security Center default policy initiative. You can directly assign this initiative, or manage its policies and compliance results within Azure Security Center. | audit, auditIfNotExists | 29.0.0 | Built-in policySet | Yes, recommended | Intermediate root Management Group
+| Configure Azure Activity logs to stream to specified Log Analytics workspace | Deploys the diagnostic settings for Azure Activity to stream subscriptions audit logs to a Log Analytics workspace to monitor subscription-level events | deployIfNotExists, disabled | 1.0.0 | Built-in policy | Yes, recommended | Intermediate root Management Group
+| Enable Azure Monitor for VMs | Enable Azure Monitor for the virtual machines (VMs) in the specified scope (management group, subscription or resource group). Takes Log Analytics workspace as parameter | deployIfNotExists, disabled| 2.0.0 | Built-in policySet | Yes, recommended | Intermediate root Management Group
+| Enable Azure Monitor for Virtual Machine Scale Sets | Enable Azure Monitor for the Virtual Machine Scale Sets in the specified scope (Management group, Subscription or resource group). Takes Log Analytics workspace as parameter. Note: if your scale set upgradePolicy is set to Manual, you need to apply the extension to the all VMs in the set by calling upgrade on them. In CLI this would be az vmss update-instances. | deployIfNotExists, disabled | 1.0.1 | Built-in policySet | Yes, recommended | Intermediate root Management Group
+| Secure transfer to storage accounts should be enabled | Audit requirement of Secure transfer in your storage account. Secure transfer is an option that forces your storage account to accept requests only from secure connections (HTTPS). Use of HTTPS ensures authentication between the server and the service and protects data in transit from network layer attacks such as man-in-the-middle, eavesdropping, and session-hijacking | deny, audit, disabled | 2.0.0 | Built-in policy | Yes, recommended | Landing Zones Management Group
+| Network interfaces should disable IP forwarding | This policy denies the network interfaces which enabled IP forwarding. The setting of IP forwarding disables Azure's check of the source and destination for a network interface. This should be reviewed by the network security team. | deny | 1.0.0 | Built-in policy | Yes, recommended | Landing Zones Management Group
+| Deploy Azure Policy Add-on to Azure Kubernetes Service clusters | Use Azure Policy Add-on to manage and report on the compliance state of your Azure Kubernetes Service (AKS) clusters. For more information, see https://aka.ms/akspolicydoc. | deployIfNotExists | 1.0.0 | Built-in policy | Yes, recommended | Landing Zones Management Group
+| Configure backup on virtual machines without a given tag to a new recovery services vault with a default policy | Enforce backup for all virtual machines by deploying a recovery services vault in the same location and resource group as the virtual machine. Doing this is useful when different application teams in your organization are allocated separate resource groups and need to manage their own backups and restores. You can optionally exclude virtual machines containing a specified tag to control the scope of assignment. See https://aka.ms/AzureVMAppCentricBackupExcludeTag. | deployIfNotExists, auditIfNotExists, disabled | 3.0.0-preview | Built-in policy| Yes | Landing Zones Management Group, Connectivity Management Group
+| Kubernetes clusters should not allow container privilege escalation | Do not allow containers to run with privilege escalation to root in a Kubernetes cluster. This recommendation is part of CIS 5.2.5 which is intended to improve the security of your Kubernetes environments. This policy is generally available for Kubernetes Service (AKS), and preview for AKS Engine and Azure Arc enabled Kubernetes. For more information, see https://aka.ms/kubepolicydoc. | deny, audit, disabled | 3.0.0 | Built-in policy | Yes, recommended | Landing Zones Management Group
+| Kubernetes cluster should not allow privileged containers | Do not allow privileged containers creation in a Kubernetes cluster. This recommendation is part of CIS 5.2.1 which is intended to improve the security of your Kubernetes environments. This policy is generally available for Kubernetes Service (AKS), and preview for AKS Engine and Azure Arc enabled Kubernetes. For more information, see https://aka.ms/kubepolicydoc. | deny, audit, disabled | 7.0.0 | Built-in policy | Yes, recommended | Landing Zones Management Group
+| Kubernetes clusters should be accessible only over HTTPS | Use of HTTPS ensures authentication and protects data in transit from network layer eavesdropping attacks. This capability is currently generally available for Kubernetes Service (AKS), and in preview for AKS Engine and Azure Arc enabled Kubernetes. For more info, visit https://aka.ms/kubepolicydoc | deny, audit, disabled | 6.0.0 | Built-in policy | Yes, recommended | Landing Zones Management Group
+| Virtual networks should be protected by Azure DDoS Protection Standard | Protect your virtual networks against volumetric and protocol attacks with Azure DDoS Protection Standard. For more information, visit https://aka.ms/ddosprotectiondocs. | modify, audit, disabled | 1.0.0 | Built-in policy | Yes, recommended, Adventure works | Landing Zones Management Group
