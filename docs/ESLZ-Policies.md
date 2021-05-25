@@ -4,7 +4,7 @@ Azure Policy and deployIfNotExist enables the autonomy in the platform, and redu
 
 ## Why are there custom policy definitions as part of Enterprise-Scale Landing Zones?
 
-We work with - and learn from our customers and partners to ensure that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Enterprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continiously moving these policies to built-ins.
+We work with - and learn from our customers and partners to ensure that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Enterprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continuously moving these policies to built-ins.
 
 The following tables shows:
 
