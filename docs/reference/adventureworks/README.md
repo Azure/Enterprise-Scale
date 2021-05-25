@@ -72,6 +72,33 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
 
+## Hub & Spoke Networking
+
+As mentioned above the Adventure Works reference implementation deploys a traditional [hub & spoke VNet architecture](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke). With the Hub VNet being deployed into the **connectivity** subscription that will host the Azure Firewalls, ExpressRoute Circuits & Gateways & VPN Gateways. 
+
+The **identity** (optional) and **corp** connected landing zone subscriptions, that contain their own VNets (known as spokes in this architecture), are then connected back to the hub VNet via VNET Peering with the following [options](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-peering#create-a-peering) enabled:
+
+- Allow forwarded traffic
+- Allow gateway transit (hub VNet only)
+- Use remote gateways (spoke VNets only)
+
+![Enterprise Scale Adventure Work Network Overview Diagram](./media/es-hubspoke-nw.png)
+
+### Traffic Flows Explained
+
+In the following section we will deep dive into each of the following traffic flows within the architecture shown above and below:
+
+- Spoke <-> Internet (brown)
+- Spoke <-> Spoke (pink)
+- Spoke <-> On-Premises (red)
+- Remote Users <-> Spoke (orange)
+
+> Please note the **Traffic Flow Key** in the bottom right hand corner of the diagram. As this will be used to refer to the various traffic flows.
+
+![Enterprise Scale Adventure Work Network Overview Diagram With Traffic Flows](./media/es-hubspoke-nw-with-flows.png)
+
+
+
 ## Next steps
 
 ### From an application perspective
