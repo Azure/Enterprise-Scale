@@ -88,16 +88,30 @@ The **identity** (optional) and **corp** connected landing zone subscriptions, t
 
 In the following section we will deep dive into each of the following traffic flows within the architecture shown above and below:
 
-- Spoke <-> Internet (brown)
-- Spoke <-> Spoke (pink)
-- Spoke <-> On-Premises (red)
-- Remote Users <-> Spoke (orange)
+- Spoke <-> Internet - (brown)
+- Spoke <-> Spoke - (pink)
+- Spoke <-> On-Premises - (red)
+- Remote Users <-> Spoke - (orange)
 
 > Please note the **Traffic Flow Key** in the bottom right hand corner of the diagram. As this will be used to refer to the various traffic flows.
 
 ![Enterprise Scale Adventure Work Network Overview Diagram With Traffic Flows](./media/es-hubspoke-nw-with-flows.png)
 
+#### Spoke <-> Internet - (brown)
 
+blah blah blah
+
+#### Spoke <-> Spoke - (pink)
+
+blah blah blah
+
+#### Spoke <-> On-Premises - (red)
+
+blah blah blah
+
+#### Remote Users <-> Spoke - (orange)
+
+blah blah blah
 
 ## Next steps
 
