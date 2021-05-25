@@ -1,10 +1,10 @@
 # Policies included in Enterprise-Scale Landing Zones reference implementations
 
-Azure Policy and deployIfNotExist enables the autonomy in the platform, and reduces the operational burden as you scale your deployments and subscriptions in the Enterprise-Scale architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy
+Azure Policy and deployIfNotExist enables the autonomy in the platform, and reduces the operational burden as you scale your deployments and subscriptions in the Enterprise-Scale architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy.
 
 ## Why are there custom policy definitions as part of Enterprise-Scale Landing Zones?
 
-We work with - and learn from our customers and partners, and ensures that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Entperprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continiously moving these policies to built-ins.
+We work with - and learn from our customers and partners to ensure that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Enterprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continiously moving these policies to built-ins.
 
 The following tables shows:
 
@@ -16,7 +16,7 @@ The following tables shows:
 
 |Name<br /><sub>(Azure portal)</sub> |Description |Effect(s) |Version | State | Can optionally be assigned when deploying ESLZ | Assignment scope
 |---|---|---|---|---|---|---| 
-|Deploy Windows Domain Join Extension with KeyVault configuration |Deploys VM extension to join Windows machines to Active Directory domain, where keys are stored and retrieved from a centralized managed Key Vault |deployIfNotExist, disabled |1.0.0 | Custom policy | No | Landing Zone Management Group
+|Deploy Windows Domain Join Extension with Key Vault configuration |Deploys VM extension to join Windows machines to Active Directory domain, where keys are stored and retrieved from a centralized managed Key Vault |deployIfNotExist, disabled |1.0.0 | Custom policy | No | Landing Zone Management Group
 |Deploys virtual network peering to hub |Deploys a virtual network with an address space, and optionally custom DNS, and will peer to the connectivity hub in the specified region |deployIfNotExist, disabled |1.0.0 | Custom policy | Yes, recommended, in Adventure Works | Directly on the subscriptions
 |Azure Storage deploy a specific min TLS version requirement and enforce SSL/HTTPS |Deploy a specific min TLS version requirement and enforce SSL on Azure Storage | deployIfNotExists, disabled | 1.0.0 | Custom policy | Yes, recommended | Landing Zone Management Group
 | SQL managed instances deploy a specific min tls version requirement | Deploy a specific min TLS version requirement and enforce SSL on SQL managed instances | deployIfNotExists, disabled | 1.0.0 | Custom policy | Yes, recommended | Landing Zone Management Group
