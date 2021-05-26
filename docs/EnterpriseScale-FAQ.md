@@ -75,3 +75,12 @@ Example:
 * Assigning a policy that deploys Azure Monitor VM extension to a management group containing subscriptions with virtual machines, will detect all virtual machines that does not have the Azure Monitor VM extenstion enabled, and mark them as non-compliant. These virtual machines can now be remediated so the Azure Monitor VM extension gets enabled, and the virtual machines will be compliant.
 
 * For all new VM create/update requests to those subscriptions subject to the policy, the policy will act as soon as the VM create request has completed successfully, and there is no need to remediate or take any actions.
+
+### Where can I see the policies used by Enterprise-Scale Landing Zones reference implementation?
+
+We maintain the index [here](.\ESLZ-Policies.md), and will update the tables when:
+
+* A custom policy is moved to built-in policy
+* When a custom policy is deprecated
+* When there's a major update to a policy definition/ policy set definition
+* When we update the reference implementations to assign new/existing built-in policies as part of the deployment
