@@ -74,7 +74,7 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 ## Hub & Spoke Networking
 
-As mentioned above the Adventure Works reference implementation deploys a traditional [hub & spoke VNet architecture](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke). With the Hub VNet being deployed into the **connectivity** subscription that will host the Azure Firewalls, ExpressRoute Circuits & Gateways & VPN Gateways.
+As mentioned above the Adventure Works reference implementation deploys a traditional [hub & spoke VNet architecture](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke). With the Hub VNet being deployed into the **connectivity** subscription that will host the Azure Firewalls, ExpressRoute Circuits & Gateways & VPN Gateways; these are used as shared components by each of the spokes.
 
 The **identity** (optional) and **corp** connected landing zone subscriptions, that contain their own VNets (known as spokes in this architecture), are then connected back to the hub VNet via [VNET Peering](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-peering#create-a-peering).
 
