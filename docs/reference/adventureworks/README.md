@@ -6,7 +6,15 @@
 
 The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on the traditional hub and spoke network topology if customers require hybrid connectivity to on-premises locations from the beginning.
 
-This reference implementation also allows the deployment of platform services across Availability Zones (such as VPN or ExpressRoute gateways) to increase availability uptime of such services. 
+A [hub and spoke network topology](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke) allows you to create a central Hub VNet that contains shared networking components (Azure Firewall, ExpressRoute & VPN Gateways) that can then be used by spoke VNets, connected to the Hub VNet via VNET Peering, to centralize connectivity in your environment. 
+
+Hub and spoke network design considerations & recommendations can be found [here](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology).
+
+![Hub & Spoke Network Topology](./media/hub-and-spoke-topology.png)
+
+*A hub & spoke network topology*
+
+This reference implementation also allows the deployment of platform services across Availability Zones (such as Azure Firewall, VPN or ExpressRoute gateways) to increase availability uptime of such services.
 
 ## Customer profile
 
@@ -72,15 +80,7 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
 
-## Hub & Spoke Networking
-
-As mentioned above the Adventure Works reference implementation deploys a traditional [hub & spoke VNet architecture](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke). With the Hub VNet being deployed into the **connectivity** subscription that will host the Azure Firewalls, ExpressRoute Circuits & Gateways & VPN Gateways; these are used as shared components by each of the spokes.
-
-The **identity** (optional) and **corp** connected landing zone subscriptions, that contain their own VNets (known as spokes in this architecture), are then connected back to the hub VNet via [VNET Peering](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-peering#create-a-peering).
-
-Please also read the design considerations and recommendations in the [Enterprise Scale documentation](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) for this networking architecture.
-
-![Enterprise Scale Adventure Work Network Overview Diagram](./media/es-hubspoke-nw.png)
+> For a detailed networking topology diagram for this reference implementation click [here](../../media/es-hubspoke-nw.png)
 
 ## Next steps
 
