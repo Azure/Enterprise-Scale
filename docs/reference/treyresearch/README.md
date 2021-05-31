@@ -51,7 +51,7 @@ By default, all recommendations are enabled. You must explicitly disable them if
 - Azure Policies that will enable autonomy for the platform and the landing zones:
   - The following Azure Policies are applied at the root of the Enterprise Scale Management Group hierarchy enabling core platform capabilities at scale:
     -	Azure Security monitoring
-    -	Azure Security Center (free -> Azure Defender OFF and Standard -> Azure Defender ON)
+    -	Azure Security Center (Azure Defender OFF (free) and Azure Defender ON)
     -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
   - On the other hand, Azure Policies that will apply to all your landing zones. That includes Online, Corp and additional Landing Zone's types you may add in the future:
     - Enforce VM in-guest monitoring (Windows & Linux)
