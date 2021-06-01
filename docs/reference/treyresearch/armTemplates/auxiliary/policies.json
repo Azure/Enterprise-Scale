@@ -555,159 +555,6 @@
         },
         {
           "properties": {
-            "description": "Deploys the diagnostic settings for Activity Log to stream to a Log Analytics workspace when any Activity Log which is missing this diagnostic settings is created or updated. The policy wil  set the diagnostic with category enabled.",
-            "displayName": "Deploy Diagnostic Settings for Activity Log to Log Analytics workspace",
-            "mode": "All",
-            "parameters": {
-              "logAnalytics": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Primary Log Analytics workspace",
-                  "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
-                  "strongType": "omsWorkspace"
-                }
-              },
-              "effect": {
-                "type": "String",
-                "defaultValue": "DeployIfNotExists",
-                "allowedValues": [
-                  "DeployIfNotExists",
-                  "Disabled"
-                ],
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              },
-              "logsEnabled": {
-                "type": "String",
-                "defaultValue": "True",
-                "allowedValues": [
-                  "True",
-                  "False"
-                ],
-                "metadata": {
-                  "displayName": "Enable logs",
-                  "description": "Whether to enable logs stream to the Log Analytics workspace - True or False"
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Monitoring"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]",
-                "details": {
-                  "type": "Microsoft.Insights/diagnosticSettings",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "Subscription",
-                  "existenceCondition": {
-                    "allOf": [
-                      {
-                        "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
-                        "equals": "true"
-                      },
-                      {
-                        "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
-                        "equals": "[[parameters('logAnalytics')]"
-                      }
-                    ]
-                  },
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "template": {
-                        "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "logAnalytics": {
-                            "type": "String"
-                          },
-                          "logsEnabled": {
-                            "type": "String"
-                          }
-                        },
-                        "variables": {},
-                        "resources": [
-                          {
-                            "name": "subscriptionToLa",
-                            "type": "Microsoft.Insights/diagnosticSettings",
-                            "apiVersion": "2017-05-01-preview",
-                            "location": "Global",
-                            "properties": {
-                              "workspaceId": "[[parameters('logAnalytics')]",
-                              "logs": [
-                                {
-                                  "category": "Administrative",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "Security",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "ServiceHealth",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "Alert",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "Recommendation",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "Policy",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "Autoscale",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                },
-                                {
-                                  "category": "ResourceHealth",
-                                  "enabled": "[[parameters('logsEnabled')]"
-                                }
-                              ]
-                            }
-                          }
-                        ],
-                        "outputs": {}
-                      },
-                      "parameters": {
-                        "logAnalytics": {
-                          "value": "[[parameters('logAnalytics')]"
-                        },
-                        "logsEnabled": {
-                          "value": "[[parameters('logsEnabled')]"
-                        }
-                      }
-                    }
-                  },
-                  "roleDefinitionIds": [
-                    "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
-                    "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
-                  ]
-                }
-              }
-            }
-          },
-          "name": "Deploy-Diagnostics-ActivityLog"
-        },
-        {
-          "properties": {
             "description": "Deploys the diagnostic settings for Kubernetes Service to stream to a Log Analytics workspace when any Kubernetes Service which is missing this diagnostic settings is created or updated. The policy wil  set the diagnostic with all metrics and category enabled.",
             "displayName": "Deploy Diagnostic Settings for Kubernetes Service to Log Analytics workspace",
             "mode": "Indexed",
@@ -949,6 +796,14 @@
                   "displayName": "hubResourceId",
                   "description": "Resource ID for the HUB vNet"
                 }
+              },
+              "dnsServers": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "DNSServers",
+                  "description": "Default domain servers for the vNET."
+                },
+                "defaultValue": []
               }
             },
             "metadata": {
@@ -1006,6 +861,9 @@
                         },
                         "hubResourceId": {
                           "value": "[[parameters('hubResourceId')]"
+                        },
+                         "dnsServers": {
+                          "value": "[[parameters('dnsServers')]"
                         }
                       },
                       "template": {
@@ -1030,6 +888,10 @@
                           },
                           "hubResourceId": {
                             "type": "String"
+                          },
+                          "dnsServers": {
+                            "type": "Array",
+                            "defaultValue": []
                           }
                         },
                         "variables": {},
@@ -1093,6 +955,9 @@
                                         "addressPrefixes": [
                                           "[[parameters('vNetCidrRange')]"
                                         ]
+                                      },
+                                       "dhcpOptions": {
+                                        "dnsServers": "[[parameters('dnsServers')]"
                                       }
                                     }
                                   },
@@ -1185,6 +1050,132 @@
             }
           },
           "name": "Deploy-VNET-HubSpoke"
+        },
+        {
+                      "properties": {
+                "displayName": "Deploy a user-defined route to a VNET with specific routes.",
+                "policyType": "Custom",
+                "mode": "Indexed",
+                "description": "Deploy a user-defined route to a VNET with routes from spoke to hub firewall. This policy must be assigned for each region you plan to use.",
+                "metadata": {
+                    "version": "1.0.0",
+                    "category": "Network"
+                },
+                "parameters": {
+                    "defaultRoute": {
+                        "type": "String",
+                        "metadata": {
+                            "displayName": "Default route to add into UDR",
+                            "description": "Policy will deploy a default route table to a vnet"
+                        }
+                    },
+                    "vnetRegion": {
+                        "type": "String",
+                        "metadata": {
+                            "displayName": "VNet Region",
+                            "description": "Regional VNet hub location",
+                            "strongType": "location"
+                        }
+                    },
+                    "effect": {
+                        "type": "String",
+                        "metadata": {
+                            "displayName": "Effect",
+                            "description": "Enable or disable the execution of the policy"
+                        },
+                        "allowedValues": [
+                            "DeployIfNotExists",
+                            "Disabled"
+                        ],
+                        "defaultValue": "DeployIfNotExists"
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/virtualNetworks"
+                            },
+                            {
+                                "field": "location",
+                                "equals": "[[parameters('vnetRegion')]"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "[[parameters('effect')]",
+                        "details": {
+                            "type": "Microsoft.Network/routeTables",
+                            "roleDefinitionIds": [
+                                "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                            ],
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Network/routeTables/routes[*].nextHopIpAddress",
+                                        "equals": "[[parameters('defaultRoute')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "properties": {
+                                    "mode": "incremental",
+                                    "parameters": {
+                                        "udrName": {
+                                            "value": "[[concat(field('name'),'-udr')]"
+                                        },
+                                        "udrLocation": {
+                                            "value": "[[field('location')]"
+                                        },
+                                        "defaultRoute": {
+                                            "value": "[[parameters('defaultRoute')]"
+                                        }
+                                    },
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "udrName": {
+                                                "type": "string"
+                                            },
+                                            "udrLocation": {
+                                                "type": "string"
+                                            },
+                                            "defaultRoute": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {},
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Network/routeTables",
+                                                "name": "[[parameters('udrName')]",
+                                                "apiVersion": "2020-08-01",
+                                                "location": "[[parameters('udrLocation')]",
+                                                "properties": {
+                                                    "routes": [
+                                                        {
+                                                            "name": "AzureFirewallRoute",
+                                                            "properties": {
+                                                                "addressPrefix": "0.0.0.0/0",
+                                                                "nextHopType": "VirtualAppliance",
+                                                                "nextHopIpAddress": "[[parameters('defaultRoute')]"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "name": "Deploy-Default-Udr"
         },
         {
           "properties": {
@@ -2196,102 +2187,134 @@
         },
         {
           "properties": {
-            "description": "Deploys  the Azure Defender settings in Azure Security Center for  the specific services.",
-            "displayName": "Deploy Azure Defender settings in Azure Security Center.",
+            "description": "Deploy Azure Security Center Security Contacts",
+            "displayName": "Deploy Azure Security Center Security Contacts",
             "mode": "All",
             "parameters": {
-              "pricingTierVMs": {
-                "type": "String",
+              "emailSecurityContact": {
+                "type": "string",
                 "metadata": {
-                  "displayName": "pricingTierVMs"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
+                  "displayName": "Security contacts email address",
+                  "description": "Provide email address for Azure Security Center contact details"
+                }
               },
-              "pricingTierSqlServers": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "pricingTierSqlServers"
-                },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
                 "allowedValues": [
-                  "Standard",
-                  "Free"
+                  "DeployIfNotExists",
+                  "Disabled"
                 ],
-                "defaultValue": "Standard"
-              },
-              "pricingTierAppServices": {
-                "type": "String",
                 "metadata": {
-                  "displayName": "pricingTierAppServices"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
               },
-              "pricingTierStorageAccounts": {
-                "type": "String",
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/securityContacts",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/securityContacts/email",
+                        "contains": "[[parameters('emailSecurityContact')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/securityContacts"
+                      },
+                      {
+                        "field": "Microsoft.Security/securityContacts/alertNotifications",
+                        "equals": "On"
+                      },
+                      {
+                        "field": "Microsoft.Security/securityContacts/alertsToAdmins",
+                        "equals": "On"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "emailSecurityContact": {
+                          "value": "[[parameters('emailSecurityContact')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "emailSecurityContact": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Security contacts email address"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/securityContacts",
+                            "name": "default",
+                            "apiVersion": "2020-01-01-preview",
+                            "properties": {
+                              "emails": "[[parameters('emailSecurityContact')]",
+                              "notificationsByRole": {
+                                "state": "On",
+                                "roles": [
+                                  "Owner"
+                                ]
+                              },
+                              "alertNotifications": {
+                                "state": "On",
+                                "minimalSeverity": "High"
+                              }
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-SecurityContacts"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings in Azure Security Center for Virtual Machines",
+            "displayName": "Deploy Azure Defender for Virtual Machines",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
                 "metadata": {
-                  "displayName": "pricingTierStorageAccounts"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
-              },
-              "pricingTierContainerRegistry": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "pricingTierContainerRegistry"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
-              },
-              "pricingTierKeyVaults": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "pricingTierKeyVaults"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
-              },
-              "pricingTierKubernetesService": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "pricingTierKubernetesService"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
-              },
-              "pricingTierDns": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "pricingTierDns"
-                },
-                "allowedValues": [
-                  "Standard",
-                  "Free"
-                ],
-                "defaultValue": "Standard"
-              },
-              "pricingTierArm": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "pricingTierArm"
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
                 },
                 "allowedValues": [
                   "Standard",
@@ -2300,7 +2323,7 @@
                 "defaultValue": "Standard"
               },
               "effect": {
-                "type": "String",
+                "type": "string",
                 "defaultValue": "DeployIfNotExists",
                 "allowedValues": [
                   "DeployIfNotExists",
@@ -2329,8 +2352,9 @@
                 "effect": "[[parameters('effect')]",
                 "details": {
                   "type": "Microsoft.Security/pricings",
-                  "deploymentScope": "subscription",
-                  "existenceScope": "subscription",
+                  "name": "VirtualMachines",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
                   "roleDefinitionIds": [
                     "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
                   ],
@@ -2338,7 +2362,7 @@
                     "allOf": [
                       {
                         "field": "Microsoft.Security/pricings/pricingTier",
-                        "equals": "Standard"
+                        "equals": "[[parameters('pricingTier')]"
                       },
                       {
                         "field": "type",
@@ -2349,92 +2373,20 @@
                   "deployment": {
                     "location": "northeurope",
                     "properties": {
-                      "mode": "Incremental",
+                      "mode": "incremental",
                       "parameters": {
-                        "pricingTierVMs": {
-                          "value": "[[parameters('pricingTierVMs')]"
-                        },
-                        "pricingTierSqlServers": {
-                          "value": "[[parameters('pricingTierSqlServers')]"
-                        },
-                        "pricingTierAppServices": {
-                          "value": "[[parameters('pricingTierAppServices')]"
-                        },
-                        "pricingTierStorageAccounts": {
-                          "value": "[[parameters('pricingTierStorageAccounts')]"
-                        },
-                        "pricingTierContainerRegistry": {
-                          "value": "[[parameters('pricingTierContainerRegistry')]"
-                        },
-                        "pricingTierKeyVaults": {
-                          "value": "[[parameters('pricingTierKeyVaults')]"
-                        },
-                        "pricingTierKubernetesService": {
-                          "value": "[[parameters('pricingTierKubernetesService')]"
-                        },
-                        "pricingTierDns": {
-                          "value": "[[parameters('pricingTierDns')]"
-                        },
-                        "pricingTierArm": {
-                          "value": "[[parameters('pricingTierArm')]"
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
                         }
                       },
                       "template": {
                         "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                         "contentVersion": "1.0.0.0",
                         "parameters": {
-                          "pricingTierVMs": {
-                            "type": "String",
+                          "pricingTier": {
+                            "type": "string",
                             "metadata": {
-                              "description": "pricingTierVMs"
-                            }
-                          },
-                          "pricingTierSqlServers": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "pricingTierSqlServers"
-                            }
-                          },
-                          "pricingTierAppServices": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "pricingTierAppServices"
-                            }
-                          },
-                          "pricingTierStorageAccounts": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "pricingTierStorageAccounts"
-                            }
-                          },
-                          "pricingTierContainerRegistry": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "ContainerRegistry"
-                            }
-                          },
-                          "pricingTierKeyVaults": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "KeyVaults"
-                            }
-                          },
-                          "pricingTierKubernetesService": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "KubernetesService"
-                            }
-                          },
-                          "pricingTierDns": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "KubernetesService"
-                            }
-                          },
-                          "pricingTierArm": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "KubernetesService"
+                              "description": "Azure Defender pricing tier"
                             }
                           }
                         },
@@ -2445,95 +2397,7 @@
                             "apiVersion": "2018-06-01",
                             "name": "VirtualMachines",
                             "properties": {
-                              "pricingTier": "[[parameters('pricingTierVMs')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "StorageAccounts",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/VirtualMachines')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierStorageAccounts')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "AppServices",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/StorageAccounts')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierAppServices')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "SqlServers",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/AppServices')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierSqlServers')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "KeyVaults",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/SqlServers')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierKeyVaults')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "KubernetesService",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/KeyVaults')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierKubernetesService')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "ContainerRegistry",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/KubernetesService')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierContainerRegistry')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "Dns",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/ContainerRegistry')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierDns')]"
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Security/pricings",
-                            "apiVersion": "2018-06-01",
-                            "name": "Arm",
-                            "dependsOn": [
-                              "[[concat('Microsoft.Security/pricings/Dns')]"
-                            ],
-                            "properties": {
-                              "pricingTier": "[[parameters('pricingTierArm')]"
+                              "pricingTier": "[[parameters('pricingTier')]"
                             }
                           }
                         ],
@@ -2545,7 +2409,970 @@
               }
             }
           },
-          "name": "Deploy-ASC-Standard"
+          "name": "Deploy-ASC-Defender-VMs"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings in Azure Security Center for Azure Sql Databases",
+            "displayName": "Deploy Azure Defender for Azure Sql Databases",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "SqlServers",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "SqlServers",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-Sql"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings in Azure Security Center for Azure App Services",
+            "displayName": "Deploy Azure Defender for Azure App Services",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "AppServices",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "AppServices",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-AppSrv"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings in Azure Security Center for Storage Accounts",
+            "displayName": "Deploy Azure Defender for Storage Accounts",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "StorageAccounts",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "StorageAccounts",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-SA"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings in Sql Server on Virtual Machines",
+            "displayName": "Deploy Azure Defender for Sql on Virtual Machines",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "SqlServerVirtualMachines",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "SqlServerVirtualMachines",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-SQLVM"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings for AKS",
+            "displayName": "Deploy Azure Defender for AKS",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "KubernetesService",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "KubernetesService",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-AKS"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings for Azure Container Registry",
+            "displayName": "Deploy Azure Defender for ACR",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "ContainerRegistry",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "ContainerRegistry",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-ACR"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings for Azure Key Vault",
+            "displayName": "Deploy Azure Defender for AKV",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "KeyVaults",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "KeyVaults",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-AKV"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings for DNS",
+            "displayName": "Deploy Azure Defender for DNS",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "Dns",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "Dns",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-DNS"
+        },
+        {
+          "properties": {
+            "description": "Deploy the Azure Defender settings for Azure Resource Manager",
+            "displayName": "Deploy Azure Defender for ARM",
+            "mode": "All",
+            "parameters": {
+              "pricingTier": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier",
+                  "description": "Azure Defender pricing tier"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "effect": {
+                "type": "string",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Resources/subscriptions"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Security/pricings",
+                  "name": "Arm",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+                  ],
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Security/pricings/pricingTier",
+                        "equals": "[[parameters('pricingTier')]"
+                      },
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Security/pricings"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "northeurope",
+                    "properties": {
+                      "mode": "incremental",
+                      "parameters": {
+                        "pricingTier": {
+                          "value": "[[parameters('pricingTier')]"
+                        }
+                      },
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "pricingTier": {
+                            "type": "string",
+                            "metadata": {
+                              "description": "Azure Defender pricing tier"
+                            }
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Security/pricings",
+                            "apiVersion": "2018-06-01",
+                            "name": "Arm",
+                            "properties": {
+                              "pricingTier": "[[parameters('pricingTier')]"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-ASC-Defender-ARM"
         },
         {
           "properties": {
@@ -9861,7 +10688,7 @@
               }
             }
           },
-          "name": "Deny-Subnet-Without-Udr"
+          "name": "Deny-Subnet-Without-UDR"
         },
         {
           "properties": {
@@ -13455,1239 +14282,6 @@
             }
           },
           "name": "Deploy-Diagnostics-VirtualNetwork"
-        },
-        {
-          "properties": {
-            "description": "Deploys Virtual Network to be used as hub virtual network in desired region in the subscription where this policy is assigned.",
-            "displayName": "Deploy Virtual Network to be used as hub virtual network in desired region",
-            "mode": "All",
-            "parameters": {
-              "hubName": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "hubName",
-                  "description": "Name of the Hub"
-                }
-              },
-              "HUB": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "HUB",
-                  "description": "Object describing HUB"
-                }
-              },
-              "vpngw": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "vpngw",
-                  "description": "Object describing VPN gateway"
-                },
-                "defaultValue": {}
-              },
-              "ergw": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "ergw",
-                  "description": "Object describing ExpressRoute gateway"
-                },
-                "defaultValue": {}
-              },
-              "azfw": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "azfw",
-                  "description": "Object describing Azure Firewall"
-                },
-                "defaultValue": {}
-              },
-              "rgName": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "rgName",
-                  "description": "Provide name for resource group."
-                }
-              },
-              "effect": {
-                "type": "String",
-                "defaultValue": "DeployIfNotExists",
-                "allowedValues": [
-                  "DeployIfNotExists",
-                  "Disabled"
-                ],
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Network"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]",
-                "details": {
-                  "type": "Microsoft.Network/virtualNetworks",
-                  "name": "[[parameters('hubName')]",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "ResourceGroup",
-                  "resourceGroupName": "[[parameters('rgName')]",
-                  "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                  ],
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "parameters": {
-                        "rgName": {
-                          "value": "[[parameters('rgName')]"
-                        },
-                        "hubName": {
-                          "value": "[[parameters('hubName')]"
-                        },
-                        "HUB": {
-                          "value": "[[parameters('HUB')]"
-                        },
-                        "vpngw": {
-                          "value": "[[parameters('vpngw')]"
-                        },
-                        "ergw": {
-                          "value": "[[parameters('ergw')]"
-                        },
-                        "azfw": {
-                          "value": "[[parameters('azfw')]"
-                        }
-                      },
-                      "template": {
-                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "hubName": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "Name of the HUB"
-                            }
-                          },
-                          "HUB": {
-                            "type": "object",
-                            "metadata": {
-                              "description": "Object describing HUB"
-                            }
-                          },
-                          "vpngw": {
-                            "type": "object",
-                            "defaultValue": {},
-                            "metadata": {
-                              "description": "Object describing VPN gateway"
-                            }
-                          },
-                          "ergw": {
-                            "type": "object",
-                            "defaultValue": {},
-                            "metadata": {
-                              "description": "Object describing ExpressRoute gateway"
-                            }
-                          },
-                          "azfw": {
-                            "type": "object",
-                            "defaultValue": {},
-                            "metadata": {
-                              "description": "Object describing the Azure Firewall"
-                            }
-                          },
-                          "rgName": {
-                            "type": "String",
-                            "metadata": {
-                              "displayName": "rgName",
-                              "description": "Provide name for resource group."
-                            }
-                          }
-                        },
-                        "variables": {},
-                        "resources": [
-                          {
-                            "type": "Microsoft.Resources/resourceGroups",
-                            "apiVersion": "2020-06-01",
-                            "name": "[[parameters('rgName')]",
-                            "location": "[[deployment().location]",
-                            "properties": {}
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
-                            "name": "[[concat(parameters('hubName'),'-', parameters('HUB').location)]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
-                            ],
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https: //schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "name": "[[parameters('hubName')]",
-                                    "type": "Microsoft.Network/virtualNetworks",
-                                    "apiVersion": "2020-04-01",
-                                    "location": "[[parameters('HUB').location]",
-                                    "properties": {
-                                      "addressSpace": {
-                                        "addressPrefixes": [
-                                          "[[parameters('HUB').addressPrefix]"
-                                        ]
-                                      },
-                                      "subnets": [
-                                        {
-                                          "name": "Infrastructure",
-                                          "properties": {
-                                            "addressPrefix": "[[if(not(empty(parameters('HUB').subnets.infra)),parameters('HUB').subnets.infra, json('null'))]"
-                                          }
-                                        },
-                                        {
-                                          "name": "AzureFirewallSubnet",
-                                          "properties": {
-                                            "addressPrefix": "[[if(not(empty(parameters('HUB').subnets.azfw)),parameters('HUB').subnets.azfw, json('null'))]"
-                                          }
-                                        },
-                                        {
-                                          "name": "GatewaySubnet",
-                                          "properties": {
-                                            "addressPrefix": "[[if(not(empty(parameters('HUB').subnets.gw)),parameters('HUB').subnets.gw, json('null'))]"
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
-                            "condition": "[[greater(length(parameters('vpngw')),0)]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[concat(parameters('hubName'),'-', parameters('HUB').location)]"
-                            ],
-                            "name": "[[concat(parameters('hubName'),'-vpngw')]",
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "apiVersion": "2020-05-01",
-                                    "type": "Microsoft.Network/publicIpAddresses",
-                                    "location": "[[parameters('HUB').location]",
-                                    "name": "[[concat(parameters('vpngw').name,'-pip')]",
-                                    "properties": {
-                                      "publicIPAllocationMethod": "Dynamic"
-                                    },
-                                    "tags": {}
-                                  },
-                                  {
-                                    "apiVersion": "2020-05-01",
-                                    "name": "[[parameters('vpngw').name]",
-                                    "type": "Microsoft.Network/virtualNetworkGateways",
-                                    "location": "[[parameters('HUB').location]",
-                                    "dependsOn": [
-                                      "[[concat('Microsoft.Network/publicIPAddresses/', parameters('vpngw').name,'-pip')]"
-                                    ],
-                                    "tags": {},
-                                    "properties": {
-                                      "gatewayType": "Vpn",
-                                      "vpnType": "[[parameters('vpngw').vpnType]",
-                                      "ipConfigurations": [
-                                        {
-                                          "name": "default",
-                                          "properties": {
-                                            "privateIPAllocationMethod": "Dynamic",
-                                            "subnet": {
-                                              "id": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers','/Microsoft.Network/virtualNetworks/', parameters('hubName'),'/subnets/GatewaySubnet')]"
-                                            },
-                                            "publicIpAddress": {
-                                              "id": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers','/Microsoft.Network/publicIPAddresses/', parameters('vpngw').name,'-pip')]"
-                                            }
-                                          }
-                                        }
-                                      ],
-                                      "sku": {
-                                        "name": "[[parameters('vpngw').sku]",
-                                        "tier": "[[parameters('vpngw').sku]"
-                                      }
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
-                            "condition": "[[greater(length(parameters('ergw')),0)]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[concat(parameters('hubName'),'-', parameters('HUB').location)]"
-                            ],
-                            "name": "[[concat(parameters('hubName'),'-ergw')]",
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "apiVersion": "2020-05-01",
-                                    "type": "Microsoft.Network/publicIpAddresses",
-                                    "location": "[[parameters('HUB').location]",
-                                    "name": "[[concat(parameters('ergw').name,'-pip')]",
-                                    "properties": {
-                                      "publicIPAllocationMethod": "Dynamic"
-                                    },
-                                    "tags": {}
-                                  },
-                                  {
-                                    "apiVersion": "2020-05-01",
-                                    "name": "[[parameters('ergw').name]",
-                                    "type": "Microsoft.Network/virtualNetworkGateways",
-                                    "location": "[[parameters('HUB').location]",
-                                    "dependsOn": [
-                                      "[[concat('Microsoft.Network/publicIPAddresses/', parameters('ergw').name,'-pip')]"
-                                    ],
-                                    "tags": {},
-                                    "properties": {
-                                      "gatewayType": "ExpressRoute",
-                                      "ipConfigurations": [
-                                        {
-                                          "name": "default",
-                                          "properties": {
-                                            "privateIPAllocationMethod": "Dynamic",
-                                            "subnet": {
-                                              "id": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers','/Microsoft.Network/virtualNetworks/', parameters('hubName'),'/subnets/GatewaySubnet')]"
-                                            },
-                                            "publicIpAddress": {
-                                              "id": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers','/Microsoft.Network/publicIPAddresses/', parameters('ergw').name,'-pip')]"
-                                            }
-                                          }
-                                        }
-                                      ],
-                                      "sku": {
-                                        "name": "[[parameters('ergw').sku]",
-                                        "tier": "[[parameters('ergw').sku]"
-                                      }
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
-                            "condition": "[[greater(length(parameters('azfw')),0)]",
-                            "name": "[[concat(parameters('hubName'),'-azfw')]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[concat(parameters('hubName'),'-', parameters('HUB').location)]"
-                            ],
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "apiVersion": "2020-05-01",
-                                    "type": "Microsoft.Network/publicIpAddresses",
-                                    "name": "[[concat(parameters('azfw').name,'-pip')]",
-                                    "location": "[[parameters('azfw').location]",
-                                    "sku": {
-                                      "name": "Standard"
-                                    },
-                                    "zones": "[[if(contains(parameters('azfw'),'pipZones'),parameters('azfw').pipZones,json('null'))]",
-                                    "properties": {
-                                      "publicIPAllocationMethod": "Static"
-                                    },
-                                    "tags": {}
-                                  },
-                                  {
-                                    "apiVersion": "2020-05-01",
-                                    "type": "Microsoft.Network/azureFirewalls",
-                                    "name": "[[parameters('azfw').name]",
-                                    "location": "[[parameters('azfw').location]",
-                                    "zones": "[[if(contains(parameters('azfw'),'fwZones'),parameters('azfw').fwZones,json('null'))]",
-                                    "dependsOn": [
-                                      "[[concat(parameters('azfw').name,'-pip')]"
-                                    ],
-                                    "properties": {
-                                      "threatIntelMode": "[[parameters('azfw').threatIntelMode]",
-                                      "additionalProperties": "[[if(contains(parameters('azfw'),'additionalProperties'),parameters('azfw').additionalProperties,json('null'))]",
-                                      "sku": "[[if(contains(parameters('azfw'),'sku'),parameters('azfw').sku,json('null'))]",
-                                      "ipConfigurations": [
-                                        {
-                                          "name": "[[concat(parameters('azfw').name,'-pip')]",
-                                          "properties": {
-                                            "subnet": {
-                                              "id": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers','/Microsoft.Network/virtualNetworks/', parameters('hubName'),'/subnets/AzureFirewallSubnet')]"
-                                            },
-                                            "publicIPAddress": {
-                                              "id": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers','/Microsoft.Network/publicIPAddresses/', parameters('azfw').name,'-pip')]"
-                                            }
-                                          }
-                                        }
-                                      ],
-                                      "firewallPolicy": "[[if(contains(parameters('azfw'),'firewallPolicy'),parameters('azfw').firewallPolicy,json('null'))]"
-                                    },
-                                    "tags": {}
-                                  }
-                                ]
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "name": "Deploy-HUB"
-        },
-        {
-          "properties": {
-            "description": "Deploy spoke network with configuration to hub network based on ipam configuration object",
-            "displayName": "Deploy spoke network with configuration to hub network based on ipam configuration object",
-            "mode": "All",
-            "parameters": {
-              "ipam": {
-                "type": "Array",
-                "metadata": {
-                  "displayName": "ipam"
-                },
-                "defaultValue": []
-              },
-              "effect": {
-                "type": "String",
-                "defaultValue": "DeployIfNotExists",
-                "allowedValues": [
-                  "DeployIfNotExists",
-                  "Disabled"
-                ],
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Network"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]",
-                "details": {
-                  "type": "Microsoft.Resources/resourceGroups",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "Subscription",
-                  "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                  ],
-                  "existenceCondition": {
-                    "allOf": [
-                      {
-                        "field": "type",
-                        "equals": "Microsoft.Resources/subscriptions/resourceGroups"
-                      },
-                      {
-                        "field": "name",
-                        "like": "[[concat(subscription().displayName, '-network')]"
-                      }
-                    ]
-                  },
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "parameters": {
-                        "ipam": {
-                          "value": "[[parameters('ipam')]",
-                          "defaultValue": []
-                        }
-                      },
-                      "template": {
-                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "ipam": {
-                            "defaultValue": [
-                              {
-                                "name": "bu1-weu-msx3-vNet1",
-                                "location": "westeurope",
-                                "virtualNetworks": {
-                                  "properties": {
-                                    "addressSpace": {
-                                      "addressPrefixes": [
-                                        "10.51.217.0/24"
-                                      ]
-                                    }
-                                  }
-                                },
-                                "networkSecurityGroups": {
-                                  "properties": {
-                                    "securityRules": []
-                                  }
-                                },
-                                "routeTables": {
-                                  "properties": {
-                                    "routes": []
-                                  }
-                                },
-                                "hubVirtualNetworkConnection": {
-                                  "vWanVhubResourceId": "/subscriptions/99c2838f-a548-4884-a6e2-38c1f8fb4c0b/resourceGroups/contoso-global-vwan/providers/Microsoft.Network/virtualHubs/contoso-vhub-weu",
-                                  "properties": {
-                                    "allowHubToRemoteVnetTransit": true,
-                                    "allowRemoteVnetToUseHubVnetGateways": false,
-                                    "enableInternetSecurity": true
-                                  }
-                                }
-                              }
-                            ],
-                            "type": "Array"
-                          }
-                        },
-                        "variables": {
-                          "vNetRgName": "[[concat(subscription().displayName, '-network')]",
-                          "vNetName": "[[concat(subscription().displayName, '-vNet')]",
-                          "vNetSubId": "[[subscription().subscriptionId]"
-                        },
-                        "resources": [
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
-                            "name": "[[concat('es-ipam-',subscription().displayName,'-RG-',copyIndex())]",
-                            "location": "[[parameters('ipam')[copyIndex()].location]",
-                            "dependsOn": [],
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "type": "Microsoft.Resources/resourceGroups",
-                                    "apiVersion": "2020-06-01",
-                                    "name": "[[variables('vNetRgName')]",
-                                    "location": "[[parameters('ipam')[copyIndex()].location]",
-                                    "properties": {}
-                                  },
-                                  {
-                                    "type": "Microsoft.Resources/resourceGroups",
-                                    "apiVersion": "2020-06-01",
-                                    "name": "NetworkWatcherRG",
-                                    "location": "[[parameters('ipam')[copyIndex()].location]",
-                                    "properties": {}
-                                  }
-                                ],
-                                "outputs": {}
-                              }
-                            },
-                            "copy": {
-                              "name": "ipam-rg-loop",
-                              "count": "[[length(parameters('ipam'))]"
-                            },
-                            "condition": "[[if(and(not(empty(parameters('ipam'))), equals(toLower(parameters('ipam')[copyIndex()].name),toLower(variables('vNetName')))),bool('true'),bool('false'))]"
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
-                            "name": "[[concat('es-ipam-',subscription().displayName,'-nsg-udr-vnet-hub-vwan-peering-',copyIndex())]",
-                            "dependsOn": [
-                              "[[concat('es-ipam-',subscription().displayName,'-RG-',copyIndex())]"
-                            ],
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "condition": "[[contains(parameters('ipam')[copyIndex()],'networkSecurityGroups')]",
-                                    "apiVersion": "2020-05-01",
-                                    "type": "Microsoft.Network/networkSecurityGroups",
-                                    "name": "[[concat(subscription().displayName, '-nsg')]",
-                                    "location": "[[parameters('ipam')[copyIndex()].location]",
-                                    "properties": "[[if(contains(parameters('ipam')[copyIndex()],'networkSecurityGroups'),parameters('ipam')[copyIndex()].networkSecurityGroups.properties,json('null'))]"
-                                  },
-                                  {
-                                    "condition": "[[contains(parameters('ipam')[copyIndex()],'routeTables')]",
-                                    "apiVersion": "2020-05-01",
-                                    "type": "Microsoft.Network/routeTables",
-                                    "name": "[[concat(subscription().displayName, '-udr')]",
-                                    "location": "[[parameters('ipam')[copyIndex()].location]",
-                                    "properties": "[[if(contains(parameters('ipam')[copyIndex()],'routeTables'),parameters('ipam')[copyIndex()].routeTables.properties,json('null'))]"
-                                  },
-                                  {
-                                    "condition": "[[contains(parameters('ipam')[copyIndex()],'virtualNetworks')]",
-                                    "type": "Microsoft.Network/virtualNetworks",
-                                    "apiVersion": "2020-05-01",
-                                    "name": "[[concat(subscription().displayName, '-vnet')]",
-                                    "location": "[[parameters('ipam')[copyIndex()].location]",
-                                    "dependsOn": [
-                                      "[[concat(subscription().displayName, '-nsg')]",
-                                      "[[concat(subscription().displayName, '-udr')]"
-                                    ],
-                                    "properties": "[[if(contains(parameters('ipam')[copyIndex()],'virtualNetworks'),parameters('ipam')[copyIndex()].virtualNetworks.properties,json('null'))]"
-                                  },
-                                  {
-                                    "condition": "[[contains(parameters('ipam')[copyIndex()],'virtualNetworkPeerings')]",
-                                    "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-                                    "apiVersion": "2020-05-01",
-                                    "name": "[[concat(variables('vNetName'), '/peerToHub')]",
-                                    "dependsOn": [
-                                      "[[concat(subscription().displayName, '-vnet')]"
-                                    ],
-                                    "properties": "[[if(contains(parameters('ipam')[copyIndex()],'virtualNetworkPeerings'),parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties,json('null'))]"
-                                  },
-                                  {
-                                    "condition": "[[and(contains(parameters('ipam')[copyIndex()],'virtualNetworks'),contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId'))]",
-                                    "type": "Microsoft.Resources/deployments",
-                                    "apiVersion": "2020-06-01",
-                                    "name": "[[concat('es-ipam-vWan-',subscription().displayName,'-peering-',copyIndex())]",
-                                    "subscriptionId": "[[if(and(contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId')),split(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection.vWanVhubResourceId,'/')[2],json('null'))]",
-                                    "resourceGroup": "[[if(and(contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId')),split(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection.vWanVhubResourceId,'/')[4],json('null'))]",
-                                    "dependsOn": [
-                                      "[[concat(subscription().displayName, '-vnet')]"
-                                    ],
-                                    "properties": {
-                                      "mode": "Incremental",
-                                      "expressionEvaluationOptions": {
-                                        "scope": "inner"
-                                      },
-                                      "template": {
-                                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                                        "contentVersion": "1.0.0.0",
-                                        "parameters": {
-                                          "remoteVirtualNetwork": {
-                                            "type": "String"
-                                          },
-                                          "vWanVhubName": {
-                                            "type": "String",
-                                            "defaultValue": ""
-                                          },
-                                          "allowHubToRemoteVnetTransit": {
-                                            "type": "bool",
-                                            "defaultValue": true
-                                          },
-                                          "allowRemoteVnetToUseHubVnetGateways": {
-                                            "type": "bool",
-                                            "defaultValue": false
-                                          },
-                                          "enableInternetSecurity": {
-                                            "type": "bool",
-                                            "defaultValue": true
-                                          }
-                                        },
-                                        "variables": {},
-                                        "resources": [
-                                          {
-                                            "type": "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections",
-                                            "apiVersion": "2020-05-01",
-                                            "name": "[[[concat(parameters('vWanVhubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
-                                            "properties": {
-                                              "remoteVirtualNetwork": {
-                                                "id": "[[[parameters('remoteVirtualNetwork')]"
-                                              },
-                                              "allowHubToRemoteVnetTransit": "[[[parameters('allowHubToRemoteVnetTransit')]",
-                                              "allowRemoteVnetToUseHubVnetGateways": "[[[parameters('allowRemoteVnetToUseHubVnetGateways')]",
-                                              "enableInternetSecurity": "[[[parameters('enableInternetSecurity')]"
-                                            }
-                                          }
-                                        ],
-                                        "outputs": {}
-                                      },
-                                      "parameters": {
-                                        "remoteVirtualNetwork": {
-                                          "value": "[[concat(subscription().id,'/resourceGroups/',variables('vNetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', concat(subscription().displayName, '-vnet'))]"
-                                        },
-                                        "vWanVhubName": {
-                                          "value": "[[if(and(contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId')),split(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection.vWanVhubResourceId,'/')[8],json('null'))]"
-                                        },
-                                        "allowHubToRemoteVnetTransit": {
-                                          "value": "[[if(and(contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId')),parameters('ipam')[copyIndex()].hubVirtualNetworkConnection.properties.allowHubToRemoteVnetTransit,json('null'))]"
-                                        },
-                                        "allowRemoteVnetToUseHubVnetGateways": {
-                                          "value": "[[if(and(contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId')),parameters('ipam')[copyIndex()].hubVirtualNetworkConnection.properties.allowRemoteVnetToUseHubVnetGateways,json('null'))]"
-                                        },
-                                        "enableInternetSecurity": {
-                                          "value": "[[if(and(contains(parameters('ipam')[copyIndex()],'hubVirtualNetworkConnection'),contains(parameters('ipam')[copyIndex()].hubVirtualNetworkConnection,'vWanVhubResourceId')),parameters('ipam')[copyIndex()].hubVirtualNetworkConnection.properties.enableInternetSecurity,json('null'))]"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  {
-                                    "condition": "[[and(contains(parameters('ipam')[copyIndex()],'virtualNetworks'),contains(parameters('ipam')[copyIndex()],'virtualNetworkPeerings'),contains(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork,'id'))]",
-                                    "type": "Microsoft.Resources/deployments",
-                                    "apiVersion": "2020-06-01",
-                                    "name": "[[concat('es-ipam-hub-',subscription().displayName,'-peering-',copyIndex())]",
-                                    "subscriptionId": "[[if(and(contains(parameters('ipam')[copyIndex()],'virtualNetworkPeerings'),contains(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork,'id')),split(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork.id,'/')[2],json('null'))]",
-                                    "resourceGroup": "[[if(and(contains(parameters('ipam')[copyIndex()],'virtualNetworkPeerings'),contains(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork,'id')),split(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork.id,'/')[4],json('null'))]",
-                                    "dependsOn": [
-                                      "[[concat(subscription().displayName, '-vnet')]"
-                                    ],
-                                    "properties": {
-                                      "mode": "Incremental",
-                                      "expressionEvaluationOptions": {
-                                        "scope": "inner"
-                                      },
-                                      "template": {
-                                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                                        "contentVersion": "1.0.0.0",
-                                        "parameters": {
-                                          "remoteVirtualNetwork": {
-                                            "type": "String",
-                                            "defaultValue": false
-                                          },
-                                          "hubName": {
-                                            "type": "String",
-                                            "defaultValue": false
-                                          }
-                                        },
-                                        "variables": {},
-                                        "resources": [
-                                          {
-                                            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-                                            "name": "[[[concat(parameters('hubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
-                                            "apiVersion": "2020-05-01",
-                                            "properties": {
-                                              "allowVirtualNetworkAccess": true,
-                                              "allowForwardedTraffic": true,
-                                              "allowGatewayTransit": true,
-                                              "useRemoteGateways": false,
-                                              "remoteVirtualNetwork": {
-                                                "id": "[[[parameters('remoteVirtualNetwork')]"
-                                              }
-                                            }
-                                          }
-                                        ],
-                                        "outputs": {}
-                                      },
-                                      "parameters": {
-                                        "remoteVirtualNetwork": {
-                                          "value": "[[concat(subscription().id,'/resourceGroups/',variables('vNetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', concat(subscription().displayName, '-vnet'))]"
-                                        },
-                                        "hubName": {
-                                          "value": "[[if(and(contains(parameters('ipam')[copyIndex()],'virtualNetworkPeerings'),contains(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork,'id')),split(parameters('ipam')[copyIndex()].virtualNetworkPeerings.properties.remoteVirtualNetwork.id,'/')[8],json('null'))]"
-                                        }
-                                      }
-                                    }
-                                  }
-                                ],
-                                "outputs": {}
-                              }
-                            },
-                            "resourceGroup": "[[variables('vNetRgName')]",
-                            "copy": {
-                              "name": "ipam-loop",
-                              "count": "[[length(parameters('ipam'))]"
-                            },
-                            "condition": "[[if(and(not(empty(parameters('ipam'))), equals(toLower(parameters('ipam')[copyIndex()].name),toLower(variables('vNetName')))),bool('true'),bool('false'))]"
-                          }
-                        ],
-                        "outputs": {
-                          "ipam": {
-                            "condition": "[[bool('true')]",
-                            "type": "Int",
-                            "value": "[[length(parameters('ipam'))]"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "name": "Deploy-vNet"
-        },
-        {
-          "properties": {
-            "description": "Deploy the Virtual WAN in the specific region.",
-            "displayName": "Deploy the Virtual WAN in the specific region",
-            "mode": "All",
-            "parameters": {
-              "vwanname": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "vwanname",
-                  "description": "Name of the Virtual WAN"
-                }
-              },
-              "vwanRegion": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "vwanRegion",
-                  "description": "Select Azure region for Virtual WAN",
-                  "strongType": "location"
-                }
-              },
-              "rgName": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "rgName",
-                  "description": "Provide name for resource group."
-                }
-              },
-              "effect": {
-                "type": "String",
-                "defaultValue": "DeployIfNotExists",
-                "allowedValues": [
-                  "DeployIfNotExists",
-                  "Disabled"
-                ],
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Network"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]",
-                "details": {
-                  "type": "Microsoft.Network/virtualWans",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "ResourceGroup",
-                  "name": "[[parameters('vwanname')]",
-                  "resourceGroupName": "[[parameters('rgName')]",
-                  "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                  ],
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "parameters": {
-                        "rgName": {
-                          "value": "[[parameters('rgName')]"
-                        },
-                        "vwanname": {
-                          "value": "[[parameters('vwanname')]"
-                        },
-                        "vwanRegion": {
-                          "value": "[[parameters('vwanRegion')]"
-                        }
-                      },
-                      "template": {
-                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "rgName": {
-                            "type": "String"
-                          },
-                          "vwanname": {
-                            "type": "String"
-                          },
-                          "vwanRegion": {
-                            "type": "String"
-                          }
-                        },
-                        "variables": {
-                          "vwansku": "Standard"
-                        },
-                        "resources": [
-                          {
-                            "type": "Microsoft.Resources/resourceGroups",
-                            "apiVersion": "2018-05-01",
-                            "name": "[[parameters('rgName')]",
-                            "location": "[[deployment().location]",
-                            "properties": {}
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2018-05-01",
-                            "name": "vwan",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
-                            ],
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "resources": [
-                                  {
-                                    "type": "Microsoft.Network/virtualWans",
-                                    "apiVersion": "2020-05-01",
-                                    "location": "[[parameters('vwanRegion')]",
-                                    "name": "[[parameters('vwanname')]",
-                                    "properties": {
-                                      "virtualHubs": [],
-                                      "vpnSites": [],
-                                      "type": "[[variables('vwansku')]"
-                                    }
-                                  }
-                                ],
-                                "outputs": {}
-                              }
-                            }
-                          }
-                        ],
-                        "outputs": {}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "name": "Deploy-vWAN"
-        },
-        {
-          "properties": {
-            "description": "Deploy Virtual Hub network with Virtual Wan and Gateway and Firewall configured in the desired region. ",
-            "displayName": "Deploy Virtual Hub network with Virtual Wan and Gateway and Firewall configured.",
-            "mode": "All",
-            "parameters": {
-              "vwanname": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "vwanname",
-                  "description": "Name of the Virtual WAN"
-                }
-              },
-              "vHubName": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "vHubName",
-                  "description": "Name of the vHUB"
-                },
-                "defaultValue": ""
-              },
-              "vHUB": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "vHUB",
-                  "description": "Object describing Virtual WAN vHUB"
-                }
-              },
-              "vpngw": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "vpngw",
-                  "description": "Object describing VPN gateway"
-                },
-                "defaultValue": {}
-              },
-              "ergw": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "ergw",
-                  "description": "Object describing ExpressRoute gateway"
-                },
-                "defaultValue": {}
-              },
-              "azfw": {
-                "type": "Object",
-                "metadata": {
-                  "displayName": "azfw",
-                  "description": "Object describing the Azure Firewall in vHUB"
-                },
-                "defaultValue": {}
-              },
-              "rgName": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "rgName",
-                  "description": "Provide name for resource group."
-                }
-              },
-              "effect": {
-                "type": "String",
-                "defaultValue": "DeployIfNotExists",
-                "allowedValues": [
-                  "DeployIfNotExists",
-                  "Disabled"
-                ],
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Network"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]",
-                "details": {
-                  "type": "Microsoft.Network/virtualHubs",
-                  "name": "[[parameters('vHubName')]",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "ResourceGroup",
-                  "resourceGroupName": "[[parameters('rgName')]",
-                  "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                  ],
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "parameters": {
-                        "rgName": {
-                          "value": "[[parameters('rgName')]"
-                        },
-                        "vwanname": {
-                          "value": "[[parameters('vwanname')]"
-                        },
-                        "vHUB": {
-                          "value": "[[parameters('vHUB')]"
-                        },
-                        "vpngw": {
-                          "value": "[[parameters('vpngw')]"
-                        },
-                        "ergw": {
-                          "value": "[[parameters('ergw')]"
-                        },
-                        "azfw": {
-                          "value": "[[parameters('azfw')]"
-                        },
-                        "vHUBName": {
-                          "value": "[[parameters('vHUBName')]"
-                        }
-                      },
-                      "template": {
-                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "vwanname": {
-                            "type": "String",
-                            "metadata": {
-                              "description": "Name of the Virtual WAN"
-                            }
-                          },
-                          "vHUB": {
-                            "type": "object",
-                            "metadata": {
-                              "description": "Object describing Virtual WAN vHUB"
-                            }
-                          },
-                          "vpngw": {
-                            "type": "object",
-                            "defaultValue": {},
-                            "metadata": {
-                              "description": "Object describing VPN gateway"
-                            }
-                          },
-                          "ergw": {
-                            "type": "object",
-                            "defaultValue": {},
-                            "metadata": {
-                              "description": "Object describing ExpressRoute gateway"
-                            }
-                          },
-                          "azfw": {
-                            "type": "object",
-                            "defaultValue": {},
-                            "metadata": {
-                              "description": "Object describing the Azure Firewall in vHUB"
-                            }
-                          },
-                          "rgName": {
-                            "type": "String",
-                            "metadata": {
-                              "displayName": "rgName",
-                              "description": "Provide name for resource group."
-                            }
-                          },
-                          "vHUBName": {
-                            "type": "String",
-                            "metadata": {
-                              "displayName": "vHUBName",
-                              "description": "Name of the vHUB"
-                            }
-                          }
-                        },
-                        "variables": {
-                          "vhubsku": "Standard",
-                          "vwanresourceid": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'),'/providers/Microsoft.Network/virtualWans/',parameters('vwanname'))]",
-                          "vwanhub": "[[concat(subscription().id,'/resourceGroups/',parameters('rgName'),'/providers/Microsoft.Network/virtualHubs/',parameters('vHUBName'))]"
-                        },
-                        "resources": [
-                          {
-                            "type": "Microsoft.Resources/resourceGroups",
-                            "apiVersion": "2018-05-01",
-                            "name": "[[parameters('rgName')]",
-                            "location": "[[deployment().location]",
-                            "properties": {}
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2018-05-01",
-                            "name": "[[concat('vHUBdeploy-',parameters('vHUB').location)]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
-                            ],
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "type": "Microsoft.Network/virtualHubs",
-                                    "apiVersion": "2020-05-01",
-                                    "location": "[[parameters('vHUB').location]",
-                                    "name": "[[parameters('vHUBname')]",
-                                    "properties": {
-                                      "virtualWan": {
-                                        "id": "[[variables('vwanresourceid')]"
-                                      },
-                                      "addressPrefix": "[[parameters('vHUB').addressPrefix]",
-                                      "sku": "[[variables('vhubsku')]"
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2018-05-01",
-                            "condition": "[[greater(length(parameters('vpngw')),0)]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[concat('vHUBdeploy-',parameters('vHUB').location)]"
-                            ],
-                            "name": "[[concat(parameters('vHUBName'),'-vpngw')]",
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "type": "Microsoft.Network/vpnGateways",
-                                    "apiVersion": "2020-05-01",
-                                    "location": "[[parameters('vHUB').location]",
-                                    "name": "[[parameters('vpngw').name]",
-                                    "properties": {
-                                      "virtualHub": {
-                                        "id": "[[variables('vwanhub')]"
-                                      },
-                                      "bgpSettings": "[[parameters('vpngw').bgpSettings]",
-                                      "vpnGatewayScaleUnit": "[[parameters('vpngw').vpnGatewayScaleUnit]"
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          },
-                          {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2018-05-01",
-                            "condition": "[[greater(length(parameters('ergw')),0)]",
-                            "resourceGroup": "[[parameters('rgName')]",
-                            "dependsOn": [
-                              "[[concat('vHUBdeploy-',parameters('vHUB').location)]"
-                            ],
-                            "name": "[[concat(parameters('vHUBName'),'-ergw')]",
-                            "properties": {
-                              "mode": "Incremental",
-                              "template": {
-                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                "contentVersion": "1.0.0.0",
-                                "parameters": {},
-                                "variables": {},
-                                "resources": [
-                                  {
-                                    "type": "Microsoft.Network/expressRouteGateways",
-                                    "apiVersion": "2020-05-01",
-                                    "location": "[[parameters('vHUB').location]",
-                                    "name": "[[parameters('ergw').name]",
-                                    "properties": {
-                                      "virtualHub": {
-                                        "id": "[[variables('vwanhub')]"
-                                      },
-                                      "autoScaleConfiguration": "[[parameters('ergw').autoScaleConfiguration]"
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "name": "Deploy-vHUB"
         },
         {
           "properties": {
@@ -19355,7 +18949,7 @@
                   "profileName": {
                     "value": "[[parameters('profileName')]"
                   },
-                  "metricsEnabled" : {
+                  "metricsEnabled": {
                     "value": "True"
                   }
                 }
@@ -20893,6 +20487,285 @@
             ]
           },
           "name": "Enforce-EncryptTransit"
+        },
+        {
+          "properties": {
+            "description": "Deploy Azure Security Center configuration",
+            "displayName": "Deploy Azure Security Center configuration",
+            "parameters": {
+              "emailSecurityContact": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Security contacts email address",
+                  "description": "Provide email address for Azure Security Center contact details"
+                }
+              },
+              "logAnalytics": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Primary Log Analytics workspace",
+                  "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
+                  "strongType": "omsWorkspace"
+                }
+              },
+              "ascExportResourceGroupName": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Resource Group name for the export to Log Analytics workspace configuration",
+                  "description": "The resource group name where the export to Log Analytics workspace configuration is created. If you enter a name for a resource group that doesn't exist, it'll be created in the subscription. Note that each resource group can only have one export to Log Analytics workspace configured."
+                }
+              },
+              "ascExportResourceGroupLocation": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Resource Group location for the export to Log Analytics workspace configuration",
+                  "description": "The location where the resource group and the export to Log Analytics workspace configuration are created."
+                }
+              },
+              "pricingTierVMs": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for Virtual Machines",
+                  "description": "Azure Defender pricing tier for Virtual Machines"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierSqlServers": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for SQL Servers",
+                  "description": "Azure Defender pricing tier for SQL Servers"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierAppServices": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for App Services",
+                  "description": "Azure Defender pricing tier for App Services"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierStorageAccounts": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for Storage Accounts",
+                  "description": "Azure Defender pricing tier for Storage Accounts"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierSqlServerVirtualMachines": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for SQL Server Virtual Machines",
+                  "description": "Azure Defender pricing tier for SQL Server Virtual Machines"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierKubernetesService": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for AKS",
+                  "description": "Azure Defender pricing tier for AKS"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierContainerRegistry": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for ACR",
+                  "description": "Azure Defender pricing tier for ACR"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierKeyVaults": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for AKV",
+                  "description": "Azure Defender pricing tier for AKV"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierDns": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for DNS",
+                  "description": "Azure Defender pricing tier for DNS"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              },
+              "pricingTierArm": {
+                "type": "string",
+                "metadata": {
+                  "displayName": "Azure Defender pricing tier for Azure Resource Manager",
+                  "description": "Azure Defender pricing tier for Azure Resource Manager"
+                },
+                "allowedValues": [
+                  "Standard",
+                  "Free"
+                ],
+                "defaultValue": "Standard"
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Security Center"
+            },
+            "PolicyDefinitions": [
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-VMs')]",
+                "policyDefinitionReferenceId": "defenderForVM",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierVMs')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-Sql')]",
+                "policyDefinitionReferenceId": "defenderForSqlServers",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierSqlServers')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-AppSrv')]",
+                "policyDefinitionReferenceId": "defenderForAppServices",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierAppServices')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-SA')]",
+                "policyDefinitionReferenceId": "defenderForStorageAccounts",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierStorageAccounts')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-SQLVM')]",
+                "policyDefinitionReferenceId": "defenderForSqlServerVirtualMachines",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierSqlServerVirtualMachines')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-AKS')]",
+                "policyDefinitionReferenceId": "defenderForKubernetesService",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierKubernetesService')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-ACR')]",
+                "policyDefinitionReferenceId": "defenderForContainerRegistry",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierContainerRegistry')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-AKV')]",
+                "policyDefinitionReferenceId": "defenderForKeyVaults",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierKeyVaults')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-DNS')]",
+                "policyDefinitionReferenceId": "defenderForDns",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierDns')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-Defender-ARM')]",
+                "policyDefinitionReferenceId": "defenderForArm",
+                "parameters": {
+                  "pricingTier": {
+                    "value": "[[parameters('pricingTierArm')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-ASC-SecurityContacts')]",
+                "policyDefinitionReferenceId": "securityEmailContact",
+                "parameters": {
+                  "emailSecurityContact": {
+                    "value": "[[parameters('emailSecurityContact')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
+                "policyDefinitionReferenceId": "ascExport",
+                "parameters": {
+                  "resourceGroupName": {
+                    "value": "[[parameters('ascExportResourceGroupName')]"
+                  },
+                  "resourceGroupLocation": {
+                    "value": "[[parameters('ascExportResourceGroupLocation')]"
+                  },
+                  "workspaceResourceId": {
+                    "value": "[[parameters('logAnalytics')]"
+
+                  }
+                }
+              }
+            ]
+          },
+          "name": "Deploy-ASC-Config"
         }
       ]
     }
