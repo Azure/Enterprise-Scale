@@ -1,0 +1,509 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "emailSecurityContact": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Security contacts email address",
+                "description": "Provide email address for Azure Security Center contact details"
+            }
+        },
+        "pricingTierVMs": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for Virtual Machines",
+                "description": "Azure Defender pricing tier for Virtual Machines"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierSqlServers": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for SQL Servers",
+                "description": "Azure Defender pricing tier for SQL Servers"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierAppServices": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for App Services",
+                "description": "Azure Defender pricing tier for App Services"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierStorageAccounts": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for Storage Accounts",
+                "description": "Azure Defender pricing tier for Storage Accounts"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierSqlServerVirtualMachines": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for SQL Server Virtual Machines",
+                "description": "Azure Defender pricing tier for SQL Server Virtual Machines"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierKubernetesService": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for AKS",
+                "description": "Azure Defender pricing tier for AKS"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierContainerRegistry": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for ACR",
+                "description": "Azure Defender pricing tier for ACR"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierKeyVaults": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for AKV",
+                "description": "Azure Defender pricing tier for AKV"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierDns": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for DNS",
+                "description": "Azure Defender pricing tier for DNS"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "pricingTierArm": {
+            "type": "string",
+            "metadata": {
+                "displayName": "Azure Defender pricing tier for Azure Resource Manager",
+                "description": "Azure Defender pricing tier for Azure Resource Manager"
+            },
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Standard"
+        },
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "workspaceResourceId": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Log Analytics workspace",
+                "description": "The Log Analytics workspace of where the data should be exported to.",
+                "strongType": "Microsoft.OperationalInsights/workspaces",
+                "assignPermissions": true
+            }
+        },
+        "guidValue": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        }
+    },
+    "variables": {
+        "resourceGroupName": "[concat(parameters('topLevelManagementGroupPrefix'), '-asc-export')]",
+        "resourceGroupLocation": "[deployment().location]",
+        "exportedDataTypes": "[createArray('Security recommendations', 'Security alerts', 'Overall secure score', 'Secure score controls', 'Regulatory compliance', 'Overall secure score - snapshot', 'Secure score controls - snapshot', 'Regulatory compliance - snapshot')]",
+        "isSecurityFindingsEnabled": true,
+        "recommendationNames": "[createArray()]",
+        "recommendationSeverities": "[createArray('High', 'Medium', 'Low')]",
+        "alertSeverities": "[createArray('High', 'Medium', 'Low')]",
+        "secureScoreControlsNames": "[createArray()]",
+        "regulatoryComplianceStandardsNames": "[createArray()]",
+
+
+        "scopeDescription": "scope for subscription {0}",
+        "subAssessmentRuleExpectedValue": "/assessments/{0}/",
+        "recommendationNamesLength": "[length(variables('recommendationNames'))]",
+        "secureScoreControlsNamesLength": "[length(variables('secureScoreControlsNames'))]",
+        "secureScoreControlsLengthIfEmpty": "[if(equals(variables('secureScoreControlsNamesLength'), 0), 1, variables('secureScoreControlsNamesLength'))]",
+        "regulatoryComplianceStandardsNamesLength": "[length(variables('regulatoryComplianceStandardsNames'))]",
+        "regulatoryComplianceStandardsNamesLengthIfEmpty": "[if(equals(variables('regulatoryComplianceStandardsNamesLength'), 0), 1, variables('regulatoryComplianceStandardsNamesLength'))]",
+        "recommendationSeveritiesLength": "[length(variables('recommendationSeverities'))]",
+        "alertSeveritiesLength": "[length(variables('alertSeverities'))]",
+        "recommendationNamesLengthIfEmpty": "[if(equals(variables('recommendationNamesLength'), 0), 1, variables('recommendationNamesLength'))]",
+        "recommendationSeveritiesLengthIfEmpty": "[if(equals(variables('recommendationSeveritiesLength'), 0), 1, variables('recommendationSeveritiesLength'))]",
+        "alertSeveritiesLengthIfEmpty": "[if(equals(variables('alertSeveritiesLength'), 0), 1, variables('alertSeveritiesLength'))]",
+        "totalRuleCombinationsForOneRecommendationName": "[variables('recommendationSeveritiesLengthIfEmpty')]",
+        "totalRuleCombinationsForOneRecommendationSeverity": 1,
+        "exportedDataTypesLength": "[length(variables('exportedDataTypes'))]",
+        "exportedDataTypesLengthIfEmpty": "[if(equals(variables('exportedDataTypesLength'), 0), 1, variables('exportedDataTypesLength'))]",
+        "dataTypeMap": {
+            "Security recommendations": "Assessments",
+            "Security alerts": "Alerts",
+            "Overall secure score": "SecureScores",
+            "Secure score controls": "SecureScoreControls",
+            "Regulatory compliance": "RegulatoryComplianceAssessment",
+            "Overall secure score - snapshot": "SecureScoresSnapshot",
+            "Secure score controls - snapshot": "SecureScoreControlsSnapshot",
+            "Regulatory compliance - snapshot": "RegulatoryComplianceAssessmentSnapshot"
+        },
+        "alertSeverityMap": {
+            "High": "high",
+            "Medium": "medium",
+            "Low": "low"
+        },
+        "ruleSetsForAssessmentsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForAssessmentsArr",
+                    "count": "[mul(variables('recommendationNamesLengthIfEmpty'),variables('recommendationSeveritiesLengthIfEmpty'))]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "[if(equals(variables('recommendationNamesLength'),0),'type','name')]",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('recommendationNamesLength'),0),'Microsoft.Security/assessments',variables('recommendationNames')[mod(div(copyIndex('ruleSetsForAssessmentsArr'),variables('totalRuleCombinationsForOneRecommendationName')),variables('recommendationNamesLength'))])]",
+                                "operator": "Contains"
+                            },
+                            {
+                                "propertyJPath": "properties.metadata.severity",
+                                "propertyType": "string",
+                                "expectedValue": "[variables('recommendationSeverities')[mod(div(copyIndex('ruleSetsForAssessmentsArr'),variables('totalRuleCombinationsForOneRecommendationSeverity')),variables('recommendationSeveritiesLength'))]]",
+                                "operator": "Equals"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "customRuleSetsForSubAssessmentsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForSubAssessmentsArr",
+                    "count": "[variables('recommendationNamesLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "id",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('recommendationNamesLength'), 0), json('null'), replace(variables('subAssessmentRuleExpectedValue'),'{0}', variables('recommendationNames')[copyIndex('ruleSetsForSubAssessmentsArr')]))]",
+                                "operator": "Contains"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "ruleSetsForAlertsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForAlertsArr",
+                    "count": "[variables('alertSeveritiesLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "Severity",
+                                "propertyType": "string",
+                                "expectedValue": "[variables('alertSeverityMap')[variables('alertSeverities')[mod(copyIndex('ruleSetsForAlertsArr'),variables('alertSeveritiesLengthIfEmpty'))]]]",
+                                "operator": "Equals"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "customRuleSetsForSecureScoreControlsObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForSecureScoreControlsArr",
+                    "count": "[variables('secureScoreControlsLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "name",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('secureScoreControlsNamesLength'), 0), json('null'), variables('secureScoreControlsNames')[copyIndex('ruleSetsForSecureScoreControlsArr')])]",
+                                "operator": "Equals"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "customRuleSetsForRegulatoryComplianceObj": {
+            "copy": [
+                {
+                    "name": "ruleSetsForRegulatoryCompliancArr",
+                    "count": "[variables('regulatoryComplianceStandardsNamesLengthIfEmpty')]",
+                    "input": {
+                        "rules": [
+                            {
+                                "propertyJPath": "id",
+                                "propertyType": "string",
+                                "expectedValue": "[if(equals(variables('regulatoryComplianceStandardsNamesLength'), 0), json('null'), variables('regulatoryComplianceStandardsNames')[copyIndex('ruleSetsForRegulatoryCompliancArr')])]",
+                                "operator": "Contains"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "ruleSetsForSecureScoreControlsObj": "[if(equals(variables('secureScoreControlsNamesLength'), 0), json('null'), variables('customRuleSetsForSecureScoreControlsObj').ruleSetsForSecureScoreControlsArr)]",
+        "ruleSetsForSecureRegulatoryComplianceObj": "[if(equals(variables('regulatoryComplianceStandardsNamesLength'), 0), json('null'), variables('customRuleSetsForRegulatoryComplianceObj').ruleSetsForRegulatoryCompliancArr)]",
+        "ruleSetsForSubAssessmentsObj": "[if(equals(variables('recommendationNamesLength'), 0), json('null'), variables('customRuleSetsForSubAssessmentsObj').ruleSetsForSubAssessmentsArr)]",
+        "subAssessmentSource": [
+            {
+                "eventSource": "SubAssessments",
+                "ruleSets": "[variables('ruleSetsForSubAssessmentsObj')]"
+            }
+        ],
+        "ruleSetsMap": {
+            "Security recommendations": "[variables('ruleSetsForAssessmentsObj').ruleSetsForAssessmentsArr]",
+            "Security alerts": "[variables('ruleSetsForAlertsObj').ruleSetsForAlertsArr]",
+            "Overall secure score": null,
+            "Secure score controls": "[variables('ruleSetsForSecureScoreControlsObj')]",
+            "Regulatory compliance": "[variables('ruleSetsForSecureRegulatoryComplianceObj')]",
+            "Overall secure score - snapshot": null,
+            "Secure score controls - snapshot": "[variables('ruleSetsForSecureScoreControlsObj')]",
+            "Regulatory compliance - snapshot": "[variables('ruleSetsForSecureRegulatoryComplianceObj')]"
+        },
+        "sourcesWithoutSubAssessments": {
+            "copy": [
+                {
+                    "name": "sources",
+                    "count": "[variables('exportedDataTypesLengthIfEmpty')]",
+                    "input": {
+                        "eventSource": "[variables('dataTypeMap')[variables('exportedDataTypes')[copyIndex('sources')]]]",
+                        "ruleSets": "[variables('ruleSetsMap')[variables('exportedDataTypes')[copyIndex('sources')]]]"
+                    }
+                }
+            ]
+        },
+        "sourcesWithSubAssessments": "[concat(variables('subAssessmentSource'),variables('sourcesWithoutSubAssessments').sources)]",
+        "sources": "[if(equals(variables('isSecurityFindingsEnabled'),bool('true')),variables('sourcesWithSubAssessments'),variables('sourcesWithoutSubAssessments').sources)]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "VirtualMachines",
+            "properties": {
+                "pricingTier": "[parameters('pricingTierVMs')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "SqlServers",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/VirtualMachines')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierSqlServers')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "AppServices",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/SqlServers')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierAppServices')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "StorageAccounts",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/AppServices')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierStorageAccounts')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "SqlServerVirtualMachines",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/StorageAccounts')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierSqlServerVirtualMachines')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "KubernetesService",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/SqlServerVirtualMachines')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierKubernetesService')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "ContainerRegistry",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/KubernetesService')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierContainerRegistry')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "KeyVaults",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/ContainerRegistry')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierKeyVaults')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "Dns",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/KeyVaults')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierDns')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "Arm",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/Dns')]"
+            ],
+            "properties": {
+                "pricingTier": "[parameters('pricingTierArm')]"
+            }
+        },
+        {
+            "condition": "[not(empty(parameters('emailSecurityContact')))]",
+            "type": "Microsoft.Security/securityContacts",
+            "name": "default",
+            "apiVersion": "2020-01-01-preview",
+            "properties": {
+                "emails": "[parameters('emailSecurityContact')]",
+                "notificationsByRole": {
+                    "state": "On",
+                    "roles": [
+                        "Owner"
+                    ]
+                },
+                "alertNotifications": {
+                    "state": "On",
+                    "minimalSeverity": "High"
+                }
+            }
+        },
+        {
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2019-10-01",
+            "location": "[variables('resourceGroupLocation')]",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('nestedAutomationDeployment', '_', parameters('guidValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('resourceGroupName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "tags": {},
+                            "apiVersion": "2019-01-01-preview",
+                            "location": "[variables('resourceGroupLocation')]",
+                            "name": "ExportToWorkspace",
+                            "type": "Microsoft.Security/automations",
+                            "dependsOn": [],
+                            "properties": {
+                                "description": "Export Azure Security Center data to Log Analytics workspace via policy",
+                                "isEnabled": true,
+                                "scopes": [
+                                    {
+                                        "description": "[replace(variables('scopeDescription'),'{0}', subscription().subscriptionId)]",
+                                        "scopePath": "[subscription().id]"
+                                    }
+                                ],
+                                "sources": "[variables('sources')]",
+                                "actions": [
+                                    {
+                                        "actionType": "Workspace",
+                                        "workspaceResourceId": "[parameters('workspaceResourceId')]"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+
+}
