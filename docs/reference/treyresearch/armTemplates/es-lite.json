@@ -58,6 +58,13 @@
                 "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
             }
         },
+        "emailContactAsc": {
+            "type": "string",
+            "metadata": {
+                "description": "Email address for Azure Security Center contact details."
+            },
+            "defaultValue": ""
+        },
         "enableAksPolicy": {
             "type": "string",
             "defaultValue": "No",
@@ -124,6 +131,14 @@
             }
         },
         "enableSecuritySolution": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableEncryptionInTransit": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -227,7 +242,23 @@
                 "No"
             ]
         },
+        "denyPublicEndpoints": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "enableStorageHttps": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableLzDdoS": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -299,6 +330,22 @@
             ],
             "defaultValue": "RouteBased"
         },
+        "enableAzFwDnsProxy": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableDdoS": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "subnetMaskForAzFw": {
             "type": "string",
             "defaultValue": ""
@@ -306,6 +353,34 @@
         "subnetMaskForGw": {
             "type": "string",
             "defaultValue": ""
+        },
+        "gwRegionalOrAz": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwAzSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwRegionalSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erRegionalOrAz": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erAzSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erRegionalSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "firewallZones": {
+            "type": "array",
+            "defaultValue": []
         }
     },
     "variables": {
@@ -339,7 +414,8 @@
         },
         "enableAscDefenderForWorkloads": "[if(equals(parameters('enableAsc'), 'Standard'), 'Standard', 'Free')]"
     },
-    "resources": [{
+    "resources": [
+        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').mgmtGroupDeploymentName]",
@@ -358,7 +434,7 @@
                         "value": []
                     },
                     "landingZoneMgs": {
-                        "value": ["online", "corp"]
+                        "value": [ "online", "corp" ]
                     }
                 }
             }
@@ -564,7 +640,7 @@
                     },
                     "targetManagementGroup": {
                         "value": "landingzones"
-                    },                                        
+                    },
                     "denyHttpIngressForAks": {
                         "value": "[parameters('denyHttpIngressForAks')]"
                     },
@@ -606,7 +682,16 @@
                     },
                     "enableVmssMonitoring": {
                         "value": "[parameters('enableVmssMonitoring')]"
-                    }                    
+                    },
+                    "enableLzDdoS": {
+                        "value": "[parameters('enableLzDdoS')]"
+                    },
+                    "denyPublicEndpoints": {
+                        "value": "[parameters('denyPublicEndpoints')]"
+                    },
+                    "enableEncryptionInTransit": {
+                        "value": "[parameters('enableEncryptionInTransit')]"
+                    }
                 }
             }
         },
@@ -640,6 +725,9 @@
                     "enableAsc": {
                         "value": "[if(or(equals(parameters('enableAsc'),'Standard'),equals(parameters('enableAsc'),'Free')),'Yes','No')]"
                     },
+                    "emailContactAsc": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
                     "enableAscForServers": {
                         "value": "[variables('enableAscDefenderForWorkloads')]"
                     },
@@ -650,6 +738,9 @@
                         "value": "[variables('enableAscDefenderForWorkloads')]"
                     },
                     "enableAscForSql": {
+                        "value": "[variables('enableAscDefenderForWorkloads')]"
+                    },
+                    "enableAscForSqlOnVm": {
                         "value": "[variables('enableAscDefenderForWorkloads')]"
                     },
                     "enableAscForKeyVault": {
@@ -718,6 +809,9 @@
                     "enableErGw": {
                         "value": "[parameters('enableErGw')]"
                     },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
+                    },
                     "location": {
                         "value": "[parameters('location')]"
                     },
@@ -732,6 +826,30 @@
                     },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "firewallZones": {
+                        "value": "[parameters('firewallZones')]"
+                    },
+                    "enableAzFwDnsProxy": {
+                        "value": "[parameters('enableAzFwDnsProxy')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAz')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSku')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSku')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAz')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSku')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSku')]"
                     }
                 }
             }
