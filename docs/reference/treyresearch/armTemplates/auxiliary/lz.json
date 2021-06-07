@@ -120,6 +120,24 @@
             ],
             "defaultValue": "No"
         },
+        "enableLzDdoS": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether DDoS Protection standard should be enabled or not."
+            }
+        },
+        "connectivitySubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subscription Id for the connectivity subscription where DDoS is enabled."
+            }
+        },
         "enableArcMonitoring": {
             "type": "string",
             "defaultValue": "No",
@@ -129,6 +147,28 @@
             ],
             "metadata": {
                 "description": "If 'Yes' is selected, policy will be assigned to enforce Arc monitoring."
+            }
+        },
+        "denyPublicEndpoints": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select if policy to deny public endpoint should be assigned or not."
+            }
+        },
+        "enableEncryptionInTransit": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select if encryption in transit policy should be assigned or not."
             }
         },
         "enableVmMonitoring": {
@@ -152,11 +192,20 @@
             "metadata": {
                 "description": "If 'Yes' is selected, policy will be assigned to enforce VMSS monitoring."
             }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the location for the connectivity resources in the connectivity subscription."
+            }
         }          
     },
     "variables": {
         "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '-', parameters('targetManagementGroup'))]",
         "policyDefinitions": {
+            "deployEncryptionInTransit": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit')]",
+            "denyPublicEndpoint": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deny-PublicEndpoints')]",
             "deployVmBackup": "/providers/Microsoft.Authorization/policyDefinitions/98d0b9f8-fd90-49c9-88e2-d3baf3b0dd86",
             "denySubnetWithoutNsg": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg')]",
             "denyRdp": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet')]",
@@ -173,9 +222,12 @@
             "windowsArcMonitoring": "/providers/Microsoft.Authorization/policyDefinitions/69af7d4a-7b18-4044-93a9-2651498ef203",
             "linuxArcMonitoring": "/providers/Microsoft.Authorization/policyDefinitions/9d2b61b4-1d14-4a63-be30-d4498e7ad2cf",
             "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a",
-            "vmssMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad"
+            "vmssMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad",
+            "deployDoS": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d"
         },
         "policyAssignmentNames": {
+            "deployEncryptionInTransit": "Enforce-TLS-SSL",
+            "denyPublicEndpoint": "Deny-Public-Endpoints",
             "deployVmBackup": "Deploy-VM-Backup",
             "denySubnetWithoutNsg": "Deny-Subnet-Without-Nsg",
             "denyRdp": "Deny-RDP-from-internet",
@@ -192,10 +244,13 @@
             "vmMonitoring": "Deploy-VM-Monitoring",
             "windowsArcMonitoring": "Deploy-WS-Arc-Monitoring",
             "linuxArcMonitoring": "Deploy-LX-Arc-Monitoring",
-            "vmssMonitoring": "Deploy-VMSS-Monitoring"
+            "vmssMonitoring": "Deploy-VMSS-Monitoring",
+            "deployDdoS": "Enable-DDoS-VNET"
         },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "rbacNetworkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7",
         "roleAssignmentNames": {
+            "deployEncryptionInTransit": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').deployEncryptionInTransit))]",
             "deployVmBackup": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployVmBackup))]",
             "deploySqlSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploysqlSecurity))]",
             "deploySqlAuditing": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing))]",
@@ -205,11 +260,95 @@
             "deployVmMonitoring": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring))]",
             "deployWindowsArcMonitoring": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').windowsArcMonitoring))]",
             "deployLinuxArcMonitoring": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').linuxArcMonitoring))]",
-            "deployVmssMonitoring": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssMonitoring))]"
-        }
+            "deployVmssMonitoring": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssMonitoring))]",
+            "deployDdoS": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployDdoS))]",
+            "deployDdOsConnectivityMg": "[guid(concat(parameters('topLevelManagementGroupPrefix'), '-connectivity'))]"
+        },
+        "dDoSRgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos')]",
+        "dDoSName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ddos-', parameters('location'))]"
         //"blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}"
     },
     "resources": [
+        {
+            "condition": "[and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deployDdoS]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployDdoS]",
+                "displayName": "[variables('policyAssignmentNames').deployDdoS]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployDoS]",
+                "parameters": {
+                    "ddosPlan": {
+                        "value": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('dDoSRgName'), '/providers/Microsoft.Network/ddosProtectionPlans/', variables('dDoSName'))]"
+                    },
+                    "effect": {
+                        "value": "Modify"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployDdoS]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployDdoS)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacNetworkContributor'))]",
+                "principalId": "[if(and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId')))), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployDdoS), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('denyPublicEndpoints'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').denyPublicEndpoint]",
+            "location": "[deployment().location]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').denyPublicEndpoint]",
+                "displayName": "[variables('policyAssignmentNames').denyPublicEndpoint]",
+                "policyDefinitionId": "[variables('policyDefinitions').denyPublicEndpoint]",
+                "parameters": {}
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableEncryptionInTransit'), 'Yes')]",
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+                "displayName": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployEncryptionInTransit]",
+                "parameters": {}
+            }
+        },
+        {
+            "condition": "[equals(parameters('enableEncryptionInTransit'), 'Yes')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployEncryptionInTransit]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployEncryptionInTransit)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[if(equals(parameters('enableEncryptionInTransit'), 'Yes'), toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployEncryptionInTransit), '2018-05-01', 'Full' ).identity.principalId), 'na')]"
+            }
+        },
         {
             "condition": "[equals(parameters('denyRdp'), 'Yes')]",
             "type": "Microsoft.Authorization/policyAssignments",

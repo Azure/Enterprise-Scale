@@ -13,7 +13,7 @@
 - [Enterprise-Scale Management Group Structure](#enterprise-scale-management-group-structure)
 - [What happens when you deploy Enterprise-Scale?](#what-happens-when-you-deploy-enterprise-scale)
 
----
+------ 
 This section describes at a high level how Enterprise-Scale reference implementation works. Your landing zones are the output of a multi-subscription environment for all your Azure services, where compliance, guardrails, security, networking, and identity is provided at scale by the platform.
 
 ## Enterprise-Scale design principles
