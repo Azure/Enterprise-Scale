@@ -1,7 +1,15 @@
 ## In this Section
 
+- [In this Section](#in-this-section)
 - [Enterprise-Scale design principles](#enterprise-scale-design-principles)
+  - [:book: Subscription Democratization](#book-subscription-democratization)
+  - [:book: Policy Driven Governance](#book-policy-driven-governance)
+  - [:book: Single Control and Management Plane](#book-single-control-and-management-plane)
+  - [:book: Application Centric and Archetype-neutral](#book-application-centric-and-archetype-neutral)
+  - [:book: Azure native design and aligned with platform roadmap](#book-azure-native-design-and-aligned-with-platform-roadmap)
 - [Separating platform and landing zones](#separating-platform-and-landing-zones)
+- [Platform responsibilities and functions](#platform-responsibilities-and-functions)
+- [Landing zone owners responsibilities](#landing-zone-owners-responsibilities)
 - [Enterprise-Scale Management Group Structure](#enterprise-scale-management-group-structure)
 - [What happens when you deploy Enterprise-Scale?](#what-happens-when-you-deploy-enterprise-scale)
 
@@ -78,7 +86,7 @@ By default, all recommended settings and resources recommendations are enabled a
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
 
-- Azure Policies that will enable autonomy for the platform and the landing zones.
+- Azure Policies that will enable autonomy for the platform and the landing zones. The full list of policies leveraged by Enterprise-Scale, their intent, assignment scope, and life-cycle can be [viewed here](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md).
 - An Azure subscription dedicated for **Management**, which enables core platform capabilities at scale using Azure Policy such as:
 
   - A Log Analytics workspace and an Automation account

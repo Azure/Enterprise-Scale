@@ -4,14 +4,22 @@
 
 # Deploy Enterprise-Scale with hub and spoke architecture
 
-The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on the traditional hub and spoke network topology if customers require hybrid connectivity to on-premises locations from the begining.
+The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on the traditional hub and spoke network topology if customers require hybrid connectivity to on-premises locations from the beginning.
 
-This reference implementation also allows the deployment of platform services across Availability Zones (such as VPN or ExpressRoute gateways) to increase availability uptime of such services. 
+A hub and spoke network topology allows you to create a central Hub VNet that contains shared networking components (such as Azure Firewall, ExpressRoute and VPN Gateways) that can then be used by spoke VNets, connected to the Hub VNet via VNET Peering, to centralize connectivity in your environment. Gateway transit in VNet peering allows spokes to have connectivity to/from on-premises via ExpressRoute or VPN, and also, [transitive connectivity](https://azure.microsoft.com/en-us/blog/create-a-transit-vnet-using-vnet-peering/) across spokes can be implemented by deploying User Defined Routes (UDR) on the spokes and using Azure Firewall or an NVA in the hub as the transit resource. Hub and spoke network design considerations & recommendations can be found [here](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology).
+
+![Hub & Spoke Network Topology](./media/hub-and-spoke-topology.png)
+
+*A hub & spoke network topology*
+
+This reference implementation also allows the deployment of platform services across Availability Zones (such as Azure Firewall, VPN or ExpressRoute gateways) to increase availability uptime of such services.
 
 ## Customer profile
 
 This reference implementation is ideal for customers that have started their Enterprise-Scale journey with an Enterprise-Scale foundation implementation and then there is a need to add connectivity on-premises datacenters and branch offices by using a traditional hub and spoke network architecture. This reference implementation is also well suited for customers who want to start with Landing Zones for their net new
 deployment/development in Azure by implementing a network architecture based on the traditional hub and spoke network topology.
+
+Please refer to the [Enterprise-Scale Landing Zones User Guide](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale) for detailed information on prerequisites and deployment steps.
 
 ## How to evolve from Enterprise-Scale foundation
 
@@ -20,15 +28,15 @@ If customer started with a Enterprise-Scale foundation deployment, and if the bu
 ## Pre-requisites
 
 To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
-See the following [instructions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin) on how to grant access.
+See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access.
 
 ### Optional prerequisites
 
 The deployment experience in Azure portal allows you to bring in existing (preferably empty) subscriptions dedicated for platform management, connectivity and identity. It also allows you to bring existing subscriptions that can be used as the initial landing zones for your applications.
 
-To learn how to create new subscriptions programatically, please visit this [link](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription).
+To learn how to create new subscriptions programmatically, please visit this [link](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription).
 
-To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
+To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
 ## What will be deployed?
 
@@ -70,9 +78,11 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
 
+> For a detailed networking topology diagram for this reference implementation click [here](../../media/es-hubspoke-nw.png)
+
 ## Next steps
 
-### From an application perspective:
+### From an application perspective
 
 Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the **Landing Zones** > **Online** or **Corp**  management group, and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workloads.
 
