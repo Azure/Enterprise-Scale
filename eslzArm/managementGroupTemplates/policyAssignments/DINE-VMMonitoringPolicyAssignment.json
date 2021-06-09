@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the central Log Analytics workspace"
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a",
+            },
+        "policyAssignmentNames": {
+            "vmMonitoring": "Deploy-VM-Monitoring",
+            },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployVmMonitoring": "[guid(variables('policyAssignmentNames').vmMonitoring)]"
+            }
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').vmMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-VM-Monitoring",
+                "displayName": "Deploy-VM-Monitoring",
+                "policyDefinitionId": "[variables('policyDefinitions').vmMonitoring]",
+                "parameters": {
+                    "logAnalytics_1": {
+                        "value": "[parameters('logAnalyticsResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployVmMonitoring]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
+     

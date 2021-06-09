@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "denyPip": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deny-PublicIP')]"
+         },
+        "policyAssignmentNames": {
+            "denyPip": "Deny-Public-IP"
+         }
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').denyPip]",
+            "properties": {
+                "description": "Deny-Public-IP",
+                "displayName": "Deny-Public-IP",
+                "policyDefinitionId": "[variables('policyDefinitions').denyPip]"
+            }
+        }        
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ prefix to your intermediate root management group containing the policy definitions."
+            }
+        },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the central Log Analytics workspace."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployResourceDiagnostics": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-Diag-LogAnalytics')]",
+            },
+        "policyAssignmentNames": {
+            "resourceDiagnostics": "Deploy-Resource-Diag",
+            },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployResourceRiagnostics": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').resourceDiagnostics))]"
+            }
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').resourceDiagnostics]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-Resource-Diag",
+                "displayName": "Deploy-Resource-Diag",
+                "policyDefinitionId": "[variables('policyDefinitions').deployResourceDiagnostics]",
+                "parameters": {
+                    "logAnalytics": {
+                        "value": "[parameters('logAnalyticsResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployResourceRiagnostics]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').resourceDiagnostics]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').resourceDiagnostics), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

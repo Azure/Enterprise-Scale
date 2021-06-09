@@ -1,0 +1,182 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the central Log Analytics workspace."
+            }
+        },
+        "emailContactAsc": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the email address to the ASC security contact."
+            }
+        },
+        "enableAscForServers": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForSql": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForAppServices": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForStorage": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForRegistries": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForKeyVault": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForSqlOnVm": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForKubernetes": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForArm": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAscForDns": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployAzureSecurity": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-ASC-Config')]"
+        },
+        "policyAssignmentNames": {
+            "azureSecurity": "Deploy-ASC-Configuration"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployAzureSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureSecurity))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').azureSecurity]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-ASC-Configuration for Azure Defender and Security Contacts",
+                "displayName": "Deploy-ASC-Configuration",
+                "policyDefinitionId": "[variables('policyDefinitions').deployAzureSecurity]",
+                "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
+                "parameters": {
+                    "emailSecurityContact": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "logAnalytics": {
+                        "value": "[parameters('logAnalyticsResourceId')]"
+                    },
+                    "ascExportResourceGroupName": {
+                        "value": "[concat(parameters('topLevelManagementGroupPrefix'), '-asc-export')]"
+                    },
+                    "ascExportResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "pricingTierVms": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "pricingTierSqlServers": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "pricingTierAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "pricingTierStorageAccounts": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "pricingTierContainerRegistry": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
+                    "pricingTierKeyVaults": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "pricingTierSqlServerVirtualMachines": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
+                    "pricingTierKubernetesService": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "pricingTierArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "pricingTierDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployAzureSecurity]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureSecurity]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+        
+    ],
+    "outputs": {}
+}
