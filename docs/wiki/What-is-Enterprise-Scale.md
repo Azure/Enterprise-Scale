@@ -1,8 +1,9 @@
 ## In this Section
 
+- [In this Section](#in-this-section)
 - [What is Enterprise-Scale reference implementation?](#what-is-enterprise-scale-reference-implementation)
 - [Pricing](#pricing)
-- [What if I already have an existing Azure footprint](#what-if-i-already-have-an-existing-azure-footprint)
+- [What if I already have an existing Azure footprint?](#what-if-i-already-have-an-existing-azure-footprint)
 
 ---
 Enterprise-Scale architecture provides prescriptive guidance coupled with Azure best practices, and it follows 5 design principles across the 8 critical design areas for organizations to define their target state for their Azure architecture. Enterprise-Scale will continue to evolve alongside the Azure platform roadmap and is ultimately defined by the various design decisions that organizations must make to define their Azure journey.
@@ -26,8 +27,8 @@ The following table outlines key customer requirements in terms of landing zones
 | UI Experience and simplified setup                           | Yes, Azure portal                                            |
 | All critical services are present and properly configured according to recommend best practices for identity & access management, governance, security, network and logging | Yes, using a multi-subscription design, aligned with Azure platform roadmap |
 | Automation capabilities (IaC/DevOps)                         | Yes: ARM, Azure Policy, GitHub/Azure DevOps CI/CD pipeline options included |
-| Provides long-term self-sufficiency                          | Yes, enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency;, the RIs reference implementations are there to get you started |
-| Enables migration velocity across the organization           | Yes, enterpriseEnterprise-scale Scale architecture -> 1:N landing zones., Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
+| Provides long-term self-sufficiency                          | Yes, Enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency;, the RIs reference implementations are there to get you started |
+| Enables migration velocity across the organization           | Yes, Enterprise-scale Scale architecture -> 1:N landing zones., Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
 | Achieves operational excellence                              | Yes. Enables autonomy for platform and application teams with a policy driven governance and management |
 
 ## Pricing
