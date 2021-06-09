@@ -10698,6 +10698,59 @@
         },
         {
           "properties": {
+            "displayName": "Restrict specific subnets from containing NICs",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "This policy denies the creation of NICs in specific subnets.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Network"
+            },
+            "parameters": {
+              "subnetIDs": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Subnet IDs",
+                  "description": "Array of Subnet IDs that are blocked from hosting NICs"
+                },
+                "defaultValue": []
+              },
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Network/networkInterfaces"
+                  },
+                  {
+                    "field": "Microsoft.Network/networkInterfaces/ipconfigurations[*].subnet.id",
+                    "in": "[[parameters('subnetIDs')]"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-NICs-Specific-Subnets"
+        },
+        {
+          "properties": {
             "description": "This policy denies the creation of vNet Peerings outside of the same subscriptions under the assigned scope.",
             "displayName": "Deny vNet peering cross subscription.",
             "mode": "Indexed",
