@@ -10650,9 +10650,9 @@
             "displayName": "Subnets should have a User Defined Route",
             "policyType": "Custom",
             "mode": "All",
-            "description": "This policy denies the creation of a subsnet with out a User Defined Route.",
+            "description": "This policy denies the creation of a subnet with out a User Defined Route.",
             "metadata": {
-              "version": "1.0.0",
+              "version": "1.1.0",
               "category": "Network"
             },
             "parameters": {
@@ -10668,6 +10668,16 @@
                   "Disabled"
                 ],
                 "defaultValue": "Deny"
+              },
+              "excludedSubnets": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Excluded Subnets",
+                  "description": "Array of subnet names that are excluded from this policy"
+                },
+                "defaultValue": [
+                  "AzureBastionSubnet"
+                ]
               }
             },
             "policyRule": {
@@ -10678,10 +10688,8 @@
                     "equals": "Microsoft.Network/virtualNetworks/subnets"
                   },
                   {
-                    "not": {
-                      "field": "name",
-                      "equals": "AzureBastionSubnet"
-                    }
+                    "field": "name",
+                    "notIn": "[[parameters('excludedSubnets')]"
                   },
                   {
                     "field": "Microsoft.Network/virtualNetworks/subnets/routeTable.id",
@@ -10695,59 +10703,6 @@
             }
           },
           "name": "Deny-Subnet-Without-UDR"
-        },
-        {
-          "properties": {
-            "displayName": "Restrict specific subnets from containing NICs",
-            "policyType": "Custom",
-            "mode": "All",
-            "description": "This policy denies the creation of NICs in specific subnets.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Network"
-            },
-            "parameters": {
-              "subnetIDs": {
-                "type": "Array",
-                "metadata": {
-                  "displayName": "Subnet IDs",
-                  "description": "Array of Subnet IDs that are blocked from hosting NICs"
-                },
-                "defaultValue": []
-              },
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Deny",
-                  "Disabled"
-                ],
-                "defaultValue": "Deny"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Network/networkInterfaces"
-                  },
-                  {
-                    "field": "Microsoft.Network/networkInterfaces/ipconfigurations[*].subnet.id",
-                    "in": "[[parameters('subnetIDs')]"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-NICs-Specific-Subnets"
         },
         {
           "properties": {
