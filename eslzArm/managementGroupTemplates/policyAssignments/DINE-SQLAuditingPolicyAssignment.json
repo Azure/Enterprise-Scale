@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deploySqlAuditing": "/providers/Microsoft.Authorization/policyDefinitions/a6fb4358-5bf4-4ad7-ba82-2cd2f41ce5e9"
+        },
+        "policyAssignmentNames": {
+            "deploySqlAuditing": "Deploy-SQL-DB-Auditing"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deploySqlAuditing": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deploySqlAuditing]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deploySqlAuditing]",
+                "displayName": "[variables('policyAssignmentNames').deploySqlAuditing]",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySqlAuditing]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deploySqlAuditing]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlAuditing]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2018-05-01', 'Full' ).identity.principalId]"
+            }
+        }
+    ],
+    "outputs": {}
+}

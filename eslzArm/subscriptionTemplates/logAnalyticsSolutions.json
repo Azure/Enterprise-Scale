@@ -2,24 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "topLevelManagementGroupPrefix": {
+        "rgName": {
             "type": "string",
             "metadata": {
-                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
-            }
-        },
-        "managementSubscriptionId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Provide subscription id for the dedicated management subscription."
+                "description": "Provide the resource group name where the Log Analytics workspace is deployed."
             }
         },
         "workspaceName": {
             "type": "string",
-            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-la')]",
             "metadata": {
-                "description": "Provide resource name for the Log Analytics workspace. When deployed using ES RI, this name it provided deterministically based on ESLZ prefix."
+                "description": "Provide resource name for the Log Analytics workspace."
             }
         },
         "workspaceRegion": {
@@ -119,7 +111,7 @@
         }
     },
     "variables": {
-        "laResourceId": "[toLower(concat('/subscriptions/', parameters('managementSubscriptionId'), '/resourceGroups/', parameters('topLevelManagementGroupPrefix'), '-mgmt', '/providers/Microsoft.OperationalInsights/workspaces/', parameters('topLevelManagementGroupPrefix'), '-la'))]",
+        "laResourceId": "[toLower(concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')))]",
         "solutions": {
             "security": {
                 "name": "[concat('Security', '(', parameters('workspaceName'), ')')]",
@@ -164,7 +156,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "[take(concat('EntScale-', 'solutions-', guid(deployment().name)), 63)]",
-            "resourceGroup": "[concat(parameters('topLevelManagementGroupPrefix'), '-mgmt')]",
+            "resourceGroup": "[parameters('rgName')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {

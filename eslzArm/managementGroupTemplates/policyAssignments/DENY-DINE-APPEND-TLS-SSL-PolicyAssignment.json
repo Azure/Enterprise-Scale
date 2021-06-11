@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployEncryptionInTransit": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit')]"
+        },
+        "policyAssignmentNames": {
+            "deployEncryptionInTransit": "Enforce-TLS-SSL"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployEncryptionInTransit": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').deployEncryptionInTransit))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+                "displayName": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployEncryptionInTransit]",
+                "parameters": {}
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployEncryptionInTransit]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployEncryptionInTransit)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployEncryptionInTransit), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

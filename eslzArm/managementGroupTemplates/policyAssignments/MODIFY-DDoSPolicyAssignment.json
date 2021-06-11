@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "ddosPlanResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the DDos Standard Plan in your connectivity subscription."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+             "deployDoS": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d"
+        },
+        "policyAssignmentNames": {
+            "deployDdoS": "Enable-DDoS-VNET"
+        },
+        "rbacNetworkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7",
+        "roleAssignmentNames": {
+            "deployDdoS": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployDdoS))]"
+         }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deployDdoS]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').deployDdoS]",
+                "displayName": "[variables('policyAssignmentNames').deployDdoS]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployDoS]",
+                "parameters": {
+                    "ddosPlan": {
+                        "value": "[parameters('ddosPlanResourceId')]"
+                    },
+                    "effect": {
+                        "value": "Modify"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployDdoS]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployDdoS)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacNetworkContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployDdoS), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+           ],
+    "outputs": {}
+}

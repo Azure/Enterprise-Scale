@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deploySqlEncryption": "/providers/Microsoft.Authorization/policyDefinitions/86a912f6-9a06-4e26-b447-11b16ba8659f"
+        },
+        "policyAssignmentNames": {
+            "deploySqlEncryption": "Deploy-SQL-Encryption"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deploySqlEncryption": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlEncryption))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policyAssignmentNames').deploySqlEncryption]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "Deploy-SQL-Security",
+                "displayName": "Deploy-SQL-Security",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySqlEncryption]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deploySqlEncryption]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlEncryption]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlEncryption), '2018-05-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
