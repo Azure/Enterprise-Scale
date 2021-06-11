@@ -23,4 +23,4 @@
   * [Enable Service Principal to create landing zones](./Create-Landingzones#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](./Create-Landingzones#arm-template-repository)
   * [Create a landing zone using AzOps](./Create-Landingzones#create-a-subscription-landing-zone-using-azops)
-* [Enterprise-Scale FAG](./EnterpriseScale-FAQ)
+* [Enterprise-Scale FAQ](./EnterpriseScale-FAQ)
