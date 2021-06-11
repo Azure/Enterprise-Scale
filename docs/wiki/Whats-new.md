@@ -3,9 +3,6 @@
 - [In this Section](#in-this-section)
 - [Updates](#updates)
   - [June 2021](#june-2021)
-    - [Docs](#docs)
-    - [Tooling](#tooling)
-    - [Other](#other)
 
 ---
 
