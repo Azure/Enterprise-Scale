@@ -33,7 +33,7 @@ The following table outlines key customer requirements in terms of landing zones
 
 ## Pricing
 
-There’s no cost associated with Enterprise-Scale itself, as it is just an architecture that is constructed using existing Azure products and services. Therefore you only pay for the Azure products and services that you choose to enable, and also the products and services your organization will deploy into the various application/service landing zones for your workloads.
+There’s no cost associated with Enterprise-Scale itself, as it is just an architecture that is constructed using existing Azure products and services. Therefore you only pay for the Azure products and services that you choose to enable, and also the products and services your organization will deploy into the landing zones for your workloads.
 
 For example, you don’t pay for the Management Groups or the Azure Policies that are being assigned, but assigning a policy to enable Azure Defender (previously known as Azure Security Center Standard) on all landing zone subscriptions will generate cost on those subscriptions for the Azure Defender service as detailed [here](https://azure.microsoft.com/pricing/details/azure-defender/).
 
