@@ -33,7 +33,11 @@ The following table outlines key customer requirements in terms of landing zones
 
 ## Pricing
 
-There’s no cost associated with Enterprise-Scale, and you only pay for the Azure services that are being enabled, and the services your organization will deploy into the landing zones. For example, you don’t pay for the management groups or the policies that are being assigned, but policy to enable Azure Security Center on the landing zone subscriptions will generate cost on those subscriptions.
+There’s no cost associated with Enterprise-Scale itself, as it is just an architecture that is constructed using existing Azure products and services. Therefore you only pay for the Azure products and services that you choose to enable, and also the products and services your organization will deploy into the various application/service landing zones for your workloads.
+
+For example, you don’t pay for the Management Groups or the Azure Policies that are being assigned, but assigning a policy to enable Azure Defender (previously known as Azure Security Center Standard) on all landing zone subscriptions will generate cost on those subscriptions for the Azure Defender service as detailed [here](https://azure.microsoft.com/pricing/details/azure-defender/).
+
+Therefore it is important to complete the design process following the Enterprise-Scale [Design Principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) and [Design Guidelines](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines) as part of your implementation of Enterprise-Scale. From reading and making design decisions from the guidance provided, you will know all of the Azure resources that will be being deployed/enabled as part of your deployment and with this information you will be able to determine any costs for the associated resources using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
 
 ## What if I already have an existing Azure footprint?
 
