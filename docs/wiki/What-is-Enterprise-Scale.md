@@ -37,6 +37,10 @@ There’s no cost associated with Enterprise-Scale itself, as it is just an arch
 
 For example, you don’t pay for the Management Groups or the Azure Policies that are being assigned, but assigning a policy to enable Azure Defender (previously known as Azure Security Center Standard) on all landing zone subscriptions will generate cost on those subscriptions for the Azure Defender service as detailed [here](https://azure.microsoft.com/pricing/details/azure-defender/).
 
+> As the pricing page for Azure Defender shows, charges only occur when resources that are protected by Azure Defender are deployed into the landing zones. 
+>  
+> Therefore an empty landing zone or landing zone with resources that are not covered by Azure Defender will incur no costs for the service.
+
 Another example are some of the networking resources that we provide prescriptive deployment guidance for as part on Enterprise-Scale:
 
 - [VPN Gateways](https://azure.microsoft.com/pricing/details/vpn-gateway/)
@@ -46,6 +50,8 @@ Another example are some of the networking resources that we provide prescriptiv
 - [DDoS Standard Protection Plans](https://azure.microsoft.com/pricing/details/ddos-protection/)
 
 Each of these resources have an associated cost that varies based on how they are deployed, configured and consumed as part of your Enterprise-Scale deployment.
+
+> A difference for the networking resources is that they have costs that are incurred once deployed, as well as how they are consumed, e.g. bandwidth and traffic processed.
 
 Therefore it is important to complete the design process following the Enterprise-Scale [Design Principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) and [Design Guidelines](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines) as part of your implementation of Enterprise-Scale. From reading and making design decisions from the guidance provided, you will know all of the Azure resources that will be being deployed/enabled as part of your deployment and with this information you will be able to determine any costs for the associated resources using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
 
