@@ -8,7 +8,7 @@
 
 Enterprise Scale is updated regularly. This page is where you'll find out about the latest updates to Enterprise Scale for:
 
-- [CAF (Cloud Adoption Framework) Documentation](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) Updates
+- [CAF (Cloud Adoption Framework) Documentation](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/) Updates
 - Improvements to existing guidance and artifacts
 - Azure Policy changes
 - Bug fixes
@@ -30,4 +30,18 @@ Here's what's changed in Enterprise Scale:
 
 ### June 2021
 
+#### Docs
+
 - ["What's New?"](./Whats-new) page created
+- Azure DDoS Standard design considerations and recommendations added to CAF docs ([Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) & [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology)) - closing issue [#603](https://github.com/Azure/Enterprise-Scale/issues/603)
+- [Connectivity to other cloud providers](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-other-providers) CAF document released
+- [Testing approach for enterprise-scale](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/testing-approach) CAF document released
+
+#### Tooling
+
+- [AzOps release v1.2.0](https://github.com/Azure/AzOps/releases/tag/1.2.0)
+- [Terraform Module for Cloud Adoption Framework Enterprise-scale release v0.3.3](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v0.3.3)
+
+#### Other
+
+- Contoso Reference Implementation Update - Virtual WAN Hub default CIDR changed from `/16` to `/23` - closing issue [#440](https://github.com/Azure/Enterprise-Scale/issues/440)
