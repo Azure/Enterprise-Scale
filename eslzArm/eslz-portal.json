@@ -704,7 +704,7 @@
                 },
                 {
                     "name": "esConnectivityGoalState",
-                    "label": "Connectivity (Hub & Spoke)",
+                    "label": "Network topology and connectivity",
                     "subLabel": {
                         "preValidation": "",
                         "postValidation": ""
@@ -716,7 +716,7 @@
                             "type": "Microsoft.Common.InfoBox",
                             "visible": true,
                             "options": {
-                                "text": "To enable Hub & Spoke connectivity, you must allocate a connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first networking hub and requisite settings. We recommend using a new Subscription with no existing resources.",
+                                "text": "To enable network topology and connectivity, you must allocate a connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first networking hub and requisite settings. We recommend using a new Subscription with no existing resources.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity#traditional-azure-networking-topology",
                                 "style": "Info"
                             }
@@ -724,19 +724,27 @@
                         {
                             "name": "esHub",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Deploy virtual hub network",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy virtual network for hub",
+                            "label": "Deploy networking topology",
+                            "defaultValue": "No",
+                            "toolTip": "Select the preferred network topology. If third-party NVA is a requirement, you must deploy this into the connectivity subscription post the deployment.",
                             "constraints": {
                                 "allowedValues": [
                                     {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
+                                        "label": "Hub and spoke with Azure Firewall (recommended)",
+                                        "value": "vhub"
+                                    },
+									{
+                                        "label": "Hub and spoke with your own third-party NVA",
+                                        "value": "nva"
                                     },
                                     {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
+                                        "label": "Virtual WAN (Microsoft managed)",
+                                        "value": "vwan"
+                                    },
+									{
+										"label": "No",
+										"value": "No"
+									}
                                 ]
                             },
                             "visible": true
@@ -752,7 +760,7 @@
 									"label": "Connectivity subscription"
 								}
 							],
-							"visible": "[equals(steps('esConnectivityGoalState').esHub, 'Yes')]"
+							"visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]"
             			},
                         {
                             "name": "esAddressHub",
@@ -760,7 +768,7 @@
                             "label": "Address space (required for hub virtual hub)",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
                             "defaultValue": "10.100.0.0/16",
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]",
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
                             "constraints": {
                                 "required": true,
                                 "validationMessage": "The virtual hubs network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
@@ -784,14 +792,14 @@
                                 "allowedValues": "[map(steps('esConnectivityGoalState').esLocationsApi.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
                                 "required": true
                             },
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]"
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]"
                         },
                         {
                             "name": "esDdoS",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable DDoS Protection Standard",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]",
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Protection Standard will be enabled.",
                             "constraints": {
                                 "allowedValues": [
@@ -811,7 +819,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy VPN Gateway",
                             "defaultValue": "No",
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]",
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway",
                             "constraints": {
                                 "allowedValues": [
@@ -971,7 +979,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy ExpressRoute Gateway",
                             "defaultValue": "No",
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]",
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route gateway",
                             "constraints": {
                                 "allowedValues": [
@@ -1104,7 +1112,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Azure Firewall",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]",
+                            "visible": "[or(equals(steps('esConnectivityGoalState').esHub, 'vhub'), equals(steps('esConnectivityGoalState').esHub, 'vwan'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall",
                             "constraints": {
                                 "allowedValues": [
@@ -1361,7 +1369,7 @@
                             "name": "esLzConnectivity",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Connect corp landing zones to the connectivity hub (optional)?",
-                            "defaultValue": "[if(equals(steps('esConnectivityGoalState').esHub,'Yes'),'Yes (recommended)','No')]",
+                            "defaultValue": "[if(not(equals(steps('esConnectivityGoalState').esHub,'No')),'Yes (recommended)','No')]",
                             "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
                             "constraints": {
                                 "allowedValues": [
@@ -1375,7 +1383,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esConnectivityGoalState').esHub,'Yes')]"
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub,'No'))]"
                         },
                         {
                             "name": "lzCorpSubsApi",
@@ -1517,7 +1525,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable DDoS Protection Standard",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[and(equals(steps('esConnectivityGoalState').esHub,'Yes'),equals(steps('esConnectivityGoalState').esDdoS,'Yes'))]",
+                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub,'No')),equals(steps('esConnectivityGoalState').esDdoS,'Yes'))]",
                             "toolTip": "If 'Yes' is selected when also adding a connectivity subscription earlier, DDoS Protection Standard will be enabled.",
                             "constraints": {
                                 "allowedValues": [
