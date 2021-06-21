@@ -57,7 +57,60 @@
                                 "regex": "^[a-z0-9A-Z-]{1,10}$",
                                 "validationMessage": "The prefix must be 1-10 characters."
                             }
-                        }
+                        },
+                        {
+                            "name": "subOrgs",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Dedicated subscriptions are recommended for the various platform components to ensure scale, sustainability, and segregation of duties. However, a single subscription can also be used in case this is not a concern (i.e., small enterprises).",
+                                "link": {
+                                    "label": "Learn more",
+                                    "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
+                                }
+                            }
+                        },
+                        {
+                            "name": "subOrgsOption",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Select dedicated subscriptions or single subscription for platform resources",
+                            "defaultValue": "Dedicated (recommended)",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continious compliance.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Dedicated (recommended)",
+                                        "value": "Dedicated"
+                                    },
+                                    {
+                                        "label": "Single",
+                                        "value": "Single"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+						{
+							"name": "esSingleSubSection",
+							"type": "Microsoft.Common.Section",
+							"label": "Single platform subscription",
+							"elements": [
+								{
+									"name": "singleSubText",
+									"type": "Microsoft.Common.TextBlock",
+									"visible": true,
+									"options": {
+										"text": "Select the dedicated, single subscription that will be used for all platform resources during deployment."
+									}
+								},
+								{
+									"type":"Microsoft.Common.SubscriptionSelector",
+									"name": "esSingleSub",
+									"label": "Single platform subscription"
+								}
+							],
+							"visible": "[equals(steps('lzSettings').subOrgsOption, 'Single')]"
+            			}
                     ]
                 },
                 {
@@ -125,7 +178,7 @@
 									"label": "Management subscription"
 								}
 							],
-							"visible": "[equals(steps('esGoalState').esLogAnalytics, 'Yes')]"
+							"visible": "[and(equals(steps('esGoalState').esLogAnalytics, 'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
             			},
                         {
                             "name": "monitoring",
@@ -555,7 +608,7 @@
                         {
                             "name": "info",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub))]",
+                            "visible": "[or(not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)), not(empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]",
                             "options": {
                                 "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
@@ -565,7 +618,7 @@
                         {
                             "name": "correction",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)]",
+                            "visible": "[and(or(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub), empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]",
                             "options": {
                                 "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
@@ -591,7 +644,7 @@
                                 ],
                                 "required": true
                             },
-                            "visible": "[not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub))]"
+                            "visible": "[or(not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)), not(empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]"
                         },
                         {
                             "name": "Instructions",
@@ -730,7 +783,7 @@
                             "constraints": {
                                 "allowedValues": [
                                     {
-                                        "label": "Hub and spoke with Azure Firewall (recommended)",
+                                        "label": "Hub and spoke with Azure Firewall",
                                         "value": "vhub"
                                     },
 									{
@@ -760,7 +813,7 @@
 									"label": "Connectivity subscription"
 								}
 							],
-							"visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]"
+							"visible": "[and(not(equals(steps('esConnectivityGoalState').esHub, 'No')), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
             			},
                         {
                             "name": "esAddressHub",
@@ -1238,7 +1291,7 @@
 									"label": "Management subscription"
 								}
 							],
-							"visible": "[equals(steps('esIdentityGoalState').esIdentity,'Yes')]"
+							"visible": "[and(equals(steps('esIdentityGoalState').esIdentity,'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
             			},
                         {
                             "name": "identitypolicies",
@@ -1920,7 +1973,8 @@
                 "gwRegionalSku": "[if(empty(steps('esConnectivityGoalState').esGwRegionalSku), steps('esConnectivityGoalState').esGwNoAzSku, steps('esConnectivityGoalState').esGwRegionalSku)]",
                 "erRegionalOrAz": "[steps('esConnectivityGoalState').esErRegionalOrAz]",
                 "erAzSku": "[steps('esConnectivityGoalState').esErAzSku]",
-                "erRegionalSku": "[if(empty(steps('esConnectivityGoalState').esErRegionalSku), steps('esConnectivityGoalState').esErNoAzSku, steps('esConnectivityGoalState').esErRegionalSku)]"
+                "erRegionalSku": "[if(empty(steps('esConnectivityGoalState').esErRegionalSku), steps('esConnectivityGoalState').esErNoAzSku, steps('esConnectivityGoalState').esErRegionalSku)]",
+                "singlePlatformSubscriptionId": "[steps('lzSettings').esSingleSubSection.esSingleSub.subscriptionId]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"
