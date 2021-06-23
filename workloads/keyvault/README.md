@@ -10,6 +10,7 @@ It is assumed that the deployment will go into a landing zone where the platform
 
 - Diagnostics and metrics are enabled to route security relevant information to a platform Log Analytics workspace (this does not prevent application teams to also use their app centric Log Analytics workspace, which also will have a diagnostic setting configured to send logs/metrics.)
 - Usage of public endpoint is not allowed for PaaS services
+- Private endpoints DNS records are automatically created in the privatelink.vaultcore.azure.net Azure Private DNS zone in the connectivity subscription
 - Azure Defender (Azure Security Center) is enabled for Azure Key Vault in the landing zones
 - Soft-delete is enabled by default
 - Purge protection is enabled by default

@@ -13,7 +13,7 @@ We support the following scenarios:
 
 - Create TemplateSpecs of each artifact, that you can share with the application teams via RBAC in your tenant
 - Deploy directly to a landing zone from this repository, using Azure PowerShell or Azure CLI
-- Fork, extend, and internalize the repostiry for your own use
+- Fork, extend, and internalize the repository for your own use
 
 See each artifact for further details regarding pre-requisites, such as dependencies on the Azure Platform (e.g., virtual networks with address space are created and provided into the landing zones, and policies are in place to ensure core security logs/metrics are stored centrally)
 
