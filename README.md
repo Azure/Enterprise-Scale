@@ -11,7 +11,7 @@
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
   * [Trey Research - Scope and Design](./docs/reference/treyresearch/README.md)
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
-* [Deploy workloads into Landing Zones](./docs/EnterpriseScale-Deploy-workloads.md)
+* [Deploy workloads into Landing Zones](./workloads/README.md)
 * [Getting started with Infrastructure-as-Code](https://github.com/Azure/AzOps-Accelerator/wiki)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
