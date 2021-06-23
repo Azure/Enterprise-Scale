@@ -14,7 +14,7 @@ param enabledForDiskEncryption bool = false
 param enabledForTemplateDeployment bool = false
 
 @description('Property specifying whether protection against purge is enabled for this vault.  This property does not accept false but enabled here to allow for this to be optional, if false, the property will not be set.')
-param enablePurgeProtection bool = false
+param enablePurgeProtection bool = true
 
 @description('Property that controls how data actions are authorized. When true, the key vault will use Role Based Access Control (RBAC) for authorization of data actions, and the access policies specified in vault properties will be ignored.')
 param enableRbacAuthorization bool = false
@@ -60,6 +60,9 @@ param virtualNetworkRules array = []
 @description('Specifies whether the key vault is a standard vault or a premium vault.')
 param skuName string = 'Standard'
 
+@description('Provide the resourceId for the application centric Log Analytics workspace if you want to enable diagnostics for the KeyVault. If no resourceId is provided, the resource will be ignored.')
+param logAnalyticsResourceId string = ''
+
 @description('Tags to be assigned to the KeyVault.')
 param tags object = {}
 
@@ -96,6 +99,32 @@ resource vaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
       }]
     }
   }
+}
+
+resource vaultName_Microsoft_Insights_diagSetting 'Microsoft.KeyVault/vaults/providers/diagnosticSettings@2017-05-01-preview' = if (!empty(logAnalyticsResourceId)) {
+  name: '${vaultName}/Microsoft.Insights/diagSetting'
+  location: location
+  properties: {
+    workspaceId: logAnalyticsResourceId
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+        retentionPolicy: {
+          days: 0
+          enabled: false
+        }
+        timeGrain: null
+      }
+    ]
+    logs: [
+      {
+        category: 'AuditEvent'
+        enabled: true
+      }
+    ]
+  }
+  dependsOn: []
 }
 
 output vaultName string = vaultName

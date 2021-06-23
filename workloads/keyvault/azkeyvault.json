@@ -39,7 +39,7 @@
         },
         "enablePurgeProtection": {
             "type": "bool",
-            "defaultValue": false,
+            "defaultValue": true,
             "metadata": {
                 "description": "Property specifying whether protection against purge is enabled for this vault.  This property does not accept false but enabled here to allow for this to be optional, if false, the property will not be set."
             }
@@ -98,24 +98,21 @@
         },
         "ipRules": {
             "type": "array",
-            "defaultValue": [
-            ],
+            "defaultValue": [],
             "metadata": {
                 "description": "An array of IPv4 addresses or rangea in CIDR notation, e.g. '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78)."
             }
         },
         "accessPolicies": {
             "type": "array",
-            "defaultValue": [
-            ],
+            "defaultValue": [],
             "metadata": {
                 "description": "An complex object array that contains the complete definition of the access policy."
             }
         },
         "virtualNetworkRules": {
             "type": "array",
-            "defaultValue": [
-            ],
+            "defaultValue": [],
             "metadata": {
                 "description": "An array for resourceIds for the virtualNetworks allowed to access the vault."
             }
@@ -131,17 +128,22 @@
                 "description": "Specifies whether the key vault is a standard vault or a premium vault."
             }
         },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the resourceId for the application centric Log Analytics workspace if you want to enable diagnostics for the KeyVault. If no resourceId is provided, the resource will be ignored."
+            }
+        },
         "tags": {
             "type": "object",
-            "defaultValue": {
-            },
+            "defaultValue": {},
             "metadata": {
                 "description": "Tags to be assigned to the KeyVault."
             }
         }
     },
-    "variables": {
-    },
+    "variables": {},
     "resources": [
         {
             "name": "[parameters('vaultName')]",
@@ -193,6 +195,34 @@
                         }
                     ]
                 }
+            }
+        },
+        {
+            "condition": "[not(empty(parameters('logAnalyticsResourceId')))]",
+            "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "name": "[concat(parameters('vaultName'), '/', 'Microsoft.Insights/', 'diagSetting')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "workspaceId": "[parameters('logAnalyticsResourceId')]",
+                "metrics": [
+                    {
+                        "category": "AllMetrics",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        },
+                        "timeGrain": null
+                    }
+                ],
+                "logs": [
+                    {
+                        "category": "AuditEvent",
+                        "enabled": true
+                    }
+                ]
             }
         }
     ],
