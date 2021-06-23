@@ -1,5 +1,9 @@
 # ARM templates and Bicep files for compliant workload deployments
 
+At this point you have the necessary platform setup and landing zones (subscriptions) created and placed into their respective management groups, being secure, governed, monitored, and enabled for autonomy and are ready for your application teams to do workload deployments, migrations, and net-new development to their landing zones.
+
+The following workloads outlined here provides best-practices, and curated deployment experiences for your application teams to successfully deploy them into their landing zones (online, corp)
+
 This folder contains ARM templates and Bicep files that are developed and composed to ensure organizations can:
 
 - Accelerate adoption and Azure service enablement for their application teams and business units
