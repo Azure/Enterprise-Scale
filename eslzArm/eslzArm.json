@@ -1520,14 +1520,18 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').azOpsRgDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').monitoringSolutionsLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').activityDiagnosticsLitePolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringSolutionsDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "corpConnectedLzs",
                 "corpLzs",
                 "onlineLzs"
             ],
@@ -2033,8 +2037,8 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
-                "policyCompletion"
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2061,8 +2065,8 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
-                "policyCompletion"
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2089,8 +2093,8 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
-                "policyCompletion"
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2123,7 +2127,9 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",                
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').activityDiagnosticsLitePolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').resourceDiagnosticsLitePolicyDeploymentName)]"
             ],
             "copy": {
                 "name": "onlineLzs",
@@ -2146,6 +2152,7 @@
             }
         },
         {
+            // Placing subscriptions into corp landing zone management group
             "condition": "[not(empty(parameters('corpLzSubscriptionId')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -2156,7 +2163,9 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",                
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').activityDiagnosticsLitePolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').resourceDiagnosticsLitePolicyDeploymentName)]"
             ],
             "copy": {
                 "name": "corpLzs",
@@ -2177,51 +2186,25 @@
                     }
                 }
             }
-        },
-        {
-            // Placing subscription(s) into corp landing zone management group
-            "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('deploymentNames').corpConnectedLzSubs, copyIndex())]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
-            ],
-            "copy": {
-                "name": "corpConnectedLzs",
-                "count": "[length(parameters('corpConnectedLzSubscriptionId'))]"
-            },
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
-                },
-                "parameters": {
-                    "targetManagementGroupId": {
-                        "value": "[variables('mgmtGroups').corp]"
-                    },
-                    "subscriptionId": {
-                        "value": "[concat(parameters('corpConnectedLzSubscriptionId')[copyIndex()])]"
-                    }
-                }
-            }
         },/*
         {
-            "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId'))]",
+            "condition": "[and(not(empty(parameters('corpConnectedLzSubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "[concat(variables('deploymentNames').corpPeeringDeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "corpConnectedLzs",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]"               
             ],
             "copy": {
                 "name": "corpConnectedPeering",
@@ -2248,7 +2231,7 @@
                     }
                 }
             }
-        }*/
+        },*/
         /*
             **ESLZ Lite Only!**
             The following section represent optional deployments in case the user select to use a single dedicated subscription for platform resources.
@@ -2841,8 +2824,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
-            ],
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -2871,8 +2853,8 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
-                "policyCompletion"
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"  
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2902,8 +2884,8 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
-                "policyCompletion"
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"  
             ],
             "properties": {
                 "mode": "Incremental",
