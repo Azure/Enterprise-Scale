@@ -5,7 +5,7 @@
 
 # Deploy Enterprise-Scale with Azure VWAN
 
-The Enterprise-Scale architecture is modular by design and allow organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on an Azure Virtual WAN network topology if customers require hybrid connectivity to on-premises locations and global transit connectivity from the beginning.
+The Enterprise-Scale architecture is modular by design and allows organizations to start with foundational landing zones that support their application portfolios and add hybrid connectivity with ExpressRoute or VPN when required. Alternatively, organizations can start with an Enterprise-Scale architecture based on an Azure Virtual WAN network topology if customers require hybrid connectivity to on-premises locations and global transit connectivity from the beginning.
 
 Azure Virtual WAN is a Microsoft-managed solution that provides end-to-end, global, and dynamic transit connectivity by default. Virtual WAN hubs eliminate the need to manually configure network connectivity. For example, you don't need to manage user-defined routes (UDR) or network virtual appliances (NVAs) to enable global transit connectivity. Virtual WAN simplifies end-to-end network connectivity in Azure, and to Azure from on-premises, by creating a hub-and-spoke network architecture. The architecture can easily scale to support multiple Azure regions and on-premises locations (any-to-any connectivity) as shown in the following figure:
 
@@ -46,7 +46,7 @@ See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to
   - Azure Firewall
   - Firewall Policies
 - An Azure Subscription dedicated for **identity**, where customers can deploy the Active Directory domain controllers required for their environment
-- Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
+- Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the VWAN hub.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone Management Group for **online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
   - This is where you will create your Subscriptions that will host your online workloads.
