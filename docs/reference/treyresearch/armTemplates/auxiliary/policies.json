@@ -18081,6 +18081,116 @@
             }
           },
           "name": "Deny-MachineLearning-ComputeCluster-Scale"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Search-Sku",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces search SKUs.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Budget"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedSkuNames": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed Sku Names",
+                  "description": "Specifies the allowed SKU names for Azure Search"
+                },
+                "defaultValue": [
+                  "basic",
+                  "standard",
+                  "standard2",
+                  "standard3",
+                  "storage_optimized_l1",
+                  "storage_optimized_l2"
+                ]
+              },
+              "maxReplicaCount": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Max Replica Count",
+                  "description": "Specifies the maximum replica count for Azure Search"
+                },
+                "defaultValue": 12
+              },
+              "allowedPartitionCounts": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed Partition Counts",
+                  "description": "Specifies the allowed partition count for Azure Search"
+                },
+                "defaultValue": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  6,
+                  12
+                ]
+              },
+              "allowedHostingModes": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed Hosting Modes",
+                  "description": "Specifies the allowed hosting modes for Azure Search"
+                },
+                "defaultValue": [
+                  "default",
+                  "highDensity"
+                ]
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Search/searchServices"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Search/searchServices/sku.name",
+                        "notIn": "[[parameters('allowedSkuNames')]"
+                      },
+                      {
+                        "field": "Microsoft.Search/searchServices/replicaCount",
+                        "greater": "[[parameters('maxReplicaCount')]"
+                      },
+                      {
+                        "field": "Microsoft.Search/searchServices/partitionCount",
+                        "notIn": "[[parameters('allowedPartitionCounts')]"
+                      },
+                      {
+                        "field": "Microsoft.Search/searchServices/hostingMode",
+                        "notIn": "[[parameters('allowedHostingModes')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Search-Sku"
         }
       ]
     },
