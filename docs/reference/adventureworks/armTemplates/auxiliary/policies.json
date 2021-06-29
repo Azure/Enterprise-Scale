@@ -18081,6 +18081,1275 @@
             }
           },
           "name": "Deny-MachineLearning-ComputeCluster-Scale"
+        },
+        {
+          "properties": {
+            "displayName": "Append-Synapse-Purview",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforce connection between central purview instance and Synapse Workspace.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Append",
+                  "Disabled"
+                ],
+                "defaultValue": "Append"
+              },
+              "purviewResourceId": {
+                "type": "String",
+                "metadata": {
+                  "description": "The resource Id of the central Azure Purview instance",
+                  "displayName": "Purview Resoruce ID"
+                }
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/purviewConfiguration.purviewResourceId",
+                        "exists": true
+                      },
+                      {
+                        "value": "[[empty(field('Microsoft.Synapse/workspaces/purviewConfiguration.purviewResourceId'))]",
+                        "notEquals": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": [
+                  {
+                    "field": "Microsoft.Synapse/workspaces/purviewConfiguration.purviewResourceId",
+                    "value": "[[parameters('purviewResourceId')]"
+                  }
+                ]
+              }
+            }
+          },
+          "name": "Append-Synapse-Purview"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-Firewall",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Setup firewall of Synapse.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/firewallrules"
+                  },
+                  {
+                    "field": "name",
+                    "exists": "true"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-Firewall"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-LinkedAccessCheckOnTargetResource",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforce LinkedAccessCheckOnTargetResource in managed vnet settings when Synapse Workspace is created.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/managedVirtualNetworkSettings.linkedAccessCheckOnTargetResource",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.Synapse/workspaces/managedVirtualNetworkSettings.linkedAccessCheckOnTargetResource",
+                        "notEquals": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-LinkedAccessCheckOnTargetResource"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-Spark-AutoPause",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces autopause for Synapse Spark Pools.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/bigDataPools/autoPause.enabled",
+                        "notEquals": true
+                      },
+                      {
+                        "field": "Microsoft.Synapse/workspaces/bigDataPools/autoPause.delayInMinutes",
+                        "greater": 60
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-Spark-AutoPause"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-Spark-AutoScale",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces autoscale for Synapse Spark Pools.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "maxNodeCount": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum Node Count",
+                  "description": "Specifies the maximum node count of Spark clusters"
+                },
+                "defaultValue": 20
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/bigDataPools/autoScale.enabled",
+                        "notEquals": true
+                      },
+                      {
+                        "field": "Microsoft.Synapse/workspaces/bigDataPools/autoScale.maxNodeCount",
+                        "greater": "[[parameters('maxNodeCount')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-Spark-AutoScale"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-Spark-ComputeIsolation",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces compute isolation for Synapse Spark Pools.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+                  },
+                  {
+                    "field": "Microsoft.Synapse/workspaces/bigDataPools/isComputeIsolationEnabled",
+                    "notEquals": true
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-Spark-ComputeIsolation"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-Spark-DefaultSparkLogFolder",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces spark logging for Synapse Spark Pools.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/bigDataPools/defaultSparkLogFolder",
+                        "exists": false
+                      },
+                      {
+                        "value": "[[empty(field('Microsoft.Synapse/workspaces/bigDataPools/defaultSparkLogFolder'))]",
+                        "equals": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-Spark-DefaultSparkLogFolder"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-Synapse-Sql-Sku",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Denies certain Synapse Sql Pool Sku's.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedSynapseSqlSkus": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed subscriptions",
+                  "description": "A list of subscriptions IDs"
+                },
+                "defaultValue": [
+                  "DW100c",
+                  "DW200c",
+                  "DW300c",
+                  "DW400c",
+                  "DW500c",
+                  "DW1000c",
+                  "DW1500c",
+                  "DW2000c",
+                  "DW2500c",
+                  "DW3000c",
+                  "DW5000c",
+                  "DW6000c",
+                  "DW7500C",
+                  "DW10000c",
+                  "DW15000c",
+                  "DW30000c"
+                ]
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/sqlPools"
+                  },
+                  {
+                    "field": "Microsoft.Synapse/workspaces/sqlPools/sku.name",
+                    "notIn": "[[parameters('allowedSynapseSqlSkus')]"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-Synapse-Sql-Sku"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-AuditingSettings",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Send auditing logs for Synapse to log analytics.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              },
+              "auditingSettingsStorageID": {
+                "type": "String",
+                "metadata": {
+                  "description": "The storage account to store auditing settings",
+                  "displayName": "Storage account"
+                }
+              },
+              "retentionDays": {
+                "type": "Integer",
+                "metadata": {
+                  "description": "The value in days of the retention period (0 indicates unlimited retention)",
+                  "displayName": "Retention days (optional, 180 days if unspecified)"
+                },
+                "defaultValue": 180
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/auditingSettings",
+                  "name": "Default",
+                  "existenceCondition": {
+                    "field": "Microsoft.Synapse/workspaces/auditingSettings/state",
+                    "equals": "Enabled"
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/microsoft.authorization/roleDefinitions/056cd41c-7e88-42e1-933e-88ba6a50c9c3",
+                    "/providers/microsoft.authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "auditRetentionDays": {
+                            "type": "int"
+                          },
+                          "storageAccountId": {
+                            "type": "int"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/Default')]",
+                            "type": "Microsoft.Synapse/workspaces/auditingSettings",
+                            "apiVersion": "2021-03-01",
+                            "properties": {
+                              "state": "Enabled",
+                              "storageEndpoint": "[[reference(parameters('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob]",
+                              "storageAccountAccessKey": "[[listKeys(parameters('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                              "auditActionsAndGroups": [
+                                "BATCH_COMPLETED_GROUP",
+                                "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+                                "FAILED_DATABASE_AUTHENTICATION_GROUP"
+                              ],
+                              "retentionDays": "[[parameters('auditRetentionDays')]",
+                              "storageAccountSubscriptionId": "[[split(parameters('storageAccountId'), '/')[2]]",
+                              "isStorageSecondaryKeyInUse": false,
+                              "isAzureMonitorTargetEnabled": true
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "auditRetentionDays": {
+                          "value": "[[parameters('retentionDays')]"
+                        },
+                        "storageAccountId": {
+                          "value": "[[parameters('auditingSettingsStorageID')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-AuditingSettings"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-Sql-AuditingSettings",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Send auditing logs for Synapse SQL pools to log analytics.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/sqlPools"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/sqlPools/auditingSettings",
+                  "name": "default",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/auditingSettings/state",
+                        "equals": "enabled"
+                      },
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/auditingSettings/isAzureMonitorTargetEnabled",
+                        "equals": "true"
+                      }
+                    ]
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "location": {
+                            "type": "string"
+                          },
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "synapseSqlPoolName": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Synapse/workspaces/sqlPools/auditingSettings",
+                            "apiVersion": "2019-06-01-preview",
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/', parameters('synapseSqlPoolName'), '/default')]",
+                            "properties": {
+                              "auditActionsAndGroups": [
+                                "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+                                "FAILED_DATABASE_AUTHENTICATION_GROUP",
+                                "BATCH_COMPLETED_GROUP"
+                              ],
+                              "isAzureMonitorTargetEnabled": true,
+                              "state": "Enabled"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "location": {
+                          "value": "[[field('location')]"
+                        },
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "synapseSqlPoolName": {
+                          "value": "[[field('name')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-Sql-AuditingSettings"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-Sql-MetadataSynch",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Setup metadata synch for Synapse sql pools.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/sqlPools"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/sqlPools/metadataSync",
+                  "name": "default",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/metadataSync/enabled",
+                        "equals": "true"
+                      }
+                    ]
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "location": {
+                            "type": "string"
+                          },
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "synapseSqlPoolName": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Synapse/workspaces/sqlPools/metadataSync",
+                            "apiVersion": "2019-06-01-preview",
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/', parameters('synapseSqlPoolName'), '/default')]",
+                            "properties": {
+                              "enabled": true
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "location": {
+                          "value": "[[field('location')]"
+                        },
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "synapseSqlPoolName": {
+                          "value": "[[field('name')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-Sql-MetadataSynch"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-Sql-SecurityAlertPolicies",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Deploy Synapse sql pool security alert policy.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              },
+              "securityAlertPolicyEmail": {
+                "type": "String",
+                "metadata": {
+                  "description": "The email address to send alerts",
+                  "displayName": "Email Address"
+                }
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/sqlPools"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/sqlPools/securityAlertPolicies",
+                  "name": "default",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/securityAlertPolicies/state",
+                        "equals": "enabled"
+                      }
+                    ]
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "location": {
+                            "type": "string"
+                          },
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "synapseSqlPoolName": {
+                            "type": "string"
+                          },
+                          "securityAlertPolicyEmail": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Synapse/workspaces/sqlPools/securityAlertPolicies",
+                            "apiVersion": "2019-06-01-preview",
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/', parameters('synapseSqlPoolName'), '/default')]",
+                            "properties": {
+                              "state": "Enabled",
+                              "disabledAlerts": [
+                                ""
+                              ],
+                              "emailAddresses": [
+                                "[[parameters('securityAlertPolicyEmail')]"
+                              ],
+                              "emailAccountAdmins": true,
+                              "storageEndpoint": null,
+                              "storageAccountAccessKey": "",
+                              "retentionDays": 0
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "location": {
+                          "value": "[[field('location')]"
+                        },
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "synapseSqlPoolName": {
+                          "value": "[[field('name')]"
+                        },
+                        "securityAlertPolicyEmail": {
+                          "value": "[[parameters('securityAlertPolicyEmail')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-Sql-SecurityAlertPolicies"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-Sql-TransparentDataEncryption",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Deploy Synapse SQL transparent data encryption.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/sqlPools"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/sqlPools/transparentDataEncryption",
+                  "name": "current",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/transparentDataEncryption/status",
+                        "equals": "Enabled"
+                      }
+                    ]
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "location": {
+                            "type": "string"
+                          },
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "synapseSqlPoolName": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Synapse/workspaces/sqlPools/transparentDataEncryption",
+                            "apiVersion": "2019-06-01-preview",
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/', parameters('synapseSqlPoolName'), '/current')]",
+                            "properties": {
+                              "status": "Enabled"
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "location": {
+                          "value": "[[field('location')]"
+                        },
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "synapseSqlPoolName": {
+                          "value": "[[field('name')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-Sql-TransparentDataEncryption"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-Sql-VulnerabilityAssessment",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Deploy Synapse SQL pool vulnerability assessments.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              },
+              "vulnerabilityAssessmentsEmail": {
+                "type": "String",
+                "metadata": {
+                  "description": "The email address to send alerts",
+                  "displayName": "Email Address"
+                }
+              },
+              "vulnerabilityAssessmentsStorageID": {
+                "type": "String",
+                "metadata": {
+                  "description": "The storage account to store assessments",
+                  "displayName": "Storage account"
+                }
+              },
+              "vulnerabilityAssessmentsStorageContainerName": {
+                "type": "String",
+                "metadata": {
+                  "description": "The storage account container name to store assessments",
+                  "displayName": "Storage account container name"
+                }
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces/sqlPools"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments",
+                  "name": "default",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments/recurringScans.emails",
+                        "equals": "[[parameters('vulnerabilityAssessmentsEmail')]"
+                      },
+                      {
+                        "field": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments/recurringScans.isEnabled",
+                        "equals": true
+                      }
+                    ]
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "location": {
+                            "type": "string"
+                          },
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "synapseSqlPoolName": {
+                            "type": "string"
+                          },
+                          "vulnerabilityAssessmentsEmail": {
+                            "type": "string"
+                          },
+                          "vulnerabilityAssessmentsStorageID": {
+                            "type": "string"
+                          },
+                          "vulnerabilityAssessmentsStorageContainerName": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments",
+                            "apiVersion": "2019-06-01-preview",
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/', parameters('synapseSqlPoolName'), '/default')]",
+                            "properties": {
+                              "storageContainerPath": "[[concat(reference(parameters('vulnerabilityAssessmentsStorageID'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob, parameters('vulnerabilityAssessmentsStorageContainerName'))]",
+                              "storageAccountAccessKey": "[[listkeys(parameters('vulnerabilityAssessmentsStorageID'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                              "recurringScans": {
+                                "isEnabled": true,
+                                "emailSubscriptionAdmins": false,
+                                "emails": [
+                                  "[[parameters('vulnerabilityAssessmentsEmail')]"
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "location": {
+                          "value": "[[field('location')]"
+                        },
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "synapseSqlPoolName": {
+                          "value": "[[field('name')]"
+                        },
+                        "vulnerabilityAssessmentsEmail": {
+                          "value": "[[parameters('vulnerabilityAssessmentsEmail')]"
+                        },
+                        "vulnerabilityAssessmentsStorageID": {
+                          "value": "[[parameters('vulnerabilityAssessmentsStorageID')]"
+                        },
+                        "vulnerabilityAssessmentsStorageContainerName": {
+                          "value": "[[parameters('vulnerabilityAssessmentsStorageContainerName')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-Sql-VulnerabilityAssessment"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-Synapse-VulnerabilityAssessment",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Deploy Synapse workspace vulnerability assessments.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Synapse"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              },
+              "vulnerabilityAssessmentsEmail": {
+                "type": "String",
+                "metadata": {
+                  "description": "The email address to send alerts",
+                  "displayName": "Email Address"
+                }
+              },
+              "vulnerabilityAssessmentsStorageID": {
+                "type": "String",
+                "metadata": {
+                  "description": "The storage account to store assessments",
+                  "displayName": "Storage account"
+                }
+              },
+              "vulnerabilityAssessmentsStorageContainerName": {
+                "type": "String",
+                "metadata": {
+                  "description": "The storage account container name to store assessments",
+                  "displayName": "Storage account container name"
+                }
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Synapse/workspaces"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments",
+                  "name": "default",
+                  "existenceCondition": {
+                    "field": "Microsoft.Synapse/workspaces/vulnerabilityAssessments/recurringScans.isEnabled",
+                    "equals": "True"
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "synapseWorkspaceName": {
+                            "type": "string"
+                          },
+                          "vulnerabilityAssessmentsEmail": {
+                            "type": "string"
+                          },
+                          "vulnerabilityAssessmentsStorageID": {
+                            "type": "string"
+                          },
+                          "vulnerabilityAssessmentsStorageContainerName": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.Synapse/workspaces/sqlPools/vulnerabilityAssessments",
+                            "apiVersion": "2019-06-01-preview",
+                            "name": "[[concat(parameters('synapseWorkspaceName'), '/default')]",
+                            "properties": {
+                              "storageContainerPath": "[[concat(reference(parameters('vulnerabilityAssessmentsStorageID'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob, parameters('vulnerabilityAssessmentsStorageContainerName'))]",
+                              "storageAccountAccessKey": "[[listkeys(parameters('vulnerabilityAssessmentsStorageID'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                              "recurringScans": {
+                                "isEnabled": true,
+                                "emailSubscriptionAdmins": false,
+                                "emails": [
+                                  "[[parameters('vulnerabilityAssessmentsEmail')]"
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "synapseWorkspaceName": {
+                          "value": "[[first(split(field('fullname'),'/'))]"
+                        },
+                        "vulnerabilityAssessmentsEmail": {
+                          "value": "[[parameters('vulnerabilityAssessmentsEmail')]"
+                        },
+                        "vulnerabilityAssessmentsStorageID": {
+                          "value": "[[parameters('vulnerabilityAssessmentsStorageID')]"
+                        },
+                        "vulnerabilityAssessmentsStorageContainerName": {
+                          "value": "[[parameters('vulnerabilityAssessmentsStorageContainerName')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Synapse-VulnerabilityAssessment"
         }
       ]
     },
