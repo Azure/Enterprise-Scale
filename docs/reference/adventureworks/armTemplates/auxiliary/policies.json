@@ -18137,13 +18137,13 @@
         },
         {
           "properties": {
-            "displayName": "Deny-StreamAnalytics-ClusterId",
+            "displayName": "Deny-StreamAnalytics-StreamingUnits",
             "policyType": "Custom",
             "mode": "Indexed",
-            "description": "Enforces use of stram analytics cluster.",
+            "description": "Enforces number of stream analytics streaming units.",
             "metadata": {
               "version": "1.0.0",
-              "category": "Stream Analytics"
+              "category": "Budget"
             },
             "parameters": {
               "effect": {
@@ -18158,6 +18158,14 @@
                   "Deny"
                 ],
                 "defaultValue": "Deny"
+              },
+              "maxStreamingUnits": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum Streaming Units",
+                  "description": "Specifies the maximum streaming units that should be allowed"
+                },
+                "defaultValue": 192
               }
             },
             "policyRule": {
@@ -18168,16 +18176,8 @@
                     "equals": "Microsoft.StreamAnalytics/streamingjobs"
                   },
                   {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.StreamAnalytics/streamingjobs/cluster.id",
-                        "exists": false
-                      },
-                      {
-                        "value": "[[empty(field('Microsoft.StreamAnalytics/streamingjobs/cluster.id'))]",
-                        "equals": true
-                      }
-                    ]
+                    "field": "Microsoft.StreamAnalytics/streamingjobs/transformation.streamingUnits",
+                    "greater": "[[parameters('maxStreamingUnits')]"
                   }
                 ]
               },
@@ -18186,7 +18186,7 @@
               }
             }
           },
-          "name": "Deny-StreamAnalytics-ClusterId"
+          "name": "Deny-StreamAnalytics-StreamingUnits"
         }
       ]
     },
