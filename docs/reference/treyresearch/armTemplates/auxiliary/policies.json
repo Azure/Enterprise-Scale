@@ -18081,6 +18081,361 @@
             }
           },
           "name": "Deny-MachineLearning-ComputeCluster-Scale"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-DataFactory-ApiVersion",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Denies old API version for data factory V1.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Data Factory"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.DataFactory/factories"
+                  },
+                  {
+                    "value": "[[requestContext().apiVersion]",
+                    "equals": "2015-01-01-preview"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-DataFactory-ApiVersion"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-DataFactory-IdentityType",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces use of system assigned identity for data factory.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Data Factory"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.DataFactory/factories"
+                  },
+                  {
+                    "field": "identity.type",
+                    "exists": false
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-DataFactory-IdentityType"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-DataFactory-IntegrationRuntimeManagedVirtualNetwork",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Denies Integration Runtimes that are not connected to the Managed Virtual Network.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Data Factory"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.DataFactory/factories/integrationruntimes"
+                  },
+                  {
+                    "field": "name",
+                    "notEquals": "AutoResolveIntegrationRuntime"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.referenceName",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.referenceName",
+                        "notEquals": "default"
+                      },
+                      {
+                        "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.type",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.type",
+                        "notEquals": "ManagedVirtualNetworkReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-DataFactory-IntegrationRuntimeManagedVirtualNetwork"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-DataFactory-ManagedPrivateEndpoints",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Denies external private endpoints for linked services.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Data Factory"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedSubscriptions": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed subscriptions",
+                  "description": "A list of subscriptions IDs that are allowed."
+                }
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints"
+                  },
+                  {
+                    "value": "[[split(field('Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints/privateLinkResourceId'), '/')[2]]",
+                    "notIn": "[[parameters('allowedSubscriptions')]"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-DataFactory-ManagedPrivateEndpoints"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-DataFactory-PublicNetworkAccess",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Denies public access to data factory.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Data Factory"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.DataFactory/factories"
+                  },
+                  {
+                    "field": "Microsoft.DataFactory/factories/publicNetworkAccess",
+                    "notEquals": "Disabled"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-DataFactory-PublicNetworkAccess"
+        },
+        {
+          "properties": {
+            "displayName": "Deploy-DataFactory-ManagedVirtualNetwork",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Deploy managed virtualnetwork for data factory.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Data Factory"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.DataFactory/factories"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+                  "name": "default",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/673868aa-7521-48a0-acc6-0f60742d39f5"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "dataFactoryName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+                            "apiVersion": "2018-06-01",
+                            "name": "[[concat(parameters('dataFactoryName'), '/default')]",
+                            "properties": {}
+                          },
+                          {
+                            "type": "Microsoft.DataFactory/factories/integrationRuntimes",
+                            "apiVersion": "2018-06-01",
+                            "name": "[[concat(parameters('dataFactoryName'), '/AutoResolveIntegrationRuntime')]",
+                            "dependsOn": [
+                              "[[resourceId('Microsoft.DataFactory/factories/managedVirtualNetworks', parameters('dataFactoryName'), 'default')]"
+                            ],
+                            "properties": {
+                              "type": "Managed",
+                              "managedVirtualNetwork": {
+                                "type": "ManagedVirtualNetworkReference",
+                                "referenceName": "default"
+                              },
+                              "typeProperties": {
+                                "computeProperties": {
+                                  "location": "AutoResolve"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "parameters": {
+                        "dataFactoryName": {
+                          "value": "[[field('name')]"
+                        },
+                        "location": {
+                          "value": "[[field('location')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-DataFactory-ManagedVirtualNetwork"
         }
       ]
     },
