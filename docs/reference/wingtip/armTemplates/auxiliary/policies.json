@@ -18081,6 +18081,142 @@
             }
           },
           "name": "Deny-MachineLearning-ComputeCluster-Scale"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-IotHub-MinimalTlsVersion",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces minimal tls versions for iot hub.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Internet of Things"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "tlsVersions": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "TLS Versions",
+                  "description": "Specifies the TLS versions that should be enforced"
+                },
+                "defaultValue": [
+                  "1.2"
+                ]
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Devices/IotHubs"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Devices/IotHubs/minTlsVersion",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.Devices/IotHubs/minTlsVersion",
+                        "notIn": "[[parameters('tlsVersions')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-IotHub-MinimalTlsVersion"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-IotHub-Sku",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces iot hub SKUs.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Budget"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedSkuNames": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed SKU Names",
+                  "description": "Specifies the allowed sku names"
+                },
+                "defaultValue": [
+                  "S1",
+                  "S2",
+                  "S3"
+                ]
+              },
+              "maxSkuCapacity": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum SKU Capacity",
+                  "description": "Specifies the maximum sku capacity"
+                },
+                "defaultValue": 40
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Devices/IotHubs"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.Devices/IotHubs/sku.name",
+                        "notIn": "[[parameters('allowedSkuNames')]"
+                      },
+                      {
+                        "field": "Microsoft.Devices/IotHubs/sku.capacity",
+                        "greater": "[[parameters('maxSkuCapacity')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-IotHub-Sku"
         }
       ]
     },
