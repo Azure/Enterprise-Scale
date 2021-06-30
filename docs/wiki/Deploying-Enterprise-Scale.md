@@ -327,11 +327,11 @@ Enterprise-Scale with its Policy Driven Governance principle relies heavily on A
 
 ![Graphical user interface, text, application, email  Description automatically generated](./media/ESLZ-location-assignment-policy.JPG)
 
-7.   Click ‘Propose new file’ and a new PR is being created which will trigger the Push workflow. Go to Actions to monitor the process.
+7.   Click ‘Propose new file' and on the next page, click 'Create Pull Request." A new Pull Request is being created which will trigger the Push workflow. Go to Actions to monitor the process.
 
 ![Graphical user interface, text, application, chat or text message  Description automatically generated](./media/clip_image056.jpg)
 
-8.   Once completed, you can merge the pull request.
+8.   Once completed, the pull request should automatically merge.
 
 9.   In Azure portal, you can navigate to the <prefix>-online management group and verify that the deployment resource got created and deployed successfully. Each deployment invoked via AzOps will have an ‘AzOps’ prefix.
 
