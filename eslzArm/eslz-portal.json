@@ -7,7 +7,7 @@
             "steps": [
                 {
                     "name": "basics",
-                    "label": "Basics",
+                    "label": "Deployment location",
                     "elements": [
                         {
                             "name": "resourceScope",
@@ -17,7 +17,7 @@
                 },
                 {
                     "name": "lzSettings",
-                    "label": "Enterprise-Scale company prefix",
+                    "label": "Enterprise-Scale core setup",
                     "subLabel": {
                         "preValidation": "Provide a company prefix for the management group structure that will be created.",
                         "postValidation": "Done"
@@ -626,7 +626,7 @@
                         {
                             "name": "correction",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[and(or(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub), empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]",
+                            "visible": "[and(equals(steps('esGoalState').esLogAnalytics, 'No'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]",
                             "options": {
                                 "text": "Enterprise-Scale provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
@@ -885,6 +885,26 @@
                                 ]
                             }
                         },
+						{
+                            "name": "esPrivateDns",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Create Private DNS Zones for Azure PaaS services",
+                            "defaultValue": "Yes (recommended)",
+                            "visible": "[or(equals(steps('esConnectivityGoalState').esHub, 'vhub'), equals(steps('esConnectivityGoalState').esHub, 'vwan'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will create Private DNS Zones for Azure PaaS services",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },	
                         {
                             "name": "esVpnGw",
                             "type": "Microsoft.Common.OptionsGroup",
@@ -1426,7 +1446,7 @@
                                     }
                                 ]
                             }
-                        },
+                        },					
                         {
                             "name": "esAddressFw",
                             "type": "Microsoft.Common.TextBox",
@@ -2110,7 +2130,8 @@
                 "erRegionalSku": "[if(empty(steps('esConnectivityGoalState').esErRegionalSku), steps('esConnectivityGoalState').esErNoAzSku, steps('esConnectivityGoalState').esErRegionalSku)]",
                 "singlePlatformSubscriptionId": "[steps('lzSettings').esSingleSubSection.esSingleSub.subscriptionId]",
                 "expressRouteScaleUnit": "[steps('esConnectivityGoalState').esVwanErScaleUnits]",
-                "vpnGateWayScaleUnit": "[steps('esConnectivityGoalState').esVwanGwScaleUnits]"
+                "vpnGateWayScaleUnit": "[steps('esConnectivityGoalState').esVwanGwScaleUnits]",
+				"enablePrivateDnsZones": "[steps('esConnectivityGoalState').esPrivateDns]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"
