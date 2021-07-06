@@ -603,7 +603,10 @@
             "tlsSslPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DINE-APPEND-TLS-SSL-PolicyAssignment.json')]",
             "aksHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AksWithoutHttpsPolicyAssignment.json')]",            
             "ipFwdPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-IPForwardingPolicyAssignment.json')]",
+            "publicEndpointPolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-PublicEndpointsPolicySetDefinition.json')]",
             "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json')]",
+            "privateDnsZonePolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DINE-PrivateDNSZonesPolicySetDefinition.json')]",
+            "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonePolicyAssignment.json')]",
             "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
@@ -651,6 +654,9 @@
             "tlsSslPolicyDeploymentName": "[take(concat('EntScale-TLSSSL', variables('deploymentSuffix')), 64)]",
             "ipFwPolicyDeploymentName": "[take(concat('EntScale-IPFwd', variables('deploymentSuffix')), 64)]",
             "publicEndpointPolicyDeploymentName": "[take(concat('EntScale-PEndpoint', variables('deploymentSuffix')), 64)]",
+            "publicEndpointPolicyDefinitionName": "[take(concat('EntScale-Policy-PEndpoints', variables('deploymentSuffix')), 64)]",
+            "privateDnsPolicyDefinitionName": "[take(concat('EntScale-Policy-PrivateDns', variables('deploymentSuffix')), 64)]",
+            "privateDnsPolicyDeploymentName": "[take(concat('EntScale-PrivDNSAssignment', variables('deploymentSuffix')), 64)]",
             "pipPolicyDeploymentName": "[take(concat('EntScale-PIP', variables('deploymentSuffix')), 64)]",
             "rdpFromInternetPolicyDeploymentName": "[take(concat('EntScale-RDP', variables('deploymentSuffix')), 64)]",
             "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('EntScale-RDPIdentity', variables('deploymentSuffix')), 64)]",
@@ -819,6 +825,46 @@
                 }
             }
         },
+        {
+            // Deploying ESLZ Policy Initiative to prevent usage of public endpoints for PaaS services using built-in policies
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').publicEndpointPolicyDefinitionName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').publicEndpointPolicySetDefinition]"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            // Deploying ESLZ Policy Initiative to deploy Private DNS Zones for PaaS services using built-in policies
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').privateDnsPolicyDefinitionName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').publicEndpointPolicySetDefinition]"
+                },
+                "parameters": {}
+            }
+        },        
         {
             // One of Azure's untold stories.....
             "type": "Microsoft.Resources/deployments",
