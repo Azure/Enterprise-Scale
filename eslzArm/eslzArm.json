@@ -463,6 +463,14 @@
                 "No"
             ]
         },
+        "enablePrivateDnsZonesForLzs": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "subnetMaskForAzFw": {
             "type": "string",
             "defaultValue": ""
@@ -606,7 +614,7 @@
             "publicEndpointPolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-PublicEndpointsPolicySetDefinition.json')]",
             "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json')]",
             "privateDnsZonePolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DINE-PrivateDNSZonesPolicySetDefinition.json')]",
-            "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonePolicyAssignment.json')]",
+            "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonesPolicyAssignment.json')]",
             "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
@@ -615,7 +623,8 @@
             "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
             "ddosPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-DDoSPolicyAssignment.json')]",
             "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
-            "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]"
+            "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]",
+            "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix')))]",
@@ -669,7 +678,8 @@
             "corpLzSubs": "[take(concat('EntScale-CorpLzs', variables('deploymentSuffix')), 60)]",
             "corpConnectedLzSubs": "[take(concat('EntScale-CorpConnLzs', variables('deploymentSuffix')), 60)]",
             "privateDnsZoneRgDeploymentName": "[take(concat('EntScale-PrivDNSRG', variables('deploymentSuffix')), 64)]",
-            "privateDnsZonesDeploymentName": "[take(concat('EntScale-PrivDNSZones', variables('deploymentSuffix')), 35)]"            
+            "privateDnsZonesDeploymentName": "[take(concat('EntScale-PrivDNSZones', variables('deploymentSuffix')), 35)]",
+            "dnsZoneRoleAssignmentDeploymentName": "[take(concat('EntScale-DNSZoneRole', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('EntScale-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -725,7 +735,8 @@
             "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', variables('platformResourceNames').logAnalyticsWorkspace)]",
             "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
             "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
-            "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]"
+            "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
+            "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
         "deterministicRoleAssignmentGuids": {
@@ -772,7 +783,10 @@
             "privatelink.datafactory.azure.com",
             "privatelink.adf.azure.com",
             "privatelink.redis.cache.windows.net"
-        ]
+        ],
+        "roleDefinitions": {
+            "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
+        }
     },
     "resources": [
         /*
@@ -860,7 +874,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').publicEndpointPolicySetDefinition]"
+                    "uri": "[variables('deploymentUris').privateDnsZonePolicySetDefinition]"
                 },
                 "parameters": {}
             }
@@ -873,7 +887,9 @@
             "location": "[deployment().location]",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "dependsOn": [
-                "[variables('deploymentNames').policyDeploymentName]"
+                "[variables('deploymentNames').policyDeploymentName]",
+                "[variables('deploymentNames').privateDnsPolicyDefinitionName]",
+                "[variables('deploymentNames').publicEndpointPolicyDefinitionName]"
             ],
             "copy": {
                 "batchSize": 1,
@@ -1583,7 +1599,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -1614,7 +1631,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
             ],
             "copy": {
                 "name": "dnsZones",
@@ -1755,6 +1773,70 @@
         /*
             The following deployments will deploy and configure the Azure policy governance for the landing zones
         */
+        {
+            // Deploying Private DNS Zones policy assignment for PaaS services using built-in policies
+            "condition": "[equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').privateDnsPolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
+                "dnsZones",
+                "dnsZonesLite",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsPolicyDefinitionName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZonePolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "dnsZoneResourceGroupId": {
+                        "value": "[variables('platformResourceIds').privateDnsRgResourceId]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning RBAC for Private DNS Zone Policy assignment to the connectivity hub
+            "condition": "[equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').dnsZoneRoleAssignmentDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[variables('singleVsDedicatedConnectivitySub')]",
+            "dependsOn": [
+                "[variables('deploymentNames').privateDnsPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleAssignments]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[reference(variables('deploymentNames').privateDnsPolicyDeploymentName).outputs.principalId.value]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "[variables('roleDefinitions').networkContributor]"
+                    }
+                }
+            }
+        },        
         {
             // Assigning Azure Monitor for VMs policy initiative to intermediate root management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Yes'))]",
@@ -2702,7 +2784,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2736,7 +2819,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]"
             ],
             "copy": {
                 "name": "dnsZonesLite",

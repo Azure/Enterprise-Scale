@@ -890,7 +890,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Create Private DNS Zones for Azure PaaS services",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[or(equals(steps('esConnectivityGoalState').esHub, 'vhub'), equals(steps('esConnectivityGoalState').esHub, 'vwan'))]",
+                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will create Private DNS Zones for Azure PaaS services",
                             "constraints": {
                                 "allowedValues": [
@@ -1751,10 +1751,30 @@
                         {
                             "name": "esLzPrivateLink",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Prevent usage of Public Endpoints for PaaS services in the corp connected landing zones",
+                            "label": "Prevent usage of Public Endpoints for Azure PaaS services in the corp connected landing zones",
                             "defaultValue": "Yes (recommended)",
                             "visible": true,
                             "toolTip": "If 'Yes' is selected then Azure Policy will prevent PaaS resources to use public endpoints.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "esPrivateDnsZones",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the corp connected landing zones",
+                            "defaultValue": "Yes (recommended)",
+                            "visible": "[equals(steps('esConnectivityGoalState').esPrivateDns, 'Yes')]",
+                            "toolTip": "If 'Yes' is selected then Azure Policy will ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the connectivity subscription on behalf of the users.",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -2131,7 +2151,8 @@
                 "singlePlatformSubscriptionId": "[steps('lzSettings').esSingleSubSection.esSingleSub.subscriptionId]",
                 "expressRouteScaleUnit": "[steps('esConnectivityGoalState').esVwanErScaleUnits]",
                 "vpnGateWayScaleUnit": "[steps('esConnectivityGoalState').esVwanGwScaleUnits]",
-				"enablePrivateDnsZones": "[steps('esConnectivityGoalState').esPrivateDns]"
+				"enablePrivateDnsZones": "[steps('esConnectivityGoalState').esPrivateDns]",
+                "enablePrivateDnsZonesForLzs": "[steps('lzGoalState').esPrivateDnsZones]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"
