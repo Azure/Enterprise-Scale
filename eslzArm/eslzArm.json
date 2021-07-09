@@ -556,6 +556,10 @@
         "vpnGateWayScaleUnit": {
             "type": "string",
             "defaultValue": "1"
+        },
+        "identityAddressPrefix": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -679,7 +683,8 @@
             "corpConnectedLzSubs": "[take(concat('EntScale-CorpConnLzs', variables('deploymentSuffix')), 60)]",
             "privateDnsZoneRgDeploymentName": "[take(concat('EntScale-PrivDNSRG', variables('deploymentSuffix')), 64)]",
             "privateDnsZonesDeploymentName": "[take(concat('EntScale-PrivDNSZones', variables('deploymentSuffix')), 35)]",
-            "dnsZoneRoleAssignmentDeploymentName": "[take(concat('EntScale-DNSZoneRole', variables('deploymentSuffix')), 64)]"
+            "dnsZoneRoleAssignmentDeploymentName": "[take(concat('EntScale-DNSZoneRole', variables('deploymentSuffix')), 64)]",
+            "identityPeeringDeploymentName": "[take(concat('EntScale-IDPeering', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('EntScale-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -709,7 +714,8 @@
             "azOpsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azops')]",
             "connectivityRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('location'))]",
             "ddosRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos')]",
-            "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]"
+            "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]",
+            "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
         },
         // Declaring deterministic names for platform resources that will be created
         "platformResourceNames": {
@@ -723,7 +729,8 @@
             "azErGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-erpip-', parameters('location'))]",
             "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('location'))]",
             "azVpnGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-gwpip-', parameters('location'))]",
-            "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('location'))]"
+            "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('location'))]",
+            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
         },
         // Declaring subscriptionId for AzOps
         "azOpsSubscriptionId": "[if(empty(parameters('subscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('subscriptionId'))]",
@@ -736,7 +743,8 @@
             "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
             "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
-            "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]"
+            "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
+            "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
         "deterministicRoleAssignmentGuids": {
@@ -2356,7 +2364,7 @@
             }
         },
         {
-            // Assigning deny rpd from internet policy landing zones management group if condition is true
+            // Assigning deny rpd from internet on identity management group if condition is true
             "condition": "[and(equals(parameters('denyRdpForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -2383,6 +2391,52 @@
                 }
             }
         },
+        {
+            // Peer vnet in identity subscription to connectivity hub if contidion is true
+            "condition": "[not(empty(parameters('identityAddressPrefix')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').identityPeeringDeploymentName]",
+            "subscriptionId": "[parameters('identitySubscriptionId')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVnetPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').identityVnetRg]"
+                    },
+                    "vNetName": {
+                        "value": "[variables('platformResourceNames').identityVnet]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('identityAddressPrefix')]"
+                    },
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[variables('platformResourceIds').azFirewallResourceId]"
+                    }
+                }
+            }
+        },        
         /*
             The following deployments will place landing zone subscriptions into online/corp (connected or disconnected)
         */
