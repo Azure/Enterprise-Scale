@@ -680,7 +680,8 @@
             "sqlEncryptionPolicyDeploymentName": "[take(concat('EntScale-SqlEncrypt', variables('deploymentSuffix')), 64)]",
             "onlineLzSubs": "[take(concat('EntScale-OnlineLzs', variables('deploymentSuffix')), 60)]",
             "corpLzSubs": "[take(concat('EntScale-CorpLzs', variables('deploymentSuffix')), 60)]",
-            "corpConnectedLzSubs": "[take(concat('EntScale-CorpConnLzs', variables('deploymentSuffix')), 60)]",
+            "corpConnectedMoveLzSubs": "[take(concat('EntScale-CorpConnLzs', variables('deploymentSuffix')), 50)]",
+            "corpConnectedLzSubs": "[take(concat('EntScale-CorpPeering', variables('deploymentSuffix')), 50)]",
             "privateDnsZoneRgDeploymentName": "[take(concat('EntScale-PrivDNSRG', variables('deploymentSuffix')), 64)]",
             "privateDnsZonesDeploymentName": "[take(concat('EntScale-PrivDNSZones', variables('deploymentSuffix')), 35)]",
             "dnsZoneRoleAssignmentDeploymentName": "[take(concat('EntScale-DNSZoneRole', variables('deploymentSuffix')), 64)]",
@@ -2511,7 +2512,41 @@
             }
         },
         {
-            // Placing subscriptions into corp landing zone management group and peer the vnet to connectivity sub
+            // Placing subscriptions into corp landing zone management group (and do subsequent peering)
+            "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').corpConnectedMoveLzSubs, copyIndex())]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "copy": {
+                "name": "corpConnectedMoveLzs",
+                "count": "[length(parameters('corpLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').corp]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs]"
+                    }
+                }
+            }
+        },
+        {
+            // Peering corp connected lz vnet to connectivity sub
             "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
@@ -2529,7 +2564,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]"               
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "corpConnectedMoveLzs"
             ],
             "copy": {
                 "name": "corpConnectedPeering",
