@@ -1682,6 +1682,26 @@
                             }
                         },
                         {
+                            "name": "esLzConnectivity",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Connect corp landing zones to the connectivity hub (optional)?",
+                            "defaultValue": "No",
+                            "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": "[or(equals(steps('esConnectivityGoalState').esHub, 'nva'), equals(steps('esConnectivityGoalState').esHub, 'vhub'))]"
+                        },
+                        {
                             "name": "lzCorpSubsApi",
                             "type": "Microsoft.Solutions.ArmApiControl",
                             "request": {
@@ -1699,12 +1719,67 @@
                             "filter": true,
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
-                            "visible": true,
+                            "visible": "[or(or(equals(steps('lzGoalState').esLzConnectivity, 'No'), equals(steps('esConnectivityGoalState').esHub, 'No')), equals(steps('esConnectivityGoalState').esHub, 'vwan'), equals(steps('lzGoalState').esLzConnectivity, 'No'))]",
                             "constraints": {
-                                "allowedValues": "[map(steps('lzGoalState').lzCorpSubsApi.value,(sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
+                                "allowedValues": "[map(steps('lzGoalState').lzCorpSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                 "required": false
                             }
                         },
+                        {
+                            "name": "lzConnectedSubs",
+                            "type": "Microsoft.Common.EditableGrid",
+                            "ariaLabel": "Add existing subscriptions into the management group landing zone and provide address space for virtual network peering",
+                            "label": "Corp connected landing zone subscriptions (optional)",
+                            "visible": "[equals(steps('lzGoalState').esLzConnectivity, 'Yes')]",
+                            "constraints": {
+                                "width": "Full",
+                                "rows": {
+                                    "count": {
+                                        "min": 1,
+                                        "max": 10
+                                    }
+                                },
+                                "columns": [
+                                    {
+                                        "id": "subs",
+                                        "header": "Subscription",
+                                        "width": "1fr",
+                                        "element": {
+                                            "name": "esLzConnectedSub",
+                                            "type": "Microsoft.Common.DropDown",
+                                            "label": "Landing zone subscription",
+                                            "toolTip": "",
+                                            "multiselect": false,
+                                            "selectAll": false,
+                                            "filter": true,
+                                            "filterPlaceholder": "Filter items ...",
+                                            "multiLine": false,
+                                            "constraints": {
+                                                "allowedValues": "[map(steps('lzGoalState').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                                "required": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "id": "addresses",
+                                        "header": "Virtual Network Address space",
+                                        "width": "1fr",
+                                        "element": {
+                                            "type": "Microsoft.Common.TextBox",
+                                            "placeholder": "Ensure there are no overlapping IP addresses!",
+                                            "constraints": {
+                                                "required": true,
+                                                "validations": [
+                                                    {
+                                                        "message": "Only CIDR notation is allowed, and address space must be unique."
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },                        
                         {
                             "name": "lzSubsApi",
                             "type": "Microsoft.Solutions.ArmApiControl",
@@ -2186,7 +2261,8 @@
                 "vpnGateWayScaleUnit": "[steps('esConnectivityGoalState').esVwanGwScaleUnits]",
 				"enablePrivateDnsZones": "[steps('esConnectivityGoalState').esPrivateDns]",
                 "enablePrivateDnsZonesForLzs": "[steps('lzGoalState').esPrivateDnsZones]",
-                "identityAddressPrefix": "[steps('esIdentityGoalState').esIdentityCidr]"
+                "identityAddressPrefix": "[steps('esIdentityGoalState').esIdentityCidr]",
+                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId))),steps('lzGoalState').lzConnectedSubs,'')]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"

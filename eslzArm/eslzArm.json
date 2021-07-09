@@ -715,7 +715,8 @@
             "connectivityRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('location'))]",
             "ddosRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos')]",
             "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]",
-            "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
+            "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]",
+            "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
         },
         // Declaring deterministic names for platform resources that will be created
         "platformResourceNames": {
@@ -730,7 +731,8 @@
             "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('location'))]",
             "azVpnGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-gwpip-', parameters('location'))]",
             "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('location'))]",
-            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
+            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]",
+            "lzVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
         },
         // Declaring subscriptionId for AzOps
         "azOpsSubscriptionId": "[if(empty(parameters('subscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('subscriptionId'))]",
@@ -2507,9 +2509,10 @@
                     }
                 }
             }
-        },/*
+        },
         {
-            "condition": "[and(not(empty(parameters('corpConnectedLzSubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')))]",
+            // Placing subscriptions into corp landing zone management group and peer the vnet to connectivity sub
+            "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "[concat(variables('deploymentNames').corpPeeringDeploymentName, copyIndex())]",
@@ -2519,6 +2522,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
@@ -2538,21 +2542,27 @@
                     "uri": "[variables('deploymentUris').corpVnetPeering]"
                 },
                 "parameters": {
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').lzVnetRg]"
                     },
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    "vNetName": {
+                        "value": "[variables('platformResourceNames').lzVnet]"
                     },
-                    "location": {
+                    "vNetLocation": {
                         "value": "[parameters('location')]"
                     },
-                    "addresses": {
+                    "vNetCidrRange": {
                         "value": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].addresses]"
+                    },
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[variables('platformResourceIds').azFirewallResourceId]"
                     }
                 }
             }
-        },*/
+        },
         /*
             **ESLZ Lite Only!**
             The following section represent optional deployments in case the user select to use a single dedicated subscription for platform resources.

@@ -118,7 +118,12 @@
                     ]
                   },
                   "dhcpOptions": {
-                    "dnsServers": "[if(not(empty(parameters('azureFirewallResourceId'))), array(reference(parameters('azureFirewallResourceId'), '2020-05-01').ipConfigurations[0].properties.privateIPAddress), parameters('dnsServers'))]"
+                    "dnsServers": "[if(
+                                       not(
+                                           empty(
+                                                 parameters('azureFirewallResourceId'))), 
+                                                 array(reference(parameters('azureFirewallResourceId'), '2020-05-01').ipConfigurations[0].properties.privateIPAddress), 
+                                                 parameters('dnsServers'))]"
                   }
                 }
               },
@@ -153,6 +158,14 @@
                   "expressionEvaluationOptions": {
                     "scope": "inner"
                   },
+                  "parameters": {
+                    "remoteVirtualNetwork": {
+                      "value": "[concat(subscription().id,'/resourceGroups/',parameters('vNetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
+                    },
+                    "hubName": {
+                      "value": "[split(parameters('hubResourceId'),'/')[8]]"
+                    }
+                  },
                   "template": {
                     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
@@ -170,7 +183,7 @@
                     "resources": [
                       {
                         "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-                        "name": "[concat(parameters('hubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
+                        "name": "[[concat(parameters('hubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
                         "apiVersion": "2020-05-01",
                         "properties": {
                           "allowVirtualNetworkAccess": true,
@@ -178,20 +191,12 @@
                           "allowGatewayTransit": true,
                           "useRemoteGateways": false,
                           "remoteVirtualNetwork": {
-                            "id": "[parameters('remoteVirtualNetwork')]"
+                            "id": "[[parameters('remoteVirtualNetwork')]"
                           }
                         }
                       }
                     ],
                     "outputs": {}
-                  },
-                  "parameters": {
-                    "remoteVirtualNetwork": {
-                      "value": "[concat(subscription().id,'/resourceGroups/',parameters('vNetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
-                    },
-                    "hubName": {
-                      "value": "[split(parameters('hubResourceId'),'/')[8]]"
-                    }
                   }
                 }
               }
