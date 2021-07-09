@@ -40,17 +40,23 @@ See these [instructions](../../../docs/Deploy/deploy-new-arm.md) for how to use 
 
 ````pwsh
 New-AzManagementGroupDeployment `
-            -Name <name> `
-            -Location -<location> `
+            -Name <name of deployment> `
+            -Location <location> `
             -ManagementGroupId <mgmtGroupId> `
-            -TemplateUri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/policies/naming-convention/naming-convention.json"
+            -TemplateUri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/policies/policy-definition/policy-definition.json" `
+            -policyName <policy name> `
+            -policyDescription <policy description> `
+            -namePattern <name pattern>
+
+            
 ````
 
-## Deploy using Azure CLI
+## Deploy using Azure CLI (Bash in Cloud Shell)
 
 ````cli
 az deployment mg create \
-  --name <name> \
+  --name <name of deployment> \
   --location <location> \
   --management-group-id <mgmtGroupId> \
-  --template-uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/policies/naming-convention/naming-convention.json"
+  --template-uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/examples/policies/policy-definition/policy-definition.json" \
+  --parameters "{ \"policyName\": { \"value\": \"<policy name>\" }, \"policyDescription\": { \"value\": \"<policy description>\" }, \"namePattern\": { \"value\": \"<name pattern>\" }}"
