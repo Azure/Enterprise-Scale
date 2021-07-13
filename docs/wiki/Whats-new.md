@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [July 2021](#july-2021)
   - [June 2021](#june-2021)
 
 ---
@@ -27,6 +28,25 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### July 2021
+
+#### Docs
+
+- Added guidance for Resource Group usage for Azure Networking topologies in [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) & [Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) CAF docs - closing issue [#632](https://github.com/Azure/Enterprise-Scale/issues/632)
+- Updated [Connectivity to Azure PaaS services](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services) CAF docs based on customer feedback around Private Link /Service Endpoints differences and guidance, including ExpressRoute peering options relating to this.
+
+#### Tooling
+
+*No updates, yet.*
+
+#### Policy
+
+*No updates, yet.*
+
+#### Other
+
+*No updates, yet.*
 
 ### June 2021
 
