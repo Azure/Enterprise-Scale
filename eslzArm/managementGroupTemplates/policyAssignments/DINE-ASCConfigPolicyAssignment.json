@@ -1,0 +1,202 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the central Log Analytics workspace."
+            }
+        },
+        "emailContactAsc": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the email address to the ASC security contact."
+            }
+        },
+        "enableAscForServers": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForSql": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForAppServices": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForStorage": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForRegistries": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForKeyVault": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForSqlOnVm": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForKubernetes": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForArm": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"            
+        },
+        "enableAscForDns": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ],
+            "defaultValue": "Free"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployAzureSecurity": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-ASC-Config')]"
+        },
+        "policyAssignmentNames": {
+            "azureSecurity": "Deploy-ASC-Configuration",
+            "description": "Deploy ASC configuration for Azure Defender and Security Contacts",
+            "displayName": "Deploy Azure Security Center configuration"
+        },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployAzureSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureSecurity))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').azureSecurity]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployAzureSecurity]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "emailSecurityContact": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "logAnalytics": {
+                        "value": "[parameters('logAnalyticsResourceId')]"
+                    },
+                    "ascExportResourceGroupName": {
+                        "value": "[concat(parameters('topLevelManagementGroupPrefix'), '-asc-export')]"
+                    },
+                    "ascExportResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "pricingTierVms": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "pricingTierSqlServers": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "pricingTierAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "pricingTierStorageAccounts": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "pricingTierContainerRegistry": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
+                    "pricingTierKeyVaults": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "pricingTierSqlServerVirtualMachines": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
+                    "pricingTierKubernetesService": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "pricingTierArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "pricingTierDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployAzureSecurity]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureSecurity]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+        
+    ],
+    "outputs": {}
+}

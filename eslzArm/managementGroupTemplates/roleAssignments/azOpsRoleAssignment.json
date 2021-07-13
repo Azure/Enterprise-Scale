@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string"
+        },
+        "principalId": {
+            "type": "array"
+        }
+    },
+    "variables": {
+        "formattedPrincipalId": "[replace(replace(replace(string(parameters('principalId')), '\"', ''), '[', ''), ']', '')]",
+        "roleDefinitionOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('roleDefinitionOwner'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('formattedPrincipalId')))]",
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[variables('roleDefinitionId')]",
+                "principalId": "[variables('formattedPrincipalId')]"
+            }
+        }
+    ]
+}

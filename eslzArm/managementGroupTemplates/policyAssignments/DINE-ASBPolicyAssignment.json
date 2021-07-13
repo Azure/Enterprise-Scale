@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "ascMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8"
+        },
+        "policyAssignmentNames": {
+            "ascMonitoring": "Deploy-ASC-Monitoring",
+            "description": "Azure Security Benchmark policy initiative",
+            "displayName": "Azure Security Benchmark"
+        }
+      },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').ascMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').ascMonitoring]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "identityDesignateLessThanOwnersMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "useRbacRulesMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "useServicePrincipalToProtectSubscriptionsMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "identityEnableMFAForOwnerPermissionsMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "networkWatcherShouldBeEnabledMonitoringEffect": {
+                        "value": "Disabled"
+                    },
+                    "autoProvisioningOfTheLogAnalyticsAgentShouldBeEnabledOnYourSubscriptionMonitoringEffect": {
+                        "value": "Disabled"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
