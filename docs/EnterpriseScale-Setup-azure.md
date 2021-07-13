@@ -8,7 +8,7 @@ Enterprise-Scale reference implementation requires permission at tenant root sco
 
 Once the User Access Administrator (UAA) role is enabled, a UAA can grant **_other users and service principles_** within organization to deploy/manage Enterprise-Scale reference implementation by granting "Owner" permission at tenant root scope "/".
 
-Once permission is granted to other users and service principles, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin)
+Once permission is granted to other users and service principles, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)
 
 ## 1. Elevate Access to manage Azure resources in the directory
 
@@ -17,11 +17,11 @@ Once permission is granted to other users and service principles, you can safely
 1.2 Open Azure Active Directory.
 
 1.3 Under _Manage_, select _Properties_.
-![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
+![alt](https://docs.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
 
 1.4 Under _Access management for Azure resources_, set the toggle to Yes.
 
-![alt](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
+![alt](https://docs.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
 
 ## 2. Grant Access to User at root scope "/" to deploy Enterprise-Scale reference implementation
 
@@ -30,7 +30,14 @@ Please ensure you are logged in as a user with UAA role enabled in AAD tenant an
 Bash
 
 ````bash
-az role assignment create  --scope '/' --role 'Owner' --assignee-object-id $(az ad user show -o tsv --query objectId --id '<replace-me>@<my-aad-domain.com>')
+#sign into AZ CLI, this will redirect you to a webbrowser for authentication, if required
+az login
+
+#if you do not want to use a web browser you can use the following bash
+read -sp "Azure password: " AZ_PASS && echo && az login -u <username> -p $AZ_PASS
+
+##assign Owner role to Tenant root scope ("/") as a User Access Administrator (gets object Id of the current user (az login))
+az role assignment create  --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query objectId)
 ````
 
 PowerShell

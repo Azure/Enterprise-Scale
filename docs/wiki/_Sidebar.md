@@ -1,4 +1,7 @@
+# Wiki content
+
 * [Home](./Home)
+* [What's New?](./Whats-new)
 * [What is Enterprise-Scale](./What-is-Enterprise-Scale)
   * [What is Enterprise-Scale reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
@@ -14,3 +17,9 @@
   * [Validation post deployment (GitHub)](./Deploying-Enterprise-Scale#validation-post-deployment-github)
   * [Post deployment activities](./Deploying-Enterprise-Scale#post-deployment-activities)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-Enterprise-Scale#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
+* [Create subscriptions / landing zones using AzOps](./Create-Landingzones)
+  * [Create landing zones (subscription) using AzOps](./Create-Landingzones#create-landing-zones-subscription-using-azops)
+  * [Pre-requisites](./Create-Landingzones#pre-requisites)
+  * [Enable Service Principal to create landing zones](./Create-Landingzones#enable-service-principal-to-create-landing-zones)
+  * [ARM template repository](./Create-Landingzones#arm-template-repository)
+  * [Create a landing zone using AzOps](./Create-Landingzones#create-a-subscription-landing-zone-using-azops)
