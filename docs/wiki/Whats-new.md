@@ -38,11 +38,37 @@ Here's what's changed in Enterprise Scale:
 
 #### Tooling
 
-*No updates, yet.*
+- Portal Experience Updated
+  - Merged Contoso, AdventureWorks, and Wingtip into one ESLZ deployment experience via first-party deployment in the portal ("Deploy To Azure" button) experience
+    - Support "N" network topologies in same experience (Hub and Spoke, Virtual WAN, Hub and Spoke with NVA)
+    - Added option for VNET Peering the Identity subscription's VNET to the Connectivity subscription's Hub VNET
+    - Added option for VNET peering Landing Zones to Connectivity subscription when Hub & Spoke is the selected topology (Virtual WAN is excluded due to concurrency issues, at this time) - closing issue [#517](https://github.com/Azure/Enterprise-Scale/issues/517)
+    - Navigate policy assignment for identity, when using single vs dedicated subscriptions for platform purposes
+    - Optimized the execution graph
+- Re-structured the ARM templates for all resource deployments
+  - `eslzArm.json` is used to orchestrate the E2E composition of ESLZ, and subsequent resource deployments based on user input from the portal ("Deploy To Azure" button) experience
+  - The composite ARM templates can be sequenced on their own, independently of each other (although strict sequencing is required to ensure the same outcome)
+    - Guidance coming soon for this
+  - Customers can deploy from private repository if they want to sequence at their own pace.
 
 #### Policy
 
-*No updates, yet.*
+- Various custom ESLZ Azure Policies have moved to Built-In Azure Policies, see below table for more detail:
+
+| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | ESLZ Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |
+| :---------------------: | :-----------------------------: | :-----------: | :---------------------: | :--------------------------: | :---------------: |
+| Deploy-Log-Analytics | Deploy the Log Analytics in the subscription | Monitoring | TBC | TBC | TBC |
+| Others... | XXXXXXXXX | TBC | TBC | TBC | TBC |
+
+> You may continue to use the ESLZ custom Azure Policy as it will still function as it does today. However, we recommend you move to assigning the new Built-In version of the Azure Policy. 
+> 
+> **Please note** that moving to the new Built-In Policy Definition will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost.
+
+- Moved several of the diagnostics Policies to built-in, and updating the diagnostics Initiative 
+  - This means there's a new resource name as update of existing one is not be allowed due to removal of parameters
+- Added Policy Initiative for enforcing Private DNS Zone Association with Private Link (using built-in)
+- Added Policy Initiative for denying Public Endpoints (using built-in)
+- Updated description and display name for all Policy Assignments
 
 #### Other
 
