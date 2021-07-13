@@ -78,7 +78,7 @@ Example:
 
 ### Where can I see the policies used by Enterprise-Scale Landing Zones reference implementation?
 
-We maintain the index [here](.\ESLZ-Policies.md), and will update the tables when:
+We maintain the index [here](./ESLZ-Policies.md), and will update the tables when:
 
 * A custom policy is moved to built-in policy
 * When a custom policy is deprecated
