@@ -106,11 +106,13 @@ You can choose to bootstrap your CI/CD pipeline (GitHub with GitHub actions). Pr
 
 1.1.2    Ensure the PA token has the following permissions:
 
-![Graphical user interface, text, application  Description automatically generated](./media/clip_image017.jpg)
+![Graphical user interface, text, application  Description automatically generated](./media/github_developer_createPAT.png)
 
 > For Microsoft employees who are enrolled into the Azure GitHub organization, you must also authorize the PA token to this Org!
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image018.png)
+![Graphical user interface, text, application, email  Description automatically generated](./media/github_developer_enablesso.png)
+
+![Graphical user interface, text, application, email  Description automatically generated](./media/github_developer_disablesso.png)
 
 1.2  Lastly, a Service Principal is required for Git to authenticate to – and be authorized to your Azure tenant. You can either use an existing Service Principal or create a new one. The Service Principal will be granted *Owner* permission on the top level Management Group that gets created.
 
@@ -325,11 +327,11 @@ Enterprise-Scale with its Policy Driven Governance principle relies heavily on A
 
 ![Graphical user interface, text, application, email  Description automatically generated](./media/ESLZ-location-assignment-policy.JPG)
 
-7.   Click ‘Propose new file’ and a new PR is being created which will trigger the Push workflow. Go to Actions to monitor the process.
+7.   Click ‘Propose new file' and on the next page, click 'Create Pull Request." A new Pull Request is being created which will trigger the Push workflow. Go to Actions to monitor the process.
 
 ![Graphical user interface, text, application, chat or text message  Description automatically generated](./media/clip_image056.jpg)
 
-8.   Once completed, you can merge the pull request.
+8.   Once completed, the pull request should automatically merge.
 
 9.   In Azure portal, you can navigate to the <prefix>-online management group and verify that the deployment resource got created and deployed successfully. Each deployment invoked via AzOps will have an ‘AzOps’ prefix.
 

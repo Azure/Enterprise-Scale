@@ -1,8 +1,9 @@
 ## In this Section
 
+- [In this Section](#in-this-section)
 - [What is Enterprise-Scale reference implementation?](#what-is-enterprise-scale-reference-implementation)
 - [Pricing](#pricing)
-- [What if I already have an existing Azure footprint](#what-if-i-already-have-an-existing-azure-footprint)
+- [What if I already have an existing Azure footprint?](#what-if-i-already-have-an-existing-azure-footprint)
 
 ---
 Enterprise-Scale architecture provides prescriptive guidance coupled with Azure best practices, and it follows 5 design principles across the 8 critical design areas for organizations to define their target state for their Azure architecture. Enterprise-Scale will continue to evolve alongside the Azure platform roadmap and is ultimately defined by the various design decisions that organizations must make to define their Azure journey.
@@ -26,13 +27,33 @@ The following table outlines key customer requirements in terms of landing zones
 | UI Experience and simplified setup                           | Yes, Azure portal                                            |
 | All critical services are present and properly configured according to recommend best practices for identity & access management, governance, security, network and logging | Yes, using a multi-subscription design, aligned with Azure platform roadmap |
 | Automation capabilities (IaC/DevOps)                         | Yes: ARM, Azure Policy, GitHub/Azure DevOps CI/CD pipeline options included |
-| Provides long-term self-sufficiency                          | Yes, enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency;, the RIs reference implementations are there to get you started |
-| Enables migration velocity across the organization           | Yes, enterpriseEnterprise-scale Scale architecture -> 1:N landing zones., Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
+| Provides long-term self-sufficiency                          | Yes, Enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency;, the RIs reference implementations are there to get you started |
+| Enables migration velocity across the organization           | Yes, Enterprise-scale Scale architecture -> 1:N landing zones., Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
 | Achieves operational excellence                              | Yes. Enables autonomy for platform and application teams with a policy driven governance and management |
 
 ## Pricing
 
-There’s no cost associated with Enterprise-Scale, and you only pay for the Azure services that are being enabled, and the services your organization will deploy into the landing zones. For example, you don’t pay for the management groups or the policies that are being assigned, but policy to enable Azure Security Center on the landing zone subscriptions will generate cost on those subscriptions.
+There’s no cost associated with Enterprise-Scale itself, as it is just an architecture that is constructed using existing Azure products and services. Therefore you only pay for the Azure products and services that you choose to enable, and also the products and services your organization will deploy into the landing zones for your workloads.
+
+For example, you don’t pay for the Management Groups or the Azure Policies that are being assigned, but assigning a policy to enable Azure Defender (previously known as Azure Security Center Standard) on all landing zone subscriptions will generate cost on those subscriptions for the Azure Defender service as detailed [here](https://azure.microsoft.com/pricing/details/azure-defender/).
+
+> As the pricing page for Azure Defender shows, charges only occur when resources that are protected by Azure Defender are deployed into the landing zones. 
+>  
+> Therefore an empty landing zone or landing zone with resources that are not covered by Azure Defender will incur no costs for the service.
+
+Another example are some of the networking resources that we provide prescriptive deployment guidance for as part on Enterprise-Scale:
+
+- [VPN Gateways](https://azure.microsoft.com/pricing/details/vpn-gateway/)
+- [ExpressRoute Gateways & Circuits](https://azure.microsoft.com/pricing/details/expressroute/)
+- [Azure Firewalls](https://azure.microsoft.com/pricing/details/azure-firewall/)
+- [Virtual WANs](https://azure.microsoft.com/pricing/details/virtual-wan/)
+- [DDoS Standard Protection Plans](https://azure.microsoft.com/pricing/details/ddos-protection/)
+
+Each of these resources have an associated cost that varies based on how they are deployed, configured and consumed as part of your Enterprise-Scale deployment.
+
+> A difference for the networking resources is that they have costs that are incurred once deployed, as well as how they are consumed, e.g. bandwidth and traffic processed.
+
+Therefore it is important to complete the design process following the Enterprise-Scale [Design Principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) and [Design Guidelines](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines) as part of your implementation of Enterprise-Scale. From reading and making design decisions from the guidance provided, you will know all of the Azure resources that are to be deployed/enabled as part of your deployment and with this information you will be able to determine any costs for the associated resources using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
 
 ## What if I already have an existing Azure footprint?
 
