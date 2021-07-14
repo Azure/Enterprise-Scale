@@ -1,0 +1,150 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "paToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Provide the PA Token to authorize Git and create new repository for the organization/user."
+            }
+        },
+        "principalSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Provide the principalId which is needed to create GitHub secret"
+            }
+        },
+        "gitHubUserNameOrOrg": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide username or org name for GitHub."
+            }
+        },
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the prefix for your ESLZ setup."
+            }
+        },
+        "appId": {
+            "type": "string"
+        },
+        "repositoryName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "keyVaultName": "[take(concat(resourceGroup().name, uniqueString(subscription().subscriptionId)), 24)]",
+        "keyVaultRbacName": "[concat(variables('keyVaultName'), '/Microsoft.Authorization/', guid(variables('keyVaultName')))]",
+        "patSecretName": "PATSecret",
+        "spnSecretName": "SPNSecret",
+        "userManagedIdentityName": "[concat(resourceGroup().name, '-umi')]",
+        "keyVaultAdminRbac": "/providers/Microsoft.Authorization/roleDefinitions/00482a5a-887f-4fb3-b363-3b7fe8e74483"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2018-11-30",
+            "name": "[variables('userManagedIdentityName')]",
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('keyVaultName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('userManagedIdentityName')]"
+            ],
+            "properties": {
+                "enabledForTemplateDeployment": true,
+                "enableRbacAuthorization": true,
+                "enablePurgeProtection": true,
+                "enableSoftDelete": true,
+                "tenantId": "[subscription().tenantId]",
+                "sku": {
+                    "family": "A",
+                    "name": "standard"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2019-09-01",
+            "name": "[concat(variables('keyVaultName'), '/', variables('patSecretName'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[parameters('paToken')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2019-09-01",
+            "name": "[concat(variables('keyVaultName'), '/', variables('spnSecretName'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[parameters('principalSecret')]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[variables('keyVaultRbacName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userManagedIdentityName'))]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "principalId": "[reference(variables('userManagedIdentityName'), '2018-11-30').principalId]",
+                "roleDefinitionId": "[variables('keyVaultAdminRbac')]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(resourceGroup().name, '-GitHub')]",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userManagedIdentityName'))]": {}
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults/providers/roleAssignments', variables('keyVaultName'), 'Microsoft.Authorization', guid(variables('keyVaultName')))]",
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('patSecretName'))]",
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('spnSecretName'))]"
+            ],
+            "properties": {
+                "primaryScriptUri": "[base64ToString('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2tybmVzZS9ucy9tYXN0ZXIvdW1pQXpPcHNTZXR1cC5wczE=')]",
+                "arguments": "[concat('-KeyVault', ' ', variables('keyVaultName'), ' ',
+                                      '-NewRepositoryName', ' ', parameters('repositoryName'), ' ',
+                                      '-GitHubUserNameOrOrg', ' ', parameters('gitHubUserNameOrOrg'), ' ', 
+                                      '-SPNSecretName', ' ', variables('spnSecretName'), ' ',
+                                      '-SpnAppId', ' ', parameters('appId'), ' ',
+                                      '-PATSecretName', ' ', variables('patSecretName'), ' ',
+                                      '-AzureTenantId', ' ', subscription().tenantId, ' ',
+                                      '-EnterpriseScalePrefix', ' ', parameters('topLevelManagementGroupPrefix'), ' ',
+                                      '-AzureSubscriptionId', ' ', subscription().subscriptionId)]",
+                "azPowerShellVersion": "5.5",
+                "timeout": "PT30M",
+                "cleanupPreference": "Always",
+                "retentionInterval": "P1D"
+            }
+        }
+    ],
+    "outputs": {
+        "umi": {
+            "type": "string",
+            "value": "[reference(variables('userManagedIdentityName'), '2018-11-30').principalId]"
+        }
+    }
+}

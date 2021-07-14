@@ -1,0 +1,210 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vNetRgName": {
+        "type": "string",
+        "metadata": {
+            "description": "Provide a name for the resource group that will contain the virtual network."
+        }
+      },
+      "vNetName": {
+        "type": "string",
+        "metadata": {
+            "description": "Provide a name for the virtual network."
+        }
+      },
+      "vNetLocation": {
+        "type": "string",
+        "metadata": {
+            "description": "Provide a location for the virtual network."
+        }
+      },
+      "vNetCidrRange": {
+        "type": "string",
+        "metadata": {
+            "description": "Provide a CIDR range for the virtual network."
+        }        
+      },
+      "vNetPeerUseRemoteGateway": {
+        "type": "bool",
+        "defaultValue": false,
+        "metadata": {
+            "description": "Use remote gateway or not."
+        }        
+      },
+      "hubResourceId": {
+        "type": "string",
+        "metadata": {
+            "description": "Provide the resourceId for the hub."
+        }        
+      },
+      "dnsServers": {
+        "type": "array",
+        "defaultValue": [],
+        "metadata": {
+            "description": "Provide DNS servers."
+        }        
+      },
+      "azureFirewallResourceId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Provide full resourceId of Azure Firewall if used as DNS proxy"
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2020-06-01",
+        "name": "[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6),'-rg')]",
+        "location": "[parameters('vNetLocation')]",
+        "dependsOn": [],
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2020-06-01",
+                "name": "[parameters('vNetRgName')]",
+                "location": "[parameters('vNetLocation')]",
+                "properties": {}
+              },
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2020-06-01",
+                "name": "NetworkWatcherRG",
+                "location": "[parameters('vNetLocation')]",
+                "properties": {}
+              }
+            ],
+            "outputs": {}
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2020-06-01",
+        "name": "[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6))]",
+        "resourceGroup": "[parameters('vNetRgName')]",
+        "dependsOn": [
+          "[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6),'-rg')]"
+        ],
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+              {
+                "type": "Microsoft.Network/virtualNetworks",
+                "apiVersion": "2020-06-01",
+                "name": "[parameters('vNetName')]",
+                "location": "[parameters('vNetLocation')]",
+                "dependsOn": [],
+                "properties": {
+                  "addressSpace": {
+                    "addressPrefixes": [
+                      "[parameters('vNetCidrRange')]"
+                    ]
+                  },
+                  "dhcpOptions": {
+                    "dnsServers": "[if(
+                                       not(
+                                           empty(
+                                                 parameters('azureFirewallResourceId'))), 
+                                                 array(reference(parameters('azureFirewallResourceId'), '2020-05-01').ipConfigurations[0].properties.privateIPAddress), 
+                                                 parameters('dnsServers'))]"
+                  }
+                }
+              },
+              {
+                "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                "apiVersion": "2020-05-01",
+                "name": "[concat(parameters('vNetName'), '/peerToHub')]",
+                "dependsOn": [
+                  "[parameters('vNetName')]"
+                ],
+                "properties": {
+                  "remoteVirtualNetwork": {
+                    "id": "[parameters('hubResourceId')]"
+                  },
+                  "allowVirtualNetworkAccess": true,
+                  "allowForwardedTraffic": true,
+                  "allowGatewayTransit": true,
+                  "useRemoteGateways": "[parameters('vNetPeerUseRemoteGateway')]"
+                }
+              },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2020-06-01",
+                "name": "[concat('es-lz-hub-',substring(uniqueString(subscription().id),0,6),'-peering')]",
+                "subscriptionId": "[split(parameters('hubResourceId'),'/')[2]]",
+                "resourceGroup": "[split(parameters('hubResourceId'),'/')[4]]",
+                "dependsOn": [
+                  "[parameters('vNetName')]"
+                ],
+                "properties": {
+                  "mode": "Incremental",
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "parameters": {
+                    "remoteVirtualNetwork": {
+                      "value": "[concat(subscription().id,'/resourceGroups/',parameters('vNetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
+                    },
+                    "hubName": {
+                      "value": "[split(parameters('hubResourceId'),'/')[8]]"
+                    }
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "remoteVirtualNetwork": {
+                        "type": "String",
+                        "defaultValue": false
+                      },
+                      "hubName": {
+                        "type": "String",
+                        "defaultValue": false
+                      }
+                    },
+                    "variables": {},
+                    "resources": [
+                      {
+                        "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                        "name": "[[concat(parameters('hubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
+                        "apiVersion": "2020-05-01",
+                        "properties": {
+                          "allowVirtualNetworkAccess": true,
+                          "allowForwardedTraffic": true,
+                          "allowGatewayTransit": true,
+                          "useRemoteGateways": false,
+                          "remoteVirtualNetwork": {
+                            "id": "[[parameters('remoteVirtualNetwork')]"
+                          }
+                        }
+                      }
+                    ],
+                    "outputs": {}
+                  }
+                }
+              }
+            ],
+            "outputs": {}
+          }
+        }
+      }
+    ],
+    "outputs": {}
+  }
