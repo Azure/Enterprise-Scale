@@ -27,6 +27,22 @@ If customer started with a Enterprise-Scale foundation deployment, and if the bu
 To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
 See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access.
 
+## How to deploy this reference implementation
+
+To deploy  Enterprise-Scale with Azure VWAN:
+
+- Click on the Deploy to Azure button at the top of this page. This will load the Enterprise-Scale Landing Zones deployment wizard.
+- In the Deployment location blade, ensure you are on the right directory and select the Azure region for the deployment.
+- In the Enterprise-Scale core setup blade, provide a Management group prefix, and select the option for **Dedicated (recommended)** subscriptions for platform resources.
+- In the Platform management, security and governance blade, select the options required for your environment.
+- In the Platform DevOps and automation page, select the options required for your environment.
+- In the Network topology and connectivity blade, select the **Virtual WAN (Microsoft managed)** network topology option.
+- In the Identity blade, select the options required for your environment.
+- In the Landing Zone configuration blade, select the options required for your environment.
+- In the Review + create blade, review your deployment options and after the validation has passed successfully, click on **Create**.
+
+For detailed instructions for each of the deployment blades, refer to the [Enterprise-Scale Landing Zones user guide](https://github.com/Azure/Enterprise-Scale/wiki).
+
 ## What will be deployed?
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
