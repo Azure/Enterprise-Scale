@@ -58,11 +58,13 @@ The rest of the options across the different blades will depend on your environm
 - An Azure Subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   -  Azure VWAN
   - VWAN Hub
-  - ExpressRoute Gateway
-  - VPN Gateway
-  - Azure Firewall
-  - Firewall Policies
-- An Azure Subscription dedicated for **identity**, where customers can deploy the Active Directory domain controllers required for their environment
+  - ExpressRoute Gateway (optional)
+  - VPN Gateway (optional)
+  - Azure Firewall (optional)
+  - Firewall Policies (optional)  
+  - Azure DDoS Standard protection plan (optional)
+- An Azure Subscription dedicated for **identity**, where customers can deploy the Active Directory domain controllers required for their environment.
+  - A virtual network will be deployed and will be connected to the hub VNet via VNet peering.
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the VWAN hub.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone Management Group for **online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
