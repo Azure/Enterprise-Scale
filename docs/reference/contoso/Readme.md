@@ -27,6 +27,23 @@ If customer started with a Enterprise-Scale foundation deployment, and if the bu
 To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
 See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access.
 
+### Optional prerequisites
+
+The deployment experience in Azure portal allows you to bring in existing (preferably empty) subscriptions dedicated for platform management, connectivity and identity. It also allows you to bring existing subscriptions that can be used as the initial landing zones for your applications.
+
+To learn how to create new subscriptions programmatically, please visit this [link](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription).
+
+To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
+
+## How to deploy this reference implementation
+
+Enterprise-Scale landing zones offers a single experience to deploy the different reference implementations. To deploy  Enterprise-Scale with Azure VWAN, click on the Deploy to Azure button at the top of this page and ensure you select the following options:
+
+- In the **Enterprise-Scale core setup** blade, select the option for **Dedicated (recommended)** subscriptions for platform resources.
+- In the **Network topology and connectivity** blade, select the **Virtual WAN (Microsoft managed)** network topology option.
+
+The rest of the options across the different blades will depend on your environment and desired deployment settings. For detailed instructions for each of the deployment steps, refer to the [Enterprise-Scale Landing Zones user guide](https://github.com/Azure/Enterprise-Scale/wiki).
+
 ## What will be deployed?
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
@@ -41,11 +58,13 @@ See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to
 - An Azure Subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   -  Azure VWAN
   - VWAN Hub
-  - ExpressRoute Gateway
-  - VPN Gateway
-  - Azure Firewall
-  - Firewall Policies
-- An Azure Subscription dedicated for **identity**, where customers can deploy the Active Directory domain controllers required for their environment
+  - ExpressRoute Gateway (optional)
+  - VPN Gateway (optional)
+  - Azure Firewall (optional)
+  - Firewall Policies (optional)  
+  - Azure DDoS Standard protection plan (optional)
+- An Azure Subscription dedicated for **identity**, where customers can deploy the Active Directory domain controllers required for their environment.
+  - A virtual network will be deployed and will be connected to the hub VNet via VNet peering.
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the VWAN hub.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone Management Group for **online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
