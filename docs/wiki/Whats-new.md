@@ -62,7 +62,7 @@ Here's what's changed in Enterprise Scale:
 
 > You may continue to use the ESLZ custom Azure Policy as it will still function as it does today. However, we recommend you move to assigning the new Built-In version of the Azure Policy. 
 > 
-> **Please note** that moving to the new Built-In Policy Definition will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost.
+> **Please note** that moving to the new Built-In Policy Definition will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
 
 - Moved several of the diagnostics Policies to built-in, and updating the diagnostics Initiative 
   - This means there's a new resource name as update of existing one is not be allowed due to removal of parameters
