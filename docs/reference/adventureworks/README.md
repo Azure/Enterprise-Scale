@@ -43,7 +43,7 @@ To learn how to create new subscriptions using Azure portal, please visit this [
 Enterprise-Scale landing zones offers a single experience to deploy the different reference implementations. To deploy  Enterprise-Scale with hub and spoke architecture, click on the Deploy to Azure button at the top of this page and ensure you select the following options:
 
 - In the **Enterprise-Scale core setup** blade, select the option for **Dedicated (recommended)** subscriptions for platform resources.
-- In the **Network topology and connectivity** blade, select either **Hub and spoke with Azure Firewall** or **Hub and spoke with your own third-party NVA**  options.
+- In the **Network topology and connectivity** blade, select either **Hub and spoke with Azure Firewall** or **Hub and spoke with your own third-party NVA**  network topology options.
 
 The rest of the options across the different blades will depend on your environment and desired deployment settings. For detailed instructions for each of the deployment steps, refer to the [Enterprise-Scale Landing Zones user guide](https://github.com/Azure/Enterprise-Scale/wiki).
 
