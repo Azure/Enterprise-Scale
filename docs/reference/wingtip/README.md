@@ -41,6 +41,15 @@ The Management Group structure implemented with Enterprise-Scale is as follows:
 * Sandboxes: This is the dedicated Management Group for subscriptions that will solely be used for testing and exploration by an organization’s application teams. These subscriptions will be securely disconnected from the Corp and Online landing zones.
 * Decommissioned: This is the dedicated Management Group for landing zones that are being cancelled, which then will be moved to this Management Group before deleted by Azure after 30-60 days. -->
 
+## How to deploy this reference implementation
+
+Enterprise-Scale landing zones offers a single experience to deploy the different reference implementations. To deploy  Enterprise-Scale foundation, click on the Deploy to Azure button at the top of this page and ensure you select the following options:
+
+- In the **Enterprise-Scale core setup** blade, select the option for **Dedicated (recommended)** subscriptions for platform resources.
+- In the **Network topology and connectivity** blade, under **Deploy network topology** select **No**.
+
+The rest of the options across the different blades will depend on your environment and desired deployment settings. For detailed instructions for each of the deployment steps, refer to the [Enterprise-Scale Landing Zones user guide](https://github.com/Azure/Enterprise-Scale/wiki).
+
 ## What will be deployed?
 
 By default, all recommendations are enabled, and you must explicitly disable them if you don't want them to be deployed and configured.
