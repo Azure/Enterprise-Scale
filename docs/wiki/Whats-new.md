@@ -61,8 +61,8 @@ Here's what's changed in Enterprise Scale:
 
 **Policy Definitions**
 
-| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |
-| :---------------------: | :-----------------------------: | :---------------------: | :--------------------------: | :---------------: |
+| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |
+| :---------------------: | :-----------------------------: | :-------------: | :---------------------: | :--------------------------: | :---------------: |
 | Deny-PublicEndpoint-Aks | Public network access on AKS API should be disabled | Kubernetes | 040732e8-d947-40b8-95d6-854c95024bf8 | Azure Kubernetes Service Private Clusters should be enabled | Kubernetes |
 | Deny-PublicEndpoint-CosmosDB | Public network access should be disabled for CosmosDB | SQL | 797b37f7-06b8-444c-b1ad-fc62867f335a | Azure Cosmos DB should disable public network access | Cosmos DB |
 | Deny-PublicEndpoint-KeyVault | Public network access should be disabled for KeyVault | Key Vault | 55615ac9-af46-4a59-874e-391cc3dfb490 | [Preview]: Azure Key Vault should disable public network access | Key Vault |
