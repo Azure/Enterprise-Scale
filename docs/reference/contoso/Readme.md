@@ -27,6 +27,14 @@ If customer started with a Enterprise-Scale foundation deployment, and if the bu
 To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
 See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access.
 
+### Optional prerequisites
+
+The deployment experience in Azure portal allows you to bring in existing (preferably empty) subscriptions dedicated for platform management, connectivity and identity. It also allows you to bring existing subscriptions that can be used as the initial landing zones for your applications.
+
+To learn how to create new subscriptions programmatically, please visit this [link](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription).
+
+To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
+
 ## How to deploy this reference implementation
 
 Enterprise-Scale landing zones offers a single experience to deploy the different reference implementations. To deploy  Enterprise-Scale with Azure VWAN, click on the Deploy to Azure button at the top of this page and ensure you select the following options:
