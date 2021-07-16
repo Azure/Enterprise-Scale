@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the central Log Analytics workspace"
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "vmssMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad"
+            },
+        "policyAssignmentNames": {
+            "vmssMonitoring": "Deploy-VMSS-Monitoring",
+            "description": "Enable Azure Monitor for the Virtual Machine Scale Sets in the specified scope (Management group, Subscription or resource group). Takes Log Analytics workspace as parameter. Note: if your scale set upgradePolicy is set to Manual, you need to apply the extension to the all VMs in the set by calling upgrade on them. In CLI this would be az vmss update-instances.",
+            "displayName": "Enable Azure Monitor for Virtual Machine Scale Sets"
+            },
+        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "roleAssignmentNames": {
+            "deployVmssMonitoring": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssMonitoring))]"
+            }
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').vmssMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').vmssMonitoring]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "logAnalytics_1": {
+                        "value": "[parameters('logAnalyticsResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployVmssMonitoring]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
