@@ -6,7 +6,7 @@ If issues are encountered when deploying these reference implementations users w
 
 Following list of issues are within the scope of Microsoft support:
 
-- Portal deployment of Reference implementations - WingTip, Contoso and AdventureWorks
+- Portal deployment of Reference implementations - WingTip, Contoso, AdventureWorks and Trey Research
 - Underlying Resource or Resource Provider issues when deploying template (e.g. Management Groups, Policies, Log Analytics Workspace, Virtual WAN, Virtual Network) for any deployment failure
 - Subscription Creation via portal experience
 - UI elements (e.g., ArmApiController) used in ARM Template

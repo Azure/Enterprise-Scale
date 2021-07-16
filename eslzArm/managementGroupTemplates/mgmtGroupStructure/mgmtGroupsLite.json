@@ -1,0 +1,130 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide prefix for the management group structure."
+            }
+        },
+        "landingZoneMgs": {
+            "type": "array",
+            "defaultValue": [
+                "online",
+                "corp"
+            ],
+            "metadata": {
+                "description": "These are the landing zone management groups."
+            }
+        }
+    },
+    "variables": {
+        "enterpriseScaleManagementGroups": {
+            "platform": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'platform')]",
+            "landingZone": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'landingzones')]",
+            "decommissioned": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'decommissioned')]",
+            "sandboxes": "[concat(parameters('topLevelManagementGroupPrefix'), '-', 'sandboxes')]"
+        }
+    },
+    "resources": [
+        {
+            // Create top level management group under tenant root
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('topLevelManagementGroupPrefix')]",
+            "properties": {}
+        },
+        {
+            // Create management group for platform management groups
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('enterpriseScaleManagementGroups').platform]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+            ],
+            "properties": {
+                "displayName": "[variables('enterpriseScaleManagementGroups').platform]",
+                "details": {
+                    "parent": {
+                    "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+                    }
+                }
+            }
+        },
+        {
+            // Create management group for landing zones
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('enterpriseScaleManagementGroups').landingZone]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+            ],
+            "properties": {
+                "displayName": "[variables('enterpriseScaleManagementGroups').landingZone]",
+                "details": {
+                    "parent": {
+                    "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+                    }
+                }
+            }
+        },
+        {
+            // Create management group for sandbox subscriptions
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('enterpriseScaleManagementGroups').sandboxes]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+            ],
+            "properties": {
+                "displayName": "[variables('enterpriseScaleManagementGroups').sandboxes]",
+                "details": {
+                    "parent": {
+                    "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+                    }
+                }
+            }
+        },         
+        {
+            // Create management group for decommissioned subscriptions
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('enterpriseScaleManagementGroups').decommissioned]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+            ],
+            "properties": {
+                "displayName": "[variables('enterpriseScaleManagementGroups').decommissioned]",
+                "details": {
+                    "parent": {
+                    "id": "[tenantResourceId('Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]"
+                    }
+                }
+            }
+        },
+        {
+            // Create child management groups for landing zones
+            "condition": "[not(empty(parameters('landingZoneMgs')))]",
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('landingZoneMgs')[copyIndex()])]",
+            "dependsOn": [
+                "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').landingZone)]"
+            ],
+            "copy": {
+                "name": "lzMgCopy",
+                "count": "[length(parameters('landingZoneMgs'))]"
+            },
+            "properties": {
+                "displayName": "[concat(parameters('topLevelManagementGroupPrefix'), '-', parameters('landingZoneMgs')[copyIndex()])]",
+                "details": {
+                    "parent": {
+                        "id": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('enterpriseScaleManagementGroups').landingZone)]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

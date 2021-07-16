@@ -1,6 +1,6 @@
-| Enterprise-Scale Design Principles | ARM Template | Scale without refactoring |
-|:-------------|:--------------|:--------------|
-|![Best Practice Check](https://azurequickstartsservice.blob.core.windows.net/badges/subscription-deployments/create-rg-lock-role-assignment/BestPracticeResult.svg)| [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json)  | Yes |
+| ARM Template | Scale without refactoring |
+|:--------------|:--------------|
+| [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-portal.json)  | Yes |
 
 # Deploy Enterprise-scale for small enterprises
 
@@ -13,6 +13,8 @@ This reference implementation provides a design path and initial technical state
 This reference implementation is also well suited for customers who want to start with Landing Zones for their net new deployment/development in Azure by implementing a network architecture based on the traditional hub and spoke network topology.
 
 Note: Alternatively, if you need to implement an operating model which facilitates segregating Platform administration duties among different teams, then we suggest considering leveraging [Adventure Works](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) or [WingTip](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) reference implementations.
+
+Please refer to [Enterprise-Scale Landing Zones User Guide](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale) for detailed information on prerequisites and deployment steps.
 
 ## How to evolve later
 
@@ -39,9 +41,9 @@ By default, all recommendations are enabled. You must explicitly disable them if
   -	A Log Analytics workspace and an Automation account.
   - Azure Sentinel.
   -	A hub virtual network  
-  -	VPN Gateway
-  - ExpressRoute Gateway (optional)
-  -	Azure Firewall
+  -	VPN Gateway (optional - deployment across Availability Zones)
+  - ExpressRoute Gateway (optional - deployment across Availability Zones)
+  -	Azure Firewall (optional - deployment across Availability Zones)
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone Management Group for **online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
@@ -49,11 +51,12 @@ By default, all recommendations are enabled. You must explicitly disable them if
 - Azure Policies that will enable autonomy for the platform and the landing zones:
   - The following Azure Policies are applied at the root of the Enterprise Scale Management Group hierarchy enabling core platform capabilities at scale:
     -	Azure Security monitoring
-    -	Azure Security Center (Standard or Free tier)
+    -	Azure Security Center (Azure Defender OFF (free) and Azure Defender ON)
     -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
   - On the other hand, Azure Policies that will apply to all your landing zones. That includes Online, Corp and additional Landing Zone's types you may add in the future:
     - Enforce VM in-guest monitoring (Windows & Linux)
     - Enforce Backup for all virtual machines (Windows & Linux) by deploying a recovery services vault in the same location and resource group as the virtual machine
+    - Ensure encryption in transit is enabled for PaaS services
     - Prevent inbound RDP from Internet
     - Ensure subnets are associated with NSG
     - Prevent IP forwarding

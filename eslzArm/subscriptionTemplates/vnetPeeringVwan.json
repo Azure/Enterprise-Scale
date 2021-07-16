@@ -1,0 +1,167 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vNetRgName": {
+        "type": "String"
+      },
+      "vNetName": {
+        "type": "String"
+      },
+      "vNetLocation": {
+        "type": "String"
+      },
+      "vNetCidrRange": {
+        "type": "String"
+      },
+      "vWanhubResourceId": {
+        "type": "String"
+      },
+      "dnsServers": {
+        "type": "array",
+        "defaultValue": [],
+        "metadata": {
+            "description": "Provide DNS servers."
+        }        
+      },
+      "azureFirewallResourceId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Provide full resourceId of Azure Firewall if used as DNS proxy"
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2020-06-01",
+        "name": "[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6),'-rg')]",
+        "location": "[parameters('vNetLocation')]",
+        "dependsOn": [],
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2020-06-01",
+                "name": "[parameters('vNetRgName')]",
+                "location": "[parameters('vNetLocation')]",
+                "properties": {}
+              },
+              {
+                "type": "Microsoft.Resources/resourceGroups",
+                "apiVersion": "2020-06-01",
+                "name": "NetworkWatcherRG",
+                "location": "[parameters('vNetLocation')]",
+                "properties": {}
+              }
+            ],
+            "outputs": {}
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2020-06-01",
+        "name": "[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6))]",
+        "dependsOn": [
+          "[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6),'-rg')]"
+        ],
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+                {
+                "type": "Microsoft.Network/virtualNetworks",
+                "apiVersion": "2020-06-01",
+                "name": "[parameters('vNetName')]",
+                "location": "[parameters('vNetLocation')]",
+                "dependsOn": [],
+                "properties": {
+                    "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vNetCidrRange')]"
+                    ]
+                    },
+                    "dhcpOptions": {
+                    "dnsServers": "[if(
+                                        not(
+                                            empty(
+                                                    parameters('azureFirewallResourceId'))), 
+                                                    array(reference(parameters('azureFirewallResourceId'), '2020-05-01').hubIPAddresses.privateIPAddress), 
+                                                    parameters('dnsServers'))]"
+                    }
+                }
+                },
+              {
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2020-06-01",
+                "name": "[concat('es-lz-vwanhub-',substring(uniqueString(subscription().id),0,6),'-peering')]",
+                "subscriptionId": "[split(parameters('vWanhubResourceId'),'/')[2]]",
+                "resourceGroup": "[split(parameters('vWanhubResourceId'),'/')[4]]",
+                "dependsOn": [
+                  "[parameters('vNetName')]"
+                ],
+                "properties": {
+                  "mode": "Incremental",
+                  "expressionEvaluationOptions": {
+                    "scope": "inner"
+                  },
+                  "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                      "remoteVirtualNetwork": {
+                        "Type": "string",
+                        "defaultValue": false
+                      },
+                      "vWanvhubName": {
+                        "Type": "string",
+                        "defaultValue": false
+                      }
+                    },
+                    "variables": {},
+                    "resources": [
+                      {
+                        "type": "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections",
+                        "apiVersion": "2019-09-01",
+                        "name": "[[concat(parameters('vWanVhubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
+                        "properties": {
+                          "remoteVirtualNetwork": {
+                            "id": "[[parameters('remoteVirtualNetwork')]"
+                          }
+                        }
+                      }
+                    ],
+                    "outputs": {}
+                  },
+                  "parameters": {
+                    "remoteVirtualNetwork": {
+                      "value": "[concat(subscription().id,'/resourceGroups/',parameters('vNetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
+                    },
+                    "vWanvhubName": {
+                      "value": "[split(parameters('vWanhubResourceId'),'/')[8]]"
+                    }
+                  }
+                }
+              }
+            ],
+            "outputs": {}
+          }
+        },
+        "resourceGroup": "[parameters('vNetRgName')]"
+      }
+    ],
+    "outputs": {}
+  }
