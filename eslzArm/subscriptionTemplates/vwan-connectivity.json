@@ -1,0 +1,226 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "addressPrefix": {
+            "type": "string",
+            "metadata": {
+                "displayName": "addressPrefix",
+                "description": "Address prefix of the VHUB"
+            },
+            "defaultValue": "192.168.0.0/24"
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "displayName": "location",
+                "description": "Location of the VHUB"
+            },
+            "defaultValue": "[deployment().location]"
+        },
+        "enableHub": {
+            "type": "string",
+            "allowedValues": [
+                "vwan",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableAzFw": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableVpnGw": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableErGw": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "connectivitySubscriptionId": {
+            "type": "string"
+        },
+        "vpnGateWayScaleUnit": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "expressRouteScaleUnit": {
+            "type": "string",
+            "defaultValue": "1"
+        }
+    },
+    "variables": {
+        "vWanName": "[concat(parameters('topLevelManagementGroupPrefix'), '-vwan-', parameters('location'))]",
+        "vpngwname": "[concat(parameters('topLevelManagementGroupPrefix'), '-vpngw-', parameters('location'))]",
+        "erGwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ergw-', parameters('location'))]",
+        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location'))]",
+        "vHubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
+        "azFwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-fw-', parameters('location'))]",
+        "vWanSku": "Standard",
+        "vwanresourceid": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/' ,variables('rgName'),'/providers/Microsoft.Network/virtualWans/', variables('vwanname'))]",
+        "vwanhub": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualHubs/', variables('vhubname'))]",
+        "vhubsku": "Standard",
+        "vpnbgpasn": 65515,
+        "resourceDeploymentName": "[take(concat(deployment().name, '-vwan'), 64)]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('location')]",
+            "name": "[concat('EntScale', '-connectivitySub')]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2019-10-01",
+                            "location": "[parameters('location')]",
+                            "name": "[variables('rgName')]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
+                            "name": "[variables('resourceDeploymentName')]",
+                            "resourceGroup": "[variables('rgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/virtualWans",
+                                            "apiVersion": "2020-05-01",
+                                            "name": "[variables('vWanName')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "virtualHubs": [],
+                                                "vpnSites": [],
+                                                "type": "[variables('vwansku')]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableHub'), 'vwan'), not(empty(parameters('addressPrefix'))))]",
+                                            "type": "Microsoft.Network/virtualHubs",
+                                            "apiVersion": "2020-05-01",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('vhubname')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualWans/', variables('vWanName'))]"
+                                            ],
+                                            "properties": {
+                                                "virtualWan": {
+                                                    "id": "[variables('vwanresourceid')]"
+                                                },
+                                                "addressPrefix": "[parameters('addressPrefix')]",
+                                                "sku": "[variables('vhubsku')]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableHub'), 'vwan'), equals(parameters('enableVpnGw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/vpnGateways",
+                                            "apiVersion": "2020-05-01",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('vpngwname')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]"
+                                            ],
+                                            "properties": {
+                                                "virtualHub": {
+                                                    "id": "[variables('vwanhub')]"
+                                                },
+                                                "bgpSettings": {
+                                                    "asn": "[variables('vpnbgpasn')]"
+                                                },
+                                                "vpnGatewayScaleUnit": "[int(parameters('vpnGateWayScaleUnit'))]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableHub'), 'vwan'), equals(parameters('enableErGw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/expressRouteGateways",
+                                            "apiVersion": "2020-05-01",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('ergwname')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/', variables('vhubname'))]"
+                                            ],
+                                            "properties": {
+                                                "virtualHub": {
+                                                    "id": "[variables('vwanhub')]"
+                                                },
+                                                "autoScaleConfiguration": {
+                                                    "bounds": {
+                                                        "min": "[int(parameters('expressRouteScaleUnit'))]"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
+                                            "apiVersion": "2020-05-01",
+                                            "type": "Microsoft.Network/azureFirewalls",
+                                            "name": "[variables('azfwname')]",
+                                            "location": "[parameters('location')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]"
+                                            ],
+                                            "properties": {
+                                                "sku": {
+                                                    "Name": "AZFW_Hub",
+                                                    "Tier": "Standard"
+                                                },
+                                                "hubIPAddresses": {
+                                                    "publicIPs": {
+                                                        "addresses": "[json('[]')]",
+                                                        "count": 1
+                                                    }
+                                                },
+                                                "virtualHub": {
+                                                    "id": "[variables('vwanhub')]"
+                                                },
+                                                "firewallPolicy": {
+                                                    "id": "[json('null')]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

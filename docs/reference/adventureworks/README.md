@@ -1,6 +1,6 @@
 | ARM Template | Scale without refactoring |
 |:--------------|:--------------|
-| [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fadventureworks%2FarmTemplates%2Fes-hubspoke.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fadventureworks%2FarmTemplates%2Fes-portal.json)  | Yes |
+| [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json)  | Yes |
 
 # Deploy Enterprise-Scale with hub and spoke architecture
 
@@ -38,6 +38,15 @@ To learn how to create new subscriptions programmatically, please visit this [li
 
 To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
+## How to deploy this reference implementation
+
+Enterprise-Scale landing zones offers a single experience to deploy the different reference implementations. To deploy  Enterprise-Scale with hub and spoke architecture, click on the Deploy to Azure button at the top of this page and ensure you select the following options:
+
+- In the **Enterprise-Scale core setup** blade, select the option for **Dedicated (recommended)** subscriptions for platform resources.
+- In the **Network topology and connectivity** blade, select either **Hub and spoke with Azure Firewall** or **Hub and spoke with your own third-party NVA**  network topology options.
+
+The rest of the options across the different blades will depend on your environment and desired deployment settings. For detailed instructions for each of the deployment steps, refer to the [Enterprise-Scale Landing Zones user guide](https://github.com/Azure/Enterprise-Scale/wiki).
+
 ## What will be deployed?
 
 By default, all recommendations are enabled and you must explicitly disable them if you don't want it to be deployed and configured.
@@ -56,8 +65,10 @@ By default, all recommendations are enabled and you must explicitly disable them
   - Azure Firewall (optional - deployment across Availability Zones)
   - ExpressRoute Gateway (optional - deployment across Availability Zones)
   - VPN Gateway (optional - deployment across Availability Zones)
-  - Azure Private DNS Zones for Private Link
+  - Azure Private DNS Zones for Private Link (optional)
+  - Azure DDoS Standard protection plan (optional)
 - (Optionally) An Azure subscription dedicated for **identity** in case your organization requires to have Active Directory Domain Controllers in a dedicated subscription.
+  - A virtual network will be deployed and will be connected to the hub VNet via VNet peering.
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone Management Group for **online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
@@ -75,6 +86,7 @@ By default, all recommendations are enabled and you must explicitly disable them
   - Prevent IP forwarding
   - Prevent inbound RDP from internet
   - Ensure subnets are associated with NSG
+  - Associate private endpoints with Azure Private DNS Zones for Azure PaaS services.
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
 
