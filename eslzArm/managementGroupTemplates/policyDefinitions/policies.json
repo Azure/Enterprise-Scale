@@ -8109,7 +8109,7 @@
             }
           },
           "name": "Deny-Subnet-Without-UDR"
-        },        
+        },
         {
           "properties": {
             "description": "This policy denies the creation of vNet Peerings outside of the same subscriptions under the assigned scope.",
@@ -9492,11 +9492,11 @@
             "displayName": "Deploy SQL Database vulnerability Assessments",
             "mode": "Indexed",
             "parameters": {
-              "vulnerabilityAssessmentsEmail": {
-                "type": "String",
+              "vulnerabilityAssessmentsEmails": {
+                "type": "Array",
                 "metadata": {
-                  "description": "The email address to send alerts",
-                  "displayName": "The email address to send alerts"
+                  "description": "The email address(es) to send alerts",
+                  "displayName": "The email address(es) to send alerts"
                 }
               },
               "vulnerabilityAssessmentsStorageID": {
@@ -9535,8 +9535,14 @@
                   "existenceCondition": {
                     "allOf": [
                       {
-                        "field": "Microsoft.Sql/servers/databases/vulnerabilityAssessments/recurringScans.emails",
-                        "equals": "[[parameters('vulnerabilityAssessmentsEmail')]"
+                        "count": {
+                          "field": "Microsoft.Sql/servers/databases/vulnerabilityAssessments/recurringScans.emails[*]",
+                          "where": {
+                            "field": "Microsoft.Sql/servers/databases/vulnerabilityAssessments/recurringScans.emails[*]",
+                            "in": "[[parameters('vulnerabilityAssessmentsEmails')]"
+                          }
+                        },
+                        "equals": "[[length(parameters('vulnerabilityAssessmentsEmails'))]"
                       },
                       {
                         "field": "Microsoft.Sql/servers/databases/vulnerabilityAssessments/recurringScans.isEnabled",
@@ -9560,8 +9566,8 @@
                           "sqlServerDataBaseName": {
                             "type": "String"
                           },
-                          "vulnerabilityAssessmentsEmail": {
-                            "type": "String"
+                          "vulnerabilityAssessmentsEmails": {
+                            "type": "Array"
                           },
                           "vulnerabilityAssessmentsStorageID": {
                             "type": "String"
@@ -9579,9 +9585,7 @@
                               "recurringScans": {
                                 "isEnabled": true,
                                 "emailSubscriptionAdmins": false,
-                                "emails": [
-                                  "[[parameters('vulnerabilityAssessmentsEmail')]"
-                                ]
+                                "emails": "[[parameters('vulnerabilityAssessmentsEmails')]"
                               }
                             }
                           }
@@ -9598,8 +9602,8 @@
                         "sqlServerDataBaseName": {
                           "value": "[[field('name')]"
                         },
-                        "vulnerabilityAssessmentsEmail": {
-                          "value": "[[parameters('vulnerabilityAssessmentsEmail')]"
+                        "vulnerabilityAssessmentsEmails": {
+                          "value": "[[parameters('vulnerabilityAssessmentsEmails')]"
                         },
                         "vulnerabilityAssessmentsStorageID": {
                           "value": "[[parameters('vulnerabilityAssessmentsStorageID')]"
@@ -16072,12 +16076,12 @@
             "description": "Deploy auditing, Alert, TDE and SQL vulnerability to SQL Databases when it not exist in the deployment",
             "displayName": "Deploy SQL Database built-in SQL security configuration",
             "parameters": {
-              "vulnerabilityAssessmentsEmail": {
+              "vulnerabilityAssessmentsEmails": {
                 "metadata": {
-                  "description": "The email address to send alerts",
-                  "displayName": "The email address to send alerts"
+                  "description": "The email address(es) to send alerts",
+                  "displayName": "The email address to(es) send alerts"
                 },
-                "type": "String"
+                "type": "Array"
               },
               "vulnerabilityAssessmentsStorageID": {
                 "metadata": {
@@ -16175,8 +16179,8 @@
                   "effect": {
                     "value": "[[parameters('SqlDbVulnerabilityAssessmentsDeploySqlSecurityEffect')]"
                   },
-                  "vulnerabilityAssessmentsEmail": {
-                    "value": "[[parameters('vulnerabilityAssessmentsEmail')]"
+                  "vulnerabilityAssessmentsEmails": {
+                    "value": "[[parameters('vulnerabilityAssessmentsEmails')]"
                   },
                   "vulnerabilityAssessmentsStorageID": {
                     "value": "[[parameters('vulnerabilityAssessmentsStorageID')]"
