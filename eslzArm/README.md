@@ -1,12 +1,12 @@
 # Enterprise-Scale Landing Zones ARM templates
 
-This folder contains the first-party ARM templates for Enterprise-Scale, and are being used when deploying and bootstrapping in the Azure Portal.
+This folder contains the first-party ARM templates for Enterprise-Scale which and are being used when deploying and bootstrapping in the Azure Portal.
 
 For customers who cannot deploy via portal, but rather want to clone the repository and sequence the deployments on their own, they can follow the instructions below.
 
 Note: There's a strict sequencing required in order to achieve the same outcome as when deploying via the Azure portal, and any modification and changes to the templates are not supported.
 
-## Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell
+## Do-It-The-Hard-Way deployment instructions for Enterprise-Scale using Azure PowerShell
 
 ````powershell
 
