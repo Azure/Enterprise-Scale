@@ -18,7 +18,9 @@ $DeploymentName = "eslzasd"
 $TenantRootGroupId = (Get-AzTenant).Id
 $ManagementSubscriptionId = "feab2d15-66b4-438b-accf-51f889b30ec3"
 $ConnectivitySubscriptionId = "99c2838f-a548-4884-a6e2-38c1f8fb4c0b"
+$ConnectivityAddressPrefix = "192.168.0.0/24"
 $IdentitySubscriptionId = "9e32661b-498f-4fd8-bffc-c9ecb4830430"
+$SecurityContactEmailAddress = "krnese@foo.bar"
 
 # Deploying management group structure for Enterprise-Scale
 
@@ -111,6 +113,89 @@ New-AzSubscriptionDeployment -Name "$($DeploymentName)-la-solution" `
                              -rgName "$($ESLZPrefix)-mgmt" `
                              -workspaceName "$($ESLZPrefix)-law" `
                              -workspaceRegion $Location `
-                             -Verbose                         
+                             -Verbose
+                             
+# Assign Azure Policy to enforce Log Analytics workspace on the management, management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-la-policy" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-LogAnalyticsPolicyAssignment.json `
+                                -retentionInDays "30" `
+                                -rgName "$($ESLZPrefix)-mgmt" `
+                                -ManagementGroupId "$($eslzPrefix)-management" `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
+                                -logAnalyticsWorkspaceName "$($ESLZPrefix)-law" `
+                                -workspaceRegion $Location `
+                                -automationAccountName "$($ESLZPrefix)-aauto" `
+                                -automationRegion $Location `
+                                -Verbose
+
+# Assign Azure Policy to enforce diagnostic settings for subscriptions on top level management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-sub-diag" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ActivityLogPolicyAssignment.json `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
+                                -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
+                                -ManagementGroupId $ESLZPrefix `
+                                -Verbose
+
+# Assign Azure Policy to enforce diagnostic settings for subscriptions on top level management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-resource-diag" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ResourceDiagnosticsPolicyAssignment.json `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
+                                -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
+                                -ManagementGroupId $ESLZPrefix `
+                                -Verbose
+
+# Assign Azure Policy to enforce Azure Security Center configuration enabled on all subscriptions, deployed to top level management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ASCConfigPolicyAssignment.json `
+                                -ManagementGroupId $eslzPrefix `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
+                                -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
+                                -enableAscForServers "Standard" `
+                                -enableAscForSql "Standard" `
+                                -enableAscForAppServices "Standard" `
+                                -enableAscForStorage "Standard" `
+                                -enableAscForRegistries "Standard" `
+                                -enableAscForKeyVault "Standard" `
+                                -enableAscForSqlOnVm "Standard" `
+                                -enableAscForKubernetes "Standard" `
+                                -enableAscForArm "Standard" `
+                                -enableAscForDns "Standard" `
+                                -emailContactAsc $SecurityContactEmailAddress `
+                                -Verbose
+
+# Assign Azure Policy to enable Azure Security Benchmark, deployed to top level management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-asb" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ASBPolicyAssignment.json `
+                                -ManagementGroupId $ESLZPrefix `
+                                -Verbose
+
+# Create connectivity hub, using traditional hub & spoke in this example
+
+Select-AzSubscription -SubscriptionId $ConnectivitySubscriptionId
+
+New-AzSubscriptionDeployment -Name "$($DeploymentName)-hubspoke" `
+                             -Location $Location `
+                             -TemplateFile .\eslzArm\subscriptionTemplates\hubspoke-connectivity.json `
+                             -topLevelManagementGroupPrefix $ESLZPrefix `
+                             -connectivitySubscriptionId $ConnectivitySubscriptionId `
+                             -addressPrefix $ConnectivityAddressPrefix `
+                             -enableHub "Yes" `
+                             -enableAzFw "No" `
+                             -enableAzFwDnsProxy "No" `
+                             -enableVpnGw "No" `
+                             -enableErGw "No" `
+                             -enableDdoS "No" `
+                             -ddosPlanResourceId $null `
+                             -Verbose 
                              
 ````
