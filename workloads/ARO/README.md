@@ -1,6 +1,6 @@
-# Deploy ARO (Azure Red Hat Openshift) into an landing zone
+# Deploy Azure Red Hat OpenShift (ARO) into an Enterprise-scale landing zone
 
-This article provides prescriptive guidance  for deploying Azure Red Hat OpenShift (ARO) clusters in enterprise-scale landing zones environment.
+This article provides prescriptive guidance for deploying Azure Red Hat OpenShift (ARO) clusters in enterprise-scale landing zones environment.
 
 Additionally ARM templates and sample scripts are provided to support a deployment.
 
@@ -23,8 +23,89 @@ The following identities are required when installing an ARO cluster following t
 | ARO first party SPN | Network contributor | LZ VNet | Azure Red Hat OpenShift RP SPN |
 | User for ARO installation | Contributor | Cluster RG | Azure AD user identity performing the installation |
 
+Following scripts can be used by the Platform team to prepare the landing zone:
+
+``` bash
+    # Variable declaration
+    RESOURCE_GROUP=<aro-cluster-rg>
+    NETWORK_RESOURCE_GROUP=<network-rg>
+    VNET_NAME=<vnet-name>
+    SUBSCRIPTION_ID=<landing-zone-subscription-id>
+    ARO_FP_SP=f1dd0a37-89c6-4e07-bcd1-ffd3d43d8875
+    ARO_INSTALL_USER=<aro-installer-upn>
+    CLUSTER=<cluster-name>
+    CLUSTER_SPN_NAME=${CLUSTER}-spn
+    
+    # Create cluster SPN
+    az ad sp create-for-rbac --name $CLUSTER_SPN_NAME --skip-assignment > spn.json
+
+    # Cluster SPN is contributor on vNet
+    az role assignment create --assignee $(cat spn.json | jq -r .appId) --role "network contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${NETWORK_RESOURCE_GROUP}/providers/Microsoft.Network/virtualNetworks/${VNET_NAME}
+
+    # Azure Red Hat Openshift account is contributor on vNet
+    az role assignment create --assignee ${ARO_FP_SP} --role "network contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${NETWORK_RESOURCE_GROUP}/providers/Microsoft.Network/virtualNetworks/${VNET_NAME}
+
+    #User who will be installing SPN is contributor on RG (Please note that no owner permission is required)
+    az role assignment create --assignee ${ARO_INSTALL_USER} --role "Contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}
+
+    # Azure Red Hat Openshift account is contributor on UDR
+    az role assignment create --assignee ${ARO_FP_SP} --role "network contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${NETWORK_RESOURCE_GROUP}/providers/Microsoft.Network/routeTables/aro-udr
+
+    # Cluster SPN is contributor on UDR
+    az role assignment create --assignee $(cat spn.json | jq -r .appId) --role "network contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${NETWORK_RESOURCE_GROUP}/providers/Microsoft.Network/routeTables/aro-udr
+```
+
+### Azure Policy consideration
+
+Enterprise-scale landing zones managed compliant resource and landing zone configuration via Azure Policy and Policy driven approach. ARO is deployed as a Managed Application and managed certain configuration which conflict with existing Policy assignments. The following Enterprise-scale landing zone custom policies conflicting with the deployment of ARO:
+
+- Subnets should have a Network Security Group (-> ARO installer deploys and manages own default NSG)
+- Public network access should be disabled for PaaS services (-> ARO installer deploys and manages two Storage Accounts)
+
+Platform team can create exemptions for these existing Policy assignments.
+
 ### Network
 
-| Resource | Description |
-|:---------|:--------------------|
+The following network configuration need to be applied by the Platform/NetOps team at the target landing zone.
+
+| Resource      | Description             |
+|:--------------|:------------------------|
+| Master-subnet | Subnet for master nodes |
+| Worker-subnet | Subnet for worked nodes |
+| Private link service network policies | Must be disabled on the Master-Subnet |
+| Azure Container Registry (ACR) Service Endpoint | Both subnets, Master-Subnet and Worker-Subnet require Service Endpoint for ACR (optional step, can be added at a later stage)|
+
+Commands to create subnets and Azure Private Link policies:
+
+```shell
+# Variable for the previous section wil be required
+az group create -g "$RESOURCE_GROUP" -l "$LOCATION"
+
+az network vnet subnet create \
+    -g "$NETWORK_RESOURCE_GROUP" \
+    --vnet-name "$VNET_NAME" \
+    -n "$CLUSTER-master" \
+    --address-prefixes 10.10.1.0/24 \
+    --service-endpoints Microsoft.ContainerRegistry
+
+az network vnet subnet create \
+    -g "$NETWORK_RESOURCE_GROUP" \
+    --vnet-name "$VNET_NAME" \
+    -n "$CLUSTER-worker" \
+    --address-prefixes 10.10.2.0/24 \
+    --service-endpoints Microsoft.ContainerRegistry
+
+az network vnet subnet update \
+  -g "$NETWORK_RESOURCE_GROUP" \
+  --vnet-name "$VNET_NAME" \
+  -n "$CLUSTER-master" \
+  --disable-private-link-service-network-policies true
+
+```
+
+### Firewall rule configuration
+
+Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) need to be applied by the Platform/NetOps team in Azure Firewall in the connectivity subscription.
+
+## Installing Azure Red Hat OpenShift
 
