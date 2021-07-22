@@ -2,6 +2,8 @@
 
 Azure Policy and deployIfNotExist enables the autonomy in the platform, and reduces the operational burden as you scale your deployments and subscriptions in the Enterprise-Scale architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy.
 
+> **This page is currently being updated so please also review the ["What's New?"](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) page for changes that will be reflected here soon in relation to Azure Policies for ESLZ**
+
 ## Why are there custom policy definitions as part of Enterprise-Scale Landing Zones
 
 We work with - and learn from our customers and partners to ensure that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Enterprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continuously moving these policies to built-ins.

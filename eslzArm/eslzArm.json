@@ -1,0 +1,3404 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enterpriseScaleCompanyPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "managementSubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for management. If you don't want to bring a subscription, leave this parameter empty as is."
+            }
+        },
+        "connectivitySubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for networking."
+            }
+        },
+        "identitySubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for identity."
+            }
+        },
+        "denySubnetWithoutNsgForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "denyRdpForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "denyPipForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableVmBackupForIdentity": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "onlineLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first online landing zones."
+            }
+        },
+        "corpLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first corp landing zones."
+            }
+        },
+        "corpConnectedLzSubscriptionId": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Provide the subscription ids for existing, empty subscriptions you want to move in as your first corp landing zones and connect to virtual networking hub."
+            }
+        },
+        "enableLogAnalytics": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
+        },
+        "retentionInDays": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableAsc": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected when also adding a subscription for management, ARM will assign two policies to enable auditing in your environment, into the Log Analytics workspace for platform monitoring. If 'No', it will be ignored."
+            }
+        },
+        "enableAksPolicy": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "emailContactAsc": {
+            "type": "string",
+            "metadata": {
+                "description": "Email address for Azure Security Center contact details."
+            },
+            "defaultValue": ""
+        },
+        "enableAscForServers": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForAppServices": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForStorage": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForSql": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForSqlOnVm": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForKeyVault": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForArm": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForDns": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForKubernetes": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "enableAscForRegistries": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Standard",
+                "Free"
+            ]
+        },
+        "denyAksPrivileged": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyAksPrivilegedEscalation": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyHttpIngressForAks": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableVmMonitoring": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected, policy will be assigned to enforce VM monitoring."
+            }
+        },
+        "enableVmssMonitoring": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected, policy will be assigned to enforce VMSS monitoring."
+            }
+        },
+        "enableSecuritySolution": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableEncryptionInTransit": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableAgentHealth": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableChangeTracking": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableUpdateMgmt": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableActivityLog": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableVmInsights": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableServiceMap": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableSqlAssessment": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
+        },
+        "enableSqlAudit": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableSqlEncryption": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableVmBackup": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyRdp": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyPublicEndpoints": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableStorageHttps": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableLzDdoS": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyIpForwarding": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denySubnetWithoutNsg": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "addressPrefix": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableVpnGw": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableErGw": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[deployment().location]"
+        },
+        "enableHub": {
+            "type": "string",
+            "allowedValues": [
+                "vhub",
+                "vwan",
+                "nva",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableAzFw": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableAzFwDnsProxy": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableDdoS": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enablePrivateDnsZones": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enablePrivateDnsZonesForLzs": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForAzFw": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subnetMaskForGw": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwRegionalOrAz": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwAzSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwRegionalSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erRegionalOrAz": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erAzSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erRegionalSku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "firewallZones": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "paToken": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "principalId": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "appId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "principalSecret": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "gitHubUserNameOrOrg": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "repositoryName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableAzOps": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36
+        },
+        "singlePlatformSubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36
+        },
+        "expressRouteScaleUnit": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "vpnGateWayScaleUnit": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "identityAddressPrefix": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        // Declaring the prescriptive management group structure that will be used in the scope construction
+        "mgmtGroups": {
+            "eslzRoot": "[parameters('enterpriseScaleCompanyPrefix')]",
+            "platform": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'platform')]",
+            "management": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'management')]",
+            "connectivity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'connectivity')]",
+            "identity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'identity')]",
+            "lzs": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'landingzones')]",
+            "corp": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'corp')]",
+            "online": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'online')]"
+        },
+        // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
+        "scopes": {
+            "eslzRootManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').eslzRoot)]",
+            "platformManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').platform)]",
+            "managementManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').management)]",
+            "connectivityManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').connectivity)]",
+            "identityManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').identity)]",
+            "lzsManaegmentGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').lzs)]",
+            "corpManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').corp)]",
+            "onlineManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').online)]"
+        },
+        // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
+        "deploymentUris": {
+            "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
+            "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
+            "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
+            "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
+            "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
+            "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
+            "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
+            "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
+            "azOpsRBAC": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/azOpsRoleAssignment.json')]",
+            "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
+            "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
+            "azOpsSetup": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/azOpsArm.json')]",
+            "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
+            "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsSolutions.json')]",
+            "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
+            "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
+            "activityDiagnosticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ActivityLogPolicyAssignment.json')]",
+            "ascConfigPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASCConfigPolicyAssignment.json')]",
+            "azVmMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMMonitoringPolicyAssignment.json')]",
+            "azVmssMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMSSMonitoringPolicyAssignment.json')]",
+            "azBackupLzPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMBackupPolicyAssignment.json')]",
+            "azBackupIdentityPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMBackupPolicyAssignment.json')]",
+            "azPolicyForAksPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AksPolicyPolicyAssignment.json')]",
+            "aksPrivEscalationPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AksPrivEscalationPolicyAssignment.json')]",
+            "aksPrivilegedPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AksPrivilegedPolicyAssignment.json')]",
+            "tlsSslPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DINE-APPEND-TLS-SSL-PolicyAssignment.json')]",
+            "aksHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AksWithoutHttpsPolicyAssignment.json')]",            
+            "ipFwdPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-IPForwardingPolicyAssignment.json')]",
+            "publicEndpointPolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-PublicEndpointsPolicySetDefinition.json')]",
+            "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json')]",
+            "privateDnsZonePolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DINE-PrivateDNSZonesPolicySetDefinition.json')]",
+            "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonesPolicyAssignment.json')]",
+            "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
+            "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
+            "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
+            "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
+            "sqlAuditPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
+            "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
+            "ddosPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-DDoSPolicyAssignment.json')]",
+            "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
+            "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
+            "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]",
+            "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]"
+        },
+        // Declaring deterministic deployment names
+        "deploymentSuffix": "[concat('-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix')))]",
+        "deploymentNames": {
+            "mgmtGroupDeploymentName": "[take(concat('EntScale-Mgs', variables('deploymentSuffix')), 64)]",
+            "mgmtSubscriptionPlacement": "[take(concat('EntScale-MgmtSub', variables('deploymentSuffix')), 64)]",
+            "corpPeeringDeploymentName": "[take(concat('EntScale-CorpPeering', variables('deploymentSuffix')), 60)]",
+            "connectivitySubscriptionPlacement": "[take(concat('EntScale-ConnectivitySub', variables('deploymentSuffix')), 64)]",
+            "identitySubscriptionPlacement": "[take(concat('EntScale-IdentitySub', variables('deploymentSuffix')), 64)]",
+            "policyDeploymentName": "[take(concat('EntScale-Policy', variables('deploymentSuffix')), 64)]",
+            "azOpsRbacDeploymentName": "[take(concat('EntScale-AzOpsRbac', variables('deploymentSuffix')), 64)]",
+            "azOpsRgDeploymentName": "[take(concat('EntScale-AzOpsRg', variables('deploymentSuffix')), 64)]",
+            "ddosRgDeploymentName": "[take(concat('EntScale-DDoSRg', variables('deploymentSuffix')), 64)]",
+            "ddosDeploymentName": "[take(concat('EntScale-DDoS', variables('deploymentSuffix')), 64)]",
+            "ddosHubPolicyDeploymentName": "[take(concat('EntScale-DDoSHubPolicy', variables('deploymentSuffix')), 64)]",
+            "ddosLzPolicyDeploymentName": "[take(concat('EntScale-DDoSLZPolicy', variables('deploymentSuffix')), 64)]",
+            "azOpsSetupDeploymentName": "[take(concat('EntScale-AzOpsSetup', variables('deploymentSuffix')), 64)]",
+            "monitoringDeploymentName": "[take(concat('EntScale-Monitoring', variables('deploymentSuffix')), 64)]",
+            "logAnalyticsPolicyDeploymentName": "[take(concat('EntScale-LAPolicy', variables('deploymentSuffix')), 64)]",
+            "monitoringSolutionsDeploymentName": "[take(concat('EntScale-Solutions', variables('deploymentSuffix')), 64)]",
+            "asbPolicyDeploymentName": "[take(concat('EntScale-ASB', variables('deploymentSuffix')), 64)]",
+            "resourceDiagnosticsPolicyDeploymentName": "[take(concat('EntScale-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
+            "activityDiagnosticsPolicyDeploymentName": "[take(concat('EntScale-ActivityDiagnostics', variables('deploymentSuffix')), 64)]",
+            "ascPolicyDeploymentName": "[take(concat('EntScale-ASC', variables('deploymentSuffix')), 64)]",
+            "vnetConnectivityHubDeploymentName": "[take(concat('EntScale-HubSpoke', variables('deploymentSuffix')), 64)]",
+            "vwanConnectivityHubDeploymentName": "[take(concat('EntScale-VWanHub', variables('deploymentSuffix')), 64)]",
+            "nvaConnectivityHubDeploymentName": "[take(concat('EntScale-NVAHub', variables('deploymentSuffix')), 64)]",
+            "azVmMonitorPolicyDeploymentName": "[take(concat('EntScale-AzVmMonitor', variables('deploymentSuffix')), 64)]",
+            "azVmssMonitorPolicyDeploymentName": "[take(concat('EntScale-AzVmssMonitor', variables('deploymentSuffix')), 64)]",
+            "azBackupLzPolicyDeploymentName": "[take(concat('EntScale-AzBackupLz', variables('deploymentSuffix')), 64)]",
+            "azBackupIdentityPolicyDeploymentName": "[take(concat('EntScale-AzBackupIdentity', variables('deploymentSuffix')), 64)]",
+            "azPolicyForAksPolicyDeploymentName": "[take(concat('EntScale-AksPolicy', variables('deploymentSuffix')), 64)]",
+            "aksPrivEscalationPolicyDeploymentName": "[take(concat('EntScale-AksPrivEsc', variables('deploymentSuffix')), 64)]",
+            "aksHttpsPolicyDeploymentName": "[take(concat('EntScale-AksHttps', variables('deploymentSuffix')), 64)]",
+            "aksPrivilegedPolicyDeploymentName": "[take(concat('EntScale-AksPrivileged', variables('deploymentSuffix')), 64)]",
+            "tlsSslPolicyDeploymentName": "[take(concat('EntScale-TLSSSL', variables('deploymentSuffix')), 64)]",
+            "ipFwPolicyDeploymentName": "[take(concat('EntScale-IPFwd', variables('deploymentSuffix')), 64)]",
+            "publicEndpointPolicyDeploymentName": "[take(concat('EntScale-PEndpoint', variables('deploymentSuffix')), 64)]",
+            "publicEndpointPolicyDefinitionName": "[take(concat('EntScale-Policy-PEndpoints', variables('deploymentSuffix')), 64)]",
+            "privateDnsPolicyDefinitionName": "[take(concat('EntScale-Policy-PrivateDns', variables('deploymentSuffix')), 64)]",
+            "privateDnsPolicyDeploymentName": "[take(concat('EntScale-PrivDNSAssignment', variables('deploymentSuffix')), 64)]",
+            "pipPolicyDeploymentName": "[take(concat('EntScale-PIP', variables('deploymentSuffix')), 64)]",
+            "rdpFromInternetPolicyDeploymentName": "[take(concat('EntScale-RDP', variables('deploymentSuffix')), 64)]",
+            "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('EntScale-RDPIdentity', variables('deploymentSuffix')), 64)]",
+            "storageHttpsPolicyDeploymentName": "[take(concat('EntScale-StorageHttps', variables('deploymentSuffix')), 64)]",
+            "subnetNsgPolicyDeploymentName": "[take(concat('EntScale-SubnetNsg', variables('deploymentSuffix')), 64)]",
+            "subnetNsgIdentityPolicyDeploymentName": "[take(concat('EntScale-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
+            "sqlAuditPolicyDeploymentName": "[take(concat('EntScale-SqlAudit', variables('deploymentSuffix')), 64)]",
+            "sqlEncryptionPolicyDeploymentName": "[take(concat('EntScale-SqlEncrypt', variables('deploymentSuffix')), 64)]",
+            "onlineLzSubs": "[take(concat('EntScale-OnlineLzs', variables('deploymentSuffix')), 60)]",
+            "corpLzSubs": "[take(concat('EntScale-CorpLzs', variables('deploymentSuffix')), 60)]",
+            "corpConnectedMoveLzSubs": "[take(concat('EntScale-CorpConnLzs', variables('deploymentSuffix')), 50)]",
+            "corpConnectedLzSubs": "[take(concat('EntScale-CorpPeering', variables('deploymentSuffix')), 50)]",
+            "privateDnsZoneRgDeploymentName": "[take(concat('EntScale-PrivDNSRG', variables('deploymentSuffix')), 64)]",
+            "privateDnsZonesDeploymentName": "[take(concat('EntScale-PrivDNSZones', variables('deploymentSuffix')), 35)]",
+            "dnsZoneRoleAssignmentDeploymentName": "[take(concat('EntScale-DNSZoneRole', variables('deploymentSuffix')), 64)]",
+            "identityPeeringDeploymentName": "[take(concat('EntScale-IDPeering', variables('deploymentSuffix')), 64)]",
+            "identityVwanPeeringDeploymentName": "[take(concat('EntScale-IDVwanPeering', variables('deploymentSuffix')), 64)]",
+            "corpConnectedLzVwanSubs": "[take(concat('EntScale-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]"
+        },
+        "esLiteDeploymentNames": {
+            "mgmtGroupLiteDeploymentName": "[take(concat('EntScale-MgsLite', variables('deploymentSuffix')), 64)]",
+            "rdpFromInternetIdentityLitePolicyDeploymentName": "[take(concat('EntScale-RDPIdentity', variables('deploymentSuffix')), 64)]",
+            "azBackupIdentityLitePolicyDeploymentName": "[take(concat('EntScale-AzBackupIdentity', variables('deploymentSuffix')), 64)]",
+            "subnetNsgIdentityLitePolicyDeploymentName": "[take(concat('EntScale-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
+            "monitoringLiteDeploymentName": "[take(concat('EntScale-MonitoringLite', variables('deploymentSuffix')), 64)]",
+            "logAnalyticsLitePolicyDeploymentName": "[take(concat('EntScale-LAPolicyLite', variables('deploymentSuffix')), 64)]",
+            "monitoringSolutionsLiteDeploymentName": "[take(concat('EntScale-SolutionsLite', variables('deploymentSuffix')), 64)]",
+            "platformLiteSubscriptionPlacement": "[take(concat('EntScale-PlatformSubLite', variables('deploymentSuffix')), 64)]",
+            "vnetConnectivityHubLiteDeploymentName": "[take(concat('EntScale-VnetHubLite', variables('deploymentSuffix')), 64)]",
+            "vwanConnectivityHubLiteDeploymentName": "[take(concat('EntScale-VWanHubLite', variables('deploymentSuffix')), 64)]",
+            "nvaConnectivityHubLiteDeploymentName": "[take(concat('EntScale-NVAHubLite', variables('deploymentSuffix')), 64)]",
+            "azOpsSetupLiteDeploymentName": "[take(concat('EntScale-AzOpsSetupLite', variables('deploymentSuffix')), 64)]",
+            "azOpsRbacLiteDeploymentName": "[take(concat('EntScale-AzOpsRbacLite', variables('deploymentSuffix')), 64)]",
+            "azOpsRgLiteDeploymentName": "[take(concat('EntScale-AzOpsRgLite', variables('deploymentSuffix')), 64)]",
+            "ddosRgLiteDeploymentName": "[take(concat('EntScale-DDoSRgLite', variables('deploymentSuffix')), 64)]",
+            "ddosLiteDeploymentName": "[take(concat('EntScale-DDoSLite', variables('deploymentSuffix')), 64)]",
+            "ddosHubLitePolicyDeploymentName": "[take(concat('EntScale-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
+            "privateDnsZoneRgLiteDeploymentName": "[take(concat('EntScale-PrivDNSRGLite', variables('deploymentSuffix')), 64)]",
+            "privateDnsZonesLiteDeploymentName": "[take(concat('EntScale-PrivDNSLite', variables('deploymentSuffix')), 35)]"            
+
+        },
+        // Declaring deterministic names for Resource Groups that will be created for platform resources
+        "platformRgNames": {
+            "mgmtRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-mgmt')]",
+            "azOpsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azops')]",
+            "connectivityRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('location'))]",
+            "ddosRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos')]",
+            "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]",
+            "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]",
+            "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
+        },
+        // Declaring deterministic names for platform resources that will be created
+        "platformResourceNames": {
+            "logAnalyticsWorkspace": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-law')]",
+            "automationAccount": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-aauto')]",
+            "vpnGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vpngw-', parameters('location'))]",
+            "erGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ergw-', parameters('location'))]",
+            "ddosName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos-', parameters('location'))]",
+            "azFwPolicyName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azfwpolicy-', parameters('location'))]",
+            "azFwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', parameters('location'))]",
+            "azErGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-erpip-', parameters('location'))]",
+            "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('location'))]",
+            "vwanName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vwan-', parameters('location'))]",
+            "azVpnGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-gwpip-', parameters('location'))]",
+            "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('location'))]",
+            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]",
+            "lzVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('location'))]"
+        },
+        // Declaring subscriptionId for AzOps
+        "azOpsSubscriptionId": "[if(empty(parameters('subscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('subscriptionId'))]",
+        // Declaring deterministic resourceId's for platform resources that will be created
+        "singleVsDedicatedMgmtSub": "[if(empty(parameters('managementSubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('managementSubscriptionId'))]",
+        "singleVsDedicatedConnectivitySub": "[if(empty(parameters('connectivitySubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('connectivitySubscriptionId'))]",
+        "singleVsDedicatedIdentitySub": "[if(empty(parameters('identitySubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('identitySubscriptionId'))]",                
+        "platformResourceIds": {
+            "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', variables('platformResourceNames').logAnalyticsWorkspace)]",
+            "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
+            "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
+            "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
+            "vWanHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubName)]",
+            "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
+            "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]"
+        },
+        // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
+        "deterministicRoleAssignmentGuids": {
+            "ddosForConnectivity": "[take(guid(concat(parameters('enterpriseScaleCompanyPrefix'), 'ddos')), 10)]",
+            "backupForIdentity": "[take(guid(concat(parameters('enterpriseScaleCompanyPrefix'), 'idbackup')), 10)]"
+        },
+        "privateDnsZones": [
+            "privatelink.azure-automation.net",
+            "privatelink.database.windows.net",
+            "privatelink.sql.azuresynapse.net",
+            "privatelink.blob.core.windows.net",
+            "privatelink.table.core.windows.net",
+            "privatelink.queue.core.windows.net",
+            "privatelink.file.core.windows.net",
+            "privatelink.web.core.windows.net",
+            "privatelink.dfs.core.windows.net",
+            "privatelink.documents.azure.com",
+            "privatelink.mongo.cosmos.azure.com",
+            "privatelink.cassandra.cosmos.azure.com",
+            "privatelink.gremlin.cosmos.azure.com",
+            "privatelink.postgres.database.azure.com",
+            "privatelink.mysql.database.azure.com",
+            "privatelink.mariadb.database.azure.com",
+            "privatelink.vaultcore.azure.net",
+            "[concat('privatelink.', parameters('location'), '.azmk8s.io')]",
+            "privatelink.search.windows.net",
+            "privatelink.azurecr.io",
+            "privatelink.azconfig.io",
+            "[concat('privatelink.', parameters('location'), '.backup.windowsazure.com')]",
+            "[concat(parameters('location'), '.privatelink.siterecovery.windowsazure.com')]",
+            "privatelink.servicebus.windows.net",
+            "privatelink.azure-devices.net",
+            "privatelink.eventgrid.azure.net",
+            "privatelink.azurewebsites.net",
+            "privatelink.api.azureml.ms",
+            "privatelink.notebooks.azure.net",
+            "privatelink.service.signalr.net",
+            "privatelink.monitor.azure.com",
+            "privatelink.oms.opsinsights.azure.com",
+            "privatelink.ods.opsinsights.azure.com",
+            "privatelink.agentsvc.azure-automation.net",
+            "privatelink.cognitiveservices.azure.com",
+            "privatelink.afs.azure.net",
+            "privatelink.datafactory.azure.com",
+            "privatelink.adf.azure.com",
+            "privatelink.redis.cache.windows.net"
+        ],
+        "roleDefinitions": {
+            "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
+        }
+    },
+    "resources": [
+        /*
+            The following deployment will create the management group structure for ESLZ and ensure the sustainable, scalable architecture
+        */
+        {
+            // Creating the ESLZ management group structure
+            "condition": "[empty(parameters('singlePlatformSubscriptionId'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').mgmtGroupDeploymentName]",
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').managementGroups]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },     
+        /*
+            The following deployments will deploy the required proactive and preventive Azure policies for ESLZ policy driven governance
+        */
+        {
+            // Deploying ESLZ custom policies. Note: all policies will eventually be moved to built-in policies and codebase will be reduced
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').policyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').policyDefinitions]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying ESLZ Policy Initiative to prevent usage of public endpoints for PaaS services using built-in policies
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').publicEndpointPolicyDefinitionName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').publicEndpointPolicySetDefinition]"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            // Deploying ESLZ Policy Initiative to deploy Private DNS Zones for PaaS services using built-in policies
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').privateDnsPolicyDefinitionName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZonePolicySetDefinition]"
+                },
+                "parameters": {}
+            }
+        },        
+        {
+            // One of Azure's untold stories.....
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat('preparingToLaunch', copyIndex())]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').policyDeploymentName]",
+                "[variables('deploymentNames').privateDnsPolicyDefinitionName]",
+                "[variables('deploymentNames').publicEndpointPolicyDefinitionName]"
+            ],
+            "copy": {
+                "batchSize": 1,
+                "count": 20,
+                "mode": "Serial",
+                "name": "policyCompletion"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        /*
+            The following deployments will organize the dedicated platform subscriptions into their respective management groups
+        */       
+        {
+            // Placing management subscription into dedicated management group
+            "condition": "[not(empty(parameters('managementSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').mgmtSubscriptionPlacement]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').managementManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').management]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    }
+                }
+            }
+        },
+        {
+            // Placing connectivity subscription into dedicated management group
+            "condition": "[not(empty(parameters('connectivitySubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').connectivitySubscriptionPlacement]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').connectivity]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    }
+                }
+            }
+        },
+        {
+            // Placing identity subscription into dedicated management group
+            "condition": "[not(empty(parameters('identitySubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').identitySubscriptionPlacement]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').identityManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').identity]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('identitySubscriptionId')]"
+                    }
+                }
+            }
+        },
+        /*
+            The following deployments will optionally configure the governance, security, and monitoring for the Azure platform and landing zones
+        */
+        {
+            // Deploying Log Analytics workspace to management subscription if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitoringDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitoring]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "automationAccountName": {
+                        "value": "[variables('platformResourceNames').automationAccount]"
+                    },
+                    "automationRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "retentionInDays": {
+                        "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
+            "condition": "[and(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitoringSolutions]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "enableSecuritySolution": {
+                        "value": "[parameters('enableSecuritySolution')]"
+                    },
+                    "enableAgentHealth": {
+                        "value": "[parameters('enableAgentHealth')]"
+                    },
+                    "enableChangeTracking": {
+                        "value": "[parameters('enableChangeTracking')]"
+                    },
+                    "enableUpdateMgmt": {
+                        "value": "[parameters('enableUpdateMgmt')]"
+                    },
+                    "enableActivityLog": {
+                        "value": "[parameters('enableActivityLog')]"
+                    },
+                    "enableVmInsights": {
+                        "value": "[parameters('enableVmInsights')]"
+                    },
+                    "enableServiceMap": {
+                        "value": "[parameters('enableServiceMap')]"
+                    },
+                    "enableSqlAssessment": {
+                        "value": "[parameters('enableSqlAssessment')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Log Analytics workspace policy to management management group if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').logAnalyticsPolicyDeploymentName]",
+            "scope": "[variables('scopes').managementManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').logAnalyticsPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "rgName": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "automationAccountName": {
+                        "value": "[variables('platformResourceNames').automationAccount]"
+                    },
+                    "automationRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "retentionInDays": {
+                        "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Security Benchmark policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), or(equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAsc'), 'Yes')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').asbPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').asbPolicyInitiative]"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            // Assigning Azure Monitor Resource Diagnostics policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",                
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceDiagnosticsInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    }
+                }
+            }   
+        },
+        {
+            // Assigning Azure Activity Diagnostics Log policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').activityDiagnosticsPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').activityDiagnosticsPolicyAssignment]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }   
+        },
+        {
+            // Assigning Azure Security Center configuration policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ascPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ascConfigPolicyInitiative]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "emailContactAsc": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "enableAscForServers": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "enableAscForSql": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "enableAscForAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "enableAscForStorage": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "enableAscForRegistries": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
+                    "enableAscForKeyVault": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "enableAscForSqlOnVm": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
+                    "enableAscForKubernetes": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "enableAscForArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "enableAscForDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    }
+                }
+            }   
+        },
+        /*
+            The following optional deployment will configure virtual network hub into the connectivity subscription
+        */
+        {
+            // Creating resource group for DDoS Standard Protection
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ddosRgDeploymentName]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').ddosRg]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating DDoS protection plan into the connectivity subscription
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ddosDeploymentName]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').ddosRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosRgDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ddosProtection]"
+                },
+                "parameters": {
+                    "ddosName": {
+                        "value": "[variables('platformResourceNames').ddosName]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning DDoS Policy to enforce DDoS on virtual networks if condition evaluates to true
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ddosHubPolicyDeploymentName]",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ddosPolicyAssignment]"
+                },
+                "parameters": {
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[variables('deterministicRoleAssignmentGuids').ddosForConnectivity]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }   
+        },
+        {
+            // Creating the virtual network hub (hub and spoke)
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vhub'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').vnetConnectivityHubDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vnetConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "enableAzFw": {
+                        "value": "[parameters('enableAzFw')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "subnetMaskForAzFw": {
+                        "value": "[parameters('subnetMaskForAzFw')]"
+                    },
+                    "subnetMaskForGw": {
+                        "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "firewallZones": {
+                        "value": "[parameters('firewallZones')]"
+                    },
+                    "enableAzFwDnsProxy": {
+                        "value": "[parameters('enableAzFwDnsProxy')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAz')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSku')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSku')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAz')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSku')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSku')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the virtual network hub (with NVA)
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'nva'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').nvaConnectivityHubDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').nvaConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "subnetMaskForGw": {
+                        "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAz')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSku')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSku')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAz')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSku')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSku')]"
+                    }
+                }
+            }
+        },        
+        {
+            // Creating the VWAN network hub (Microsoft managed)
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vwan'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').vwanConnectivityHubDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "enableAzFw": {
+                        "value": "[parameters('enableAzFw')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "expressRouteScaleUnit": {
+                        "value": "[parameters('expressRouteScaleUnit')]"
+                    },
+                    "vpnGateWayScaleUnit": {
+                        "value": "[parameters('vpnGateWayScaleUnit')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating resource group for Private DNS Zones
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').privateDnsZoneRgDeploymentName]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').privateDnsRg]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating Private DNS Zones into the connectivity subscription
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').privateDnsZonesDeploymentName, copyIndex())]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRgDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
+            ],
+            "copy": {
+                "name": "dnsZones",
+                "count": "[length(variables('privateDnsZones'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZones]"
+                },
+                "parameters": {
+                    "privateDnsZoneName": {
+                        "value": "[concat(variables('privateDnsZones')[copyIndex()])]"
+                    },
+                    "connectivityHubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    }
+                }
+            }
+        },          
+        /*
+            The following optional deployment will configure and setup AzOps with GitHub for your ESLZ deployment
+        */
+        {
+            // Creating roleAssignment for the dedicated Service Principal for AzOps
+            "condition": "[and(equals(parameters('enableAzOps'), 'Yes'), not(empty(parameters('principalSecret'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azOpsRbacDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azOpsRBAC]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[parameters('principalId')]"
+                    }
+                }
+            }   
+        },
+        {
+            // Creating resource group for AzOps
+            "condition": "[and(equals(parameters('enableAzOps'), 'Yes'), not(empty(parameters('principalSecret'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azOpsRgDeploymentName]",
+            "subscriptionId": "[variables('azOpsSubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').azOpsRbacDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').azOpsRg]"
+                    },
+                    "location": {
+                        "value": "[deployment().location]"
+                    }
+                }
+            }   
+        },
+        {
+            // Creating GitHub repository and bootstraps the CICD pipeline
+            "condition": "[and(equals(parameters('enableAzOps'), 'Yes'), not(empty(parameters('principalSecret'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azOpsSetupDeploymentName]",
+            "subscriptionId": "[variables('azOpsSubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').azOpsRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').azOpsRbacDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').azOpsRgDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').monitoringSolutionsLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringSolutionsDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "corpLzs",
+                "onlineLzs"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azOpsSetup]"
+                },
+                "parameters": {
+                    "paToken": {
+                        "value": "[parameters('paToken')]"
+                    },
+                    "principalSecret": {
+                        "value": "[parameters('principalSecret')]"
+                    },
+                    "gitHubUserNameOrOrg": {
+                        "value": "[parameters('gitHubUserNameOrOrg')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "appId": {
+                        "value": "[parameters('appId')]"
+                    },
+                    "repositoryName": {
+                        "value": "[parameters('repositoryName')]"
+                    }
+                }
+            }   
+        },
+        /*
+            The following deployments will deploy and configure the Azure policy governance for the landing zones
+        */
+        {
+            // Deploying Private DNS Zones policy assignment for PaaS services using built-in policies
+            "condition": "[equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').privateDnsPolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
+                "dnsZones",
+                "dnsZonesLite",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsPolicyDefinitionName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZonePolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "dnsZoneResourceGroupId": {
+                        "value": "[variables('platformResourceIds').privateDnsRgResourceId]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning RBAC for Private DNS Zone Policy assignment to the connectivity hub
+            "condition": "[equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').dnsZoneRoleAssignmentDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[variables('singleVsDedicatedConnectivitySub')]",
+            "dependsOn": [
+                "[variables('deploymentNames').privateDnsPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleAssignments]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[if(equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes'), reference(variables('deploymentNames').privateDnsPolicyDeploymentName).outputs.principalId.value, 'na')]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "[variables('roleDefinitions').networkContributor]"
+                    }
+                }
+            }
+        },        
+        {
+            // Assigning Azure Monitor for VMs policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }   
+        },
+        {
+            // Assigning Azure Monitor for VMSS policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmssMonitoring'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmssMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },        
+        {
+            // Assigning Azure Backup policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableVmBackup'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azBackupLzPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azBackupLzPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning DDoS Policy to enforce DDoS on virtual networks in landing zones management group if condition evaluates to true
+            "condition": "[and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ddosLzPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ddosPolicyAssignment]"
+                },
+                "parameters": {
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }   
+        },          
+        {
+            // Assigning Azure Policy enablement policy for AKS to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableAksPolicy'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azPolicyForAksPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azPolicyForAksPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning Aks Priv Escalation policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('denyAksPrivilegedEscalation'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').aksPrivEscalationPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').aksPrivEscalationPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Aks Priviliged policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('denyAksPrivileged'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').aksPrivilegedPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').aksPrivilegedPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning Https enforcement for AKS policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('denyHttpIngressForAks'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').aksHttpsPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').aksHttpsPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning TLS-SSL policy initiative to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableEncryptionInTransit'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').tlsSslPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').tlsSslPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning IP Fwd policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('denyIpForwarding'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ipFwPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ipFwdPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny public endpoint initiative to corp connected landing zones management group if condition is true
+            "condition": "[equals(parameters('denyPublicEndpoints'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').publicEndpointPolicyDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').publicEndpointPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny rpd from internet policy landing zones management group if condition is true
+            "condition": "[equals(parameters('denyRdp'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').rdpFromInternetPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').rdpFromInternetPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny storage without https policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableStorageHttps'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').storageHttpsPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').storageHttpsPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny subnet without nsg policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('denySubnetWithoutNsg'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').subnetNsgPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subnetNsgPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning sql audit policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').sqlAuditPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').sqlAuditPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning sql encryption policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableSqlEncryption'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').sqlEncryptionPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManaegmentGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').sqlEncryptionPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        /*
+            The following section will optionally configure the governance for the Identity management group for the platform
+        */
+        {
+            // Assigning Azure Backup policy to identity management group if condition is true
+            "condition": "[and(equals(parameters('enableVmBackupForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azBackupIdentityPolicyDeploymentName]",
+            "scope": "[variables('scopes').identityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azBackupLzPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[variables('deterministicRoleAssignmentGuids').backupForIdentity]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny Public Ip policy to identity management group if condition is true
+            "condition": "[and(equals(parameters('denyPipForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').pipPolicyDeploymentName]",
+            "scope": "[variables('scopes').identityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').pipPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny subnet without nsg policy to identity management group if condition is true
+            "condition": "[and(equals(parameters('denySubnetWithoutNsgForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').subnetNsgIdentityPolicyDeploymentName]",
+            "scope": "[variables('scopes').identityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subnetNsgPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning deny rpd from internet on identity management group if condition is true
+            "condition": "[and(equals(parameters('denyRdpForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').rdpFromInternetIdentityPolicyDeploymentName]",
+            "scope": "[variables('scopes').identityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').rdpFromInternetPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Peer vnet in identity subscription to connectivity hub if vhub or nva contidion is true
+            "condition": "[and(or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), not(empty(parameters('identityAddressPrefix'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').identityPeeringDeploymentName]",
+            "subscriptionId": "[parameters('identitySubscriptionId')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVnetPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').identityVnetRg]"
+                    },
+                    "vNetName": {
+                        "value": "[concat(parameters('identitySubscriptionId'), variables('platformResourceNames').identityVnet)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('identityAddressPrefix')]"
+                    },
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('platformResourceIds').azFirewallResourceId, '')]"
+                    }
+                }
+            }
+        },
+        {
+            // Peer vnet in identity subscription to connectivity hub if vwan contidion is true
+            "condition": "[and(equals(parameters('enableHub'), 'vwan'), not(empty(parameters('identityAddressPrefix'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').identityVwanPeeringDeploymentName]",
+            "subscriptionId": "[parameters('identitySubscriptionId')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVwanPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').identityVnetRg]"
+                    },
+                    "vNetName": {
+                        "value": "[concat(parameters('identitySubscriptionId'), variables('platformResourceNames').identityVnet)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('identityAddressPrefix')]"
+                    },
+                    "vWanHubResourceId": {
+                        "value": "[variables('platformResourceIds').vWanHubResourceId]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('platformResourceIds').azFirewallResourceId, '')]"
+                    }
+                }
+            }
+        },              
+        /*
+            The following deployments will place landing zone subscriptions into online/corp (connected or disconnected)
+        */
+        {
+            // Placing subscription(s) into online landing zone management group
+            "condition": "[not(empty(parameters('onlineLzSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').onlineLzSubs, copyIndex())]",
+            "scope": "[variables('scopes').onlineManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "copy": {
+                "name": "onlineLzs",
+                "count": "[length(parameters('onlineLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').online]"
+                    },
+                    "subscriptionId": {
+                        "value": "[concat(parameters('onlineLzSubscriptionId')[copyIndex()])]"
+                    }
+                }
+            }
+        },
+        {
+            // Placing subscriptions into corp landing zone management group
+            "condition": "[not(empty(parameters('corpLzSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').corpLzSubs, copyIndex())]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "copy": {
+                "name": "corpLzs",
+                "count": "[length(parameters('corpLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').corp]"
+                    },
+                    "subscriptionId": {
+                        "value": "[concat(parameters('corpLzSubscriptionId')[copyIndex()])]"
+                    }
+                }
+            }
+        },
+        {
+            // Placing subscriptions into corp landing zone management group (and do subsequent peering)
+            "condition": "[not(empty(parameters('corpConnectedLzSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').corpConnectedMoveLzSubs, copyIndex())]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "copy": {
+                "name": "corpConnectedMoveLzs",
+                "count": "[length(parameters('corpConnectedLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').corp]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs]"
+                    }
+                }
+            }
+        },
+        {
+            // Peering corp connected lz vnet to connectivity sub (when nva or vhub is selected)
+            "condition": "[and(or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), not(empty(parameters('corpConnectedLzSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(variables('deploymentNames').corpPeeringDeploymentName, copyIndex())]",
+            "subscriptionId": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "corpConnectedMoveLzs"
+            ],
+            "copy": {
+                "name": "corpConnectedPeering",
+                "count": "[length(parameters('corpConnectedLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVnetPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').lzVnetRg]"
+                    },
+                    "vNetName": {
+                        "value": "[concat(parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '-', variables('platformResourceNames').lzVnet)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].addresses]"
+                    },
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('platformResourceIds').azFirewallResourceId, '')]"
+                    }
+                }
+            }
+        },
+        /*{
+            // Peering corp connected lz vnet to connectivity sub (when vwan is selected)
+            "condition": "[and(equals(parameters('enableHub'), 'vwan'), not(empty(parameters('corpConnectedLzSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(variables('deploymentNames').corpConnectedLzVwanSubs, copyIndex())]",
+            "subscriptionId": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "corpConnectedMoveLzs"
+            ],
+            "copy": {
+                "name": "corpConnectedVwanPeering",
+                "count": "[length(parameters('corpConnectedLzSubscriptionId'))]",
+                "batchSize": 1,
+                "mode": "Serial"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVnetPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').lzVnetRg]"
+                    },
+                    "vNetName": {
+                        "value": "[concat(parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '-', variables('platformResourceNames').lzVnet)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('corpConnectedLzSubscriptionId')[copyIndex()].addresses]"
+                    },
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vWanHubResourceId]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('platformResourceIds').azFirewallResourceId, '')]"
+                    }
+                }
+            }
+        },*/     
+        /*
+            **ESLZ Lite Only!**
+            The following section represent optional deployments in case the user select to use a single dedicated subscription for platform resources.
+            This is not recommmended for production deployment, only for small enterprises, demo, POC, etc.
+
+            The following deployment will create the management group structure for ESLZ Lite
+        */
+        {
+            // Creating the ESLZ Lite management group structure
+            "condition": "[not(empty(parameters('singlePlatformSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').managementGroupsLite]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: the following deployments will organize the dedicated platform subscription into the dedicated management groups
+        */ 
+        {
+            // Placing Platform subscription into dedicated management group
+            "condition": "[not(empty(parameters('singlePlatformSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subscriptionPlacement]"
+                },
+                "parameters": {
+                    "targetManagementGroupId": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "subscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: the following deployment will create Log Analytics to the platform subscription
+        */         
+        {
+            // Deploying Log Analytics workspace to platform subscription if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').monitoringLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esliteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitoring]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "automationAccountName": {
+                        "value": "[variables('platformResourceNames').automationAccount]"
+                    },
+                    "automationRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "retentionInDays": {
+                        "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: the following deployments will deploy Log Analytics solutions to the platform subscription
+        */         
+        {
+            // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
+            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitoringSolutions]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "enableSecuritySolution": {
+                        "value": "[parameters('enableSecuritySolution')]"
+                    },
+                    "enableAgentHealth": {
+                        "value": "[parameters('enableAgentHealth')]"
+                    },
+                    "enableChangeTracking": {
+                        "value": "[parameters('enableChangeTracking')]"
+                    },
+                    "enableUpdateMgmt": {
+                        "value": "[parameters('enableUpdateMgmt')]"
+                    },
+                    "enableActivityLog": {
+                        "value": "[parameters('enableActivityLog')]"
+                    },
+                    "enableVmInsights": {
+                        "value": "[parameters('enableVmInsights')]"
+                    },
+                    "enableServiceMap": {
+                        "value": "[parameters('enableServiceMap')]"
+                    },
+                    "enableSqlAssessment": {
+                        "value": "[parameters('enableSqlAssessment')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploy Log Analytics workspace policy to the platform management group
+        */                 
+        {
+            // Assigning Log Analytics workspace policy to platform management group if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').logAnalyticsLitePolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').logAnalyticsPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "rgName": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "automationAccountName": {
+                        "value": "[variables('platformResourceNames').automationAccount]"
+                    },
+                    "automationRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "retentionInDays": {
+                        "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploy RG for DDoS standard protection to platform subscription
+        */          
+        {
+            // Creating resource group for DDoS Standard Protection
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').ddosRgLiteDeploymentName]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').ddosRg]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploy DDoS standard protection
+        */          
+        {
+            // Creating DDoS protection plan into the connectivity subscription
+            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').ddosLiteDeploymentName]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').ddosRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosRgLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ddosProtection]"
+                },
+                "parameters": {
+                    "ddosName": {
+                        "value": "[variables('platformResourceNames').ddosName]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },        
+        /*
+            Note: ES Lite only: deploy RG for Private DNS zones to platform subscription
+        */
+        {
+            // Creating resource group for Private DNS Zones
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').privateDnsRg]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploy private DNS zones
+        */
+        {
+            // Creating Private DNS Zones into the connectivity subscription
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLiteDeploymentName, copyIndex())]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]"
+            ],
+            "copy": {
+                "name": "dnsZonesLite",
+                "count": "[length(variables('privateDnsZones'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZones]"
+                },
+                "parameters": {
+                    "privateDnsZoneName": {
+                        "value": "[concat(variables('privateDnsZones')[copyIndex()])]"
+                    },
+                    "connectivityHubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: assign DDoS policy for landing zones
+        */                        
+        {
+            // Assigning DDoS Policy to enforce DDoS on virtual networks if condition evaluates to true
+            "condition": "[and(and(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableHub'), 'vhub')), not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableHub'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName]"
+                },
+                "parameters": {
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[variables('deterministicRoleAssignmentGuids').ddosForConnectivity]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }   
+        },
+        /*
+            Note: ES Lite only: deploys hub and spoke
+        */        
+        {
+            // Configuring and deploying the connectivity hub (hub and spoke)
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))),equals(parameters('enableHub'), 'vhub'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "name": "[variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vnetConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "enableAzFw": {
+                        "value": "[parameters('enableAzFw')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
+                    },
+                    "subnetMaskForAzFw": {
+                        "value": "[parameters('subnetMaskForAzFw')]"
+                    },
+                    "subnetMaskForGw": {
+                        "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "firewallZones": {
+                        "value": "[parameters('firewallZones')]"
+                    },
+                    "enableAzFwDnsProxy": {
+                        "value": "[parameters('enableAzFwDnsProxy')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAz')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSku')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSku')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAz')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSku')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSku')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys virtual hub (NVA)
+        */
+        {
+            // Configuring and deploying the connectivity hub (NVA)
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))),equals(parameters('enableHub'), 'nva'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "name": "[variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').nvaConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
+                    },
+                    "subnetMaskForGw": {
+                        "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAz')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSku')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSku')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAz')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSku')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSku')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys VWAN hub (Microsoft Managed)
+        */
+        {
+            // Creating the VWAN network hub (Microsoft managed)
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))),equals(parameters('enableHub'), 'vwan'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "name": "[variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "enableAzFw": {
+                        "value": "[parameters('enableAzFw')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
+                    },
+                    "expressRouteScaleUnit": {
+                        "value": "[parameters('expressRouteScaleUnit')]"
+                    },
+                    "vpnGateWayScaleUnit": {
+                        "value": "[parameters('vpnGateWayScaleUnit')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: assigns policy for identity to enable Azure Backup
+        */
+        {
+            // Assigning Azure Backup policy to platform management group if condition is true
+            "condition": "[and(equals(parameters('enableVmBackupForIdentity'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLitedeploymentNames').azBackupIdentityLitePolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azBackupLzPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[variables('deterministicRoleAssignmentGuids').backupForIdentity]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: assign policy for identity to deny subnet without NSG 
+        */
+        {
+            // Assigning deny subnet without nsg policy to identity management group if condition is true
+            "condition": "[and(equals(parameters('denySubnetWithoutNsgForIdentity'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLitedeploymentNames').subnetNsgIdentityLitePolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"  
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').subnetNsgPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: assign policy to deny RDP from internet to platform MG 
+        */        
+        {
+            // Assigning deny rpd from internet policy landing zones management group if condition is true
+            "condition": "[and(equals(parameters('denyRdpForIdentity'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLitedeploymentNames').rdpFromInternetIdentityLitePolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"  
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').rdpFromInternetPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "deployment": {
+            "type": "string",
+            "value": "[concat(deployment().name, ' has successfully deployed. Welcome to Enterprise-Scale!')]"
+        }
+    }
+}
