@@ -119,7 +119,7 @@ Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/
 
 ## Deploy Azure Red Hat OpenShift using Azure CLI
 
-The following command should be deployed by the **landing zone user**, which will install the new ARO cluster into an existing landing zone VNET.
+The following command should be executed by the **landing zone user**, which will deploy the new ARO cluster into an existing landing zone VNet.
 ```shell
 # Variables for the previous section wil be required
 
