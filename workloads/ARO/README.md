@@ -117,9 +117,6 @@ az network vnet subnet update \
 
 Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) need to be applied by the Platform/NetOps team in Azure Firewall in the connectivity subscription.
 
-## Installing Azure Red Hat OpenShift using ARM templates
-
-
 ## Installing Azure Red Hat OpenShift using Azure CLI
 
 The following command will install the a new cluster into an existing landing zone VNET.
@@ -141,3 +138,7 @@ az aro create --name "$CLUSTER" \
               --vnet-resource-group "$NETWORK_RESOURCE_GROUP"
 
 ```
+
+## Installing Azure Red Hat OpenShift using ARM templates
+
+_coming soon_
