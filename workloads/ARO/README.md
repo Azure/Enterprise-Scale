@@ -1,4 +1,4 @@
-# Deploy Azure Red Hat OpenShift (ARO) into an Enterprise-scale landing zone
+# Deploy Azure Red Hat OpenShift (ARO) in enterprise-scale landing zones
 
 This article provides prescriptive guidance for deploying Azure Red Hat OpenShift (ARO) clusters in enterprise-scale landing zones environment.
 
@@ -8,16 +8,16 @@ Additionally ARM templates and sample scripts are provided to support a deployme
 
 Before getting started with this guidance, ensure that:
 
-- Enterprise-scale landing zones has been deployed, either by using the Hub and Spoke or Virtual-WAN reference implementations, or Enterprise-scale landing zones was deployed as per [architectural guidance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
+- Enterprise-scale landing zones has been deployed by using the Hub and Spoke reference implementation or Enterprise-scale landing zones was deployed as per [architectural guidance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
 - There is at least one landing zone under the corp management group where ARO cluster will be deployed, which is peered to the hub VNet.
 - Within Enterprise-scale landing zone there is a segregation between platform and workload/application specific roles. For this guide the segregation of duties is fully respected and it is mentioned which role is able to perform the actions.
-- This guide follows the  least-privilege principle by assign permissions to the user installing ARO or the respective SPN's.
+- This guide follows the least-privilege principle by assign permissions to the user installing ARO or the respective SPN's.
 
-Before ARO gets deployed to a landing zone, ensure the following required infrastructure is additionally configured:
+Before ARO is deployed to a landing zone, ensure the following requirements are met:
 
 ### Identity
 
-The following identities are required when installing an ARO cluster following the least-privilege principle for the ALM template deployment:
+The following identities are required when installing an ARO cluster following the least-privilege principle via Azure CLI and ARM template deployment:
 
 | Identity | Required privileges | Scope or resource | Description  |
 |:---------|:--------------------|:------------------|:--------|
@@ -28,7 +28,7 @@ The following identities are required when installing an ARO cluster following t
 
 > Note: SPN has to be dedicated to a single ARO cluster and can't be shared.
 
-Following scripts can be used by the **Platform team** to prepare the landing zone:
+The following script can be used by the **Platform team** to prepare the landing zone for an ARO cluster installation:
 
 ``` bash
     # Variable declaration
@@ -67,27 +67,27 @@ Following scripts can be used by the **Platform team** to prepare the landing zo
 
 ### Azure Policy consideration
 
-Enterprise-scale landing zones managed compliant resource and landing zone configuration via Azure Policy and Policy driven approach. ARO is deployed as a Managed Application and managed certain configuration which conflict with existing Policy assignments. The following Enterprise-scale landing zone custom policies conflicting with the deployment of ARO:
+Enterprise-scale landing zones manages compliant resource and landing zone configuration via Azure Policy. ARO is deployed as a Managed Application, which includes certain configuration that conflicts with existing Policy assignments. The following enterprise-scale landing zone policy assignments conflicting with the deployment of ARO:
 
 - Subnets should have a Network Security Group (-> ARO installer deploys and manages own default NSG)
-- Public network access should be disabled for PaaS services (-> ARO installer deploys and manages two Storage Accounts)
+- Public network access should be disabled for PaaS services (-> ARO installer deploys and manages Azure Storage Accounts)
 
 **Platform team** can create exemptions for these existing Policy assignments.
 
 ### Network
 
-The following network configuration need to be applied by the **Platform/NetOps team** at the target landing zone. Please note, in the Enterprise-scale context landing zone VNET has already existing and needs the following configuration.
+The following network configuration needs to be applied by the **Platform/NetOps team** to the target landing zone. Please note that, in the Enterprise-scale context, landing zone VNET has been already deployed in the subscription and connected to the hub VNet via VNet peering, hence only the following configuration is required:
 
 | Resource      | Description             |
 |:--------------|:------------------------|
 | Master-subnet | Subnet for master nodes |
 | Worker-subnet | Subnet for worked nodes |
 | Private link service network policies | Must be disabled on the Master-Subnet |
-| Azure Container Registry (ACR) Service Endpoint | Both subnets, Master-Subnet and Worker-Subnet require Service Endpoint for ACR (optional step, can be added at a later stage)|
+| Azure Container Registry (ACR) Service Endpoint | Both subnets, Master-Subnet and Worker-Subnet require Service Endpoint for ACR |
 
-> Note: Make sure that no NSG exists on the subnets. ARO installer will fail or overwrite any existing NSG. NSG are managed resources in the ARO context.
+> Note: Make sure that no NSG is linked to the subnets. ARO installer will fail if there are NSGs attached to the ARO subnets. NSG are managed resources in the ARO context.
 
-Commands to create subnets and Azure Private Link policies:
+Commands to create the required subnets with the required configuration for an ARO cluster deployment:
 
 ```shell
 # Variables for the previous section wil be required
@@ -115,11 +115,11 @@ az network vnet subnet update \
 
 ### Firewall rule configuration
 
-Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) need to be applied by the Platform/NetOps team in Azure Firewall in the connectivity subscription.
+Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) needs to be applied by the Platform/NetOps team in Azure Firewall (or third party NVA) in the connectivity subscription.
 
 ## Installing Azure Red Hat OpenShift using Azure CLI
 
-The following command will install the a new cluster into an existing landing zone VNET.
+The following command should be deployed by the **landing zone user**, which will install the new ARO cluster into an existing landing zone VNET.
 ```shell
 # Variables for the previous section wil be required
 
