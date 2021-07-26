@@ -117,7 +117,7 @@ az network vnet subnet update \
 
 Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) needs to be applied by the Platform/NetOps team in Azure Firewall (or third party NVA) in the connectivity subscription.
 
-## Installing Azure Red Hat OpenShift using Azure CLI
+## Deploy Azure Red Hat OpenShift using Azure CLI
 
 The following command should be deployed by the **landing zone user**, which will install the new ARO cluster into an existing landing zone VNET.
 ```shell
@@ -139,6 +139,6 @@ az aro create --name "$CLUSTER" \
 
 ```
 
-## Installing Azure Red Hat OpenShift using ARM templates
+## Deploy Azure Red Hat OpenShift using ARM templates
 
 _coming soon_
