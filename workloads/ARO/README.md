@@ -1,6 +1,6 @@
-# Deploy Azure Red Hat OpenShift (ARO) in enterprise-scale landing zones
+# Deploy Azure Red Hat OpenShift (ARO) in Enterprise-Scale landing zones
 
-This article provides prescriptive guidance for deploying Azure Red Hat OpenShift (ARO) clusters in enterprise-scale landing zones environment.
+This article provides prescriptive guidance for deploying Azure Red Hat OpenShift (ARO) clusters in Enterprise-Scale landing zones environment.
 
 Additionally ARM templates and sample scripts are provided to support a deployment.
 
@@ -8,16 +8,16 @@ Additionally ARM templates and sample scripts are provided to support a deployme
 
 Before getting started with this guidance, ensure that:
 
-- Enterprise-scale landing zones has been deployed by using the Hub and Spoke reference implementation or Enterprise-scale landing zones was deployed as per [architectural guidance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
-- There is at least one landing zone under the corp management group where ARO cluster will be deployed, which is peered to the hub VNet.
-- Within Enterprise-scale landing zone there is a segregation between platform and workload/application specific roles. For this guide the segregation of duties is fully respected and it is mentioned which role is able to perform the actions.
-- This guide follows the least-privilege principle by assign permissions to the user installing ARO or the respective SPN's.
+- Enterprise-Scale landing zones has been deployed by using the Hub and Spoke reference implementation or Enterprise-Scale landing zones was deployed as per [architectural guidance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
+- There is at least one landing zone under the corp management group, which is peered to the hub VNet where ARO cluster will be deployed.
+- Within Enterprise-Scale landing zones there is a segregation between platform and workload/application specific roles. For this guide the segregation of duties is fully respected and it is mentioned which role is able to perform the actions.
+- This guide follows the principle of least-privilege by assign permissions to the user installing ARO or the respective SPN's.
 
 Before ARO is deployed to a landing zone, ensure the following requirements are met:
 
 ### Identity
 
-The following identities are required when installing an ARO cluster following the least-privilege principle via Azure CLI and ARM template deployment:
+The following identities are required when installing an ARO cluster following the principle of least-privilege via Azure CLI and ARM template deployment:
 
 | Identity | Required privileges | Scope or resource | Description  |
 |:---------|:--------------------|:------------------|:--------|
@@ -67,16 +67,16 @@ The following script can be used by the **Platform team** to prepare the landing
 
 ### Azure Policy consideration
 
-Enterprise-scale landing zones manages compliant resource and landing zone configuration via Azure Policy. ARO is deployed as a Managed Application, which includes certain configuration that conflicts with existing Policy assignments. The following enterprise-scale landing zone policy assignments conflicting with the deployment of ARO:
+Enterprise-Scale landing zones manages compliant resource and landing zone configuration via Azure Policy. ARO is deployed as a Managed Application, which includes certain configuration that conflicts with existing Policy assignments. The following enterprise-scale landing zone policy assignments conflicting with the deployment of ARO:
 
 - Subnets should have a Network Security Group (-> ARO installer deploys and manages own default NSG)
 - Public network access should be disabled for PaaS services (-> ARO installer deploys and manages Azure Storage Accounts)
 
-**Platform team** can create exemptions for these existing Policy assignments.
+**Platform team** can create [exemptions](https://docs.microsoft.com/en-us/azure/governance/policy/concepts/exemption-structure) for these existing Policy assignments.
 
 ### Network
 
-The following network configuration needs to be applied by the **Platform/NetOps team** to the target landing zone. Please note that, in the Enterprise-scale context, landing zone VNET has been already deployed in the subscription and connected to the hub VNet via VNet peering, hence only the following configuration is required:
+The following network configuration needs to be applied by the **Platform/NetOps team** in the target landing zone. Please note that, in the Enterprise-Scale context, the landing zone VNet has been already deployed in the subscription and connected to the hub VNet via VNet peering, hence only the following configuration is required:
 
 | Resource      | Description             |
 |:--------------|:------------------------|
