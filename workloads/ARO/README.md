@@ -9,7 +9,7 @@ Additionally ARM templates and sample scripts are provided to support a deployme
 Before getting started with this guidance, ensure that:
 
 - Enterprise-scale landing zones has been deployed, either by using the Hub and Spoke or Virtual-WAN reference implementations, or Enterprise-scale landing zones was deployed as per [architectural guidance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
-- There is at least one landing zone under the corp management group, which is peered to the hub VNet where ARO cluster will be deployed.
+- There is at least one landing zone under the corp management group where ARO cluster will be deployed, which is peered to the hub VNet.
 - Within Enterprise-scale landing zone there is a segregation between platform and workload/application specific roles. For this guide the segregation of duties is fully respected and it is mentioned which role is able to perform the actions.
 - This guide follows the  least-privilege principle by assign permissions to the user installing ARO or the respective SPN's.
 
