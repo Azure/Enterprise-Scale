@@ -81,7 +81,7 @@ The following network configuration needs to be applied by the **Platform/NetOps
 | Resource      | Description             |
 |:--------------|:------------------------|
 | Master-subnet | Subnet for master nodes |
-| Worker-subnet | Subnet for worked nodes |
+| Worker-subnet | Subnet for worker nodes |
 | Private link service network policies | Must be disabled on the Master-Subnet |
 | Azure Container Registry (ACR) Service Endpoint | Both subnets, Master-Subnet and Worker-Subnet require Service Endpoint for ACR |
 
