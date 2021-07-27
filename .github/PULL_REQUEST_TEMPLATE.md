@@ -1,15 +1,15 @@
 <!-- Thank you for submitting a Pull Request. Please fill out the template below.-->
 ## Overview/Summary
 
-Replace this with a brief description of what this Pull Request fixes, changes, etc. 
+Replace this with a brief description of what this Pull Request fixes, changes, etc.
 
-## This PR fixes/adds/changes/removes:
+## This PR fixes/adds/changes/removes
 
 1. *Replace me*
 2. *Replace me*
 3. *Replace me*
 
-### Breaking Changes:
+### Breaking Changes
 
 1. *Replace me*
 2. *Replace me*
@@ -18,7 +18,7 @@ Replace this with a brief description of what this Pull Request fixes, changes, 
 
 Please provide any testing evidence to show that your Pull Request works/fixes as described and planned (include screenshots, if appropriate).
 
-## As part of this Pull Request I have... :
+## As part of this Pull Request I have
 
 - [ ] Checked for duplicate [Pull Requests](https://github.com/Azure/Enterprise-Scale/pulls)
 - [ ] Associated it with relevant [issues](https://github.com/Azure/Enterprise-Scale/issues), for tracking and closure.
