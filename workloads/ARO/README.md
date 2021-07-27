@@ -71,6 +71,7 @@ Enterprise-Scale landing zones manages compliant resource and landing zone confi
 
 - Subnets should have a Network Security Group (-> ARO installer deploys and manages own default NSG)
 - Public network access should be disabled for PaaS services (-> ARO installer deploys and manages Azure Storage Accounts)
+- Deny creation of Public IP Addresses (-> ARO installer creates a public IP address for egress)
 
 **Platform team** can create [exemptions](https://docs.microsoft.com/en-us/azure/governance/policy/concepts/exemption-structure) for these existing Policy assignments.
 
