@@ -58,6 +58,11 @@ The following script can be used by the **Platform team** to prepare the landing
     az role assignment create --assignee ${ARO_INSTALL_USER} --role "Contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}
     az role assignment create --assignee ${ARO_INSTALL_USER} --role "Reader" --scope /subscriptions/${SUBSCRIPTION_ID}
 
+    # Create UDR for ARO subnets. The subnets should have outbound connectivity to specific ARO endpoints. For example the UDR could point to the Firewall / Hub router.
+    az network route-table create -g $NETWORK_RESOURCE_GROUP --name aro-udr
+
+    az network route-table route create -g $NETWORK_RESOURCE_GROUP --name aro-udr --route-table-name aro-udr --address-prefix 0.0.0.0/0 --next-hop-type VirtualAppliance --next-hop-ip-address <FWPRIVATE_IP>
+    
     # Azure Red Hat Openshift account is contributor on UDR
     az role assignment create --assignee ${ARO_FP_SP} --role "network contributor" --scope /subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${NETWORK_RESOURCE_GROUP}/providers/Microsoft.Network/routeTables/aro-udr
 
@@ -95,6 +100,7 @@ Commands to create the required subnets with the required configuration for an A
 az network vnet subnet create \
     -g "$NETWORK_RESOURCE_GROUP" \
     --vnet-name "$VNET_NAME" \
+    --route-table aro-udr \
     -n "$CLUSTER-master" \
     --address-prefixes 10.10.1.0/24 \
     --service-endpoints Microsoft.ContainerRegistry
@@ -102,6 +108,7 @@ az network vnet subnet create \
 az network vnet subnet create \
     -g "$NETWORK_RESOURCE_GROUP" \
     --vnet-name "$VNET_NAME" \
+    --route-table aro-udr
     -n "$CLUSTER-worker" \
     --address-prefixes 10.10.2.0/24 \
     --service-endpoints Microsoft.ContainerRegistry
@@ -111,7 +118,7 @@ az network vnet subnet update \
   --vnet-name "$VNET_NAME" \
   -n "$CLUSTER-master" \
   --disable-private-link-service-network-policies true
-
+  
 ```
 
 ### Firewall rule configuration
