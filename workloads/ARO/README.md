@@ -125,6 +125,8 @@ az network vnet subnet update \
 
 Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) needs to be applied by the Platform/NetOps team in Azure Firewall (or third party NVA) in the connectivity subscription.
 
+It is essential your firewall can resolve DNS names so its can resolve the endpoints needed by Azure RedHat Openshift. Specific steps for Azure Firewall are here https://docs.microsoft.com/en-us/azure/firewall/dns-settings
+
 ## Deploy Azure Red Hat OpenShift using Azure CLI
 
 The following command should be executed by the **landing zone user**, which will deploy the new ARO cluster into an existing landing zone VNet.
