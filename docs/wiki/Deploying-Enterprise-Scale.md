@@ -50,7 +50,7 @@ Bash:
 az login
 
 #assign Owner role to Tenant root scope  ("/") as a Owner (gets object Id of the current user (az login))
-az role assignment create --scope '/'  --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query  objectId)
+az role assignment create --scope '/'  --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query "objectId" --output tsv)
 ```
 
 Powershell:
