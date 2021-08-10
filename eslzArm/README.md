@@ -8,6 +8,12 @@ For customers who cannot deploy via portal, but rather want to clone the reposit
 
 ## Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell
 
+Prerequisites:
+
+* [Azure PowerShell module](https://docs.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
+* [Sign in and get started](https://docs.microsoft.com/powershell/azure/get-started-azureps?view=azps-6.3.0#sign-in-to-azure)
+* [How to clone a GitHub repository](https://docs.github.com/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
+
 ````powershell
 
 # Do-It-Yourself instructions for doing Enterprise-Scale
@@ -18,11 +24,13 @@ $ESLZPrefix = "ESLZ"
 $Location = "westeurope"
 $DeploymentName = "EntScale"
 $TenantRootGroupId = (Get-AzTenant).Id
-$ManagementSubscriptionId = "feab2d15-66b4-438b-accf-51f889b30ec3"
-$ConnectivitySubscriptionId = "99c2838f-a548-4884-a6e2-38c1f8fb4c0b"
-$ConnectivityAddressPrefix = "192.168.0.0/24"
-$IdentitySubscriptionId = "9e32661b-498f-4fd8-bffc-c9ecb4830430"
-$SecurityContactEmailAddress = "security@foo.bar"
+$ManagementSubscriptionId = "<replace me>"
+$ConnectivitySubscriptionId = "<replace me>"
+$ConnectivityAddressPrefix = "<replace me>"
+$IdentitySubscriptionId = "<replace me>"
+$SecurityContactEmailAddress = "<replace@this.address>"
+$CorpConnectedLandingZone = "<replace me>"
+$OnlineLandingZone = "<replace me>"
 
 # Deploying management group structure for Enterprise-Scale
 
@@ -345,5 +353,33 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-aks-priv-https" `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-AksWithoutHttpsPolicyAssignment.json `
                                 -Verbose
-                                                             
+                                
+# Assign Azure Policy to prevent usage of public endpoint for Azure PaaS services on the corp landing zone management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-paas-endpoint" `
+                                -Location $Location `
+                                -ManagementGroupId "$($ESLZPrefix)-corp" `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-PublicEndpointPolicyAssignment.json `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
+                                -Verbose                                                           
+
+# Add the first corp connected landing zone subscription to Corp management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-corp1" `
+                                -ManagementGroupId "$($ESLZPrefix)-corp" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
+                                -targetManagementGroupId "$($ESLZPrefix)-corp" `
+                                -subscriptionId $CorpConnectedLandingZone `
+                                -Verbose                                
+
+# Add the first online connected landing zone subscription to Corp management group
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-online1" `
+                                -ManagementGroupId "$($ESLZPrefix)-online" `
+                                -Location $Location `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
+                                -targetManagementGroupId "$($ESLZPrefix)-online" `
+                                -subscriptionId $CorpConnectedLandingZone `
+                                -Verbose                                                                
 ````
