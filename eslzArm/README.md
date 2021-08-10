@@ -6,7 +6,7 @@ For customers who cannot deploy via portal, but rather want to clone the reposit
 
 > **Note:** There's a strict sequencing required in order to achieve the same outcome as when deploying via the Azure portal, and any modification and changes to the templates are not supported.
 
-## Do-It-The-Hard-Way deployment instructions for Enterprise-Scale using Azure PowerShell
+## Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell
 
 ````powershell
 
