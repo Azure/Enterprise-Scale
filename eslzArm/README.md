@@ -2,7 +2,7 @@
 
 This folder contains the first-party ARM templates for Enterprise-Scale which and are being used when deploying and bootstrapping in the Azure Portal, which is our recommendation as it will 1) save you tremendous amount of time, 2) accelerate your journey, and 3) optionally bootstrap your GitHub repository with ready-to-use ARM templates if you want to pivot to infrastructure-as-code post deployment.
 
-For customers who cannot deploy via portal, but rather want to clone the repository and sequence the deployments on their own, they can follow the instructions below.
+For customers who cannot deploy via portal, but rather want to clone the repository and sequence the deployments on their own using the same ARM templates, they can follow the manual deployment instructions below.
 
 > **Note:** There's a strict sequencing required in order to achieve the same outcome as when deploying via the Azure portal, and any modification and changes to the templates are not supported.
 
