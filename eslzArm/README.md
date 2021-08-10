@@ -29,8 +29,8 @@ $ConnectivitySubscriptionId = "<replace me>"
 $ConnectivityAddressPrefix = "<replace me>"
 $IdentitySubscriptionId = "<replace me>"
 $SecurityContactEmailAddress = "<replace@this.address>"
-$CorpConnectedLandingZone = "<replace me>" # This should be a Subscription ID for a Subscription you wish to be moved to the "Corp" Management Group
-$OnlineLandingZone = "<replace me>"# This should be a Subscription ID for a Subscription you wish to be moved to the "Online" Management Group
+$CorpConnectedLandingZoneSubscriptionId = "<replace me>" 
+$OnlineLandingZoneSubscriptionId = "<replace me>"
 
 # Deploying management group structure for Enterprise-Scale
 
@@ -370,7 +370,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-corp1" `
                                 -Location $Location `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
                                 -targetManagementGroupId "$($ESLZPrefix)-corp" `
-                                -subscriptionId $CorpConnectedLandingZone `
+                                -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
                                 -Verbose                                
 
 # Add the first online connected landing zone subscription to Corp management group
@@ -380,6 +380,6 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-online1" `
                                 -Location $Location `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
                                 -targetManagementGroupId "$($ESLZPrefix)-online" `
-                                -subscriptionId $CorpConnectedLandingZone `
+                                -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
                                 -Verbose                                                                
 ````
