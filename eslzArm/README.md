@@ -22,7 +22,7 @@ $ManagementSubscriptionId = "feab2d15-66b4-438b-accf-51f889b30ec3"
 $ConnectivitySubscriptionId = "99c2838f-a548-4884-a6e2-38c1f8fb4c0b"
 $ConnectivityAddressPrefix = "192.168.0.0/24"
 $IdentitySubscriptionId = "9e32661b-498f-4fd8-bffc-c9ecb4830430"
-$SecurityContactEmailAddress = "krnese@foo.bar"
+$SecurityContactEmailAddress = "security@foo.bar"
 
 # Deploying management group structure for Enterprise-Scale
 
