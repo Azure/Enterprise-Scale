@@ -38,6 +38,7 @@ Here's what's changed in Enterprise Scale:
 - Updated [Contoso](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/contoso/Readme.md), [Adventure Works](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) & [Wingtip Toys](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) reference implementations with new Deploy To Azure buttons for new portal experience
   - Also updated guidance and option availability for each of them respectively
 - [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) updated to reflect latest release and new portal experience
+- New Article to [Deploy Azure Red Hat OpenShift (ARO) in enterprise-scale landing zones](https://github.com/Azure/Enterprise-Scale/tree/main/workloads/ARO)
 
 #### Tooling
 
@@ -53,7 +54,9 @@ Here's what's changed in Enterprise Scale:
   - The composite ARM templates can be sequenced on their own, independently of each other (although strict sequencing is required to ensure the same outcome)
     - Guidance coming soon for this
   - Customers can deploy from private repository if they want to sequence at their own pace.
-- [AzOps release v1.3.0](https://github.com/Azure/AzOps/releases/tag/1.3.0)
+- ~~[AzOps release v1.3.0](https://github.com/Azure/AzOps/releases/tag/1.3.0)~~ 
+- ~~[AzOps release v1.3.1](https://github.com/Azure/AzOps/releases/tag/1.3.1)~~
+- [AzOps release v1.4.0](https://github.com/Azure/AzOps/releases/tag/1.4.0)
 
 #### Policy
 
