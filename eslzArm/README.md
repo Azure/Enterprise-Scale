@@ -46,7 +46,6 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\DENY-PublicEndpointsPolicySetDefinition.json `
-                                -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
 # Deploying policy initiative for associating private DNS zones with private endpoints for Azure PaaS services
@@ -55,7 +54,6 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy3" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\DINE-PrivateDNSZonesPolicySetDefinition.json `
-                                -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
 # Add dedicated subscription for platform management
@@ -189,13 +187,40 @@ New-AzSubscriptionDeployment -Name "$($DeploymentName)-hubspoke" `
                              -topLevelManagementGroupPrefix $ESLZPrefix `
                              -connectivitySubscriptionId $ConnectivitySubscriptionId `
                              -addressPrefix $ConnectivityAddressPrefix `
-                             -enableHub "Yes" `
+                             -enableHub "vhub" `
                              -enableAzFw "No" `
                              -enableAzFwDnsProxy "No" `
                              -enableVpnGw "No" `
                              -enableErGw "No" `
                              -enableDdoS "No" `
-                             -ddosPlanResourceId $null `
-                             -Verbose 
+                             -Verbose
+
+# Create Private DNS Zones for Azure PaaS services. Note, you must repeat this deployment for all Azure PaaS services as requested, and an updated table can be found at https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#azure-services-dns-zone-configuration
+# The following example will first create a resource group, and the subsequent deployment will create Private DNS Zone for Storage Account into that resource group
+
+Select-AzSubscription -SubscriptionId $ConnectivitySubscriptionId
+
+New-AzSubscriptionDeployment -Name "$($DeploymentName)-private-dns-rg" `
+                             -Location $Location `
+                             -TemplateFile .\eslzArm\subscriptionTemplates\resourceGroup.json `
+                             -rgName "$($ESLZPrefix)-privatedns" `
+                             -locationFromTemplate $Location `
+                             -Verbose
+
+New-AzResourceGroupDeployment -Name "$($DeploymentName)-private-dns-storage" `
+                              -ResourceGroupName "$($ESLZPrefix)-privatedns" `
+                              -TemplateFile .\eslzArm\resourceGroupTemplates\privateDnsZones.json `
+                              -connectivityHubResourceId "/subscriptions/$($ConnectivitySubscriptionId)/resourceGroups/$($ESLZPrefix)-vnethub-$($Location)/providers/Microsoft.Network/virtualNetworks/$($ESLZPrefix)-hub-$($Location)" `
+                              -privateDnsZoneName "privatelink.blob.core.windows.net" `
+                              -Verbose
+
+# Assign Azure Policy to prevent public IP usage in the identity subscription
+
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-public-ip" `
+                                -Location $Location `
+                                -ManagementGroupId "$($ESLZPrefix)-identity" `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-PublicIpAddressPolicyAssignment.json `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
+                                -Verbose 
                              
 ````
