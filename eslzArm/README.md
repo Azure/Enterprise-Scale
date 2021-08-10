@@ -29,7 +29,7 @@ $ConnectivitySubscriptionId = "<replace me>"
 $ConnectivityAddressPrefix = "<replace me>"
 $IdentitySubscriptionId = "<replace me>"
 $SecurityContactEmailAddress = "<replace@this.address>"
-$CorpConnectedLandingZone = "<replace me>"
+$CorpConnectedLandingZone = "<replace me>" # This should be a Subscription ID for a Subscription you wish to be moved to the "Corp" Management Group
 $OnlineLandingZone = "<replace me>"
 
 # Deploying management group structure for Enterprise-Scale
