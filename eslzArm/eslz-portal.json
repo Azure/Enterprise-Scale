@@ -834,15 +834,27 @@
 							"visible": "[and(not(equals(steps('esConnectivityGoalState').esHub, 'No')), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
             			},
                         {
-                            "name": "esAddressHub",
+                            "name": "esAddressHubVWAN",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Address space (required for hub virtual hub)",
-                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
-                            "defaultValue": "10.100.0.0/16",
-                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
+                            "label": "Address space (required for vWAN hub)",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/23)",
+                            "defaultValue": "10.100.0.0/23",
+                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub, 'No')), not(equals(steps('esConnectivityGoalState').esHub, 'nva')), not(equals(steps('esConnectivityGoalState').esHub, 'vhub')))]",
                             "constraints": {
                                 "required": true,
-                                "validationMessage": "The virtual hubs network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                                "validationMessage": "The vWAN hub network address space, specified as one address prefix in CIDR notation (e.g. 10.100.0.0/23)"
+                            }
+                        },
+                        {
+                            "name": "esAddressHubHS",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Address space (required for hub virtual network)",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
+                            "defaultValue": "10.100.0.0/16",
+                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub, 'No')), not(equals(steps('esConnectivityGoalState').esHub, 'vwan')))]",
+                            "constraints": {
+                                "required": true,
+                                "validationMessage": "The hub virtual network address space, specified as one address prefix in CIDR notation (e.g. 10.100.0.0/16)"
                             }
                         },
                         {
@@ -856,7 +868,7 @@
                         {
                             "name": "esNwLocation",
                             "type": "Microsoft.Common.DropDown",
-                            "label": "Region for the first virtual network hub",
+                            "label": "Region for the first networking hub",
                             "filter": true,
                             "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                             "constraints": {
@@ -1175,10 +1187,10 @@
                             "label": "Subnet for VPN/ExpressRoute Gateways",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.1.0/24)",
                             "defaultValue": "10.100.1.0/24",
-                            "visible": "[or(equals(steps('esConnectivityGoalState').esErGw,'Yes'),equals(steps('esConnectivityGoalState').esVpnGw,'Yes'))]",
+                            "visible": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'),equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
                             "constraints": {
                                 "required": true,
-                                "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                                "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 10.100.1.0/24)"
                             }
                         },
                         {
@@ -1405,7 +1417,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable Azure Firewall as a DNS proxy",
                             "defaultValue": "No",
-                            "visible": "[equals(steps('esConnectivityGoalState').esAzFw,'Yes')]",
+                            "visible": "[equals(steps('esConnectivityGoalState').esAzFw, 'Yes')]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will enable Azure Firewall as a DNS Proxy.",
                             "constraints": {
                                 "allowedValues": [
@@ -1453,10 +1465,10 @@
                             "label": "Subnet for Azure Firewall",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/24)",
                             "defaultValue": "10.100.0.0/24",
-                            "visible": "[equals(steps('esConnectivityGoalState').esAzFw,'Yes')]",
+                            "visible": "[and(equals(steps('esConnectivityGoalState').esAzFw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan')))]",
                             "constraints": {
                                 "required": true,
-                                "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)"
+                                "validationMessage": "The subnet for Azure Firewall inside the hub virtual network address space, specified as one address prefixes in CIDR notation (e.g. 10.100.0.0/24)"
                             }
                         }
                     ]
@@ -2236,7 +2248,7 @@
                 "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId,'')]",
                 "enableAzFw": "[steps('esConnectivityGoalState').esAzFw]",
                 "enableAzFwDnsProxy": "[steps('esConnectivityGoalState').esAzFwDns]",
-                "addressPrefix": "[steps('esConnectivityGoalState').esAddressHub]",
+                "addressPrefix": "[coalesce(steps('esConnectivityGoalState').esAddressHubVWAN, steps('esConnectivityGoalState').esAddressHubHS, '')]",
                 "location": "[steps('esConnectivityGoalState').esNwLocation]",
                 "managementSubscriptionId": "[steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId]",
                 "identitySubscriptionId": "[if(or(not(equals(steps('esIdentityGoalState').esIdentitySubSection.esIdentitySub.subscriptionId,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(equals(steps('esIdentityGoalState').esIdentitySubSection.esIdentitySub.subscriptionId,steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId))),steps('esIdentityGoalState').esIdentitySubSection.esIdentitySub.subscriptionId,'')]",
