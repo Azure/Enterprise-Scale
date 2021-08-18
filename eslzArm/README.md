@@ -380,6 +380,6 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-online1" `
                                 -Location $Location `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
                                 -targetManagementGroupId "$($ESLZPrefix)-online" `
-                                -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
+                                -subscriptionId $OnlineLandingZoneSubscriptionId `
                                 -Verbose                                                                
 ````
