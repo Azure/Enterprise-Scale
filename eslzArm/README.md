@@ -373,7 +373,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-corp1" `
                                 -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
                                 -Verbose                                
 
-# Add the first online connected landing zone subscription to Corp management group
+# Add the first online connected landing zone subscription to Online management group
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-online1" `
                                 -ManagementGroupId "$($ESLZPrefix)-online" `
