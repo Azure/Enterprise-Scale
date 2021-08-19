@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [August 2021](#august-2021)
   - [July 2021](#july-2021)
   - [June 2021](#june-2021)
 
@@ -28,6 +29,27 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### August 2021
+
+#### Docs
+
+*No updates, yet.*
+
+#### Tooling
+
+- [Terraform Module for Cloud Adoption Framework Enterprise-scale release v0.4.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v0.4.0)
+  - Brings support for Hub Connectivity & Identity landing zone peering - read more in the release notes linked above
+- [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
+
+#### Policy
+
+- Some minor changes to parameters and variables, tidying up some code. 
+  - See [PR #727](https://github.com/Azure/Enterprise-Scale/pull/727)
+
+#### Other
+
+*No updates, yet.*
 
 ### July 2021
 
