@@ -12,6 +12,7 @@ Prerequisites:
 
 * [Azure PowerShell module](https://docs.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
 * [Sign in and get started](https://docs.microsoft.com/powershell/azure/get-started-azureps?view=azps-6.3.0#sign-in-to-azure)
+* [Configure Azure permissions for ARM tenant deployments](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)
 * [How to clone a GitHub repository](https://docs.github.com/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
 
 ````powershell
