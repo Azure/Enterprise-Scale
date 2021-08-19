@@ -2,6 +2,8 @@
 
 Azure Policy and deployIfNotExist enables the autonomy in the platform, and reduces the operational burden as you scale your deployments and subscriptions in the Enterprise-Scale architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy.
 
+> **This page is currently being updated so please also review the ["What's New?"](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) page for changes that will be reflected here soon in relation to Azure Policies for ESLZ**
+
 ## Why are there custom policy definitions as part of Enterprise-Scale Landing Zones
 
 We work with - and learn from our customers and partners to ensure that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Enterprise-Scale is to be proactive (deployIfNotExist, and modify), and preventive (deny), and we are continuously moving these policies to built-ins.
@@ -26,7 +28,7 @@ We work with - and learn from our customers and partners to ensure that we evolv
 | Azure Cache for Redis Append and the enforcement that enableNonSslPort is disabled | Azure Cache for Redis Append and the enforcement that enableNonSslPort is disabled. Enables secure server to client by enforce minimal Tls Version to secure the connection between your database server and your client applications helps protect against 'man in the middle' attacks by encrypting the data stream between the server and your application. This configuration enforces that SSL is always enabled for accessing your database server | append, disabled | 1.0.0 | Custom policy | Yes, recommended | Landing Zone Management Group | Cache |
 | Deploy Windows Domain Join Extension with Key Vault configuration | Deploys VM extension to join Windows machines to Active Directory domain, where keys are stored and retrieved from a centralized managed Key Vault | deployIfNotExist, disabled | 1.0.0 | Custom policy | No | Landing Zone Management Group | Guest Configuration |
 | Public network access should be disabled for Key Vault | Denies creation of KeyVault using public endpoints | deny, audit, disabled | 1.0.0 | Custom policy | Yes, recommended | Corp Management Group | Key Vault |
-| KeyVault SoftDelete should be enabled | Ensures that Key Vaults are created with soft-delete enabled | append | 1.0.0 | Custom policy | No | Intermediate Root Management Group | Key Vault |
+| KeyVault SoftDelete should be enabled | Ensures that Key Vaults are created with soft-delete enabled | deny, audit, disabled | 1.0.0 | Custom policy | No | Intermediate Root Management Group | Key Vault |
 | Public network access on AKS API should be disabled | Denies creation of AKS non-private clusters | deny, audit, disabled | 1.0.0 | Custom policy | Yes, recommended | Corp Management Group | Kubernetes |
 | Deploy NSG flow logs and traffic analytics to Log Analytics | Deploys Network Security Group flow logs and enables traffic analytics to a Log Analytics workspace | deployIfNotExists, disabled | 1.0.0 | Custom policy | No | Landing Zone Management Group | Monitoring |
 | Deploys NSG flow logs and traffic analytics | Deploys Network Security Group flow logs and enables traffic analytics to a storage account | deployIfNotExists, disabled | 1.0.0 | Deprecated | No |  | Monitoring |
