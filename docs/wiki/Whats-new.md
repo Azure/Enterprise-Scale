@@ -34,7 +34,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
-*No updates, yet.*
+- Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
 
 #### Tooling
 
