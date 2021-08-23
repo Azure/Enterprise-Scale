@@ -34,6 +34,9 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
+- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
+  - Added CSP, MCA & other billing offers
+  - Added information on how an EA relates to Azure AD and ties in with RBAC
 - Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
 
 #### Tooling
