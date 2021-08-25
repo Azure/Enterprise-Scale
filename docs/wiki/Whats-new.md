@@ -45,6 +45,7 @@ Here's what's changed in Enterprise Scale:
   - Brings support for Hub Connectivity & Identity landing zone peering - read more in the release notes linked above
 - [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
 - Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
+- Removed old codebase for the different reference implementations, and converged to a single [ARM codebase](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
 
 #### Policy
 
