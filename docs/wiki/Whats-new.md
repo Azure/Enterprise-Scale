@@ -44,6 +44,7 @@ Here's what's changed in Enterprise Scale:
 - [Terraform Module for Cloud Adoption Framework Enterprise-scale release v0.4.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v0.4.0)
   - Brings support for Hub Connectivity & Identity landing zone peering - read more in the release notes linked above
 - [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
+- Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
 
 #### Policy
 
