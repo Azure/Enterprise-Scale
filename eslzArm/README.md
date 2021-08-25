@@ -12,6 +12,7 @@ Prerequisites:
 
 * [Azure PowerShell module](https://docs.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
 * [Sign in and get started](https://docs.microsoft.com/powershell/azure/get-started-azureps?view=azps-6.3.0#sign-in-to-azure)
+* [Configure Azure permissions for ARM tenant deployments](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)
 * [How to clone a GitHub repository](https://docs.github.com/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
 
 ````powershell
@@ -373,13 +374,13 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-corp1" `
                                 -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
                                 -Verbose                                
 
-# Add the first online connected landing zone subscription to Corp management group
+# Add the first online connected landing zone subscription to Online management group
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-online1" `
                                 -ManagementGroupId "$($ESLZPrefix)-online" `
                                 -Location $Location `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
                                 -targetManagementGroupId "$($ESLZPrefix)-online" `
-                                -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
+                                -subscriptionId $OnlineLandingZoneSubscriptionId `
                                 -Verbose                                                                
 ````
