@@ -14412,6 +14412,294 @@
             }
           },
           "name": "Deny-MachineLearning-ComputeCluster-Scale"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-EventHub-IpFilterRules",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Deny adding IP Filter Rules for Event Hub.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Event Hub"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.EventHub/namespaces/ipfilterrules"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-EventHub-IpFilterRules"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-EventHub-MaximumThroughputUnits",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Enforces maximum throughput units for Event Hub.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Event Hub"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "maxThroughputUnits": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum Throughput Units",
+                  "description": "Specifies the maximum throughput units"
+                },
+                "defaultValue": 20
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.EventHub/namespaces"
+                  },
+                  {
+                    "field": "Microsoft.EventHub/namespaces/isAutoInflateEnabled",
+                    "equals": true
+                  },
+                  {
+                    "field": "Microsoft.EventHub/namespaces/maximumThroughputUnits",
+                    "exists": true
+                  },
+                  {
+                    "field": "Microsoft.EventHub/namespaces/maximumThroughputUnits",
+                    "greater": "[[parameters('maxThroughputUnits')]"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-EventHub-MaximumThroughputUnits"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-EventHub-NetworkRuleSet",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Enforces default Virtual Network rules for Event Hub.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Event Hub"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.EventHub/namespaces/networkRuleSets"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.EventHub/namespaces/networkRuleSets/defaultAction",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.EventHub/namespaces/networkRuleSets/defaultAction",
+                        "notEquals": "Deny"
+                      },
+                      {
+                        "field": "Microsoft.EventHub/namespaces/networkRuleSets/trustedServiceAccessEnabled",
+                        "exists": false
+                      },
+                      {
+                        "field": "Microsoft.EventHub/namespaces/networkRuleSets/trustedServiceAccessEnabled",
+                        "notEquals": false
+                      },
+                      {
+                        "count": {
+                          "field": "Microsoft.EventHub/namespaces/networkRuleSets/ipRules[*]"
+                        },
+                        "greater": 0
+                      },
+                      {
+                        "count": {
+                          "field": "Microsoft.EventHub/namespaces/networkRuleSets/virtualNetworkRules[*]"
+                        },
+                        "greater": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-EventHub-NetworkRuleSet"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-EventHub-Sku",
+            "policyType": "Custom",
+            "mode": "Indexed",
+            "description": "Denies certain SKUs for Event Hubs.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Event Hub"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedSkuNames": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed SKU Names",
+                  "description": "Specifies the allowed sku names"
+                },
+                "defaultValue": [
+                  "Standard",
+                  "Premium"
+                ]
+              },
+              "maxSkuCapacity": {
+                "type": "Integer",
+                "metadata": {
+                  "displayName": "Maximum SKU Capacity",
+                  "description": "Specifies the maximum sku capacity"
+                },
+                "defaultValue": 20
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.EventHub/namespaces"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "field": "Microsoft.EventHub/namespaces/sku.name",
+                        "notIn": "[[parameters('allowedSkuNames')]"
+                      },
+                      {
+                        "field": "Microsoft.EventHub/namespaces/sku.capacity",
+                        "greater": "[[parameters('maxSkuCapacity')]"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-EventHub-Sku"
+        },
+        {
+          "properties": {
+            "displayName": "Deny-EventHub-VNetRules",
+            "policyType": "Custom",
+            "mode": "All",
+            "description": "Deny adding virtual network rules for event hub.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Event Hub"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Disabled",
+                  "Deny"
+                ],
+                "defaultValue": "Deny"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.EventHub/namespaces/virtualnetworkrules"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-EventHub-VNetRules"
         }
       ]
     },
