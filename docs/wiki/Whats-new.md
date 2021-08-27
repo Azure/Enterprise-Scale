@@ -54,7 +54,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Other
 
-*No updates, yet.*
+- Improved Network CIDR Range Validation within the Azure Portal experience (https://github.com/Azure/Enterprise-Scale/pull/767).
 
 ### July 2021
 
