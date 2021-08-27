@@ -46,6 +46,7 @@ Here's what's changed in Enterprise Scale:
 - [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
 - Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
 - Removed old codebase for the different reference implementations, and converged to a single [ARM codebase](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
+- Improved Network CIDR Range Validation within the Azure Portal experience (https://github.com/Azure/Enterprise-Scale/pull/767).
 
 #### Policy
 
@@ -54,7 +55,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Other
 
-- Improved Network CIDR Range Validation within the Azure Portal experience (https://github.com/Azure/Enterprise-Scale/pull/767).
+*No updates, yet.*
 
 ### July 2021
 
