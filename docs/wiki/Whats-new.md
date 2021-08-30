@@ -55,7 +55,9 @@ Here's what's changed in Enterprise Scale:
 
 #### Other
 
-*No updates, yet.*
+- Published resources from the first Enterprise Scale Community Call - held on the 25th August 2021
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #668](https://github.com/Azure/Enterprise-Scale/issues/668) for meeting details
 
 ### July 2021
 
