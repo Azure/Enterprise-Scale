@@ -52,7 +52,8 @@ Here's what's changed in Enterprise Scale:
 
 - Some minor changes to parameters and variables, tidying up some code. 
   - See [PR #727](https://github.com/Azure/Enterprise-Scale/pull/727)
-
+- Updated policy Deploy-VNET-HubSpoke to address [#726](https://github.com/Azure/Enterprise-Scale/issues/726) and [#728](https://github.com/Azure/Enterprise-Scale/issues/728)
+  - See [PR #772](https://github.com/Azure/Enterprise-Scale/pull/772)
 #### Other
 
 - Published resources from the first Enterprise Scale Community Call - held on the 25th August 2021
