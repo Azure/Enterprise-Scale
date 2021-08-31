@@ -12,7 +12,7 @@ Some of these issues may be resolved in future release, while others require inp
 ARM backend storage
 
 ### Issue
-When deploying to a region that is paired (e.g., EastUS, which is paired with EastUs2), resources deployed in deployment 1 who's referenced in deployment 2 may fail due to replication latency in ARM backend storage. This will cause the overall deployment to fail
+When deploying to a region that is paired (e.g., EastUS, which is paired with WestUS), resources deployed in deployment 1 who's referenced in deployment 2 may fail due to replication latency in ARM backend storage. This will cause the overall deployment to fail
 
 ### Status
 While this is being fixed, it is recommended to re-run the deployment of the reference implementation with the same input parameter, and the deployment should succeed.
