@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2020-03-01",
+            "name": "Deny-Databricks-NoPublicIp",
+            "properties": {
+                "policyType": "Custom",
+                "mode": "Indexed",
+                "displayName": "Deny public IPs for Databricks clustern",
+                "description": "Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.",
+                "parameters": {
+                    "effect": {
+                        "type": "String",
+                        "metadata": {
+                            "displayName": "Effect",
+                            "description": "Enable or disable the execution of the policy"
+                        },
+                        "allowedValues": [
+                            "Audit",
+                            "Disabled",
+                            "Deny"
+                        ],
+                        "defaultValue": "Deny"
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Databricks/workspaces"
+                            },
+                            {
+                                "field": "Microsoft.DataBricks/workspaces/parameters.enableNoPublicIp.value",
+                                "notEquals": true
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "[[parameters('effect')]"
+                    }
+                },
+                "metadata": {
+                    "version": "1.0.0",
+                    "category": "Databricks",
+                    "preview": false,
+                    "deprecated": false
+                }
+            }
+        }
+    ]
+}
