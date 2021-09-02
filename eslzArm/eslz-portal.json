@@ -1200,7 +1200,28 @@
                             "visible": "[or(equals(steps('esConnectivityGoalState').esErGw, 'Yes'),equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'))]",
                             "constraints": {
                                 "required": true,
-                                "validationMessage": "The subnet network's address space, specified as one address prefixes in CIDR notation (e.g. 10.100.1.0/24)"
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:$|/(2[0-7]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,27]."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('esConnectivityGoalState').esAddressVpnOrEr, '/')), '.'), 1))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (first octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('esConnectivityGoalState').esAddressVpnOrEr, '/')), '.'), 2))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (second octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('esConnectivityGoalState').esAddressVpnOrEr, '/')), '.'), 3))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (third octet)."
+                                    },
+                                    {
+                                        "isValid": "[lessOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), last(split(steps('esConnectivityGoalState').esAddressVpnOrEr, '/')))]",
+                                        "message": "CIDR range not within virtual network CIDR range (subnet mask)."
+                                    }
+                                ]
                             }
                         },
                         {
