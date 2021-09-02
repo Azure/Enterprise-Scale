@@ -46,15 +46,19 @@ Here's what's changed in Enterprise Scale:
 - [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
 - Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
 - Removed old codebase for the different reference implementations, and converged to a single [ARM codebase](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
+- Improved Network CIDR Range Validation within the Azure Portal experience (https://github.com/Azure/Enterprise-Scale/pull/767).
 
 #### Policy
 
 - Some minor changes to parameters and variables, tidying up some code. 
   - See [PR #727](https://github.com/Azure/Enterprise-Scale/pull/727)
-
+- Updated policy Deploy-VNET-HubSpoke to address [#726](https://github.com/Azure/Enterprise-Scale/issues/726) and [#728](https://github.com/Azure/Enterprise-Scale/issues/728)
+  - See [PR #772](https://github.com/Azure/Enterprise-Scale/pull/772)
 #### Other
 
-*No updates, yet.*
+- Published resources from the first Enterprise Scale Community Call - held on the 25th August 2021
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #668](https://github.com/Azure/Enterprise-Scale/issues/668) for meeting details
 
 ### July 2021
 
