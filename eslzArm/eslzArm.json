@@ -590,6 +590,10 @@
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
+            "denyDatabricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-DatabricksPublicIpPolicyDefinition.json')]",
+            "denyDatabricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-DatabricksSkuPolicyDefinition.json')]",
+            "denyDatabricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-DatabricksVirtualNetworkPolicyDefinition.json')]",
+            "denyPIP": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-DatabricksPublicIpPolicyDefinition.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
@@ -639,6 +643,9 @@
             "connectivitySubscriptionPlacement": "[take(concat('EntScale-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('EntScale-IdentitySub', variables('deploymentSuffix')), 64)]",
             "policyDeploymentName": "[take(concat('EntScale-Policy', variables('deploymentSuffix')), 64)]",
+            "databricksPipDeploymentName": "[take(concat('EntScale-DBPIP-Policy', variables('deploymentSuffix')), 64)]",
+            "databricksSkuDeploymentName": "[take(concat('EntScale-DBSKU-Policy', variables('deploymentSuffix')), 64)]",
+            "databricksVnetDeploymentName": "[take(concat('EntScale-DBVNET-Policy', variables('deploymentSuffix')), 64)]",
             "azOpsRbacDeploymentName": "[take(concat('EntScale-AzOpsRbac', variables('deploymentSuffix')), 64)]",
             "azOpsRgDeploymentName": "[take(concat('EntScale-AzOpsRg', variables('deploymentSuffix')), 64)]",
             "ddosRgDeploymentName": "[take(concat('EntScale-DDoSRg', variables('deploymentSuffix')), 64)]",
@@ -893,7 +900,67 @@
                 },
                 "parameters": {}
             }
-        },        
+        },
+        {
+            // Deploying ESLZ Policy definition to prevent PIP for Databricks 
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').databricksPipDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').denyDatabricksPip]"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            // Deploying ESLZ Policy definition to prevent Sku for Databricks 
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').databricksSkuDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').denyDatabricksSku]"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            // Deploying ESLZ Policy definition to prevent Vnet for Databricks 
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').databricksVnetDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').denyDatabricksVnet]"
+                },
+                "parameters": {}
+            }
+        },                             
         {
             // One of Azure's untold stories.....
             "type": "Microsoft.Resources/deployments",
