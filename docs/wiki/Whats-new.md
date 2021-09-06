@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [August 2021](#august-2021)
   - [July 2021](#july-2021)
   - [June 2021](#june-2021)
 
@@ -28,6 +29,36 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### August 2021
+
+#### Docs
+
+- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
+  - Added CSP, MCA & other billing offers
+  - Added information on how an EA relates to Azure AD and ties in with RBAC
+- Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
+
+#### Tooling
+
+- [Terraform Module for Cloud Adoption Framework Enterprise-scale release v0.4.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v0.4.0)
+  - Brings support for Hub Connectivity & Identity landing zone peering - read more in the release notes linked above
+- [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
+- Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
+- Removed old codebase for the different reference implementations, and converged to a single [ARM codebase](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
+- Improved Network CIDR Range Validation within the Azure Portal experience (https://github.com/Azure/Enterprise-Scale/pull/767).
+
+#### Policy
+
+- Some minor changes to parameters and variables, tidying up some code. 
+  - See [PR #727](https://github.com/Azure/Enterprise-Scale/pull/727)
+- Updated policy Deploy-VNET-HubSpoke to address [#726](https://github.com/Azure/Enterprise-Scale/issues/726) and [#728](https://github.com/Azure/Enterprise-Scale/issues/728)
+  - See [PR #772](https://github.com/Azure/Enterprise-Scale/pull/772)
+#### Other
+
+- Published resources from the first Enterprise Scale Community Call - held on the 25th August 2021
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #668](https://github.com/Azure/Enterprise-Scale/issues/668) for meeting details
 
 ### July 2021
 

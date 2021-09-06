@@ -556,7 +556,7 @@
         {
           "properties": {
             "description": "This policy deploys virtual network and peer to the hub",
-            "displayName": "Deploys virtual network peering to hub",
+            "displayName": "Deploy Virtual Network with peering to the hub",
             "mode": "All",
             "parameters": {
               "vNetName": {
@@ -601,10 +601,18 @@
                   "description": "Default domain servers for the vNET."
                 },
                 "defaultValue": []
+              },
+              "vNetPeerUseRemoteGateway": {
+                "type": "Boolean",
+                "metadata": {
+                  "displayName": "vNetPeerUseRemoteGateway",
+                  "description": "Enable gateway transit for the LZ network"
+                },
+                "defaultValue": false
               }
             },
             "metadata": {
-              "version": "1.0.0",
+              "version": "1.1.0",
               "category": "Network"
             },
             "policyRule": {
@@ -661,6 +669,9 @@
                         },
                         "dnsServers": {
                           "value": "[[parameters('dnsServers')]"
+                        },
+                        "vNetPeerUseRemoteGateway": {
+                          "value": "[[parameters('vNetPeerUseRemoteGateway')]"
                         }
                       },
                       "template": {
@@ -695,7 +706,7 @@
                         "resources": [
                           {
                             "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
+                            "apiVersion": "2021-04-01",
                             "name": "[[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6),'-rg')]",
                             "location": "[[parameters('vNetLocation')]",
                             "dependsOn": [],
@@ -709,15 +720,8 @@
                                 "resources": [
                                   {
                                     "type": "Microsoft.Resources/resourceGroups",
-                                    "apiVersion": "2020-06-01",
+                                    "apiVersion": "2021-04-01",
                                     "name": "[[parameters('vNetRgName')]",
-                                    "location": "[[parameters('vNetLocation')]",
-                                    "properties": {}
-                                  },
-                                  {
-                                    "type": "Microsoft.Resources/resourceGroups",
-                                    "apiVersion": "2020-06-01",
-                                    "name": "NetworkWatcherRG",
                                     "location": "[[parameters('vNetLocation')]",
                                     "properties": {}
                                   }
@@ -728,7 +732,7 @@
                           },
                           {
                             "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2020-06-01",
+                            "apiVersion": "2021-04-01",
                             "name": "[[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6))]",
                             "dependsOn": [
                               "[[concat('es-lz-vnet-',substring(uniqueString(subscription().id),0,6),'-rg')]"
@@ -743,7 +747,7 @@
                                 "resources": [
                                   {
                                     "type": "Microsoft.Network/virtualNetworks",
-                                    "apiVersion": "2020-06-01",
+                                    "apiVersion": "2021-02-01",
                                     "name": "[[parameters('vNetName')]",
                                     "location": "[[parameters('vNetLocation')]",
                                     "dependsOn": [],
@@ -760,7 +764,7 @@
                                   },
                                   {
                                     "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-                                    "apiVersion": "2020-05-01",
+                                    "apiVersion": "2021-02-01",
                                     "name": "[[concat(parameters('vNetName'), '/peerToHub')]",
                                     "dependsOn": [
                                       "[[parameters('vNetName')]"
@@ -771,13 +775,13 @@
                                       },
                                       "allowVirtualNetworkAccess": true,
                                       "allowForwardedTraffic": true,
-                                      "allowGatewayTransit": true,
+                                      "allowGatewayTransit": false,
                                       "useRemoteGateways": "[[parameters('vNetPeerUseRemoteGateway')]"
                                     }
                                   },
                                   {
                                     "type": "Microsoft.Resources/deployments",
-                                    "apiVersion": "2020-06-01",
+                                    "apiVersion": "2021-04-01",
                                     "name": "[[concat('es-lz-hub-',substring(uniqueString(subscription().id),0,6),'-peering')]",
                                     "subscriptionId": "[[split(parameters('hubResourceId'),'/')[2]]",
                                     "resourceGroup": "[[split(parameters('hubResourceId'),'/')[4]]",
@@ -807,7 +811,7 @@
                                           {
                                             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
                                             "name": "[[[concat(parameters('hubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
-                                            "apiVersion": "2020-05-01",
+                                            "apiVersion": "2021-02-01",
                                             "properties": {
                                               "allowVirtualNetworkAccess": true,
                                               "allowForwardedTraffic": true,
