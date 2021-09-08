@@ -30,6 +30,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
+### September 2021
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### August 2021
 
 #### Docs
