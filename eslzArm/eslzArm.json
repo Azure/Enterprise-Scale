@@ -503,6 +503,14 @@
             "type": "string",
             "defaultValue": ""
         },
+        "firewallSku": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Standard"
+        },
         "firewallZones": {
             "type": "array",
             "defaultValue": []
@@ -560,6 +568,30 @@
         "identityAddressPrefix": {
             "type": "string",
             "defaultValue": ""
+        },
+        "denyDatabricksPip": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyDatabricksVnet": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "denyDatabricksSku": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
         }
     },
     "variables": {
@@ -590,6 +622,7 @@
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
+            "dataPolicyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/dataPolicies.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
@@ -628,17 +661,24 @@
             "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
             "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
             "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]",
-            "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]"
+            "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]",
+            "databricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksSkuPolicyAssignment.json')]",
+            "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
+            "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]"                        
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix')))]",
         "deploymentNames": {
             "mgmtGroupDeploymentName": "[take(concat('EntScale-Mgs', variables('deploymentSuffix')), 64)]",
             "mgmtSubscriptionPlacement": "[take(concat('EntScale-MgmtSub', variables('deploymentSuffix')), 64)]",
+            "databricksSkuDeploymentName": "[take(concat('EntScale-DBSku', variables('deploymentSuffix')), 64)]",
+            "databricksPipDeploymentName": "[take(concat('EntScale-DBPip', variables('deploymentSuffix')), 64)]",
+            "databricksVnetDeploymentName": "[take(concat('EntScale-DBVnet', variables('deploymentSuffix')), 64)]",
             "corpPeeringDeploymentName": "[take(concat('EntScale-CorpPeering', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('EntScale-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('EntScale-IdentitySub', variables('deploymentSuffix')), 64)]",
             "policyDeploymentName": "[take(concat('EntScale-Policy', variables('deploymentSuffix')), 64)]",
+            "dataPolicyDeploymentName": "[take(concat('EntScale-Data-Policy', variables('deploymentSuffix')), 64)]",
             "azOpsRbacDeploymentName": "[take(concat('EntScale-AzOpsRbac', variables('deploymentSuffix')), 64)]",
             "azOpsRgDeploymentName": "[take(concat('EntScale-AzOpsRg', variables('deploymentSuffix')), 64)]",
             "ddosRgDeploymentName": "[take(concat('EntScale-DDoSRg', variables('deploymentSuffix')), 64)]",
@@ -893,7 +933,31 @@
                 },
                 "parameters": {}
             }
-        },        
+        },
+        {
+            // Deploying ESLZ custom data policies
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').dataPolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataPolicyDefinitions]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },                            
         {
             // One of Azure's untold stories.....
             "type": "Microsoft.Resources/deployments",
@@ -1442,6 +1506,9 @@
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
                     },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSku')]"
+                    },
                     "firewallZones": {
                         "value": "[parameters('firewallZones')]"
                     },
@@ -1574,6 +1641,9 @@
                     },
                     "enableAzFw": {
                         "value": "[parameters('enableAzFw')]"
+                    },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSku')]"
                     },
                     "addressPrefix": {
                         "value": "[parameters('addressPrefix')]"
@@ -1968,7 +2038,88 @@
                     }
                 }
             }   
-        },          
+        },
+        {
+            // Assigning Azure Policy to prevent Databricks using public IP
+            "condition": "[equals(parameters('denyDatabricksPip'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').databricksPipDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').databricksPip]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning Azure Policy to prevent Databricks sku
+            "condition": "[equals(parameters('denyDatabricksSku'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').databricksSkuDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').databricksSku]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },
+        {
+            // Assigning Azure Policy to prevent Databricks sku
+            "condition": "[equals(parameters('denyDatabricksVnet'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').databricksVnetDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').databricksVnet]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }                    
+                }
+            }
+        },               
         {
             // Assigning Azure Policy enablement policy for AKS to landing zones management group if condition is true
             "condition": "[equals(parameters('enableAksPolicy'), 'Yes')]",
@@ -3141,6 +3292,9 @@
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
                     },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSku')]"
+                    },
                     "firewallZones": {
                         "value": "[parameters('firewallZones')]"
                     },
@@ -3277,6 +3431,9 @@
                     },
                     "enableAzFw": {
                         "value": "[parameters('enableAzFw')]"
+                    },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSku')]"
                     },
                     "addressPrefix": {
                         "value": "[parameters('addressPrefix')]"
