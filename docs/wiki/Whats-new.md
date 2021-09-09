@@ -47,6 +47,9 @@ Here's what's changed in Enterprise Scale:
 | Deny-Databricks-NoPublicIp | Deny public IPs for Databricks cluster | Databricks |  |  |  | Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs. |
 | Deny-Databricks-Sku | Deny non-premium Databricks sku | Databricks |  |  |  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
 | Deny-Databricks-VirtualNetwork | Deny Databricks workspaces without Vnet injection | Databricks |  |  |  | Enforces the use of vnet injection for Databricks workspaces. |
+| Deny-HdInsight-MinimalTlsVersion | Azure HDInsight clusters should use minimal TLS version | HDInsight |  |  |  | Enforces minimal TLS versions for HD Insight clusters. |
+| Deny-HdInsight-NetworkProperties | Azure HDInsight clusters should use private link | HDInsight |  |  |  | Enforces private link for HDInsight clusters. |
+| Deny-HdInsight-Sku | Azure HDInsight should use specific SKUs | HDInsight |  |  |  | Enforces use of specific SKUs for HDInsight clusters for cost management. |
 
 ### Other
 
