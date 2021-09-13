@@ -166,210 +166,211 @@
           },
           "name": "Deploy-Diagnostics-ACI"
         },
-        {
-          "properties": {
-            "description": "Deploy a default budget on all subscriptions under the assigned scope",
-            "displayName": "Deploy a default budget on all subscriptions under the assigned scope",
-            "mode": "All",
-            "parameters": {
-              "amount": {
-                "type": "String",
-                "defaultValue": "1000",
-                "metadata": {
-                  "description": "The total amount of cost or usage to track with the budget"
-                }
-              },
-              "timeGrain": {
-                "type": "String",
-                "defaultValue": "Monthly",
-                "allowedValues": [
-                  "Monthly",
-                  "Quarterly",
-                  "Annually",
-                  "BillingMonth",
-                  "BillingQuarter",
-                  "BillingAnnual"
-                ],
-                "metadata": {
-                  "description": "The time covered by a budget. Tracking of the amount will be reset based on the time grain."
-                }
-              },
-              "firstThreshold": {
-                "type": "String",
-                "defaultValue": "90",
-                "metadata": {
-                  "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
-                }
-              },
-              "secondThreshold": {
-                "type": "String",
-                "defaultValue": "100",
-                "metadata": {
-                  "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
-                }
-              },
-              "contactRoles": {
-                "type": "Array",
-                "defaultValue": [
-                  "Owner",
-                  "Contributor"
-                ],
-                "metadata": {
-                  "description": "The list of contact RBAC roles, in an array, to send the budget notification to when the threshold is exceeded."
-                }
-              },
-              "contactEmails": {
-                "type": "Array",
-                "defaultValue": [],
-                "metadata": {
-                  "description": "The list of email addresses, in an array, to send the budget notification to when the threshold is exceeded."
-                }
-              },
-              "contactGroups": {
-                "type": "Array",
-                "defaultValue": [],
-                "metadata": {
-                  "description": "The list of action groups, in an array, to send the budget notification to when the threshold is exceeded. It accepts array of strings."
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Budget"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "DeployIfNotExists",
-                "details": {
-                  "type": "Microsoft.Consumption/budgets",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "Subscription",
-                  "existenceCondition": {
-                    "allOf": [
-                      {
-                        "field": "Microsoft.Consumption/budgets/amount",
-                        "equals": "[[parameters('amount')]"
-                      },
-                      {
-                        "field": "Microsoft.Consumption/budgets/timeGrain",
-                        "equals": "[[parameters('timeGrain')]"
-                      },
-                      {
-                        "field": "Microsoft.Consumption/budgets/category",
-                        "equals": "Cost"
-                      }
-                    ]
-                  },
-                  "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                  ],
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "parameters": {
-                        "amount": {
-                          "value": "[[parameters('amount')]"
-                        },
-                        "timeGrain": {
-                          "value": "[[parameters('timeGrain')]"
-                        },
-                        "firstThreshold": {
-                          "value": "[[parameters('firstThreshold')]"
-                        },
-                        "secondThreshold": {
-                          "value": "[[parameters('secondThreshold')]"
-                        },
-                        "contactEmails": {
-                          "value": "[[parameters('contactEmails')]"
-                        },
-                        "contactRoles": {
-                          "value": "[[parameters('contactRoles')]"
-                        },
-                        "contactGroups": {
-                          "value": "[[parameters('contactGroups')]"
-                        }
-                      },
-                      "template": {
-                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "amount": {
-                            "type": "String"
-                          },
-                          "timeGrain": {
-                            "type": "String"
-                          },
-                          "firstThreshold": {
-                            "type": "String"
-                          },
-                          "secondThreshold": {
-                            "type": "String"
-                          },
-                          "contactEmails": {
-                            "type": "Array"
-                          },
-                          "contactRoles": {
-                            "type": "Array"
-                          },
-                          "contactGroups": {
-                            "type": "Array"
-                          },
-                          "startDate": {
-                            "type": "String",
-                            "defaultValue": "[[concat(utcNow('MM'), '/01/', utcNow('yyyy'))]"
-                          }
-                        },
-                        "resources": [
-                          {
-                            "type": "Microsoft.Consumption/budgets",
-                            "apiVersion": "2019-10-01",
-                            "name": "default-sandbox-budget",
-                            "properties": {
-                              "timePeriod": {
-                                "startDate": "[[parameters('startDate')]"
-                              },
-                              "timeGrain": "[[parameters('timeGrain')]",
-                              "amount": "[[parameters('amount')]",
-                              "category": "Cost",
-                              "notifications": {
-                                "NotificationForExceededBudget1": {
-                                  "enabled": true,
-                                  "operator": "GreaterThan",
-                                  "threshold": "[[parameters('firstThreshold')]",
-                                  "contactEmails": "[[parameters('contactEmails')]",
-                                  "contactRoles": "[[parameters('contactRoles')]",
-                                  "contactGroups": "[[parameters('contactGroups')]"
-                                },
-                                "NotificationForExceededBudget2": {
-                                  "enabled": true,
-                                  "operator": "GreaterThan",
-                                  "threshold": "[[parameters('secondThreshold')]",
-                                  "contactEmails": "[[parameters('contactEmails')]",
-                                  "contactRoles": "[[parameters('contactRoles')]",
-                                  "contactGroups": "[[parameters('contactGroups')]"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "name": "Deploy-Budget"
-        },
+        // Commented policy definition 'Deploy-Budget' resource provider 'Microsoft.Consumption' is not available in Azure China Cloud
+        // {
+        //   "properties": {
+        //     "description": "Deploy a default budget on all subscriptions under the assigned scope",
+        //     "displayName": "Deploy a default budget on all subscriptions under the assigned scope",
+        //     "mode": "All",
+        //     "parameters": {
+        //       "amount": {
+        //         "type": "String",
+        //         "defaultValue": "1000",
+        //         "metadata": {
+        //           "description": "The total amount of cost or usage to track with the budget"
+        //         }
+        //       },
+        //       "timeGrain": {
+        //         "type": "String",
+        //         "defaultValue": "Monthly",
+        //         "allowedValues": [
+        //           "Monthly",
+        //           "Quarterly",
+        //           "Annually",
+        //           "BillingMonth",
+        //           "BillingQuarter",
+        //           "BillingAnnual"
+        //         ],
+        //         "metadata": {
+        //           "description": "The time covered by a budget. Tracking of the amount will be reset based on the time grain."
+        //         }
+        //       },
+        //       "firstThreshold": {
+        //         "type": "String",
+        //         "defaultValue": "90",
+        //         "metadata": {
+        //           "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
+        //         }
+        //       },
+        //       "secondThreshold": {
+        //         "type": "String",
+        //         "defaultValue": "100",
+        //         "metadata": {
+        //           "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
+        //         }
+        //       },
+        //       "contactRoles": {
+        //         "type": "Array",
+        //         "defaultValue": [
+        //           "Owner",
+        //           "Contributor"
+        //         ],
+        //         "metadata": {
+        //           "description": "The list of contact RBAC roles, in an array, to send the budget notification to when the threshold is exceeded."
+        //         }
+        //       },
+        //       "contactEmails": {
+        //         "type": "Array",
+        //         "defaultValue": [],
+        //         "metadata": {
+        //           "description": "The list of email addresses, in an array, to send the budget notification to when the threshold is exceeded."
+        //         }
+        //       },
+        //       "contactGroups": {
+        //         "type": "Array",
+        //         "defaultValue": [],
+        //         "metadata": {
+        //           "description": "The list of action groups, in an array, to send the budget notification to when the threshold is exceeded. It accepts array of strings."
+        //         }
+        //       }
+        //     },
+        //     "metadata": {
+        //       "version": "1.0.0",
+        //       "category": "Budget"
+        //     },
+        //     "policyRule": {
+        //       "if": {
+        //         "allOf": [
+        //           {
+        //             "field": "type",
+        //             "equals": "Microsoft.Resources/subscriptions"
+        //           }
+        //         ]
+        //       },
+        //       "then": {
+        //         "effect": "DeployIfNotExists",
+        //         "details": {
+        //           "type": "Microsoft.Consumption/budgets",
+        //           "deploymentScope": "Subscription",
+        //           "existenceScope": "Subscription",
+        //           "existenceCondition": {
+        //             "allOf": [
+        //               {
+        //                 "field": "Microsoft.Consumption/budgets/amount",
+        //                 "equals": "[[parameters('amount')]"
+        //               },
+        //               {
+        //                 "field": "Microsoft.Consumption/budgets/timeGrain",
+        //                 "equals": "[[parameters('timeGrain')]"
+        //               },
+        //               {
+        //                 "field": "Microsoft.Consumption/budgets/category",
+        //                 "equals": "Cost"
+        //               }
+        //             ]
+        //           },
+        //           "roleDefinitionIds": [
+        //             "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+        //           ],
+        //           "deployment": {
+        //             "location": "northeurope",
+        //             "properties": {
+        //               "mode": "Incremental",
+        //               "parameters": {
+        //                 "amount": {
+        //                   "value": "[[parameters('amount')]"
+        //                 },
+        //                 "timeGrain": {
+        //                   "value": "[[parameters('timeGrain')]"
+        //                 },
+        //                 "firstThreshold": {
+        //                   "value": "[[parameters('firstThreshold')]"
+        //                 },
+        //                 "secondThreshold": {
+        //                   "value": "[[parameters('secondThreshold')]"
+        //                 },
+        //                 "contactEmails": {
+        //                   "value": "[[parameters('contactEmails')]"
+        //                 },
+        //                 "contactRoles": {
+        //                   "value": "[[parameters('contactRoles')]"
+        //                 },
+        //                 "contactGroups": {
+        //                   "value": "[[parameters('contactGroups')]"
+        //                 }
+        //               },
+        //               "template": {
+        //                 "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+        //                 "contentVersion": "1.0.0.0",
+        //                 "parameters": {
+        //                   "amount": {
+        //                     "type": "String"
+        //                   },
+        //                   "timeGrain": {
+        //                     "type": "String"
+        //                   },
+        //                   "firstThreshold": {
+        //                     "type": "String"
+        //                   },
+        //                   "secondThreshold": {
+        //                     "type": "String"
+        //                   },
+        //                   "contactEmails": {
+        //                     "type": "Array"
+        //                   },
+        //                   "contactRoles": {
+        //                     "type": "Array"
+        //                   },
+        //                   "contactGroups": {
+        //                     "type": "Array"
+        //                   },
+        //                   "startDate": {
+        //                     "type": "String",
+        //                     "defaultValue": "[[concat(utcNow('MM'), '/01/', utcNow('yyyy'))]"
+        //                   }
+        //                 },
+        //                 "resources": [
+        //                   {
+        //                     "type": "Microsoft.Consumption/budgets",
+        //                     "apiVersion": "2019-10-01",
+        //                     "name": "default-sandbox-budget",
+        //                     "properties": {
+        //                       "timePeriod": {
+        //                         "startDate": "[[parameters('startDate')]"
+        //                       },
+        //                       "timeGrain": "[[parameters('timeGrain')]",
+        //                       "amount": "[[parameters('amount')]",
+        //                       "category": "Cost",
+        //                       "notifications": {
+        //                         "NotificationForExceededBudget1": {
+        //                           "enabled": true,
+        //                           "operator": "GreaterThan",
+        //                           "threshold": "[[parameters('firstThreshold')]",
+        //                           "contactEmails": "[[parameters('contactEmails')]",
+        //                           "contactRoles": "[[parameters('contactRoles')]",
+        //                           "contactGroups": "[[parameters('contactGroups')]"
+        //                         },
+        //                         "NotificationForExceededBudget2": {
+        //                           "enabled": true,
+        //                           "operator": "GreaterThan",
+        //                           "threshold": "[[parameters('secondThreshold')]",
+        //                           "contactEmails": "[[parameters('contactEmails')]",
+        //                           "contactRoles": "[[parameters('contactRoles')]",
+        //                           "contactGroups": "[[parameters('contactGroups')]"
+        //                         }
+        //                       }
+        //                     }
+        //                   }
+        //                 ]
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   },
+        //   "name": "Deploy-Budget"
+        // },
         {
           "properties": {
             "description": "Deploys the diagnostic settings for Container Registry to stream to a Log Analytics workspace when any ACR which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics  enabled.",
@@ -13869,556 +13870,6 @@
         },
         {
           "properties": {
-            "displayName": "Audit-MachineLearning-PrivateEndpointId",
-            "mode": "Indexed",
-            "description": "Audit public endpoints that are created in other subscriptions for machine learning.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Machine Learning"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Deny",
-                  "Disabled"
-                ],
-                "defaultValue": "Audit"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces"
-                  },
-                  {
-                    "count": {
-                      "field": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections[*]",
-                      "where": {
-                        "field": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections[*].privateEndpoint.id",
-                        "notContains": "[[subscription().id]"
-                      }
-                    },
-                    "greaterOrEquals": 1
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Audit-MachineLearning-PrivateEndpointId"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-HbiWorkspace",
-            "mode": "Indexed",
-            "description": "Enforce high business impact machine learning workspaces across the environment.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Machine Learning"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces"
-                  },
-                  {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/hbiWorkspace",
-                        "exists": false
-                      },
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/hbiWorkspace",
-                        "notEquals": true
-                      }
-                    ]
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-HbiWorkspace"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-PublicAccessWhenBehindVnet",
-            "mode": "Indexed",
-            "description": "Deny public access behind vnet for machine learning workspaces.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Machine Learning"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces"
-                  },
-                  {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/allowPublicAccessWhenBehindVnet",
-                        "exists": false
-                      },
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/allowPublicAccessWhenBehindVnet",
-                        "notEquals": false
-                      }
-                    ]
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-PublicAccessWhenBehindVnet"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-Aks",
-            "mode": "Indexed",
-            "description": "Deny AKS cluster creation in machine learning and enforce connecting to existing clusters.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Machine Learning"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
-                  },
-                  {
-                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
-                    "equals": "AKS"
-                  },
-                  {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/computes/resourceId",
-                        "exists": false
-                      },
-                      {
-                        "value": "[[empty(field('Microsoft.MachineLearningServices/workspaces/computes/resourceId'))]",
-                        "equals": true
-                      }
-                    ]
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-Aks"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-Compute-SubnetId",
-            "mode": "Indexed",
-            "description": "Enforce subnet connectivity for machine learning compute clusters and instances.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Machine Learning"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
-                  },
-                  {
-                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
-                    "in": [
-                      "AmlCompute",
-                      "ComputeInstance"
-                    ]
-                  },
-                  {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/computes/subnet.id",
-                        "exists": false
-                      },
-                      {
-                        "value": "[[empty(field('Microsoft.MachineLearningServices/workspaces/computes/subnet.id'))]",
-                        "equals": true
-                      }
-                    ]
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-Compute-SubnetId"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-Compute-VmSize",
-            "mode": "Indexed",
-            "description": "Limit allowed vm sizes for machine learning compute clusters and instances.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Budget"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              },
-              "allowedVmSizes": {
-                "type": "Array",
-                "metadata": {
-                  "displayName": "Allowed VM Sizes for Aml Compute Clusters and Instances",
-                  "description": "Specifies the allowed VM Sizes for Aml Compute Clusters and Instances"
-                },
-                "defaultValue": [
-                  "Standard_D1_v2",
-                  "Standard_D2_v2",
-                  "Standard_D3_v2",
-                  "Standard_D4_v2",
-                  "Standard_D11_v2",
-                  "Standard_D12_v2",
-                  "Standard_D13_v2",
-                  "Standard_D14_v2",
-                  "Standard_DS1_v2",
-                  "Standard_DS2_v2",
-                  "Standard_DS3_v2",
-                  "Standard_DS4_v2",
-                  "Standard_DS5_v2",
-                  "Standard_DS11_v2",
-                  "Standard_DS12_v2",
-                  "Standard_DS13_v2",
-                  "Standard_DS14_v2",
-                  "Standard_M8-2ms",
-                  "Standard_M8-4ms",
-                  "Standard_M8ms",
-                  "Standard_M16-4ms",
-                  "Standard_M16-8ms",
-                  "Standard_M16ms",
-                  "Standard_M32-8ms",
-                  "Standard_M32-16ms",
-                  "Standard_M32ls",
-                  "Standard_M32ms",
-                  "Standard_M32ts",
-                  "Standard_M64-16ms",
-                  "Standard_M64-32ms",
-                  "Standard_M64ls",
-                  "Standard_M64ms",
-                  "Standard_M64s",
-                  "Standard_M128-32ms",
-                  "Standard_M128-64ms",
-                  "Standard_M128ms",
-                  "Standard_M128s",
-                  "Standard_M64",
-                  "Standard_M64m",
-                  "Standard_M128",
-                  "Standard_M128m",
-                  "Standard_D1",
-                  "Standard_D2",
-                  "Standard_D3",
-                  "Standard_D4",
-                  "Standard_D11",
-                  "Standard_D12",
-                  "Standard_D13",
-                  "Standard_D14",
-                  "Standard_DS15_v2",
-                  "Standard_NV6",
-                  "Standard_NV12",
-                  "Standard_NV24",
-                  "Standard_F2s_v2",
-                  "Standard_F4s_v2",
-                  "Standard_F8s_v2",
-                  "Standard_F16s_v2",
-                  "Standard_F32s_v2",
-                  "Standard_F64s_v2",
-                  "Standard_F72s_v2",
-                  "Standard_NC6s_v3",
-                  "Standard_NC12s_v3",
-                  "Standard_NC24rs_v3",
-                  "Standard_NC24s_v3",
-                  "Standard_NC6",
-                  "Standard_NC12",
-                  "Standard_NC24",
-                  "Standard_NC24r",
-                  "Standard_ND6s",
-                  "Standard_ND12s",
-                  "Standard_ND24rs",
-                  "Standard_ND24s",
-                  "Standard_NC6s_v2",
-                  "Standard_NC12s_v2",
-                  "Standard_NC24rs_v2",
-                  "Standard_NC24s_v2",
-                  "Standard_ND40rs_v2",
-                  "Standard_NV12s_v3",
-                  "Standard_NV24s_v3",
-                  "Standard_NV48s_v3"
-                ]
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
-                  },
-                  {
-                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
-                    "in": [
-                      "AmlCompute",
-                      "ComputeInstance"
-                    ]
-                  },
-                  {
-                    "field": "Microsoft.MachineLearningServices/workspaces/computes/vmSize",
-                    "notIn": "[[parameters('allowedVmSizes')]"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-Compute-VmSize"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess",
-            "mode": "Indexed",
-            "description": "Deny public access of clusters via SSH.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Machine Learning"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
-                  },
-                  {
-                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
-                    "equals": "AmlCompute"
-                  },
-                  {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
-                        "exists": false
-                      },
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
-                        "notEquals": "Disabled"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess"
-        },
-        {
-          "properties": {
-            "displayName": "Deny-MachineLearning-ComputeCluster-Scale",
-            "policyType": "Custom",
-            "mode": "Indexed",
-            "description": "Enforce scale settings for machine learning compute clusters.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Budget"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Disabled",
-                  "Deny"
-                ],
-                "defaultValue": "Deny"
-              },
-              "maxNodeCount": {
-                "type": "Integer",
-                "metadata": {
-                  "displayName": "Maximum Node Count",
-                  "description": "Specifies the maximum node count of AML Clusters"
-                },
-                "defaultValue": 10
-              },
-              "minNodeCount": {
-                "type": "Integer",
-                "metadata": {
-                  "displayName": "Minimum Node Count",
-                  "description": "Specifies the minimum node count of AML Clusters"
-                },
-                "defaultValue": 0
-              },
-              "maxNodeIdleTimeInSecondsBeforeScaleDown": {
-                "type": "Integer",
-                "metadata": {
-                  "displayName": "Maximum Node Idle Time in Seconds Before Scaledown",
-                  "description": "Specifies the maximum node idle time in seconds before scaledown"
-                },
-                "defaultValue": 900
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.MachineLearningServices/workspaces/computes"
-                  },
-                  {
-                    "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
-                    "equals": "AmlCompute"
-                  },
-                  {
-                    "anyOf": [
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.maxNodeCount",
-                        "greater": "[[parameters('maxNodeCount')]"
-                      },
-                      {
-                        "field": "Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.minNodeCount",
-                        "greater": "[[parameters('minNodeCount')]"
-                      },
-                      {
-                        "value": "[[int(last(split(replace(replace(replace(replace(replace(replace(replace(field('Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.nodeIdleTimeBeforeScaleDown'), 'P', '/'), 'Y', '/'), 'M', '/'), 'D', '/'), 'T', '/'), 'H', '/'), 'S', ''), '/')))]",
-                        "greater": "[[parameters('maxNodeIdleTimeInSecondsBeforeScaleDown')]"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MachineLearning-ComputeCluster-Scale"
-        },
-        {
-          "properties": {
             "displayName": "MySQL servers should use customer-managed keys to encrypt data at rest",
             "mode": "Indexed",
             "description": "Use customer-managed keys to manage the encryption at rest of your MySQL servers. By default, the data is encrypted at rest with service-managed keys, but customer-managed keys are commonly required to meet regulatory compliance standards. Customer-managed keys enable the data to be encrypted with an Azure Key Vault key created and owned by you. You have full control and responsibility for the key lifecycle, including rotation and management.",
@@ -14619,95 +14070,7 @@
             }
           },
           "name": "Deny-AFSPaasPublicIP"
-        },        
-        {
-          "properties": {
-            "displayName": "Public network access should be disabled for PostgreSQL flexible servers",
-            "mode": "Indexed",
-            "description": "Disabling the public network access property improves security by ensuring your Azure Database for PostgreSQL flexible servers can only be accessed from a private endpoint. This configuration strictly disables access from any public address space outside of Azure IP range and denies all logins that match IP or virtual network-based firewall rules.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "SQL"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Deny",
-                  "Disabled"
-                ],
-                "defaultValue": "Audit"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.DBforPostgreSQL/flexibleServers"
-                  },
-                  {
-                    "field": "Microsoft.DBforPostgreSQL/flexibleServers/publicNetworkAccess",
-                    "notEquals": "Disabled"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-PostgreSQLFlexPublicIP"
-        },
-        {
-          "properties": {
-            "displayName": "Public network access should be disabled for MySQL flexible servers",
-            "mode": "Indexed",
-            "description": "Disabling the public network access property improves security by ensuring your Azure Database for MySQL flexible servers can only be accessed from a private endpoint. This configuration strictly disables access from any public address space outside of Azure IP range and denies all logins that match IP or virtual network-based firewall rules.",
-            "metadata": {
-              "version": "1.0.0",
-              "category": "SQL"
-            },
-            "parameters": {
-              "effect": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                },
-                "allowedValues": [
-                  "Audit",
-                  "Deny",
-                  "Disabled"
-                ],
-                "defaultValue": "Audit"
-              }
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.DBforMySQL/flexibleServers"
-                  },
-                  {
-                    "field": "Microsoft.DBforMySQL/flexibleServers/publicNetworkAccess",
-                    "notEquals": "Disabled"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "[[parameters('effect')]"
-              }
-            }
-          },
-          "name": "Deny-MySQLFlexPublicIP"
-        },
+        }, 
         {
           "properties": {
             "displayName": "Configure Azure File Sync to use private DNS zones",
@@ -14897,7 +14260,7 @@
                         },
                         "resources": [
                           {
-                            "name": "[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+                            "name": "[[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
                             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
                             "apiVersion": "2020-03-01",
                             "location": "[[parameters('location')]",
@@ -17169,18 +16532,6 @@
                   "description": "Implementing Transparent Data Encryption (TDE) with your own key provides increased transparency and control over the TDE Protector, increased security with an HSM-backed external service, and promotion of separation of duties. This recommendation applies to organizations with a related compliance requirement."
                 }
               },
-              "HealthcareAPIsCMKEffect": {
-                "type": "String",
-                "defaultValue": "audit",
-                "allowedValues": [
-                  "audit",
-                  "disabled"
-                ],
-                "metadata": {
-                  "displayName": "Azure API for FHIR should use a customer-managed key (CMK) to encrypt data at rest",
-                  "description": "Use a customer-managed key to control the encryption at rest of the data stored in Azure API for FHIR when this is a regulatory or compliance requirement. Customer-managed keys also deliver double encryption by adding a second layer of encryption on top of the default one done with service-managed keys."
-                }
-              },
               "AzureBatchCMKEffect": {
                 "type": "String",
                 "defaultValue": "Audit",
@@ -17318,15 +16669,6 @@
                 "parameters": {
                   "effect": {
                     "value": "[[parameters('SqlServerTDECMKEffect')]"
-                  }
-                }
-              },
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/051cba44-2429-45b9-9649-46cec11c7119",
-                "policyDefinitionReferenceId": "HealthcareAPIsCMKEffect",
-                "parameters": {
-                  "effect": {
-                    "value": "[[parameters('HealthcareAPIsCMKEffect')]"
                   }
                 }
               },
