@@ -39,6 +39,7 @@ Here's what's changed in Enterprise Scale:
 #### Tooling
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
+- [AzOps release v1.4.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
 
 ### Policy
 
