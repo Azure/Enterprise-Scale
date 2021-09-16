@@ -48,6 +48,7 @@ Here's what's changed in Enterprise Scale:
 | Deny-Databricks-NoPublicIp | Deny public IPs for Databricks cluster | Databricks |  |  |  | Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs. |
 | Deny-Databricks-Sku | Deny non-premium Databricks sku | Databricks |  |  |  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
 | Deny-Databricks-VirtualNetwork | Deny Databricks workspaces without Vnet injection | Databricks |  |  |  | Enforces the use of vnet injection for Databricks workspaces. |
+| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |  |  |  | Denies public network access for Azure Machine Learning workspaces. |
 
 ### Other
 
