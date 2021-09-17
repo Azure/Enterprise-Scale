@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [September 2021](#september-2021)
   - [August 2021](#august-2021)
   - [July 2021](#july-2021)
   - [June 2021](#june-2021)
@@ -39,7 +40,7 @@ Here's what's changed in Enterprise Scale:
 #### Tooling
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
-- [AzOps release v1.4.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
+- [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
 
 ### Policy
 
