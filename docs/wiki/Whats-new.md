@@ -35,7 +35,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
-- *No updates, yet.*
+- Added reference to Enterprise-Scale Analytics (https://github.com/Azure/Enterprise-Scale/pull/809)
 
 #### Tooling
 
