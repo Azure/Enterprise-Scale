@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [September 2021](#september-2021)
   - [August 2021](#august-2021)
   - [July 2021](#july-2021)
   - [June 2021](#june-2021)
@@ -39,10 +40,16 @@ Here's what's changed in Enterprise Scale:
 #### Tooling
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
+- [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
 
 ### Policy
 
-- *No updates, yet.*
+| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category | Notes |
+| :---------------------: | :-----------------------------: | :-------------: | :---------------------: | :--------------------------: | :---------------: | :---: |
+| Deny-Databricks-NoPublicIp | Deny public IPs for Databricks cluster | Databricks |  |  |  | Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs. |
+| Deny-Databricks-Sku | Deny non-premium Databricks sku | Databricks |  |  |  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
+| Deny-Databricks-VirtualNetwork | Deny Databricks workspaces without Vnet injection | Databricks |  |  |  | Enforces the use of vnet injection for Databricks workspaces. |
+| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |  |  |  | Denies public network access for Azure Machine Learning workspaces. |
 
 ### Other
 
