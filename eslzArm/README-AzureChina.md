@@ -1,35 +1,12 @@
-# Enterprise-Scale Landing Zones ARM templates
-
-This folder contains the first-party ARM templates for Enterprise-Scale which and are being used when deploying and bootstrapping in the Azure Portal, which is our recommendation as it will 1) save you tremendous amount of time, 2) accelerate your journey, and 3) optionally bootstrap your GitHub repository with ready-to-use ARM templates if you want to pivot to infrastructure-as-code post deployment.
-
-For customers who cannot deploy via portal, but rather want to clone the repository and sequence the deployments on their own using the same ARM templates, they can follow the manual deployment instructions below.
-
-> **Note:** There's a strict sequencing required in order to achieve the same outcome as when deploying via the Azure portal, and any modification and changes to the templates are not supported.
-
-## Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell
-
-Prerequisites:
-
-* [Azure PowerShell module](https://docs.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
-* [Sign in and get started](https://docs.microsoft.com/powershell/azure/get-started-azureps?view=azps-6.3.0#sign-in-to-azure)
-* [Configure Azure permissions for ARM tenant deployments](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)
-* [How to clone a GitHub repository](https://docs.github.com/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
-
-There are two sets of instructions; one for deploying to Azure global regions, and another for deploying specifically to Azure China regions. This is due to minor difference in services which are available in Azure global and in Azure China, but the feature parity gap is narrowing. Here are the quick links to bring you to the specific set of instructions:
-
-1. [Deploying in Azure global regions](#deploying-in-azure-global-regions)
-2. [Deploying in Azure China regions](./README-AzureChina.md)
-
-#### Deploying in Azure global regions
+#### Deploying in Azure China regions
 
 ````powershell
-
-# Do-It-Yourself instructions for deploying Enterprise-Scale in Azure global regions
+# Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China
 
 # Change the variables below to contain the right values for your tenant, subscription, address space etc.
 
 $ESLZPrefix = "ESLZ"
-$Location = "westeurope"
+$Location = "chinaeast2"
 $DeploymentName = "EntScale"
 $TenantRootGroupId = (Get-AzTenant).Id
 $ManagementSubscriptionId = "<replace me>"
@@ -50,11 +27,12 @@ New-AzManagementGroupDeployment -Name $DeploymentName `
                                 -Verbose
 
 # Deploy core policy definitions to ESLZ intermediate root management group
+# Note: If you get an error message when deploying any policy set definition because policy definitions could not be found, please retry the PowerShell command.
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\policies.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcPolicies.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
@@ -63,7 +41,8 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\DENY-PublicEndpointsPolicySetDefinition.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcDENY-PublicEndpointsPolicySetDefinition.json `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
 # Deploying policy initiative for associating private DNS zones with private endpoints for Azure PaaS services
@@ -71,7 +50,8 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy3" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\DINE-PrivateDNSZonesPolicySetDefinition.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcDINE-PrivateDNSZonesPolicySetDefinition.json `
+                                -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
 # Add dedicated subscription for platform management
@@ -144,16 +124,6 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-la-policy" `
                                 -workspaceRegion $Location `
                                 -automationAccountName "$($ESLZPrefix)-aauto" `
                                 -automationRegion $Location `
-                                -Verbose
-
-# Assign Azure Policy to enforce diagnostic settings for subscriptions on top level management group
-
-New-AzManagementGroupDeployment -Name "$($DeploymentName)-sub-diag" `
-                                -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ActivityLogPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $ESLZPrefix `
-                                -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
-                                -ManagementGroupId $ESLZPrefix `
                                 -Verbose
 
 # Assign Azure Policy to enforce diagnostic settings for subscriptions on top level management group
@@ -319,7 +289,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-sql-auditing" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-SQLAuditingPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
-                                
+
 # Assign Azure Policy to enforce VM Backup on VMs on the landing zones management group
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-lz-backup" `
