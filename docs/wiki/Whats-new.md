@@ -36,6 +36,7 @@ Here's what's changed in Enterprise Scale:
 #### Docs
 
 - Added reference to Enterprise-Scale Analytics (https://github.com/Azure/Enterprise-Scale/pull/809)
+- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions (https://github.com/Azure/Enterprise-Scale/pull/802)
 
 #### Tooling
 
