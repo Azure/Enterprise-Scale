@@ -3,7 +3,7 @@
 ## Navigation Menu
 
 * [What's New?](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new)
-* [Community Calls](./Community-Calls)
+* [Community Calls](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
 * [Enterprise-Scale Landing Zones - User Guide](https://github.com/Azure/Enterprise-Scale/wiki#enterprise-scale-landing-zones-user-guide)
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
 * [Configure Azure permission for ARM Template deployments](./docs/EnterpriseScale-Setup-azure.md)
