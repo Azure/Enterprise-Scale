@@ -166,210 +166,211 @@
           },
           "name": "Deploy-Diagnostics-ACI"
         },
-        {
-          "properties": {
-            "description": "Deploy a default budget on all subscriptions under the assigned scope",
-            "displayName": "Deploy a default budget on all subscriptions under the assigned scope",
-            "mode": "All",
-            "parameters": {
-              "amount": {
-                "type": "String",
-                "defaultValue": "1000",
-                "metadata": {
-                  "description": "The total amount of cost or usage to track with the budget"
-                }
-              },
-              "timeGrain": {
-                "type": "String",
-                "defaultValue": "Monthly",
-                "allowedValues": [
-                  "Monthly",
-                  "Quarterly",
-                  "Annually",
-                  "BillingMonth",
-                  "BillingQuarter",
-                  "BillingAnnual"
-                ],
-                "metadata": {
-                  "description": "The time covered by a budget. Tracking of the amount will be reset based on the time grain."
-                }
-              },
-              "firstThreshold": {
-                "type": "String",
-                "defaultValue": "90",
-                "metadata": {
-                  "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
-                }
-              },
-              "secondThreshold": {
-                "type": "String",
-                "defaultValue": "100",
-                "metadata": {
-                  "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
-                }
-              },
-              "contactRoles": {
-                "type": "Array",
-                "defaultValue": [
-                  "Owner",
-                  "Contributor"
-                ],
-                "metadata": {
-                  "description": "The list of contact RBAC roles, in an array, to send the budget notification to when the threshold is exceeded."
-                }
-              },
-              "contactEmails": {
-                "type": "Array",
-                "defaultValue": [],
-                "metadata": {
-                  "description": "The list of email addresses, in an array, to send the budget notification to when the threshold is exceeded."
-                }
-              },
-              "contactGroups": {
-                "type": "Array",
-                "defaultValue": [],
-                "metadata": {
-                  "description": "The list of action groups, in an array, to send the budget notification to when the threshold is exceeded. It accepts array of strings."
-                }
-              }
-            },
-            "metadata": {
-              "version": "1.0.0",
-              "category": "Budget"
-            },
-            "policyRule": {
-              "if": {
-                "allOf": [
-                  {
-                    "field": "type",
-                    "equals": "Microsoft.Resources/subscriptions"
-                  }
-                ]
-              },
-              "then": {
-                "effect": "DeployIfNotExists",
-                "details": {
-                  "type": "Microsoft.Consumption/budgets",
-                  "deploymentScope": "Subscription",
-                  "existenceScope": "Subscription",
-                  "existenceCondition": {
-                    "allOf": [
-                      {
-                        "field": "Microsoft.Consumption/budgets/amount",
-                        "equals": "[[parameters('amount')]"
-                      },
-                      {
-                        "field": "Microsoft.Consumption/budgets/timeGrain",
-                        "equals": "[[parameters('timeGrain')]"
-                      },
-                      {
-                        "field": "Microsoft.Consumption/budgets/category",
-                        "equals": "Cost"
-                      }
-                    ]
-                  },
-                  "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
-                  ],
-                  "deployment": {
-                    "location": "northeurope",
-                    "properties": {
-                      "mode": "Incremental",
-                      "parameters": {
-                        "amount": {
-                          "value": "[[parameters('amount')]"
-                        },
-                        "timeGrain": {
-                          "value": "[[parameters('timeGrain')]"
-                        },
-                        "firstThreshold": {
-                          "value": "[[parameters('firstThreshold')]"
-                        },
-                        "secondThreshold": {
-                          "value": "[[parameters('secondThreshold')]"
-                        },
-                        "contactEmails": {
-                          "value": "[[parameters('contactEmails')]"
-                        },
-                        "contactRoles": {
-                          "value": "[[parameters('contactRoles')]"
-                        },
-                        "contactGroups": {
-                          "value": "[[parameters('contactGroups')]"
-                        }
-                      },
-                      "template": {
-                        "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-                        "contentVersion": "1.0.0.0",
-                        "parameters": {
-                          "amount": {
-                            "type": "String"
-                          },
-                          "timeGrain": {
-                            "type": "String"
-                          },
-                          "firstThreshold": {
-                            "type": "String"
-                          },
-                          "secondThreshold": {
-                            "type": "String"
-                          },
-                          "contactEmails": {
-                            "type": "Array"
-                          },
-                          "contactRoles": {
-                            "type": "Array"
-                          },
-                          "contactGroups": {
-                            "type": "Array"
-                          },
-                          "startDate": {
-                            "type": "String",
-                            "defaultValue": "[[concat(utcNow('MM'), '/01/', utcNow('yyyy'))]"
-                          }
-                        },
-                        "resources": [
-                          {
-                            "type": "Microsoft.Consumption/budgets",
-                            "apiVersion": "2019-10-01",
-                            "name": "default-sandbox-budget",
-                            "properties": {
-                              "timePeriod": {
-                                "startDate": "[[parameters('startDate')]"
-                              },
-                              "timeGrain": "[[parameters('timeGrain')]",
-                              "amount": "[[parameters('amount')]",
-                              "category": "Cost",
-                              "notifications": {
-                                "NotificationForExceededBudget1": {
-                                  "enabled": true,
-                                  "operator": "GreaterThan",
-                                  "threshold": "[[parameters('firstThreshold')]",
-                                  "contactEmails": "[[parameters('contactEmails')]",
-                                  "contactRoles": "[[parameters('contactRoles')]",
-                                  "contactGroups": "[[parameters('contactGroups')]"
-                                },
-                                "NotificationForExceededBudget2": {
-                                  "enabled": true,
-                                  "operator": "GreaterThan",
-                                  "threshold": "[[parameters('secondThreshold')]",
-                                  "contactEmails": "[[parameters('contactEmails')]",
-                                  "contactRoles": "[[parameters('contactRoles')]",
-                                  "contactGroups": "[[parameters('contactGroups')]"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "name": "Deploy-Budget"
-        },
+        // Commented policy definition 'Deploy-Budget' resource provider 'Microsoft.Consumption' is not available in Azure China Cloud
+        // {
+        //   "properties": {
+        //     "description": "Deploy a default budget on all subscriptions under the assigned scope",
+        //     "displayName": "Deploy a default budget on all subscriptions under the assigned scope",
+        //     "mode": "All",
+        //     "parameters": {
+        //       "amount": {
+        //         "type": "String",
+        //         "defaultValue": "1000",
+        //         "metadata": {
+        //           "description": "The total amount of cost or usage to track with the budget"
+        //         }
+        //       },
+        //       "timeGrain": {
+        //         "type": "String",
+        //         "defaultValue": "Monthly",
+        //         "allowedValues": [
+        //           "Monthly",
+        //           "Quarterly",
+        //           "Annually",
+        //           "BillingMonth",
+        //           "BillingQuarter",
+        //           "BillingAnnual"
+        //         ],
+        //         "metadata": {
+        //           "description": "The time covered by a budget. Tracking of the amount will be reset based on the time grain."
+        //         }
+        //       },
+        //       "firstThreshold": {
+        //         "type": "String",
+        //         "defaultValue": "90",
+        //         "metadata": {
+        //           "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
+        //         }
+        //       },
+        //       "secondThreshold": {
+        //         "type": "String",
+        //         "defaultValue": "100",
+        //         "metadata": {
+        //           "description": "Threshold value associated with a notification. Notification is sent when the cost exceeded the threshold. It is always percent and has to be between 0 and 1000."
+        //         }
+        //       },
+        //       "contactRoles": {
+        //         "type": "Array",
+        //         "defaultValue": [
+        //           "Owner",
+        //           "Contributor"
+        //         ],
+        //         "metadata": {
+        //           "description": "The list of contact RBAC roles, in an array, to send the budget notification to when the threshold is exceeded."
+        //         }
+        //       },
+        //       "contactEmails": {
+        //         "type": "Array",
+        //         "defaultValue": [],
+        //         "metadata": {
+        //           "description": "The list of email addresses, in an array, to send the budget notification to when the threshold is exceeded."
+        //         }
+        //       },
+        //       "contactGroups": {
+        //         "type": "Array",
+        //         "defaultValue": [],
+        //         "metadata": {
+        //           "description": "The list of action groups, in an array, to send the budget notification to when the threshold is exceeded. It accepts array of strings."
+        //         }
+        //       }
+        //     },
+        //     "metadata": {
+        //       "version": "1.0.0",
+        //       "category": "Budget"
+        //     },
+        //     "policyRule": {
+        //       "if": {
+        //         "allOf": [
+        //           {
+        //             "field": "type",
+        //             "equals": "Microsoft.Resources/subscriptions"
+        //           }
+        //         ]
+        //       },
+        //       "then": {
+        //         "effect": "DeployIfNotExists",
+        //         "details": {
+        //           "type": "Microsoft.Consumption/budgets",
+        //           "deploymentScope": "Subscription",
+        //           "existenceScope": "Subscription",
+        //           "existenceCondition": {
+        //             "allOf": [
+        //               {
+        //                 "field": "Microsoft.Consumption/budgets/amount",
+        //                 "equals": "[[parameters('amount')]"
+        //               },
+        //               {
+        //                 "field": "Microsoft.Consumption/budgets/timeGrain",
+        //                 "equals": "[[parameters('timeGrain')]"
+        //               },
+        //               {
+        //                 "field": "Microsoft.Consumption/budgets/category",
+        //                 "equals": "Cost"
+        //               }
+        //             ]
+        //           },
+        //           "roleDefinitionIds": [
+        //             "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+        //           ],
+        //           "deployment": {
+        //             "location": "chinaeast2",
+        //             "properties": {
+        //               "mode": "Incremental",
+        //               "parameters": {
+        //                 "amount": {
+        //                   "value": "[[parameters('amount')]"
+        //                 },
+        //                 "timeGrain": {
+        //                   "value": "[[parameters('timeGrain')]"
+        //                 },
+        //                 "firstThreshold": {
+        //                   "value": "[[parameters('firstThreshold')]"
+        //                 },
+        //                 "secondThreshold": {
+        //                   "value": "[[parameters('secondThreshold')]"
+        //                 },
+        //                 "contactEmails": {
+        //                   "value": "[[parameters('contactEmails')]"
+        //                 },
+        //                 "contactRoles": {
+        //                   "value": "[[parameters('contactRoles')]"
+        //                 },
+        //                 "contactGroups": {
+        //                   "value": "[[parameters('contactGroups')]"
+        //                 }
+        //               },
+        //               "template": {
+        //                 "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+        //                 "contentVersion": "1.0.0.0",
+        //                 "parameters": {
+        //                   "amount": {
+        //                     "type": "String"
+        //                   },
+        //                   "timeGrain": {
+        //                     "type": "String"
+        //                   },
+        //                   "firstThreshold": {
+        //                     "type": "String"
+        //                   },
+        //                   "secondThreshold": {
+        //                     "type": "String"
+        //                   },
+        //                   "contactEmails": {
+        //                     "type": "Array"
+        //                   },
+        //                   "contactRoles": {
+        //                     "type": "Array"
+        //                   },
+        //                   "contactGroups": {
+        //                     "type": "Array"
+        //                   },
+        //                   "startDate": {
+        //                     "type": "String",
+        //                     "defaultValue": "[[concat(utcNow('MM'), '/01/', utcNow('yyyy'))]"
+        //                   }
+        //                 },
+        //                 "resources": [
+        //                   {
+        //                     "type": "Microsoft.Consumption/budgets",
+        //                     "apiVersion": "2019-10-01",
+        //                     "name": "default-sandbox-budget",
+        //                     "properties": {
+        //                       "timePeriod": {
+        //                         "startDate": "[[parameters('startDate')]"
+        //                       },
+        //                       "timeGrain": "[[parameters('timeGrain')]",
+        //                       "amount": "[[parameters('amount')]",
+        //                       "category": "Cost",
+        //                       "notifications": {
+        //                         "NotificationForExceededBudget1": {
+        //                           "enabled": true,
+        //                           "operator": "GreaterThan",
+        //                           "threshold": "[[parameters('firstThreshold')]",
+        //                           "contactEmails": "[[parameters('contactEmails')]",
+        //                           "contactRoles": "[[parameters('contactRoles')]",
+        //                           "contactGroups": "[[parameters('contactGroups')]"
+        //                         },
+        //                         "NotificationForExceededBudget2": {
+        //                           "enabled": true,
+        //                           "operator": "GreaterThan",
+        //                           "threshold": "[[parameters('secondThreshold')]",
+        //                           "contactEmails": "[[parameters('contactEmails')]",
+        //                           "contactRoles": "[[parameters('contactRoles')]",
+        //                           "contactGroups": "[[parameters('contactGroups')]"
+        //                         }
+        //                       }
+        //                     }
+        //                   }
+        //                 ]
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   },
+        //   "name": "Deploy-Budget"
+        // },
         {
           "properties": {
             "description": "Deploys the diagnostic settings for Container Registry to stream to a Log Analytics workspace when any ACR which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics  enabled.",
@@ -648,7 +649,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "Incremental",
                       "parameters": {
@@ -2011,7 +2012,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2128,7 +2129,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2235,7 +2236,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2342,7 +2343,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2449,7 +2450,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2556,7 +2557,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2663,7 +2664,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2770,7 +2771,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2877,7 +2878,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -2984,7 +2985,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -3091,7 +3092,7 @@
                     ]
                   },
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "incremental",
                       "parameters": {
@@ -4415,6 +4416,189 @@
         },
         {
           "properties": {
+            "description": "Deploys the diagnostic settings for Data Lake Analytics to stream to a Log Analytics workspace when any Data Lake Analytics which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
+            "displayName": "Deploy Diagnostic Settings for Data Lake Analytics to Log Analytics workspace",
+            "mode": "Indexed",
+            "parameters": {
+              "logAnalytics": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Log Analytics workspace",
+                  "description": "Select Log Analytics workspace from dropdown list. If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
+                  "strongType": "omsWorkspace"
+                }
+              },
+              "effect": {
+                "type": "String",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                }
+              },
+              "profileName": {
+                "type": "String",
+                "defaultValue": "setbypolicy",
+                "metadata": {
+                  "displayName": "Profile name",
+                  "description": "The diagnostic settings profile name"
+                }
+              },
+              "metricsEnabled": {
+                "type": "String",
+                "defaultValue": "True",
+                "allowedValues": [
+                  "True",
+                  "False"
+                ],
+                "metadata": {
+                  "displayName": "Enable metrics",
+                  "description": "Whether to enable metrics stream to the Log Analytics workspace - True or False"
+                }
+              },
+              "logsEnabled": {
+                "type": "String",
+                "defaultValue": "True",
+                "allowedValues": [
+                  "True",
+                  "False"
+                ],
+                "metadata": {
+                  "displayName": "Enable logs",
+                  "description": "Whether to enable logs stream to the Log Analytics workspace - True or False"
+                }
+              }
+            },
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Monitoring"
+            },
+            "policyRule": {
+              "if": {
+                "field": "type",
+                "equals": "Microsoft.DataLakeAnalytics/accounts"
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Insights/diagnosticSettings",
+                  "name": "setByPolicy",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                        "equals": "true"
+                      },
+                      {
+                        "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                        "equals": "true"
+                      },
+                      {
+                        "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+                        "equals": "[[parameters('logAnalytics')]"
+                      }
+                    ]
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+                    "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "Incremental",
+                      "template": {
+                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "resourceName": {
+                            "type": "String"
+                          },
+                          "logAnalytics": {
+                            "type": "String"
+                          },
+                          "location": {
+                            "type": "String"
+                          },
+                          "profileName": {
+                            "type": "String"
+                          },
+                          "metricsEnabled": {
+                            "type": "String"
+                          },
+                          "logsEnabled": {
+                            "type": "String"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "Microsoft.DataLakeAnalytics/accounts/providers/diagnosticSettings",
+                            "apiVersion": "2017-05-01-preview",
+                            "name": "[[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+                            "location": "[[parameters('location')]",
+                            "dependsOn": [],
+                            "properties": {
+                              "workspaceId": "[[parameters('logAnalytics')]",
+                              "metrics": [
+                                {
+                                  "category": "AllMetrics",
+                                  "enabled": "[[parameters('metricsEnabled')]",
+                                  "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                  },
+                                  "timeGrain": null
+                                }
+                              ],
+                              "logs": [
+                                {
+                                  "category": "Audit",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "Requests",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "logAnalytics": {
+                          "value": "[[parameters('logAnalytics')]"
+                        },
+                        "location": {
+                          "value": "[[field('location')]"
+                        },
+                        "resourceName": {
+                          "value": "[[field('name')]"
+                        },
+                        "profileName": {
+                          "value": "[[parameters('profileName')]"
+                        },
+                        "metricsEnabled": {
+                          "value": "[[parameters('metricsEnabled')]"
+                        },
+                        "logsEnabled": {
+                          "value": "[[parameters('logsEnabled')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Diagnostics-DLAnalytics"
+        },
+        {
+          "properties": {
             "description": "Deploys the diagnostic settings for Event Grid subscriptions to stream to a Log Analytics workspace when any Event Grid subscriptions which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
             "displayName": "Deploy Diagnostic Settings for Event Grid subscriptions to Log Analytics workspace",
             "mode": "Indexed",
@@ -5359,7 +5543,7 @@
                     "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
                   ],
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "Incremental",
                       "parameters": {
@@ -7270,7 +7454,7 @@
                     "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
                   ],
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "Incremental",
                       "parameters": {
@@ -7682,7 +7866,7 @@
                   "resourceGroupName": "[[if(empty(coalesce(field('Microsoft.Network/networkSecurityGroups/flowLogs'))), 'NetworkWatcherRG', split(first(field('Microsoft.Network/networkSecurityGroups/flowLogs[*].id')), '/')[4])]",
                   "deploymentScope": "subscription",
                   "deployment": {
-                    "location": "northeurope",
+                    "location": "chinaeast2",
                     "properties": {
                       "mode": "Incremental",
                       "parameters": {
@@ -13683,7 +13867,699 @@
             }
           },
           "name": "Deploy-Storage-sslEnforcement"
-        }
+        },
+        {
+          "properties": {
+            "displayName": "MySQL servers should use customer-managed keys to encrypt data at rest",
+            "mode": "Indexed",
+            "description": "Use customer-managed keys to manage the encryption at rest of your MySQL servers. By default, the data is encrypted at rest with service-managed keys, but customer-managed keys are commonly required to meet regulatory compliance standards. Customer-managed keys enable the data to be encrypted with an Azure Key Vault key created and owned by you. You have full control and responsibility for the key lifecycle, including rotation and management.",
+            "metadata": {
+              "version": "1.0.4",
+              "category": "SQL"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "AuditIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "AuditIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "field": "type",
+                "equals": "Microsoft.DBforMySQL/servers"
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.DBforMySQL/servers/keys",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.DBforMySQL/servers/keys/serverKeyType",
+                        "equals": "AzureKeyVault"
+                      },
+                      {
+                        "field": "Microsoft.DBforMySQL/servers/keys/uri",
+                        "notEquals": ""
+                      },
+                      {
+                        "field": "Microsoft.DBforMySQL/servers/keys/uri",
+                        "exists": "true"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-MySQLCMKEffect"
+        },
+        {
+          "properties": {
+            "displayName": "PostgreSQL servers should use customer-managed keys to encrypt data at rest",
+            "mode": "Indexed",
+            "description": "Use customer-managed keys to manage the encryption at rest of your PostgreSQL servers. By default, the data is encrypted at rest with service-managed keys, but customer-managed keys are commonly required to meet regulatory compliance standards. Customer-managed keys enable the data to be encrypted with an Azure Key Vault key created and owned by you. You have full control and responsibility for the key lifecycle, including rotation and management.",
+            "metadata": {
+              "version": "1.0.4",
+              "category": "SQL"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "AuditIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "AuditIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "field": "type",
+                "equals": "Microsoft.DBforPostgreSQL/servers"
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.DBforPostgreSQL/servers/keys",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.DBforPostgreSQL/servers/keys/serverKeyType",
+                        "equals": "AzureKeyVault"
+                      },
+                      {
+                        "field": "Microsoft.DBforPostgreSQL/servers/keys/uri",
+                        "notEquals": ""
+                      },
+                      {
+                        "field": "Microsoft.DBforPostgreSQL/servers/keys/uri",
+                        "exists": "true"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-PostgreSQLCMKEffect"
+        },
+        {
+          "properties": {
+            "displayName": "Preview: Azure Key Vault should disable public network access",
+            "mode": "Indexed",
+            "description": "Disable public network access for your key vault so that it's not accessible over the public internet. This can reduce data leakage risks. Learn more at: https://aka.ms/akvprivatelink.",
+            "metadata": {
+              "version": "2.0.0-preview",
+              "category": "Key Vault",
+              "preview": true
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Audit"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.KeyVault/vaults"
+                  },
+                  {
+                    "not": {
+                      "field": "Microsoft.KeyVault/vaults/createMode",
+                      "equals": "recover"
+                    }
+                  },
+                  {
+                    "field": "Microsoft.KeyVault/vaults/networkAcls.defaultAction",
+                    "notEquals": "Deny"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-KeyVaultPaasPublicIP"
+        },
+        {
+          "properties": {
+            "displayName": "Public network access should be disabled for Azure File Sync",
+            "mode": "Indexed",
+            "description": "Disabling the public endpoint allows you to restrict access to your Storage Sync Service resource to requests destined to approved private endpoints on your organization's network. There is nothing inherently insecure about allowing requests to the public endpoint, however, you may wish to disable it to meet regulatory, legal, or organizational policy requirements. You can disable the public endpoint for a Storage Sync Service by setting the incomingTrafficPolicy of the resource to AllowVirtualNetworksOnly.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Storage"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Audit"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.StorageSync/storageSyncServices"
+                  },
+                  {
+                    "field": "Microsoft.StorageSync/storageSyncServices/incomingTrafficPolicy",
+                    "notEquals": "AllowVirtualNetworksOnly"
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-AFSPaasPublicIP"
+        }, 
+        {
+          "properties": {
+            "displayName": "Configure Azure File Sync to use private DNS zones",
+            "mode": "Indexed",
+            "description": "To access the private endpoint(s) for Storage Sync Service resource interfaces from a registered server, you need to configure your DNS to resolve the correct names to your private endpoint's private IP addresses. This policy creates the requisite Azure Private DNS Zone and A records for the interfaces of your Storage Sync Service private endpoint(s).",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Storage"
+            },
+            "parameters": {
+              "privateDnsZoneId": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "privateDnsZoneId",
+                  "strongType": "Microsoft.Network/privateDnsZones",
+                  "description": "Private DNS Zone Identifier"
+                }
+              },
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Network/privateEndpoints"
+                  },
+                  {
+                    "count": {
+                      "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                      "where": {
+                        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                        "equals": "afs"
+                      }
+                    },
+                    "greaterOrEquals": 1
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b12aa53e-6015-4669-85d0-8515ebb3ae7f",
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "privateDnsZoneId": {
+                            "type": "string"
+                          },
+                          "privateEndpointName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "name": "[[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2020-03-01",
+                            "location": "[[parameters('location')]",
+                            "properties": {
+                              "privateDnsZoneConfigs": [
+                                {
+                                  "name": "privatelink-afs",
+                                  "properties": {
+                                    "privateDnsZoneId": "[[parameters('privateDnsZoneId')]"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "parameters": {
+                        "privateDnsZoneId": {
+                          "value": "[[parameters('privateDnsZoneId')]"
+                        },
+                        "privateEndpointName": {
+                          "value": "[[field('name')]"
+                        },
+                        "location": {
+                          "value": "[[field('location')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Private-DNS-Azure-File-Sync"
+        },
+        {
+          "properties": {
+            "displayName": "Configure Azure Web PubSub Service to use private DNS zones",
+            "mode": "Indexed",
+            "description": "Use private DNS zones to override the DNS resolution for a private endpoint. A private DNS zone links to your virtual network to resolve to Azure Web PubSub service. Learn more at: https://aka.ms/awps/privatelink.",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Web PubSub"
+            },
+            "parameters": {
+              "privateDnsZoneId": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Private DNS Zone Id",
+                  "description": "Private DNS zone to integrate with private endpoint.",
+                  "strongType": "Microsoft.Network/privateDnsZones"
+                }
+              },
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Network/privateEndpoints"
+                  },
+                  {
+                    "count": {
+                      "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                      "where": {
+                        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                        "equals": "webpubsub"
+                      }
+                    },
+                    "greaterOrEquals": 1
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "privateDnsZoneId": {
+                            "type": "string"
+                          },
+                          "privateEndpointName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "name": "[[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2020-03-01",
+                            "location": "[[parameters('location')]",
+                            "properties": {
+                              "privateDnsZoneConfigs": [
+                                {
+                                  "name": "privatelink-webpubsub-azure-com",
+                                  "properties": {
+                                    "privateDnsZoneId": "[[parameters('privateDnsZoneId')]"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "parameters": {
+                        "privateDnsZoneId": {
+                          "value": "[[parameters('privateDnsZoneId')]"
+                        },
+                        "privateEndpointName": {
+                          "value": "[[field('name')]"
+                        },
+                        "location": {
+                          "value": "[[field('location')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Private-DNS-Azure-Web"
+        },
+        {
+          "properties": {
+            "displayName": "Preview: Configure Azure Key Vaults to use private DNS zones",
+            "mode": "Indexed",
+            "description": "Use private DNS zones to override the DNS resolution for a private endpoint. A private DNS zone links to your virtual network to resolve to key vault. Learn more at: https://aka.ms/akvprivatelink.",
+            "metadata": {
+              "version": "1.0.0-preview",
+              "category": "Key Vault",
+              "preview": true
+            },
+            "parameters": {
+              "privateDnsZoneId": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Private DNS Zone ID",
+                  "description": "A private DNS zone ID to connect to the private endpoint.",
+                  "strongType": "Microsoft.Network/privateDnsZones",
+                  "assignPermissions": true
+                }
+              },
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "allOf": [
+                  {
+                    "field": "type",
+                    "equals": "Microsoft.Network/privateEndpoints"
+                  },
+                  {
+                    "count": {
+                      "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                      "where": {
+                        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                        "equals": "vault"
+                      }
+                    },
+                    "greaterOrEquals": 1
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                  "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                  ],
+                  "deployment": {
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "privateDnsZoneId": {
+                            "type": "string"
+                          },
+                          "privateEndpointName": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        },
+                        "resources": [
+                          {
+                            "name": "[[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2020-03-01",
+                            "location": "[[parameters('location')]",
+                            "properties": {
+                              "privateDnsZoneConfigs": [
+                                {
+                                  "name": "keyvault-privateDnsZone",
+                                  "properties": {
+                                    "privateDnsZoneId": "[[parameters('privateDnsZoneId')]"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "parameters": {
+                        "privateDnsZoneId": {
+                          "value": "[[parameters('privateDnsZoneId')]"
+                        },
+                        "privateEndpointName": {
+                          "value": "[[field('name')]"
+                        },
+                        "location": {
+                          "value": "[[field('location')]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "name": "Deploy-Private-DNS-Azure-KeyVault"
+        },
+        {
+          "properties": {
+            "displayName": "Configure Azure Activity logs to stream to specified Log Analytics workspace",
+            "mode": "All",
+            "description": "Deploys the diagnostic settings for Azure Activity to stream subscriptions audit logs to a Log Analytics workspace to monitor subscription-level events",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Monitoring"
+            },
+            "parameters": {
+              "logAnalytics": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Primary Log Analytics workspace",
+                  "description": "If this workspace is outside of the scope of the assignment you must manually grant 'Log Analytics Contributor' permissions (or similar) to the policy assignment's principal ID.",
+                  "strongType": "omsWorkspace",
+                  "assignPermissions": true
+                }
+              },
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "DeployIfNotExists",
+                  "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+              },
+              "logsEnabled": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Enable logs",
+                  "description": "Whether to enable logs stream to the Log Analytics workspace - True or False"
+                },
+                "allowedValues": [
+                  "True",
+                  "False"
+                ],
+                "defaultValue": "True"
+              }
+            },
+            "policyRule": {
+              "if": {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions"
+              },
+              "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                  "type": "Microsoft.Insights/diagnosticSettings",
+                  "deploymentScope": "Subscription",
+                  "existenceScope": "Subscription",
+                  "existenceCondition": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                        "equals": "[[parameters('logsEnabled')]"
+                      },
+                      {
+                        "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+                        "equals": "[[parameters('logAnalytics')]"
+                      }
+                    ]
+                  },
+                  "deployment": {
+                    "location": "chinaeast2",
+                    "properties": {
+                      "mode": "incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "logAnalytics": {
+                            "type": "string"
+                          },
+                          "logsEnabled": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "name": "subscriptionToLa",
+                            "type": "Microsoft.Insights/diagnosticSettings",
+                            "apiVersion": "2017-05-01-preview",
+                            "location": "Global",
+                            "properties": {
+                              "workspaceId": "[[parameters('logAnalytics')]",
+                              "logs": [
+                                {
+                                  "category": "Administrative",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "Security",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "ServiceHealth",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "Alert",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "Recommendation",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "Policy",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "Autoscale",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                },
+                                {
+                                  "category": "ResourceHealth",
+                                  "enabled": "[[parameters('logsEnabled')]"
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "outputs": {}
+                      },
+                      "parameters": {
+                        "logAnalytics": {
+                          "value": "[[parameters('logAnalytics')]"
+                        },
+                        "logsEnabled": {
+                          "value": "[[parameters('logsEnabled')]"
+                        }
+                      }
+                    }
+                  },
+                  "roleDefinitionIds": [
+                    "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+                    "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+                  ]
+                }
+              }
+            }
+          },
+          "name": "Deploy-ActivityLogs-to-LA-workspace"
+        }        
       ]
     },
     "initiatives": {
@@ -14444,7 +15320,7 @@
             },
             "policyDefinitionGroups": null,
             "metadata": {
-              "version": "2.0.0",
+              "version": "1.0.0",
               "category": "Monitoring"
             },
             "PolicyDefinitions": [
@@ -14739,6 +15615,21 @@
                   },
                   "effect": {
                     "value": "[[parameters('DataLakeStoreLogAnalyticsEffect')]"
+                  },
+                  "profileName": {
+                    "value": "[[parameters('profileName')]"
+                  }
+                }
+              },
+              {
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-DLAnalytics')]",
+                "policyDefinitionReferenceId": "DataLakeAnalyticsDeployDiagnosticLogDeployLogAnalytics",
+                "parameters": {
+                  "logAnalytics": {
+                    "value": "[[parameters('logAnalytics')]"
+                  },
+                  "effect": {
+                    "value": "[[parameters('DataLakeAnalyticsLogAnalyticsEffect')]"
                   },
                   "profileName": {
                     "value": "[[parameters('profileName')]"
@@ -15362,7 +16253,7 @@
               }
             ]
           },
-          "name": "Deploy-Diagnostics-LogAnalyticsV2"
+          "name": "Deploy-Diagnostics-LogAnalytics"
         },
         {
           "properties": {
@@ -15641,18 +16532,6 @@
                   "description": "Implementing Transparent Data Encryption (TDE) with your own key provides increased transparency and control over the TDE Protector, increased security with an HSM-backed external service, and promotion of separation of duties. This recommendation applies to organizations with a related compliance requirement."
                 }
               },
-              "HealthcareAPIsCMKEffect": {
-                "type": "String",
-                "defaultValue": "audit",
-                "allowedValues": [
-                  "audit",
-                  "disabled"
-                ],
-                "metadata": {
-                  "displayName": "Azure API for FHIR should use a customer-managed key (CMK) to encrypt data at rest",
-                  "description": "Use a customer-managed key to control the encryption at rest of the data stored in Azure API for FHIR when this is a regulatory or compliance requirement. Customer-managed keys also deliver double encryption by adding a second layer of encryption on top of the default one done with service-managed keys."
-                }
-              },
               "AzureBatchCMKEffect": {
                 "type": "String",
                 "defaultValue": "Audit",
@@ -15767,7 +16646,7 @@
                 }
               },
               {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/83cef61d-dbd1-4b20-a4fc-5fbc7da10833",
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-MySQLCMKEffect')]",
                 "policyDefinitionReferenceId": "MySQLCMKEffect",
                 "parameters": {
                   "effect": {
@@ -15776,7 +16655,7 @@
                 }
               },
               {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/18adea5e-f416-4d0f-8aa8-d24321e3e274",
+                "policyDefinitionId": "[concat(variables('scope'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-PostgreSQLCMKEffect')]",
                 "policyDefinitionReferenceId": "PostgreSQLCMKEffect",
                 "parameters": {
                   "effect": {
@@ -15793,15 +16672,16 @@
                   }
                 }
               },
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/051cba44-2429-45b9-9649-46cec11c7119",
-                "policyDefinitionReferenceId": "HealthcareAPIsCMKEffect",
-                "parameters": {
-                  "effect": {
-                    "value": "[[parameters('HealthcareAPIsCMKEffect')]"
-                  }
-                }
-              },
+              // Healthcare API is not available in Azure China regions
+              // {
+              //   "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/051cba44-2429-45b9-9649-46cec11c7119",
+              //   "policyDefinitionReferenceId": "HealthcareAPIsCMKEffect",
+              //   "parameters": {
+              //     "effect": {
+              //       "value": "[[parameters('HealthcareAPIsCMKEffect')]"
+              //     }
+              //   }
+              // },
               {
                 "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/99e9ccd8-3db9-4592-b0d1-14b1715a4d8a",
                 "policyDefinitionReferenceId": "AzureBatchCMKEffect",
