@@ -15,12 +15,14 @@ The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-
   * [Separating platform and landing zones](./How-Enterprise-Scale-Works#separating-platform-and-landing-zones)
   * [Enterprise-Scale Management Group Structure](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure)
   * [What happens when you deploy Enterprise-Scale?](./How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
-* [Deploying Enterprise-Scale](./Deploying-Enterprise-Scale)
-  * [Pre-requisites](./Deploying-Enterprise-Scale#pre-requisites)
-  * [Reference implementation deployment](./Deploying-Enterprise-Scale#reference-implementation-deployment)
-  * [Validation post deployment (GitHub)](./Deploying-Enterprise-Scale#validation-post-deployment-github)
-  * [Post deployment activities](./Deploying-Enterprise-Scale#post-deployment-activities)
-  * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-Enterprise-Scale#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
+* Easy deployment of Landing Zones using the Deployment Accelerator
+  * [Pre-requisites](./Deploying-Enterprise-Scale-Pre-requisites)
+  * [Deploy Landing Zones with hybrid connectivity to on-premises](./Deploying-Enterprise-Scale-AdvWorks)
+  * [Deploy Landing Zones with hybrid connectivity to on-premises (Small Enterprises)](./Deploying-Enterprise-Scale-TreyResearch)
+  * Deploy Landing Zones without hybrid connectivity to on-premises
+  * Deploy Landing Zones with hybrid connectivity to on-premises with Azure Virtual WAN
+  * [Enable deployment of Landing Zones using Infrastructure as Code and Github Actions](./Deploying-Enterprise-Scale-IaC-Github)
+  * [Operating the Azure platform using Infrastructure as Code and GitHub Actions)](./Deploying-Enterprise-Scale#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
 * [Create subscriptions / landing zones using AzOps](./Create-Landingzones)
   * [Create landing zones (subscription) using AzOps](./Create-Landingzones#create-landing-zones-subscription-using-azops)
   * [Pre-requisites](./Create-Landingzones.md#pre-requisites)
