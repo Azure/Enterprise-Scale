@@ -1,12 +1,10 @@
-## In this Section
+## Enterprise-Scale deployment with hub and spoke network topology
 
-TBD: Enterprise Scale Deployment Accelerator is a bla, bla, bla. In this quickstart, you will implement an Azure foundation that provides your Landing Zones with connectivity on-premises datacenters and branch offices by leveraging a hub and spoke network topology.
-
-Please refer to [AdventureWorks reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) for further details on the Azure foundation enabled in this tutorial.
+This section will describe how to deploy an Enterprise-Scale Landing Zones platform with connectivity to on-premises datacenters and branch offices based on a hub and spoke network topology. Please refer to [AdventureWorks reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) for further details on this reference architecture.
 
 ## Pre-requisites
 
-To provision your environment with the Deployment Accelerator, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+To provision your Enterprise-Scale Landing Zones environment with the deployment experience in the Azure portal, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
 
 ### Optional pre-requsites
 
@@ -16,7 +14,9 @@ To learn how to create new subscriptions using Azure portal, please visit this [
 
 To learn how to create new subscriptions programmatically, please visit this [link](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription).
 
-## Launch the Deployment Accelerator
+## Launch Enterprise-Scale Landing Zones deployment experience
+
+In the *Deploying Enterprise-Scale Architecture in your own environment* [article](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment), when you click on *Deploy to Azure* for the selected Enterprise-Scale reference implementation, it will load the deployment experience in the Azure portal into your default Azure tenant. In case you have access to multiple tenants, ensure you are selecting the right one.
 
 Enterprise-Scale can be deployed both from the Azure portal directly, or from [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 
@@ -30,7 +30,7 @@ On the first page, select the *Region*. This region will primarily be used to pl
 
 ## Enterprise-Scale core setup
 
-Provide a prefix that will be used to create the management group hierarchy and platform resources, and select if you would use dedicated subscriptions or a single subscription for platform resources (please note that dedicates subscriptions are recommended). For this scenario, select Dedicated.
+Provide a prefix that will be used to create the management group hierarchy and platform resources, and select if you would use dedicated subscriptions or a single subscription for platform resources (please note that dedicates subscriptions are recommended). For this scenario, select **Dedicated**.
 
 ![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix.JPG)
 
@@ -44,6 +44,11 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 
 ![Azure Security Center Email Contact](./media/clip_image014asc.jpg)
 
+## Platform DevOps and Automation
+
+Enterprise-Scale Landing Zones provides an integrated CICD pipeline via AzOps that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
+
+
 ## Network topology and connectivity
 On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology (for this scenario, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA"), provide the address space to be assigned to the hub virtual network, select an Azure region where the hub virtual network will be created and provide a dedicated (empty) subscription that will be used to host the requisite infrastructure. For this example, we will select the "Hub and spoke with Azure Firewall" network topology.
 
@@ -56,7 +61,7 @@ Depending on your requirements, you may choose to deploy additional network infr
 * VPN and ExpressRoute Gateways
   * If you choose to deploy either or both of these gateways, you will have the option to select the subnet to be dedicated for these resources, if you decide to deploy them as regional or zone-redundant gateways, as well as choose the right SKU based on your requirements
 * Azure Firewall
-  * If you choose to deploy Azure Firewall, you will have the option to select the subnet, select to deploy the Firewall as regional or zone redundant as well as indicate if you want to enable DNS Proxy in Azure Firewall
+  * If you choose to deploy Azure Firewall, you will have the option to select the subnet, select to deploy the Firewall as regional or zone redundant, select the Firewall SKU as well as indicate if you want to enable DNS Proxy in Azure Firewall
 
  ![img](./media/clip_image036b.png)
 
@@ -75,12 +80,6 @@ You can also indicate which subscriptions you would like to be bootstrapped as l
 As part of the policies that you can assign to your landing zones, the Enterprise-Scale Landing Zones deployment experience will allow you to protect your landing zones with a DDoS Standard plan, and for corp connected landing zones, you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones. 
 
 ![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
-
-## Platform DevOps and Automation
-
-You can choose to bootstrap your CI/CD pipeline (GitHub with GitHub actions or Azure Devops). 
-
-TBD: Bla, bla.
 
 ## Review + create
 

@@ -1,4 +1,4 @@
-### In this Section
+## Enterprise-Scale Prerequisites
 
 Enterprise-Scale can bootstrap an entire Azure tenant without any infrastructure dependencies, and the user must first have Owner permission on the tenant *root* before deploying.
 

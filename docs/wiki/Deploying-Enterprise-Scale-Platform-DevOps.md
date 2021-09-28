@@ -1,4 +1,6 @@
-## In this Section
+## Enterprise-Scale Platform DevOps and Automation
+
+### In this section:
 
 - [Enable deployment of Landing Zones with Infrastructure as Code using Github and Github Actions](#reference-implementation-deployment)
 - [Validation post deployment (GitHub)](#validation-post-deployment-github)
