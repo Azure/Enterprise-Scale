@@ -54,7 +54,7 @@ Here's what's changed in Enterprise Scale:
 
 ### Other
 
-- *No updates, yet.*
+- Released guidance and PowerShell script on how to clean up and Enterprise-scale deployment here: [Cleaning up an Enterprise-scale deployment]([/docs/EnterpriseScale-Clean-Deployment.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Clean-Deployment.md))
 
 ### August 2021
 
