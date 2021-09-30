@@ -66,6 +66,10 @@ This PowerShell script will check for each of the below before allowing it to ru
 
 ## `Wipe-ESLZAzTenant.ps1` PowerShell Script
 
+The script is provided below in-line instead of a downloadable file to ensure that it is only used and executed, if required and understood; like another failsafe to ensure it is not used by mistake.
+
+To use this script you will need to create a new `.ps1` file locally on your machine, called `Wipe-ESLZAzTenant.ps1` (although you can use whatever you like, you'll just need to call the script with whatever file name you enter), and copy the content from the script below into it before running the script.
+
 ```powershell
 ######################
 # Wipe-ESLZAzTenant #
