@@ -32,7 +32,7 @@ New-AzManagementGroupDeployment -Name $DeploymentName `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcPolicies.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\china\mcPolicies.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
@@ -41,7 +41,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcDENY-PublicEndpointsPolicySetDefinition.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\china\mcDENY-PublicEndpointsPolicySetDefinition.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
@@ -50,7 +50,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy3" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcDINE-PrivateDNSZonesPolicySetDefinition.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\china\mcDINE-PrivateDNSZonesPolicySetDefinition.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
