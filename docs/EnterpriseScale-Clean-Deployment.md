@@ -48,6 +48,11 @@ This PowerShell script will check for each of the below before allowing it to ru
 
 ## Example usage of `Wipe-ESLZAzTenant.ps1` PowerShell Script
 
+1. Download and save the script locally as `Wipe-ESLZAzTenant.ps1`
+2. Run `Connect-AzAccount` to login to the desired Azure AD Tenant
+3. Change to the correct Tenant/Account context with `Get-AzContext` to list all available contexts and `Select-AzContext` to select the desired one.
+4. Run the script using either of the examples below
+
 ### Without SPN removal:
 
 ```powershell
@@ -70,14 +75,17 @@ This PowerShell script will check for each of the below before allowing it to ru
 
 To use this script you will need to create a new `.ps1` file locally on your machine, called `Wipe-ESLZAzTenant.ps1` (although you can use whatever you like, you'll just need to call the script with whatever file name you enter), and copy the content from the script below into it before running the script.
 
-```powershell
+<details>
+  <summary>Expand to show script - <strong>Ensure you have read and understood the warnings of using this script, it's actions are irreversible and re-deployment will be required (data also may be lost if held in resoruces in scope of the script)</strong></summary>
+
+  ```powershell
 ######################
 # Wipe-ESLZAzTenant #
 ######################
-# Version: 1.2
-# Last Modified: 30/09/2021
+# Version: 1.3
+# Last Modified: 01/10/2021
 # Author: Jack Tracey 
-# Contributors: Liam F. O'Neill, Paul Grimley, Jeff Mitchell
+# Contributors: Liam F. O'Neill, Paul Grimley, Jeff Mitchell, Johan Dahlbom
 
 <#
 .SYNOPSIS
@@ -115,9 +123,17 @@ https://aka.ms/es/guides
 # Release notes 30/09/2021 - V1.2:
 - Added checks to ensure this is running on PowerShell Core edition and not Desktop - https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1
 - Added user confirmation prompt with random 8 character code they must enter to confirm before anything is removed/moved by the script
+
+# Release notes 01/10/2021 - V1.3:
+- Changed the way checks are handled for required PowerShell modules
 #>
 
+# Check for pre-reqs
 #Requires -PSEdition Core
+#Requires -Modules @{ ModuleName="Az.Accounts"; ModuleVersion="2.5.2" }
+#Requires -Modules @{ ModuleName="Az.Resources"; ModuleVersion="4.3.0" }
+#Requires -Modules @{ ModuleName="Az.ResourceGraph"; ModuleVersion="0.7.7" }
+
 
 [CmdletBinding()]
 param (
@@ -142,15 +158,6 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 $StopWatch = New-Object -TypeName System.Diagnostics.Stopwatch
 $StopWatch.Start()
 
-# Check required PowerShell modules are installed
-if ((Get-InstalledModule -Name 'Az' -MinimumVersion '6.3.0' -ErrorAction SilentlyContinue) -or ((Get-InstalledModule -Name 'Az.Accounts' -MinimumVersion '2.5.2' -ErrorAction SilentlyContinue) -and (Get-InstalledModule -Name 'Az.Resources' -MinimumVersion '4.3.0' -ErrorAction SilentlyContinue) -and (Get-InstalledModule -Name 'Az.ResourceGraph' -MinimumVersion '0.7.7' -ErrorAction SilentlyContinue))) {
-    Write-Host "Required Az Powershell Modules are installed" -ForegroundColor Green
-    Write-Host ""
-}
-else {
-    throw "Required Az Powershell Modules are installed. Required modules are: 'Az' OR 'Az.Accounts' (v2.5.2+), 'Az.Resources' (v4.3.0+) & 'Az.ResourceGraph' (v0.7.7+)"
-}
-
 # Get all Subscriptions that are in the Intermediate Root Management Group's hierarchy tree
 $intermediateRootGroupChildSubscriptions = Search-AzGraph -Query "resourcecontainers | where type =~ 'microsoft.resources/subscriptions' | mv-expand mgmtGroups=properties.managementGroupAncestorsChain | where mgmtGroups.name =~ '$intermediateRootGroupID' | project subName=name, subID=subscriptionId, subState=properties.state, aadTenantID=tenantId, mgID=mgmtGroups.name, mgDisplayName=mgmtGroups.displayName"
 
@@ -167,6 +174,7 @@ if ($null -ne $intermediateRootGroupChildSubscriptions) {
     $userConfirmationSubsToMove
 } else {
     Write-Host "No Subscriptions found in selected/entered hierarchy"
+    Write-Host ""
 }
 
 # Generate 8 character random string (combination of lowercase letters and integers)
@@ -282,3 +290,4 @@ $StopWatch.Stop()
 Write-Host "Time taken to complete task:" -ForegroundColor Yellow
 $StopWatch.Elapsed | Format-Table
 ```
+</details>
