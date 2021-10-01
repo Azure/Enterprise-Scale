@@ -42,6 +42,7 @@ Here's what's changed in Enterprise Scale:
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
 - [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
+- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (https://github.com/Azure/Enterprise-Scale/pull/820)
 
 ### Policy
 
