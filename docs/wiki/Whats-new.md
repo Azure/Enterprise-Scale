@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [September 2021](#september-2021)
   - [August 2021](#august-2021)
   - [July 2021](#july-2021)
   - [June 2021](#june-2021)
@@ -34,11 +35,14 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
-- *No updates, yet.*
+- Added reference to Enterprise-Scale Analytics (https://github.com/Azure/Enterprise-Scale/pull/809)
+- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions (https://github.com/Azure/Enterprise-Scale/pull/802)
 
 #### Tooling
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
+- [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
+- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (https://github.com/Azure/Enterprise-Scale/pull/820)
 
 ### Policy
 
@@ -50,6 +54,7 @@ Here's what's changed in Enterprise Scale:
 | Deny-HdInsight-MinimalTlsVersion | Azure HDInsight clusters should use minimal TLS version | HDInsight |  |  |  | Enforces minimal TLS versions for HD Insight clusters. |
 | Deny-HdInsight-NetworkProperties | Azure HDInsight clusters should use private link | HDInsight |  |  |  | Enforces private link for HDInsight clusters. |
 | Deny-HdInsight-Sku | Azure HDInsight should use specific SKUs | HDInsight |  |  |  | Enforces use of specific SKUs for HDInsight clusters for cost management. |
+| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |  |  |  | Denies public network access for Azure Machine Learning workspaces. |
 
 ### Other
 
