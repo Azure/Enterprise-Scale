@@ -37,6 +37,7 @@
             "type": "string",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "defaultValue": "No"
@@ -45,6 +46,7 @@
             "type": "string",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "defaultValue": "No"
@@ -53,6 +55,7 @@
             "type": "string",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "defaultValue": "No"
@@ -61,6 +64,7 @@
             "type": "string",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "defaultValue": "No"
@@ -117,6 +121,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -212,6 +217,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -220,6 +226,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -228,6 +235,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -236,6 +244,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "metadata": {
@@ -247,6 +256,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "metadata": {
@@ -266,6 +276,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -330,6 +341,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -338,6 +350,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -346,6 +359,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -354,6 +368,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -362,6 +377,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -370,6 +386,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -378,6 +395,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -386,6 +404,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -393,6 +412,7 @@
             "type": "string",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ],
             "defaultValue": "No"
@@ -452,6 +472,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -468,6 +489,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -574,6 +596,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -582,6 +605,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         },
@@ -590,6 +614,7 @@
             "defaultValue": "No",
             "allowedValues": [
                 "Yes",
+                "Audit",
                 "No"
             ]
         }
@@ -1434,7 +1459,7 @@
         },
         {
             // Assigning DDoS Policy to enforce DDoS on virtual networks if condition evaluates to true
-            "condition": "[and(equals(parameters('enableDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "condition": "[and(or(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableDdoS'), 'Audit')), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').ddosHubPolicyDeploymentName]",
@@ -1457,7 +1482,7 @@
                         "value": "[variables('deterministicRoleAssignmentGuids').ddosForConnectivity]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableDdoS'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }   
@@ -1875,7 +1900,7 @@
         */
         {
             // Deploying Private DNS Zones policy assignment for PaaS services using built-in policies
-            "condition": "[equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes')]",
+            "condition": "[or(equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes'), equals(parameters('enablePrivateDnsZonesForLzs'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').privateDnsPolicyDeploymentName]",
@@ -1903,6 +1928,9 @@
                     },
                     "dnsZoneResourceGroupId": {
                         "value": "[variables('platformResourceIds').privateDnsRgResourceId]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enablePrivateDnsZonesForLzs'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }
@@ -1939,7 +1967,7 @@
         },        
         {
             // Assigning Azure Monitor for VMs policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Yes'))]",
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azVmMonitorPolicyDeploymentName]",
@@ -1962,14 +1990,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }   
         },
         {
             // Assigning Azure Monitor for VMSS policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmssMonitoring'), 'Yes'))]",
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
@@ -1992,14 +2020,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableVmssMonitoring'), 'Yes'), 'Default', 'DonNotEnforce')]"
                     }
                 }
             }
         },        
         {
             // Assigning Azure Backup policy to landing zones management group if condition is true
-            "condition": "[equals(parameters('enableVmBackup'), 'Yes')]",
+            "condition": "[or(equals(parameters('enableVmBackup'), 'Yes'), equals(parameters('enableVmBackup'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azBackupLzPolicyDeploymentName]",
@@ -2019,14 +2047,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableVmBackup'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },
         {
             // Assigning DDoS Policy to enforce DDoS on virtual networks in landing zones management group if condition evaluates to true
-            "condition": "[and(equals(parameters('enableLzDdoS'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "condition": "[and(or(equals(parameters('enableLzDdoS'), 'Yes'), equals(parameters('enableLzDdoS'), 'Audit')), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').ddosLzPolicyDeploymentName]",
@@ -2049,14 +2077,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableLzDdoS'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }   
         },
         {
             // Assigning Azure Policy to prevent Databricks using public IP
-            "condition": "[equals(parameters('denyDatabricksPip'), 'Yes')]",
+            "condition": "[or(equals(parameters('denyDatabricksPip'), 'Yes'), equals(parameters('denyDatabricksPip'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').databricksPipDeploymentName]",
@@ -2077,14 +2105,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('denyDatabricksPip'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },
         {
             // Assigning Azure Policy to prevent Databricks sku
-            "condition": "[equals(parameters('denyDatabricksSku'), 'Yes')]",
+            "condition": "[or(equals(parameters('denyDatabricksSku'), 'Yes'), equals(parameters('denyDatabricksSku'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').databricksSkuDeploymentName]",
@@ -2105,14 +2133,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('denyDatabricksSku'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },
         {
             // Assigning Azure Policy to prevent Databricks sku
-            "condition": "[equals(parameters('denyDatabricksVnet'), 'Yes')]",
+            "condition": "[or(equals(parameters('denyDatabricksVnet'), 'Yes'), equals(parameters('denyDatabricksVnet'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').databricksVnetDeploymentName]",
@@ -2133,14 +2161,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('denyDatabricksVnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },               
         {
             // Assigning Azure Policy enablement policy for AKS to landing zones management group if condition is true
-            "condition": "[equals(parameters('enableAksPolicy'), 'Yes')]",
+            "condition": "[or(equals(parameters('enableAksPolicy'), 'Yes'), equals(parameters('enableAksPolicy'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azPolicyForAksPolicyDeploymentName]",
@@ -2160,14 +2188,14 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableaksPolicy'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },
         {
             // Assigning Aks Priv Escalation policy to landing zones management group if condition is true
-            "condition": "[equals(parameters('denyAksPrivilegedEscalation'), 'Yes')]",
+            "condition": "[or(equals(parameters('denyAksPrivilegedEscalation'), 'Yes'), equals(parameters('denyAksPrivilegedEscalation'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').aksPrivEscalationPolicyDeploymentName]",
@@ -2184,14 +2212,14 @@
                 },
                 "parameters": {
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('denyAksPrivilegedEscalation'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }
         },
         {
             // Assigning Aks Priviliged policy to landing zones management group if condition is true
-            "condition": "[equals(parameters('denyAksPrivileged'), 'Yes')]",
+            "condition": "[or(equals(parameters('denyAksPrivileged'), 'Yes'), equals(parameters('denyAksPrivileged'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').aksPrivilegedPolicyDeploymentName]",
@@ -2208,14 +2236,14 @@
                 },
                 "parameters": {
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('denyAksPrivileged'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },
         {
             // Assigning Https enforcement for AKS policy to landing zones management group if condition is true
-            "condition": "[equals(parameters('denyHttpIngressForAks'), 'Yes')]",
+            "condition": "[or(equals(parameters('denyHttpIngressForAks'), 'Yes'), equals(parameters('denyHttpIngressForAks'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').aksHttpsPolicyDeploymentName]",
@@ -2232,14 +2260,14 @@
                 },
                 "parameters": {
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('denyHttpIngressForAks'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
         },
         {
             // Assigning TLS-SSL policy initiative to landing zones management group if condition is true
-            "condition": "[equals(parameters('enableEncryptionInTransit'), 'Yes')]",
+            "condition": "[or(equals(parameters('enableEncryptionInTransit'), 'Yes'), equals(parameters('enableEncryptionInTransit'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').tlsSslPolicyDeploymentName]",
@@ -2260,7 +2288,7 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
-                        "value": "Default"
+                        "value": "[if(equals(parameters('enableEncryptionInTransit'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }                    
                 }
             }
