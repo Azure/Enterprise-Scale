@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [October 2021](#october-2021)
   - [September 2021](#september-2021)
   - [August 2021](#august-2021)
   - [July 2021](#july-2021)
