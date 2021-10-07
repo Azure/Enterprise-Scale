@@ -59,7 +59,7 @@ Depending on your requirements, you may choose to deploy additional network infr
 * Azure Firewall
   * If you choose to deploy Azure Firewall, you will have the option to indicate if you want to enable DNS Proxy in Azure Firewall and select the tier based on your requirements
 
- ![vwan](https://user-images.githubusercontent.com/79409563/136347080-98c1ab5e-967a-450c-ae03-63c0bb571689.JPG)
+![vwan](https://user-images.githubusercontent.com/79409563/136395890-e4d04751-49f1-4c65-8278-f109f6a2d578.JPG)
 
 ## Identity
 On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering. 
