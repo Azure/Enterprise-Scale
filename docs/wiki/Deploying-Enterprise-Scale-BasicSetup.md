@@ -6,19 +6,23 @@ This setup is meant for Small and Medium Enterprises and organizations that do n
 
 Please refer to [Trey Research reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/treyresearch/README.md) for further details on the Azure foundation enabled in this tutorial.
 
-### Pre-requisites
+## Pre-requisites
 
-To provision your Enterprise-Scale Landing Zones environment, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+### Permissions required
 
-### Optional pre-requsites
+To provision your Enterprise-Scale Landing Zones environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
 
-The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscription dedicated to host your Platform (Management, Connectivity and Identity) resources. It also allows you to bring existing subscriptions that can be used as the initial landing zones for your applications.
+### Subscriptions
+
+The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscriptions dedicated to host your Platform (Management, Connectivity and Identity) resources. It also allows you to bring existing subscriptions that can be used as the initial Landing Zones for your applications.
 
 To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
 To learn how to create new subscriptions programmatically, please visit this [link](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription).
 
-### Launch Enterprise-Scale Landing Zones deployment experience
+**For this tutorial, three empty subscriptions are required: one subscription dedicated to host your Platform resources and two Landing Zone subscriptions (*Corp* and *Online* Landing Zones).**
+
+## Launch Enterprise-Scale Landing Zones deployment experience
 
 You can **initiate the deployment of Enterprise-Scale** by clicking in here:
 
@@ -28,7 +32,7 @@ Other sources from where you can start your Enterprise Scale deployment include 
 
 ![Graphical user interface, text, application  Description automatically generated](./media/clip_image004.jpg)
 
-### Deployment location
+## Deployment location
 
 On the first page, select the **Region**. This region will host Enterprise Scale deployment jobs. It will also be used as the target region for some of the resources that are deployed, such as Azure Log Analytics and Azure automation.
 
@@ -38,7 +42,7 @@ Click **Next: Azure Core Setup>** once you had chosen your deployment Region.
 
 ![deployTab-next](./media/clip_image010-1-singlesubscription.jpg)
 
-### Enterprise-Scale core setup
+## Enterprise-Scale core setup
 
 On the *Azure Core setup* blade you will:
 
@@ -53,7 +57,7 @@ Click **Next: Platform management, security, and governance>**.
 
 ![coreSetupTab-next](./media/ESLZ-Company-Prefix-2-singlesubscription.jpg)
 
-### Platform management, security, and governance
+## Platform management, security, and governance
 
 On the *Platform management, security, and governance* blade, you will configure the core components to enable monitoring, and security posture management and thread protection for your platform and application resources. The options you enable will also be enforced using Azure Policy to ensure resources, landing zones, and more are continuously compliant as your deployments scale and grow.
 
@@ -91,15 +95,29 @@ On the *Platform management, security, and governance* blade, you will configure
 
 - Depending on your requirements, you may want to select **Deploy Azure Sentinel** to enable [Azure Sentinel](https://docs.microsoft.com/en-us/azure/sentinel/overview) in your Log Analytics Workspace. Please note, enabling Azure Sentinel will introduce additional costs. See [Azure Sentinel Pricing](https://azure.microsoft.com/en-us/pricing/details/azure-sentinel/) for additional information.
 
-  In this tutorial, Azure Sentinel is not enabled. Please note you can [enable Azure Sentinel](https://docs.microsoft.com/en-us/azure/sentinel/quickstart-onboard) later on at any moment.
+  **In this tutorial, Azure Sentinel is not enabled**. Please note you can [enable Azure Sentinel](https://docs.microsoft.com/en-us/azure/sentinel/quickstart-onboard) later on at any moment.
 
   ![mgmtTab-asc](./media/clip_image014asc-3-singlesubscription.jpg)
 
-Click **Next: Network topology and connectivity>** to proceed with configuring your network setup.
+Click **Next: Platform Devops and Automation>** to configure how your Enterprise Scale's Platform will be deployed and managed.
 
 ![mgmtTab-next](./media/clip_image014asc-4-singlesubscription.jpg)
 
-### Network topology and connectivity
+## Platform DevOps and Automation
+
+Enterprise-Scale Landing Zones provides an integrated CI/CD pipeline via AzOps that can be used with GitHub Actions. The *Platform Devops and Automation* tab allows you to bootstrap your CI/CD pipeline including your Enterprise Scale deployment settings. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
+
+**In this tutorial, your Enterprise Scale deployment will be triggered using the Azure Portal experience**.
+
+Set **Deploy integrated CICD pipeline** to **No**.
+
+![iacTab-next](./media/clip_image-iac-1-singlesubscription.jpg)
+
+Click **Next: Network topology and connectivity>** to proceed with configuring your network setup.
+
+![iacTab-next](./media/clip_image-iac-2-singlesubscription.jpg)
+
+## Network topology and connectivity
 
 On the *Network topology and connectivity* blade you will configure your core networking platform resources.
 
@@ -108,7 +126,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
 - **Deploy networking topology**:
   - For this scenario, select **Hub and spoke with Azure Firewall**.
   - **Address Space**: Provide the private IP Address Space to be assigned to the hub virtual network. Please make sure the address space provided does not overlap with neither the ones being used on-premises or those that you will be assigning to the virtual networks where your are deploying your workloads. See [Plan for IP Addressing](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations.
-  - **Region for the first networking hub**: Select an Azure region where the hub virtual network will be created. That is most usually the same Region you chose in the *Deployment location* tab but can be a different one if needed.
+  - **Region for the first networking hub**: **Select an Azure region where the hub virtual network will be created**. That is most usually the same Region you chose in the *Deployment location* tab but can be a different one if needed.
 
   ![networkTab-topology](./media/clip_image036b-1-singlesubscription.png)
 
@@ -116,11 +134,15 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
   - **Enable DDoS Protection Standard**: Usage of [Azure DDoS Protection Standard protection](https://docs.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview) is recommended to help protect all public endpoints hosted within your virtual networks. When this option is selected an Azure DDoS Protection Plan is provisioned in your Platform Subscription and which can be used to protect public endpoints across your Platform and Landing Zone subscriptions. DDoS Protection Plan's costs cover up to 100 public endpoints. Protection of additional endpoints requires additional fees. See [Azure DDoS Protection pricing](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/) for further details.
   
-    In this tutorial, DDoS Standard protection it is enabled. Set **Enable DDoS Protection Standard** to **Yes**.
+    **In this tutorial, DDoS Standard protection it is enabled**. Set **Enable DDoS Protection Standard** to **Yes**.
 
     ![networkTab-ddos](./media/clip_image036b-11-singlesubscription.png)
 
-  - **Create Private DNS Zones for Azure PaaS services**: TBD
+  - **Create Private DNS Zones for Azure PaaS services** allows you to provision and connect to your Hub virtual network a number of Azure Private DNS Zones which are required to leverage Private Endpoints to access Azure PaaS services as [recommended for Enterprise Scale Landing Zones](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services). See [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns) for further details.
+
+    Enabling **Create Private DNS Zones for Azure PaaS services** is recommended if the workloads you are deploying to your Landing Zones are expected to be use Azure PaaS services.
+
+    **In this tutorial, deployment of Private DNS Zones required by Azure PaaS Service's Private Endpoints will not be enabled**. Please note you can [deploy those Private DNS Zones](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) at any time if later on needed.
 
   ![networkTab-dns](./media/clip_image036b-12-singlesubscription.png)
 
@@ -190,7 +212,7 @@ Click **Next: Identity>** once you had configured your network setup.
 
 ![networkTab-next](./media/clip_image036b-13-singlesubscription.png)
 
-### Identity
+## Identity
 
 On the *Identity* blade you can specify if you want to assign recommended Azure Policies to govern Domain Controllers deployed to your Platform Subscription. If you decide to enable this feature, you can then select which Azure Policies you want to get assigned. Please note, those Azure Policies will apply to all Virtual Machines deployed to the Platform Subscription regardless of their role. See [Enteprise Scale Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the recommended set of Azure Policies.
 
@@ -206,7 +228,7 @@ Click **Next: Landing Zone configuration>** to continue with your deployment.
 
 ![identityTab-next](./media/clip_image036c-1-singlesubscription.png)
 
-### Landing zones configuration
+## Landing zones configuration
 
 You can optionally bring in N number of subscriptions that will be bootstrapped as landing zones, governed by Azure Policy:
 
@@ -214,32 +236,42 @@ You can optionally bring in N number of subscriptions that will be bootstrapped 
 
 - **Select the subscriptions you want to move to corp management group**: You can indicate which subscriptions will be bootstrapped as Corp Landing Zones. Corp Landing Zones are meant to host workloads that require connectivity/hybrid connectivity with the corporate network thru the Hub in the Platform Subscription.
 
-For Corp Landing Zones a virtual network can (recommended) be deployed and connected to the hub virtual network using virtual network peering to be able to access to your corporate network. Please note you will need to provide a non-overlapping private IP address space to be assigned to each Landing Zone. See [Plan for IP Addressing](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations. Also, if you deployed and enabled Azure Firewall as DNS proxy, [DNS settings on these VNets will be configured](https://docs.microsoft.com/en-us/azure/firewall/dns-settings#configure-virtual-network-dns-servers) with the Azure Firewall private IP address.
+For Corp Landing Zones a virtual network can be deployed and connected (recommended) to the hub virtual network using virtual network peering to be able to access to your corporate network. Please note you will need to provide a non-overlapping private IP address space to be assigned to each Landing Zone. See [Plan for IP Addressing](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations. Also, if you deployed and enabled Azure Firewall as DNS proxy, [DNS settings on these VNets will be configured](https://docs.microsoft.com/en-us/azure/firewall/dns-settings#configure-virtual-network-dns-servers) with the Azure Firewall private IP address.
 
-  In this tutorial, a "Corp" Landing Zone is provisioned using an existing (empty) subscription.
+  In this tutorial, a "Corp" Landing Zone is provisioned using an existing (empty) subscription and connected to the Hub virtual network previously configured. Please note, additional subscriptions can be added.
+
+  Set **Connect corp landing zones to the connectivity hub (optional)** to **Yes**, then **select** an empty subscription (*corp-subscription*) and assign an address space:
 
   ![lzTab-corpLZs](./media/clip_image037-2-singlesubscription.jpg)
 
+- **Select the subscriptions you want to move to online management group**: You can indicate which subscriptions will be bootstrapped as Online Landing Zones. Online Landing Zones are meant to host workloads that do not require connectivity/hybrid connectivity with the corporate network or that not even require a virtual network.
 
+  In this tutorial, an "Online" Landing Zone is provisioned using an existing (empty) subscription.
 
-You can also indicate which subscriptions you would like to be bootstrapped as landing zones but without corp connectivity. Finally, you can select which policy you want to assign broadly to all of your landing zones.
+  Select an empty subscription (*online-subscription*) from the ones available in the **Online landing zone subscription** drop down list. Please note, additional subscriptions can be added.
 
-As part of the policies that you can assign to your landing zones, the Enterprise-Scale Landing Zones deployment experience will allow you to protect your landing zones with a DDoS Standard plan, and for corp connected landing zones, you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones. 
+  ![lzTab-onlineLZs](./media/clip_image037-3-singlesubscription.jpg)
 
-![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
+- Finally, you can **select** from a set of **recommended Azure policies** which ones you want to apply to secure and govern your Landing Zones. All Enterprise Scale's Azure Policies are enabled by default (recommended) but are fully customizable. Please note, Enterprise Scale Azure Policies can be assigned later on at any time.
 
-### Platform DevOps and Automation
+  Azure Policies you may select will be assigned to the [Landing Zones Management Group](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure) under the root of your Enterprise Scale Management Group hierarchy. See [Enterprise Scale Azure's Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the configurable set of Azure Policies.
 
-You can choose to bootstrap your CI/CD pipeline (GitHub with GitHub actions or Azure Devops). 
+  As part of the policies that you can assign to your landing zones, the Enterprise-Scale Landing Zones deployment experience will allow you to protect your landing zones with a DDoS Standard plan, and for connected Landing Zones (*Corp* Landing Zones), you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones.
 
-TBD: Bla, bla.
+  **In this tutorial, all recommended Azure Policies are enabled.**
 
-### Review + create
+  ![lzTab-policies](./media/clip_image037-4-singlesubscription.jpg)
+
+Click **Next: Review + Create>** to complete your deployment.
+
+![lzTab-next](./media/clip_image037-5-singlesubscription.jpg)
+
+## Review + create
 
 *Review + Create* page will validate your permission and configuration before you can click deploy. Once it has been validated successfully, you can click *Create*
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image039.jpg)
+![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image039-singlesubscription.jpg)
 
-### Post deployment activities
+## Post deployment activities
 
 Once Enterprise-Scale has deployed, you can grant your application teams/business units access to their respective landing zones. Whenever there’s a need for a new landing zone, you can place them into their respective management groups (Online or Corp) given the characteristics of assumed workloads and their requirements.
