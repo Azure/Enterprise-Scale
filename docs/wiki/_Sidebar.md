@@ -3,6 +3,7 @@
 * [Home](./Home)
 * [What's New?](./Whats-new)
 * [Community Calls](./Community-Calls)
+* [Frequently Asked Questions](./FAQ)
 * [What is Enterprise-Scale](./What-is-Enterprise-Scale)
   * [What is Enterprise-Scale reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
