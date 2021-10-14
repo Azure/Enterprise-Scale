@@ -23,16 +23,16 @@ Deployment time depends on the options you select during the implementation expe
 
 For example:
 
-- Conceptual architecture without any networking or connectivity options can take around five minutes to deploy.
-- Conceptual architecture with the hub and spoke networking options, including VPN and ExpressRoute gateways, can take around 40 minutes to deploy.
+- Reference implementation without any networking or connectivity options can take around five minutes to deploy.
+- Reference implementation with the hub and spoke networking options, including VPN and ExpressRoute gateways, can take around 40 minutes to deploy.
 
-## Why are there custom policy definitions as part of enterprise-scale architecture?
+## Why are there custom policy definitions as part of enterprise-scale reference implementation?
 
 We work with and learn from our customers and partners. This collaboration helps us evolve and enhance the reference implementations to meet customer and partner requirements. As part of this interaction with customers and partners, we might notice policy definition gaps. In those cases, we create and test a definition to fill the gap and include it in enterprise-scale architecture for everyone to use.
 
-We then work with the Azure Policy and associated engineering teams to convert the new custom policy definition into a built-in definition.
+We then work with the Azure Policy and associated engineering teams to continuously transition the new custom policy definitions into built-in policy definitions.
 
-## Where can I see the policy definitions used by enterprise-scale landing zones reference implementation?
+## Where can I see the policy definitions used by the enterprise-scale landing zones reference implementation?
 
 You can find a list of policy definitions here: [Policies included in enterprise-scale landing zones reference implementations](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md)
 
@@ -40,21 +40,21 @@ We also add changes to our [What's New? wiki page](https://github.com/Azure/Ente
 
 <!-- IMPLEMENTATION -->
 
-## Why does enterprise-scale architecture require permission at tenant root '/' scope?
+## Why does the enterprise-scale reference implementation require permission at tenant root '/' scope?
 
 Management group creation, subscription creation, and placing subscriptions into management groups are APIs that operate at the tenant root "`/`" scope.
 
-To establish the management group hierarchy and create subscriptions and place them into the defined management groups, the initial deployment must be invoked at the tenant root "`/`" scope. Once you deploy enterprise-scale architecture, you can remove the owner permission from the tenant root "`/`" scope. You are made an owner at the intermediate root management group (for example "Contoso") by the Azure platform.
+To establish the management group hierarchy and create subscriptions and place them into the defined management groups, the initial deployment must be invoked at the tenant root "`/`" scope. Once you deploy enterprise-scale architecture, you can remove the owner permission from the tenant root "`/`" scope. The user deploying the enterprise-scale reference implementation is made an owner at the intermediate root management group (for example "Contoso").
 
 For more information about tenant-level deployments in Azure, see [Deploy resources to tenant](https://docs.microsoft.com/azure/azure-resource-manager/templates/deploy-to-tenant).
 
-## The Azure landing zone accelerator portal-based deployment doesn't display all subscriptions in the drop-down lists?
+## The enterprise-scale (also known as the Azure landing zone accelerator) portal-based deployment doesn't display all subscriptions in the drop-down lists?
 
-When you deploy an Azure landing zone accelerator, the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online). When there are more than 50 subscriptions, the API can't display all of them in the drop-down lists.
+When you deploy an enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online). When there are more than 50 subscriptions, the API can't display all of them in the drop-down lists.
 
 Follow these steps as a workaround:
 
-1. Select or enable your usual options in the Azure landing zone accelerator portal-based experience. In the subscription drop-downs, select any visible subscription as a placeholder so that you can see and select all options (some options don't appear until you select a subscription).
+1. Select or enable your usual options in the portal-based experience. In the subscription drop-downs, select any visible subscription as a placeholder so that you can see and select all options (some options don't appear until you select a subscription).
 1. After you've gone through each page, go back to the **Basics** page, and then select **Edit parameters**.
 1. Change the value for the specific `subscriptionId` parameter inputs with the actual subscription IDs you want to use.
 1. Select **Save**.
