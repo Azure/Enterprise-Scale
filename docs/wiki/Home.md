@@ -19,7 +19,7 @@ The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-
   * [Pre-requisites](./Deploying-Enterprise-Scale-Pre-requisites)
   * Deploy Enterprise-Scale without hybrid connectivity to on-premises
   * [Deploy Enterprise-Scale with a hub and spoke based network topology](./Deploying-Enterprise-Scale-HubAndSpoke)
-  * Deploy Enterprise-Scale with an Azure Virtual WAN based network topology
+  * [Deploy Enterprise-Scale with an Azure Virtual WAN based network topology](./Deploying-Enterprise-Scale-VWAN)
   * [Deploy Enterprise-Scale for Small Enterprises](./Deploying-Enterprise-Scale-BasicSetup)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-Enterprise-Scale-Platform-DevOps#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
 * [Create subscriptions / landing zones using AzOps](./Create-Landingzones)
