@@ -50,7 +50,12 @@ Enterprise-Scale Landing Zones provides an integrated CICD pipeline via AzOps th
 
 
 ## Network topology and connectivity
-On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology (for this scenario, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA"), provide the address space to be assigned to the hub virtual network, select an Azure region where the hub virtual network will be created and provide a dedicated (empty) subscription that will be used to host the requisite infrastructure. For this example, we will select the "Hub and spoke with Azure Firewall" network topology.
+On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must:
+
+* In the Deploy network topology option, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA".  For this example, we will select the "Hub and spoke with Azure Firewall".
+* Provide a dedicated (empty) subscription that will be used to host the requisite networking infrastructure.
+* Provide the address space to be assigned to the hub virtual network
+* Select an Azure region where the hub virtual network will be created
 
  ![img](./media/clip_image036a.png)
 
@@ -60,8 +65,11 @@ Depending on your requirements, you may choose to deploy additional network infr
 * Azure Private DNS Zones for Azure PaaS services
 * VPN and ExpressRoute Gateways
   * If you choose to deploy either or both of these gateways, you will have the option to select the subnet to be dedicated for these resources, if you decide to deploy them as regional or zone-redundant gateways, as well as choose the right SKU based on your requirements
-* Azure Firewall
-  * If you choose to deploy Azure Firewall, you will have the option to select the subnet, select to deploy the Firewall as regional or zone redundant (recommended), select the Firewall SKU as well as indicate if you want to enable DNS Proxy in Azure Firewall. It is recommended to choose the Azure Firewall [Premium](https://docs.microsoft.com/azure/firewall/premium-features) SKU if your organization requires next generation firewall capabilities such as TLS inspection or network intrusion detection and prevention system (IDPS).
+* If you choose to deploy Azure Firewall, you will have the option to
+  * Select the subnet
+  * Select to deploy Azure Firewall as regional or zone redundant (recommended)
+  * Select the Firewall SKU (Standard or Premium). It is recommended to choose the Azure Firewall [Premium](https://docs.microsoft.com/azure/firewall/premium-features) SKU if your organization requires next generation firewall capabilities such as TLS inspection or network intrusion detection and prevention system (IDPS).
+  * Indicate if you want to enable DNS Proxy in Azure Firewall. 
 
  ![img](./media/clip_image036b.png)
 
