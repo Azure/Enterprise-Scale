@@ -104,4 +104,4 @@ Terraform import is currently done on a per resource basis and can be time consu
 
 To deploy enterprise-scale architecture by using Terraform, you might want to use the Terraform module we provide. It deploys everything that the Azure landing zone accelerator portal-based experience does. The module, [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/0.0.4-preview), is available from the Terraform Registry page.
 
-To see a demo of AzOps being used, check out this YouTube video on the Microsoft DevRadio channel: [Terraform Module for Cloud Adoption Framework Enterprise-scale Walkthrough](https://www.youtube.com/watch?v=5pJxM1O4bys)
+To see a demo of Terraform being used, check out this YouTube video on the Microsoft DevRadio channel: [Terraform Module for Cloud Adoption Framework Enterprise-scale Walkthrough](https://www.youtube.com/watch?v=5pJxM1O4bys)
