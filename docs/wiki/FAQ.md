@@ -50,7 +50,7 @@ For more information about tenant-level deployments in Azure, see [Deploy resour
 
 ## The enterprise-scale (also known as the Azure landing zone accelerator) portal-based deployment doesn't display all subscriptions in the drop-down lists?
 
-When you deploy an enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online). When there are more than 50 subscriptions, the API can't display all of them in the drop-down lists.
+When you deploy enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online). When there are more than 50 subscriptions, the API can't display all of them in the drop-down lists.
 
 Follow these steps as a workaround:
 
