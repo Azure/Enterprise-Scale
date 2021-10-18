@@ -66,7 +66,7 @@ On the *Identity* blade you can specify if you want to assign recommended polici
 
 You can optionally bring in N number of subscriptions that will be bootstrapped as landing zones, governed by Azure Policy. You can indicate which subscriptions you would like to be bootstrapped as landing zones but with online connectivity only. Finally, you can select which policy you want to assign broadly to all of your landing zones.
 
-![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
+![Landingzone](https://user-images.githubusercontent.com/79409563/137821031-d161e83c-b02a-4414-94aa-b237a26bbc2b.jpg)
 
 ## Review + create
 
