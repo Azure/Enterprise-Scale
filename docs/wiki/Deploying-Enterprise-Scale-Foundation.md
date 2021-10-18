@@ -1,4 +1,4 @@
-## Enterprise-Scale deployment without connectivity to on-premises
+## Enterprise-Scale deployment without hybrid connectivity
 
 This section will describe how to deploy an Enterprise-Scale Landing Zones platform without connectivity to on-premises datacenters and branch offices. Please refer to [WingTip reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) for further details on this reference architecture.
 
