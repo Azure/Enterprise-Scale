@@ -49,22 +49,24 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 Enterprise-Scale Landing Zones provides an integrated CICD pipeline via AzOps that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
 
 ## Network topology and connectivity
-On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology.
+On the *Network topology and connectivity* blade, you can configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology.
 
-*For this scenario since we don't require any on-premise connectivity select "No"*
+*For this scenario since we don't require network connectivity to on-premises, select "No"*
 
 ![Network](https://user-images.githubusercontent.com/79409563/137819649-d1bb97eb-fda7-446a-b9cd-9f447306d3f6.jpg)
 
 ## Identity
-On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering. 
+On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and if you are deploying a network topology in the *Network topology and connectivity* blade, you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that, if the virtual network is deployed on this subscription, it will be connected to the hub virtual network via VNet peering. 
 
-*For this scenario since we don't require any identity setup select "No"*
+*For this scenario since we are not deploying a network topology and hybrid connectivity, we will select the "No" option.* 
 
 ![Identity](https://user-images.githubusercontent.com/79409563/137819658-2efaed58-14f0-46f6-81f5-ff1e6859e9d3.jpg)
 
+*However, if you are intending to deploy Domain Controllers on this subscription, select the "Yes" option, and indicate which of the recommended policies you would like to be assigned to the Identity management group.*
+
 ## Landing zone configuration
 
-You can optionally bring in N number of subscriptions that will be bootstrapped as landing zones, governed by Azure Policy. You can indicate which subscriptions you would like to be bootstrapped as landing zones but with online connectivity only. Finally, you can select which policy you want to assign broadly to all of your landing zones.
+You can optionally bring in N number of subscriptions that will be bootstrapped as landing zones, governed by Azure Policy. You can indicate which subscriptions you would like to be bootstrapped as landing zones for corp connectivity and for online only. Please note that as in this scenario we are not deploying a network topology in the *Network topology and connectivity* blade, the corp landing zones will not be connected via VNet peering to a hub virtual network. Finally, you can select which policies you want to assign broadly to all of your landing zones.
 
 ![Landingzone](https://user-images.githubusercontent.com/79409563/137821031-d161e83c-b02a-4414-94aa-b237a26bbc2b.jpg)
 
@@ -76,4 +78,4 @@ You can optionally bring in N number of subscriptions that will be bootstrapped 
 
 ## Post deployment activities
 
-Once Enterprise-Scale has deployed, you can grant your application teams/business units access to their respective landing zones. Whenever there’s a need for a new landing zone, you can place them into the Online management group given.
+Once Enterprise-Scale has been deployed, you can grant your application teams/business units access to their respective landing zones. Whenever there is a need for a new landing zone, you can place them into their respective management groups (Online or Corp) given the characteristics of assumed workloads and their requirements.

@@ -13,7 +13,7 @@
   * [What happens when you deploy Enterprise-Scale?](./How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
 * Deploying Enterprise-Scale
   * [Pre-requisites](./Deploying-Enterprise-Scale-Pre-requisites)
-  * Deploy Enterprise-Scale without hybrid connectivity to on-premises
+  * [Deploy Enterprise-Scale without hybrid connectivity to on-premises](./Deploying-Enterprise-Scale-Foundation)
   * [Deploy Enterprise-Scale with a hub and spoke based network topology](./Deploying-Enterprise-Scale-HubAndSpoke)
   * [Deploy Enterprise-Scale with an Azure Virtual WAN based network topology](./Deploying-Enterprise-Scale-VWAN)
   * [Deploy Enterprise-Scale for Small Enterprises](./Deploying-Enterprise-Scale-BasicSetup)
