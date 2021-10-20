@@ -1,6 +1,6 @@
-## Enterprise-Scale deployment with Azure VWAN topology
+## Enterprise-Scale deployment with Azure VWAN network topology
 
-This section will describe how to deploy an Enterprise-Scale Landing Zones platform with connectivity to on-premises datacenters and branch offices based on a VWAN topology. Please refer to [Contoso reference implementation](https://github.com/Azure/Enterprise-Scale/tree/main/docs/reference/contoso/Readme.md) for further details on this reference architecture.
+This section will describe how to deploy an Enterprise-Scale Landing Zones platform with connectivity to on-premises datacenters and branch offices based on an Azure Virtual WAN (VWAN) network topology. Please refer to [Contoso reference implementation](https://github.com/Azure/Enterprise-Scale/tree/main/docs/reference/contoso/Readme.md) for further details on this reference architecture.
 
 ## Pre-requisites
 
@@ -16,7 +16,7 @@ To learn how to create new subscriptions programmatically, please visit this [li
 
 ## Launch Enterprise-Scale Landing Zones deployment experience
 
-In the *Deploying Enterprise-Scale Architecture in your own environment* [article](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment), when you click on *Deploy to Azure* for the selected Enterprise-Scale reference implementation, it will load the deployment experience in the Azure portal into your default Azure tenant. In case you have access to multiple tenants, ensure you are selecting the right one.
+In the *Deploying Enterprise-Scale Architecture in your own environment* [article](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment), when you click on *Deploy to Azure* for the selected Enterprise-Scale reference implementation, it will start the deployment experience in the Azure portal into your default Azure tenant. In case you have access to multiple tenants, ensure you are selecting the right one.
 
 Enterprise-Scale can be deployed both from the Azure portal directly, or from [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 
@@ -49,7 +49,12 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 Enterprise-Scale Landing Zones provides an integrated CICD pipeline via AzOps that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
 
 ## Network topology and connectivity
-On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall and DDoS Protection Standard. To deploy and configure these network resources, you must select a network topology (for this scenario, select "Virtual WAN (Microsoft managed)"), provide the address space to be assigned to the vWAN hub, select an Azure region where the first vWAN hub will be created and provide a dedicated (empty) subscription that will be used to host the requisite infrastructure.
+On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology. For this scenario:
+
+* Select "Virtual WAN (Microsoft managed)") as the network topology
+* Provide a dedicated (empty) subscription that will be used to host the requisite networking infrastructure.
+* Provide the address space to be assigned to the vWAN hub
+* Select an Azure region where the first vWAN hub will be created
 
 Depending on your requirements, you may choose to deploy additional network infrastructure for your Enterprise-Scale landing zones platform. The optional resources include:
 
@@ -57,7 +62,7 @@ Depending on your requirements, you may choose to deploy additional network infr
 * VPN and ExpressRoute Gateways
   * If you choose to deploy either or both of these gateways, you will have the option to select the scale unit based on your requirements
 * Azure Firewall
-  * If you choose to deploy Azure Firewall, you will have the option to indicate if you want to enable DNS Proxy in Azure Firewall and select the tier based on your requirements
+  * If you choose to deploy Azure Firewall, you will have the option to select the Firewall SKU (Standard or Premium) as well as indicate if you want to enable DNS Proxy in Azure Firewall. It is recommended to choose the Azure Firewall [Premium](https://docs.microsoft.com/azure/firewall/premium-features) SKU if your organization requires next generation firewall capabilities such as TLS inspection or network intrusion detection and prevention system (IDPS).
 
 ![vwan](https://user-images.githubusercontent.com/79409563/136395890-e4d04751-49f1-4c65-8278-f109f6a2d578.JPG)
 
