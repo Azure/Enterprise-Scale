@@ -8,9 +8,9 @@ Please refer to [Trey Research reference implementation](https://github.com/Azur
 
 ## 1. Pre-requisites
 
-### Required Permissions 
+### Required Permissions
 
-To provision your Enterprise-Scale Landing Zones environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**. 
+To provision your Enterprise-Scale Landing Zones environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**.
 Refer to these [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
 
 ### Subscriptions
@@ -48,11 +48,11 @@ Click **Next: Azure Core Setup>** once you had chosen your deployment Region.
 On the *Azure Core setup* blade you will:
 
 - **Provide a prefix** that will be used to name your management group hierarchy **and** platform resources.
-- Choose between using dedicated subscriptions or a single subscription to host platform resources. 
+- Choose between using dedicated subscriptions or a single subscription to host platform resources.
 
-**Please Note:** A dedicated platform subscriptions is in general recommended. However, some Customers have the requirement to host their plattform and applications wihtin a single subscription. The Trey Research Reference is aimed at Customers with this requirement. 
+**Please Note:** A dedicated platform subscriptions is in general recommended. However, some Customers have the requirement to host their platform and applications within a single subscription. This tutorial is aimed at Customers with this requirement.
 
-  For the Trey Research scenario select **Single** and **provide a dedicated (empty) subscription** that will be used to host your Platform resources.
+  Select **Single** and **provide a dedicated (empty) subscription** that will be used to host your Platform resources.
 
   ![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix-singlesubscription.jpg)
 
@@ -62,10 +62,11 @@ Click **Next: Platform management, security, and governance>**.
 
 ## 5. Platform management, security, and governance
 
-On the *Platform management, security, and governance* blade, you will :
-- configure the core components to enable monitoring, 
-- configure the core components to enable security posture management 
-- configure the core components to thread protection for your platform and application resources. 
+On the *Platform management, security, and governance* blade, you will:
+
+- configure the core components to enable monitoring,
+- configure the core components to enable security posture management,
+- configure the core components to thread protection for your platform and application resources.
 
 **Note:** The options you enable will be enforced using Azure Policy to ensure your landing zones and  Azure resources are continuously compliant as your deployments scale and grow.
 
@@ -75,8 +76,8 @@ On the *Platform management, security, and governance* blade, you will :
 
   ![mgmtTab-enableLogs](./media/clip_image014-1-singlesubscription.jpg)
 
-  - If required you can customize the retention time of your monitoring data from it's default of 30 days by using the **Log Analytics Data Retention (days)** slider. 
-**Please note:** Increasing the retention time to more than 30 days will increase your costs. 
+  - If required you can customize the retention time of your monitoring data from it's default of 30 days by using the **Log Analytics Data Retention (days)** slider.
+**Please note:** Increasing the retention time to more than 30 days will increase your costs.
 See [Manage usage and costs with Azure Monitor Logs](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/manage-cost-storage) for further details on Azure Monitor pricing. The data retention time [can be changed at any time](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/manage-cost-storage#change-the-data-retention-period).
 
   ![mgmtTab-logsRetention](./media/clip_image014-2-singlesubscription.jpg)
@@ -94,8 +95,8 @@ See [Manage usage and costs with Azure Monitor Logs](https://docs.microsoft.com/
     - [SQL Assessment](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/sql-assessment) provides a prioritized list of recommendations specific to your deployed server infrastructure. The recommendations are categorized across six focus areas which help you quickly understand the risk and take corrective action.
 
 - **Enable** **Deploy Azure Security Center and enable security monitoring for your platform and resources** option to allow Azure Security Center assess your subscriptions and detect security misconfigurations in your Azure resources, and leverage [Azure Defender](https://docs.microsoft.com/en-us/azure/security-center/azure-defender) to protect your workloads. An Azure Policy will be applied to the root of the Enterprise Scale Management Group hierarchy to enforce your settings across all your subscriptions.
- 
-  You will need to **provide an email address** to get email notifications from Azure Security Center. It is best practices to provide a distribution list instead of an email address tied to a single person. 
+
+  You will need to **provide an email address** to get email notifications from Azure Security Center. It is best practices to provide a distribution list instead of an email address tied to a single person.
 
   ![mgmtTab-asc](./media/clip_image014asc-1-singlesubscription.jpg)
 
@@ -173,7 +174,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
     ![networkTab-gwSku](./media/clip_image036b-4-singlesubscription.png)
 
   - **Subnet for VPN/ExpressRoute Gateways**: provide an address space to be assigned to the subnet dedicated to host your virtual network gateways. We recommend that you create a gateway subnet of /27 or larger (/27, /26 etc.) if you have the available address space to do so. This will accommodate most configurations. In this tutorial you will assign a /26:
-    
+
     ![networkTab-gwSubnet](./media/clip_image036b-5-singlesubscription.png)  
 
 - Select **Deploy Azure Firewall** to get an Azure Firewall deployed (recommended) to your hub virtual network for spoke-to-spoke, on-premises-to-Azure, and internet-outbound traffic protection and filtering.
@@ -185,7 +186,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
   Continue with configuring the rest of your Azure Firewall deployment settings:
 
   - **Enable Azure Firewall as a DNS proxy**: select this option if you are planning to use [FQDNs in Network rules](https://docs.microsoft.com/en-us/azure/firewall/fqdn-filtering-network-rules).
-    
+
     In this tutorial, you will not enable this feature. Please note you can [enable DNS Proxy feature](https://docs.microsoft.com/en-us/azure/firewall/dns-settings) at any moment.
   
     Set **Enable Azure Firewall as a DNS proxy** to **No**.
@@ -199,11 +200,11 @@ On the *Network topology and connectivity* blade you will configure your core ne
     Set **Select Azure Firewall tier** to **Standard**:
 
     ![networkTab-fwSKU](./media/clip_image036b-8-singlesubscription.png)
-   
+
   - **Select Availability Zones for the Azure Firewall**:
-    
+
     In this tutorial you will deploy a zone-redudant Azure Firewall.
-    
+
     **Select two or more zones** to configure your Azure Firewall deployment to span multiple [Availability Zones](https://docs.microsoft.com/en-us/azure/firewall/features#availability-zones) (recommended for increased availability).
 
     ![networkTab-fwAZs](./media/clip_image036b-9-singlesubscription.png)
@@ -224,7 +225,7 @@ Click **Next: Identity>** once you had configured your network setup.
 
 ## 8. Identity
 
-On the *Identity* blade you can specify if you want to assign recommended Azure Policies to govern Domain Controllers deployed to your Platform Subscription. If you decide to enable this feature, you can then select which Azure Policies you want to get assigned. Please note, those Azure Policies will apply to all Virtual Machines deployed to the Platform Subscription regardless of their role. See [Enteprise Scale Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the recommended set of Azure Policies.
+On the *Identity* blade you can specify if you want to assign recommended Azure Policies to govern Domain Controllers deployed to your Platform Subscription. If you decide to enable this feature, you can then select which Azure Policies you want to get assigned. Please note, those Azure Policies will apply to all Virtual Machines deployed to the Platform Subscription regardless of their role. See [Enterprise Scale Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the recommended set of Azure Policies.
 
 ![identityTab](./media/clip_image036c-singlesubscription.png)
 
@@ -240,7 +241,7 @@ Click **Next: Landing Zone configuration>** to continue with your deployment.
 
 ## 9. Landing zones configuration
 
-It is posibly to bring in N number of excisting subscriptions that will be bootstrapped as landing zones, governed by Azure Policy:
+It is possible to bring in N number of existing subscriptions that will be bootstrapped as landing zones, governed by Azure Policy:
 
 ![lzTab-intro](./media/clip_image037-1-singlesubscription.jpg)
 
@@ -255,7 +256,7 @@ For Corp Landing Zones its virtual network can be connected (recommended) to the
 
   ![lzTab-corpLZs](./media/clip_image037-2-singlesubscription.jpg)
 
-- **Select the subscriptions you want to move to online management group**: 
+- **Select the subscriptions you want to move to online management group**:
   Online Landing Zones are meant to host workloads that do not require connectivity/hybrid connectivity with the corporate network or that not even require a virtual network.
 
   In this tutorial, an "Online" Landing Zone is provisioned using an existing (empty) subscription.
@@ -264,7 +265,7 @@ For Corp Landing Zones its virtual network can be connected (recommended) to the
 
   ![lzTab-onlineLZs](./media/clip_image037-3-singlesubscription.jpg)
 
-- Finally, you can **select** from a set of **recommended Azure policies** which ones you want to apply to secure and govern your Landing Zones. All Enterprise Scale's Azure Policies are enabled by default (recommended) but are fully customizable. 
+- Finally, you can **select** from a set of **recommended Azure policies** which ones you want to apply to secure and govern your Landing Zones. All Enterprise Scale's Azure Policies are enabled by default (recommended) but are fully customizable.
 - **Please note:** Enterprise Scale Azure Policies can be assigned at any time.
 
   Any Azure Policies you selected will be assigned to the [Landing Zones Management Group](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure) under the root of your Enterprise Scale Management Group hierarchy. See [Enterprise Scale Azure's Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the configurable set of Azure Policies.
