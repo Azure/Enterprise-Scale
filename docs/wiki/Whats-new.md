@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [October 2021](#october-2021)
   - [September 2021](#september-2021)
   - [August 2021](#august-2021)
   - [July 2021](#july-2021)
@@ -31,16 +32,36 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
+### October 2021
+
+#### Docs
+
+- Updated Deploying Enterprise Scale wiki page with updated workflow steps. (https://github.com/Azure/Enterprise-Scale/pull/827)
+
+#### Tooling
+
+- Terraform Enterprise Scale Module reaches GA (V1.0.0) - [see release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.0.0)
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### September 2021
 
 #### Docs
 
 - Added reference to Enterprise-Scale Analytics (https://github.com/Azure/Enterprise-Scale/pull/809)
+- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions (https://github.com/Azure/Enterprise-Scale/pull/802)
 
 #### Tooling
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
 - [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
+- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (https://github.com/Azure/Enterprise-Scale/pull/820)
 
 ### Policy
 
