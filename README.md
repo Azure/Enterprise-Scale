@@ -17,7 +17,7 @@
 * [Getting started with Infrastructure-as-Code](https://github.com/Azure/AzOps-Accelerator/wiki)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
-* [FAQ](./docs/EnterpriseScale-FAQ.md)
+* [Frequently Asked Questions (FAQ)](https://github.com/Azure/Enterprise-Scale/wiki/FAQ)
 * [Roadmap](./docs/EnterpriseScale-Roadmap.md)
 * [Microsoft Support Policy](./SUPPORT.md)
 
