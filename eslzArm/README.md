@@ -174,16 +174,17 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -ManagementGroupId $eslzPrefix `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
-                                -enableAscForServers "Standard" `
-                                -enableAscForSql "Standard" `
-                                -enableAscForAppServices "Standard" `
-                                -enableAscForStorage "Standard" `
-                                -enableAscForRegistries "Standard" `
-                                -enableAscForKeyVault "Standard" `
-                                -enableAscForSqlOnVm "Standard" `
-                                -enableAscForKubernetes "Standard" `
-                                -enableAscForArm "Standard" `
-                                -enableAscForDns "Standard" `
+                                -enableAscForServers "DeployIfNotExists" `
+                                -enableAscForSql "DeployIfNotExists" `
+                                -enableAscForAppServices "DeployIfNotExists" `
+                                -enableAscForStorage "DeployIfNotExists" `
+                                -enableAscForRegistries "DeployIfNotExists" `
+                                -enableAscForKeyVault "DeployIfNotExists" `
+                                -enableAscForSqlOnVm "DeployIfNotExists" `
+                                -enableAscForKubernetes "DeployIfNotExists" `
+                                -enableAscForArm "DeployIfNotExists" `
+                                -enableAscForDns "DeployIfNotExists" `
+                                -enableAscForOssDb "DeployIfNotExists" `
                                 -emailContactAsc $SecurityContactEmailAddress `
                                 -Verbose
 
