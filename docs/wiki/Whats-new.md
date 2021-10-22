@@ -37,6 +37,8 @@ Here's what's changed in Enterprise Scale:
 #### Docs
 
 - Updated Deploying Enterprise Scale wiki page with updated workflow steps. (https://github.com/Azure/Enterprise-Scale/pull/827)
+- Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki
+- Added [architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
 
 #### Tooling
 
