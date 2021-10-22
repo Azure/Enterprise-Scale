@@ -41,7 +41,18 @@ Here's what's changed in Enterprise Scale:
 #### Tooling
 
 - Terraform Enterprise Scale Module reaches GA (V1.0.0) - [see release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.0.0)
-- ESLZ reference implementation updated with [built-in (11) policies for Azure Security Center](https://github.com/Azure/Enterprise-Scale/pull/835)
+- ESLZ reference implementation updated with [built-in (11) policies for Azure Security Center](https://github.com/Azure/Enterprise-Scale/pull/835), enforcing (DeployIfNotExists) Azure Security Center with Standard Tier for Azure Defender for the following services:
+  - Kubernetes
+  - App Services
+  - VMs
+  - Key Vault
+  - Azure Resource Manager
+  - DNS
+  - Open-source relational databases
+  - SQL on VMs
+  - SQL databases
+  - Storage
+  - Container Registries
 
 ### Policy
 
