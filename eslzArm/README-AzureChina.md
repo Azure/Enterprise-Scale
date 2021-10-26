@@ -32,7 +32,7 @@ New-AzManagementGroupDeployment -Name $DeploymentName `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcPolicies.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\china\mcPolicies.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
@@ -41,7 +41,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcDENY-PublicEndpointsPolicySetDefinition.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\china\mcDENY-PublicEndpointsPolicySetDefinition.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
@@ -50,7 +50,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy2" `
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy3" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\mcDINE-PrivateDNSZonesPolicySetDefinition.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyDefinitions\china\mcDINE-PrivateDNSZonesPolicySetDefinition.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
@@ -144,16 +144,17 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -ManagementGroupId $eslzPrefix `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
-                                -enableAscForServers "Standard" `
-                                -enableAscForSql "Standard" `
-                                -enableAscForAppServices "Standard" `
-                                -enableAscForStorage "Standard" `
-                                -enableAscForRegistries "Standard" `
-                                -enableAscForKeyVault "Standard" `
-                                -enableAscForSqlOnVm "Standard" `
-                                -enableAscForKubernetes "Standard" `
-                                -enableAscForArm "Standard" `
-                                -enableAscForDns "Standard" `
+                                -enableAscForServers "DeployIfNotExists" `
+                                -enableAscForSql "DeployIfNotExists" `
+                                -enableAscForAppServices "DeployIfNotExists" `
+                                -enableAscForStorage "DeployIfNotExists" `
+                                -enableAscForRegistries "DeployIfNotExists" `
+                                -enableAscForKeyVault "DeployIfNotExists" `
+                                -enableAscForSqlOnVm "DeployIfNotExists" `
+                                -enableAscForKubernetes "DeployIfNotExists" `
+                                -enableAscForArm "DeployIfNotExists" `
+                                -enableAscForDns "DeployIfNotExists" `
+                                -enableAscForOssDb "DeployIfNotExists" `
                                 -emailContactAsc $SecurityContactEmailAddress `
                                 -Verbose
 

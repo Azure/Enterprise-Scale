@@ -129,83 +129,91 @@
         },
         "enableAscForServers": {
             "type": "string",
-            "defaultValue": "Free",
+            "defaultValue": "Disabled",
             "allowedValues": [
-                "Standard",
-                "Free"
+                "DeployIfNotExists",
+                "Disabled"
             ]
         },
         "enableAscForAppServices": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForStorage": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForSql": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForSqlOnVm": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForKeyVault": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForArm": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForDns": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForKubernetes": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
         },
         "enableAscForRegistries": {
             "type": "string",
-            "defaultValue": "Free",
             "allowedValues": [
-                "Standard",
-                "Free"
-            ]
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
+        },
+        "enableAscForOssDb": {
+            "type": "string",
+            "allowedValues": [
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"
         },
         "denyAksPrivileged": {
             "type": "string",
@@ -618,10 +626,25 @@
             "onlineManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').online)]"
         },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
+       "azPrivateDnsPolicyMapping": {
+            "https://management.azure.com/": "managementGroupTemplates/policyDefinitions/DINE-PrivateDNSZonesPolicySetDefinition.json",
+            "https://management.usgovcloudapi.net": "managementGroupTemplates/policyDefinitions/gov/fairfaxDINE-PrivateDNSZonesPolicySetDefinition.json"
+        },
+        "azPrivateDnsArmTemplate": "[variables('azPrivateDnsPolicyMapping')[environment().resourceManager]]",
+        "azPublicEndpointsPolicyMapping": {
+            "https://management.azure.com/": "managementGroupTemplates/policyDefinitions/DENY-PublicEndpointsPolicySetDefinition.json",
+            "https://management.usgovcloudapi.net": "managementGroupTemplates/policyDefinitions/gov/fairfaxDENY-PublicEndpointsPolicySetDefinition.json"
+        },
+        "azPublicEndpointArmTemplate": "[variables('azPublicEndpointsPolicyMapping')[environment().resourceManager]]",
+        "azPolicyPoliciesMapping": {
+            "https://management.azure.com/": "managementGroupTemplates/policyDefinitions/policies.json",
+            "https://management.usgovcloudapi.net": "managementGroupTemplates/policyDefinitions/gov/fairfaxPolicies.json"
+        },
+        "azPolicyArmTemplate": "[variables('azPolicyPoliciesMapping')[environment().resourceManager]]",
         "deploymentUris": {
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
-            "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
+            "policyDefinitions": "[uri(deployment().properties.templateLink.uri, variables('azPolicyArmTemplate'))]",
             "dataPolicyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/dataPolicies.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
@@ -647,9 +670,9 @@
             "tlsSslPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DINE-APPEND-TLS-SSL-PolicyAssignment.json')]",
             "aksHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AksWithoutHttpsPolicyAssignment.json')]",            
             "ipFwdPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-IPForwardingPolicyAssignment.json')]",
-            "publicEndpointPolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DENY-PublicEndpointsPolicySetDefinition.json')]",
+            "publicEndpointPolicySetDefinition": "[uri(deployment().properties.templateLink.uri, variables('azPublicEndpointArmTemplate'))]",
             "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json')]",
-            "privateDnsZonePolicySetDefinition": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/DINE-PrivateDNSZonesPolicySetDefinition.json')]",
+            "privateDnsZonePolicySetDefinition": "[uri(deployment().properties.templateLink.uri, variables('azPrivateDnsArmTemplate'))]",
             "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonesPolicyAssignment.json')]",
             "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
@@ -1350,6 +1373,9 @@
                     },
                     "enableAscForDns": {
                         "value": "[parameters('enableAscForDns')]"
+                    },
+                    "enableAscForOssDb": {
+                        "value": "[parameters('enableAscForOssDb')]"
                     }
                 }
             }   

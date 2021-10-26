@@ -2,7 +2,8 @@
 
 * [What's New?](./Whats-new)
 * [Community Calls](./Community-Calls)
-* [What is Enterprise-Scale?](./What-is-Enterprise-Scale)
+* [Frequently Asked Questions (FAQ)](./FAQ)
+* [What is Enterprise-Scale](./What-is-Enterprise-Scale)
   * [What is Enterprise-Scale reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
   * [What if I already have an existing Azure footprint](./What-is-Enterprise-Scale#what-if-i-already-have-an-existing-azure-footprint)

@@ -36,6 +36,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
+
 - Updates to [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) to include instructions for deploying each of the reference implementations.
 - Updated Deploying Enterprise Scale wiki page with updated workflow steps. (https://github.com/Azure/Enterprise-Scale/pull/827)
 - Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki

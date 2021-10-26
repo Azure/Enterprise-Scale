@@ -53,7 +53,7 @@ az login
 az role assignment create --scope '/'  --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query "objectId" --output tsv)
 ```
 
-Powershell:
+PowerShell:
 
 ```powershell
 #sign in to Azure  from Powershell, this will redirect you to a web browser for authentication, if required
@@ -195,29 +195,25 @@ Once Enterprise-Scale has deployed and you enabled the CI/CD bootstrap, you shou
 ![Graphical user interface, text, application  Description automatically generated](./media/clip_image040.png)
 
 *    4 Secrets are created into this GitHub repository.
-
-ARM_CLIENT_ID = Service Principal
-
-ARM_CLIENT_SECRET = Service Principal Client Secret created in the Tenant
-ARM_SUBSCRIPTION_ID = The management subscription ID created in the Tenant
-ARM_TENANT_ID = Tenant ID of the Azure Tenant that was used to create ESLZ
+     - ARM_CLIENT_ID = Service Principal
+     - ARM_CLIENT_SECRET = Service Principal Client Secret created in the Tenant
+     - ARM_SUBSCRIPTION_ID = The management subscription ID created in the Tenant
+     - ARM_TENANT_ID = Tenant ID of the Azure Tenant that was used to create ESLZ
 
 ![img](./media/clip_image042.jpg)
 
-*    A Pull Request is either in progress or has completed and automatically merged into the main branch.
+*    A Pull Request is either in progress or has completed and automatically merged into the main branch. Using the "AzOps - Pull" workflow.
 
 ![img](./media/clip_image044.png)
 
-*    The Azure hierarchy that got created using ARM templates as part of the Enterprise-Scale setup, such as management groups, subscription organization as well as policy definitions, policy assignments and role assignments are hydrated and organized into Git:
+*    The Azure hierarchy that is created using ARM templates as part of the Enterprise-Scale setup, such as management groups, subscription organization as well as policy definitions, policy assignments and role assignments are pulled and organized into the GitHub repository:
 
-![Graphical user interface  Description automatically generated with medium confidence](./media/clip_image046.jpg)
+![AzOps Initial Pull Commit](./media/azops-initial-commit.png)
 
-
-![Graphical user interface, application  Description automatically generated](./media/clip_image048.jpg)
 
 *    In each folder, you will find the ARM templates that were deployed at the scopes during the Enterprise-Scale setup. E.g., on the intermediate root group, you will find all policy definitions, and depending on the selection you made during the deployment, you will find resource templates in the platform subscriptions. Users can – whenever they are ready, start using these templates and bring their own templates to manage the platform using ARM templates and infrastructure as code.
 
-![Graphical user interface, application  Description automatically generated](./media/clip_image050.jpg)
+![AzOps - Inside root folder](./media/azops-inside-root-dir.png)
 
 ## Post deployment activities
 
@@ -251,15 +247,15 @@ Also, when there’s a new *scope* (management groups, subscriptions, and resour
 
 Enterprise-Scale with its Policy Driven Governance principle relies heavily on Azure Policy to determine the goal state of the overall platform. As an example, this exercise will demonstrate how a developer can make a new policy assignment at the “Online” landing zone management group scope.
 
-1.   In GitHub, navigate to your repository and click on the ‘azops’ folder. From here, navigate to your <prefix>-online folder which represents the management group for all your online landing zones.
+1.   In GitHub, navigate to your repository and click on the `root` folder. From here, navigate to your <prefix>-online folder which represents the management group for all your online landing zones.
 
-![img](./media/clip_image052.jpg)
+![AzOps - path to online folder](./media/azops-online-path.png)
 
-2.   Click on ‘Add file’, and ‘Create new file’.
+2. Click on ‘Add file’, and ‘Create new file’.
 
-3.   Name the file ‘locationAssignment.json’
+3. Name the file `locationAssignment.json`
 
-4.   Copy and paste the following ARM template json
+4. Copy and paste the following ARM template json
 
 ``` json
 {
@@ -326,33 +322,39 @@ Enterprise-Scale with its Policy Driven Governance principle relies heavily on A
 }
 ```
 
-5.   Examine the file and note that we are using default values for the parameters. You could modify these, or you could also provide a locationAssignment.parameters.json file to provide the parameters.
+5. Examine the file and note that we are using default values for the parameters. You could modify these, or you could also provide a `locationAssignment.parameters.json` file to provide the parameters.
 
-6.   On the ‘Commit new file’ option, select ‘Create a new branch for this commit and start a pull request’, and give it a name.
+6. On the ‘Commit new file’ option, select ‘Create a new branch for this commit and start a pull request’, and give it a name.
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/ESLZ-location-assignment-policy.JPG)
+![AzOps - Create PR from GitHub](media/azops-create-pr.png)
 
-7.   Click ‘Propose new file' and on the next page, click 'Create Pull Request." A new Pull Request is being created which will trigger the Push workflow. Go to Actions to monitor the process.
+7. Click ‘Propose new file' and on the next page, click 'Create Pull Request." A new Pull Request is being created which will trigger the "AzOps - Validate" workflow. Go to Actions to monitor the process.
 
-![Graphical user interface, text, application, chat or text message  Description automatically generated](./media/clip_image056.jpg)
+![AzOps - Validate Workflow](media/azops-pr-validate-action.png)
 
-8.   Once completed, the pull request should automatically merge.
+8. Once completed, the pull request will show WhatIf results as a comment.
 
-9.   In Azure portal, you can navigate to the <prefix>-online management group and verify that the deployment resource got created and deployed successfully. Each deployment invoked via AzOps will have an ‘AzOps’ prefix.
+![AzOps - Validate comment in Pull Request](media/azops-pr-validate-comment.png)
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image058.jpg)
+9. You should review the comment and then approve the pull request by completing the pull request by clicking "Squash and merge". You can also delete the branch once the merge has completed.
 
-10.  Navigate to ‘Policies’ on the <prefix>-online management group and verify that there’s a new assignment called ‘Policy to ring-fence Azure regions’.
+10. This will then kick-off the "AzOps - Push" workflow, that can be monitored under actions.
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image060.jpg)
+![AzOps - Push workflow](media/azops-push-workflow.png)
 
-11.  Click on ‘Edit assignment’ to verify that the Policy is not being enforced but will only scan for compliance and validate resources per the policy rule defined in the policy definition.
+11. In Azure portal, you can navigate to the <prefix>-online management group and verify that the deployment resource got created and deployed successfully. Each deployment invoked via AzOps will have an ‘AzOps’ prefix.
 
-![Text  Description automatically generated with low confidence](./media/clip_image062.jpg)
+![AzOps - ARM Deployment](media/azops-deployment.png)
+
+12. Navigate to ‘Policies’ on the <prefix>-online management group and verify that there’s a new assignment called ‘Policy to ring-fence Azure regions’.
+
+![AzOps - Policy Assigned](media/azops-policy-assigned-online.png)
+
+13. Click on ‘Edit assignment’ to verify that the Policy is not being enforced but will only scan for compliance and validate resources per the policy rule defined in the policy definition.
+
+![AzOps - Policy Disabled](media/azops-policy-disabled.png)
 
 Once the policy compliance scan has completed, you will get a compliance result for the policy you assigned to validate the effect is working as intended, before going to the next step to update the enforcement mode. I.e., this policy will prevent resources being created outside of the allowed locations specified.
-
-You can now merge the pull request and delete the branch.
 
 ### Update a Policy Assignment to enforce
 
@@ -366,23 +368,21 @@ In this exercise, we will modify the existing policy assignment to ensure the po
 
 ![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image065.jpg)
 
-4.   On the ‘Commit changes’ dialogue box, select ‘Create a new branch for this commit and start a pull request’, and provide a branch name. Click ‘Propose changes’ and create the pull request
+1.   On the ‘Commit changes’ dialogue box, select ‘Create a new branch for this commit and start a pull request’, and provide a branch name. Click ‘Propose changes’ and create the pull request
 
 ![Graphical user interface, text, application, email  Description automatically generated](./media/ESLZ-Update-location-assignment-policy.JPG)
 
-This will now start the AzOps push workflow and deploy the template with the updated property so that the policy effect will be enforced (in this case, deny resource creation outside of the ringfenced Azure regions).
+This will now start the same process as above by validating and showing a WhatIf output as a comment on the pull request. Once reviewed, approved and merged the AzOps push workflow will trigger and deploy the template with the updated property so that the policy effect will be enforced (in this case, deny resource creation outside of the ringfenced Azure regions).
 
 Once the job has completed, you can revisit the policy in Azure portal and see that the policy enforcement is set to ‘Enabled’.
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image069.jpg)
-
-You can now merge the pull request and delete the branch.
+![AzOps - Policy Assignment Mode Changed](media/azops-policy-enforcement-mode-change.png)
 
 ### Create new Role Assignment on a landing zone
 
 To grant a user, a group, or a service principal access to a landing zone (subscription), you can use the following ARM template where you provide the principalId (object id of the user, group, or service principal) as input to the parameter, and place the template into the subscription folder into your landing zone management group(s).
 
-Replace Provide-Principal-Id with Id of the principal.
+Replace Provide-Principal-Id with ID of the principal.
 
 ```json
 {
