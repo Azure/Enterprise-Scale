@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [October 2021](#october-2021)
   - [September 2021](#september-2021)
   - [August 2021](#august-2021)
   - [July 2021](#july-2021)
@@ -31,6 +32,39 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
+### October 2021
+
+#### Docs
+
+- Updates to [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) to include instructions for deploying each of the reference implementations.
+- Updated Deploying Enterprise Scale wiki page with updated workflow steps. (https://github.com/Azure/Enterprise-Scale/pull/827)
+- Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki
+- Added [architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
+
+#### Tooling
+
+- Terraform Enterprise Scale Module reaches GA (V1.0.0) - [see release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.0.0)
+- ESLZ reference implementation updated with [built-in (11) policies for Azure Security Center](https://github.com/Azure/Enterprise-Scale/pull/835), enforcing (DeployIfNotExists) Azure Security Center with Standard Tier for Azure Defender for the following services:
+  - Kubernetes
+  - App Services
+  - VMs
+  - Key Vault
+  - Azure Resource Manager
+  - DNS
+  - Open-source relational databases
+  - SQL on VMs
+  - SQL databases
+  - Storage
+  - Container Registries
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### September 2021
 
 #### Docs
@@ -42,6 +76,7 @@ Here's what's changed in Enterprise Scale:
 
 - Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
 - [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
+- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (https://github.com/Azure/Enterprise-Scale/pull/820)
 
 ### Policy
 
