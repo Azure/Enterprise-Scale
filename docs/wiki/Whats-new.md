@@ -36,11 +36,27 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
+
+- Updates to [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) to include instructions for deploying each of the reference implementations.
 - Updated Deploying Enterprise Scale wiki page with updated workflow steps. (https://github.com/Azure/Enterprise-Scale/pull/827)
+- Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki
+- Added [architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
 
 #### Tooling
 
 - Terraform Enterprise Scale Module reaches GA (V1.0.0) - [see release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.0.0)
+- ESLZ reference implementation updated with [built-in (11) policies for Azure Security Center](https://github.com/Azure/Enterprise-Scale/pull/835), enforcing (DeployIfNotExists) Azure Security Center with Standard Tier for Azure Defender for the following services:
+  - Kubernetes
+  - App Services
+  - VMs
+  - Key Vault
+  - Azure Resource Manager
+  - DNS
+  - Open-source relational databases
+  - SQL on VMs
+  - SQL databases
+  - Storage
+  - Container Registries
 
 ### Policy
 
