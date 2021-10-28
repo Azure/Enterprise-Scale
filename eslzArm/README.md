@@ -327,7 +327,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-lz-backup" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $eslzPrefix `
+                                -topLevelManagementGroupPrefix "$($eslzPrefix)-landingzones" `
                                 -Verbose
 
 # Assign Azure Policy to enforce TLS/SSL on the landing zones management group
