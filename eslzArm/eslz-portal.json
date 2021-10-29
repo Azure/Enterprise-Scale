@@ -98,7 +98,7 @@
 									"type": "Microsoft.Common.TextBlock",
 									"visible": true,
 									"options": {
-										"text": "Select the dedicated, single subscription that will be used for all platform resources during deployment, for security, logging, connectivity, and identity."
+										"text": "Select the single subscription that will be used for all platform resources during deployment, for security, logging, connectivity, and identity."
 									}
 								},
 								{
@@ -623,7 +623,27 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').esLogAnalytics,'Yes')]"
+                            "visible": "[and(equals(steps('esGoalState').esLogAnalytics, 'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
+                        },
+						{
+                            "name": "esLiteSecuritySolution",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Azure Sentinel",
+                            "defaultValue": "No",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": "[and(equals(steps('esGoalState').esLogAnalytics, 'Yes'), equals(steps('lzSettings').subOrgsOption, 'Single'))]"
                         }
                     ]
                 },
@@ -912,7 +932,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable DDoS Protection Standard",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[not(equals(steps('esConnectivityGoalState').esHub, 'No'))]",
+                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub, 'No')), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]",
                             "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Protection Standard will be enabled.",
                             "constraints": {
                                 "allowedValues": [
@@ -927,6 +947,26 @@
                                 ]
                             }
                         },
+						{
+                            "name": "esLiteDdoS",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Enable DDoS Protection Standard",
+                            "defaultValue": "No",
+                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub, 'No')), equals(steps('lzSettings').subOrgsOption, 'Single'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Protection Standard will be enabled.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },						
 						{
                             "name": "esPrivateDns",
                             "type": "Microsoft.Common.OptionsGroup",
@@ -1957,7 +1997,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable DDoS Protection Standard",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub,'No')),equals(steps('esConnectivityGoalState').esDdoS,'Yes'))]",
+                            "visible": "[and(not(equals(steps('esConnectivityGoalState').esHub,'No')), or(equals(steps('esConnectivityGoalState').esDdoS,'Yes'), equals(steps('esConnectivityGoalState').esLiteDdoS,'Yes')))]",
                             "toolTip": "If 'Yes' is selected when also adding a connectivity subscription earlier, DDoS Protection Standard will be enabled.",
                             "constraints": {
                                 "allowedValues": [
@@ -2035,7 +2075,7 @@
                         {
                             "name": "esVmMonitoring",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure Azure VMs (Windows & Linux) and Azure Arc-enabled servers are being monitored",
+                            "label": "Ensure Azure VMs (Windows & Linux) and Arc enabled servers are being monitored",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "Enabling this Azure Policy will ensure that every virtual machine (Windows, Linux, including Azure Arc enabled servers) are onboarded to Azure Monitor and Security",
                             "constraints": {
@@ -2363,7 +2403,7 @@
                 "enableErGw": "[steps('esConnectivityGoalState').esErGw]",
                 "enableVpnGw": "[steps('esConnectivityGoalState').esVpnGw]",
                 "enableHub": "[steps('esConnectivityGoalState').esHub]",
-                "enableDdoS": "[steps('esConnectivityGoalState').esDdoS]",
+                "enableDdoS": "[coalesce(steps('esConnectivityGoalState').esDdoS, steps('esConnectivityGoalState').esLiteDdoS, '')]",
                 "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId,'')]",
                 "enableAzFw": "[steps('esConnectivityGoalState').esAzFw]",
                 "enableAzFwDnsProxy": "[steps('esConnectivityGoalState').esAzFwDns]",
@@ -2391,7 +2431,7 @@
                 "enableAscForDns": "[steps('esGoalState').esAscDns]",
                 "enableAscForKubernetes": "[steps('esGoalState').esAscKubernetes]",
                 "enableAscForRegistries": "[steps('esGoalState').esAscRegistries]",
-                "enableSecuritySolution": "[steps('esGoalState').esSecuritySolution]",
+                "enableSecuritySolution": "[coalesce(steps('esGoalState').esSecuritySolution, steps('esGoalState').esLiteSecuritySolution, '')]",
                 "enableAgentHealth": "[steps('esGoalState').esAgentSolution]",
                 "enableChangeTracking": "[steps('esGoalState').esChangeTracking]",
                 "enableUpdateMgmt": "[steps('esGoalState').esUpdateMgmt]",
