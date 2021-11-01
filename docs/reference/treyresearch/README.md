@@ -1,6 +1,6 @@
 | ARM Template | Scale without refactoring |
 |:--------------|:--------------|
-| [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-portal.json)  | Yes |
+| [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json)  | Yes |
 
 # Deploy Enterprise-scale for small enterprises
 
@@ -32,7 +32,16 @@ To learn how to create new subscriptions programmatically, please visit [Microso
 
 To learn how to create new subscriptions using the Azure portal, please visit [Microsoft Docs](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/). 
 
-## What will be deployed?
+## How to deploy this reference implementation
+
+Enterprise-Scale landing zones offers a single experience to deploy the different reference implementations. To deploy Enterprise-Scale for Small Enterprises, click on the Deploy to Azure button at the top of this page and ensure you select the following options:
+
+- In the **Enterprise-Scale core setup** blade, select the option for **Single** subscription to host your Platform resources.
+- In the **Network topology and connectivity** blade, select either **Hub and spoke with Azure Firewall**.
+
+The rest of the options across the different blades will depend on your environment and desired deployment settings. For detailed instructions for each of the deployment steps, refer to the [Enterprise-Scale Landing Zones Deployment Guide](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-BasicSetup).
+
+### What will be deployed?
 
 By default, all recommendations are enabled. You must explicitly disable them if you do not want them to be deployed and configured.
 
