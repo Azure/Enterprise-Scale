@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [November 2021](#november-2021)
   - [October 2021](#october-2021)
   - [September 2021](#september-2021)
   - [August 2021](#august-2021)
@@ -27,6 +28,27 @@ Enterprise Scale is updated regularly. This page is where you'll find out about 
 This article will be updated as and when changes are made to the above and anything else of relevance for Enterprise Scale. Make sure to check back here often to keep up with new updates and changes.
 
 > **Important:** Previous changes to the above in relation to Enterprise Scale will not be listed here. However going forward, this page will be updated.
+
+### November 2021
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- *No updates, yet.*
+
+### Policy
+
+- Updated `Deploy-Budget` policy, to v1.1.0, adding new parameter of `budgetName` that defaults to: `budget-set-by-policy` - closing issue [#842](https://github.com/Azure/Enterprise-Scale/issues/842)
+  - Including Fairfax
+  - Also Mooncake (Azure China) even though not in use yet
+
+### Other
+
+- *No updates, yet.*
+
 
 ## Updates
 
