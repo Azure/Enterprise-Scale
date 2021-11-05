@@ -248,7 +248,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-backup" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-identity" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $eslzPrefix `
+                                -topLevelManagementGroupPrefix "idVmBackup" `
                                 -Verbose
 
 # Assign Azure Policy to deny RDP access from internet into VMs (domain controllers) in the identity subscription
@@ -327,7 +327,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-lz-backup" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix "$($eslzPrefix)-landingzones" `
+                                -topLevelManagementGroupPrefix "lzVmBackup" `
                                 -Verbose
 
 # Assign Azure Policy to enforce TLS/SSL on the landing zones management group
