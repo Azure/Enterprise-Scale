@@ -41,6 +41,8 @@ This article will be updated as and when changes are made to the above and anyth
 
 ### Policy
 
+- Replaced `Deploy-Default-Udr` policy with `Deploy-Custom-Route-Table` that allows deploying custom route tables with an arbitrary set of UDRs (including a 0/0 default route if needed)
+
 - Updated `Deploy-Budget` policy, to v1.1.0, adding new parameter of `budgetName` that defaults to: `budget-set-by-policy` - closing issue [#842](https://github.com/Azure/Enterprise-Scale/issues/842)
   - Including Fairfax
   - Also Mooncake (Azure China) even though not in use yet

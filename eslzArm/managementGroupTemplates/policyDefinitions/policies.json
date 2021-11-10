@@ -879,30 +879,15 @@
                 },
                 {
                     "properties": {
-                        "displayName": "Deploy a user-defined route to a VNET with specific routes.",
-                        "policyType": "Custom",
-                        "mode": "Indexed",
-                        "description": "Deploy a user-defined route to a VNET with routes from spoke to hub firewall. This policy must be assigned for each region you plan to use.",
+                        "displayName": "Deploy a route table with specific user defined routes",
+                        "description": "Deploys a route table with specific user defined routes when one does not exist. The route table deployed by the policy must be manually associated to subnet(s)",
                         "metadata": {
                             "version": "1.0.0",
                             "category": "Network"
                         },
+                        "policyType": "Custom",
+                        "mode": "Indexed",
                         "parameters": {
-                            "defaultRoute": {
-                                "type": "String",
-                                "metadata": {
-                                    "displayName": "Default route to add into UDR",
-                                    "description": "Policy will deploy a default route table to a vnet"
-                                }
-                            },
-                            "vnetRegion": {
-                                "type": "String",
-                                "metadata": {
-                                    "displayName": "VNet Region",
-                                    "description": "Regional VNet hub location",
-                                    "strongType": "location"
-                                }
-                            },
                             "effect": {
                                 "type": "String",
                                 "metadata": {
@@ -914,6 +899,35 @@
                                     "Disabled"
                                 ],
                                 "defaultValue": "DeployIfNotExists"
+                            },
+                            "requiredRoutes": {
+                                "type": "Array",
+                                "metadata": {
+                                    "displayName": "requiredRoutes",
+                                    "description": "Routes that must exist in compliant route tables deployed by this policy"
+                                }
+                            },
+                            "vnetRegion": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "vnetRegion",
+                                    "description": "Only VNets in this region will be evaluated against this policy"
+                                }
+                            },
+                            "routeTableName": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "routeTableName",
+                                    "description": "Name of the route table automatically deployed by this policy"
+                                }
+                            },
+                            "disableBgpPropagation": {
+                                "type": "Boolean",
+                                "metadata": {
+                                    "displayName": "DisableBgpPropagation",
+                                    "description": "Disable BGP Propagation"
+                                },
+                                "defaultValue": false
                             }
                         },
                         "policyRule": {
@@ -933,67 +947,131 @@
                                 "effect": "[[parameters('effect')]",
                                 "details": {
                                     "type": "Microsoft.Network/routeTables",
-                                    "roleDefinitionIds": [
-                                        "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
-                                    ],
                                     "existenceCondition": {
                                         "allOf": [
                                             {
-                                                "field": "Microsoft.Network/routeTables/routes[*].nextHopIpAddress",
-                                                "equals": "[[parameters('defaultRoute')]"
+                                                "field": "name",
+                                                "equals": "[[parameters('routeTableName')]"
+                                            },
+                                            {
+                                                "count": {
+                                                    "field": "Microsoft.Network/routeTables/routes[*]",
+                                                    "where": {
+                                                        "value": "[[concat(current('Microsoft.Network/routeTables/routes[*].addressPrefix'), ';', current('Microsoft.Network/routeTables/routes[*].nextHopType'), if(equals(toLower(current('Microsoft.Network/routeTables/routes[*].nextHopType')),'virtualappliance'), concat(';', current('Microsoft.Network/routeTables/routes[*].nextHopIpAddress')), ''))]",
+                                                        "in": "[[parameters('requiredRoutes')]"
+                                                    }
+                                                },
+                                                "equals": "[[length(parameters('requiredRoutes'))]"
                                             }
                                         ]
                                     },
+                                    "roleDefinitionIds": [
+                                        "/subscriptions/e867a45d-e513-44ac-931e-4741cef80b24/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                                    ],
                                     "deployment": {
                                         "properties": {
                                             "mode": "incremental",
-                                            "parameters": {
-                                                "udrName": {
-                                                    "value": "[[concat(field('name'),'-udr')]"
-                                                },
-                                                "udrLocation": {
-                                                    "value": "[[field('location')]"
-                                                },
-                                                "defaultRoute": {
-                                                    "value": "[[parameters('defaultRoute')]"
-                                                }
-                                            },
                                             "template": {
-                                                "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                                                 "contentVersion": "1.0.0.0",
                                                 "parameters": {
-                                                    "udrName": {
+                                                    "routeTableName": {
                                                         "type": "string"
                                                     },
-                                                    "udrLocation": {
+                                                    "vnetRegion": {
                                                         "type": "string"
                                                     },
-                                                    "defaultRoute": {
-                                                        "type": "string"
+                                                    "requiredRoutes": {
+                                                        "type": "array"
+                                                    },
+                                                    "disableBgpPropagation": {
+                                                        "type": "bool"
                                                     }
                                                 },
-                                                "variables": {},
+                                                "variables": {
+                                                    "copyLoop": [
+                                                        {
+                                                        "name": "routes",
+                                                        "count": "[[[length(parameters('requiredRoutes'))]",
+                                                            "input": {
+                                                                "name": "[[[concat('route-',copyIndex('routes'))]",
+                                                                "properties": {
+                                                                    "addressPrefix": "[[[split(parameters('requiredRoutes')[copyIndex('routes')], ';')[0]]",
+                                                                    "nextHopType": "[[[split(parameters('requiredRoutes')[copyIndex('routes')], ';')[1]]",
+                                                                    "nextHopIpAddress": "[[[if(equals(toLower(split(parameters('requiredRoutes')[copyIndex('routes')], ';')[1]),'virtualappliance'),split(parameters('requiredRoutes')[copyIndex('routes')], ';')[2], null())]"
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                },
                                                 "resources": [
                                                     {
-                                                        "type": "Microsoft.Network/routeTables",
-                                                        "name": "[[parameters('udrName')]",
-                                                        "apiVersion": "2020-08-01",
-                                                        "location": "[[parameters('udrLocation')]",
+                                                        "type": "Microsoft.Resources/deployments",
+                                                        "apiVersion": "2021-04-01",
+                                                        "name": "routeTableDepl",
                                                         "properties": {
-                                                            "routes": [
-                                                                {
-                                                                    "name": "AzureFirewallRoute",
-                                                                    "properties": {
-                                                                        "addressPrefix": "0.0.0.0/0",
-                                                                        "nextHopType": "VirtualAppliance",
-                                                                        "nextHopIpAddress": "[[parameters('defaultRoute')]"
+                                                            "mode": "Incremental",
+                                                            "template": {
+                                                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                                                "contentVersion": "1.0.0.0",
+                                                                "parameters": {
+                                                                    "routeTableName": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "vnetRegion": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "requiredRoutes": {
+                                                                        "type": "array"
+                                                                    },
+                                                                    "disableBgpPropagation": {
+                                                                        "type": "bool"
                                                                     }
+                                                                },
+                                                                "resources": [
+                                                                    {
+                                                                        "type": "Microsoft.Network/routeTables",
+                                                                        "apiVersion": "2021-02-01",
+                                                                        "name": "[[[parameters('routeTableName')]",
+                                                                        "location": "[[[parameters('vnetRegion')]",
+                                                                        "properties": {
+                                                                            "disableBgpRoutePropagation": "[[[parameters('disableBgpPropagation')]",
+                                                                            "copy": "[[variables('copyLoop')]"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "parameters": {
+                                                                "routeTableName": {
+                                                                    "value": "[[parameters('routeTableName')]"
+                                                                },
+                                                                "vnetRegion": {
+                                                                    "value": "[[parameters('vnetRegion')]"
+                                                                },
+                                                                "requiredRoutes": {
+                                                                    "value": "[[parameters('requiredRoutes')]"
+                                                                },
+                                                                "disableBgpPropagation": {
+                                                                    "value": "[[parameters('disableBgpPropagation')]"
                                                                 }
-                                                            ]
+                                                            }
                                                         }
-                                                    }
-                                                ],
-                                                "outputs": {}
+                                                    }   
+                                                ]
+                                            },
+                                            "parameters": {
+                                                "routeTableName": {
+                                                "value": "[[parameters('routeTableName')]"
+                                                },
+                                                "vnetRegion": {
+                                                "value": "[[parameters('vnetRegion')]"
+                                                },
+                                                "requiredRoutes": {
+                                                "value": "[[parameters('requiredRoutes')]"
+                                                },
+                                                "disableBgpPropagation": {
+                                                "value": "[[parameters('disableBgpPropagation')]"
+                                                }
                                             }
                                         }
                                     }
@@ -1001,7 +1079,7 @@
                             }
                         }
                     },
-                    "name": "Deploy-Default-Udr"
+                    "name": "Deploy-Custom-Route-Table"
                 },
                 {
                     "properties": {
