@@ -29,6 +29,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 > **Important:** Previous changes to the above in relation to Enterprise Scale will not be listed here. However going forward, this page will be updated.
 
+## Updates
+
+Here's what's changed in Enterprise Scale:
+
 ### November 2021
 
 #### Docs
@@ -50,11 +54,6 @@ This article will be updated as and when changes are made to the above and anyth
 ### Other
 
 - *No updates, yet.*
-
-
-## Updates
-
-Here's what's changed in Enterprise Scale:
 
 ### October 2021
 
