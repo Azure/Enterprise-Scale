@@ -12,7 +12,7 @@ On this page you will find the meeting recordings and PowerPoint slides from pre
 
 ### Recording
 
-[![Screenshot of Enterprise Scale Community Call from November 2021 recording on YouTube](./media/community-calls/nov-2021/eslz-nov-2021-youtube-screenshot.png)](hhttps://youtu.be/4j69qH0NuiM)
+[![Screenshot of Enterprise Scale Community Call from November 2021 recording on YouTube](./media/community-calls/nov-2021/eslz-nov-2021-youtube-screenshot.png)](https://youtu.be/4j69qH0NuiM)
 
 ### Slides
 
