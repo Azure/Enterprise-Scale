@@ -687,7 +687,8 @@
             "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]",
             "databricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksSkuPolicyAssignment.json')]",
             "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
-            "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]"                        
+            "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
+            "govAscPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-ASCConfigPolicyAssignment.json')]"                   
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix')))]",
@@ -716,6 +717,7 @@
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('EntScale-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
             "activityDiagnosticsPolicyDeploymentName": "[take(concat('EntScale-ActivityDiagnostics', variables('deploymentSuffix')), 64)]",
             "ascPolicyDeploymentName": "[take(concat('EntScale-ASC', variables('deploymentSuffix')), 64)]",
+            "ascGovPolicyDeploymentName": "[take(concat('EntScale-Gov-ASC', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubDeploymentName": "[take(concat('EntScale-HubSpoke', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubDeploymentName": "[take(concat('EntScale-VWanHub', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubDeploymentName": "[take(concat('EntScale-NVAHub', variables('deploymentSuffix')), 64)]",
@@ -1380,6 +1382,58 @@
                 }
             }   
         },
+        {
+            // Az Gov Only - Assigning Azure Security Center configuration policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.usgovcloudapi.net'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ascGovPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').govAscPolicyAssignment]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "emailContactAsc": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "enableAscForServers": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "enableAscForSql": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "enableAscForStorage": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "enableAscForRegistries": {
+                        "value": "[parameters('enableAscForRegistries')]"
+                    },
+                    "enableAscForKubernetes": {
+                        "value": "[parameters('enableAscForKubernetes')]"
+                    },
+                    "enableAscForArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "enableAscForDns": {
+                        "value": "[parameters('enableAscForDns')]"
+                    }
+                }
+            }   
+        },        
         /*
             The following optional deployment will configure virtual network hub into the connectivity subscription
         */
