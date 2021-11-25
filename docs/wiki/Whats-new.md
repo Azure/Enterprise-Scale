@@ -29,6 +29,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 > **Important:** Previous changes to the above in relation to Enterprise Scale will not be listed here. However going forward, this page will be updated.
 
+## Updates
+
+Here's what's changed in Enterprise Scale:
+
 ### November 2021
 
 #### Docs
@@ -47,14 +51,13 @@ This article will be updated as and when changes are made to the above and anyth
   - Including Fairfax
   - Also Mooncake (Azure China) even though not in use yet
 
+- Added `AuditEvent` to `Deploy-Diagnostics-AA` Policy Definition to ensure correct compliance reporting on Automation Account used for diagnostics - closing issue [#864](https://github.com/Azure/Enterprise-Scale/issues/864)
+
 ### Other
 
-- *No updates, yet.*
-
-
-## Updates
-
-Here's what's changed in Enterprise Scale:
+- Published resources from the second Enterprise Scale Community Call - held on the 17th November 2021
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #803](https://github.com/Azure/Enterprise-Scale/issues/803) for meeting details
 
 ### October 2021
 
