@@ -51,6 +51,8 @@ Here's what's changed in Enterprise Scale:
   - Including Fairfax
   - Also Mooncake (Azure China) even though not in use yet
 
+- Added `AuditEvent` to `Deploy-Diagnostics-AA` Policy Definition to ensure correct compliance reporting on Automation Account used for diagnostics - closing issue [#864](https://github.com/Azure/Enterprise-Scale/issues/864)
+
 ### Other
 
 - Published resources from the second Enterprise Scale Community Call - held on the 17th November 2021
