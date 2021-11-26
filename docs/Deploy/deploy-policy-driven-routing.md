@@ -1,7 +1,7 @@
 # Policy-driven routing configuration in hub and spoke networks
 The policy `Deploy a route table with specific user defined routes` allows applying a customer-defined routing configuration to in-scope VNets. For each in-scope VNet, the policy checks the existence of a route table containing a set of customer-defined UDRs; and deploys it if it does not exist. The route table is deployed to the same resource group as the VNet evaluated against the policy. The route table deployed by the policy must be manually associated to subnets.
 
-The main usage scenario for the policy is automated routing configuration in hub and spoke topologies. By assignign the policy to scopes that contain the spoke VNet(s), it allows enforcing routing rules such as:
+The main usage scenario for the policy is automated routing configuration in Enterprise-Scale hub and spoke topologies (the reference architecture for Enterprise Scale with hub and spoke is documented [here](https://github.com/Azure/Enterprise-Scale/tree/main/docs/reference/adventureworks)). By assigning the policy to landing zone subscriptions that contain the spoke VNet(s), it allows enforcing routing rules such as:
 
 - Route all traffic leaving a spoke VNet to a firewall cluster in the hub.
 
