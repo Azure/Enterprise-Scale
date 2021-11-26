@@ -41,7 +41,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Tooling
 
-- *No updates, yet.*
+- New release [v1.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.1.0) of the [caf-enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/latest) Terraform module, providing updates to the published policies and a number of bug fixes.
 
 ### Policy
 
