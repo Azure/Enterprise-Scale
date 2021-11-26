@@ -1,7 +1,7 @@
 # Policy-driven routing configuration in hub and spoke networks
 The policy `Deploy a route table with specific user defined routes` allows applying a customer-defined routing configuration to in-scope VNets. For each in-scope VNet, the policy checks the existence of a route table containing a set of customer-defined UDRs; and deploys it if it does not exist. The route table is deployed to the same resource group as the VNet evaluated against the policy. The route table deployed by the policy must be manually associated to subnets.
 
-The main usage scenario for the policy is automated routing configuration in hub and spoke topologies. By assignign the policy to scopes that contain the spoke VNet(s), it allows enforcing routing rules, such as:
+The main usage scenario for the policy is automated routing configuration in hub and spoke topologies. By assignign the policy to scopes that contain the spoke VNet(s), it allows enforcing routing rules such as:
 
 - Route all traffic leaving a spoke VNet to a firewall cluster in the hub.
 
@@ -14,7 +14,7 @@ The main usage scenario for the policy is automated routing configuration in hub
 The policy supports the parameters documented below.
 - *effect*: A `String` that defines the effect of the policy. Allowed values are `DeployIfNotExist` (default) and `Disabled`.
 
-- *requiredRoutes*: An `Array` of `String` objects. Each `String` object defines a User-Defined Route (UDR) in the custom route table deployed by the policy. The format is "<address prefix>;<next hop type>;<next hop IP address>". The <next hop IP address> must be provided on when <next hop type> is "VirtualAppliance". Allowed values for the <next hop type> field are documented [here](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#next-hop-types-across-azure-tools). For example:  
+- *requiredRoutes*: An `Array` of `String` objects. Each `String` object defines a User-Defined Route (UDR) in the custom route table deployed by the policy. The format is "address-prefix>;next-hop-type;next-hop-ip-address". The next-hop IP address must be provided on when the next hop type is "VirtualAppliance". Allowed values for the next hop type field are documented [here](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#next-hop-types-across-azure-tools). For example:  
 
 ```json
 [
