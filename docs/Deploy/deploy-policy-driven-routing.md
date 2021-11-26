@@ -26,4 +26,4 @@ The policy supports the parameters documented below.
 ```
 - **vnetRegion**: A `String` that defines the region of the `Microsoft.Network/virtualNetworks` resources that are evaluated against the policy. Only VNets in the specified region are evaluated against the policy. This parameter enables multiple assignments to enforce different routing policies in different regions.
 - **routeTableName**: A `String` that defines the name of the custom route table automatically deployed by the policy (when one that contains all the *requiredRoutes* is found). 
-- **DisableBgpPropagation**: A `Boolean` that defines the value of the *disableBgpRoutePropagation* property of the deployed route table. The default value is `false`.
+- **disableBgpPropagation**: A `Boolean` that defines the value of the *disableBgpRoutePropagation* property of the deployed route table. The default value is `false`.
