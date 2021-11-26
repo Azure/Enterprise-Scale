@@ -58,6 +58,7 @@ Here's what's changed in Enterprise Scale:
 - Published resources from the second Enterprise Scale Community Call - held on the 17th November 2021
   - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
   - See [issue #803](https://github.com/Azure/Enterprise-Scale/issues/803) for meeting details
+- New release [v1.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.1.0) of the [caf-enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/latest) Terraform module, providing updates to the published policies and a number of bug fixes.
 
 ### October 2021
 
