@@ -12,9 +12,9 @@ The main usage scenario for the policy is automated routing configuration in hub
 - Route all traffic from spoke VNet to shared services in the hub via the hub’s firewall cluster.
 
 The policy supports the parameters documented below.
-- *effect*: A `String` that defines the effect of the policy. Allowed values are `DeployIfNotExist` (default) and `Disabled`.
+- **effect**: A `String` that defines the effect of the policy. Allowed values are `DeployIfNotExist` (default) and `Disabled`.
 
-- *requiredRoutes*: An `Array` of `String` objects. Each `String` object defines a User-Defined Route (UDR) in the custom route table deployed by the policy. The format is "address-prefix>;next-hop-type;next-hop-ip-address". The next-hop IP address must be provided on when the next hop type is "VirtualAppliance". Allowed values for the next hop type field are documented [here](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#next-hop-types-across-azure-tools). For example:  
+- **requiredRoutes**: An `Array` of `String` objects. Each `String` object defines a User-Defined Route (UDR) in the custom route table deployed by the policy. The format is `"address-prefix;next-hop-type;next-hop-ip-address"`. The next-hop IP address must be provided on when the next hop type is "VirtualAppliance". Allowed values for the next hop type field are documented [here](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#next-hop-types-across-azure-tools). This is an example of a *requiredRoutes* array that defines four UDRs:  
 
 ```json
 [
@@ -24,5 +24,5 @@ The policy supports the parameters documented below.
 "192.168.2.0/24;VnetLocal"
 ]
 ```
-- *vnetRegion*: A `String` that defines the region of the `Microsoft.Network/virtualNetworks` resources that are evaluated against the policy. Only VNets in the specified region are evaluated against the policy. This parameter enables multiple assignments to enforce different routing policies in different regions.
-- *routeTableName*: A `String` that defines the name of the custom route table automatically deployed by the policy (when one that contains all the *requiredRoutes* is found). 
+- **vnetRegion**: A `String` that defines the region of the `Microsoft.Network/virtualNetworks` resources that are evaluated against the policy. Only VNets in the specified region are evaluated against the policy. This parameter enables multiple assignments to enforce different routing policies in different regions.
+- **routeTableName**: A `String` that defines the name of the custom route table automatically deployed by the policy (when one that contains all the *requiredRoutes* is found). 
