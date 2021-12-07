@@ -28,7 +28,7 @@ New-AzManagementGroupDeployment -Name $DeploymentName `
                                 -Verbose
 
 # Deploy core policy definitions to ESLZ intermediate root management group
-# Note: If your ProvisioningState is "Failed", please go to your top level management group prefix under Management Groups in the Azure Portal, under Governance click "Deployments", click on the deployment with the post-fix "-policy1". If the Operation Details show that the policy set definition request is invalid because some policy definition could not be found, this is often due to a race condition which happens during which ARM is deploying both the policy set definitions and the policy definitions at the same time. Please wait for awhile and re-run the Azure Powershell command to deploy the mcPolicies.json template and this would result in a "Succeeded" ProvisioningState.
+# Note: If your ProvisioningState is "Failed", please go to your top level management group prefix under Management Groups in the Azure Portal, under Governance click "Deployments", click on the deployment with the post-fix "-policy1". If the Operation Details show that the policy set definition request is invalid because some policy definition could not be found, this is often due to a known replication delay. Please re-run the deployment step below, and the deployment should succeed.
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
                                 -ManagementGroupId $ESLZPrefix `
