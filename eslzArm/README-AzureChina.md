@@ -4,6 +4,7 @@
 # Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China
 
 # Change the variables below to contain the right values for your tenant, subscription, address space etc.
+# $Location determines the region where the metadata regarding the ARM deployment is stored, not where management groups, Azure Policies and Azure RBAC are stored because these resource are not deployed to a particular region. See https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/faq#why-are-we-asked-to-specify-azure-regions-during-the-azure-landing-zone-accelerator-deployment-and-what-are-they-used-for
 
 $ESLZPrefix = "ESLZ"
 $Location = "chinaeast2"
@@ -27,7 +28,7 @@ New-AzManagementGroupDeployment -Name $DeploymentName `
                                 -Verbose
 
 # Deploy core policy definitions to ESLZ intermediate root management group
-# Note: If you get an error message when deploying any policy set definition because policy definitions could not be found, please retry the PowerShell command.
+# Note: If your ProvisioningState is "Failed", please go to your top level management group prefix under Management Groups in the Azure Portal, under Governance click "Deployments", click on the deployment with the post-fix "-policy1". If the Operation Details show that the policy set definition request is invalid because some policy definition could not be found, this is often due to a race condition which happens during which ARM is deploying both the policy set definitions and the policy definitions at the same time. Please wait for awhile and re-run the Azure Powershell command to deploy the mcPolicies.json template and this would result in a "Succeeded" ProvisioningState.
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-policy1" `
                                 -ManagementGroupId $ESLZPrefix `
@@ -86,7 +87,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-idsub" `
 
 # Deploy Log Analytics Workspace to the platform management subscription
 
-Select-AzSubscription -SubscriptionName $ManagementSubscriptionId
+Select-AzSubscription -SubscriptionId $ManagementSubscriptionId
 
 New-AzSubscriptionDeployment -Name "$($DeploymentName)-la" `
                              -Location $Location `
@@ -101,7 +102,7 @@ New-AzSubscriptionDeployment -Name "$($DeploymentName)-la" `
 
 # Deploy Log Analytics Solutions to the Log Analytics workspace in the platform management subscription
 
-Select-AzSubscription -SubscriptionName $ManagementSubscriptionId
+Select-AzSubscription -SubscriptionId $ManagementSubscriptionId
 
 New-AzSubscriptionDeployment -Name "$($DeploymentName)-la-solution" `
                              -Location $Location `
@@ -158,7 +159,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asb" `
                                 -Verbose
 
 # Create connectivity hub, using traditional hub & spoke in this example
-
+# Note: After you have executed the deployment step below, please check that these deployment names, $ESLZPrefix-hubspoke and EntScale-connectivityHubSub in your $ConnectivitySubscriptionId have succeeded. If you get this error "New-AzDeployment: An error occurred while sending the request." on the command line, just ignore it.
 Select-AzSubscription -SubscriptionId $ConnectivitySubscriptionId
 
 New-AzSubscriptionDeployment -Name "$($DeploymentName)-hubspoke" `
@@ -191,7 +192,7 @@ New-AzResourceGroupDeployment -Name "$($DeploymentName)-private-dns-storage" `
                               -ResourceGroupName "$($ESLZPrefix)-privatedns" `
                               -TemplateFile .\eslzArm\resourceGroupTemplates\privateDnsZones.json `
                               -connectivityHubResourceId "/subscriptions/$($ConnectivitySubscriptionId)/resourceGroups/$($ESLZPrefix)-vnethub-$($Location)/providers/Microsoft.Network/virtualNetworks/$($ESLZPrefix)-hub-$($Location)" `
-                              -privateDnsZoneName "privatelink.blob.core.windows.net" `
+                              -privateDnsZoneName "privatelink.blob.core.chinacloudapi.cn" `
                               -Verbose
 
 # Assign Azure Policy to prevent public IP usage in the identity subscription
@@ -206,10 +207,10 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-public-ip" `
 # Assign Azure Policy to enforce VM Backup on VMs in the identity subscription
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-backup" `
-                                -Location $Location `pwd
+                                -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-identity" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $eslzPrefix `
+                                -topLevelManagementGroupPrefix "idVmBackup" `
                                 -Verbose
 
 # Assign Azure Policy to deny RDP access from internet into VMs (domain controllers) in the identity subscription
@@ -288,7 +289,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-lz-backup" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $eslzPrefix `
+                                -topLevelManagementGroupPrefix "lzVmBackup" `
                                 -Verbose
 
 # Assign Azure Policy to enforce TLS/SSL on the landing zones management group
