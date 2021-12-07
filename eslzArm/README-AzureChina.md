@@ -136,25 +136,16 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-resource-diag" `
                                 -ManagementGroupId $ESLZPrefix `
                                 -Verbose
 
-# Assign Azure Policy to enforce Azure Security Center configuration enabled on all subscriptions, deployed to top level management group
+# Assign Azure Policy to enforce Microsoft Defender for Cloud configuration enabled on all subscriptions, deployed to top level management group
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ASCConfigPolicyAssignment.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\china\mcDINE-ASCConfigPolicyAssignment.json `
                                 -ManagementGroupId $eslzPrefix `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
                                 -enableAscForServers "DeployIfNotExists" `
                                 -enableAscForSql "DeployIfNotExists" `
-                                -enableAscForAppServices "DeployIfNotExists" `
-                                -enableAscForStorage "DeployIfNotExists" `
-                                -enableAscForRegistries "DeployIfNotExists" `
-                                -enableAscForKeyVault "DeployIfNotExists" `
-                                -enableAscForSqlOnVm "DeployIfNotExists" `
-                                -enableAscForKubernetes "DeployIfNotExists" `
-                                -enableAscForArm "DeployIfNotExists" `
-                                -enableAscForDns "DeployIfNotExists" `
-                                -enableAscForOssDb "DeployIfNotExists" `
                                 -emailContactAsc $SecurityContactEmailAddress `
                                 -Verbose
 
@@ -215,7 +206,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-public-ip" `
 # Assign Azure Policy to enforce VM Backup on VMs in the identity subscription
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-backup" `
-                                -Location $Location `
+                                -Location $Location `pwd
                                 -ManagementGroupId "$($ESLZPrefix)-identity" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $eslzPrefix `
