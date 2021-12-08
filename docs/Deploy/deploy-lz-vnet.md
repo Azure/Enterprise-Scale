@@ -52,7 +52,7 @@ which will give you a "one-click" end-to-end deployment experience.
 
 ## Azure Policy - Landing Zone VNet Deployment
 
-We currently provide a policy to deploy VNets in landing zones and peer them to a traditional VNet hub. This policy definition (Deploy-VNET-HubSpoke) is part of the greater set of policies provided as standard in the template found [here](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyDefinitions/policies.json).
+We currently provide a policy to deploy VNets in landing zones and peer them to a traditional VNet hub. This policy definition (Deploy-VNET-HubSpoke) is part of the greater set of policies provided as standard in the template found [here](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyDefinitions/policies.json#L878).
 
 ### Deploy-VNet-HubSpoke - Assignment at subscription
 
