@@ -33,6 +33,21 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
+### December 2021
+
+#### Docs
+
+- Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
+  - Additional details of some deployment steps
+  - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
+  - Differentiate between Az Vm Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+
+### Policy
+
+- The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
+  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKubernetesService, defenderForKeyVaults, defenderForDns, defenderForArm
+  - defenderForContainerRegistry - this built-in policy has been deprecated
+  
 ### November 2021
 
 #### Docs
