@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [November 2021](#november-2021)
   - [October 2021](#october-2021)
   - [September 2021](#september-2021)
   - [August 2021](#august-2021)
@@ -31,6 +32,47 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### December 2021
+
+#### Docs
+
+- Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
+  - Additional details of some deployment steps
+  - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
+  - Differentiate between Az Vm Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+
+### Policy
+
+- The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
+  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKubernetesService, defenderForKeyVaults, defenderForDns, defenderForArm
+  - defenderForContainerRegistry - this built-in policy has been deprecated
+  
+### November 2021
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- New release [v1.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.1.0) of the [caf-enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/latest) Terraform module, providing updates to the published policies and a number of bug fixes.
+
+### Policy
+
+- Replaced `Deploy-Default-Udr` policy with `Deploy-Custom-Route-Table` that allows deploying custom route tables with an arbitrary set of UDRs (including a 0/0 default route if needed). See [here](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/deploy-policy-driven-routing.md) for usage details.
+
+- Updated `Deploy-Budget` policy, to v1.1.0, adding new parameter of `budgetName` that defaults to: `budget-set-by-policy` - closing issue [#842](https://github.com/Azure/Enterprise-Scale/issues/842)
+  - Including Fairfax
+  - Also Mooncake (Azure China) even though not in use yet
+
+- Added `AuditEvent` to `Deploy-Diagnostics-AA` Policy Definition to ensure correct compliance reporting on Automation Account used for diagnostics - closing issue [#864](https://github.com/Azure/Enterprise-Scale/issues/864)
+
+### Other
+
+- Published resources from the second Enterprise Scale Community Call - held on the 17th November 2021
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #803](https://github.com/Azure/Enterprise-Scale/issues/803) for meeting details
 
 ### October 2021
 
