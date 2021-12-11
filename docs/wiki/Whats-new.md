@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [December 2021](#december-2021)
   - [November 2021](#november-2021)
   - [October 2021](#october-2021)
   - [September 2021](#september-2021)
@@ -40,13 +41,22 @@ Here's what's changed in Enterprise Scale:
 - Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
   - Additional details of some deployment steps
   - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
-  - Differentiate between Az Vm Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+  - Differentiate between Az VM Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+
 
 ### Policy
 
 - The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
-  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKubernetesService, defenderForKeyVaults, defenderForDns, defenderForArm
-  - defenderForContainerRegistry - this built-in policy has been deprecated
+  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKeyVaults, defenderForDns, defenderForArm
+- Updated `Deploy-ASCDF-Config` policy initiative with changes relating to new [Microsoft Defender for Cloud Containers plan](https://docs.microsoft.com/azure/defender-for-cloud/release-notes#microsoft-defender-for-containers-plan-released-for-general-availability-ga) as documented in issue [#874](https://github.com/Azure/Enterprise-Scale/issues/874)
+  - Updated in Public (Commercial), Fairfax (Gov) and Mooncake (China)
+  - Updated portal experiences for Public and Fairfax
+
+| Policy Definition Display Name | Policy Definition ID | Note |
+| ------- | -- | ----- |
+| [Deprecated]: Configure Azure Defender for container registries to be enabled | d3d1e68e-49d4-4b56-acff-93cef644b432 | REMOVED - Old ACR policy |
+| [Deprecated]: Configure Azure Defender for Kubernetes to be enabled | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy |
+| Configure Microsoft Defender for Containers to be enabled | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
   
 ### November 2021
 

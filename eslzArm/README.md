@@ -178,10 +178,9 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -enableAscForSql "DeployIfNotExists" `
                                 -enableAscForAppServices "DeployIfNotExists" `
                                 -enableAscForStorage "DeployIfNotExists" `
-                                -enableAscForRegistries "DeployIfNotExists" `
+                                -enableAscForContainers "DeployIfNotExists" `
                                 -enableAscForKeyVault "DeployIfNotExists" `
                                 -enableAscForSqlOnVm "DeployIfNotExists" `
-                                -enableAscForKubernetes "DeployIfNotExists" `
                                 -enableAscForArm "DeployIfNotExists" `
                                 -enableAscForDns "DeployIfNotExists" `
                                 -enableAscForOssDb "DeployIfNotExists" `
