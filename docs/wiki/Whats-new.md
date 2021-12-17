@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [December 2021](#december-2021)
   - [November 2021](#november-2021)
   - [October 2021](#october-2021)
   - [September 2021](#september-2021)
@@ -37,10 +38,18 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
+- CAF ready lots of doc updates relating to Azure Landing Zones/Enterprise Scale
+  - Added doc on [Adopting policy driven guardrails](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/dine-guidance)
+  - Added doc called [Scenario: Transition existing Azure environments to the Azure landing zone conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/align-scenarios)
+    - More of these to come, let us know via issues on other scenarios you'd like to see documented
+  - [Design Areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) updated and reorganized in TOC (navigation pane)
+
+[![Updated TOC](./media/caf-docs-mstone-2-toc.png)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
+
 - Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
   - Additional details of some deployment steps
   - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
-  - Differentiate between Az Vm Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+  - Differentiate between Az VM Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
 
 ### Policy
 
