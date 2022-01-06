@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [January 2022](#january-2022)
   - [December 2021](#december-2021)
   - [November 2021](#november-2021)
   - [October 2021](#october-2021)
@@ -34,20 +35,18 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
-### December 2021
+### January 2022
 
 #### Docs
 
-- Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
-  - Additional details of some deployment steps
-  - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
-  - Differentiate between Az VM Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+- *No updates, yet.*
 
+#### Tooling
+
+- *No updates, yet.*
 
 ### Policy
 
-- The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
-  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKeyVaults, defenderForDns, defenderForArm
 - Updated `Deploy-ASCDF-Config` policy initiative with changes relating to new [Microsoft Defender for Cloud Containers plan](https://docs.microsoft.com/azure/defender-for-cloud/release-notes#microsoft-defender-for-containers-plan-released-for-general-availability-ga) as documented in issue [#874](https://github.com/Azure/Enterprise-Scale/issues/874)
   - Updated in Public (Commercial), Fairfax (Gov) and Mooncake (China)
   - Updated portal experiences for Public and Fairfax
@@ -57,6 +56,32 @@ Here's what's changed in Enterprise Scale:
 | [Deprecated]: Configure Azure Defender for container registries to be enabled | d3d1e68e-49d4-4b56-acff-93cef644b432 | REMOVED - Old ACR policy |
 | [Deprecated]: Configure Azure Defender for Kubernetes to be enabled | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy |
 | Configure Microsoft Defender for Containers to be enabled | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
+
+### Other
+
+- *No updates, yet.*
+
+### December 2021
+
+#### Docs
+
+- CAF ready lots of doc updates relating to Azure Landing Zones/Enterprise Scale
+  - Added doc on [Adopting policy driven guardrails](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/dine-guidance)
+  - Added doc called [Scenario: Transition existing Azure environments to the Azure landing zone conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/align-scenarios)
+    - More of these to come, let us know via issues on other scenarios you'd like to see documented
+  - [Design Areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) updated and reorganized in TOC (navigation pane)
+
+[![Updated TOC](./media/caf-docs-mstone-2-toc.png)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
+
+- Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
+  - Additional details of some deployment steps
+  - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
+  - Differentiate between Az VM Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
+
+### Policy
+
+- The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
+  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKeyVaults, defenderForDns, defenderForArm
   
 ### November 2021
 
