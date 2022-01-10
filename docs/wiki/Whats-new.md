@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [January 2022](#january-2022)
   - [December 2021](#december-2021)
   - [November 2021](#november-2021)
   - [October 2021](#october-2021)
@@ -33,6 +34,25 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### January 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- *No updates, yet.*
+
+### Policy
+
+- Updated `Deny-Subnet-Without-Nsg` & `Deny-Subnet-Without-Udr` to version 2.0.0
+  - Fixes scenario described in issue issue [#407](https://github.com/Azure/Enterprise-Scale/issues/407)
+
+### Other
+
+- *No updates, yet.*
 
 ### December 2021
 
