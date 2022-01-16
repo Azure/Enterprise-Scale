@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [January 2022](#january-2022)
   - [December 2021](#december-2021)
   - [November 2021](#november-2021)
   - [October 2021](#october-2021)
@@ -34,6 +35,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
+### January 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- Updated accelerator (portal) experience to deploy a Azure Firewall Policy `Premium` SKU instead of `Standard` when `Premium` is selected for the Azure Firewall in a Hub & Spoke VNet Connectivity model.
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### December 2021
 
 #### Docs
@@ -54,8 +73,7 @@ Here's what's changed in Enterprise Scale:
 ### Policy
 
 - The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
-  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKubernetesService, defenderForKeyVaults, defenderForDns, defenderForArm
-  - defenderForContainerRegistry - this built-in policy has been deprecated
+  - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKeyVaults, defenderForDns, defenderForArm
   
 ### November 2021
 
