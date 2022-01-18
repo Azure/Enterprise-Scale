@@ -2245,7 +2245,7 @@
                                     "description": "The diagnostic settings profile name"
                                 }
                             },
-                            "metricsEnabled": {
+                            "AllMetricsEnabled": {
                                 "type": "String",
                                 "defaultValue": "True",
                                 "allowedValues": [
@@ -2253,11 +2253,11 @@
                                     "False"
                                 ],
                                 "metadata": {
-                                    "displayName": "Enable metrics",
+                                    "displayName": "Enable metrics for Automation",
                                     "description": "Whether to enable metrics stream to the Log Analytics workspace - True or False"
                                 }
                             },
-                            "logsEnabled": {
+                            "JobLogsEnabled": {
                                 "type": "String",
                                 "defaultValue": "True",
                                 "allowedValues": [
@@ -2265,13 +2265,49 @@
                                     "False"
                                 ],
                                 "metadata": {
-                                    "displayName": "Enable logs",
-                                    "description": "Whether to enable logs stream to the Log Analytics workspace - True or False"
+                                    "displayName": "Enable job logs for Automation",
+                                    "description": "Whether to enable Job Logs to the Log Analytics workspace - True or False"
+                                }
+                            },
+                            "JobStreamsEnabled": {
+                                "type": "String",
+                                "defaultValue": "True",
+                                "allowedValues": [
+                                    "True",
+                                    "False"
+                                ],
+                                "metadata": {
+                                    "displayName": "Enable job streams for Automation",
+                                    "description": "Whether to enable Job streams to the Log Analytics workspace - True or False"
+                                }
+                            },
+                            "DscNodeStatusEnabled": {
+                                "type": "String",
+                                "defaultValue": "True",
+                                "allowedValues": [
+                                    "True",
+                                    "False"
+                                ],
+                                "metadata": {
+                                    "displayName": "Enable DSC Node status for Automation",
+                                    "description": "Whether to enable DSC Node status to the Log Analytics workspace - True or False"
+                                }
+                            },
+                            "AuditEventEnabled": {
+                                "type": "String",
+                                "defaultValue": "True",
+                                "allowedValues": [
+                                    "True",
+                                    "False"
+                                ],
+                                "metadata": {
+                                    "displayName": "Enable Audit events for Automation",
+                                    "description": "Whether to enable Audit Events to the Log Analytics workspace - True or False"
                                 }
                             }
                         },
                         "metadata": {
-                            "version": "1.0.0",
+                            "version": "1.1.0",
                             "category": "Monitoring"
                         },
                         "policyRule": {
@@ -2287,16 +2323,66 @@
                                     "existenceCondition": {
                                         "allOf": [
                                             {
-                                                "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
-                                                "equals": "true"
-                                            },
-                                            {
-                                                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
-                                                "equals": "true"
-                                            },
-                                            {
                                                 "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
                                                 "equals": "[[parameters('logAnalytics')]"
+                                            },
+                                            {
+                                                "count": {
+                                                    "field": "Microsoft.Insights/diagnosticSettings/logs[*]",
+                                                    "where": {
+                                                        "anyOf": [
+                                                            {
+                                                                "allOf": [
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                                                                        "equals": "JobLogs"
+                                                                    },
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
+                                                                        "equals": "[[parameters('JobLogsEnabled')]"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "allOf": [
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                                                                        "equals": "JobStreams"
+                                                                    },
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
+                                                                        "equals": "[[parameters('JobStreamsEnabled')]"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "allOf": [
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                                                                        "equals": "DscNodeStatus"
+                                                                    },
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
+                                                                        "equals": "[[parameters('DscNodeStatusEnabled')]"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "allOf": [
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                                                                        "equals": "AuditEvent"
+                                                                    },
+                                                                    {
+                                                                        "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
+                                                                        "equals": "[[parameters('AuditEventEnabled')]"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                "equals": 4
                                             }
                                         ]
                                     },
@@ -2323,10 +2409,19 @@
                                                     "profileName": {
                                                         "type": "String"
                                                     },
-                                                    "metricsEnabled": {
+                                                    "allMetricsEnabled": {
                                                         "type": "String"
                                                     },
-                                                    "logsEnabled": {
+                                                    "JobLogsEnabled": {
+                                                        "type": "String"
+                                                    },
+                                                    "JobStreamsEnabled": {
+                                                        "type": "String"
+                                                    },
+                                                    "DscNodeStatusEnabled": {
+                                                        "type": "String"
+                                                    },
+                                                    "AuditEventEnabled": {
                                                         "type": "String"
                                                     }
                                                 },
@@ -2344,7 +2439,7 @@
                                                                 {
                                                                     "category": "AllMetrics",
                                                                     "timeGrain": null,
-                                                                    "enabled": "[[parameters('metricsEnabled')]",
+                                                                    "enabled": "[[parameters('AllMetricsEnabled')]",
                                                                     "retentionPolicy": {
                                                                         "enabled": false,
                                                                         "days": 0
@@ -2354,19 +2449,19 @@
                                                             "logs": [
                                                                 {
                                                                     "category": "JobLogs",
-                                                                    "enabled": "[[parameters('logsEnabled')]"
+                                                                    "enabled": "[[parameters('jobLogsEnabled')]"
                                                                 },
                                                                 {
                                                                     "category": "JobStreams",
-                                                                    "enabled": "[[parameters('logsEnabled')]"
+                                                                    "enabled": "[[parameters('JobStreamsEnabled')]"
                                                                 },
                                                                 {
                                                                     "category": "DscNodeStatus",
-                                                                    "enabled": "[[parameters('logsEnabled')]"
+                                                                    "enabled": "[[parameters('DscNodeStatusEnabled')]"
                                                                 },
                                                                 {
                                                                     "category": "AuditEvent",
-                                                                    "enabled": "[[parameters('logsEnabled')]"
+                                                                    "enabled": "[[parameters('AuditEventEnabled')]"
                                                                 }
                                                             ]
                                                         }
@@ -2387,11 +2482,20 @@
                                                 "profileName": {
                                                     "value": "[[parameters('profileName')]"
                                                 },
-                                                "metricsEnabled": {
-                                                    "value": "[[parameters('metricsEnabled')]"
+                                                "jobLogsEnabled": {
+                                                    "value": "[[parameters('jobLogsEnabled')]"
                                                 },
-                                                "logsEnabled": {
-                                                    "value": "[[parameters('logsEnabled')]"
+                                                "JobStreamsEnabled": {
+                                                    "value": "[[parameters('JobStreamsEnabled')]"
+                                                },
+                                                "DscNodeStatusEnabled": {
+                                                    "value": "[[parameters('DscNodeStatusEnabled')]"
+                                                },
+                                                "AuditEventEnabled": {
+                                                    "value": "[[parameters('AuditEventEnabled')]"
+                                                },
+                                                "AllMetricsEnabled": {
+                                                    "value": "[[parameters('AllMetricsEnabled')]"
                                                 }
                                             }
                                         }
@@ -14026,6 +14130,46 @@
                                     "description": "Whether to enable logs stream to the Log Analytics workspace - True or False"
                                 },
                                 "defaultValue": "True"
+                            },
+                            "AutomationAllMetricsEnabled": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Enable metrics for Automation",
+                                    "description": "Whether to enable metrics stream to the Log Analytics workspace - True or False"
+                                },
+                                "defaultValue": "True"
+                            },
+                            "AutomationJobLogsEnabled": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Enable job logs for Automation",
+                                    "description": "Whether to enable Job Logs to the Log Analytics workspace - True or False"
+                                },
+                                "defaultValue": "True"
+                            },
+                            "AutomationJobStreamsEnabled": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Enable job streams for Automation",
+                                    "description": "Whether to enable Job streams to the Log Analytics workspace - True or False"
+                                },
+                                "defaultValue": "True"
+                            },
+                            "AutomationDscNodeStatusEnabled": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Enable DSC Node status for Automation",
+                                    "description": "Whether to enable DSC Node status to the Log Analytics workspace - True or False"
+                                },
+                                "defaultValue": "True"
+                            },
+                            "AutomationAuditEventEnabled": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Enable Audit events for Automation",
+                                    "description": "Whether to enable Audit Events to the Log Analytics workspace - True or False"
+                                },
+                                "defaultValue": "True"
                             }
                         },
                         "policyDefinitionGroups": null,
@@ -14250,6 +14394,21 @@
                                     },
                                     "profileName": {
                                         "value": "[[parameters('profileName')]"
+                                    },
+                                    "AllMetricsEnabled": {
+                                        "value": "[[parameters('AutomationAllMetricsEnabled')]"
+                                    },
+                                    "JobLogsEnabled": {
+                                        "value": "[[parameters('AutomationJobLogsEnabled')]"
+                                    },
+                                    "JobStreamsEnabled": {
+                                        "value": "[[parameters('AutomationJobStreamsEnabled')]"
+                                    },
+                                    "DscNodeStatusEnabled": {
+                                        "value": "[[parameters('AutomationDscNodeStatusEnabled')]"
+                                    },
+                                    "AuditEventEnabled": {
+                                        "value": "[[parameters('AutomationAuditEventEnabled')]"
                                     }
                                 }
                             },
