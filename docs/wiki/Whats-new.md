@@ -47,6 +47,8 @@ Here's what's changed in Enterprise Scale:
 
 ### Policy
 
+- Updated `Deny-Subnet-Without-Nsg` & `Deny-Subnet-Without-Udr` to version 2.0.0
+  - Fixes scenario described in issue issue [#407](https://github.com/Azure/Enterprise-Scale/issues/407)
 - Updated `Deploy-ASCDF-Config` policy initiative with changes relating to new [Microsoft Defender for Cloud Containers plan](https://docs.microsoft.com/azure/defender-for-cloud/release-notes#microsoft-defender-for-containers-plan-released-for-general-availability-ga) as documented in issue [#874](https://github.com/Azure/Enterprise-Scale/issues/874)
   - Updated in Public (Commercial), Fairfax (Gov) and Mooncake (China)
   - Updated portal experiences for Public and Fairfax
