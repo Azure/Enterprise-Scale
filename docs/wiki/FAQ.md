@@ -1,10 +1,10 @@
 ## In this Section
 
 - [How long does enterprise-scale architecture take to deploy?](#how-long-does-enterprise-scale-architecture-take-to-deploy)
-- [Why are there custom policy definitions as part of enterprise-scale architecture?](#why-does-enterprise-scale-architecture-require-permission-at-tenant-root--scope)
-- [Where can I see the policy definitions used by enterprise-scale landing zones reference implementation?](#where-can-i-see-the-policy-definitions-used-by-enterprise-scale-landing-zones-reference-implementation)
-- [Why does enterprise-scale architecture require permission at tenant root '/' scope?](#why-does-enterprise-scale-architecture-require-permission-at-tenant-root--scope)
-- [The Azure landing zone accelerator portal-based deployment doesn't display all subscriptions in the drop-down lists?](#the-azure-landing-zone-accelerator-portal-based-deployment-doesnt-display-all-subscriptions-in-the-drop-down-lists)
+- [Why are there custom policy definitions as part of enterprise-scale architecture?](#why-are-there-custom-policy-definitions-as-part-of-enterprise-scale-reference-implementation)
+- [Where can I see the policy definitions used by enterprise-scale landing zones reference implementation?](#where-can-i-see-the-policy-definitions-used-by-the-enterprise-scale-landing-zones-reference-implementation)
+- [Why does enterprise-scale architecture require permission at tenant root '/' scope?](#why-does-the-enterprise-scale-reference-implementation-require-permission-at-tenant-root--scope)
+- [The Azure landing zone accelerator portal-based deployment doesn't display all subscriptions in the drop-down lists?](#the-enterprise-scale-also-known-as-the-azure-landing-zone-accelerator-portal-based-deployment-doesnt-display-all-subscriptions-in-the-drop-down-lists)
 - [Can we use and customize the ARM templates for enterprise-scale architecture and check them into our repository and deploy it from there?](#can-we-use-and-customize-the-arm-templates-for-enterprise-scale-architecture-and-check-them-into-our-repository-and-deploy-it-from-there)
 - [What if we can't deploy by using the Azure landing zone accelerator portal-based experience, but can deploy via infrastructure-as-code?](#what-if-we-cant-deploy-by-using-the-azure-landing-zone-accelerator-portal-based-experience-but-can-deploy-via-infrastructure-as-code)
 - [If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?](#if-we-already-deployed-enterprise-scale-architecture-without-using-infrastructure-as-code-do-we-have-to-delete-everything-and-start-again-to-use-infrastructure-as-code)
