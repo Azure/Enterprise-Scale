@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [February 2022](#february-2022)
   - [January 2022](#january-2022)
   - [December 2021](#december-2021)
   - [November 2021](#november-2021)
@@ -34,6 +35,25 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### February 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- The Bicep version of Azure Landing Zone (formerly Enterprise-scale) is here! 🥳
+  - Check out the [ALZ-Bicep repo](https://github.com/Azure/ALZ-Bicep) to get started!
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
 
 ### January 2022
 
