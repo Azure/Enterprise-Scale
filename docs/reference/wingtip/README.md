@@ -92,13 +92,6 @@ If you later want to add connectivity to your Enterprise-Scale architecture to s
 3. Deploy your desired networking topology, being VWAN (Microsoft managed) or hub & spoke (customer managed)
 4. Create new management group (Corp) in the landing zone management group, to separate connected workloads from online workloads.
 
-Optionally, you can enable the above using the following ARM templates:
-
-| Connectivity setup | Description | ARM Template |
-|:-------------------------|:-------------|:-------------|
-| Virtual WAN | Deploys requisite infrastructure for on-premises connectivity with Virtual WAN  |[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-add-vwan.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-add-vwan.json) |
-| Hub & Spoke | Deploys requisite infrastructure for on-premises connectivity with Hub & Spoke  |[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fes-add-hub.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Fwingtip%2FarmTemplates%2Fportal-es-add-hub.json) |
-
 ### From an application perspective
 
 Once you have deployed the reference implementation, you can create new subscriptions, or move an existing subscriptions to the Landing Zone management group (Online), and finally assign RBAC to the groups/users who should use the landing zones (subscriptions) so they can start deploying their workloads.

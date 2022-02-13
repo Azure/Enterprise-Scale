@@ -31,23 +31,23 @@ The Enterprise-Scale architecture is based on the [five design principles](https
 * [Policy-driven governance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance)
 * [Single control and management plane](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#single-control-and-management-plane)
 * [Application-centric and archetype-neutral](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?#application-centric-and-archetype-neutral)
-* [Aligning Azure-native design and road maps](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#aligning-azure-native-design-and-road-maps)
+* [Aligning Azure-native design and road maps](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#align-azure-native-design-and-roadmaps)
 
 # Design Guidelines
 
-At the centre of the Enterprise-Scale architecture lies a critical design path, comprised of fundamental design topics with heavily interrelated and dependent design decisions. This repository provides design guidance across these architecturally significant technical domains to support the critical design decisions which must occur to define the Enterprise-Scale architecture. For each of the considered domains, readers should review provided considerations and recommendations, using them to structure and drive designs within each area.
+At the centre of the Enterprise-Scale architecture lies a critical design path, comprised of fundamental design topics with heavily interrelated and dependent design decisions. This repository provides design guidance across these architecturally significant technical domains to support the critical design decisions which must occur to define the Enterprise-Scale architecture. For each of the considered domains, readers should review the provided considerations and recommendations, using them to structure and drive designs within each area.
 
 ## Critical Design Areas
 
-The [eight critical design areas](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines#critical-design-areas) are intended to support the translation of customer requirements to Azure constructs and capabilities, to address the mismatch between on-premises infrastructure and cloud-design which typically creates dissonance and friction with respect to the Enterprise-Scale definition and Azure adoption.
+The [eight critical design areas](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-areas) are intended to support the translation of customer requirements to Azure constructs and capabilities, to address the mismatch between on-premises infrastructure and cloud-design which typically creates dissonance and friction with respect to the Enterprise-Scale definition and Azure adoption.
 
 The impact of decisions made within these critical areas will reverberate across the Enterprise-Scale architecture and influence other decisions. Readers and reference implementation users are strongly advised to familiarize themselves with these eight areas, to better understand the consequences of encompassed decisions, which may later produce trade-offs within related areas.
 
-* [Enterprise enrollment and Azure AD Tenants](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants)
-* [Identity and access management](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/identity-and-access-management)
-* [Management Group and Subscription organization](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization)
-* [Network topology and connectivity](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity)
-* [Management and monitoring](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring)
-* [Business continuity and disaster recovery](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/business-continuity-and-disaster-recovery)
-* [Security, governance and compliance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance)
-* [Platform automation and DevOps](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/platform-automation-and-devops)
+* [Billing and Active Directory tenants](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/azure-billing-ad-tenant)
+* [Identity and access management](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access)
+* [Network topology and connectivity](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/network-topology-and-connectivity)
+* [Resource organization](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org)
+* [Security](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/security)
+* [Management](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/management)
+* [Governance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/governance)
+* [Platform automation and DevOps](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/platform-automation-devops)

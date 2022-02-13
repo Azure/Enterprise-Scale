@@ -3,7 +3,7 @@
 ## Navigation Menu
 
 * [What's New?](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new)
-* [Community Calls](./Community-Calls)
+* [Community Calls](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
 * [Enterprise-Scale Landing Zones - User Guide](https://github.com/Azure/Enterprise-Scale/wiki#enterprise-scale-landing-zones-user-guide)
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
 * [Configure Azure permission for ARM Template deployments](./docs/EnterpriseScale-Setup-azure.md)
@@ -11,13 +11,13 @@
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
   * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
   * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
-  * [Trey Research - Scope and Design](./docs/reference/treyresearch/README.md)
+  * [Trey Research Reference - Scope and Design](./docs/reference/treyresearch/README.md)
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
 * [Deploy workloads into Landing Zones](./workloads)
 * [Getting started with Infrastructure-as-Code](https://github.com/Azure/AzOps-Accelerator/wiki)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
-* [FAQ](./docs/EnterpriseScale-FAQ.md)
+* [Frequently Asked Questions (FAQ)](https://github.com/Azure/Enterprise-Scale/wiki/FAQ)
 * [Roadmap](./docs/EnterpriseScale-Roadmap.md)
 * [Microsoft Support Policy](./SUPPORT.md)
 
@@ -65,14 +65,17 @@ It is also assumed that readers have a broad understanding of key Azure construc
 
 ## Deploying Enterprise-Scale Architecture in your own environment
 
-The Enterprise-Scale architecture is modular by design and allows customers to start with foundational Landing Zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point. In this repository we are providing the following three templates representing different scenarios composed using ARM templates.
+The Enterprise-Scale architecture is modular by design and allows customers to start with foundational Landing Zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point. In this repository we are providing the following four templates representing different scenarios composed using ARM templates.
 
 | Reference implementation | Description | ARM Template | Link |
 |:-------------------------|:-------------|:-------------|------|
 | Contoso | On-premises connectivity using Azure vWAN |[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json) | [Detailed description](./docs/reference/contoso/Readme.md) |
 | AdventureWorks | On-premises connectivity with Hub & Spoke  |[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json) | [Detailed description](./docs/reference/adventureworks/README.md) |
 | WingTip | Azure without hybrid connectivity |[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json) | [Detailed description](./docs/reference/wingtip/README.md) |
-| Trey Research | For small Enterprises | [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json) | [Detailed description](./docs/reference/treyresearch/README.md) |
+| Trey Research | On-premises connectivity with Hub and Spoke for small Enterprises | [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json) | [Detailed description](./docs/reference/treyresearch/README.md) |
+| Azure Gov | Reference implementation that can be deployed to Azure gov and includes all options in a converged experience | [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.svg?sanitize=true)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Ffairfaxeslz-portal.json) | N/A
+
+> The Bicep version is now available in Public Preview here: [https://github.com/Azure/ALZ-Bicep](https://github.com/Azure/ALZ-Bicep)
 
 ## Contributing
 

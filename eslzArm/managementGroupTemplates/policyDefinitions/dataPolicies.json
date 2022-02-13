@@ -1,0 +1,791 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "String",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        }
+    },
+    "variables": {
+        "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'))]",
+        "policies": {
+            "policyDefinitions": [
+                {
+                    "properties": {
+                        "displayName": "Control private endpoint connections to Azure Machine Learning",
+                        "mode": "Indexed",
+                        "description": "Audit private endpoints that are created in other subscriptions and/or tenants for Azure Machine Learning.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Deny",
+                                    "Disabled"
+                                ],
+                                "defaultValue": "Audit"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections/privateLinkServiceConnectionState.status",
+                                        "equals": "Approved"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/privateEndpointConnections/privateEndpoint.id",
+                                                "exists": false
+                                            },
+                                            {
+                                                "value": "[[split(concat(field('Microsoft.MachineLearningServices/workspaces/privateEndpointConnections/privateEndpoint.id'), '//'), '/')[2]]",
+                                                "notEquals": "[[subscription().subscriptionId]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Audit-MachineLearning-PrivateEndpointId"
+                },
+                {
+                    "properties": {
+                        "displayName": "Enforces high business impact Azure Machine Learning Workspaces",
+                        "mode": "Indexed",
+                        "description": "Enforces high business impact Azure Machine Learning workspaces.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/hbiWorkspace",
+                                                "exists": false
+                                            },
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/hbiWorkspace",
+                                                "notEquals": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-HbiWorkspace"
+                },
+                {
+                    "properties": {
+                        "displayName": "Deny public acces behind vnet to Azure Machine Learning workspace",
+                        "mode": "Indexed",
+                        "description": "Deny public access behind vnet to Azure Machine Learning workspaces.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/allowPublicAccessWhenBehindVnet",
+                                                "exists": false
+                                            },
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/allowPublicAccessWhenBehindVnet",
+                                                "notEquals": false
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-PublicAccessWhenBehindVnet"
+                },
+                {
+                    "properties": {
+                        "displayName": "Deny AKS cluster creation in Azure Machine Learning",
+                        "mode": "Indexed",
+                        "description": "Deny AKS cluster creation in Azure Machine Learning and enforce connecting to existing clusters.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                                        "equals": "AKS"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/computes/resourceId",
+                                                "exists": false
+                                            },
+                                            {
+                                                "value": "[[empty(field('Microsoft.MachineLearningServices/workspaces/computes/resourceId'))]",
+                                                "equals": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-Aks"
+                },
+                {
+                    "properties": {
+                        "displayName": "Enforce subnet connectivity for Azure Machine Learning compute clusters and compute instances",
+                        "mode": "Indexed",
+                        "description": "Enforce subnet connectivity for Azure Machine Learning compute clusters and compute instances.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                                        "in": [
+                                            "AmlCompute",
+                                            "ComputeInstance"
+                                        ]
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/computes/subnet.id",
+                                                "exists": false
+                                            },
+                                            {
+                                                "value": "[[empty(field('Microsoft.MachineLearningServices/workspaces/computes/subnet.id'))]",
+                                                "equals": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-Compute-SubnetId"
+                },
+                {
+                    "properties": {
+                        "displayName": "Limit allowed vm sizes for Azure Machine Learning compute clusters and compute instances",
+                        "mode": "Indexed",
+                        "description": "Limit allowed vm sizes for Azure Machine Learning compute clusters and compute instances.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Budget"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            },
+                            "allowedVmSizes": {
+                                "type": "Array",
+                                "metadata": {
+                                    "displayName": "Allowed VM Sizes for Aml Compute Clusters and Instances",
+                                    "description": "Specifies the allowed VM Sizes for Aml Compute Clusters and Instances"
+                                },
+                                "defaultValue": [
+                                    "Standard_D1_v2",
+                                    "Standard_D2_v2",
+                                    "Standard_D3_v2",
+                                    "Standard_D4_v2",
+                                    "Standard_D11_v2",
+                                    "Standard_D12_v2",
+                                    "Standard_D13_v2",
+                                    "Standard_D14_v2",
+                                    "Standard_DS1_v2",
+                                    "Standard_DS2_v2",
+                                    "Standard_DS3_v2",
+                                    "Standard_DS4_v2",
+                                    "Standard_DS5_v2",
+                                    "Standard_DS11_v2",
+                                    "Standard_DS12_v2",
+                                    "Standard_DS13_v2",
+                                    "Standard_DS14_v2",
+                                    "Standard_M8-2ms",
+                                    "Standard_M8-4ms",
+                                    "Standard_M8ms",
+                                    "Standard_M16-4ms",
+                                    "Standard_M16-8ms",
+                                    "Standard_M16ms",
+                                    "Standard_M32-8ms",
+                                    "Standard_M32-16ms",
+                                    "Standard_M32ls",
+                                    "Standard_M32ms",
+                                    "Standard_M32ts",
+                                    "Standard_M64-16ms",
+                                    "Standard_M64-32ms",
+                                    "Standard_M64ls",
+                                    "Standard_M64ms",
+                                    "Standard_M64s",
+                                    "Standard_M128-32ms",
+                                    "Standard_M128-64ms",
+                                    "Standard_M128ms",
+                                    "Standard_M128s",
+                                    "Standard_M64",
+                                    "Standard_M64m",
+                                    "Standard_M128",
+                                    "Standard_M128m",
+                                    "Standard_D1",
+                                    "Standard_D2",
+                                    "Standard_D3",
+                                    "Standard_D4",
+                                    "Standard_D11",
+                                    "Standard_D12",
+                                    "Standard_D13",
+                                    "Standard_D14",
+                                    "Standard_DS15_v2",
+                                    "Standard_NV6",
+                                    "Standard_NV12",
+                                    "Standard_NV24",
+                                    "Standard_F2s_v2",
+                                    "Standard_F4s_v2",
+                                    "Standard_F8s_v2",
+                                    "Standard_F16s_v2",
+                                    "Standard_F32s_v2",
+                                    "Standard_F64s_v2",
+                                    "Standard_F72s_v2",
+                                    "Standard_NC6s_v3",
+                                    "Standard_NC12s_v3",
+                                    "Standard_NC24rs_v3",
+                                    "Standard_NC24s_v3",
+                                    "Standard_NC6",
+                                    "Standard_NC12",
+                                    "Standard_NC24",
+                                    "Standard_NC24r",
+                                    "Standard_ND6s",
+                                    "Standard_ND12s",
+                                    "Standard_ND24rs",
+                                    "Standard_ND24s",
+                                    "Standard_NC6s_v2",
+                                    "Standard_NC12s_v2",
+                                    "Standard_NC24rs_v2",
+                                    "Standard_NC24s_v2",
+                                    "Standard_ND40rs_v2",
+                                    "Standard_NV12s_v3",
+                                    "Standard_NV24s_v3",
+                                    "Standard_NV48s_v3"
+                                ]
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                                        "in": [
+                                            "AmlCompute",
+                                            "ComputeInstance"
+                                        ]
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/computes/vmSize",
+                                        "notIn": "[[parameters('allowedVmSizes')]"
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-Compute-VmSize"
+                },
+                {
+                    "properties": {
+                        "displayName": "Deny public access of Azure Machine Learning clusters via SSH",
+                        "mode": "Indexed",
+                        "description": "Deny public access of Azure Machine Learning clusters via SSH.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                                        "equals": "AmlCompute"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
+                                                "exists": false
+                                            },
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
+                                                "notEquals": "Disabled"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess"
+                },
+                {
+                    "properties": {
+                        "displayName": "Enforce scale settings for Azure Machine Learning compute clusters",
+                        "policyType": "Custom",
+                        "mode": "Indexed",
+                        "description": "Enforce scale settings for Azure Machine Learning compute clusters.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Budget"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            },
+                            "maxNodeCount": {
+                                "type": "Integer",
+                                "metadata": {
+                                    "displayName": "Maximum Node Count",
+                                    "description": "Specifies the maximum node count of AML Clusters"
+                                },
+                                "defaultValue": 10
+                            },
+                            "minNodeCount": {
+                                "type": "Integer",
+                                "metadata": {
+                                    "displayName": "Minimum Node Count",
+                                    "description": "Specifies the minimum node count of AML Clusters"
+                                },
+                                "defaultValue": 0
+                            },
+                            "maxNodeIdleTimeInSecondsBeforeScaleDown": {
+                                "type": "Integer",
+                                "metadata": {
+                                    "displayName": "Maximum Node Idle Time in Seconds Before Scaledown",
+                                    "description": "Specifies the maximum node idle time in seconds before scaledown"
+                                },
+                                "defaultValue": 900
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+                                        "equals": "AmlCompute"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.maxNodeCount",
+                                                "greater": "[[parameters('maxNodeCount')]"
+                                            },
+                                            {
+                                                "field": "Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.minNodeCount",
+                                                "greater": "[[parameters('minNodeCount')]"
+                                            },
+                                            {
+                                                "value": "[[int(last(split(replace(replace(replace(replace(replace(replace(replace(field('Microsoft.MachineLearningServices/workspaces/computes/scaleSettings.nodeIdleTimeBeforeScaleDown'), 'P', '/'), 'Y', '/'), 'M', '/'), 'D', '/'), 'T', '/'), 'H', '/'), 'S', ''), '/')))]",
+                                                "greater": "[[parameters('maxNodeIdleTimeInSecondsBeforeScaleDown')]"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-ComputeCluster-Scale"
+                },
+                {
+                    "properties": {
+                        "displayName": "Azure Machine Learning should have disabled public network access",
+                        "policyType": "Custom",
+                        "mode": "Indexed",
+                        "description": "Denies public network access for Azure Machine Learning workspaces.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Machine Learning"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.MachineLearningServices/workspaces"
+                                    },
+                                    {
+                                        "field": "Microsoft.MachineLearningServices/workspaces/publicNetworkAccess",
+                                        "notEquals": "Disabled"
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-MachineLearning-PublicNetworkAccess"
+                },
+                {
+                    "properties": {
+                        "displayName": "Deny public IPs for Databricks cluster",
+                        "policyType": "Custom",
+                        "mode": "Indexed",
+                        "description": "Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Databricks"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.Databricks/workspaces"
+                                    },
+                                    {
+                                        "field": "Microsoft.DataBricks/workspaces/parameters.enableNoPublicIp.value",
+                                        "notEquals": true
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-Databricks-NoPublicIp"
+                },
+                {
+                    "properties": {
+                        "displayName": "Deny non-premium Databricks sku",
+                        "policyType": "Custom",
+                        "mode": "Indexed",
+                        "description": "Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Databricks"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.Databricks/workspaces"
+                                    },
+                                    {
+                                        "field": "Microsoft.DataBricks/workspaces/sku.name",
+                                        "notEquals": "premium"
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-Databricks-Sku"
+                },
+                {
+                    "properties": {
+                        "displayName": "Deny Databricks workspaces without Vnet injection",
+                        "policyType": "Custom",
+                        "mode": "Indexed",
+                        "description": "Enforces the use of vnet injection for Databricks workspaces.",
+                        "metadata": {
+                            "version": "1.0.0",
+                            "category": "Databricks"
+                        },
+                        "parameters": {
+                            "effect": {
+                                "type": "String",
+                                "metadata": {
+                                    "displayName": "Effect",
+                                    "description": "Enable or disable the execution of the policy"
+                                },
+                                "allowedValues": [
+                                    "Audit",
+                                    "Disabled",
+                                    "Deny"
+                                ],
+                                "defaultValue": "Deny"
+                            }
+                        },
+                        "policyRule": {
+                            "if": {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.Databricks/workspaces"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.DataBricks/workspaces/parameters.customVirtualNetworkId.value",
+                                                "exists": false
+                                            },
+                                            {
+                                                "field": "Microsoft.DataBricks/workspaces/parameters.customPublicSubnetName.value",
+                                                "exists": false
+                                            },
+                                            {
+                                                "field": "Microsoft.DataBricks/workspaces/parameters.customPrivateSubnetName.value",
+                                                "exists": false
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "then": {
+                                "effect": "[[parameters('effect')]"
+                            }
+                        }
+                    },
+                    "name": "Deny-Databricks-VirtualNetwork"
+                }
+            ]
+        },
+        "initiatives": {
+            "policySetDefinitions": []
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "[variables('policies').policyDefinitions[copyIndex()].name]",
+            "apiVersion": "2019-09-01",
+            "copy": {
+                "name": "policyDefinitionCopy",
+                "count": "[length(variables('policies').policyDefinitions)]"
+            },
+            "properties": {
+                "displayName": "[variables('policies').policyDefinitions[copyIndex()].properties.displayName]",
+                "description": "[variables('policies').policyDefinitions[copyIndex()].properties.description]",
+                "mode": "[variables('policies').policyDefinitions[copyIndex()].properties.mode]",
+                "policyType": "Custom",
+                "parameters": "[variables('policies').policyDefinitions[copyIndex()].properties.parameters]",
+                "policyRule": "[variables('policies').policyDefinitions[copyIndex()].properties.policyRule]",
+                "metadata": "[variables('policies').policyDefinitions[copyIndex()].properties.metadata]"
+            }
+        }
+    ]
+}

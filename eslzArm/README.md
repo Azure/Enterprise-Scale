@@ -1,5 +1,7 @@
 # Enterprise-Scale Landing Zones ARM templates
 
+> The Bicep version is now available in Public Preview here: [https://github.com/Azure/ALZ-Bicep](https://github.com/Azure/ALZ-Bicep)
+
 This folder contains the first-party ARM templates for Enterprise-Scale which and are being used when deploying and bootstrapping in the Azure Portal, which is our recommendation as it will 1) save you tremendous amount of time, 2) accelerate your journey, and 3) optionally bootstrap your GitHub repository with ready-to-use ARM templates if you want to pivot to infrastructure-as-code post deployment.
 
 For customers who cannot deploy via portal, but rather want to clone the repository and sequence the deployments on their own using the same ARM templates, they can follow the manual deployment instructions below.
@@ -15,9 +17,16 @@ Prerequisites:
 * [Configure Azure permissions for ARM tenant deployments](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)
 * [How to clone a GitHub repository](https://docs.github.com/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
 
+There are two sets of instructions; one for deploying to Azure global regions, and another for deploying specifically to Azure China regions. This is due to minor difference in services which are available in Azure global and in Azure China, but the feature parity gap is narrowing. Here are the quick links to bring you to the specific set of instructions:
+
+1. [Deploying in Azure global regions](#deploying-in-azure-global-regions)
+2. [Deploying in Azure China regions](./README-AzureChina.md)
+
+#### Deploying in Azure global regions
+
 ````powershell
 
-# Do-It-Yourself instructions for doing Enterprise-Scale
+# Do-It-Yourself instructions for deploying Enterprise-Scale in Azure global regions
 
 # Change the variables below to contain the right values for your tenant, subscription, address space etc.
 
@@ -167,16 +176,16 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -ManagementGroupId $eslzPrefix `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
-                                -enableAscForServers "Standard" `
-                                -enableAscForSql "Standard" `
-                                -enableAscForAppServices "Standard" `
-                                -enableAscForStorage "Standard" `
-                                -enableAscForRegistries "Standard" `
-                                -enableAscForKeyVault "Standard" `
-                                -enableAscForSqlOnVm "Standard" `
-                                -enableAscForKubernetes "Standard" `
-                                -enableAscForArm "Standard" `
-                                -enableAscForDns "Standard" `
+                                -enableAscForServers "DeployIfNotExists" `
+                                -enableAscForSql "DeployIfNotExists" `
+                                -enableAscForAppServices "DeployIfNotExists" `
+                                -enableAscForStorage "DeployIfNotExists" `
+                                -enableAscForContainers "DeployIfNotExists" `
+                                -enableAscForKeyVault "DeployIfNotExists" `
+                                -enableAscForSqlOnVm "DeployIfNotExists" `
+                                -enableAscForArm "DeployIfNotExists" `
+                                -enableAscForDns "DeployIfNotExists" `
+                                -enableAscForOssDb "DeployIfNotExists" `
                                 -emailContactAsc $SecurityContactEmailAddress `
                                 -Verbose
 
@@ -240,7 +249,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-backup" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-identity" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $eslzPrefix `
+                                -topLevelManagementGroupPrefix "idVmBackup" `
                                 -Verbose
 
 # Assign Azure Policy to deny RDP access from internet into VMs (domain controllers) in the identity subscription
@@ -267,7 +276,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-ip-fwd" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-IPForwardingPolicyAssignment.json `
-                                -Verbose                                
+                                -Verbose
 
 # Assign Azure Policy to deny IP deny subnets without NSG on the landing zones management group
 
@@ -276,7 +285,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-lz-subnet-nsg" `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-SubnetWithoutNsgPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
-                                -Verbose                                   
+                                -Verbose
 
 # Assign Azure Policy to deny RDP access from internet into VMs on the landing zones management group
 
@@ -285,7 +294,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-lz-vm-rdp" `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-RDPFromInternetPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $eslzPrefix `
-                                -Verbose     
+                                -Verbose
                                 
 # Assign Azure Policy to deny usage of storage accounts over http on the landing zones management group
 
@@ -293,7 +302,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-storage-https" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-StorageWithoutHttpsPolicyAssignment.json `
-                                -Verbose                                
+                                -Verbose
 
 # Assign Azure Policy to enforce AKS policy add-on on the landing zones management group
 
@@ -302,7 +311,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-aks-policy" `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-AksPolicyPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
-                                -Verbose  
+                                -Verbose
                                 
 # Assign Azure Policy to enforce SQL auditing on the landing zones management group
 
@@ -311,7 +320,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-sql-auditing" `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-SQLAuditingPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
-                                -Verbose         
+                                -Verbose
                                 
 # Assign Azure Policy to enforce VM Backup on VMs on the landing zones management group
 
@@ -319,8 +328,8 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-vm-lz-backup" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMBackupPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $eslzPrefix `
-                                -Verbose                                
+                                -topLevelManagementGroupPrefix "lzVmBackup" `
+                                -Verbose
 
 # Assign Azure Policy to enforce TLS/SSL on the landing zones management group
 
@@ -329,7 +338,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-tls-ssl" `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-DINE-APPEND-TLS-SSL-PolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $eslzPrefix `
-                                -Verbose                                
+                                -Verbose
                                 
 # Assign Azure Policy to enforce AKS clusters to not allow container priv escalation on the landing zones management group
 
@@ -337,7 +346,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-aks-priv-esc" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-AksPrivEscalationPolicyAssignment.json `
-                                -Verbose                                
+                                -Verbose
 
 # Assign Azure Policy to enforce AKS clusters to not allow privileged containers on the landing zones management group
 
@@ -345,7 +354,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-aks-priv-con" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-landingzones" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-AksPrivilegedPolicyAssignment.json `
-                                -Verbose        
+                                -Verbose
                                 
 # Assign Azure Policy to enforce AKS clusters to not allow traffic over http on the landing zones management group
 
@@ -362,7 +371,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-paas-endpoint" `
                                 -ManagementGroupId "$($ESLZPrefix)-corp" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-PublicEndpointPolicyAssignment.json `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
-                                -Verbose                                                           
+                                -Verbose
 
 # Add the first corp connected landing zone subscription to Corp management group
 
@@ -372,7 +381,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-corp1" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
                                 -targetManagementGroupId "$($ESLZPrefix)-corp" `
                                 -subscriptionId $CorpConnectedLandingZoneSubscriptionId `
-                                -Verbose                                
+                                -Verbose
 
 # Add the first online connected landing zone subscription to Online management group
 
@@ -382,5 +391,5 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-online1" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\subscriptionOrganization\subscriptionOrganization.json `
                                 -targetManagementGroupId "$($ESLZPrefix)-online" `
                                 -subscriptionId $OnlineLandingZoneSubscriptionId `
-                                -Verbose                                                                
+                                -Verbose
 ````
