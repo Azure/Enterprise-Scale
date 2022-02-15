@@ -8,6 +8,7 @@
 - [Can we use and customize the ARM templates for enterprise-scale architecture and check them into our repository and deploy it from there?](#can-we-use-and-customize-the-arm-templates-for-enterprise-scale-architecture-and-check-them-into-our-repository-and-deploy-it-from-there)
 - [What if we can't deploy by using the Azure landing zone accelerator portal-based experience, but can deploy via infrastructure-as-code?](#what-if-we-cant-deploy-by-using-the-azure-landing-zone-accelerator-portal-based-experience-but-can-deploy-via-infrastructure-as-code)
 - [If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?](#if-we-already-deployed-enterprise-scale-architecture-without-using-infrastructure-as-code-do-we-have-to-delete-everything-and-start-again-to-use-infrastructure-as-code)
+- [The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?](#the-azurediagnostics-table-in-my-log-analytics-workspace-has-hit-the-500-column-limit-what-should-i-do)
 
 ---
 
@@ -104,3 +105,23 @@ Terraform import is currently done on a per resource basis and can be time consu
 To deploy enterprise-scale architecture by using Terraform, you might want to use the Terraform module we provide. It deploys everything that the Azure landing zone accelerator portal-based experience does. The module, [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/0.0.4-preview), is available from the Terraform Registry page.
 
 To see a demo of Terraform being used, check out this YouTube video on the Microsoft DevRadio channel: [Terraform Module for Cloud Adoption Framework Enterprise-scale Walkthrough](https://www.youtube.com/watch?v=5pJxM1O4bys)
+
+## The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?
+
+In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://docs.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property. 
+
+However, some customers may not want this as it can make it more difficult and complex to query the data when the 500 column limit is breached and data is stored in the `AdditionalFields` column.
+
+> More details on this can be found here: [AzureDiagnostics Table Docs](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics)
+
+To overcome this issue the Azure Monitor team has created a new collection type for diagnostic settings for resources called [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific). In this mode a separate table per Azure service is created in the Log Analytics Workspace which will mean the 500 column limit will not be hit and therefore querying and managing the data in the Log Analytics Workspace is simplified and more performant.
+
+> An explanation of the 2 modes can be found here: [Azure resource logs](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs)
+
+### So what do we do?
+
+As of today only a limited number of services support the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
+
+We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://docs.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
+
+Stay tuned to our [What's New page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) where we will be announcing when we migrate services to the new collection type. Also watch [Azure Updates](https://azure.microsoft.com/updates/) for announcements from service teams for adding support to their services for this collection type.
