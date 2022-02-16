@@ -40,7 +40,8 @@ Here's what's changed in Enterprise Scale:
 
 #### Docs
 
-- *No updates, yet.*
+- Added new FAQ question and answer for AzureDiagnostic table limits for Log Analytics Workspaces
+  - [The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#the-azurediagnostics-table-in-my-log-analytics-workspace-has-hit-the-500-column-limit-what-should-i-do)
 
 #### Tooling
 
