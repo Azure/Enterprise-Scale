@@ -47,6 +47,8 @@ Here's what's changed in Enterprise Scale:
 
 - The Bicep version of Azure Landing Zone (formerly Enterprise-scale) is here! 🥳
   - Check out the [ALZ-Bicep repo](https://github.com/Azure/ALZ-Bicep) to get started!
+- Updated accelerator (portal) experience to deploy a Azure Firewall Policy `Premium` SKU instead of `Standard` when `Premium` is selected for the Azure Firewall in a Hub & Spoke VNet Connectivity model. 
+  - [PR 890](https://github.com/Azure/Enterprise-Scale/pull/890) fixing [issue 889](https://github.com/Azure/Enterprise-Scale/issues/889) 
 
 ### Policy
 
