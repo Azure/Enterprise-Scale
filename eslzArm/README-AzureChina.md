@@ -147,6 +147,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `
                                 -enableAscForServers "DeployIfNotExists" `
                                 -enableAscForSql "DeployIfNotExists" `
+                                -enableAscForContainers "DeployIfNotExists" `
                                 -emailContactAsc $SecurityContactEmailAddress `
                                 -Verbose
 

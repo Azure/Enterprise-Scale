@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [February 2022](#february-2022)
   - [January 2022](#january-2022)
   - [December 2021](#december-2021)
   - [November 2021](#november-2021)
@@ -35,6 +36,27 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale:
 
+### February 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- The Bicep version of Azure Landing Zone (formerly Enterprise-scale) is here! 🥳
+  - Check out the [ALZ-Bicep repo](https://github.com/Azure/ALZ-Bicep) to get started!
+- Updated accelerator (portal) experience to deploy a Azure Firewall Policy `Premium` SKU instead of `Standard` when `Premium` is selected for the Azure Firewall in a Hub & Spoke VNet Connectivity model. 
+  - [PR 890](https://github.com/Azure/Enterprise-Scale/pull/890) fixing [issue 889](https://github.com/Azure/Enterprise-Scale/issues/889) 
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### January 2022
 
 #### Docs
@@ -43,11 +65,21 @@ Here's what's changed in Enterprise Scale:
 
 #### Tooling
 
-- Updated accelerator (portal) experience to deploy a Azure Firewall Policy `Premium` SKU instead of `Standard` when `Premium` is selected for the Azure Firewall in a Hub & Spoke VNet Connectivity model.
+- *No updates, yet.*
 
 ### Policy
 
-- *No updates, yet.*
+- Updated `Deny-Subnet-Without-Nsg` & `Deny-Subnet-Without-Udr` to version 2.0.0
+  - Fixes scenario described in issue issue [#407](https://github.com/Azure/Enterprise-Scale/issues/407)
+- Updated `Deploy-ASCDF-Config` policy initiative with changes relating to new [Microsoft Defender for Cloud Containers plan](https://docs.microsoft.com/azure/defender-for-cloud/release-notes#microsoft-defender-for-containers-plan-released-for-general-availability-ga) as documented in issue [#874](https://github.com/Azure/Enterprise-Scale/issues/874)
+  - Updated in Public (Commercial), Fairfax (Gov) and Mooncake (China)
+  - Updated portal experiences for Public and Fairfax
+
+| Policy Definition Display Name | Policy Definition ID | Note |
+| ------- | -- | ----- |
+| [Deprecated]: Configure Azure Defender for container registries to be enabled | d3d1e68e-49d4-4b56-acff-93cef644b432 | REMOVED - Old ACR policy |
+| [Deprecated]: Configure Azure Defender for Kubernetes to be enabled | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy |
+| Configure Microsoft Defender for Containers to be enabled | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
 
 ### Other
 

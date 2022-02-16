@@ -1,5 +1,7 @@
 # Enterprise-Scale Landing Zones ARM templates
 
+> The Bicep version is now available in Public Preview here: [https://github.com/Azure/ALZ-Bicep](https://github.com/Azure/ALZ-Bicep)
+
 This folder contains the first-party ARM templates for Enterprise-Scale which and are being used when deploying and bootstrapping in the Azure Portal, which is our recommendation as it will 1) save you tremendous amount of time, 2) accelerate your journey, and 3) optionally bootstrap your GitHub repository with ready-to-use ARM templates if you want to pivot to infrastructure-as-code post deployment.
 
 For customers who cannot deploy via portal, but rather want to clone the repository and sequence the deployments on their own using the same ARM templates, they can follow the manual deployment instructions below.
@@ -178,10 +180,9 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
                                 -enableAscForSql "DeployIfNotExists" `
                                 -enableAscForAppServices "DeployIfNotExists" `
                                 -enableAscForStorage "DeployIfNotExists" `
-                                -enableAscForRegistries "DeployIfNotExists" `
+                                -enableAscForContainers "DeployIfNotExists" `
                                 -enableAscForKeyVault "DeployIfNotExists" `
                                 -enableAscForSqlOnVm "DeployIfNotExists" `
-                                -enableAscForKubernetes "DeployIfNotExists" `
                                 -enableAscForArm "DeployIfNotExists" `
                                 -enableAscForDns "DeployIfNotExists" `
                                 -enableAscForOssDb "DeployIfNotExists" `
