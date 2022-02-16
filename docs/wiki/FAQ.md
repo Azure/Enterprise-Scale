@@ -118,7 +118,7 @@ To overcome this issue the Azure Monitor team has created a new collection type 
 
 > An explanation of the 2 modes can be found here: [Azure resource logs](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs)
 
-### So what do we do?
+### Next steps
 
 As of today only a limited number of services support the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
 
