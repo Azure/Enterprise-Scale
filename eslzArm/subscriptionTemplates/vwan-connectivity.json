@@ -49,6 +49,17 @@
             ],
             "defaultValue": "Standard"
         },
+        "enableAzFwDnsProxy": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the Azure Firewall should be used as DNS Proxy or not."
+            }
+        },
         "enableVpnGw": {
             "type": "string",
             "allowedValues": [
@@ -93,6 +104,9 @@
         "resourceDeploymentName": "[take(concat(deployment().name, '-vwan'), 64)]",
         "azFirewallPolicyId": {
             "id": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]"
+        },
+        "azFirewallDnsSettings": {
+            "enableProxy": true
         }
     },
     "resources": [
@@ -205,7 +219,7 @@
                                             "name": "[variables('azFwPolicyName')]",
                                             "location": "[parameters('location')]",
                                             "properties": {
-                                                "dnsSettings": "[json('null')]",
+                                                "dnsSettings": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('azFirewallDnsSettings'), json('null'))]",
                                                 "sku": {
                                                     "tier": "[parameters('firewallSku')]"
                                                 }
