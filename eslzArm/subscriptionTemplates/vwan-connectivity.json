@@ -49,6 +49,17 @@
             ],
             "defaultValue": "Standard"
         },
+        "enableAzFwDnsProxy": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the Azure Firewall should be used as DNS Proxy or not."
+            }
+        },
         "enableVpnGw": {
             "type": "string",
             "allowedValues": [
@@ -84,12 +95,19 @@
         "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location'))]",
         "vHubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
         "azFwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-fw-', parameters('location'))]",
+        "azFwPolicyName": "[concat(parameters('topLevelManagementGroupPrefix'), '-azfwpolicy-', parameters('location'))]",
         "vWanSku": "Standard",
         "vwanresourceid": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/' ,variables('rgName'),'/providers/Microsoft.Network/virtualWans/', variables('vwanname'))]",
         "vwanhub": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualHubs/', variables('vhubname'))]",
         "vhubsku": "Standard",
         "vpnbgpasn": 65515,
-        "resourceDeploymentName": "[take(concat(deployment().name, '-vwan'), 64)]"
+        "resourceDeploymentName": "[take(concat(deployment().name, '-vwan'), 64)]",
+        "azFirewallPolicyId": {
+            "id": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]"
+        },
+        "azFirewallDnsSettings": {
+            "enableProxy": true
+        }
     },
     "resources": [
         {
@@ -196,11 +214,25 @@
                                         },
                                         {
                                             "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
+                                            "type": "Microsoft.Network/firewallPolicies",
+                                            "apiVersion": "2020-11-01",
+                                            "name": "[variables('azFwPolicyName')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "dnsSettings": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('azFirewallDnsSettings'), json('null'))]",
+                                                "sku": {
+                                                    "tier": "[parameters('firewallSku')]"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
                                             "apiVersion": "2020-05-01",
                                             "type": "Microsoft.Network/azureFirewalls",
                                             "name": "[variables('azfwname')]",
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
+                                                "[concat('Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]",
                                                 "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]"
                                             ],
                                             "properties": {
@@ -218,7 +250,7 @@
                                                     "id": "[variables('vwanhub')]"
                                                 },
                                                 "firewallPolicy": {
-                                                    "id": "[json('null')]"
+                                                    "id": "[variables('azFirewallPolicyId').id]"
                                                 }
                                             }
                                         }
