@@ -170,9 +170,9 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-resource-diag" `
 
 # Assign Azure Policy to enforce Azure Security Center configuration enabled on all subscriptions, deployed to top level management group
 
-New-AzManagementGroupDeployment -Name "$($DeploymentName)-asc-config" `
+New-AzManagementGroupDeployment -Name "$($DeploymentName)-mdfc-config" `
                                 -Location $Location `
-                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-ASCConfigPolicyAssignment.json `
+                                -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DINE-MDFCConfigPolicyAssignment.json `
                                 -ManagementGroupId $eslzPrefix `
                                 -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -logAnalyticsResourceId "/subscriptions/$($ManagementSubscriptionId)/resourceGroups/$($eslzPrefix)-mgmt/providers/Microsoft.OperationalInsights/workspaces/$($eslzPrefix)-law" `

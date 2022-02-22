@@ -53,7 +53,7 @@ Here's what's changed in Enterprise Scale:
 
 ### Policy
 
-- *No updates, yet.*
+- Renamed `Deploy-ASCDF-Config` to `Deploy-MDFC-Config` and updated version to `3.0.0` - fixing [issue 923](https://github.com/Azure/Enterprise-Scale/issues/923)
 
 ### Other
 
