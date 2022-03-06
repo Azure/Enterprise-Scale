@@ -4,7 +4,7 @@ This section will describe how to deploy an Enterprise-Scale Landing Zones platf
 
 ## 1. Pre-requisites
 
-To provision your Enterprise-Scale Landing Zones environment with the deployment experience in the Azure portal, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+To provision your Enterprise-Scale Landing Zones environment with the deployment experience in the Azure portal, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites.md) on how to grant access before you proceed.
 
 ### Optional pre-requsites
 

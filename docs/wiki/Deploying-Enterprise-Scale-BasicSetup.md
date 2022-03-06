@@ -11,7 +11,7 @@ Please refer to [Trey Research reference implementation](https://github.com/Azur
 ### Required Permissions
 
 To provision your Enterprise-Scale Landing Zones environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**.
-Refer to these [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+Refer to these [instructions](./Deploying-Enterprise-Scale-Pre-requisites.md) on how to grant access before you proceed.
 
 ### Subscriptions
 
