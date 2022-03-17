@@ -12,7 +12,6 @@ For example, in the `eslzARM.json` file, you will see the following:
 ![ESLZ ARM Template variable example](./media/cua-variable.png)
 ![ESLZ ARM Template resource example](./media/cua-resource.png)
 
-
 The default value is `false`, but by changing the parameter value `true` and saving this file, when you deploy this module either via PowerShell, Azure CLI, or as part of a pipeline the module deployment below will be ignored and therefore telemetry will not be tracked.
 
 ## Module PID Value Mapping
