@@ -8,7 +8,7 @@ To disable this tracking, we have included a parameter called `telemetryOptOut` 
 
 If you are happy with leaving telemetry tracking enabled, no changes are required. Please do not edit the module name or value of the variable `cuaID` in any module.
 
-For example, in the eslzARM.json file, you will see the following:
+For example, in the `eslzARM.json` file, you will see the following:
 
 [ESLZ ARM Template parameter example](./media/cua-parameter.png)
 [ESLZ ARM Template variable example](./media/cua-variable.png)
