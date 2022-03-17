@@ -11,7 +11,7 @@ If you are happy with leaving telemetry tracking enabled, no changes are require
 For example, in the `eslzARM.json` file, you will see the following:
 
 ![ESLZ ARM Template parameter example](./media/cua-parameter.png)
-[ESLZ ARM Template variable example](./media/cua-variable.png)
+![ESLZ ARM Template variable example](./media/cua-variable.png)
 [ESLZ ARM Template resource example](./media/cua-resource.png)
 
 
