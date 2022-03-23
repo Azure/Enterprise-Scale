@@ -134,6 +134,7 @@ We work with - and learn from our customers and partners to ensure that we evolv
 | Storage Account set to minimum TLS and Secure transfer should be enabled | Audit requirement of Secure transfer in your storage account. Secure transfer is an option that forces your storage account to accept requests only from secure connections (HTTPS). Use of HTTPS ensures authentication between the server and the service and protects data in transit from network layer attacks such as man-in-the-middle, eavesdropping, and session-hijacking | deny, audit, disabled | 1.0.0 | Custom policy | Yes, recommended | Landing Zones Management Group | Storage |
 | Public network access on Storage Accounts should be disabled | Denies creation of storage accounts using public endpoints | deny, audit, disabled | 1.0.0 | Custom policy | Yes, recommended | Corp Management Group | Storage |
 | Deploy Log Analytics workspace | Deploys Log Analytics workspace to an Azure subscription | deployIfNotExists, disabled | 1.0.0 | Custom policy | Yes, recommended | Management, Management Group | Storage |
+|Deny VNet Peering To Non approved vNet |deny deploying of vnet peering to non approved vnets | deny, disabled | 1.0.0 | custom policy | Yes, recommended | Intermediate Network Management group under plateoform | Network|
 
 
 ## ESLZ Custom Policy Set Definitions
