@@ -20,4 +20,4 @@ The following are the unique ID's (also known as PIDs) used in each of the modul
 
 | Module Name                 | PID                                  |
 | --------------------------- | ------------------------------------ |
-| ESLZ ARM Deployment         | 35c42e79-00b3-42eb-a9ac-e542953efb3c |
+| ALZ Accelerator/ESLZ ARM Deployment         | 35c42e79-00b3-42eb-a9ac-e542953efb3c |
