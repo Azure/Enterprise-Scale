@@ -15,7 +15,7 @@ In the `eslzARM.json` file, you will see the following:
 ![ESLZ ARM Template variable example](./media/cua-variable.png)
 ![ESLZ ARM Template resource example](./media/cua-resource.png)
 
-The default value is `False`, but by changing the parameter value `True` and saving this file, when you deploy this module either via PowerShell, Azure CLI, or as part of a pipeline the module deployment below will be ignored and therefore telemetry will not be tracked.
+The default value is `No`, but by changing the parameter value `Yes` and saving this file, when you deploy this module either via PowerShell, Azure CLI, or as part of a pipeline the module deployment below will be ignored and therefore telemetry will not be tracked.
 
 If you are happy with leaving telemetry tracking enabled, no changes are required. Please do not edit the module name or value of the variable `cuaID` in any module.
 
