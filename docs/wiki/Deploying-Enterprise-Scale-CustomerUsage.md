@@ -3,6 +3,7 @@
 Microsoft can identify the deployments of the Azure Resource Manager templates with the deployed Azure resources. Microsoft can correlate these resources used to support the deployments. Microsoft collects this information to provide the best experiences with their products and to operate their business. The telemetry is collected through [customer usage attribution](https://docs.microsoft.com/azure/marketplace/azure-partner-customer-usage-attribution). The data is collected and governed by Microsoft's privacy policies, located at the [trust center](https://www.microsoft.com/trustcenter).
 
 To enable or disable the telemetry via the portal experience (recommended), use the radio toggle to specify your preference.
+
 Customer Usage Attribution Disabled:
 ![ESLZ ARM Template Telemetry Opt Out Toggle Control Disabled](./media/cua-portal-experience-disabled.png)
 Customer Usage Attribution Enabled:
