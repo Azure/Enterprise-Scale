@@ -5,9 +5,9 @@ Microsoft can identify the deployments of the Azure Resource Manager templates w
 To enable or disable the telemetry via the portal experience (recommended), use the radio toggle to specify your preference.
 
 Customer Usage Attribution Disabled:
-![ESLZ ARM Template Telemetry Opt Out Toggle Control Disabled](./media/cua_portal_experience_disabled.jpg)
+![ESLZ ARM Template Telemetry Opt Out Toggle Control Disabled](./media/cua-portal-experience-disabled.jpg)
 Customer Usage Attribution Enabled:
-![ESLZ ARM Template Telemetry Opt Out Toggle Control Enabled](./media/cua_portal_experience_enabled.jpg)
+![ESLZ ARM Template Telemetry Opt Out Toggle Control Enabled](./media/cua-portal-experience-enabled.jpg)
 
 
 Alternatively, to enable or disable this tracking via the ARM template experience, we have included a parameter called `telemetryOptOut` in order to opt out of telemetry tracking to the ESLZ ARM Template in this repo with a simple boolean flag. The default value `false` which **enables** the telemetry. If you would like to disable this tracking, then simply set this value to `true` and this module will not be included in deployments and **therefore disables** the telemetry tracking.
