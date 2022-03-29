@@ -14,6 +14,7 @@
   * [What happens when you deploy Enterprise-Scale?](https://github.com/Azure/Enterprise-Scale/wiki/How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
 * Deploying Enterprise-Scale
   * [Pre-requisites](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-Pre-requisites)
+  * [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
   * [Deploy Enterprise-Scale without hybrid connectivity to on-premises](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-Foundation)
   * [Deploy Enterprise-Scale with a hub and spoke based network topology](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-HubAndSpoke)
   * [Deploy Enterprise-Scale with an Azure Virtual WAN based network topology](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-VWAN)
