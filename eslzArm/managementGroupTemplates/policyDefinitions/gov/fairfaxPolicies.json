@@ -168,6 +168,76 @@
 		  },
 		  {
 			"properties": {
+			  "mode": "All",
+			  "displayName": "VNet Peering is only allowed to approved VNets.",
+			  "description": "If you try to peer to a VNet that's not on the list of approved VNets then the action will be denied.",
+			  "parameters": {
+				"allowedVnets": {
+				  "type": "array",
+				  "metadata": {
+					"displayName": "Allowed VNets",
+					"description": "Enter list of allowed VNets using a semi-coling ';' seperated list. VNets must be entered using their resource ID. Example: /subscriptions/{SubID}/resourceGroups/resourceGroupName/providers/Microsoft.Network/virtualNetworks/resourceGroupName/virtualNetworkPeerings/vnetName"
+				  },
+				  "defaultvalue": "None"
+				},
+				"effect": {
+				  "type": "String",
+				  "metadata": {
+					"displayName": "Effect",
+					"description": "Enable or disable the execution of the policy"
+				  },
+				  "allowedValues": ["Deny", "Disabled"],
+				  "defaultValue": "Deny"
+				}
+			  },
+			  "policyRule": {
+				"if": {
+				  "anyOf": [
+					{
+					  "allOf": [
+						{
+						  "field": "type",
+						  "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+						},
+						{
+						  "not": {
+							"field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+							"in": "[parameters('allowedVnets')]"
+						  }
+						}
+					  ]
+					},
+					{
+					  "allOf": [
+						{
+						  "field": "type",
+						  "equals": "Microsoft.Network/virtualNetworks"
+						},
+						{
+						  "not": {
+							"field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
+							"in": "[parameters('allowedVnets')]"
+						  }
+						},
+						{
+						  "not": {
+							"field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
+							"exists": false
+						  }
+						}
+					  ]
+					}
+				  ]
+				},
+				"then": {
+				  "effect": "[parameters('effect')]"
+				}
+			  }
+			},
+			"name": "Deny-VNet-Peering-To-Non-Approved-VNet"
+		  },
+		  {
+			"properties": {
 			  "description": "Deploy a default budget on all subscriptions under the assigned scope",
 			  "displayName": "Deploy a default budget on all subscriptions under the assigned scope",
 			  "mode": "All",
@@ -6517,76 +6587,6 @@
 			  }
 			},
 			"name": "Deny-VNet-Peering"
-		  },
-		  {
-			"properties": {
-			  "mode": "All",
-			  "displayName": "VNet Peering is only allowed to approved VNets.",
-			  "description": "If you try to peer to a VNet that's not on the list of approved VNets then the action will be denied.",
-			  "parameters": {
-				"allowedVnets": {
-				  "type": "array",
-				  "metadata": {
-					"displayName": "Allowed VNets",
-					"description": "Enter list of allowed VNets using a semi-coling ';' seperated list. VNets must be entered using their resource ID. Example: /subscriptions/{SubID}/resourceGroups/resourceGroupName/providers/Microsoft.Network/virtualNetworks/resourceGroupName/virtualNetworkPeerings/vnetName"
-				  },
-				  "defaultvalue": "None"
-				},
-				"effect": {
-				  "type": "String",
-				  "metadata": {
-					"displayName": "Effect",
-					"description": "Enable or disable the execution of the policy"
-				  },
-				  "allowedValues": ["Deny", "Disabled"],
-				  "defaultValue": "Deny"
-				}
-			  },
-			  "policyRule": {
-				"if": {
-				  "anyOf": [
-					{
-					  "allOf": [
-						{
-						  "field": "type",
-						  "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
-						},
-						{
-						  "not": {
-							"field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
-							"in": "[parameters('allowedVnets')]"
-						  }
-						}
-					  ]
-					},
-					{
-					  "allOf": [
-						{
-						  "field": "type",
-						  "equals": "Microsoft.Network/virtualNetworks"
-						},
-						{
-						  "not": {
-							"field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
-							"in": "[parameters('allowedVnets')]"
-						  }
-						},
-						{
-						  "not": {
-							"field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
-							"exists": false
-						  }
-						}
-					  ]
-					}
-				  ]
-				},
-				"then": {
-				  "effect": "[parameters('effect')]"
-				}
-			  }
-			},
-			"name": "Deny-VNet-Peering-To-Non-Approved-VNet"
 		  },
 		  {
 			"properties": {
