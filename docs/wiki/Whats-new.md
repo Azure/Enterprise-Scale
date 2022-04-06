@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [April 2022](#april-2022)
   - [February 2022](#february-2022)
   - [January 2022](#january-2022)
   - [December 2021](#december-2021)
@@ -35,6 +36,26 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### April 2022
+
+#### Docs
+
+- New CAF document [Plan for virtual machine remote access](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-virtual-machine-remote-access)
+
+#### Tooling
+
+- Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/azure/private-link/private-endpoint-dns)
+  - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
+- Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
 
 ### February 2022
 
