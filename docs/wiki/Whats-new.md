@@ -48,6 +48,7 @@ Here's what's changed in Enterprise Scale:
 - Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/azure/private-link/private-endpoint-dns)
   - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
 - Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
+- Increase `preparingToLaunch` deployment delay in portal experience to improve scenario in [issue 902](https://github.com/Azure/Enterprise-Scale/issues/902)
 
 ### Policy
 
