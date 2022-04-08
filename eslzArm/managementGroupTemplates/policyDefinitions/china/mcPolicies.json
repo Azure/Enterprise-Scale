@@ -7143,6 +7143,84 @@
         },
         {
           "properties": {
+            "description": "This policy denies the creation of vNet Peerings to non-approved vNets under the assigned scope.",
+            "displayName": "Deny vNet peering to non-approved vNets",
+            "mode": "All",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Network"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedVnets": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed vNets to peer with",
+                  "description": "Array of allowed vNets that can be peered with. Must be entered using their resource ID. Example: /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}"
+                },
+                "defaultValue": []
+              }
+            },
+            "policyRule": {
+              "if": {
+                "anyOf": [
+                  {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+                          "in": "[[parameters('allowedVnets')]"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks"
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
+                          "in": "[[parameters('allowedVnets')]"
+                        }
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
+                          "exists": false
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-VNET-Peering-To-Non-Approved-VNETs"
+        },
+        {
+          "properties": {
             "description": "Deploys the diagnostic settings for Network Security Groups to stream to a Log Analytics workspace when any Network Security Groups which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
             "displayName": "Deploy Diagnostic Settings for Network Security Groups to Log Analytics workspace",
             "mode": "Indexed",

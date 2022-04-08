@@ -51,7 +51,8 @@ Here's what's changed in Enterprise Scale:
 
 ### Policy
 
-- *No updates, yet.*
+- Added new custom policy definition called `Deny vNet peering to non-approved vNets`
+  - This is useful in scenarios where you only want to allow vNet peering to say a central hub vNet and not allow other vNet peerings between landing zones to be enabled.
 
 ### Other
 
