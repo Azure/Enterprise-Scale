@@ -49,6 +49,9 @@ Here's what's changed in Enterprise Scale:
   - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
 - Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
 - Increase `preparingToLaunch` deployment delay in portal experience to improve scenario in [issue 902](https://github.com/Azure/Enterprise-Scale/issues/902)
+- Added warnings to use dedicated Subscriptions for platform services when selecting the dedicated model to help avoid deployment failures seen when selecting the same Subscription in the dedicated platform Subscription model for Management, Identity and Connectivity
+  - Improving experience as suggested in [issue 910](https://github.com/Azure/Enterprise-Scale/issues/910)
+  - Customers wanting a single subscription for platform services should select the 'Single' option on the 'Azure Core Setup' blade
 
 ### Policy
 
