@@ -42,6 +42,11 @@ Here's what's changed in Enterprise Scale:
 #### Docs
 
 - New CAF document [Plan for virtual machine remote access](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-virtual-machine-remote-access)
+- New CAF document [Use Terraform to deploy Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/deploy-landing-zones-with-terraform)
+  - Helps you to understand what Terraform approach and module to use to deploy, manage and operate ALZ
+- New CAF document [Tailor the Azure landing zone architecture to meet requirements](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/tailoring-alz)
+  - Guidance to help you understand how to tailor the ALZ architecture to meet your additional requirements
+- New CAF document [Independent software vendor (ISV) considerations for Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/isv-landing-zone)
 
 #### Tooling
 
