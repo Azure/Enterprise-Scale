@@ -50,6 +50,10 @@ Here's what's changed in Enterprise Scale:
 
 #### Tooling
 
+- [Azure Landing Zones Terraform Module](https://aka.ms/alz/tf) v2.0.0 released 🥳
+  - Adds support for Virtual WAN plus much more
+  - Checkout [release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.0) for details on all the changes and fixes
+  - Checkout [upgrade guide](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v1.1.4-to-v2.0.0) for details on how to upgrade to the latest release
 - Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/azure/private-link/private-endpoint-dns)
   - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
 - Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
