@@ -58,8 +58,6 @@ Here's what's changed in Enterprise Scale:
   - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
   - See [issue #949](https://github.com/Azure/Enterprise-Scale/issues/949) for meeting details
 
-### October 2021
-
 ### April 2022
 
 #### Docs
