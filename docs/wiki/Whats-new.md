@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [May 2022](#may-2022)
   - [April 2022](#april-2022)
   - [February 2022](#february-2022)
   - [January 2022](#january-2022)
@@ -36,6 +37,28 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### May 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- *No updates, yet.*
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- Published resources from the third Azure Landing Zones Community Call - held on the 2nd May 2022
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #949](https://github.com/Azure/Enterprise-Scale/issues/949) for meeting details
+
+### October 2021
 
 ### April 2022
 
