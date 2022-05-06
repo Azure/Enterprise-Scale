@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [May 2022](#may-2022)
   - [April 2022](#april-2022)
   - [February 2022](#february-2022)
   - [January 2022](#january-2022)
@@ -36,6 +37,22 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### May 2022
+
+#### Docs
+
+#### Tooling
+
+- Updating Azure Firewall to use Availability Zones inside of Azure Virtual WAN Secure Hub: [Azure Firewall Updates](https://azure.microsoft.com/blog/boost-your-network-security-with-new-updates-to-azure-firewall/) and [Azure Firewall with Availability Zones](https://docs.microsoft.com/azure/virtual-wan/virtual-wan-faq#how-are-availability-zones-and-resiliency-handled-in-virtual-wan)
+
+### Policy
+
+### Other
+
+- *No updates, yet.*
+
+
 
 ### April 2022
 
