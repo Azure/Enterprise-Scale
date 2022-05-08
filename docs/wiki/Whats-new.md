@@ -50,6 +50,8 @@ Here's what's changed in Enterprise Scale:
 
 ### Policy
 
+- *No updates, yet.*
+
 ### Other
 
 - *No updates, yet.*
