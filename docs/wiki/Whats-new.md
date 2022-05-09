@@ -54,18 +54,27 @@ Here's what's changed in Enterprise Scale:
 
 ### Other
 
-- *No updates, yet.*
-
-
+- Published resources from the third Azure Landing Zones Community Call - held on the 2nd May 2022
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #949](https://github.com/Azure/Enterprise-Scale/issues/949) for meeting details
 
 ### April 2022
 
 #### Docs
 
 - New CAF document [Plan for virtual machine remote access](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-virtual-machine-remote-access)
+- New CAF document [Use Terraform to deploy Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/deploy-landing-zones-with-terraform)
+  - Helps you to understand what Terraform approach and module to use to deploy, manage and operate ALZ
+- New CAF document [Tailor the Azure landing zone architecture to meet requirements](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/tailoring-alz)
+  - Guidance to help you understand how to tailor the ALZ architecture to meet your additional requirements
+- New CAF document [Independent software vendor (ISV) considerations for Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/isv-landing-zone)
 
 #### Tooling
 
+- [Azure Landing Zones Terraform Module](https://aka.ms/alz/tf) v2.0.0 released 🥳
+  - Adds support for Virtual WAN plus much more
+  - Checkout [release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.0) for details on all the changes and fixes
+  - Checkout [upgrade guide](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v1.1.4-to-v2.0.0) for details on how to upgrade to the latest release
 - Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/azure/private-link/private-endpoint-dns)
   - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
 - Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
