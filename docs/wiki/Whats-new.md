@@ -47,6 +47,7 @@ Here's what's changed in Enterprise Scale:
 #### Tooling
 
 - Updating Azure Firewall to use Availability Zones inside of Azure Virtual WAN Secure Hub: [Azure Firewall Updates](https://azure.microsoft.com/blog/boost-your-network-security-with-new-updates-to-azure-firewall/) and [Azure Firewall with Availability Zones](https://docs.microsoft.com/azure/virtual-wan/virtual-wan-faq#how-are-availability-zones-and-resiliency-handled-in-virtual-wan)
+- ALZ Terraform module patch release [v2.0.2](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.2) - three minor bugs squashed 🐛 🐛 🐛 🥳
 
 ### Policy
 
