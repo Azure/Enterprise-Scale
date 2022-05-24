@@ -37,7 +37,7 @@ az login
 read -sp "Azure password: " AZ_PASS && echo && az login -u <username> -p $AZ_PASS
 
 #assign Owner role at Tenant root scope ("/") as a User Access Administrator to current user (gets object Id of the current user (az login))
-az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query objectId) --assignee-principal-type User
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad signed-in-user show --query objectId --output tsv) --assignee-principal-type User
 
 #(optional) assign Owner role at Tenant root scope ("/") as a User Access Administrator to service principal (set spn_displayname to your service principal displayname)
 spn_displayname='<ServicePrincipal DisplayName>'
