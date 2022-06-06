@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [June 2022](#june-2022)
   - [May 2022](#may-2022)
   - [April 2022](#april-2022)
   - [February 2022](#february-2022)
@@ -16,9 +17,10 @@
 
 ---
 
-Enterprise Scale is updated regularly. This page is where you'll find out about the latest updates to Enterprise Scale for:
+Enterprise Scale/Azure Landing Zones is updated regularly. This page is where you'll find out about the latest updates to Enterprise Scale/Azure Landing Zones for:
 
-- [CAF (Cloud Adoption Framework) Documentation](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/) Updates
+- [CAF (Cloud Adoption Framework) Documentation](https://aka.ms/alz) Updates
+  - Check out the CAF specific [What's new in the Microsoft Cloud Adoption Framework for Azure](https://docs.microsoft.com/azure/cloud-adoption-framework/get-started/whats-new) page
 - Improvements to existing guidance and artifacts
 - Azure Policy changes
 - Bug fixes
@@ -27,22 +29,45 @@ Enterprise Scale is updated regularly. This page is where you'll find out about 
     - [Releases](https://github.com/Azure/AzOps/releases)
   - [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
     - [Releases](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases)
+  - [ALZ-Bicep Modules](https://github.com/Azure/ALZ-Bicep)
+    - [Releases](https://github.com/Azure/ALZ-Bicep/releases)
 
 > **Note:** Please check the latest release notes for each of the tools, as these will contain more detailed notes relating to changes in each of the tools.
 
-This article will be updated as and when changes are made to the above and anything else of relevance for Enterprise Scale. Make sure to check back here often to keep up with new updates and changes.
+This article will be updated as and when changes are made to the above and anything else of relevance for Enterprise Scale/Azure Landing Zones. Make sure to check back here often to keep up with new updates and changes.
 
 > **Important:** Previous changes to the above in relation to Enterprise Scale will not be listed here. However going forward, this page will be updated.
 
 ## Updates
 
-Here's what's changed in Enterprise Scale:
+Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### June 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- Fixed [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979) by adding support for the additional Log Analytics Solutions of `SQLVulnerabilityAssessment` and `SQLAdvancedThreatProtection` to the Azure Landing Zone Accelerator (portal experience)
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
 
 ### May 2022
 
 #### Docs
 
-- *No updates, yet.*
+- Updated the [What is an Azure landing zone?](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) page
+- Updated the [Azure landing zone - design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) page
+- Updated the [Azure landing zone design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) overview page
+- Updated the [Landing zone implementation options](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/implementation-options) page
 
 #### Tooling
 
