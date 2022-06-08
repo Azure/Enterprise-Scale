@@ -51,6 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Fixed [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979) by adding support for the additional Log Analytics Solutions of `SQLVulnerabilityAssessment` and `SQLAdvancedThreatProtection` to the Azure Landing Zone Accelerator (portal experience)
+- ALZ Terraform module minor release [v2.1.0], to provide feature parity on the fix for [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979)
 
 ### Policy
 
