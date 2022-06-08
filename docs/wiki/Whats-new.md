@@ -51,6 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Fixed [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979) by adding support for the additional Log Analytics Solutions of `SQLVulnerabilityAssessment` and `SQLAdvancedThreatProtection` to the Azure Landing Zone Accelerator (portal experience)
+- ALZ Terraform module minor release [v2.1.0], to provide feature parity on the fix for [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979)
 
 ### Policy
 
@@ -149,7 +150,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
-- *No updates, yet.*
+- New release [v1.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.1.0) of the [caf-enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/latest) Terraform module, providing updates to the published policies and a number of bug fixes.
 
 ### Policy
 
