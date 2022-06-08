@@ -6966,7 +6966,7 @@
         },
         {
           "properties": {
-            "description": "This policy denies the creation of a subsnet with out an Network Security Group. NSG help to protect traffic across subnet-level.",
+            "description": "This policy denies the creation of a subsnet without a Network Security Group. NSG help to protect traffic across subnet-level.",
             "displayName": "Subnets should have a Network Security Group",
             "mode": "All",
             "parameters": {
@@ -6997,23 +6997,53 @@
               }
             },
             "metadata": {
-              "version": "1.1.0",
+              "version": "2.0.0",
               "category": "Network"
             },
             "policyRule": {
               "if": {
-                "allOf": [
+                "anyOf": [
                   {
-                    "field": "type",
-                    "equals": "Microsoft.Network/virtualNetworks/subnets"
+                    "allOf": [
+                      {
+                        "equals": "Microsoft.Network/virtualNetworks",
+                        "field": "type"
+                      },
+                      {
+                        "count": {
+                          "field": "Microsoft.Network/virtualNetworks/subnets[*]",
+                          "where": {
+                            "allOf": [
+                              {
+                                "exists": "false",
+                                "field": "Microsoft.Network/virtualNetworks/subnets[*].networkSecurityGroup.id"
+                              },
+                              {
+                                "field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+                                "notIn": "[[parameters('excludedSubnets')]"
+                              }
+                            ]
+                          }
+                        },
+                        "notEquals": 0
+                      }
+                    ]
                   },
                   {
-                    "field": "name",
-                    "notIn": "[[parameters('excludedSubnets')]"
-                  },
-                  {
-                    "field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroup.id",
-                    "exists": "false"
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks/subnets"
+                      },
+                      {
+                        "field": "name",
+                        "notIn": "[[parameters('excludedSubnets')]"
+                      },
+                      {
+                        "field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroup.id",
+                        "exists": "false"
+                      }
+                    ]
                   }
                 ]
               },
@@ -7029,9 +7059,9 @@
             "displayName": "Subnets should have a User Defined Route",
             "policyType": "Custom",
             "mode": "All",
-            "description": "This policy denies the creation of a subnet with out a User Defined Route.",
+            "description": "This policy denies the creation of a subnet without a User Defined Route (UDR).",
             "metadata": {
-              "version": "1.1.0",
+              "version": "2.0.0",
               "category": "Network"
             },
             "parameters": {
@@ -7061,18 +7091,48 @@
             },
             "policyRule": {
               "if": {
-                "allOf": [
+                "anyOf": [
                   {
-                    "field": "type",
-                    "equals": "Microsoft.Network/virtualNetworks/subnets"
+                    "allOf": [
+                      {
+                        "equals": "Microsoft.Network/virtualNetworks",
+                        "field": "type"
+                      },
+                      {
+                        "count": {
+                          "field": "Microsoft.Network/virtualNetworks/subnets[*]",
+                          "where": {
+                            "allOf": [
+                              {
+                                "exists": "false",
+                                "field": "Microsoft.Network/virtualNetworks/subnets[*].routeTable.id"
+                              },
+                              {
+                                "field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+                                "notIn": "[[parameters('excludedSubnets')]"
+                              }
+                            ]
+                          }
+                        },
+                        "notEquals": 0
+                      }
+                    ]
                   },
                   {
-                    "field": "name",
-                    "notIn": "[[parameters('excludedSubnets')]"
-                  },
-                  {
-                    "field": "Microsoft.Network/virtualNetworks/subnets/routeTable.id",
-                    "exists": "false"
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks/subnets"
+                      },
+                      {
+                        "field": "name",
+                        "notIn": "[[parameters('excludedSubnets')]"
+                      },
+                      {
+                        "field": "Microsoft.Network/virtualNetworks/subnets/routeTable.id",
+                        "exists": "false"
+                      }
+                    ]
                   }
                 ]
               },
@@ -7126,6 +7186,84 @@
             }
           },
           "name": "Deny-VNET-Peer-Cross-Sub"
+        },
+        {
+          "properties": {
+            "description": "This policy denies the creation of vNet Peerings to non-approved vNets under the assigned scope.",
+            "displayName": "Deny vNet peering to non-approved vNets",
+            "mode": "All",
+            "metadata": {
+              "version": "1.0.0",
+              "category": "Network"
+            },
+            "parameters": {
+              "effect": {
+                "type": "String",
+                "metadata": {
+                  "displayName": "Effect",
+                  "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                  "Audit",
+                  "Deny",
+                  "Disabled"
+                ],
+                "defaultValue": "Deny"
+              },
+              "allowedVnets": {
+                "type": "Array",
+                "metadata": {
+                  "displayName": "Allowed vNets to peer with",
+                  "description": "Array of allowed vNets that can be peered with. Must be entered using their resource ID. Example: /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}"
+                },
+                "defaultValue": []
+              }
+            },
+            "policyRule": {
+              "if": {
+                "anyOf": [
+                  {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+                          "in": "[[parameters('allowedVnets')]"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "field": "type",
+                        "equals": "Microsoft.Network/virtualNetworks"
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
+                          "in": "[[parameters('allowedVnets')]"
+                        }
+                      },
+                      {
+                        "not": {
+                          "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings[*].remoteVirtualNetwork.id",
+                          "exists": false
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "then": {
+                "effect": "[[parameters('effect')]"
+              }
+            }
+          },
+          "name": "Deny-VNET-Peering-To-Non-Approved-VNETs"
         },
         {
           "properties": {
@@ -12611,7 +12749,7 @@
         },
         {
           "properties": {
-            "displayName": "Storage Account set to minumum TLS and Secure transfer should be enabled",
+            "displayName": "Storage Account set to minimum TLS and Secure transfer should be enabled",
             "mode": "Indexed",
             "description": "Audit requirement of Secure transfer in your storage account. Secure transfer is an option that forces your storage account to accept requests only from secure connections (HTTPS). Use of HTTPS ensures authentication between the server and the service and protects data in transit from network layer attacks such as man-in-the-middle, eavesdropping, and session-hijacking",
             "metadata": {
@@ -15524,14 +15662,14 @@
         },
         {
           "properties": {
-            "description": "Deploy Azure Security Center configuration",
-            "displayName": "Deploy Azure Security Center configuration",
+            "description": "Deploy Microsoft Defender for Cloud configuration",
+            "displayName": "Deploy Microsoft Defender for Cloud configuration",
             "parameters": {
               "emailSecurityContact": {
                 "type": "string",
                 "metadata": {
                   "displayName": "Security contacts email address",
-                  "description": "Provide email address for Azure Security Center contact details"
+                  "description": "Provide email address for Microsoft Defender for Cloud contact details"
                 }
               },
               "logAnalytics": {
@@ -15556,21 +15694,7 @@
                   "description": "The location where the resource group and the export to Log Analytics workspace configuration are created."
                 }
               },
-              "enableAscForKubernetes": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              },
               "enableAscForSql": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              },
-              "enableAscForSqlOnVm": {
                 "type": "String",
                 "metadata": {
                   "displayName": "Effect",
@@ -15591,28 +15715,7 @@
                   "description": "Enable or disable the execution of the policy"
                 }
               },
-              "enableAscForOssDb": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              },
-              "enableAscForAppServices": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              },
-              "enableAscForRegistries": {
-                "type": "String",
-                "metadata": {
-                  "displayName": "Effect",
-                  "description": "Enable or disable the execution of the policy"
-                }
-              },
-              "enableAscForKeyVault": {
+              "enableAscForContainers": {
                 "type": "String",
                 "metadata": {
                   "displayName": "Effect",
@@ -15635,43 +15738,16 @@
               }
             },
             "metadata": {
-              "version": "2.0.0",
+              "version": "3.0.0",
               "category": "Security Center"
             },
             "PolicyDefinitions": [
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/44433aa3-7ec2-4002-93ea-65c65ff0310a",
-                "policyDefinitionReferenceId": "defenderForOssDb",
-                "parameters": {
-                  "effect": {
-                    "value": "[[parameters('enableAscForOssDb')]"
-                  }
-                }
-              },
               {
                 "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/8e86a5b6-b9bd-49d1-8e21-4bb8a0862222",
                 "policyDefinitionReferenceId": "defenderForVM",
                 "parameters": {
                   "effect": {
                     "value": "[[parameters('enableAscForServers')]"
-                  }
-                }
-              },
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/50ea7265-7d8c-429e-9a7d-ca1f410191c3",
-                "policyDefinitionReferenceId": "defenderForSqlServerVirtualMachines",
-                "parameters": {
-                  "effect": {
-                    "value": "[[parameters('enableAscForSqlOnVm')]"
-                  }
-                }
-              },
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d",
-                "policyDefinitionReferenceId": "defenderForAppServices",
-                "parameters": {
-                  "effect": {
-                    "value": "[[parameters('enableAscForAppServices')]"
                   }
                 }
               },
@@ -15685,29 +15761,11 @@
                 }
               },
               {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/64def556-fbad-4622-930e-72d1d5589bf5",
-                "policyDefinitionReferenceId": "defenderForKubernetesService",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c9ddb292-b203-4738-aead-18e2716e858f",
+                "policyDefinitionReferenceId": "defenderForContainers",
                 "parameters": {
                   "effect": {
-                    "value": "[[parameters('enableAscForKubernetes')]"
-                  }
-                }
-              },
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/d3d1e68e-49d4-4b56-acff-93cef644b432",
-                "policyDefinitionReferenceId": "defenderForContainerRegistry",
-                "parameters": {
-                  "effect": {
-                    "value": "[[parameters('enableAscForRegistries')]"
-                  }
-                }
-              },
-              {
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f725891-01c0-420a-9059-4fa46cb770b7",
-                "policyDefinitionReferenceId": "defenderForKeyVaults",
-                "parameters": {
-                  "Effect": {
-                    "value": "[[parameters('enableAscForKeyVault')]"
+                    "value": "[[parameters('enableAscForContainers')]"
                   }
                 }
               },
@@ -15764,7 +15822,7 @@
               }
             ]
           },
-          "name": "Deploy-ASCDF-Config"
+          "name": "Deploy-MDFC-Config"
         }
       ]
     }
