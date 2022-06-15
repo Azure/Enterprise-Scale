@@ -46,7 +46,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- *No updates, yet.*
+- Updated the [Policies included in Enterprise-Scale Landing Zones](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) page.
 
 #### Tooling
 
