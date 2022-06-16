@@ -62,6 +62,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - `SessionHostManagement`
 - Added AVD Scaling Plans Diagnostic Settings for Azure Public only - as not supported in Fairfax or Mooncake as per https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
 - Added additional log categories to `Deploy-Diagnostics-Firewall` for Azure Firewall Diagnostic Settings Policy - Fixing issue [issue #985](https://github.com/Azure/Enterprise-Scale/issues/985)
+- Added additional log categories to `Deploy-Diagnostics-APIMgmt` for Azure API Management Diagnostic Settings Policy - Fixing issue [issue #986](https://github.com/Azure/Enterprise-Scale/issues/986)
+- Added new Policy for for Azure Bastion Diagnostic Settings Policy called `Deploy-Diagnostics-Bastion` - Fixing issue [issue #968](https://github.com/Azure/Enterprise-Scale/issues/968)
 
 ### Other
 
