@@ -55,7 +55,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
-- *No updates, yet.*
+- Renamed Diagnostic Settings Policies from `WVD` to `AVD`
+  - Add 2 new categories for Host Pools Diagnostic Settings
+    - `NetworkData`
+    - `SessionHostManagement`
+  - Added Scaling Plans Diagnostic Settings for Azure Public only - as not supported in Fairfax or Mooncake as per https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan
 
 ### Other
 
