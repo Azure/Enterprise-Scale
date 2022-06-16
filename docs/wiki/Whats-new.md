@@ -67,6 +67,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new Policy for for Azure Bastion Diagnostic Settings Policy called `Deploy-Diagnostics-Bastion` - Fixing issue [issue #968](https://github.com/Azure/Enterprise-Scale/issues/968)
   - Added to `Deploy-Diagnostics-LogAnalytics` Policy Initiative
 - Updated `Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess` mode from `Indexed` to `All` - Fixing issue [issue #978](https://github.com/Azure/Enterprise-Scale/issues/978)
+- Updated `Deploy-Storage-sslEnforcement` existence condition - Fixing issue [issue #971](https://github.com/Azure/Enterprise-Scale/issues/971)
+- Updated `Deploy-Diagnostics-MlWorkspace` metrics and categories - Fixing issue [issue #893](https://github.com/Azure/Enterprise-Scale/issues/893)
 
 ### Other
 
