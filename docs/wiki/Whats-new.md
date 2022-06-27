@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [June 2022](#june-2022)
   - [February 2022](#february-2022)
   - [January 2022](#january-2022)
   - [December 2021](#december-2021)
@@ -35,6 +36,23 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale:
+
+### June 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- *No updates, yet.*
+
+#### Policy
+
+- Added `Deny-Private-Link-Private-DNS-Zones` - fixing [issue 707](https://github.com/Azure/Enterprise-Scale/issues/707)
+#### Other
+
+- *No updates, yet.*
 
 ### February 2022
 
