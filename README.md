@@ -6,6 +6,7 @@
 * [Community Calls](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
 * [Enterprise-Scale Landing Zones - User Guide](https://github.com/Azure/Enterprise-Scale/wiki#enterprise-scale-landing-zones-user-guide)
 * [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
+* [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
 * [Configure Azure permission for ARM Template deployments](./docs/EnterpriseScale-Setup-azure.md)
 * [Deploy Reference Implementation](./docs/EnterpriseScale-Deploy-reference-implentations.md)
   * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)

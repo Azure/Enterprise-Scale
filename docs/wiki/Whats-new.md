@@ -3,6 +3,11 @@
 - [In this Section](#in-this-section)
 - [Updates](#updates)
   - [June 2022](#june-2022)
+<<<<<<< HEAD
+=======
+  - [May 2022](#may-2022)
+  - [April 2022](#april-2022)
+>>>>>>> main
   - [February 2022](#february-2022)
   - [January 2022](#january-2022)
   - [December 2021](#december-2021)
@@ -15,9 +20,10 @@
 
 ---
 
-Enterprise Scale is updated regularly. This page is where you'll find out about the latest updates to Enterprise Scale for:
+Enterprise Scale/Azure Landing Zones is updated regularly. This page is where you'll find out about the latest updates to Enterprise Scale/Azure Landing Zones for:
 
-- [CAF (Cloud Adoption Framework) Documentation](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/) Updates
+- [CAF (Cloud Adoption Framework) Documentation](https://aka.ms/alz) Updates
+  - Check out the CAF specific [What's new in the Microsoft Cloud Adoption Framework for Azure](https://docs.microsoft.com/azure/cloud-adoption-framework/get-started/whats-new) page
 - Improvements to existing guidance and artifacts
 - Azure Policy changes
 - Bug fixes
@@ -26,16 +32,108 @@ Enterprise Scale is updated regularly. This page is where you'll find out about 
     - [Releases](https://github.com/Azure/AzOps/releases)
   - [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
     - [Releases](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases)
+  - [ALZ-Bicep Modules](https://github.com/Azure/ALZ-Bicep)
+    - [Releases](https://github.com/Azure/ALZ-Bicep/releases)
 
 > **Note:** Please check the latest release notes for each of the tools, as these will contain more detailed notes relating to changes in each of the tools.
 
-This article will be updated as and when changes are made to the above and anything else of relevance for Enterprise Scale. Make sure to check back here often to keep up with new updates and changes.
+This article will be updated as and when changes are made to the above and anything else of relevance for Enterprise Scale/Azure Landing Zones. Make sure to check back here often to keep up with new updates and changes.
 
 > **Important:** Previous changes to the above in relation to Enterprise Scale will not be listed here. However going forward, this page will be updated.
 
 ## Updates
 
-Here's what's changed in Enterprise Scale:
+Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### June 2022
+
+#### Docs
+
+- Updated the [Policies included in Enterprise-Scale Landing Zones](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) page.
+
+#### Tooling
+
+- Fixed [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979) by adding support for the additional Log Analytics Solutions of `SQLVulnerabilityAssessment` and `SQLAdvancedThreatProtection` to the Azure Landing Zone Accelerator (portal experience)
+- ALZ Terraform module minor release [v2.1.0], to provide feature parity on the fix for [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979)
+
+### Policy
+
+- Renamed Diagnostic Settings Policies from `WVD` to `AVD` - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
+  - `displayName` and `description` updated only. `name` left as `WVD` to avoid in-place update issues for existing deployments
+  - Add 2 new categories for Host Pools Diagnostic Settings
+    - `NetworkData`
+    - `SessionHostManagement`
+- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
+  - Added to `Deploy-Diagnostics-LogAnalytics` Policy Initiative
+- Added additional log categories to `Deploy-Diagnostics-Firewall` for Azure Firewall Diagnostic Settings Policy - Fixing issue [issue #985](https://github.com/Azure/Enterprise-Scale/issues/985)
+- Added additional log categories to `Deploy-Diagnostics-APIMgmt` for Azure API Management Diagnostic Settings Policy - Fixing issue [issue #986](https://github.com/Azure/Enterprise-Scale/issues/986)
+- Added new Policy for for Azure Bastion Diagnostic Settings Policy called `Deploy-Diagnostics-Bastion` - Fixing issue [issue #968](https://github.com/Azure/Enterprise-Scale/issues/968)
+  - Added to `Deploy-Diagnostics-LogAnalytics` Policy Initiative
+- Updated `Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess` mode from `Indexed` to `All` - Fixing issue [issue #978](https://github.com/Azure/Enterprise-Scale/issues/978)
+- Updated `Deploy-Storage-sslEnforcement` existence condition - Fixing issue [issue #971](https://github.com/Azure/Enterprise-Scale/issues/971)
+- Updated `Deploy-Diagnostics-MlWorkspace` metrics and categories - Fixing issue [issue #893](https://github.com/Azure/Enterprise-Scale/issues/893)
+
+### Other
+
+- *No updates, yet.*
+
+### May 2022
+
+#### Docs
+
+- Updated the [What is an Azure landing zone?](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) page
+- Updated the [Azure landing zone - design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) page
+- Updated the [Azure landing zone design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) overview page
+- Updated the [Landing zone implementation options](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/implementation-options) page
+
+#### Tooling
+
+- Updating Azure Firewall to use Availability Zones inside of Azure Virtual WAN Secure Hub: [Azure Firewall Updates](https://azure.microsoft.com/blog/boost-your-network-security-with-new-updates-to-azure-firewall/) and [Azure Firewall with Availability Zones](https://docs.microsoft.com/azure/virtual-wan/virtual-wan-faq#how-are-availability-zones-and-resiliency-handled-in-virtual-wan)
+- ALZ Terraform module patch release [v2.0.2](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.2) - three minor bugs squashed 🐛 🐛 🐛 🥳
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- Published resources from the third Azure Landing Zones Community Call - held on the 2nd May 2022
+  - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
+  - See [issue #949](https://github.com/Azure/Enterprise-Scale/issues/949) for meeting details
+
+### April 2022
+
+#### Docs
+
+- New CAF document [Plan for virtual machine remote access](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-virtual-machine-remote-access)
+- New CAF document [Use Terraform to deploy Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/deploy-landing-zones-with-terraform)
+  - Helps you to understand what Terraform approach and module to use to deploy, manage and operate ALZ
+- New CAF document [Tailor the Azure landing zone architecture to meet requirements](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/tailoring-alz)
+  - Guidance to help you understand how to tailor the ALZ architecture to meet your additional requirements
+- New CAF document [Independent software vendor (ISV) considerations for Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/isv-landing-zone)
+
+#### Tooling
+
+- [Azure Landing Zones Terraform Module](https://aka.ms/alz/tf) v2.0.0 released 🥳
+  - Adds support for Virtual WAN plus much more
+  - Checkout [release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.0) for details on all the changes and fixes
+  - Checkout [upgrade guide](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v1.1.4-to-v2.0.0) for details on how to upgrade to the latest release
+- Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/azure/private-link/private-endpoint-dns)
+  - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
+- Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
+- Increase `preparingToLaunch` deployment delay in portal experience to improve scenario in [issue 902](https://github.com/Azure/Enterprise-Scale/issues/902)
+- Added warnings to use dedicated Subscriptions for platform services when selecting the dedicated model to help avoid deployment failures seen when selecting the same Subscription in the dedicated platform Subscription model for Management, Identity and Connectivity
+  - Improving experience as suggested in [issue 910](https://github.com/Azure/Enterprise-Scale/issues/910)
+  - Customers wanting a single subscription for platform services should select the 'Single' option on the 'Azure Core Setup' blade
+
+### Policy
+
+- Added new custom policy definition called `Deny vNet peering to non-approved vNets`
+  - This is useful in scenarios where you only want to allow vNet peering to say a central hub vNet and not allow other vNet peerings between landing zones to be enabled.
+
+### Other
+
+- *No updates, yet.*
 
 ### June 2022
 
@@ -85,7 +183,7 @@ Here's what's changed in Enterprise Scale:
 
 #### Tooling
 
-- *No updates, yet.*
+- New release [v1.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.1.0) of the [caf-enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/latest) Terraform module, providing updates to the published policies and a number of bug fixes.
 
 #### Policy
 
