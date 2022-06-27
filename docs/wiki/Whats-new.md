@@ -69,11 +69,11 @@ Here's what's changed in Enterprise Scale:
   - [PR 890](https://github.com/Azure/Enterprise-Scale/pull/890) fixing [issue 889](https://github.com/Azure/Enterprise-Scale/issues/889)
 - Updated accelerator (portal) experience to deploy an Azure Firewall Policy for customers using the Virtual WAN connectivity model.
 
-### Policy
+#### Policy
 
 - Renamed `Deploy-ASCDF-Config` to `Deploy-MDFC-Config` and updated version to `3.0.0` - fixing [issue 923](https://github.com/Azure/Enterprise-Scale/issues/923)
 
-### Other
+#### Other
 
 - *No updates, yet.*
 
@@ -87,7 +87,7 @@ Here's what's changed in Enterprise Scale:
 
 - *No updates, yet.*
 
-### Policy
+#### Policy
 
 - Updated `Deny-Subnet-Without-Nsg` & `Deny-Subnet-Without-Udr` to version 2.0.0
   - Fixes scenario described in issue issue [#407](https://github.com/Azure/Enterprise-Scale/issues/407)
@@ -101,7 +101,7 @@ Here's what's changed in Enterprise Scale:
 | [Deprecated]: Configure Azure Defender for Kubernetes to be enabled | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy |
 | Configure Microsoft Defender for Containers to be enabled | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
 
-### Other
+#### Other
 
 - *No updates, yet.*
 
@@ -122,7 +122,7 @@ Here's what's changed in Enterprise Scale:
   - Microsoft Defender for Cloud configuration policy set definition and policy assignment specific to Azure China
   - Differentiate between Az VM Backup policy assignment for identity management group, and landing zone management group in the DIY guidance
 
-### Policy
+#### Policy
 
 - The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
   - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKeyVaults, defenderForDns, defenderForArm
@@ -137,7 +137,7 @@ Here's what's changed in Enterprise Scale:
 
 - New release [v1.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v1.1.0) of the [caf-enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/latest) Terraform module, providing updates to the published policies and a number of bug fixes.
 
-### Policy
+#### Policy
 
 - Replaced `Deploy-Default-Udr` policy with `Deploy-Custom-Route-Table` that allows deploying custom route tables with an arbitrary set of UDRs (including a 0/0 default route if needed). See [here](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/deploy-policy-driven-routing.md) for usage details.
 
@@ -147,7 +147,7 @@ Here's what's changed in Enterprise Scale:
 
 - Added `AuditEvent` to `Deploy-Diagnostics-AA` Policy Definition to ensure correct compliance reporting on Automation Account used for diagnostics - closing issue [#864](https://github.com/Azure/Enterprise-Scale/issues/864)
 
-### Other
+#### Other
 
 - Published resources from the second Enterprise Scale Community Call - held on the 17th November 2021
   - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
@@ -179,11 +179,11 @@ Here's what's changed in Enterprise Scale:
   - Storage
   - Container Registries
 
-### Policy
+#### Policy
 
 - *No updates, yet.*
 
-### Other
+#### Other
 
 - *No updates, yet.*
 
@@ -200,7 +200,7 @@ Here's what's changed in Enterprise Scale:
 - [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
 - Enabled support for Enterprise-Scale landing zones deployments to Azure gov (https://github.com/Azure/Enterprise-Scale/pull/820)
 
-### Policy
+#### Policy
 
 | Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category | Notes |
 | :---------------------: | :-----------------------------: | :-------------: | :---------------------: | :--------------------------: | :---------------: | :---: |
@@ -209,7 +209,7 @@ Here's what's changed in Enterprise Scale:
 | Deny-Databricks-VirtualNetwork | Deny Databricks workspaces without Vnet injection | Databricks |  |  |  | Enforces the use of vnet injection for Databricks workspaces. |
 | Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |  |  |  | Denies public network access for Azure Machine Learning workspaces. |
 
-### Other
+#### Other
 
 - *No updates, yet.*
 
