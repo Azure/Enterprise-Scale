@@ -3,11 +3,8 @@
 - [In this Section](#in-this-section)
 - [Updates](#updates)
   - [June 2022](#june-2022)
-<<<<<<< HEAD
-=======
   - [May 2022](#may-2022)
   - [April 2022](#april-2022)
->>>>>>> main
   - [February 2022](#february-2022)
   - [January 2022](#january-2022)
   - [December 2021](#december-2021)
@@ -56,7 +53,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979) by adding support for the additional Log Analytics Solutions of `SQLVulnerabilityAssessment` and `SQLAdvancedThreatProtection` to the Azure Landing Zone Accelerator (portal experience)
 - ALZ Terraform module minor release [v2.1.0], to provide feature parity on the fix for [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979)
 
-### Policy
+#### Policy
 
 - Renamed Diagnostic Settings Policies from `WVD` to `AVD` - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
   - `displayName` and `description` updated only. `name` left as `WVD` to avoid in-place update issues for existing deployments
@@ -72,8 +69,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated `Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess` mode from `Indexed` to `All` - Fixing issue [issue #978](https://github.com/Azure/Enterprise-Scale/issues/978)
 - Updated `Deploy-Storage-sslEnforcement` existence condition - Fixing issue [issue #971](https://github.com/Azure/Enterprise-Scale/issues/971)
 - Updated `Deploy-Diagnostics-MlWorkspace` metrics and categories - Fixing issue [issue #893](https://github.com/Azure/Enterprise-Scale/issues/893)
+- Added `Deny-Private-Link-Private-DNS-Zones` - fixing [issue 707](https://github.com/Azure/Enterprise-Scale/issues/707)
 
-### Other
+#### Other
 
 - *No updates, yet.*
 
@@ -91,11 +89,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updating Azure Firewall to use Availability Zones inside of Azure Virtual WAN Secure Hub: [Azure Firewall Updates](https://azure.microsoft.com/blog/boost-your-network-security-with-new-updates-to-azure-firewall/) and [Azure Firewall with Availability Zones](https://docs.microsoft.com/azure/virtual-wan/virtual-wan-faq#how-are-availability-zones-and-resiliency-handled-in-virtual-wan)
 - ALZ Terraform module patch release [v2.0.2](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.2) - three minor bugs squashed 🐛 🐛 🐛 🥳
 
-### Policy
+#### Policy
 
 - *No updates, yet.*
 
-### Other
+#### Other
 
 - Published resources from the third Azure Landing Zones Community Call - held on the 2nd May 2022
   - Meeting recording and PowerPoint slides [published in Wiki](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
@@ -126,28 +124,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Improving experience as suggested in [issue 910](https://github.com/Azure/Enterprise-Scale/issues/910)
   - Customers wanting a single subscription for platform services should select the 'Single' option on the 'Azure Core Setup' blade
 
-### Policy
+#### Policy
 
 - Added new custom policy definition called `Deny vNet peering to non-approved vNets`
   - This is useful in scenarios where you only want to allow vNet peering to say a central hub vNet and not allow other vNet peerings between landing zones to be enabled.
 
-### Other
-
-- *No updates, yet.*
-
-### June 2022
-
-#### Docs
-
-- *No updates, yet.*
-
-#### Tooling
-
-- *No updates, yet.*
-
-#### Policy
-
-- Added `Deny-Private-Link-Private-DNS-Zones` - fixing [issue 707](https://github.com/Azure/Enterprise-Scale/issues/707)
 #### Other
 
 - *No updates, yet.*
