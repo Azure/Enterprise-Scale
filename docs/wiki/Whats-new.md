@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [July 2022](#july-2022)
   - [June 2022](#june-2022)
   - [May 2022](#may-2022)
   - [April 2022](#april-2022)
@@ -42,16 +43,36 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### July 2022
+
+#### Docs
+
+- Updated the ALZ Terraform module [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest fixes.
+
+#### Tooling
+
+- ALZ Terraform module hotfix release [v2.1.2](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.1.2), for regional private endpoint DNS zones
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### June 2022
 
 #### Docs
 
 - Updated the [Policies included in Enterprise-Scale Landing Zones](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) page.
+- Updated the ALZ Terraform module [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) with new examples and improved coverage of variable configuration.
 
 #### Tooling
 
 - Fixed [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979) by adding support for the additional Log Analytics Solutions of `SQLVulnerabilityAssessment` and `SQLAdvancedThreatProtection` to the Azure Landing Zone Accelerator (portal experience)
-- ALZ Terraform module minor release [v2.1.0], to provide feature parity on the fix for [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979)
+- ALZ Terraform module minor release [v2.1.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.1.0), to provide feature parity on the fix for [issue #979](https://github.com/Azure/Enterprise-Scale/issues/979)
+- ALZ Terraform module hotfix release [v2.1.1](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.1.1) (see release notes for more information).
 
 ### Policy
 
