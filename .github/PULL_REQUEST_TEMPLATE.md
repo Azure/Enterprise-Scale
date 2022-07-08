@@ -16,7 +16,13 @@ Replace this with a brief description of what this Pull Request fixes, changes, 
 
 ## Testing Evidence
 
+Please provide any testing evidence to show that your Pull Request works/fixes as described and planned (include screenshots, if appropriate).
+
 ### Testing URLs
+
+The below URLs can be updated where the placeholders are, look for `{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}` & `{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}`, to allow you to test your portal deployment experience.
+
+> Please also replace the curly brackets on the placeholders `{}`
 
 #### Azure Public
 
@@ -24,10 +30,6 @@ Replace this with a brief description of what this Pull Request fixes, changes, 
 
 #### Azure US Gov (Fairfax)
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.svg?sanitize=true)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2FYOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2FYOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2Ffairfaxeslz-portal.json)
-
-Please provide any testing evidence to show that your Pull Request works/fixes as described and planned (include screenshots, if appropriate).
-
-
 
 ## As part of this Pull Request I have
 
