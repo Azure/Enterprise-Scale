@@ -16,7 +16,18 @@ Replace this with a brief description of what this Pull Request fixes, changes, 
 
 ## Testing Evidence
 
+### Testing URLs
+
+#### Azure Public
+
+[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2Feslz-portal.json)
+
+#### Azure US Gov (Fairfax)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.svg?sanitize=true)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2FYOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2FYOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2Ffairfaxeslz-portal.json)
+
 Please provide any testing evidence to show that your Pull Request works/fixes as described and planned (include screenshots, if appropriate).
+
+
 
 ## As part of this Pull Request I have
 
