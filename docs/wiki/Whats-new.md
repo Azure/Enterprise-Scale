@@ -48,10 +48,20 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Updated the ALZ Terraform module [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest fixes.
+- Various updates to [CAF ALZ Docs](https://aka.ms/alz)
+  - Identity and Access Management
+  - Network Topology and Connectivity
+  - Management
+  - Platform Automation and DevOps
 
 #### Tooling
 
 - ALZ Terraform module hotfix release [v2.1.2](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.1.2), for regional private endpoint DNS zones
+- ALZ Bicep modules release [v0.9.2](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.9.1) released
+  - Added Landing Zone Management Group Children Flexibility
+  - Added Policy Assignments for Mooncake (Azure China)
+  - Fixed Azure Backup Private DNS Zone Geo Codes bug, fixing [issue #279](https://github.com/Azure/ALZ-Bicep/issues/279)
+- ALZ Accelerator (Portal Experience) updated to fix Azure Backup Private DNS Zone Geo Codes, fixing [issue #1004](https://github.com/Azure/Enterprise-Scale/issues/1004)
 
 ### Policy
 
