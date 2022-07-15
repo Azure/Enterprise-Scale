@@ -1,6 +1,6 @@
 # Deploy Policy assignment
 
-⚠️The content of this article has been moved to [here](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale#create-new-policy-assignment-for-validation)⚠️
+⚠️ The content of this article has been moved to [here](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale#create-new-policy-assignment-for-validation) ⚠️
 
 ## Next steps
 
