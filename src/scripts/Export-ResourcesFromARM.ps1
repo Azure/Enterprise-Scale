@@ -21,9 +21,9 @@
 
 [CmdletBinding(SupportsShouldProcess)]
 param (
-    [Parameter()][String]$AlzToolsPath = "$PWD/../Alz.Tools",
-    [Parameter()][String]$TargetPath = "$PWD/../resources",
-    [Parameter()][String]$SourcePath = "$PWD/../../eslzArm",
+    [Parameter()][String]$AlzToolsPath = "$PWD/src/Alz.Tools",
+    [Parameter()][String]$TargetPath = "$PWD/src/resources",
+    [Parameter()][String]$SourcePath = "$PWD/eslzArm",
     [Parameter()][String]$LineEnding = "unix",
     [Parameter()][Switch]$Reset,
     [Parameter()][Switch]$UpdateProviderApiVersions
