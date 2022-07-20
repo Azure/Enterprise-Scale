@@ -494,14 +494,19 @@ class ArmTemplateResource : ALZBase {
     }
 
     [String] GetFileName() {
-        $fileName = $this.GetFileName("")
+        $fileName = $this.GetFileName("", ".json", "Raw")
         return $fileName
     }
 
-    [String] GetFileName([String]$Prefix) {
-        $fileNameBase = $this.name.$([ArmTemplateResource]::GetFileNameCaseModifier)()
-        $fileNameBase = [ArmTemplateResource]::regexReplaceFileNameCharacters.Replace($fileNameBase, [ArmTemplateResource]::GetFileNameSubstituteCharacter)
-        $fileName = $Prefix + $fileNameBase
+    [String] GetFileName([String]$Prefix, [String]$Suffix, [ExportFormat]$ExportFormat) {
+        $fileName = "$($this.name)"
+        if ($ExportFormat -eq "Terraform") {
+            # Perform character substitution
+            $fileName = [ArmTemplateResource]::regexReplaceFileNameCharacters.Replace($fileName, [ArmTemplateResource]::GetFileNameSubstituteCharacter)
+            # Modify case
+            $fileName = $fileName.$([ArmTemplateResource]::GetFileNameCaseModifier)()
+        }
+        $fileName = $Prefix + $fileName + $Suffix
         return $fileName
     }
 

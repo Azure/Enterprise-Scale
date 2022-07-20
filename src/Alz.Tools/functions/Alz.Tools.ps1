@@ -297,7 +297,7 @@ function ConvertTo-LibraryArtifact {
         foreach ($item in $content | Where-Object { $_ }) {
             [PSCustomObject]@{
                 InputFilePath  = $inputFile.FullName
-                OutputFilePath = ($OutputPath + "/" + $item.GetFileName($FileNamePrefix) + $FileNameSuffix) -replace "//", "/"
+                OutputFilePath = ($OutputPath + "/" + $item.GetFileName($FileNamePrefix, $FileNameSuffix, $ExportFormat)) -replace "//", "/"
                 OutputTemplate = $item.Format($ExportFormat)
             }
         }
