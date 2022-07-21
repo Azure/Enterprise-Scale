@@ -95,22 +95,80 @@ $policySetDefinitionFilePaths = @(
 # missing, it will use the default value specified in the
 # defaultConfig object.
 $resourceConfigs = @()
-# Add Policy Definition source files to $resourceConfigs
+
+# Add AzureCloud Policy Definition source files to $resourceConfigs
 $resourceConfigs += $policyDefinitionFilePaths | ForEach-Object {
     [PsCustomObject]@{
-        inputPath          = $_
+        inputPath          = "$_"
         resourceTypeFilter = "Microsoft.Authorization/policyDefinitions"
         fileNamePrefix     = "Microsoft.Authorization/policyDefinitions/"
     }
 }
-# Add Policy Set Definition source files to $resourceConfigs
+# Add AzureCloud Policy Set Definition source files to $resourceConfigs
 $resourceConfigs += $policySetDefinitionFilePaths | ForEach-Object {
     [PsCustomObject]@{
-        inputPath          = $_
+        inputPath          = "$_"
         resourceTypeFilter = "Microsoft.Authorization/policySetDefinitions"
         fileNamePrefix     = "Microsoft.Authorization/policySetDefinitions/"
     }
 }
+
+# Add AzureChinaCloud Policy Definition source files to $resourceConfigs
+$resourceConfigs += $policyDefinitionFilePaths | ForEach-Object {
+    [PsCustomObject]@{
+        inputPath          = "$_/china"
+        resourceTypeFilter = "Microsoft.Authorization/policyDefinitions"
+        fileNamePrefix     = "Microsoft.Authorization/policyDefinitions/"
+        fileNameSuffix     = ".AzureChinaCloud.json"
+    }
+}
+# Add AzureChinaCloud Policy Set Definition source files to $resourceConfigs
+$resourceConfigs += $policySetDefinitionFilePaths | ForEach-Object {
+    [PsCustomObject]@{
+        inputPath          = "$_/china"
+        resourceTypeFilter = "Microsoft.Authorization/policySetDefinitions"
+        fileNamePrefix     = "Microsoft.Authorization/policySetDefinitions/"
+        fileNameSuffix     = ".AzureChinaCloud.json"
+    }
+}
+
+# Add AzureUSGovernment Policy Definition source files to $resourceConfigs
+$resourceConfigs += $policyDefinitionFilePaths | ForEach-Object {
+    [PsCustomObject]@{
+        inputPath          = "$_/gov"
+        resourceTypeFilter = "Microsoft.Authorization/policyDefinitions"
+        fileNamePrefix     = "Microsoft.Authorization/policyDefinitions/"
+        fileNameSuffix     = ".AzureUSGovernment.json"
+    }
+}
+# Add AzureUSGovernment Policy Set Definition source files to $resourceConfigs
+$resourceConfigs += $policySetDefinitionFilePaths | ForEach-Object {
+    [PsCustomObject]@{
+        inputPath          = "$_/gov"
+        resourceTypeFilter = "Microsoft.Authorization/policySetDefinitions"
+        fileNamePrefix     = "Microsoft.Authorization/policySetDefinitions/"
+        fileNameSuffix     = ".AzureUSGovernment.json"
+    }
+}
+
+# Add AzureGermanCloud Policy Definition source files to $resourceConfigs
+# $resourceConfigs += $policyDefinitionFilePaths | ForEach-Object {
+#     [PsCustomObject]@{
+#         inputPath          = "$_/germany"
+#         resourceTypeFilter = "Microsoft.Authorization/policyDefinitions"
+#         fileNamePrefix     = "Microsoft.Authorization/policyDefinitions/"
+#         fileNameSuffix     = ".AzureGermanCloud.json"
+#     }
+# }
+# Add AzureGermanCloud Policy Set Definition source files to $resourceConfigs
+# $resourceConfigs += $policySetDefinitionFilePaths | ForEach-Object {
+#     [PsCustomObject]@{
+#         inputPath          = "$_/germany"
+#         resourceTypeFilter = "Microsoft.Authorization/policySetDefinitions"
+#         fileNamePrefix     = "Microsoft.Authorization/policySetDefinitions/"
+#         fileNameSuffix     = ".AzureGermanCloud.json"
+#     }
+# }
 
 # If the -Reset parameter is set, delete all existing
 # artefacts (by resource type) from the library
