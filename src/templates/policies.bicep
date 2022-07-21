@@ -14,9 +14,6 @@ var scope = tenantResourceId('Microsoft.Management/managementGroups', topLevelMa
 var cloudEnv = environment().name
 
 // Default deployment locations used in templates
-// POSSIBLE BUG: NEEDS FURTHER CONSIDERATION
-// SHOULD ONLY USE SINGLE LOCATION IN SOURCE TEMPLATES
-// REGEX BASED REPLACE WOULD REALLY HELP HERE
 var defaultDeploymentLocationByCloudType = {
   AzureCloud: 'northeurope'
   AzureChinaCloud: 'chinaeast2'
