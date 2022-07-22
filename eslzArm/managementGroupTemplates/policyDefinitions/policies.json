@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.8.9.13224",
-      "templateHash": "4810146334630543430"
+      "templateHash": "4183314761453569912"
     }
   },
   "parameters": {
@@ -20,7 +20,17 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "[deployment().location]"
+      "defaultValue": "[deployment().location]",
+      "metadata": {
+        "description": "Optionally set the deployment location for policies with Deploy If Not Exists effect. DEFAULT VALUE = \"deployment().location\""
+      }
+    },
+    "scope": {
+      "type": "string",
+      "defaultValue": "[tenantResourceId('Microsoft.Management/managementGroups', parameters('topLevelManagementGroupPrefix'))]",
+      "metadata": {
+        "description": "Optionally set the scope for custom Policy Definitions used in Policy Set Definitions (Initiatives). Must be one of '/', '/subscriptions/id' or '/providers/Microsoft.Management/managementGroups/id'. DEFAULT VALUE = '/providers/Microsoft.Management/managementGroups/${topLevelManagementGroupPrefix}'"
+      }
     }
   },
   "variables": {
@@ -183,22 +193,22 @@
       {
         "name": "processPolicySetDefinitionsAll",
         "count": "[length(variables('loadPolicySetDefinitions').All)]",
-        "input": "[replace(variables('loadPolicySetDefinitions').All[copyIndex('processPolicySetDefinitionsAll')], variables('templateVars').scope, variables('scope'))]"
+        "input": "[replace(variables('loadPolicySetDefinitions').All[copyIndex('processPolicySetDefinitionsAll')], variables('templateVars').scope, parameters('scope'))]"
       },
       {
         "name": "processPolicySetDefinitionsAzureCloud",
         "count": "[length(variables('loadPolicySetDefinitions').AzureCloud)]",
-        "input": "[replace(variables('loadPolicySetDefinitions').AzureCloud[copyIndex('processPolicySetDefinitionsAzureCloud')], variables('templateVars').scope, variables('scope'))]"
+        "input": "[replace(variables('loadPolicySetDefinitions').AzureCloud[copyIndex('processPolicySetDefinitionsAzureCloud')], variables('templateVars').scope, parameters('scope'))]"
       },
       {
         "name": "processPolicySetDefinitionsAzureChinaCloud",
         "count": "[length(variables('loadPolicySetDefinitions').AzureChinaCloud)]",
-        "input": "[replace(variables('loadPolicySetDefinitions').AzureChinaCloud[copyIndex('processPolicySetDefinitionsAzureChinaCloud')], variables('templateVars').scope, variables('scope'))]"
+        "input": "[replace(variables('loadPolicySetDefinitions').AzureChinaCloud[copyIndex('processPolicySetDefinitionsAzureChinaCloud')], variables('templateVars').scope, parameters('scope'))]"
       },
       {
         "name": "processPolicySetDefinitionsAzureUSGovernment",
         "count": "[length(variables('loadPolicySetDefinitions').AzureUSGovernment)]",
-        "input": "[replace(variables('loadPolicySetDefinitions').AzureUSGovernment[copyIndex('processPolicySetDefinitionsAzureUSGovernment')], variables('templateVars').scope, variables('scope'))]"
+        "input": "[replace(variables('loadPolicySetDefinitions').AzureUSGovernment[copyIndex('processPolicySetDefinitionsAzureUSGovernment')], variables('templateVars').scope, parameters('scope'))]"
       },
       {
         "name": "policyDefinitionsAll",
@@ -241,7 +251,6 @@
         "input": "[json(variables('processPolicySetDefinitionsAzureUSGovernment')[copyIndex('policySetDefinitionsAzureUSGovernment')])]"
       }
     ],
-    "scope": "[tenantResourceId('Microsoft.Management/managementGroups', parameters('topLevelManagementGroupPrefix'))]",
     "cloudEnv": "[environment().name]",
     "defaultDeploymentLocationByCloudType": {
       "AzureCloud": "northeurope",
