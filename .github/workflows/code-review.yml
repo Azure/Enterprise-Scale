@@ -1,0 +1,58 @@
+---
+name: Code Review
+
+##########################################
+# Start the job on push for all branches #
+##########################################
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches-ignore:
+      - main
+      - release/**
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+###############
+# Set the Job #
+###############
+jobs:
+  super-linter:
+    name: Super Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Lint src directory
+        uses: docker://github/super-linter:v4.9.5
+        env:
+          # Lint all code
+          VALIDATE_ALL_CODEBASE: true
+          # Need to define main branch as default
+          # is set to master in super-linter
+          DEFAULT_BRANCH: main
+          # Enable setting the status of each individual linter
+          # run in the Checks section of a pull request
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Only the following files will be linted:
+          FILTER_REGEX_INCLUDE: .*src\/.*
+          FILTER_REGEX_EXCLUDE: .*src\/.*\/(Deploy-Diagnostics-Firewall\.json|Deploy-FirewallPolicy\.json)
+          # The following linter types will be enabled:
+          VALIDATE_ARM: true
+          VALIDATE_BASH: true
+          VALIDATE_BASH_EXEC: true
+          VALIDATE_JSON: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_POWERSHELL: true
+          VALIDATE_YAML: true
+          # Additional settings:
+          # If a shell script is not executable, the bash-exec
+          # linter will report an error when set to true
+          ERROR_ON_MISSING_EXEC_BIT: true

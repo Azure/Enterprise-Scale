@@ -11,6 +11,7 @@ using module "../Alz.Classes/"
 # PSScriptAnalyzer tests against known exceptions as per:
 # https://github.com/powershell/psscriptanalyzer#suppressing-rules
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Function targets multiple line endings', Scope = 'Function', Target = 'Edit-LineEndings')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Function does not change system state', Scope = 'Function', Target = 'Remove-Escaping')]
 param ()
 
 #######################################
@@ -258,7 +259,7 @@ function ConvertTo-ArmTemplateResource {
         [Parameter()][ExportFormat]$ExportFormat = "Raw",
         [Parameter()][Switch]$AsJson
     )
-   
+
     $content = ProcessFile `
         -FilePath $FilePath `
         -ExportFormat $ExportFormat
@@ -271,7 +272,6 @@ function ConvertTo-ArmTemplateResource {
     else {
         return $output
     }
-
 
 }
 
