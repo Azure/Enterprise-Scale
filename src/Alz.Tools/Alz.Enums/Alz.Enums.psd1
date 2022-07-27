@@ -90,8 +90,8 @@
 
     # List of all files packaged with this module
     FileList             = @(
-        './Alz.Enums.psd1'
-        './Alz.Enums.psm1'
+        'Alz.Enums.psd1'
+        'Alz.Enums.psm1'
     )
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.

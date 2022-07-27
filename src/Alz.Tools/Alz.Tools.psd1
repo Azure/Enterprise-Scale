@@ -69,8 +69,8 @@
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     NestedModules        = @(
-        @{ModuleName = 'Alz.Enums'; ModuleVersion = '1.0.0'; GUID = 'bccc040b-857d-4ae8-bebf-31dd454e4855' }
-        @{ModuleName = 'Alz.Classes'; ModuleVersion = '1.0.0'; GUID = '14f47ea8-53df-4b13-b7b4-73ecda225c0a' }
+        @{ModuleName = 'Alz.Enums/Alz.Enums'; ModuleVersion = '1.0.0'; GUID = 'bccc040b-857d-4ae8-bebf-31dd454e4855' }
+        @{ModuleName = 'Alz.Classes/Alz.Classes'; ModuleVersion = '1.0.0'; GUID = '14f47ea8-53df-4b13-b7b4-73ecda225c0a' }
     )
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
@@ -105,13 +105,14 @@
 
     # List of all files packaged with this module
     FileList             = @(
-        './Alz.Enum/Alz.Enum.psd1'
-        './Alz.Enum/Alz.Enum.psm1'
-        './Alz.Classes/Alz.Classes.psd1'
-        './Alz.Classes/Alz.Classes.psm1'
-        './functions/Alz.Tools.ps1'
-        './Alz.Tools.psd1'
-        './Alz.Tools.psm1'
+        'Alz.Enums/Alz.Enum.psd1'
+        'Alz.Enums/Alz.Enum.psm1'
+        'Alz.Classes/Alz.Classes.psd1'
+        'Alz.Classes/Alz.Classes.psm1'
+        'functions/Alz.Tools.ps1'
+        'scripts/Update-ProviderApiVersionsZip.ps1'
+        'Alz.Tools.psd1'
+        'Alz.Tools.psm1'
     )
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
