@@ -271,6 +271,7 @@ var policyDefinitions = concat(policyDefinitionsByCloudType.All, policyDefinitio
 // The following var is used to extract the Policy Set Definitions into a single list for deployment
 var policySetDefinitions = concat(policySetDefinitionsByCloudType.All, policySetDefinitionsByCloudType[cloudEnv])
 
+// Create the Policy Definitions as needed for the target cloud environment
 resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2020-09-01' = [for policy in policyDefinitions: {
   name: policy.name
   properties: {
@@ -284,9 +285,11 @@ resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2020-09-01
   }
 }]
 
+// Create the Policy Definitions as needed for the target cloud environment
+// Depends on Policy Definitons to ensure they exist before creating dependent Policy Set Definitions (Initiatives)
 resource PolicySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2020-09-01' = [for policy in policySetDefinitions: {
   dependsOn: [
-    PolicyDefinitions // Must wait for policy definitons to be deployed before starting the creation of Policy Set/Initiative Defininitions
+    PolicyDefinitions
   ]
   name: policy.name
   properties: {
