@@ -26,6 +26,7 @@ env:
 ###############
 # Set the Job #
 ###############
+
 jobs:
   update-portal:
     name: Update Portal Experience
@@ -39,7 +40,9 @@ jobs:
 
       - name: Configure local git
         run: |
+          echo "git user name  : $github_user_name"
           git config --global user.name "$github_user_name"
+          echo "git user email : $github_email"
           git config --global user.email "$github_email"
  
       - name: Update policies
@@ -47,7 +50,28 @@ jobs:
 
       - name: Stage and push changes
         run: |
-          if [ ! "$(git status -s)" ]; then exit 0; fi
-          git add ./eslzArm
-          git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
-          git push origin
+          echo "==> Stage changes..."
+          mapfile -t STATUS_LOG < <(git status --short | grep baseline_values.json)
+          if [ ${#STATUS_LOG[@]} -gt 0 ]; then
+              echo "Found changes to the following files:"
+              printf "%s\n" "${STATUS_LOG[@]}"
+              git add --all ./eslzArm
+          else
+              echo "No changes to add."
+          fi
+
+          echo "==> Check git diff..."
+          mapfile -t GIT_DIFF < <(git diff --cached)
+          printf "%s\n" "${GIT_DIFF[@]}"
+
+          if [ ${#GIT_DIFF[@]} -gt 0 ]; then
+
+              echo "==> Commit changes..."
+              git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+
+              echo "==> Push changes..."
+              git push
+
+          else
+              echo "No changes found."
+          fi
