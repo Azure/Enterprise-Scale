@@ -105,13 +105,13 @@
 
     # List of all files packaged with this module
     FileList             = @(
-        '.\Alz.Enum\Alz.Enum.psd1'
-        '.\Alz.Enum\Alz.Enum.psm1'
-        '.\Alz.Classes\Alz.Classes.psd1'
-        '.\Alz.Classes\Alz.Classes.psm1'
-        '.\functions\Alz.Tools.ps1'
-        '.\Alz.Tools.psd1'
-        '.\Alz.Tools.psm1'
+        './Alz.Enum/Alz.Enum.psd1'
+        './Alz.Enum/Alz.Enum.psm1'
+        './Alz.Classes/Alz.Classes.psd1'
+        './Alz.Classes/Alz.Classes.psm1'
+        './functions/Alz.Tools.ps1'
+        './Alz.Tools.psd1'
+        './Alz.Tools.psm1'
     )
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
