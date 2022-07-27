@@ -1,0 +1,44 @@
+---
+name: Update ALZ Tools
+
+##########################################
+# Start the job on push for all branches #
+##########################################
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: '0 5 0 0 SUN'
+  workflow_dispatch: {}
+
+env:
+  github_user_name: "github-actions"
+  github_email: "github-actions@github.com"
+  github_commit_message: "Auto-update ALZ.Tools"
+
+###############
+# Set the Job #
+###############
+jobs:
+  update-alz-tools:
+    name: Update ALZ Tools
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Configure local git
+        run: |
+          git config --global user.name "$github_user_name"
+          git config --global user.email "$github_email"
+ 
+      - name: Update ProviderApiVersions
+        run: src/Alz.Tools/scripts/Update-ProviderApiVersionsZip.ps1
+
+      - name: Stage and push changes
+        run: |
+          if [ ! "$(git status -s)" ]; then exit 0; fi
+          git add ./src/Alz.Tools/
+          git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+          git push origin

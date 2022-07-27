@@ -1,0 +1,51 @@
+---
+name: Update Portal Experience
+
+##########################################
+# Start the job on push for all branches #
+##########################################
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    types:
+      - edited
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - "src/**.json"
+      - "src/**.bicep"
+  workflow_dispatch: {}
+
+env:
+  github_user_name: "github-actions"
+  github_email: "github-actions@github.com"
+  github_commit_message: "Auto-update Portal templates"
+
+###############
+# Set the Job #
+###############
+jobs:
+  update-portal:
+    name: Update Portal Experience
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Configure local git
+        run: |
+          git config --global user.name "$github_user_name"
+          git config --global user.email "$github_email"
+ 
+      - name: Update policies
+        run: bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json
+
+      - name: Stage and push changes
+        run: |
+          if [ ! "$(git status -s)" ]; then exit 0; fi
+          git add ./eslzArm
+          git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+          git push origin
