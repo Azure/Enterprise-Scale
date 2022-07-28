@@ -22,6 +22,7 @@ env:
   github_user_name: 'github-actions'
   github_email: 'github-actions@github.com'
   github_commit_message: 'Auto-update ALZ.Tools'
+  github_pr_number: ${{ github.event.pull_request.number }}
 
 ###############
 # Set the Job #
@@ -39,7 +40,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Show env
-        run: env | sort
+        run: env | sort          
 
       - name: Configure local git
         run: |
@@ -52,6 +53,7 @@ jobs:
         run: bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json
 
       - name: Stage and push changes
+        uses: actions/checkout@v3
         run: |
           echo "==> Stage changes..."
           mapfile -t STATUS_LOG < <(git status --short | grep eslzArm/)
@@ -73,6 +75,9 @@ jobs:
               git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
 
               echo "==> Push changes..."
+              # PR_USER=$(gh pr view "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" --json headRepositoryOwner --jq ".headRepositoryOwner.login")
+              # PR_REPO=$(gh pr view "$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" --json headRepository --jq ".headRepository.name")
+              # echo "Pushing changes to: $PR_USER/$PR_REPO"
               git push
 
           else
