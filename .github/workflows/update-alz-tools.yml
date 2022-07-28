@@ -52,9 +52,33 @@ jobs:
           inlineScript: src/Alz.Tools/scripts/Update-ProviderApiVersionsZip.ps1
           azPSVersion: "latest"
 
-      - name: Stage and push changes
+      - name: Stage changes
         run: |
-          if [ ! "$(git status -s)" ]; then exit 0; fi
-          git add ./src/Alz.Tools/
-          git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
-          git push origin
+          echo "==> Stage changes..."
+          mapfile -t STATUS_LOG < <(git status --short | grep src/Alz.Tools/)
+          if [ ${#STATUS_LOG[@]} -gt 0 ]; then
+              echo "Found changes to the following files:"
+              printf "%s\n" "${STATUS_LOG[@]}"
+              git add --all ./src/Alz.Tools/
+          else
+              echo "No changes to add."
+          fi
+
+      - name: Push changes
+        run: |
+          echo "==> Check git diff..."
+          mapfile -t GIT_DIFF < <(git diff --cached)
+          printf "%s\n" "${GIT_DIFF[@]}"
+
+          if [ ${#GIT_DIFF[@]} -gt 0 ]; then
+
+              echo "==> Commit changes..."
+              git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+
+              echo "==> Push changes..."
+              echo "Pushing changes to: $GITHUB_REPOSITORY [$GITHUB_HEAD_REF]"
+              git push origin HEAD:"$GITHUB_HEAD_REF"
+
+          else
+              echo "No changes found."
+          fi

@@ -21,7 +21,7 @@ on:
 env:
   github_user_name: 'github-actions'
   github_email: '41898282+github-actions[bot]@users.noreply.github.com'
-  github_commit_message: 'Auto-update ALZ.Tools'
+  github_commit_message: 'Auto-update Portal experience'
 
 ###############
 # Set the Job #
@@ -38,9 +38,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Show env
-        run: env | sort          
-
       - name: Configure local git
         run: |
           echo "git user name  : $github_user_name"
@@ -51,7 +48,7 @@ jobs:
       - name: Update policies
         run: bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json
 
-      - name: Stage and push changes
+      - name: Stage changes
         run: |
           echo "==> Stage changes..."
           mapfile -t STATUS_LOG < <(git status --short | grep eslzArm/)
@@ -63,6 +60,8 @@ jobs:
               echo "No changes to add."
           fi
 
+      - name: Push changes
+        run: |
           echo "==> Check git diff..."
           mapfile -t GIT_DIFF < <(git diff --cached)
           printf "%s\n" "${GIT_DIFF[@]}"
