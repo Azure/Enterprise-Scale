@@ -373,22 +373,29 @@ function Register-AzureSubscription {
         [Parameter()][Switch]$SetAddressPrefix
     )
 
+    $aliasesApiVersion = [ProviderApiVersions]::GetLatestStableByType("Microsoft.Subscription/aliases")
     $subscriptions = @()
     foreach ($subscriptionName in $Alias) {
-        $subscription = New-AzSubscriptionAlias `
-            -AliasName $subscriptionName `
-            -SubscriptionName $subscriptionName `
-            -BillingScope $BillingScope `
-            -Workload $Workload
-        $subscriptions += $subscription
-        Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.Id)]" -InformationAction Continue
+        $requestPath = "/providers/Microsoft.Subscription/aliases/$($subscriptionName)?api-version=$($aliasesApiVersion)"
+        $requestMethod = "PUT"
+        $requestBody = @{
+            properties = @{
+                displayName          = $subscriptionName
+                billingScope         = $BillingScope
+                workload             = $Workload
+                additionalProperties = @{}
+            }
+        } | ConvertTo-Json -Depth $jsonDepth
+        $aliasResponse = Invoke-AzRestMethod -Method $requestMethod -Path $requestPath -Payload $requestBody
+        $subscriptions += $aliasResponse.Content | ConvertFrom-Json
+        Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.properties.subscriptionId)]" -InformationAction Continue
     }
 
     if ($SetParentManagementGroup) {
         foreach ($subscription in $subscriptions) {
             $scope = $regex_subscriptionAlias.Matches($subscription.Name)[0].Groups['scope'].Value
             Write-Information "Set parent management group : $($subscription.Name) [$scope]" -InformationAction Continue
-            $subscription | Add-Member -Type NoteProperty -Name ParentManagementGroup -Value $scope
+            $subscription | Add-Member -Type NoteProperty -Name parentManagementGroup -Value $scope
         }
     }
 
@@ -406,7 +413,7 @@ function Register-AzureSubscription {
             }
             $addressPrefix = "10.$secondOctet.0.0/24"
             Write-Information "Set address prefix : $($subscription.Name) [$addressPrefix]" -InformationAction Continue
-            $subscription | Add-Member -Type NoteProperty -Name AddressPrefix -Value $addressPrefix
+            $subscription | Add-Member -Type NoteProperty -Name addressPrefix -Value $addressPrefix
         }
     }
 

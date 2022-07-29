@@ -55,8 +55,8 @@
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules      = @(
         @{
-            ModuleName    = 'Az.Subscription'
-            ModuleVersion = '0.8.0'
+            ModuleName    = 'Az.Accounts'
+            ModuleVersion = '2.2.3'
         }
     )
 
