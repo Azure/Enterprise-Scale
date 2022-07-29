@@ -55,16 +55,11 @@ jobs:
           inlineScript: Install-Module -Name Az.Subscription -Force
           azPSVersion: "latest"
 
-      - name: Import Alz.Tools
-        uses: azure/powershell@v1
-        with:
-          inlineScript: Import-Module ./src/Alz.Tools/
-          azPSVersion: "latest"
-
       - name: Register subscriptions
         uses: azure/powershell@v1
         with:
           inlineScript: |
+            Import-Module ./src/Alz.Tools/
             $subscriptionAliases = @(
               "csu-portal-connectivity-100"
               "csu-portal-identity-110"
@@ -75,7 +70,10 @@ jobs:
               "csu-portal-online-211"
               "csu-portal-online-212"
             )
-            $subscriptionsJson = Register-AzureSubscriptions -Alias $subscriptionAliases | ConvertTo-Json -Depth 10
+            $subscriptionsJson = Register-AzureSubscriptions `
+              -Alias $subscriptionAliases `
+              -BillingScope $env:BILLING_SCOPE |
+              ConvertTo-Json -Depth 10
             echo "::set-env name=SUBSCRIPTIONS_JSON::$subscriptionsJson"
           azPSVersion: "latest"
 
