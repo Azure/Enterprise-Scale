@@ -374,13 +374,13 @@ function Register-AzureSubscription {
     )
 
     $subscriptions = @()
-    foreach ($alias in $subscriptionAliases) {
+    foreach ($subscriptionName in $Alias) {
         $subscription = New-AzSubscriptionAlias `
-            -AliasName $alias `
+            -AliasName $subscriptionName `
             -BillingScope $BillingScope `
             -Workload $Workload
         $subscriptions += $subscription
-        Write-Information "Created new Subscription Alias : $($alias) [$($subscription.Id)]" -InformationAction Continue
+        Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.Id)]" -InformationAction Continue
     }
 
     if ($SetParentManagementGroup) {
