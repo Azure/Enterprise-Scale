@@ -363,11 +363,10 @@ function Export-LibraryArtifact {
     }
 }
 
-function Register-AzureSubscriptions {
+function Register-AzureSubscription {
     [CmdletBinding()]
     param (
         [Parameter()][String[]]$Alias,
-        [Parameter()][String[]]$SubscriptionId,
         [Parameter()][String]$BillingScope,
         [Parameter()][String]$Workload = "Production",
         [Parameter()][Switch]$SetParentManagementGroup,
