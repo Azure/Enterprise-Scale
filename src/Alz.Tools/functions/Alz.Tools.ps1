@@ -378,8 +378,7 @@ function Register-AzureSubscription {
         $subscription = New-AzSubscriptionAlias `
             -AliasName $alias `
             -BillingScope $BillingScope `
-            -Workload $Workload `
-            -WhatIf:$WhatIfPreference
+            -Workload $Workload
         $subscriptions += $subscription
         Write-Information "Created new Subscription Alias : $($alias) [$($subscription.Id)]" -InformationAction Continue
     }
