@@ -387,14 +387,15 @@ function Register-AzureSubscription {
             }
         } | ConvertTo-Json -Depth $jsonDepth
         $aliasResponse = Invoke-AzRestMethod -Method $requestMethod -Path $requestPath -Payload $requestBody
-        $subscriptions += $aliasResponse.Content | ConvertFrom-Json
+        $subscription = $aliasResponse.Content | ConvertFrom-Json
+        $subscriptions += $subscription
         Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.properties.subscriptionId)]" -InformationAction Continue
     }
 
     if ($SetParentManagementGroup) {
         foreach ($subscription in $subscriptions) {
-            $scope = $regex_subscriptionAlias.Matches($subscription.Name)[0].Groups['scope'].Value
-            Write-Information "Set parent management group : $($subscription.Name) [$scope]" -InformationAction Continue
+            $scope = $regex_subscriptionAlias.Matches($subscription.name)[0].Groups['scope'].Value
+            Write-Information "Set parent management group : $($subscription.name) [$scope]" -InformationAction Continue
             $subscription | Add-Member -Type NoteProperty -Name parentManagementGroup -Value $scope
         }
     }
@@ -403,7 +404,7 @@ function Register-AzureSubscription {
         $secondOctetFallback = 100
         $secondOctetLog = @()
         foreach ($subscription in $subscriptions) {
-            $secondOctetValue = $regex_subscriptionAlias.Matches($subscription.Name)[0].Groups['secondOctet'].Value
+            $secondOctetValue = $regex_subscriptionAlias.Matches($subscription.name)[0].Groups['secondOctet'].Value
             $secondOctet = [string]::IsNullOrEmpty($secondOctetValue) ? $secondOctetFallback : $secondOctetValue
             if ($secondOctet -in $secondOctetLog) {
                 throw "Overlapping address space (at secondOctet) detected."
@@ -412,7 +413,7 @@ function Register-AzureSubscription {
                 $secondOctetFallback += 10
             }
             $addressPrefix = "10.$secondOctet.0.0/24"
-            Write-Information "Set address prefix : $($subscription.Name) [$addressPrefix]" -InformationAction Continue
+            Write-Information "Set address prefix : $($subscription.name) [$addressPrefix]" -InformationAction Continue
             $subscription | Add-Member -Type NoteProperty -Name addressPrefix -Value $addressPrefix
         }
     }
