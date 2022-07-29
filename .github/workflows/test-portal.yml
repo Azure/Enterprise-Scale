@@ -1,0 +1,101 @@
+---
+name: Test Portal Experience
+
+##########################################
+# Start the job on push for all branches #
+##########################################
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: '0 5 * * 0'
+  workflow_dispatch: {}
+
+env:
+  github_base_url: ${{ github.event.pull_request.base.html_url }}
+  github_commit_id: ${{ github.event.pull_request.head.sha }}
+  github_workflow_run_id: ${{ github.event.workflow_run.id }}
+
+permissions:
+  contents: read
+  id-token: write
+
+###############
+# Set the Job #
+###############
+jobs:
+  test-portal:
+    name: Test Portal Experience
+    runs-on: ubuntu-latest
+    environment: csu-rw
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+ 
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Import Alz.Tools
+        uses: azure/powershell@v1
+        with:
+          inlineScript: Import-Module -Path ./src/Alz.Tools/
+          azPSVersion: "latest"
+
+      - name: Register subscriptions
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $subscriptionAliases = @(
+              "csu-portal-connectivity-100"
+              "csu-portal-identity-110"
+              "csu-portal-management-120"
+              "csu-portal-corp-201"
+              "csu-portal-corp-202"
+              "csu-portal-corp-203"
+              "csu-portal-online-211"
+              "csu-portal-online-212"
+            )
+            $subscriptionsJson = Register-AzureSubscriptions -Alias $subscriptionAliases | ConvertTo-Json -Depth 10
+            echo "::set-env name=SUBSCRIPTIONS_JSON::$subscriptionsJson"
+          azPSVersion: "latest"
+
+      - name: Deploy eslzArm.json
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $rootId = "$($env:GITHUB_WORKFLOW_RUN_ID)".Substring(0,$((@($env:GITHUB_WORKFLOW_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
+            $subscriptions = $env:SUBSCRIPTIONS_JSON | ConvertFrom-Json
+            $connectivitySubscriptionId = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "connectivity")[0].Id
+            $connectivityAddressPrefix = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "connectivity")[0].AddressPrefix
+            $identitySubscriptionId = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "identity")[0].Id
+            $identityAddressPrefix = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "identity")[0].AddressPrefix
+            $managementSubscriptionId = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "management")[0].Id
+            $corpLzSubscriptionId = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "corp").Id
+            $onlineLzSubscriptionId = ($subscriptions | Where-Object -Property "ParentManagementGroup" -EQ "online").Id
+            $templateUri = "$($env:GITHUB_BASE_URL)/commit/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.json"
+            $templateParameterUri = "$($env:GITHUB_BASE_URL)/commit/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.test.param.json"
+            $deployment = New-AzTenantDeployment `
+              -Name "$rootId" `
+              -Location "$($env:DEPLOYMENT_LOCATION)" `
+              -TemplateUri "$templateUri" `
+              -TemplateParameterUri "$templateParameterUri" `
+              -enterpriseScaleCompanyPrefix "$rootId" `
+              -managementSubscriptionId "$managementSubscriptionId" `
+              -connectivitySubscriptionId "$connectivitySubscriptionId" `
+              -connectivityLocation "$($env:DEPLOYMENT_LOCATION)" `
+              -addressPrefix "$connectivityAddressPrefix" `
+              -identitySubscriptionId "$identitySubscriptionId" `
+              -identityAddressPrefix "$identityAddressPrefix" `
+              -corpLzSubscriptionId "$corpLzSubscriptionId" `
+              -onlineLzSubscriptionId "$onlineLzSubscriptionId" `
+              -WhatIf
+            if ($deployment.ProvisioningState -ne "Succeeded") {
+              throw "Provisioning failed... check activity and deployment logs in Azure for more information."
+            }
+          azPSVersion: "latest"
