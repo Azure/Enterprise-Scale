@@ -377,6 +377,7 @@ function Register-AzureSubscription {
     foreach ($subscriptionName in $Alias) {
         $subscription = New-AzSubscriptionAlias `
             -AliasName $subscriptionName `
+            -SubscriptionName $subscriptionName `
             -BillingScope $BillingScope `
             -Workload $Workload
         $subscriptions += $subscription
