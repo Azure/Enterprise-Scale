@@ -24,6 +24,7 @@ param ()
 [Regex]$regex_schema_managementGroupDeploymentTemplate = "http[s]?:\/\/schema\.management\.azure\.com\/schemas\/([0-9-]{10})\/managementGroupDeploymentTemplate\.json#"
 [Regex]$regex_firstLeftSquareBrace = "(?<=`")(\[)"
 [Regex]$regex_escapedLeftSquareBrace = "(?<=`")(\[\[)"
+[Regex]$regex_subscriptionAlias = "(?<prefix>[\w-]+?)-(?<scope>\w+)-?(?<secondOctet>[1-2]?[0-9]?[0-9])?$"
 
 [String[]]$allowedResourceTypes = @(
     "Microsoft.Authorization/policyAssignments"
@@ -360,4 +361,56 @@ function Export-LibraryArtifact {
             Write-Verbose $libraryArtifactMessage
         }
     }
+}
+
+function Register-AzureSubscriptions {
+    [CmdletBinding()]
+    param (
+        [Parameter()][String[]]$Alias,
+        [Parameter()][String[]]$SubscriptionId,
+        [Parameter()][String]$BillingScope,
+        [Parameter()][String]$Workload = "Production",
+        [Parameter()][Switch]$SetParentManagementGroup,
+        [Parameter()][Switch]$SetAddressPrefix
+    )
+
+    $subscriptions = @()
+    foreach ($alias in $subscriptionAliases) {
+        $subscription = New-AzSubscriptionAlias `
+            -AliasName $alias `
+            -BillingScope $BillingScope `
+            -Workload $Workload `
+            -WhatIf:$WhatIfPreference
+        $subscriptions += $subscription
+        Write-Information "Created new Subscription Alias : $($alias) [$($subscription.Id)]" -InformationAction Continue
+    }
+
+    if ($SetParentManagementGroup) {
+        foreach ($subscription in $subscriptions) {
+            $scope = $regex_subscriptionAlias.Matches($subscription.Name)[0].Groups['scope'].Value
+            Write-Information "Set parent management group : $($subscription.Name) [$scope]" -InformationAction Continue
+            $subscription | Add-Member -Type NoteProperty -Name ParentManagementGroup -Value $scope
+        }
+    }
+
+    if ($SetAddressPrefix) {
+        $secondOctetFallback = 100
+        $secondOctetLog = @()
+        foreach ($subscription in $subscriptions) {
+            $secondOctetValue = $regex_subscriptionAlias.Matches($subscription.Name)[0].Groups['secondOctet'].Value
+            $secondOctet = [string]::IsNullOrEmpty($secondOctetValue) ? $secondOctetFallback : $secondOctetValue
+            if ($secondOctet -in $secondOctetLog) {
+                throw "Overlapping address space (at secondOctet) detected."
+            }
+            if ($secondOctet -in $secondOctetFallback) {
+                $secondOctetFallback += 10
+            }
+            $addressPrefix = "10.$secondOctet.0.0/24"
+            Write-Information "Set address prefix : $($subscription.Name) [$addressPrefix]" -InformationAction Continue
+            $subscription | Add-Member -Type NoteProperty -Name AddressPrefix -Value $addressPrefix
+        }
+    }
+
+    return $subscriptions
+
 }
