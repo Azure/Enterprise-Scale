@@ -388,7 +388,6 @@ function Register-AzureSubscription {
             }
         } | ConvertTo-Json -Depth $jsonDepth
         $aliasResponse = Invoke-AzRestMethod -Method $requestMethod -Path $requestPath -Payload $requestBody
-        Write-Information "$($aliasResponse.Content)" -InformationAction Continue
         $subscription = $aliasResponse.Content | ConvertFrom-Json
         $subscriptions += $subscription
         Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.properties.subscriptionId)]" -InformationAction Continue
