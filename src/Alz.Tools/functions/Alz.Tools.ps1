@@ -374,6 +374,7 @@ function Register-AzureSubscription {
     )
 
     $aliasesApiVersion = [ProviderApiVersions]::GetLatestStableByType("Microsoft.Subscription/aliases")
+    Write-Information "Set Subscription Alias API Version : $($aliasesApiVersion)" -InformationAction Continue
     $subscriptions = @()
     foreach ($subscriptionName in $Alias) {
         $requestPath = "/providers/Microsoft.Subscription/aliases/$($subscriptionName)?api-version=$($aliasesApiVersion)"
@@ -387,6 +388,7 @@ function Register-AzureSubscription {
             }
         } | ConvertTo-Json -Depth $jsonDepth
         $aliasResponse = Invoke-AzRestMethod -Method $requestMethod -Path $requestPath -Payload $requestBody
+        $aliasResponse.Content | Out-String
         $subscription = $aliasResponse.Content | ConvertFrom-Json
         $subscriptions += $subscription
         Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.properties.subscriptionId)]" -InformationAction Continue
