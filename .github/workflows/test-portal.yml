@@ -20,9 +20,8 @@ on:
   workflow_dispatch: {}
 
 env:
-  GITHUB_BASE_URL: ${{ github.event.repository.html_url }}
   GITHUB_COMMIT_ID: ${{ github.event.pull_request.head.sha }}
-  GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+  GITHUB_PR_ID: ${{ github.event.pull_request.id }}
   SUBSCRIPTIONS_JSON_PATH: "./src/data/subscriptions.json"
 
 permissions:
@@ -86,7 +85,7 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $rootId = "$($env:GITHUB_RUN_ID)".Substring(0,$((@($env:GITHUB_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
+            Write-Information "Loading Subscription Aliases from : $($env:SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
             $subscriptions = Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
             $connectivitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].properties.subscriptionId
             $connectivityAddressPrefix = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].addressPrefix
@@ -95,11 +94,16 @@ jobs:
             $managementSubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "management")[0].properties.subscriptionId
             $corpLzSubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "corp").properties.subscriptionId
             $onlineLzSubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "online").properties.subscriptionId
-            $templateUri = "$($env:GITHUB_BASE_URL)/commit/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.json"
-            $templateParameterUri = "$($env:GITHUB_BASE_URL)/commit/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.test.param.json"
+
+            $rootId = "$($env:GITHUB_RUN_ID)".Substring(0,$((@($env:GITHUB_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
+
+            $templateUri = "https://raw.githubusercontent.com/$($env:GITHUB_REPOSITORY)/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.json"
+            $templateParameterUri = "https://raw.githubusercontent.com/$($env:GITHUB_REPOSITORY)/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.test.param.json"
+
             Write-Information "Running test deployment [rootId = $rootId]..." -InformationAction Continue
             Write-Information " - Template URI = $templateUri" -InformationAction Continue
             Write-Information " - Template Parameter URI = $templateParameterUri" -InformationAction Continue
+
             $deployment = New-AzTenantDeployment `
                 -Name "$rootId" `
                 -Location "$($env:DEPLOYMENT_LOCATION)" `
@@ -115,6 +119,7 @@ jobs:
                 -corpLzSubscriptionId "$corpLzSubscriptionId" `
                 -onlineLzSubscriptionId "$onlineLzSubscriptionId" `
                 -WhatIf
+
             if ($deployment.ProvisioningState -ne "Succeeded") {
                 throw "Provisioning failed... check activity and deployment logs in Azure for more information."
             }
