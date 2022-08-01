@@ -23,6 +23,7 @@ env:
   github_base_url: ${{ github.event.pull_request.base.html_url }}
   github_commit_id: ${{ github.event.pull_request.head.sha }}
   github_workflow_run_id: ${{ github.event.workflow_run.id }}
+  subscriptions_json_path: './src/data/subscriptions.json'
 
 permissions:
   contents: read
@@ -65,15 +66,14 @@ jobs:
                 "csu-portal-online-212"
             )
             Write-Information "Registering Subscription Aliases : $($subscriptionAliases.foreach({ "`n $_" }))" -InformationAction Continue
-            Register-AzureSubscription `
+            $subscriptions = Register-AzureSubscription `
                 -Alias $subscriptionAliases `
                 -BillingScope $env:BILLING_SCOPE `
                 -Workload "Production" `
                 -SetParentManagementGroup `
-                -SetAddressPrefix |
-            ConvertTo-Json -Depth 10 |
-            New-Item -Path ./src/data/subscriptions.json -ItemType File -Force
-            Get-Content -Path ./src/data/subscriptions.json | jq
+                -SetAddressPrefix
+            $subscriptions | ConvertTo-Json -Depth 10 | New-Item -Path $env:SUBSCRIPTIONS_JSON_PATH -ItemType File -Force
+            Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | jq
           azPSVersion: "latest"
 
       - name: Deploy eslzArm.json
@@ -81,7 +81,7 @@ jobs:
         with:
           inlineScript: |
             $rootId = "$($env:GITHUB_WORKFLOW_RUN_ID)".Substring(0,$((@($env:GITHUB_WORKFLOW_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
-            $subscriptions = Get-ChildItem -Path ./src/data/subscriptions.json | ConvertFrom-Json
+            $subscriptions = Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
             $connectivitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].properties.subscriptionId
             $connectivityAddressPrefix = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].addressPrefix
             $identitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "identity")[0].properties.subscriptionId
