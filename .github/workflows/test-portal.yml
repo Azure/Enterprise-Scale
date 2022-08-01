@@ -75,9 +75,9 @@ jobs:
                 -Workload "Production" `
                 -SetParentManagementGroup `
                 -SetAddressPrefix
-            Write-Information "Saving Subscription Aliases to : $($env:SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
-            $subscriptions | ConvertTo-Json -Depth 10 | New-Item -Path $env:SUBSCRIPTIONS_JSON_PATH -ItemType File -Force
-            Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | jq
+            Write-Information "Saving Subscription Aliases to : $($env:subscriptions_json_path)" -InformationAction Continue
+            $subscriptions | ConvertTo-Json -Depth 10 | New-Item -Path $env:subscriptions_json_path -ItemType File -Force
+            Get-Content -Path $env:subscriptions_json_path | jq
           azPSVersion: "latest"
         env:
           BILLING_SCOPE: ${{ secrets.BILLING_SCOPE }}
@@ -86,8 +86,8 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $rootId = "$($env:GITHUB_WORKFLOW_RUN_ID)".Substring(0,$((@($env:GITHUB_WORKFLOW_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
-            $subscriptions = Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
+            $rootId = "$($env:GITHUB_RUN_ID)".Substring(0,$((@($env:GITHUB_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
+            $subscriptions = Get-Content -Path $env:subscriptions_json_path | ConvertFrom-Json
             $connectivitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].properties.subscriptionId
             $connectivityAddressPrefix = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].addressPrefix
             $identitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "identity")[0].properties.subscriptionId
@@ -97,6 +97,9 @@ jobs:
             $onlineLzSubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "online").properties.subscriptionId
             $templateUri = "$($env:GITHUB_BASE_URL)/commit/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.json"
             $templateParameterUri = "$($env:GITHUB_BASE_URL)/commit/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.test.param.json"
+            Write-Information "Running test deployment [rootId = $rootId]..." -InformationAction Continue
+            Write-Information " - Template URI = $templateUri" -InformationAction Continue
+            Write-Information " - Template Parameter URI = $templateParameterUri" -InformationAction Continue
             $deployment = New-AzTenantDeployment `
                 -Name "$rootId" `
                 -Location "$($env:DEPLOYMENT_LOCATION)" `
@@ -116,3 +119,5 @@ jobs:
                 throw "Provisioning failed... check activity and deployment logs in Azure for more information."
             }
           azPSVersion: "latest"
+        env:
+          DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
