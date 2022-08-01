@@ -98,31 +98,43 @@ jobs:
             $rootId = "$($env:GITHUB_RUN_ID)".Substring(0,$((@($env:GITHUB_RUN_ID.length,10) | Measure-Object -Minimum).Minimum))
 
             $templateUri = "https://raw.githubusercontent.com/$($env:GITHUB_REPOSITORY)/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.json"
-            $templateParameterUri = "https://raw.githubusercontent.com/$($env:GITHUB_REPOSITORY)/$($env:GITHUB_COMMIT_ID)/eslzArm/eslzArm.test.param.json"
+            $templateParameterPath = "./eslzArm/eslzArm.test.param.json"
+
+            Write-Information "Loading parameter defaults from : $templateParameterPath" -InformationAction Continue
+            $loadTemplateParameterFile = (Get-Content -Path $templateParameterPath | ConvertFrom-Json -AsHashTable).parameters
+            $templateParameterObject = @{} | Add-Member -MemberType ScriptMethod -Name AddOrUpdate -Value {
+                param($key,$value)
+                $this[$key] = $value
+            } -Force -PassThru
+            $loadTemplateParameterFile.Keys.foreach({ $templateParameterObject.Add($_, $loadTemplateParameterFile[$_]['value']) })
+
+            Write-Information "Setting environment specific parameter values..." -InformationAction Continue
+            $templateParameterObject.AddOrUpdate('enterpriseScaleCompanyPrefix',$rootId)
+            $templateParameterObject.AddOrUpdate('managementSubscriptionId',$managementSubscriptionId)
+            $templateParameterObject.AddOrUpdate('connectivitySubscriptionId',$connectivitySubscriptionId)
+            $templateParameterObject.AddOrUpdate('connectivityLocation',$env:DEPLOYMENT_LOCATION)
+            $templateParameterObject.AddOrUpdate('addressPrefix',$connectivityAddressPrefix)
+            $templateParameterObject.AddOrUpdate('identitySubscriptionId',$identitySubscriptionId)
+            $templateParameterObject.AddOrUpdate('identityAddressPrefix',$identityAddressPrefix)
+            $templateParameterObject.AddOrUpdate('corpLzSubscriptionId',$corpLzSubscriptionId)
+            $templateParameterObject.AddOrUpdate('onlineLzSubscriptionId',$onlineLzSubscriptionId)
+
+            $maxKeyLength = ($templateParameterObject.Keys.Length | Measure-Object -Maximum).Maximum
+            ($templateParameterObject.Keys | Sort-Object ).foreach({ Write-Information " [Parameter] $($_.PadRight($maxKeyLength, ' ')) : $($templateParameterObject[$_])" -InformationAction Continue })
 
             Write-Information "Running test deployment [rootId = $rootId]..." -InformationAction Continue
             Write-Information " - Template URI = $templateUri" -InformationAction Continue
-            Write-Information " - Template Parameter URI = $templateParameterUri" -InformationAction Continue
 
-            $deployment = New-AzTenantDeployment `
-                -Name "$rootId" `
-                -Location "$($env:DEPLOYMENT_LOCATION)" `
-                -TemplateUri "$templateUri" `
-                -TemplateParameterUri "$templateParameterUri" `
-                -enterpriseScaleCompanyPrefix "$rootId" `
-                -managementSubscriptionId "$managementSubscriptionId" `
-                -connectivitySubscriptionId "$connectivitySubscriptionId" `
-                -connectivityLocation "$($env:DEPLOYMENT_LOCATION)" `
-                -addressPrefix "$connectivityAddressPrefix" `
-                -identitySubscriptionId "$identitySubscriptionId" `
-                -identityAddressPrefix "$identityAddressPrefix" `
-                -corpLzSubscriptionId "$corpLzSubscriptionId" `
-                -onlineLzSubscriptionId "$onlineLzSubscriptionId" `
+            New-AzTenantDeployment `
+                -Name $rootId `
+                -Location $env:DEPLOYMENT_LOCATION `
+                -TemplateUri $templateUri `
+                -TemplateParameterObject $templateParameterObject `
                 -WhatIf
 
-            if ($deployment.ProvisioningState -ne "Succeeded") {
-                throw "Provisioning failed... check activity and deployment logs in Azure for more information."
-            }
+            # if ($deployment.ProvisioningState -ne "Succeeded") {
+            #     throw "Provisioning failed... check activity and deployment logs in Azure for more information."
+            # }
           azPSVersion: "latest"
         env:
           DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
