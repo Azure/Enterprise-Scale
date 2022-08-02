@@ -45,12 +45,20 @@ jobs:
       - name: Show env
         run: env | sort
 
-      - name: Azure login
+      - name: Azure login (OIDC)
         uses: azure/login@v1
+        if: ${{ success() && secrets.AZURE_CLIENT_SECRET == '' }} 
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Azure login (Client Secret)
+        uses: azure/login@v1
+        if: ${{ success() && secrets.AZURE_CLIENT_SECRET != '' }} 
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
           enable-AzPSSession: true
 
       - name: Register subscriptions
@@ -146,7 +154,7 @@ jobs:
             Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
             $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
 
-            Write-Information "Running WhatIf deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information "Running test deployment [$($deploymentObject.Name)]..." -InformationAction Continue
             Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
 
             $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
@@ -162,7 +170,7 @@ jobs:
             Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
             $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
 
-            Write-Information "Running WhatIf deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information "Running WhatIf pre-deployment [$($deploymentObject.Name)]..." -InformationAction Continue
             Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
 
             $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
@@ -200,7 +208,7 @@ jobs:
             Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
             $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
 
-            Write-Information "Running WhatIf deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information "Running WhatIf post-deployment [$($deploymentObject.Name)]..." -InformationAction Continue
             Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
 
             $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
