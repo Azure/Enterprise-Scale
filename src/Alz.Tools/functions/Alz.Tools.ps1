@@ -424,22 +424,28 @@ function Register-AzureSubscription {
 }
 
 function Invoke-RemoveRsgByPattern {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter()][String[]]$SubscriptionId,
         [Parameter()][String]$Like
     )
 
+    $originalCtx = Get-AzContext
+
     $jobs = @()
     foreach ($subId in $SubscriptionId) {
-        Set-AzContext -SubscriptionId $subId | Out-Null
+        Set-AzContext -SubscriptionId $subId -WhatIf:$false | Out-Null
 
-        $jobs += Get-AzResourceGroup |
-        Where-Object -Property "ResourceGroupName" -Like $Like |
-        Remove-AzResourceGroup -AsJob -Force
+        $resourcesGroups = Get-AzResourceGroup |  Where-Object -Property "ResourceGroupName" -Like $Like
 
-        Write-Information " - Deleting [$($jobs.Length)] Resource Groups for Subscription [$($subId)] matching pattern [$($Like)]" -InformationAction Continue
+        if (($PSCmdlet.ShouldProcess($($resourcesGroups.ResourceGroupName | ConvertTo-Json -Compress))) -and ($resourcesGroups.Length -gt 0)) {
+            $jobs += $resourcesGroups | Remove-AzResourceGroup -AsJob -Force
+        }
+
+        Write-Information " - Deleting [$($resourcesGroups.Length)] Resource Groups for Subscription [$($subId)] matching pattern [$($Like)]" -InformationAction Continue
     }
+
+    Set-AzContext $originalCtx -WhatIf:$false | Out-Null
 
     return $jobs
 
