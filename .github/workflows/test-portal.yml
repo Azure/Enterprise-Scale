@@ -161,10 +161,11 @@ jobs:
             Write-Information "Running test deployment [$($deploymentObject.Name)]..." -InformationAction Continue
             Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
 
-            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
-            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($deploymentObject.TemplateParameterObject[$_])" -InformationAction Continue })
-
             Test-AzTenantDeployment @deploymentObject
+
+            if (!$Error) {
+                Write-Information " - Completed [SUCCESS]..." -InformationAction Continue
+            }
           azPSVersion: "latest"
 
       - name: Run eslzArm WhatIf (Pre-deployment)
@@ -176,9 +177,6 @@ jobs:
 
             Write-Information "Running WhatIf pre-deployment [$($deploymentObject.Name)]..." -InformationAction Continue
             Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
-
-            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
-            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($deploymentObject.TemplateParameterObject[$_])" -InformationAction Continue })
 
             New-AzTenantDeployment @deploymentObject -WhatIf -WhatIfResultFormat ResourceIdOnly
           azPSVersion: "latest"
@@ -214,9 +212,6 @@ jobs:
 
             Write-Information "Running WhatIf post-deployment [$($deploymentObject.Name)]..." -InformationAction Continue
             Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
-
-            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
-            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($deploymentObject.TemplateParameterObject[$_])" -InformationAction Continue })
 
             New-AzTenantDeployment @deploymentObject -WhatIf -WhatIfResultFormat ResourceIdOnly
           azPSVersion: "latest"
