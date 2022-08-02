@@ -455,7 +455,7 @@ function Invoke-RemoveMgHierarchy {
     [CmdletBinding()]
     param (
         [Parameter()][String[]]$ManagementGroupId,
-        [Parameter()][Int[]]$SleepForSeconds = 10
+        [Parameter()][Int]$SleepForSeconds = 10
     )
 
     $InvokeRemoveMgHierarchy = ${function:Invoke-RemoveMgHierarchy}.ToString()
@@ -467,11 +467,11 @@ function Invoke-RemoveMgHierarchy {
         # Set Azure context in parallel PS session
         Set-AzContext -Context $using:ctx | Out-Null
         # Get expanded properties of current Management Group
-        $managementGroup = Get-AzManagementGroup -GroupId $_ -Expand
+        $managementGroup = Get-AzManagementGroup -GroupId $_ -Expand -WarningAction SilentlyContinue
         # Process child Subscriptions under the current Management Group scope
         $childSubs = ($managementGroup.Children | Where-Object { $_.Type -eq "/subscriptions" }).Name
         foreach ($childSub in $childSubs) {
-            Remove-AzManagementGroupSubscription -SubscriptionId $childSub -GroupName $managementGroup.Name
+            Remove-AzManagementGroupSubscription -SubscriptionId $childSub -GroupName $managementGroup.Name -WarningAction SilentlyContinue
         }
         # Process child Management Groups under the current Management Group scope
         $childMgs = ($managementGroup.Children | Where-Object { $_.Type -eq "Microsoft.Management/managementGroups" }).Name
@@ -479,9 +479,8 @@ function Invoke-RemoveMgHierarchy {
             Invoke-RemoveMgHierarchy -ManagementGroupId $childMgs
         }
         # Pause to 
-        Start-Sleep -Seconds $SleepForSeconds
-        Remove-AzManagementGroup -GroupId $_ | Out-Null
+        Start-Sleep -Seconds $using:SleepForSeconds
+        Remove-AzManagementGroup -GroupId $_ -WarningAction SilentlyContinue | Out-Null
         Write-Information ("Successfully removed Management Group: {0}" -f $_) -InformationAction Continue
     }
-
 }
