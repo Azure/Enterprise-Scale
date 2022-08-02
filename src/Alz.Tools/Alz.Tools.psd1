@@ -80,15 +80,17 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport    = @(
+        'Add-Escaping'
         'ConvertTo-ArmTemplateResource'
         'ConvertTo-LibraryArtifact'
-        'Export-LibraryArtifact'
-        'Invoke-UseCacheFromModule'
-        'Invoke-UpdateCacheInModule'
         'Edit-LineEndings'
-        'Add-Escaping'
-        'Remove-Escaping'
+        'Export-LibraryArtifact'
+        'Invoke-RemoveMgHierarchy'
+        'Invoke-RemoveRsgByPattern'
+        'Invoke-UpdateCacheInModule'
+        'Invoke-UseCacheFromModule'
         'Register-AzureSubscription'
+        'Remove-Escaping'
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

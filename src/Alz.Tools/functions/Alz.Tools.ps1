@@ -422,3 +422,57 @@ function Register-AzureSubscription {
     return $subscriptions
 
 }
+
+function Invoke-RemoveRsgByPattern {
+    [CmdletBinding()]
+    param (
+        [Parameter()][String[]]$SubscriptionId,
+        [Parameter()][String]$Like
+    )
+
+    $jobs = @()
+    foreach ($subId in $SubscriptionId) {
+        Set-AzContext -SubscriptionId $subId | Out-Null
+
+        $jobs += Get-AzResourceGroup |
+        Where-Object -Property "ResourceGroupName" -Like $Like |
+        Remove-AzResourceGroup -AsJob -Force
+
+        Write-Information " - Deleting [$($jobs.Length)] Resource Groups for Subscription [$($subId)] matching pattern [$($Like)]" -InformationAction Continue
+    }
+
+    return $jobs
+
+}
+
+function Invoke-RemoveMgHierarchy {
+    [CmdletBinding()]
+    param (
+        [Parameter()][String[]]$ManagementGroupId
+    )
+
+    $InvokeRemoveMgHierarchy = ${function:Invoke-RemoveMgHierarchy}.ToString()
+    $ctx = Get-AzContext
+    Write-Information ("Removing Management Group Hierarchy in batch: {0}" -f $($ManagementGroupId | ConvertTo-Json -Compress)) -InformationAction Continue
+    $ManagementGroupId | ForEach-Object -Parallel {
+        # Parse functions to parallel PS session
+        ${function:Invoke-RemoveMgHierarchy} = $using:InvokeRemoveMgHierarchy
+        # Set Azure context in parallel PS session
+        Set-AzContext -Context $using:ctx | Out-Null
+        # Get expanded properties of current Management Group
+        $managementGroup = Get-AzManagementGroup -GroupId $_ -Expand
+        # Process child Subscriptions under the current Management Group scope
+        $childSubs = ($managementGroup.Children | Where-Object { $_.Type -eq "/subscriptions" }).Name
+        foreach ($childSub in $childSubs) {
+            Remove-AzManagementGroupSubscription -SubscriptionId $childSub -GroupName $managementGroup.Name
+        }
+        # Process child Management Groups under the current Management Group scope
+        $childMgs = ($managementGroup.Children | Where-Object { $_.Type -eq "Microsoft.Management/managementGroups" }).Name
+        if ($childMgs.Length -gt 0) {
+            Invoke-RemoveMgHierarchy -ManagementGroupId $childMgs
+        }
+        Remove-AzManagementGroup -GroupId $_ | Out-Null
+        Write-Information ("Successfully removed Management Group: {0}" -f $_) -InformationAction Continue
+    }
+
+}
