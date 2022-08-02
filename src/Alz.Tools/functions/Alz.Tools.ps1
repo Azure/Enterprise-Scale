@@ -454,7 +454,8 @@ function Invoke-RemoveRsgByPattern {
 function Invoke-RemoveMgHierarchy {
     [CmdletBinding()]
     param (
-        [Parameter()][String[]]$ManagementGroupId
+        [Parameter()][String[]]$ManagementGroupId,
+        [Parameter()][Int[]]$SleepForSeconds = 10
     )
 
     $InvokeRemoveMgHierarchy = ${function:Invoke-RemoveMgHierarchy}.ToString()
@@ -477,6 +478,8 @@ function Invoke-RemoveMgHierarchy {
         if ($childMgs.Length -gt 0) {
             Invoke-RemoveMgHierarchy -ManagementGroupId $childMgs
         }
+        # Pause to 
+        Start-Sleep -Seconds $SleepForSeconds
         Remove-AzManagementGroup -GroupId $_ | Out-Null
         Write-Information ("Successfully removed Management Group: {0}" -f $_) -InformationAction Continue
     }
