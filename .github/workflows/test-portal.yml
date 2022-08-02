@@ -14,15 +14,16 @@ on:
       - reopened
       - synchronize
     paths:
-      - 'eslzArm/**.json'
-      - 'src/**.json'
-      - 'src/**.bicep'
+      - "eslzArm/**.json"
+      - "src/**.json"
+      - "src/**.bicep"
   workflow_dispatch: {}
 
 env:
   GITHUB_COMMIT_ID: ${{ github.event.pull_request.head.sha }}
   GITHUB_PR_ID: ${{ github.event.pull_request.id }}
-  SUBSCRIPTIONS_JSON_PATH: "./src/data/subscriptions.json"
+  TEMP_SUBSCRIPTIONS_JSON_PATH: "./src/data/subscriptions.json"
+  TEMP_DEPLOYMENT_OBJECT_PATH: "./src/data/eslzArm.test.deployment.json"
 
 permissions:
   contents: read
@@ -57,6 +58,7 @@ jobs:
         with:
           inlineScript: |
             Import-Module ./src/Alz.Tools/
+
             $subscriptionAliases = @(
                 "csu-portal-connectivity-100"
                 "csu-portal-identity-110"
@@ -67,26 +69,30 @@ jobs:
                 "csu-portal-online-211"
                 "csu-portal-online-212"
             )
+
             Write-Information "Registering Subscription Aliases : $($subscriptionAliases.foreach({ "`n $_" }))" -InformationAction Continue
+
             $subscriptions = Register-AzureSubscription `
                 -Alias $subscriptionAliases `
                 -BillingScope $env:BILLING_SCOPE `
                 -Workload "Production" `
                 -SetParentManagementGroup `
                 -SetAddressPrefix
-            Write-Information "Saving Subscription Aliases to : $($env:SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
-            $subscriptions | ConvertTo-Json -Depth 10 | New-Item -Path $env:SUBSCRIPTIONS_JSON_PATH -ItemType File -Force
-            Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | jq
+
+            Write-Information "Saving Subscription Aliases to : $($env:TEMP_SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
+            $subscriptions | ConvertTo-Json -Depth 10 | New-Item -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH -ItemType File -Force
+            Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | jq
           azPSVersion: "latest"
         env:
           BILLING_SCOPE: ${{ secrets.BILLING_SCOPE }}
 
-      - name: Deploy eslzArm.json
+      - name: Generate eslzArm configuration
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            Write-Information "Loading Subscription Aliases from : $($env:SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
-            $subscriptions = Get-Content -Path $env:SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
+            Write-Information "Loading Subscription Aliases from : $($env:TEMP_SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
+            $subscriptions = Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
+
             $connectivitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].properties.subscriptionId
             $connectivityAddressPrefix = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "connectivity")[0].addressPrefix
             $identitySubscriptionId = ($subscriptions | Where-Object -Property "parentManagementGroup" -EQ "identity")[0].properties.subscriptionId
@@ -119,22 +125,114 @@ jobs:
             $templateParameterObject.AddOrUpdate('corpLzSubscriptionId',$corpLzSubscriptionId)
             $templateParameterObject.AddOrUpdate('onlineLzSubscriptionId',$onlineLzSubscriptionId)
 
-            $maxKeyLength = ($templateParameterObject.Keys.Length | Measure-Object -Maximum).Maximum
+            $deploymentObject = @{
+                Name = $rootId
+                Location = $env:DEPLOYMENT_LOCATION
+                TemplateUri = $templateUri
+                TemplateParameterObject = $templateParameterObject
+            }
 
-            Write-Information "Running test deployment [rootId = $rootId]..." -InformationAction Continue
-            Write-Information " - Template URI : $templateUri" -InformationAction Continue
-            ($templateParameterObject.Keys | Sort-Object ).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxKeyLength, ' ')) : $($templateParameterObject[$_])" -InformationAction Continue })
-
-            New-AzTenantDeployment `
-                -Name $rootId `
-                -Location $env:DEPLOYMENT_LOCATION `
-                -TemplateUri $templateUri `
-                -TemplateParameterObject $templateParameterObject `
-                -WhatIf
-
-            # if ($deployment.ProvisioningState -ne "Succeeded") {
-            #     throw "Provisioning failed... check activity and deployment logs in Azure for more information."
-            # }
+            Write-Information "Saving deployment config to : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject | ConvertTo-Json -Depth 10 | New-Item -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH -ItemType File -Force
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
           azPSVersion: "latest"
         env:
           DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
+
+      - name: Test eslzArm deployment
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
+
+            Write-Information "Running WhatIf deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
+
+            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
+            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($templateParameterObject[$_])" -InformationAction Continue })
+
+            Test-AzTenantDeployment @deploymentObject
+          azPSVersion: "latest"
+
+      - name: Run eslzArm WhatIf (Pre-deployment)
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
+
+            Write-Information "Running WhatIf deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
+
+            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
+            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($templateParameterObject[$_])" -InformationAction Continue })
+
+            New-AzTenantDeployment @deploymentObject -WhatIf -WhatIfResultFormat ResourceIdOnly
+          azPSVersion: "latest"
+
+      - name: Run eslzArm deployment
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
+
+            Write-Information "Running deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
+
+            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
+            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($templateParameterObject[$_])" -InformationAction Continue })
+
+            $deployment = New-AzTenantDeployment @deploymentObject
+
+            $deployment
+
+            if ($deployment.ProvisioningState -ne "Succeeded") {
+                throw "Provisioning failed... check activity and deployment logs in Azure for more information."
+            }
+          azPSVersion: "latest"
+
+      - name: Run eslzArm WhatIf  (Post-deployment)
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
+
+            Write-Information "Running WhatIf deployment [$($deploymentObject.Name)]..." -InformationAction Continue
+            Write-Information " - Template URI : $($deploymentObject.TemplateUri)" -InformationAction Continue
+
+            $maxParameterKeyLength = ($deploymentObject.TemplateParameterObject.Keys.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
+            ($deploymentObject.TemplateParameterObject.Keys | Sort-Object).foreach({ Write-Information " - [Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($templateParameterObject[$_])" -InformationAction Continue })
+
+            New-AzTenantDeployment @deploymentObject -WhatIf -WhatIfResultFormat ResourceIdOnly
+          azPSVersion: "latest"
+
+      - name: Destroy eslzArm
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Import-Module ./src/Alz.Tools/
+
+            Write-Information "Loading Subscription Aliases from : $($env:TEMP_SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
+            $subscriptions = Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
+
+            Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
+
+            $rootId = $deploymentObject.Name
+
+            $jobs = @()
+
+            Write-Information "Destroying test deployment [$rootId]..." -InformationAction Continue
+            $maxKeyLength = ($subscriptions.name.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
+            ($subscriptions | Sort-Object -Property name).foreach({ Write-Information " - Processing Subscription : $($_.name.PadRight($maxKeyLength, ' ')) [$($_.properties.subscriptionId)]" -InformationAction Continue })
+            $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptions.properties.subscriptionId -Like "$rootId-*"
+            $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptions.properties.subscriptionId -Like "NetworkWatcherRG"
+
+            Write-Information " - Processing Management Group : $rootId" -InformationAction Continue
+            Invoke-RemoveMgHierarchy -ManagementGroupId $rootId
+
+            $jobs | Wait-Job -Timeout 3600
+          azPSVersion: "latest"
