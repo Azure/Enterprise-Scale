@@ -12,6 +12,7 @@ using module "../Alz.Classes/"
 # https://github.com/powershell/psscriptanalyzer#suppressing-rules
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Function targets multiple line endings', Scope = 'Function', Target = 'Edit-LineEndings')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Function does not change system state', Scope = 'Function', Target = 'Remove-Escaping')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'SleepForSeconds', Justification = 'Used in child process', Scope = 'Function', Target = 'Invoke-RemoveMgHierarchy')]
 param ()
 
 #######################################
@@ -478,7 +479,7 @@ function Invoke-RemoveMgHierarchy {
         if ($childMgs.Length -gt 0) {
             Invoke-RemoveMgHierarchy -ManagementGroupId $childMgs
         }
-        # Pause to 
+        # Pause to allow time for the backend to replicate
         Start-Sleep -Seconds $using:SleepForSeconds
         Remove-AzManagementGroup -GroupId $_ -WarningAction SilentlyContinue | Out-Null
         Write-Information ("Successfully removed Management Group: {0}" -f $_) -InformationAction Continue
