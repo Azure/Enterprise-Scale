@@ -466,10 +466,11 @@ function Invoke-RemoveMgHierarchy {
     }
     Write-Information ("$($WhatIfPrefix)Removing Management Group Hierarchy in batch: {0}" -f $($ManagementGroupId | ConvertTo-Json -Compress)) -InformationAction Continue
     $ManagementGroupId | ForEach-Object -Parallel {
+        # Set WhatIfPreference from parent session
         $WhatIfPreference = $using:WhatIfPreference
-        # Parse functions to parallel PS session
+        # Parse functions from parent session
         ${function:Invoke-RemoveMgHierarchy} = $using:InvokeRemoveMgHierarchy
-        # Set Azure context in parallel PS session
+        # Set Azure context from parent session
         Set-AzContext -Context $using:ctx | Out-Null
         # Get expanded properties of current Management Group
         $managementGroup = Get-AzManagementGroup -GroupId $_ -Expand -WarningAction SilentlyContinue
@@ -484,7 +485,6 @@ function Invoke-RemoveMgHierarchy {
         if ($childMgs.Length -gt 0) {
             Invoke-RemoveMgHierarchy -ManagementGroupId $childMgs
         }
-        # Pause to allow time for the backend to replicate
         Remove-AzManagementGroup -GroupId $_ -WhatIf:$WhatIfPreference -WarningAction SilentlyContinue | Out-Null
         Write-Output "/providers/Microsoft.Management/managementGroups/$_"
     }
