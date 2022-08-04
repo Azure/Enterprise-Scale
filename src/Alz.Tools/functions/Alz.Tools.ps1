@@ -457,7 +457,7 @@ function Invoke-RemoveMgHierarchy {
     param (
         [Parameter()][String[]]$ManagementGroupId
     )
-        
+
     $InvokeRemoveMgHierarchy = ${function:Invoke-RemoveMgHierarchy}.ToString()
     $ctx = Get-AzContext
     $WhatIfPrefix = ""
@@ -477,7 +477,7 @@ function Invoke-RemoveMgHierarchy {
         # Process child Subscriptions under the current Management Group scope
         $childSubs = ($managementGroup.Children | Where-Object { $_.Type -eq "/subscriptions" }).Name
         foreach ($childSub in $childSubs) {
-            Remove-AzManagementGroupSubscription -SubscriptionId $childSub -GroupName $managementGroup.Name -WhatIf:$WhatIfPreference -WarningAction SilentlyContinue                
+            Remove-AzManagementGroupSubscription -SubscriptionId $childSub -GroupName $managementGroup.Name -WhatIf:$WhatIfPreference -WarningAction SilentlyContinue
             Write-Output "/subscriptions/$childSub"
         }
         # Process child Management Groups under the current Management Group scope
