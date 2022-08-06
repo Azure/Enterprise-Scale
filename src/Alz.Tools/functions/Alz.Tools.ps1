@@ -364,36 +364,133 @@ function Export-LibraryArtifact {
     }
 }
 
-function Register-AzureSubscription {
-    [CmdletBinding()]
+function Set-AzureSubscriptionAlias {
+    [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([Object[]])]
     param (
-        [Parameter()][String[]]$Alias,
-        [Parameter()][String]$BillingScope,
-        [Parameter()][String]$Workload = "Production",
-        [Parameter()][Switch]$SetParentManagementGroup,
-        [Parameter()][Switch]$SetAddressPrefix
+        [Parameter(Mandatory = $true, ParameterSetName = 'PutAliasWithBillingScope')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'PutAliasWithSubscriptionId')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'GetAliasOnly')]
+        [String[]]$Alias,
+        [Parameter(Mandatory = $true, ParameterSetName = 'PutAliasWithBillingScope')]
+        [String]$BillingScope,
+        [Parameter(Mandatory = $true, ParameterSetName = 'PutAliasWithSubscriptionId')]
+        [String]$SubscriptionId,
+        [Parameter(Mandatory = $false, ParameterSetName = 'PutAliasWithBillingScope')]
+        [String]$Workload = "Production",
+        [Parameter(Mandatory = $false, ParameterSetName = 'PutAliasWithBillingScope')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'PutAliasWithSubscriptionId')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'GetAliasOnly')]
+        [Switch]$SetParentManagementGroup,
+        [Parameter(Mandatory = $false, ParameterSetName = 'PutAliasWithBillingScope')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'PutAliasWithSubscriptionId')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'GetAliasOnly')]
+        [Switch]$SetAddressPrefix
     )
 
+    # Get the latest stable API version
     $aliasesApiVersion = [ProviderApiVersions]::GetLatestStableByType("Microsoft.Subscription/aliases")
-    Write-Information "Set Subscription Alias API Version : $($aliasesApiVersion)" -InformationAction Continue
-    $subscriptions = @()
+    Write-Information "Using Subscription Alias API Version : $($aliasesApiVersion)" -InformationAction Continue
+
+    # Logic to determine whether to GET an existing Alias or PUT a new one
+    $GetExistingAlias = [string]::IsNullOrEmpty($BillingScope) -and [string]::IsNullOrEmpty($SubscriptionId)
+    $requestMethod = $GetExistingAlias ? "GET" : "PUT"
+
+    # Process Alias value(s)
+    $aliasResponses = @()
     foreach ($subscriptionName in $Alias) {
+        Write-Verbose "Microsoft.Subscription/aliases/$($subscriptionName) [$requestMethod]"
         $requestPath = "/providers/Microsoft.Subscription/aliases/$($subscriptionName)?api-version=$($aliasesApiVersion)"
-        $requestMethod = "PUT"
-        $requestBody = @{
-            properties = @{
-                displayName          = $subscriptionName
-                billingScope         = $BillingScope
-                workload             = $Workload
-                additionalProperties = @{}
+        if (-not [string]::IsNullOrEmpty($BillingScope)) {
+            $action = "PutAliasWithBillingScope"
+            $requestBodyObject = @{
+                properties = @{
+                    displayName          = $subscriptionName
+                    billingScope         = $BillingScope
+                    workload             = $Workload
+                    additionalProperties = @{}
+                }
             }
-        } | ConvertTo-Json -Depth $jsonDepth
-        $aliasResponse = Invoke-AzRestMethod -Method $requestMethod -Path $requestPath -Payload $requestBody
-        $subscription = $aliasResponse.Content | ConvertFrom-Json
-        $subscriptions += $subscription
-        Write-Information "Created new Subscription Alias : $($subscriptionName) [$($subscription.properties.subscriptionId)]" -InformationAction Continue
+        }
+        elseif (-not [string]::IsNullOrEmpty($SubscriptionId)) {
+            $action = "PutAliasWithSubscriptionId"
+            $requestBodyObject = @{
+                properties = @{
+                    subscriptionId       = $SubscriptionId
+                    additionalProperties = @{}
+                }
+            }
+        }
+        else {
+            $action = "GetAliasOnly"
+            $requestBodyObject = @{}
+        }
+        $requestBody = $requestBodyObject | ConvertTo-Json -Depth $jsonDepth
+        if ($PSCmdlet.ShouldProcess("$subscriptionName", "$action")) {
+            $aliasResponse = Invoke-AzRestMethod -Method $requestMethod -Path $requestPath -Payload $requestBody
+        }
+        else {
+            $aliasResponse = [ordered]@{
+                StatusCode = "200"
+                Method     = "GET"
+                Content    = [ordered]@{
+                    id         = "/providers/Microsoft.Subscription/aliases/$subscriptionName"
+                    name       = "$subscriptionName"
+                    type       = "Microsoft.Subscription/aliases"
+                    properties = [ordered]@{
+                        subscriptionId    = "00000000-0000-0000-0000-000000000000"
+                        provisioningState = "Succeeded"
+                    }
+                } | ConvertTo-Json -Depth $jsonDepth
+            }
+        }
+        $aliasResponses += $aliasResponse
+        Write-Verbose "Microsoft.Subscription/aliases/$($subscriptionName) [$($aliasResponse.StatusCode)]"
     }
 
+    # For newly created Subscriptions, wait until all return StatusCode 200 and Provisioning State Succeeded
+    $aliasResponses | Where-Object -Property StatusCode -EQ "201" | ForEach-Object {
+        $aliasResponseContent = $_.Content | ConvertFrom-Json
+        $retryCount = 0
+        $SleepSeconds = 1
+        do {
+            $retryCount++
+            $aliasResponse = Invoke-AzRestMethod -Method GET -Path "$($aliasResponseContent.id)?api-version=$($aliasesApiVersion)"
+            $aliasResponseContent = $aliasResponse.Content | ConvertFrom-Json
+            $subscriptionId = $aliasResponseContent.properties.subscriptionId
+            $provisioningState = $aliasResponseContent.properties.provisioningState
+            Write-Verbose "(Retry=$retryCount) $($aliasResponseContent.id) [$($aliasResponse.StatusCode)] [$($subscriptionId)] [$($provisioningState)]"
+            if (($aliasResponse.StatusCode -eq "200") -and ($provisioningState -eq "Succeeded")) {
+                $endLoop = $true
+            }
+            else {
+                Start-Sleep -Seconds $SleepSeconds
+                $SleepSeconds = 2 * $SleepSeconds
+            }
+            if ($retryCount -eq 10) {
+                $endLoop = $true
+            }
+        } until ($endLoop)
+    }
+
+    # Add each subscription to the return object
+    $subscriptions = @()
+    $aliasResponses | ForEach-Object {
+        if ($aliasResponse.StatusCode -eq "201") {
+            $status = "NEW"
+        }
+        elseif ($aliasResponse.StatusCode -eq "200") {
+            $status = "EXISTING"
+        }
+        else {
+            $status = "UNKNOWN" # Consider whether to throw an error here
+        }
+        $subscription = $_.Content | ConvertFrom-Json
+        $subscriptions += $subscription
+        Write-Information "[$status] Subscription Alias : $($subscription.name) [$($subscription.properties.subscriptionId)]" -InformationAction Continue
+    }
+
+    # Determine the parent management group if SetParentManagementGroup is specified
     if ($SetParentManagementGroup) {
         foreach ($subscription in $subscriptions) {
             $scope = $regex_subscriptionAlias.Matches($subscription.name)[0].Groups['scope'].Value
@@ -402,6 +499,7 @@ function Register-AzureSubscription {
         }
     }
 
+    # Determine the assigned address prefix if SetAddressPrefix is specified
     if ($SetAddressPrefix) {
         $secondOctetFallback = 100
         $secondOctetLog = @()

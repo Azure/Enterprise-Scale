@@ -89,7 +89,7 @@
         'Invoke-RemoveRsgByPattern'
         'Invoke-UpdateCacheInModule'
         'Invoke-UseCacheFromModule'
-        'Register-AzureSubscription'
+        'Set-AzureSubscriptionAlias'
         'Remove-Escaping'
     )
 
