@@ -431,8 +431,8 @@ function Set-AzureSubscriptionAlias {
         }
         else {
             $aliasResponse = [ordered]@{
-                StatusCode = "200"
-                Method     = "GET"
+                StatusCode = "200 (WHATIF)"
+                Method     = "GET (WHATIF)"
                 Content    = [ordered]@{
                     id         = "/providers/Microsoft.Subscription/aliases/$subscriptionName"
                     name       = "$subscriptionName"
@@ -481,6 +481,9 @@ function Set-AzureSubscriptionAlias {
         }
         elseif ($aliasResponse.StatusCode -eq "200") {
             $status = "EXISTING"
+        }
+        elseif ($aliasResponse.StatusCode -eq "200 (WHATIF)") {
+            $status = "WHAT IF"
         }
         else {
             $status = "UNKNOWN" # Consider whether to throw an error here
