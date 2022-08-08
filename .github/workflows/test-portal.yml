@@ -66,57 +66,69 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Register subscriptions
-        shell: pwsh
-        run: |
-          ./src/scripts/Invoke-ActionRegisterSubscriptions.ps1
-          Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | jq
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionRegisterSubscriptions.ps1
+            Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | jq
+          azPSVersion: "latest"
         env:
           BILLING_SCOPE: ${{ secrets.BILLING_SCOPE }}
 
       - name: Generate eslzArm configuration
         id: config
-        shell: pwsh
-        run: |
-          ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
-          Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+          azPSVersion: "latest"
         env:
           DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
 
       - name: Test eslzArm deployment
-        shell: pwsh
-        run: ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -Test
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -Test
+          azPSVersion: "latest"
 
       - name: Run eslzArm WhatIf
-        shell: pwsh
-        run: ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -WhatIf
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -WhatIf
+          azPSVersion: "latest"
 
       - name: Run eslzArm deployment
-        shell: pwsh
-        run: ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
+        uses: azure/powershell@v1
+        with:
+          inlineScript: ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
+          azPSVersion: "latest"
 
       - name: Destroy eslzArm deployment
-        shell: pwsh
+        uses: azure/powershell@v1
         if: ${{ always() }}
-        run: |
-          Import-Module ./src/Alz.Tools/
+        with:
+          inlineScript: |
+            Import-Module ./src/Alz.Tools/
 
-          Write-Information "Loading Subscription Aliases from : $($env:TEMP_SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
-          $subscriptions = Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
+            Write-Information "Loading Subscription Aliases from : $($env:TEMP_SUBSCRIPTIONS_JSON_PATH)" -InformationAction Continue
+            $subscriptions = Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | ConvertFrom-Json
 
-          Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
-          $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
+            Write-Information "Loading deployment config from : $($env:TEMP_DEPLOYMENT_OBJECT_PATH)" -InformationAction Continue
+            $deploymentObject = Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | ConvertFrom-Json -AsHashTable
 
-          $rootId = $deploymentObject.Name
+            $rootId = $deploymentObject.Name
 
-          $jobs = @()
+            $jobs = @()
 
-          Write-Information "Destroying test deployment [$rootId]..." -InformationAction Continue
-          $maxKeyLength = ($subscriptions.name.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
-          ($subscriptions | Sort-Object -Property name).foreach({ Write-Information " - Processing Subscription : $($_.name.PadRight($maxKeyLength, ' ')) [$($_.properties.subscriptionId)]" -InformationAction Continue })
-          $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptions.properties.subscriptionId -Like "$rootId-*"
-          $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptions.properties.subscriptionId -Like "NetworkWatcherRG"
+            Write-Information "Destroying test deployment [$rootId]..." -InformationAction Continue
+            $maxKeyLength = ($subscriptions.name.foreach({$_.Length}) | Measure-Object -Maximum).Maximum
+            ($subscriptions | Sort-Object -Property name).foreach({ Write-Information " - Processing Subscription : $($_.name.PadRight($maxKeyLength, ' ')) [$($_.properties.subscriptionId)]" -InformationAction Continue })
+            $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptions.properties.subscriptionId -Like "$rootId-*"
+            $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptions.properties.subscriptionId -Like "NetworkWatcherRG"
 
-          Write-Information " - Processing Management Group : $rootId" -InformationAction Continue
-          Invoke-RemoveMgHierarchy -ManagementGroupId $rootId | ForEach-Object { Write-Information "Successfully removed : $_" -InformationAction Continue }
+            Write-Information " - Processing Management Group : $rootId" -InformationAction Continue
+            Invoke-RemoveMgHierarchy -ManagementGroupId $rootId | ForEach-Object { Write-Information "Successfully removed : $_" -InformationAction Continue }
 
-          $jobs | Wait-Job -Timeout 3600
+            $jobs | Wait-Job -Timeout 3600
+          azPSVersion: "latest"
