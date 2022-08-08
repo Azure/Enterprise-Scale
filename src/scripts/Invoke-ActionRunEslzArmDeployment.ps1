@@ -51,13 +51,10 @@ else {
 Write-Information "[$scenarioPrefix] deployment : [$($deploymentObject.Name)]..."
 Write-Information " - Template URI : $($deploymentObject.TemplateUri)"
 if ($Test) {
-    # $deployment = Test-AzTenantDeployment @deploymentObject
+    $deployment = Test-AzTenantDeployment @deploymentObject
 }
 else {
-    # $deployment = New-AzTenantDeployment @deploymentObject
-    $deployment = @{
-        ProvisioningState = "Succeeded"
-    }
+    $deployment = New-AzTenantDeployment @deploymentObject
 }
 
 # Return output
