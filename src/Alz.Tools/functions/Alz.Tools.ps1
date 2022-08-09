@@ -534,17 +534,25 @@ function Invoke-RemoveRsgByPattern {
 
     $originalCtx = Get-AzContext
 
+    $WhatIfPrefix = ""
+    if ($WhatIfPreference) {
+        $WhatIfPrefix = "What if: "
+    }
+
     $jobs = @()
     foreach ($subId in $SubscriptionId) {
         Set-AzContext -SubscriptionId $subId -WhatIf:$false | Out-Null
 
         $resourcesGroups = Get-AzResourceGroup |  Where-Object -Property "ResourceGroupName" -Like $Like
 
-        if (($PSCmdlet.ShouldProcess($($resourcesGroups.ResourceGroupName | ConvertTo-Json -Compress))) -and ($resourcesGroups.Length -gt 0)) {
-            $jobs += $resourcesGroups | Remove-AzResourceGroup -AsJob -Force
+        Write-Information "$($WhatIfPrefix)Deleting [$($resourcesGroups.Length)] Resource Groups for Subscription [$($subId)] matching pattern [$($Like)]" -InformationAction Continue
+
+        if ($resourcesGroups.Length -gt 0) {
+            if ($PSCmdlet.ShouldProcess($($resourcesGroups.ResourceGroupName | ConvertTo-Json -Compress), "Remove-AzResourceGroup")) {
+                $jobs += $resourcesGroups | Remove-AzResourceGroup -AsJob -Force
+            }
         }
 
-        Write-Information " - Deleting [$($resourcesGroups.Length)] Resource Groups for Subscription [$($subId)] matching pattern [$($Like)]" -InformationAction Continue
     }
 
     Set-AzContext $originalCtx -WhatIf:$false | Out-Null
@@ -560,33 +568,56 @@ function Invoke-RemoveMgHierarchy {
     )
 
     $InvokeRemoveMgHierarchy = ${function:Invoke-RemoveMgHierarchy}.ToString()
+
     $ctx = Get-AzContext
+
     $WhatIfPrefix = ""
     if ($WhatIfPreference) {
         $WhatIfPrefix = "What if: "
     }
+
+    # Get list of existing Management Groups
+    $managementGroupIds = (Get-AzManagementGroup).Name
+
     Write-Information ("$($WhatIfPrefix)Removing Management Group Hierarchy in batch: {0}" -f $($ManagementGroupId | ConvertTo-Json -Compress)) -InformationAction Continue
-    $ManagementGroupId | ForEach-Object -Parallel {
+
+    # Log warning for non-existing Management Group
+    $ManagementGroupId | Where-Object { $_ -notin $managementGroupIds } | ForEach-Object {
+        Write-Warning "'/providers/Microsoft.Management/managementGroups/$_' not found"
+    }
+
+    # Process existing Management Groups
+    $ManagementGroupId | Where-Object { $_ -in $managementGroupIds } | ForEach-Object -Parallel {
+
         # Set WhatIfPreference from parent session
         $WhatIfPreference = $using:WhatIfPreference
+
         # Parse functions from parent session
         ${function:Invoke-RemoveMgHierarchy} = $using:InvokeRemoveMgHierarchy
+
         # Set Azure context from parent session
         Set-AzContext -Context $using:ctx | Out-Null
+
         # Get expanded properties of current Management Group
         $managementGroup = Get-AzManagementGroup -GroupId $_ -Expand -WarningAction SilentlyContinue
+
         # Process child Subscriptions under the current Management Group scope
         $childSubs = ($managementGroup.Children | Where-Object { $_.Type -eq "/subscriptions" }).Name
         foreach ($childSub in $childSubs) {
             Remove-AzManagementGroupSubscription -SubscriptionId $childSub -GroupName $managementGroup.Name -WhatIf:$WhatIfPreference -WarningAction SilentlyContinue
             Write-Output "/subscriptions/$childSub"
         }
+
         # Process child Management Groups under the current Management Group scope
         $childMgs = ($managementGroup.Children | Where-Object { $_.Type -match "^(\/providers\/)?(Microsoft\.Management\/managementGroups)$" }).Name
         if ($childMgs.Length -gt 0) {
             Invoke-RemoveMgHierarchy -ManagementGroupId $childMgs
         }
+
         Remove-AzManagementGroup -GroupId $_ -WhatIf:$WhatIfPreference -WarningAction SilentlyContinue | Out-Null
+
         Write-Output "/providers/Microsoft.Management/managementGroups/$_"
+
     }
+
 }
