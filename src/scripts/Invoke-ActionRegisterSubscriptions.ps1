@@ -5,13 +5,6 @@
 # - Register Azure Subscriptions for test pipelines
 #
 
-###############################################
-# Configure PSScriptAnalyzer rule suppression.
-###############################################
-
-# The following SuppressMessageAttribute entries are used to surpress
-# PSScriptAnalyzer tests against known exceptions as per:
-# https://github.com/powershell/psscriptanalyzer#suppressing-rules
 [CmdletBinding(SupportsShouldProcess)]
 param (
     [Parameter()][String]$AlzToolsPath = "$PWD/src/Alz.Tools",
