@@ -56,7 +56,11 @@
     RequiredModules      = @(
         @{
             ModuleName    = 'Az.Accounts'
-            ModuleVersion = '2.2.3'
+            ModuleVersion = '2.9.0'
+        }
+        @{
+            ModuleName    = 'Az.Resources'
+            ModuleVersion = '6.1.0'
         }
     )
 
@@ -85,7 +89,9 @@
         'ConvertTo-LibraryArtifact'
         'Edit-LineEndings'
         'Export-LibraryArtifact'
+        'Invoke-RemoveDeploymentByPattern'
         'Invoke-RemoveMgHierarchy'
+        'Invoke-RemoveOrphanedRoleAssignment'
         'Invoke-RemoveRsgByPattern'
         'Invoke-UpdateCacheInModule'
         'Invoke-UseCacheFromModule'

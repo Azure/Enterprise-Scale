@@ -561,6 +561,144 @@ function Invoke-RemoveRsgByPattern {
 
 }
 
+function Invoke-RemoveDeploymentByPattern {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter()][String[]]$SubscriptionId,
+        [Parameter()][String[]]$ManagementGroupId,
+        [Parameter()][String]$Like,
+        [Parameter()][Switch]$IncludeTenantScope
+    )
+
+    $originalCtx = Get-AzContext
+
+    $WhatIfPrefix = ""
+    if ($WhatIfPreference) {
+        $WhatIfPrefix = "What if: "
+    }
+
+    $jobs = @()
+
+    foreach ($subId in $SubscriptionId) {
+        Set-AzContext -SubscriptionId $subId -WhatIf:$false | Out-Null
+
+        $deployments = Get-AzSubscriptionDeployment |  Where-Object -Property "DeploymentName" -Like $Like
+
+        Write-Information "$($WhatIfPrefix)Deleting [$($deployments.Length)] Deployments for Subscription [$($subId)] matching pattern [$($Like)]" -InformationAction Continue
+
+        if ($deployments.Length -gt 0) {
+            if ($PSCmdlet.ShouldProcess($($deployments.DeploymentName | ConvertTo-Json -Compress), "Remove-AzSubscriptionDeployment")) {
+                $jobs += $deployments | Remove-AzSubscriptionDeployment -AsJob
+            }
+        }
+
+    }
+
+    foreach ($mgId in $ManagementGroupId) {
+        $deployments = Get-AzManagementGroupDeployment -ManagementGroupId $mgId |  Where-Object -Property "DeploymentName" -Like $Like
+
+        Write-Information "$($WhatIfPrefix)Deleting [$($deployments.Length)] Deployments for Management Group [$($mgId)] matching pattern [$($Like)]" -InformationAction Continue
+
+        if ($deployments.Length -gt 0) {
+            if ($PSCmdlet.ShouldProcess($($deployments.DeploymentName | ConvertTo-Json -Compress), "Remove-AzManagementGroupDeployment")) {
+                $jobs += $deployments | Remove-AzManagementGroupDeployment -AsJob
+            }
+        }
+
+    }
+
+    if ($IncludeTenantScope) {
+        $deployments = Get-AzTenantDeployment |  Where-Object -Property "DeploymentName" -Like $Like
+
+        Write-Information "$($WhatIfPrefix)Deleting [$($deployments.Length)] Deployments for Tenant [$($originalCtx.Tenant.Id)] matching pattern [$($Like)]" -InformationAction Continue
+
+        if ($deployments.Length -gt 0) {
+            if ($PSCmdlet.ShouldProcess($($deployments.DeploymentName | ConvertTo-Json -Compress), "Remove-AzTenantDeployment")) {
+                $jobs += $deployments | Remove-AzTenantDeployment -AsJob
+            }
+        }
+
+    }
+
+    Set-AzContext $originalCtx -WhatIf:$false | Out-Null
+
+    return $jobs
+
+}
+
+function Invoke-RemoveOrphanedRoleAssignment {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter()][String[]]$SubscriptionId
+    )
+
+    $originalCtx = Get-AzContext
+
+    $WhatIfPrefix = ""
+    if ($WhatIfPreference) {
+        $WhatIfPrefix = "What if: "
+    }
+
+    # Get the latest stable API version
+    $roleAssignmentsApiVersion = [ProviderApiVersions]::GetLatestStableByType("Microsoft.Authorization/roleAssignments")
+    Write-Information "Using Role Assignments API Version : $($roleAssignmentsApiVersion)" -InformationAction Continue
+    
+    foreach ($subId in $SubscriptionId) {
+
+        # Use Rest API to ensure correct permissions are assigned when looking up
+        # whether identity exists, otherwise Get-AzRoleAssignment will always
+        # return `objectType : "unknown"` for all assignments with no errors.
+
+        # Get Role Assignments
+        $getRequestPath = "/subscriptions/$($subId)/providers/Microsoft.Authorization/roleAssignments?api-version=$($roleAssignmentsApiVersion)"
+        $getResponse = Invoke-AzRestMethod -Method "GET" -Path $getRequestPath
+        $roleAssignments = ($getResponse.Content | ConvertFrom-Json).value
+
+        # Check for valid response
+        if ($getResponse.StatusCode -ne "200") {
+            throw $getResponse.Content
+        }
+        try {
+            # If invalid response, $roleAssignments will be null and throw an error
+            $roleAssignments.GetType() | Out-Null
+        }
+        catch {
+            throw $getResponse.Content
+        }
+
+        # Get a list of assigned principalId values and lookup against AAD
+        $principalsRequestUri = "https://graph.microsoft.com/v1.0/directoryObjects/microsoft.graph.getByIds"
+        $principalsRequestBody = @{
+            ids = $roleAssignments.properties.principalId
+        } | ConvertTo-Json -Depth $jsonDepth
+        $principalsResponse = Invoke-AzRestMethod -Method "POST" -Uri $principalsRequestUri -Payload $principalsRequestBody -WhatIf:$false
+        $principalIds = ($principalsResponse.Content | ConvertFrom-Json).value.id
+
+        # Find all Role Assignments where the principalId is not found in AAD
+        $orphanedRoleAssignments = $roleAssignments | Where-Object {
+            ($_.properties.scope -eq "/subscriptions/$($subId)") -and
+            ($_.properties.principalId -notin $principalIds)
+        }
+
+        # Delete orphaned Role Assignments
+        Write-Information "$($WhatIfPrefix)Deleting [$($orphanedRoleAssignments.Length)] orphaned Role Assignments for Subscription [$($subId)]" -InformationAction Continue
+        $orphanedRoleAssignments | ForEach-Object {
+            if ($PSCmdlet.ShouldProcess("$($_.id)", "Remove-AzRoleAssignment")) {
+                $deleteRequestPath = "$($_.id)?api-version=$($roleAssignmentsApiVersion)"
+                $deleteResponse = Invoke-AzRestMethod -Method "DELETE" -Path $deleteRequestPath
+                # Check for valid response
+                if ($deleteResponse.StatusCode -ne "200") {
+                    throw $deleteResponse.Content
+                }
+            }
+        }
+
+    }
+
+    Set-AzContext $originalCtx -WhatIf:$false | Out-Null
+
+}
+
 function Invoke-RemoveMgHierarchy {
     [CmdletBinding(SupportsShouldProcess)]
     param (
