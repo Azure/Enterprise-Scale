@@ -74,7 +74,11 @@ if ($Test) {
     $deployment = Test-AzTenantDeployment @deploymentObject
 }
 elseif ($Destroy) {
-    # Run the steps to destroy the deployment
+    # This part of the script relies on a custom set of classes and functions
+    # defined within the Alz.Tools PowerShell module.
+    Write-Information "==> Import Alz.Tools PowerShell module..."
+    Import-Module $AlzToolsPath
+
     $jobs = @()
 
     $maxKeyLength = ($subscriptions.name.foreach({ $_.Length }) | Measure-Object -Maximum).Maximum

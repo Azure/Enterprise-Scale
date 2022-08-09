@@ -642,7 +642,7 @@ function Invoke-RemoveOrphanedRoleAssignment {
     # Get the latest stable API version
     $roleAssignmentsApiVersion = [ProviderApiVersions]::GetLatestStableByType("Microsoft.Authorization/roleAssignments")
     Write-Information "Using Role Assignments API Version : $($roleAssignmentsApiVersion)" -InformationAction Continue
-    
+
     foreach ($subId in $SubscriptionId) {
 
         # Use Rest API to ensure correct permissions are assigned when looking up
