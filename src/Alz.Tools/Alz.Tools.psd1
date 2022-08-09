@@ -60,7 +60,7 @@
         }
         @{
             ModuleName    = 'Az.Resources'
-            ModuleVersion = '6.1.0'
+            ModuleVersion = '5.6.0'
         }
     )
 
