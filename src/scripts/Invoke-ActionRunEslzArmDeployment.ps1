@@ -92,12 +92,17 @@ elseif ($Destroy) {
     $jobs += Invoke-RemoveDeploymentByPattern -SubscriptionId $subscriptionIds -Like "$RootId" -IncludeTenantScope -WhatIf:$WhatIfPreference
     $jobs += Invoke-RemoveDeploymentByPattern -SubscriptionId $subscriptionIds -Like "EntScale-*" -IncludeTenantScope -WhatIf:$WhatIfPreference
 
-    Write-Information "$($WhatIfPrefix)Removing Orphaned Role Assignments..."
-    Invoke-RemoveOrphanedRoleAssignment -SubscriptionId $subscriptionIds -WhatIf:$WhatIfPreference
-
     Write-Information "$($WhatIfPrefix)Removing Management Group : $RootId..."
     Invoke-RemoveMgHierarchy -ManagementGroupId $RootId -WhatIf:$WhatIfPreference | ForEach-Object { Write-Information "Successfully removed : $_" }
 
+    Write-Information "$($WhatIfPrefix)Removing Orphaned Role Assignments..."
+    if (-not $WhatIfPreference) {
+        # Sleep for 60 seconds to allow Management Group changes to create orphaned Role Assignments
+        Start-Sleep -Seconds 60
+    }
+    Invoke-RemoveOrphanedRoleAssignment -SubscriptionId $subscriptionIds -WhatIf:$WhatIfPreference
+
+    Write-Information "$($WhatIfPrefix)Waiting for resource deletion jobs to complete..."
     $jobs | Wait-Job -Timeout 3600
 }
 else {
