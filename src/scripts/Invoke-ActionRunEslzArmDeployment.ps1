@@ -90,7 +90,7 @@ elseif ($Destroy) {
     $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptionIds -Like "$RootId-*" -WhatIf:$WhatIfPreference
     $jobs += Invoke-RemoveRsgByPattern -SubscriptionId $subscriptionIds -Like "NetworkWatcherRG" -WhatIf:$WhatIfPreference
     $jobs += Invoke-RemoveDeploymentByPattern -SubscriptionId $subscriptionIds -Like "$RootId" -IncludeTenantScope -WhatIf:$WhatIfPreference
-    $jobs += Invoke-RemoveDeploymentByPattern -SubscriptionId $subscriptionIds -Like "EntScale-*" -IncludeTenantScope -WhatIf:$WhatIfPreference
+    $jobs += Invoke-RemoveDeploymentByPattern -SubscriptionId $subscriptionIds -Like "alz-*" -IncludeTenantScope -WhatIf:$WhatIfPreference
 
     Write-Information "$($WhatIfPrefix)Removing Management Group : $RootId..."
     Invoke-RemoveMgHierarchy -ManagementGroupId $RootId -WhatIf:$WhatIfPreference | ForEach-Object { Write-Information "Successfully removed : $_" }
