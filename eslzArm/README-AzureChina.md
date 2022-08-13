@@ -160,7 +160,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-asb" `
                                 -Verbose
 
 # Create connectivity hub, using traditional hub & spoke in this example
-# Note: After you have executed the deployment step below, please check that these deployment names, $ESLZPrefix-hubspoke and EntScale-connectivityHubSub in your $ConnectivitySubscriptionId have succeeded. If you get this error "New-AzDeployment: An error occurred while sending the request." on the command line, just ignore it.
+# Note: After you have executed the deployment step below, please check that these deployment names, $ESLZPrefix-hubspoke and alz-****-****-connectivityHubSub in your $ConnectivitySubscriptionId have succeeded. If you get this error "New-AzDeployment: An error occurred while sending the request." on the command line, just ignore it.
 Select-AzSubscription -SubscriptionId $ConnectivitySubscriptionId
 
 New-AzSubscriptionDeployment -Name "$($DeploymentName)-hubspoke" `
