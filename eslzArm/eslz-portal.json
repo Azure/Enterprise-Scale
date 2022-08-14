@@ -7,7 +7,7 @@
             "steps": [
                 {
                     "name": "basics",
-                    "label": "Deployment location",
+                    "label": "Deployment settings",
                     "elements": [
                         {
                             "name": "cloudEnvironment",
@@ -48,7 +48,7 @@
                                     "visible": true,
                                     "options": {
                                         "icon": "Warning",
-                                        "text": "This value should automatically set. Only change if you believe it to be incorrect.",
+                                        "text": "This value should be automatically set based on the list of available locations. Only change this if you believe the value to be incorrect.",
                                         "uri": "https://docs.microsoft.com/en-us/cli/azure/manage-clouds-azure-cli"
                                     }
                                 }
@@ -61,13 +61,13 @@
                     ]
                 },
                 {
-                    "name": "lzSettings",
+                    "name": "core",
                     "label": "Azure core setup",
                     "subLabel": {
                         "preValidation": "Provide a company prefix for the management group structure that will be created.",
                         "postValidation": "Done"
                     },
-                    "bladeTitle": "Company prefix",
+                    "bladeTitle": "ALZ - Core Settings",
                     "elements": [
                         {
                             "name": "info",
@@ -94,8 +94,8 @@
                         {
                             "name": "enterpriseScaleCompanyPrefix",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Management Group prefix",
-                            "toolTip": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale.",
+                            "label": "Resource prefix (Root ID)",
+                            "toolTip": "Provide a resource prefix (max 10 characters, unique at tenant-scope). This will be used for the Management Group hierarchy and other resources created as part of this deployment.",
                             "defaultValue": "",
                             "constraints": {
                                 "required": true,
@@ -104,11 +104,11 @@
                             }
                         },
                         {
-                            "name": "subOrgsOption",
+                            "name": "platformSubscription",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Select dedicated subscriptions or single subscription for platform resources",
+                            "label": "Platform subscription options",
                             "defaultValue": "Dedicated (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance.",
+                            "toolTip": "If 'Dedicated (recommended)' is selected, dedicated Subscriptions will be used for deploying connectivity, identity and management resources.",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -124,7 +124,7 @@
                             "visible": true
                         },
                         {
-                            "name": "esSingleSubSection",
+                            "name": "singleSubscription",
                             "type": "Microsoft.Common.Section",
                             "label": "Single platform subscription",
                             "elements": [
@@ -134,7 +134,7 @@
                                     "visible": true,
                                     "options": {
                                         "icon": "Warning",
-                                        "text": "Dedicated subscriptions are recommended for the various platform components to ensure scale, sustainability, and segregation of duties. However, a single subscription can also be used in case this is not a concern (e.g., small enterprises).",
+                                        "text": "Dedicated subscriptions are recommended for the different platform resource categories to ensure scale, sustainability, and segregation of duties. A single subscription can be used for proof of concepts, or by smaller organizations.",
                                         "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
                                     }
                                 },
@@ -143,16 +143,16 @@
                                     "type": "Microsoft.Common.TextBlock",
                                     "visible": true,
                                     "options": {
-                                        "text": "Select the dedicated, single subscription that will be used for all platform resources during deployment, for security, logging, connectivity, and identity."
+                                        "text": "Select a single subscription that will be used for all platform resources. This includes resources relating to platform management, security, governance, automation, connectivity, and identity."
                                     }
                                 },
                                 {
                                     "type": "Microsoft.Common.SubscriptionSelector",
-                                    "name": "esSingleSub",
+                                    "name": "selector",
                                     "label": "Single platform subscription"
                                 }
                             ],
-                            "visible": "[equals(steps('lzSettings').subOrgsOption, 'Single')]"
+                            "visible": "[equals(steps('core').platformSubscription, 'Single')]"
                         },
                         {
                             "name": "cuaSection",
@@ -195,18 +195,18 @@
                     ]
                 },
                 {
-                    "name": "esGoalState",
+                    "name": "management",
                     "label": "Platform management, security, and governance",
                     "subLabel": {
                         "preValidation": "",
                         "postValidation": ""
                     },
-                    "bladeTitle": "lzGs",
+                    "bladeTitle": "ALZ - Management Settings",
                     "elements": [
                         {
                             "name": "multiPlatformMgmtSub",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[not(equals(steps('lzSettings').subOrgsOption, 'Single'))]",
+                            "visible": "[not(equals(steps('core').platformSubscription, 'Single'))]",
                             "options": {
                                 "text": "To enable platform management, security and governance, you must allocate a management Subscription. Please note, this Subscription will be moved to the platform Management Group, and ARM will deploy a Log Analytics workspace and requisite settings. We recommend using a new Subscription with no existing resources. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring",
@@ -216,7 +216,7 @@
                         {
                             "name": "singlePlatformMgmtSub",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[equals(steps('lzSettings').subOrgsOption, 'Single')]",
+                            "visible": "[equals(steps('core').platformSubscription, 'Single')]",
                             "options": {
                                 "text": "To enable platform management, security and governance, you can configure core infra such as Log Analytics, Azure Security Center and additional monitoring solutions to your dedicated platform subscription. Note that Azure Policy will be used to govern the configuration for the platform at scale.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-and-monitoring",
@@ -228,7 +228,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Log Analytics workspace and enable monitoring for your platform and resources",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continious compliance.",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance.",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -256,7 +256,7 @@
                             "constraints": {
                                 "required": false
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "esMgmtSubSection",
@@ -278,12 +278,12 @@
                                     "label": "Management subscription"
                                 }
                             ],
-                            "visible": "[and(equals(steps('esGoalState').enableLogAnalytics, 'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
+                            "visible": "[and(equals(steps('management').enableLogAnalytics, 'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
                         },
                         {
                             "name": "monitoring",
                             "type": "Microsoft.Common.TextBlock",
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]",
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]",
                             "options": {
                                 "text": "Select which Azure Monitor solutions you will enable for your Log Analytics workspace",
                                 "link": {
@@ -297,7 +297,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Agent Health solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -310,14 +310,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableChangeTracking",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Change Tracking solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -330,14 +330,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableUpdateMgmt",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Update Management solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -350,14 +350,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableActivityLog",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Activity Log solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -370,14 +370,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableVmInsights",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy VM Insights solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -390,14 +390,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableServiceMap",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Service Map solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -410,14 +410,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableSqlAssessment",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy SQL Assessment solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -430,14 +430,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableSqlVulnerabilityAssessment",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy SQL Vulnerability Assessment solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -450,14 +450,14 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableSqlAdvancedThreatProtection",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy SQL Advanced Threat Protection solution",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -470,12 +470,12 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "textBlock0",
                             "type": "Microsoft.Common.TextBlock",
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]",
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]",
                             "options": {
                                 "text": "Select which Microsoft Defender for Cloud solutions you will enable.",
                                 "link": {
@@ -489,7 +489,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Microsoft Defender for Cloud and enable security monitoring for your platform and resources",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -502,17 +502,17 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "emailContactAsc",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Microsoft Defender for Cloud Email Contact",
                             "toolTip": "Email address to get email notifications from Azure Security Center",
-                            "visible": "[equals(steps('esGoalState').enableAsc,'Yes')]",
+                            "visible": "[equals(steps('management').enableAsc,'Yes')]",
                             "defaultValue": "",
                             "constraints": {
-                                "required": "[equals(steps('esGoalState').enableAsc,'Yes')]",
+                                "required": "[equals(steps('management').enableAsc,'Yes')]",
                                 "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
                                 "validationMessage": "Please provide a valid email address"
                             }
@@ -523,7 +523,7 @@
                             "label": "Enable Microsoft Defender for Cloud for servers",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for all servers.",
-                            "visible": "[equals(steps('esGoalState').enableAsc,'Yes')]",
+                            "visible": "[equals(steps('management').enableAsc,'Yes')]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -543,7 +543,7 @@
                             "label": "Enable Microsoft Defender for Cloud for open-source relational databases",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for open-source relational databases.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -563,7 +563,7 @@
                             "label": "Enable Microsoft Defender for Cloud for AppServices",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for AppServices.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -583,7 +583,7 @@
                             "label": "Enable Microsoft Defender for Cloud for Storage",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for Storage.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), or(equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'), equals(steps('basics').cloudEnvironment.selection, 'AzureUSGovernment')))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), or(equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'), equals(steps('basics').cloudEnvironment.selection, 'AzureUSGovernment')))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -603,7 +603,7 @@
                             "label": "Enable Microsoft Defender for Cloud for Azure SQL Database",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for Azure SQL Database.",
-                            "visible": "[equals(steps('esGoalState').enableAsc,'Yes')]",
+                            "visible": "[equals(steps('management').enableAsc,'Yes')]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -623,7 +623,7 @@
                             "label": "Enable Microsoft Defender for Cloud for SQL servers on machines",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for SQL servers on machines.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -643,7 +643,7 @@
                             "label": "Enable Microsoft Defender for Cloud for Key Vault",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for Key Vault.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -663,7 +663,7 @@
                             "label": "Enable Microsoft Defender for Cloud for Azure Resource Manager",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for Resource Manager.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), or(equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'), equals(steps('basics').cloudEnvironment.selection, 'AzureUSGovernment')))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), or(equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'), equals(steps('basics').cloudEnvironment.selection, 'AzureUSGovernment')))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -683,7 +683,7 @@
                             "label": "Enable Microsoft Defender for Cloud for DNS",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for DNS.",
-                            "visible": "[and(equals(steps('esGoalState').enableAsc,'Yes'), or(equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'), equals(steps('basics').cloudEnvironment.selection, 'AzureUSGovernment')))]",
+                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), or(equals(steps('basics').cloudEnvironment.selection, 'AzureCloud'), equals(steps('basics').cloudEnvironment.selection, 'AzureUSGovernment')))]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -703,7 +703,7 @@
                             "label": "Enable Microsoft Defender for Cloud for Containers (Kubernetes and Container Registries)",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected, Microsoft Defender for Cloud will be enabled for Containers (Kubernetes and Container Registries).",
-                            "visible": "[equals(steps('esGoalState').enableAsc,'Yes')]",
+                            "visible": "[equals(steps('management').enableAsc,'Yes')]",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -722,7 +722,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Microsoft Sentinel",
                             "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continuous compliance",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -735,22 +735,22 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         }
                     ]
                 },
                 {
-                    "name": "lzDevOps",
+                    "name": "automation",
                     "label": "Platform DevOps and automation",
                     "subLabel": {},
-                    "bladeTitle": "lz Dev Ops",
+                    "bladeTitle": "ALZ - Automation Settings",
                     "elements": [
                         {
                             "name": "info",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[or(not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)), not(empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]",
+                            "visible": "[or(not(empty(steps('management').esMgmtSubSection.esMgmtSub)), not(empty(steps('core').singleSubscription.selector)))]",
                             "options": {
-                                "text": "Azure Landing Zones provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
+                                "text": "Azure Landing Zones provides an integrated CI/CD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
                                 "style": "Info"
                             }
@@ -758,9 +758,9 @@
                         {
                             "name": "correction",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[and(equals(steps('esGoalState').enableLogAnalytics, 'No'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]",
+                            "visible": "[and(equals(steps('management').enableLogAnalytics, 'No'), not(equals(steps('core').platformSubscription, 'Single')))]",
                             "options": {
-                                "text": "Azure Landing Zones provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
+                                "text": "Azure Landing Zones provides an integrated CI/CD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CI/CD integration.",
                                 "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
                                 "style": "Warning"
                             }
@@ -768,7 +768,7 @@
                         {
                             "name": "enableAzOps",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Deploy integrated CICD pipeline?",
+                            "label": "Deploy integrated CI/CD pipeline?",
                             "defaultValue": "No",
                             "toolTip": "",
                             "constraints": {
@@ -784,12 +784,12 @@
                                 ],
                                 "required": true
                             },
-                            "visible": "[or(not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)), not(empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]"
+                            "visible": "[or(not(empty(steps('management').esMgmtSubSection.esMgmtSub)), not(empty(steps('core').singleSubscription.selector)))]"
                         },
                         {
                             "name": "Instructions",
                             "type": "Microsoft.Common.TextBlock",
-                            "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]",
+                            "visible": "[equals(steps('automation').enableAzOps,'Yes')]",
                             "options": {
                                 "text": "Provide the credentials to initialize the repository with the ARM templates for Azure Landing Zones.",
                                 "link": {
@@ -801,7 +801,7 @@
                         {
                             "name": "optionsGroup1",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Select CICD option",
+                            "label": "Select CI/CD option",
                             "defaultValue": "GitHub Actions",
                             "toolTip": "Azure Landing Zones will provide options for both GitHub Actions and Azure DevOps pipelines. For now, only GitHub Actions is available",
                             "constraints": {
@@ -813,14 +813,14 @@
                                 ],
                                 "required": true
                             },
-                            "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]"
+                            "visible": "[equals(steps('automation').enableAzOps,'Yes')]"
                         },
                         {
                             "name": "gitHubUserNameOrOrg",
                             "type": "Microsoft.Common.TextBox",
                             "label": "GitHub organization or username",
                             "toolTip": "Provide Git org/username.",
-                            "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]",
+                            "visible": "[equals(steps('automation').enableAzOps,'Yes')]",
                             "defaultValue": "",
                             "constraints": {
                                 "required": true,
@@ -834,7 +834,7 @@
                             "label": "New GitHub repository name",
                             "toolTip": "Provide a name for the new repository that will be created",
                             "defaultValue": "",
-                            "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]",
+                            "visible": "[equals(steps('automation').enableAzOps,'Yes')]",
                             "placeholder": "",
                             "constraints": {
                                 "required": true,
@@ -857,7 +857,7 @@
                             "options": {
                                 "hideConfirmation": true
                             },
-                            "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]"
+                            "visible": "[equals(steps('automation').enableAzOps,'Yes')]"
                         },
                         {
                             "name": "spnSection",
@@ -867,7 +867,7 @@
                                 {
                                     "name": "esServicePrincipal",
                                     "type": "Microsoft.Common.ServicePrincipalSelector",
-                                    "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]",
+                                    "visible": "[equals(steps('automation').enableAzOps,'Yes')]",
                                     "label": {
                                         "password": "Password",
                                         "certificateThumbprint": "Certificate thumbprint",
@@ -891,23 +891,23 @@
                                     }
                                 }
                             ],
-                            "visible": "[equals(steps('lzDevOps').enableAzOps,'Yes')]"
+                            "visible": "[equals(steps('automation').enableAzOps,'Yes')]"
                         }
                     ]
                 },
                 {
-                    "name": "esConnectivityGoalState",
+                    "name": "connectivity",
                     "label": "Network topology and connectivity",
                     "subLabel": {
                         "preValidation": "",
                         "postValidation": ""
                     },
-                    "bladeTitle": "lzGs",
+                    "bladeTitle": "ALZ - Connectivity Settings",
                     "elements": [
                         {
                             "name": "multiPlatformConnectivitySub",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[not(equals(steps('lzSettings').subOrgsOption, 'Single'))]",
+                            "visible": "[not(equals(steps('core').platformSubscription, 'Single'))]",
                             "options": {
                                 "text": "To enable network topology and connectivity, you must allocate a dedicated connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first hub virtual network for either a hub and spoke or Virtual WAN  network topology. Additional networking platform resources such as gateways or Azure Firewall can be deployed. We recommend using a new dedicated Subscription with no existing resources.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology",
@@ -917,7 +917,7 @@
                         {
                             "name": "singlePlatformConnectivitySub",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[equals(steps('lzSettings').subOrgsOption, 'Single')]",
+                            "visible": "[equals(steps('core').platformSubscription, 'Single')]",
                             "options": {
                                 "text": "To enable network topology and connectivity, you can select the preferred networking topology, and deploy this into the dedicated platform subscription. Additional networking platform resources such as gateways or Azure Firewall can also be deployed.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology",
@@ -972,7 +972,7 @@
                                     "label": "Connectivity subscription"
                                 }
                             ],
-                            "visible": "[and(not(equals(steps('esConnectivityGoalState').enableHub, 'No')), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('core').platformSubscription, 'Single')))]"
                         },
                         {
                             "name": "esAddressHubVWAN",
@@ -980,7 +980,7 @@
                             "label": "Address space (required for vWAN hub)",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/23)",
                             "defaultValue": "10.100.0.0/23",
-                            "visible": "[and(not(equals(steps('esConnectivityGoalState').enableHub, 'No')), not(equals(steps('esConnectivityGoalState').enableHub, 'nva')), not(equals(steps('esConnectivityGoalState').enableHub, 'vhub')))]",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')))]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -997,7 +997,7 @@
                             "label": "Address space (required for hub virtual network)",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
                             "defaultValue": "10.100.0.0/16",
-                            "visible": "[and(not(equals(steps('esConnectivityGoalState').enableHub, 'No')), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan')))]",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'vwan')))]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -1023,17 +1023,17 @@
                             "filter": true,
                             "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                             "constraints": {
-                                "allowedValues": "[map(steps('esConnectivityGoalState').esLocationsApi.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
+                                "allowedValues": "[map(steps('connectivity').esLocationsApi.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
                                 "required": true
                             },
-                            "visible": "[not(equals(steps('esConnectivityGoalState').enableHub, 'No'))]"
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]"
                         },
                         {
                             "name": "enableDdoS",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable DDoS Protection Standard",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[not(equals(steps('esConnectivityGoalState').enableHub, 'No'))]",
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Protection Standard will be enabled.",
                             "constraints": {
                                 "allowedValues": [
@@ -1053,7 +1053,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Create Private DNS Zones for Azure PaaS services",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[or(equals(steps('esConnectivityGoalState').enableHub, 'vhub'), equals(steps('esConnectivityGoalState').enableHub, 'nva'))]",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will create Private DNS Zones for Azure PaaS services",
                             "constraints": {
                                 "allowedValues": [
@@ -1073,7 +1073,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy VPN Gateway",
                             "defaultValue": "No",
-                            "visible": "[not(equals(steps('esConnectivityGoalState').enableHub, 'No'))]",
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway",
                             "constraints": {
                                 "allowedValues": [
@@ -1093,7 +1093,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy zone redundant or regional VPN Gateway",
                             "defaultValue": "Zone redundant (recommended)",
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableVpnGw,'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))), equals(steps('esConnectivityGoalState').enableVpnGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw,'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Virtual Gateway to the selected region and availability zones.",
                             "constraints": {
                                 "allowedValues": [
@@ -1117,7 +1117,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))), equals(steps('esConnectivityGoalState').enableVpnGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation)))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation)))]",
                             "toolTip": "Select the required SKU for the VPN gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1153,7 +1153,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))), equals(steps('esConnectivityGoalState').enableVpnGw,'Yes'), equals(steps('esConnectivityGoalState').gwRegionalOrAz, 'Zone') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'), equals(steps('connectivity').gwRegionalOrAz, 'Zone') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation))]",
                             "toolTip": "Select the required SKU for the VPN gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1189,7 +1189,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))), equals(steps('esConnectivityGoalState').enableVpnGw,'Yes'), equals(steps('esConnectivityGoalState').gwRegionalOrAz, 'Regional') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'), equals(steps('connectivity').gwRegionalOrAz, 'Regional') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation))]",
                             "toolTip": "Select the required SKU for the VPN gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1225,7 +1225,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(equals(steps('esConnectivityGoalState').enableVpnGw, 'Yes'), equals(steps('esConnectivityGoalState').enableHub, 'vwan'))]",
+                            "visible": "[and(equals(steps('connectivity').enableVpnGw, 'Yes'), equals(steps('connectivity').enableHub, 'vwan'))]",
                             "toolTip": "Select the VPN Gateway scale unit",
                             "constraints": {
                                 "allowedValues": [
@@ -1338,7 +1338,7 @@
                             "label": "Subnet for VPN/ExpressRoute Gateways",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.1.0/24)",
                             "defaultValue": "10.100.1.0/24",
-                            "visible": "[and(not(equals(steps('esConnectivityGoalState').enableHub, 'vwan')), or(equals(steps('esConnectivityGoalState').enableErGw, 'Yes'),equals(steps('esConnectivityGoalState').enableVpnGw, 'Yes')))]",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'vwan')), or(equals(steps('connectivity').enableErGw, 'Yes'),equals(steps('connectivity').enableVpnGw, 'Yes')))]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -1347,19 +1347,19 @@
                                         "message": "Invalid CIDR range. The address prefix must be in the range [20,27]."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('esConnectivityGoalState').subnetMaskForGw, '/')), '.'), 1))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 1))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (first octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('esConnectivityGoalState').subnetMaskForGw, '/')), '.'), 2))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 2))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (second octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('esConnectivityGoalState').subnetMaskForGw, '/')), '.'), 3))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 3))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (third octet)."
                                     },
                                     {
-                                        "isValid": "[lessOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), last(split(steps('esConnectivityGoalState').subnetMaskForGw, '/')))]",
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForGw, '/')))]",
                                         "message": "CIDR range not within virtual network CIDR range (subnet mask)."
                                     }
                                 ]
@@ -1370,7 +1370,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy ExpressRoute Gateway",
                             "defaultValue": "No",
-                            "visible": "[not(equals(steps('esConnectivityGoalState').enableHub, 'No'))]",
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route gateway",
                             "constraints": {
                                 "allowedValues": [
@@ -1390,7 +1390,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy zone redundant or regional ExpressRoute Gateway",
                             "defaultValue": "Zone redundant (recommended)",
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))),equals(steps('esConnectivityGoalState').enableErGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))),equals(steps('connectivity').enableErGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route Gateway to the selected region and availability zones.",
                             "constraints": {
                                 "allowedValues": [
@@ -1414,7 +1414,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))),equals(steps('esConnectivityGoalState').enableErGw,'Yes'), equals(steps('esConnectivityGoalState').erRegionalOrAz, 'Zone'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))),equals(steps('connectivity').enableErGw,'Yes'), equals(steps('connectivity').erRegionalOrAz, 'Zone'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation))]",
                             "toolTip": "Select the required SKU for the Express Route gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1445,7 +1445,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))), equals(steps('esConnectivityGoalState').enableErGw,'Yes'), equals(steps('esConnectivityGoalState').erRegionalOrAz, 'Regional'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableErGw,'Yes'), equals(steps('connectivity').erRegionalOrAz, 'Regional'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation))]",
                             "toolTip": "Select the required SKU for the Express Route gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1476,7 +1476,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').enableErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan'))),equals(steps('esConnectivityGoalState').enableErGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation)))]",
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))),equals(steps('connectivity').enableErGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation)))]",
                             "toolTip": "Select the required SKU for the Express Route gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1507,7 +1507,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(equals(steps('esConnectivityGoalState').enableErGw, 'Yes'), equals(steps('esConnectivityGoalState').enableHub, 'vwan'))]",
+                            "visible": "[and(equals(steps('connectivity').enableErGw, 'Yes'), equals(steps('connectivity').enableHub, 'vwan'))]",
                             "toolTip": "Select the ExpressRoute Gateway scale unit",
                             "constraints": {
                                 "allowedValues": [
@@ -1569,7 +1569,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Azure Firewall",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[or(equals(steps('esConnectivityGoalState').enableHub, 'vhub'), equals(steps('esConnectivityGoalState').enableHub, 'vwan'))]",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall",
                             "constraints": {
                                 "allowedValues": [
@@ -1589,7 +1589,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable Azure Firewall as a DNS proxy",
                             "defaultValue": "No",
-                            "visible": "[equals(steps('esConnectivityGoalState').enableAzFw, 'Yes')]",
+                            "visible": "[equals(steps('connectivity').enableAzFw, 'Yes')]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will enable Azure Firewall as a DNS Proxy.",
                             "constraints": {
                                 "allowedValues": [
@@ -1613,7 +1613,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[equals(steps('esConnectivityGoalState').enableAzFw, 'Yes')]",
+                            "visible": "[equals(steps('connectivity').enableAzFw, 'Yes')]",
                             "toolTip": "Select Azure Firewall tier",
                             "constraints": {
                                 "allowedValues": [
@@ -1638,7 +1638,7 @@
                             "multiselect": true,
                             "selectAll": true,
                             "filter": true,
-                            "visible": "[if(or(equals(steps('esConnectivityGoalState').enableHub, 'vhub'), equals(steps('esConnectivityGoalState').enableHub, 'vwan')), and(equals(steps('esConnectivityGoalState').enableAzFw,'Yes'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').connectivityLocation)), false)]",
+                            "visible": "[if(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan')), and(equals(steps('connectivity').enableAzFw,'Yes'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('connectivity').connectivityLocation)), false)]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall to the selected region and availability zones.",
                             "constraints": {
                                 "allowedValues": [
@@ -1663,7 +1663,7 @@
                             "label": "Subnet for Azure Firewall",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/24)",
                             "defaultValue": "10.100.0.0/24",
-                            "visible": "[and(equals(steps('esConnectivityGoalState').enableAzFw, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub, 'vwan')))]",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -1672,19 +1672,19 @@
                                         "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('esConnectivityGoalState').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (first octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('esConnectivityGoalState').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (second octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('esConnectivityGoalState').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (third octet)."
                                     },
                                     {
-                                        "isValid": "[lessOrEquals(last(split(steps('esConnectivityGoalState').esAddressHubHS, '/')), last(split(steps('esConnectivityGoalState').subnetMaskForAzFw, '/')))]",
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFw, '/')))]",
                                         "message": "CIDR range not within virtual network CIDR range (subnet mask)."
                                     }
                                 ]
@@ -1693,18 +1693,18 @@
                     ]
                 },
                 {
-                    "name": "esIdentityGoalState",
+                    "name": "identity",
                     "label": "Identity",
                     "subLabel": {
                         "preValidation": "",
                         "postValidation": ""
                     },
-                    "bladeTitle": "lzGs",
+                    "bladeTitle": "ALZ - Identity Settings",
                     "elements": [
                         {
                             "name": "multiPlatformIdentitySub",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[not(equals(steps('lzSettings').subOrgsOption, 'Single'))]",
+                            "visible": "[not(equals(steps('core').platformSubscription, 'Single'))]",
                             "options": {
                                 "text": "To enable identity (AuthN/AuthZ) for workloads in landing zones, you must allocate an identity Subscription that is dedicated to host your Active Directory domain controllers. Please note, this Subscription will be moved to the identity Management Group, and ARM will assign the selected policies. We recommend using a new Subscription with no existing resources.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/identity-and-access-management",
@@ -1714,7 +1714,7 @@
                         {
                             "name": "singlePlatformIdentitySub",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[equals(steps('lzSettings').subOrgsOption, 'Single')]",
+                            "visible": "[equals(steps('core').platformSubscription, 'Single')]",
                             "options": {
                                 "text": "To enable identity (AuthN/AuthZ) for workloads in landing zones, it is recommended to assign specific policies to govern the virtual machines used for Active Directory domain controllers.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/identity-and-access-management",
@@ -1761,12 +1761,12 @@
                                     "label": "Management subscription"
                                 }
                             ],
-                            "visible": "[and(equals(steps('esIdentityGoalState').esIdentity,'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
+                            "visible": "[and(equals(steps('identity').esIdentity,'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
                         },
                         {
                             "name": "identitypolicies",
                             "type": "Microsoft.Common.TextBlock",
-                            "visible": "[equals(steps('esIdentityGoalState').esIdentity,'Yes')]",
+                            "visible": "[equals(steps('identity').esIdentity,'Yes')]",
                             "options": {
                                 "text": "Select which of the the recommended policies you will assign to your identity management group.",
                                 "link": {
@@ -1793,7 +1793,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esIdentityGoalState').esIdentity,'Yes')]"
+                            "visible": "[equals(steps('identity').esIdentity,'Yes')]"
                         },
                         {
                             "name": "denySubnetWithoutNsgForIdentity",
@@ -1813,7 +1813,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esIdentityGoalState').esIdentity,'Yes')]"
+                            "visible": "[equals(steps('identity').esIdentity,'Yes')]"
                         },
                         {
                             "name": "denyPipForIdentity",
@@ -1833,7 +1833,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[and(equals(steps('esIdentityGoalState').esIdentity,'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]"
+                            "visible": "[and(equals(steps('identity').esIdentity,'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
                         },
                         {
                             "name": "enableVmBackupForIdentity",
@@ -1853,7 +1853,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esIdentityGoalState').esIdentity,'Yes')]"
+                            "visible": "[equals(steps('identity').esIdentity,'Yes')]"
                         },
                         {
                             "name": "esIdentityConnectivity",
@@ -1873,7 +1873,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[and(and(equals(steps('esIdentityGoalState').esIdentity,'Yes'), not(equals(steps('lzSettings').subOrgsOption, 'Single'))), equals(steps('esIdentityGoalState').esIdentity, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub,'No')))]"
+                            "visible": "[and(and(equals(steps('identity').esIdentity,'Yes'), not(equals(steps('core').platformSubscription, 'Single'))), equals(steps('identity').esIdentity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                         },
                         {
                             "name": "identityAddressPrefix",
@@ -1891,18 +1891,18 @@
                                     }
                                 ]
                             },
-                            "visible": "[and(equals(steps('esIdentityGoalState').esIdentityConnectivity, 'Yes'), not(equals(steps('esConnectivityGoalState').enableHub,'No')))]"
+                            "visible": "[and(equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                         }
                     ]
                 },
                 {
-                    "name": "lzGoalState",
-                    "label": "Landing zone configuration",
+                    "name": "landingZones",
+                    "label": "Landing zones configuration",
                     "subLabel": {
                         "preValidation": "",
                         "postValidation": ""
                     },
-                    "bladeTitle": "lzGs",
+                    "bladeTitle": "ALZ - Landing Zones Settings",
                     "elements": [
                         {
                             "name": "infoBox1",
@@ -1944,7 +1944,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[or(equals(steps('esConnectivityGoalState').enableHub, 'nva'), equals(steps('esConnectivityGoalState').enableHub, 'vhub'))]"
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableHub, 'vhub'))]"
                         },
                         {
                             "name": "lzCorpSubsApi",
@@ -1964,9 +1964,9 @@
                             "filter": true,
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
-                            "visible": "[or(or(equals(steps('lzGoalState').esLzConnectivity, 'No'), equals(steps('esConnectivityGoalState').enableHub, 'No')), equals(steps('esConnectivityGoalState').enableHub, 'vwan'), equals(steps('lzGoalState').esLzConnectivity, 'No'))]",
+                            "visible": "[or(or(equals(steps('landingZones').esLzConnectivity, 'No'), equals(steps('connectivity').enableHub, 'No')), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('landingZones').esLzConnectivity, 'No'))]",
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('lzGoalState').lzCorpSubsApi.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                "allowedValues": "[map(filter(steps('landingZones').lzCorpSubsApi.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                 "required": false
                             }
                         },
@@ -1975,7 +1975,7 @@
                             "type": "Microsoft.Common.EditableGrid",
                             "ariaLabel": "Add existing subscriptions into the management group landing zone and provide address space for virtual network peering",
                             "label": "Corp connected landing zone subscriptions (optional)",
-                            "visible": "[equals(steps('lzGoalState').esLzConnectivity, 'Yes')]",
+                            "visible": "[equals(steps('landingZones').esLzConnectivity, 'Yes')]",
                             "constraints": {
                                 "width": "Full",
                                 "rows": {
@@ -2000,7 +2000,7 @@
                                             "filterPlaceholder": "Filter items ...",
                                             "multiLine": false,
                                             "constraints": {
-                                                "allowedValues": "[map(steps('lzGoalState').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                                "allowedValues": "[map(steps('landingZones').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                                 "required": false
                                             }
                                         }
@@ -2066,7 +2066,7 @@
                             "multiLine": true,
                             "visible": true,
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('lzGoalState').lzOnlineSubsApi.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
+                                "allowedValues": "[map(filter(steps('landingZones').lzOnlineSubsApi.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
                                 "required": false
                             }
                         },
@@ -2087,7 +2087,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable DDoS Protection Standard",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[and(not(equals(steps('esConnectivityGoalState').enableHub,'No')),equals(steps('esConnectivityGoalState').enableDdoS,'Yes'))]",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub,'No')),equals(steps('connectivity').enableDdoS,'Yes'))]",
                             "toolTip": "If 'Yes' is selected when also adding a connectivity subscription earlier, DDoS Protection Standard will be enabled.",
                             "constraints": {
                                 "allowedValues": [
@@ -2135,7 +2135,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the corp connected landing zones",
                             "defaultValue": "Yes (recommended)",
-                            "visible": "[equals(steps('esConnectivityGoalState').enablePrivateDnsZones, 'Yes')]",
+                            "visible": "[equals(steps('connectivity').enablePrivateDnsZones, 'Yes')]",
                             "toolTip": "If 'Yes' is selected then Azure Policy will ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the connectivity subscription on behalf of the users.",
                             "constraints": {
                                 "allowedValues": [
@@ -2200,7 +2200,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableVmssMonitoring",
@@ -2224,7 +2224,7 @@
                                     }
                                 ]
                             },
-                            "visible": "[equals(steps('esGoalState').enableLogAnalytics,'Yes')]"
+                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
                             "name": "enableAksPolicy",
@@ -2568,93 +2568,93 @@
         },
         "outputs": {
             "parameters": {
-                "enterpriseScaleCompanyPrefix": "[steps('lzSettings').enterpriseScaleCompanyPrefix]",
-                "singlePlatformSubscriptionId": "[steps('lzSettings').esSingleSubSection.esSingleSub.subscriptionId]",
-                "telemetryOptOut": "[steps('lzSettings').cuaSection.telemetryOptOut]",
-                "enableLogAnalytics": "[steps('esGoalState').enableLogAnalytics]",
-                "retentionInDays": "[string(steps('esGoalState').retentionInDays)]",
-                "managementSubscriptionId": "[steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId]",
-                "enableAgentHealth": "[steps('esGoalState').enableAgentHealth]",
-                "enableChangeTracking": "[steps('esGoalState').enableChangeTracking]",
-                "enableUpdateMgmt": "[steps('esGoalState').enableUpdateMgmt]",
-                "enableActivityLog": "[steps('esGoalState').enableActivityLog]",
-                "enableVmInsights": "[steps('esGoalState').enableVmInsights]",
-                "enableServiceMap": "[steps('esGoalState').enableServiceMap]",
-                "enableSqlAssessment": "[steps('esGoalState').enableSqlAssessment]",
-                "enableSqlVulnerabilityAssessment": "[steps('esGoalState').enableSqlVulnerabilityAssessment]",
-                "enableSqlAdvancedThreatProtection": "[steps('esGoalState').enableSqlAdvancedThreatProtection]",
-                "enableAsc": "[steps('esGoalState').enableAsc]",
-                "emailContactAsc": "[steps('esGoalState').emailContactAsc]",
-                "enableAscForServers": "[steps('esGoalState').enableAscForServers]",
-                "enableAscForOssDb": "[steps('esGoalState').enableAscForOssDb]",
-                "enableAscForAppServices": "[steps('esGoalState').enableAscForAppServices]",
-                "enableAscForStorage": "[steps('esGoalState').enableAscForStorage]",
-                "enableAscForSql": "[steps('esGoalState').enableAscForSql]",
-                "enableAscForSqlOnVm": "[steps('esGoalState').enableAscForSqlOnVm]",
-                "enableAscForKeyVault": "[steps('esGoalState').enableAscForKeyVault]",
-                "enableAscForArm": "[steps('esGoalState').enableAscForArm]",
-                "enableAscForDns": "[steps('esGoalState').enableAscForDns]",
-                "enableAscForContainers": "[steps('esGoalState').enableAscForContainers]",
-                "enableSecuritySolution": "[steps('esGoalState').enableSecuritySolution]",
-                "enableAzOps": "[steps('lzDevOps').enableAzOps]",
-                "gitHubUserNameOrOrg": "[steps('lzDevOps').gitHubUserNameOrOrg]",
-                "repositoryName": "[steps('lzDevOps').repositoryName]",
-                "paToken": "[steps('lzDevOps').paToken]",
-                "principalId": "[steps('lzDevOps').spnSection.esServicePrincipal.objectId]",
-                "principalSecret": "[steps('lzDevOps').spnSection.esServicePrincipal.password]",
-                "appId": "[steps('lzDevOps').spnSection.esServicePrincipal.appId]",
-                "azOpsSubscriptionId": "[steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId]",
-                "connectivitySubscriptionId": "[if(not(equals(steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId,'')]",
-                "addressPrefix": "[coalesce(steps('esConnectivityGoalState').esAddressHubVWAN, steps('esConnectivityGoalState').esAddressHubHS, '')]",
-                "connectivityLocation": "[steps('esConnectivityGoalState').connectivityLocation]",
-                "enableDdoS": "[steps('esConnectivityGoalState').enableDdoS]",
-                "enablePrivateDnsZones": "[steps('esConnectivityGoalState').enablePrivateDnsZones]",
-                "enableVpnGw": "[steps('esConnectivityGoalState').enableVpnGw]",
-                "gwRegionalOrAz": "[steps('esConnectivityGoalState').gwRegionalOrAz]",
-                "gwRegionalSku": "[coalesce(steps('esConnectivityGoalState').gwRegionalSku, steps('esConnectivityGoalState').esGwNoAzSku)]",
-                "gwAzSku": "[steps('esConnectivityGoalState').gwAzSku]",
-                "vpnGateWayScaleUnit": "[steps('esConnectivityGoalState').vpnGateWayScaleUnit]",
-                "subnetMaskForGw": "[steps('esConnectivityGoalState').subnetMaskForGw]",
-                "enableErGw": "[steps('esConnectivityGoalState').enableErGw]",
-                "erAzSku": "[steps('esConnectivityGoalState').erAzSku]",
-                "erRegionalSku": "[coalesce(steps('esConnectivityGoalState').erRegionalSku, steps('esConnectivityGoalState').esErNoAzSku)]",
-                "erRegionalOrAz": "[steps('esConnectivityGoalState').erRegionalOrAz]",
-                "expressRouteScaleUnit": "[steps('esConnectivityGoalState').expressRouteScaleUnit]",
-                "enableHub": "[steps('esConnectivityGoalState').enableHub]",
-                "enableAzFw": "[steps('esConnectivityGoalState').enableAzFw]",
-                "enableAzFwDnsProxy": "[steps('esConnectivityGoalState').enableAzFwDnsProxy]",
-                "firewallSku": "[steps('esConnectivityGoalState').firewallSku]",
-                "firewallZones": "[steps('esConnectivityGoalState').firewallZones]",
-                "subnetMaskForAzFw": "[steps('esConnectivityGoalState').subnetMaskForAzFw]",
-                "identitySubscriptionId": "[if(or(not(equals(steps('esIdentityGoalState').esIdentitySubSection.esIdentitySub.subscriptionId,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(equals(steps('esIdentityGoalState').esIdentitySubSection.esIdentitySub.subscriptionId,steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId))),steps('esIdentityGoalState').esIdentitySubSection.esIdentitySub.subscriptionId,'')]",
-                "denyRdpForIdentity": "[steps('esIdentityGoalState').denyRdpForIdentity]",
-                "denySubnetWithoutNsgForIdentity": "[steps('esIdentityGoalState').denySubnetWithoutNsgForIdentity]",
-                "denyPipForIdentity": "[steps('esIdentityGoalState').denyPipForIdentity]",
-                "enableVmBackupForIdentity": "[steps('esIdentityGoalState').enableVmBackupForIdentity]",
-                "identityAddressPrefix": "[steps('esIdentityGoalState').identityAddressPrefix]",
-                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId))),steps('lzGoalState').lzConnectedSubs,'')]",
-                "corpLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esCorpLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esCorpLzSub,steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId))),steps('lzGoalState').esCorpLzSub,'')]",
-                "onlineLzSubscriptionId": "[if(or(not(contains(steps('lzGoalState').esOnlineLzSub,steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('lzGoalState').esOnlineLzSub,steps('esConnectivityGoalState').esNwSubSection.esNwSub.subscriptionId))),steps('lzGoalState').esOnlineLzSub,'')]",
-                "enableLzDdoS": "[steps('lzGoalState').enableLzDdoS]",
-                "denyPublicEndpoints": "[steps('lzGoalState').denyPublicEndpoints]",
-                "enablePrivateDnsZonesForLzs": "[steps('lzGoalState').enablePrivateDnsZonesForLzs]",
-                "enableEncryptionInTransit": "[steps('lzGoalState').enableEncryptionInTransit]",
-                "enableVmMonitoring": "[steps('lzGoalState').enableVmMonitoring]",
-                "enableVmssMonitoring": "[steps('lzGoalState').enableVmssMonitoring]",
-                "enableAksPolicy": "[steps('lzGoalState').enableAksPolicy]",
-                "denyAksPrivileged": "[steps('lzGoalState').denyAksPrivileged]",
-                "denyAksPrivilegedEscalation": "[steps('lzGoalState').denyAksPrivilegedEscalation]",
-                "denyHttpIngressForAks": "[steps('lzGoalState').denyHttpIngressForAks]",
-                "denyDatabricksPip": "[steps('lzGoalState').denyDatabricksPip]",
-                "denyDatabricksVnet": "[steps('lzGoalState').denyDatabricksVnet]",
-                "denyDatabricksSku": "[steps('lzGoalState').denyDatabricksSku]",
-                "enableVmBackup": "[steps('lzGoalState').enableVmBackup]",
-                "denyRdp": "[steps('lzGoalState').denyRdp]",
-                "denySubnetWithoutNsg": "[steps('lzGoalState').denySubnetWithoutNsg]",
-                "denyIpForwarding": "[steps('lzGoalState').denyIpForwarding]",
-                "enableSqlEncryption": "[steps('lzGoalState').enableSqlEncryption]",
-                "enableSqlAudit": "[steps('lzGoalState').enableSqlAudit]",
-                "enableStorageHttps": "[steps('lzGoalState').enableStorageHttps]"
+                "enterpriseScaleCompanyPrefix": "[steps('core').enterpriseScaleCompanyPrefix]",
+                "singlePlatformSubscriptionId": "[steps('core').singleSubscription.selector.subscriptionId]",
+                "telemetryOptOut": "[steps('core').cuaSection.telemetryOptOut]",
+                "enableLogAnalytics": "[steps('management').enableLogAnalytics]",
+                "retentionInDays": "[string(steps('management').retentionInDays)]",
+                "managementSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub.subscriptionId]",
+                "enableAgentHealth": "[steps('management').enableAgentHealth]",
+                "enableChangeTracking": "[steps('management').enableChangeTracking]",
+                "enableUpdateMgmt": "[steps('management').enableUpdateMgmt]",
+                "enableActivityLog": "[steps('management').enableActivityLog]",
+                "enableVmInsights": "[steps('management').enableVmInsights]",
+                "enableServiceMap": "[steps('management').enableServiceMap]",
+                "enableSqlAssessment": "[steps('management').enableSqlAssessment]",
+                "enableSqlVulnerabilityAssessment": "[steps('management').enableSqlVulnerabilityAssessment]",
+                "enableSqlAdvancedThreatProtection": "[steps('management').enableSqlAdvancedThreatProtection]",
+                "enableAsc": "[steps('management').enableAsc]",
+                "emailContactAsc": "[steps('management').emailContactAsc]",
+                "enableAscForServers": "[steps('management').enableAscForServers]",
+                "enableAscForOssDb": "[steps('management').enableAscForOssDb]",
+                "enableAscForAppServices": "[steps('management').enableAscForAppServices]",
+                "enableAscForStorage": "[steps('management').enableAscForStorage]",
+                "enableAscForSql": "[steps('management').enableAscForSql]",
+                "enableAscForSqlOnVm": "[steps('management').enableAscForSqlOnVm]",
+                "enableAscForKeyVault": "[steps('management').enableAscForKeyVault]",
+                "enableAscForArm": "[steps('management').enableAscForArm]",
+                "enableAscForDns": "[steps('management').enableAscForDns]",
+                "enableAscForContainers": "[steps('management').enableAscForContainers]",
+                "enableSecuritySolution": "[steps('management').enableSecuritySolution]",
+                "enableAzOps": "[steps('automation').enableAzOps]",
+                "gitHubUserNameOrOrg": "[steps('automation').gitHubUserNameOrOrg]",
+                "repositoryName": "[steps('automation').repositoryName]",
+                "paToken": "[steps('automation').paToken]",
+                "principalId": "[steps('automation').spnSection.esServicePrincipal.objectId]",
+                "principalSecret": "[steps('automation').spnSection.esServicePrincipal.password]",
+                "appId": "[steps('automation').spnSection.esServicePrincipal.appId]",
+                "azOpsSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub.subscriptionId]",
+                "connectivitySubscriptionId": "[if(not(equals(steps('connectivity').esNwSubSection.esNwSub.subscriptionId,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),steps('connectivity').esNwSubSection.esNwSub.subscriptionId,'')]",
+                "addressPrefix": "[coalesce(steps('connectivity').esAddressHubVWAN, steps('connectivity').esAddressHubHS, '')]",
+                "connectivityLocation": "[steps('connectivity').connectivityLocation]",
+                "enableDdoS": "[steps('connectivity').enableDdoS]",
+                "enablePrivateDnsZones": "[steps('connectivity').enablePrivateDnsZones]",
+                "enableVpnGw": "[steps('connectivity').enableVpnGw]",
+                "gwRegionalOrAz": "[steps('connectivity').gwRegionalOrAz]",
+                "gwRegionalSku": "[coalesce(steps('connectivity').gwRegionalSku, steps('connectivity').esGwNoAzSku)]",
+                "gwAzSku": "[steps('connectivity').gwAzSku]",
+                "vpnGateWayScaleUnit": "[steps('connectivity').vpnGateWayScaleUnit]",
+                "subnetMaskForGw": "[steps('connectivity').subnetMaskForGw]",
+                "enableErGw": "[steps('connectivity').enableErGw]",
+                "erAzSku": "[steps('connectivity').erAzSku]",
+                "erRegionalSku": "[coalesce(steps('connectivity').erRegionalSku, steps('connectivity').esErNoAzSku)]",
+                "erRegionalOrAz": "[steps('connectivity').erRegionalOrAz]",
+                "expressRouteScaleUnit": "[steps('connectivity').expressRouteScaleUnit]",
+                "enableHub": "[steps('connectivity').enableHub]",
+                "enableAzFw": "[steps('connectivity').enableAzFw]",
+                "enableAzFwDnsProxy": "[steps('connectivity').enableAzFwDnsProxy]",
+                "firewallSku": "[steps('connectivity').firewallSku]",
+                "firewallZones": "[steps('connectivity').firewallZones]",
+                "subnetMaskForAzFw": "[steps('connectivity').subnetMaskForAzFw]",
+                "identitySubscriptionId": "[if(or(not(equals(steps('identity').esIdentitySubSection.esIdentitySub.subscriptionId,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(equals(steps('identity').esIdentitySubSection.esIdentitySub.subscriptionId,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('identity').esIdentitySubSection.esIdentitySub.subscriptionId,'')]",
+                "denyRdpForIdentity": "[steps('identity').denyRdpForIdentity]",
+                "denySubnetWithoutNsgForIdentity": "[steps('identity').denySubnetWithoutNsgForIdentity]",
+                "denyPipForIdentity": "[steps('identity').denyPipForIdentity]",
+                "enableVmBackupForIdentity": "[steps('identity').enableVmBackupForIdentity]",
+                "identityAddressPrefix": "[steps('identity').identityAddressPrefix]",
+                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('landingZones').lzConnectedSubs,'')]",
+                "corpLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('landingZones').esCorpLzSub,'')]",
+                "onlineLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esOnlineLzSub,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('landingZones').esOnlineLzSub,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('landingZones').esOnlineLzSub,'')]",
+                "enableLzDdoS": "[steps('landingZones').enableLzDdoS]",
+                "denyPublicEndpoints": "[steps('landingZones').denyPublicEndpoints]",
+                "enablePrivateDnsZonesForLzs": "[steps('landingZones').enablePrivateDnsZonesForLzs]",
+                "enableEncryptionInTransit": "[steps('landingZones').enableEncryptionInTransit]",
+                "enableVmMonitoring": "[steps('landingZones').enableVmMonitoring]",
+                "enableVmssMonitoring": "[steps('landingZones').enableVmssMonitoring]",
+                "enableAksPolicy": "[steps('landingZones').enableAksPolicy]",
+                "denyAksPrivileged": "[steps('landingZones').denyAksPrivileged]",
+                "denyAksPrivilegedEscalation": "[steps('landingZones').denyAksPrivilegedEscalation]",
+                "denyHttpIngressForAks": "[steps('landingZones').denyHttpIngressForAks]",
+                "denyDatabricksPip": "[steps('landingZones').denyDatabricksPip]",
+                "denyDatabricksVnet": "[steps('landingZones').denyDatabricksVnet]",
+                "denyDatabricksSku": "[steps('landingZones').denyDatabricksSku]",
+                "enableVmBackup": "[steps('landingZones').enableVmBackup]",
+                "denyRdp": "[steps('landingZones').denyRdp]",
+                "denySubnetWithoutNsg": "[steps('landingZones').denySubnetWithoutNsg]",
+                "denyIpForwarding": "[steps('landingZones').denyIpForwarding]",
+                "enableSqlEncryption": "[steps('landingZones').enableSqlEncryption]",
+                "enableSqlAudit": "[steps('landingZones').enableSqlAudit]",
+                "enableStorageHttps": "[steps('landingZones').enableStorageHttps]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"
