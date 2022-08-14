@@ -57,6 +57,22 @@
                         {
                             "name": "resourceScope",
                             "type": "Microsoft.Common.ResourceScope"
+                        },
+                        {
+                            "name": "getSubscriptions",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "GET",
+                                "path": "subscriptions?api-version=2020-01-01"
+                            }
+                        },
+                        {
+                            "name": "getLocations",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "GET",
+                                "path": "locations?api-version=2019-11-01"
+                            }
                         }
                     ]
                 },
@@ -1009,21 +1025,13 @@
                             }
                         },
                         {
-                            "name": "esLocationsApi",
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "request": {
-                                "method": "GET",
-                                "path": "locations?api-version=2019-11-01"
-                            }
-                        },
-                        {
                             "name": "connectivityLocation",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Region for the first networking hub",
                             "filter": true,
                             "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
                             "constraints": {
-                                "allowedValues": "[map(steps('connectivity').esLocationsApi.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
+                                "allowedValues": "[map(steps('basics').getLocations.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
                                 "required": true
                             },
                             "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]"
@@ -1947,14 +1955,6 @@
                             "visible": "[or(equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableHub, 'vhub'))]"
                         },
                         {
-                            "name": "lzCorpSubsApi",
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2020-01-01"
-                            }
-                        },
-                        {
                             "name": "esCorpLzSub",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Corp landing zone subscriptions (optional)",
@@ -1966,7 +1966,7 @@
                             "multiLine": true,
                             "visible": "[or(or(equals(steps('landingZones').esLzConnectivity, 'No'), equals(steps('connectivity').enableHub, 'No')), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('landingZones').esLzConnectivity, 'No'))]",
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('landingZones').lzCorpSubsApi.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                "allowedValues": "[map(filter(steps('basics').getSubscriptions.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                 "required": false
                             }
                         },
@@ -2000,7 +2000,7 @@
                                             "filterPlaceholder": "Filter items ...",
                                             "multiLine": false,
                                             "constraints": {
-                                                "allowedValues": "[map(steps('landingZones').lzSubsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                                "allowedValues": "[map(steps('basics').getSubscriptions.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                                 "required": false
                                             }
                                         }
@@ -2027,14 +2027,6 @@
                             }
                         },
                         {
-                            "name": "lzSubsApi",
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2020-01-01"
-                            }
-                        },
-                        {
                             "name": "onlineText",
                             "type": "Microsoft.Common.TextBlock",
                             "visible": true,
@@ -2044,14 +2036,6 @@
                                     "label": "Learn more",
                                     "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
                                 }
-                            }
-                        },
-                        {
-                            "name": "lzOnlineSubsApi",
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2020-01-01"
                             }
                         },
                         {
@@ -2066,7 +2050,7 @@
                             "multiLine": true,
                             "visible": true,
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('landingZones').lzOnlineSubsApi.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
+                                "allowedValues": "[map(filter(steps('basics').getSubscriptions.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
                                 "required": false
                             }
                         },
