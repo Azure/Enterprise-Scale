@@ -37,7 +37,7 @@ The following ARM Resource types and deployment scopes are relevant for the Ente
 | ---------------------|--------------------|--------------------------------------------------------------------|
 | Microsoft.Management/managementGroups          |Tenant root| Management Groups, which can contain child Management Groups and Subscriptions|
 | Microsoft.Subscription/subscriptions          |Tenant root|Subscriptions, which will be the de-facto Resource containers for workloads in Azure.|
-| Microsoft.Management/managementGroups/subscriptions          |Management Group, Subscription|Placement of a Subscription into a Management Group|
+| Microsoft.Management/managementGroups/subscriptions          | Management Group |Placement of a Subscription into a Management Group|
 | Microsoft.Authorization/policyDefinitions          |Management Group, Subscription|Policy definitions can be created at Management Groups and Subscriptions and can contain audit, deny, append, auditIfNotExists, deployIfNotExists, and modify policy effects|
 | Microsoft.Authorization/policySetDefinitions          |Management Group, Subscription|PolicySetDefinitions can represent multiple policyDefinitions to simplify policyAssignment lifecycle|
 | Microsoft.Authorization/policyAssignments         |Management Group, Subscription|PolicyAssignments will manifests the runtime representation of a policyDefinition at the given scope|
