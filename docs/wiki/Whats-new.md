@@ -43,6 +43,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### August 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- Updated Azure Backup geo codes for new regions across ARM, Bicep and Terraform implementation options
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### July 2022
 
 #### Docs
