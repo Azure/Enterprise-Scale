@@ -65,6 +65,7 @@ var deploymentLocation = '"location": "${targetDeploymentLocationByCloudType[clo
 
 // The following var contains lists of files containing Policy Definition resources to load, grouped by compatibility with Cloud.
 // To get a full list of Azure clouds, use the az cli command "az cloud list --output table"
+// We use loadTextContent instead of loadJsonContent  as this allows us to perform string replacement operations against the imported templates.
 var loadPolicyDefinitions = {
   All: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-AppService-httpsonly.json')
@@ -196,6 +197,7 @@ var loadPolicyDefinitions = {
 
 // The following var contains lists of files containing Policy Set Definition (Initiative) resources to load, grouped by compatibility with Cloud.
 // To get a full list of Azure clouds, use the az cli command "az cloud list --output table"
+// We use loadTextContent instead of loadJsonContent  as this allows us to perform string replacement operations against the imported templates.
 var loadPolicySetDefinitions = {
   All: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
@@ -266,9 +268,11 @@ var policySetDefinitionsByCloudType = {
 }
 
 // The following var is used to extract the Policy Definitions into a single list for deployment
+// This will contain all policy definitions classified as available for All cloud environments, and those for the current cloud environment
 var policyDefinitions = concat(policyDefinitionsByCloudType.All, policyDefinitionsByCloudType[cloudEnv])
 
 // The following var is used to extract the Policy Set Definitions into a single list for deployment
+// This will contain all policy set definitions classified as available for All cloud environments, and those for the current cloud environment
 var policySetDefinitions = concat(policySetDefinitionsByCloudType.All, policySetDefinitionsByCloudType[cloudEnv])
 
 // Create the Policy Definitions as needed for the target cloud environment
