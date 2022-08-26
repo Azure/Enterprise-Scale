@@ -51,6 +51,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- Updated the `eslzArm` implementation (Portal accelerator) to use a new `policies.json` file. This file is now programmatically generated from a library of individual resource definitions using a Bicep template, and was introduced to:
+  - Simplify maintenance of individual policies
+  - Improve traceability and testability of policy changes
+  - Provide universal support across multiple cloud environments, including AzureCloud (public), AzureChinaCloud and AzureUSGovernment
+  - As a bonus, we have also improved consistency of metadata implemented across the policies
 - Updated Azure Backup geo codes for new regions across ARM, Bicep and Terraform implementation options
 
 ### Policy
