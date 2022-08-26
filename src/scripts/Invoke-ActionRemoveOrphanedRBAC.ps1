@@ -2,7 +2,7 @@
 
 #
 # PowerShell Script
-# - Remove orphaned role assignments from the 
+# - Remove orphaned role assignments from the specified Subscriptions
 #
 
 [CmdletBinding(SupportsShouldProcess)]
