@@ -1,0 +1,80 @@
+---
+name: Update Portal Experience
+
+##########################################
+# Start the job on push for all branches #
+##########################################
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    types:
+      - edited
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - 'src/**.json'
+      - 'src/**.bicep'
+  workflow_dispatch: {}
+
+env:
+  github_user_name: 'github-actions'
+  github_email: '41898282+github-actions[bot]@users.noreply.github.com'
+  github_commit_message: 'Auto-update Portal experience'
+
+###############
+# Set the Job #
+###############
+
+jobs:
+  update-portal:
+    name: Update Portal Experience
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Configure local git
+        run: |
+          echo "git user name  : $github_user_name"
+          git config --global user.name "$github_user_name"
+          echo "git user email : $github_email"
+          git config --global user.email "$github_email"
+ 
+      - name: Update policies
+        run: bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json
+
+      - name: Stage changes
+        run: |
+          echo "==> Stage changes..."
+          mapfile -t STATUS_LOG < <(git status --short | grep eslzArm/)
+          if [ ${#STATUS_LOG[@]} -gt 0 ]; then
+              echo "Found changes to the following files:"
+              printf "%s\n" "${STATUS_LOG[@]}"
+              git add --all ./eslzArm
+          else
+              echo "No changes to add."
+          fi
+
+      - name: Push changes
+        run: |
+          echo "==> Check git diff..."
+          mapfile -t GIT_DIFF < <(git diff --cached)
+          printf "%s\n" "${GIT_DIFF[@]}"
+
+          if [ ${#GIT_DIFF[@]} -gt 0 ]; then
+
+              echo "==> Commit changes..."
+              git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+
+              echo "==> Push changes..."
+              echo "Pushing changes to: $GITHUB_REPOSITORY [$GITHUB_HEAD_REF]"
+              git push origin HEAD:"$GITHUB_HEAD_REF"
+
+          else
+              echo "No changes found."
+          fi
