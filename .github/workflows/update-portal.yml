@@ -36,18 +36,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: true
+
+      - name: Show env
+        run: env | sort
 
       - name: Check out PR
         run: |
           echo "==> Check out PR..."
           gh pr checkout "$github_pr_number"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
-      - name: Show env
-        run: env | sort
-
       - name: Configure local git
         run: |
           echo "git user name  : $github_user_name"
@@ -90,7 +89,7 @@ jobs:
               git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
 
               echo "==> Push changes..."
-              echo "Pushing changes to: [$GITHUB_HEAD_REF]"
+              echo "Pushing changes to PR: [$github_pr_number]"
               git push
 
           else
