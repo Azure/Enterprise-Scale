@@ -7,21 +7,22 @@ name: Update Portal Experience
 
 # yamllint disable-line rule:truthy
 on:
-  pull_request:
+  pull_request_target:
     types:
       - edited
       - opened
       - reopened
       - synchronize
-    paths:
-      - 'src/**.json'
-      - 'src/**.bicep'
-  workflow_dispatch: {}
 
 env:
   github_user_name: 'github-actions'
   github_email: '41898282+github-actions[bot]@users.noreply.github.com'
   github_commit_message: 'Auto-update Portal experience'
+  github_pr_number: ${{ github.event.number }}
+  github_pr_repo: ${{ github.event.pull_request.head.repo.full_name }}
+
+permissions:
+  contents: write
 
 ###############
 # Set the Job #
@@ -35,9 +36,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Show env
+        run: env | sort
+        
+      - name: Check out PR
+        run: |
+          echo "==> Check out PR..."
+          gh pr checkout "$github_pr_number"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
       - name: Configure local git
         run: |
           echo "git user name  : $github_user_name"
@@ -47,6 +56,11 @@ jobs:
  
       - name: Update policies
         run: bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json
+
+      - name: Check git status
+        run: |
+          echo "==> Check git status..."
+          git status --short --branch
 
       - name: Stage changes
         run: |
@@ -72,9 +86,11 @@ jobs:
               git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
 
               echo "==> Push changes..."
-              echo "Pushing changes to: $GITHUB_REPOSITORY [$GITHUB_HEAD_REF]"
-              git push origin HEAD:"$GITHUB_HEAD_REF"
+              echo "Pushing changes to: $github_pr_repo"
+              git push "https://$GITHUB_TOKEN@github.com/$github_pr_repo.git"
 
           else
               echo "No changes found."
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
