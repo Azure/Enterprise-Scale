@@ -40,6 +40,11 @@ jobs:
       - name: Show env
         run: env | sort
 
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+        
       - name: Check out PR
         run: |
           echo "==> Check out PR..."
@@ -89,9 +94,13 @@ jobs:
               git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
 
               echo "==> Push changes..."
-              echo "Pushing changes to PR: [$github_pr_number]"
-              git push
+              PR_USER=$(gh pr view "$github_pr_number" --json headRepositoryOwner --jq ".headRepositoryOwner.login")
+              PR_REPO=$(gh pr view "$github_pr_number" --json headRepository --jq ".headRepository.name")
+              echo "Pushing changes to: $PR_USER/$PR_REPO"
+              git push "https://$GITHUB_TOKEN@github.com/$PR_USER/$PR_REPO.git"
 
           else
               echo "No changes found."
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
