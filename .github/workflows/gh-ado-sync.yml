@@ -1,0 +1,31 @@
+name: Sync Issues with Azure DevOps Work Items
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  issues:
+    types: [opened, closed, deleted, reopened, edited, labeled, unlabeled, assigned, unassigned]
+  issue_comment:
+    types: [created]
+  workflow_dispatch: {}
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    name: Sync workflow
+    if: github.repository == 'Azure/Enterprise-Scale'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: GitHub/ADO Sync
+        uses: a11smiles/GitSync@main
+        env:
+          ado_token: '${{ secrets.ADO_PERSONAL_ACCESS_TOKEN }}'
+          github_token: '${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}'
+          config_file: './.github/actions-config/gh-ado-sync-config.json'
+        with:
+          ado: ${{ secrets.ADO_MAPPINGS_HANDLES }}
