@@ -8,17 +8,23 @@ name: Update ALZ Tools
 # yamllint disable-line rule:truthy
 on:
   schedule:
-    - cron: '0 5 * * 0'
+    - cron: "0 5 * * 0"
   workflow_dispatch: {}
 
 env:
-  github_user_name: 'github-actions'
-  github_email: '41898282+github-actions[bot]@users.noreply.github.com'
-  github_commit_message: 'Auto-update ALZ.Tools'
+  github_user_name: "github-actions"
+  github_email: "41898282+github-actions[bot]@users.noreply.github.com"
+  github_commit_message: "Auto-update ALZ.Tools"
+  pr_branch_name: "patch-alz-tools"
+  pr_title: "Update ALZ.Tools (automated)"
+  pr_body:
+    "This is an automated 'pull_request' containing updates to the ALZ.Tools stored in 'src/ALZ.Tools'.\n
+    Please review the 'files changed' tab to review changes."
 
 permissions:
   contents: write
   id-token: write
+  pull-requests: write
 
 ###############
 # Set the Job #
@@ -32,12 +38,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Configure local git
         run: |
           git config --global user.name "$github_user_name"
           git config --global user.email "$github_email"
- 
+
       - name: Azure login
         uses: azure/login@v1
         with:
@@ -46,39 +54,62 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
+      - name: Create and checkout branch
+        run: |
+          BRANCH_URL="repos/${{ github.repository }}/branches"
+          JQ_FILTER=".[] | select(.name == \"${{ env.pr_branch_name }}\").name"
+          CHECK_BRANCH_ORIGIN=$(gh api $BRANCH_URL | jq -r "$JQ_FILTER")
+          if [ -z "$CHECK_BRANCH_ORIGIN" ]
+          then
+            echo "Checkout local branch (create new, no origin)..."
+            git checkout -b ${{ env.pr_branch_name }}
+          else
+            echo "Checkout local branch (create new, track from origin)..."
+            git checkout -b ${{ env.pr_branch_name }} --track origin/${{ env.pr_branch_name }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+
       - name: Update ProviderApiVersions
         uses: azure/powershell@v1
         with:
           inlineScript: src/Alz.Tools/scripts/Update-ProviderApiVersionsZip.ps1
           azPSVersion: "latest"
 
-      - name: Stage changes
+      - name: Check for changes
+        id: git_status
         run: |
-          echo "==> Stage changes..."
-          mapfile -t STATUS_LOG < <(git status --short | grep src/Alz.Tools/)
-          if [ ${#STATUS_LOG[@]} -gt 0 ]; then
-              echo "Found changes to the following files:"
-              printf "%s\n" "${STATUS_LOG[@]}"
-              git add --all ./src/Alz.Tools/
-          else
-              echo "No changes to add."
-          fi
+          mapfile -t CHECK_GIT_STATUS < <(git status -s)
+          printf "%s\n" "${CHECK_GIT_STATUS[@]}"
+          echo "::set-output name=changes::${#CHECK_GIT_STATUS[@]}"
 
-      - name: Push changes
+      - name: Add files, commit and push
+        if: steps.git_status.outputs.changes > 0
         run: |
-          echo "==> Check git diff..."
-          mapfile -t GIT_DIFF < <(git diff --cached)
-          printf "%s\n" "${GIT_DIFF[@]}"
+          echo "Pushing changes to origin..."
+          git add --all ./src/Alz.Tools/
+          git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
+          git push origin ${{ env.pr_branch_name }}
 
-          if [ ${#GIT_DIFF[@]} -gt 0 ]; then
-
-              echo "==> Commit changes..."
-              git commit --message "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
-
-              echo "==> Push changes..."
-              echo "Pushing changes to: $GITHUB_REPOSITORY"
-              git push origin
-
+      - name: Create pull request
+        if: steps.git_status.outputs.changes > 0
+        run: |
+          HEAD_LABEL="${{ github.repository_owner }}:${{ env.pr_branch_name }}"
+          BASE_LABEL="${{ github.repository_owner }}:$(echo '${{ github.ref }}' | sed 's:refs/heads/::')"
+          PULL_REQUEST_URL="repos/${{ github.repository }}/pulls"
+          JQ_FILTER=".[] | select(.head.label == \"$HEAD_LABEL\") | select(.base.label == \"$BASE_LABEL\") | .url"
+          CHECK_PULL_REQUEST_URL=$(gh api $PULL_REQUEST_URL | jq -r "$JQ_FILTER")
+          if [ -z "$CHECK_PULL_REQUEST_URL" ]
+          then
+            CHECK_PULL_REQUEST_URL=$(gh pr create \
+            --title "${{ env.pr_title }}" \
+            --body "${{ env.pr_body }}" \
+            --base "${{ github.ref }}" \
+            --head "${{ env.pr_branch_name }}" \
+            --draft)
+            echo "Created new PR: $CHECK_PULL_REQUEST_URL"
           else
-              echo "No changes found."
+            echo "Existing PR found: $CHECK_PULL_REQUEST_URL"
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
