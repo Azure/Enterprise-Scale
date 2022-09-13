@@ -64,7 +64,6 @@ jobs:
             echo "Checkout local branch (create new, track from origin)..."
             git checkout -b ${{ env.pr_branch_name }} --track origin/${{ env.pr_branch_name }}
           fi
-        working-directory: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
 
@@ -80,7 +79,6 @@ jobs:
           mapfile -t CHECK_GIT_STATUS < <(git status -s)
           printf "%s\n" "${CHECK_GIT_STATUS[@]}"
           echo "::set-output name=changes::${#CHECK_GIT_STATUS[@]}"
-        working-directory: ${{ github.repository }}
 
       - name: Add files, commit and push
         if: steps.git_status.outputs.changes > 0
@@ -89,7 +87,6 @@ jobs:
           git add --all ./src/Alz.Tools/
           git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
           git push origin ${{ env.pr_branch_name }}
-        working-directory: ${{ github.repository }}
 
       - name: Create pull request
         if: steps.git_status.outputs.changes > 0
@@ -111,6 +108,5 @@ jobs:
           else
             echo "Existing PR found: $CHECK_PULL_REQUEST_URL"
           fi
-        working-directory: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
