@@ -43,6 +43,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### September 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- Updated [Automation Account region mapping](https://docs.microsoft.com/azure/automation/how-to/region-mappings) in the Terraform implementation option
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### August 2022
 
 #### Docs
