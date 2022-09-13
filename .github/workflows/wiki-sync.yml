@@ -47,8 +47,18 @@ jobs:
           rsync -avzr --delete --exclude='.git/' "$wiki_source_repo_dir/" "$wiki_target_repo"
         working-directory: ${{ env.GITHUB_WORKSPACE }}
 
-      - name: Stage & Push Files Into Wiki Repo
+      - name: Check for changes
+        id: git_status
         run: |
+          mapfile -t CHECK_GIT_STATUS < <(git status -s)
+          printf "%s\n" "${CHECK_GIT_STATUS[@]}"
+          echo "::set-output name=changes::${#CHECK_GIT_STATUS[@]}"
+        working-directory: ${{ env.wiki_target_repo }}
+
+      - name: Add files, commit and push into Wiki
+        if: steps.git_status.outputs.changes > 0
+        run: |
+          echo "Pushing changes to origin..."
           git add .
           git commit -m "$github_commit_message [$GITHUB_ACTOR/${GITHUB_SHA::8}]"
           git push --set-upstream https://$GITHUB_TOKEN@github.com/$wiki_target_repo.git master
