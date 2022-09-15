@@ -30,8 +30,8 @@ The Enterprise-Scale architecture is based on the [five design principles](https
 * [Subscription democratization](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?branch#subscription-democratization)
 * [Policy-driven governance](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance)
 * [Single control and management plane](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#single-control-and-management-plane)
-* [Application-centric and archetype-neutral](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?#application-centric-and-archetype-neutral)
-* [Aligning Azure-native design and road maps](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#align-azure-native-design-and-roadmaps)
+* [Application-centric service model](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?#application-centric-service-model)
+* [Align with Azure-native design and roadmaps](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#align-with-azure-native-design-and-roadmaps)
 
 # Design Guidelines
 
