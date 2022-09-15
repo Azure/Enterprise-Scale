@@ -1,6 +1,6 @@
-## Deploy Enterprise-Scale for Small Enterprises
+## Deploy Azure landing zone portal accelerator for Small Enterprises
 
-In this tutorial, you will deploy an Enterprise-Scale Landing Zones platform with connectivity to on-premises datacenters and branch offices based on a [hub and spoke network topology](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology), and where Management, Connectivity and Identity resources are consolidated in a single Platform Subscription.
+In this tutorial, you will deploy an Azure landing zone portal accelerator with connectivity to on-premises datacenters and branch offices based on a [hub and spoke network topology](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology), and where Management, Connectivity and Identity resources are consolidated in a single Platform Subscription.
 
 This setup is meant for Small and Medium Enterprises and organizations that do not have a large IT team and do not require fine grained administration delegation models, and that are willing to leverage Azure native capabilities for simplicity and cost efficiency.
 
@@ -10,7 +10,7 @@ Please refer to [Trey Research reference implementation](https://github.com/Azur
 
 ### Required Permissions
 
-To provision your Enterprise-Scale Landing Zones environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**.
+To provision Azure landing zone portal accelerator in your environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**.
 Refer to these [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
 
 ### Subscriptions
@@ -23,17 +23,17 @@ To learn how to create new subscriptions programmatically, please visit this [li
 
 **For this tutorial, three empty subscriptions are required: one subscription dedicated to host your Platform resources and two subscriptions to host your applications .**
 
-## 2. Launch the Enterprise-Scale Landing Zones deployment experience
+## 2. Launch the Azure landing zone portal accelerator deployment experience
 
-You can **initiate the deployment of Enterprise-Scale** by clicking the "Deploy to Azure" button below:
+You can **initiate the deployment** by clicking the "Deploy to Azure" button below:
 
 [![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json)
 
-Alternatively you can start your Enterprise Scale deployment via [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
+Alternatively you can start your Azure landing zone portal accelerator deployment via [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 
 ![Graphical user interface, text, application  Description automatically generated](./media/clip_image004.jpg)
 
-## 3. Deployment settings
+## 3. Deployment location
 
 On the first page, select the *cloud environment*. This should default to the correct Azure Cloud, *only* change this if you believe the value to be incorrect. Next, select the Region. This region will primarily be used to place the deployment resources in an Azure region, but also used as the initial region for some of the resources that are deployed, such as Azure Log Analytics and Azure automation. Now proceed to *Azure core setup*.
 
@@ -72,7 +72,7 @@ On the *Platform management, security, and governance* blade, you will:
 
 ![mgmtTab-intro](./media/clip_image014-singlesubscription.jpg)
 
-- Enable **Deploy Log Analytics workspace and enable monitoring for your platform and resources** to get a central [Log Analytics Workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/data-platform-logs#log-analytics-and-workspaces) and an [Automation Account deployed](https://docs.microsoft.com/en-us/azure/automation/automation-intro) deployed, and a set of [Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) applied at the root of the Enterprise Scale Management Group hierarchy to make sure Activity Logs from all your Subscriptions, and Diagnostic Logs from all your VMs and PaaS resources are sent to Log Analytics.
+- Enable **Deploy Log Analytics workspace and enable monitoring for your platform and resources** to get a central [Log Analytics Workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/data-platform-logs#log-analytics-and-workspaces) and an [Automation Account deployed](https://docs.microsoft.com/en-us/azure/automation/automation-intro) deployed, and a set of [Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) applied at the root of the Azure landing zone Management Group hierarchy to make sure Activity Logs from all your Subscriptions, and Diagnostic Logs from all your VMs and PaaS resources are sent to Log Analytics.
 
   ![mgmtTab-enableLogs](./media/clip_image014-1-singlesubscription.jpg)
 
@@ -94,7 +94,7 @@ See [Manage usage and costs with Azure Monitor Logs](https://docs.microsoft.com/
     - [Service Map](https://docs.microsoft.com/en-us/azure/azure-monitor/vm/service-map) automatically discovers application components on Windows and Linux systems and maps the communication between services.
     - [SQL Assessment](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/sql-assessment) provides a prioritized list of recommendations specific to your deployed server infrastructure. The recommendations are categorized across six focus areas which help you quickly understand the risk and take corrective action.
 
-- **Enable** **Deploy Azure Security Center and enable security monitoring for your platform and resources** option to allow Azure Security Center assess your subscriptions and detect security misconfigurations in your Azure resources, and leverage [Azure Defender](https://docs.microsoft.com/en-us/azure/security-center/azure-defender) to protect your workloads. An Azure Policy will be applied to the root of the Enterprise Scale Management Group hierarchy to enforce your settings across all your subscriptions.
+- **Enable** **Deploy Azure Security Center and enable security monitoring for your platform and resources** option to allow Azure Security Center assess your subscriptions and detect security misconfigurations in your Azure resources, and leverage [Azure Defender](https://docs.microsoft.com/en-us/azure/security-center/azure-defender) to protect your workloads. An Azure Policy will be applied to the root of the Azure landing zone Management Group hierarchy to enforce your settings across all your subscriptions.
 
   You will need to **provide an email address** to get email notifications from Azure Security Center. It is best practices to provide a distribution list instead of an email address tied to a single person.
 
@@ -110,15 +110,15 @@ See [Manage usage and costs with Azure Monitor Logs](https://docs.microsoft.com/
 
   ![mgmtTab-asc](./media/clip_image014asc-3-singlesubscription.jpg)
 
-Click **Next: Platform Devops and Automation>** to configure how your Enterprise Scale's Platform will be deployed and managed.
+Click **Next: Platform Devops and Automation>** to configure how your Azure environment will be deployed and managed.
 
 ![mgmtTab-next](./media/clip_image014asc-4-singlesubscription.jpg)
 
 ## 6. Platform DevOps and Automation
 
-Enterprise-Scale Landing Zones provides an integrated CI/CD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. The *Platform Devops and Automation* tab allows you to bootstrap your CI/CD pipeline including your Enterprise Scale deployment settings. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
+Azure landing zone portal accelerator provides an integrated CI/CD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. The *Platform Devops and Automation* tab allows you to bootstrap your CI/CD pipeline including your Azure landing zone deployment settings. For detailed steps for setting up this configuration, refer to the [Deploy Azure landing zone portal accelerator Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
 
-**In this tutorial, your Enterprise Scale deployment will be triggered using the Azure Portal experience**.
+**In this tutorial, your Azure landing zone deployment will be triggered using the Azure Portal experience**.
 
 Set **Deploy integrated CICD pipeline** to **No**.
 
@@ -141,7 +141,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
   ![networkTab-topology](./media/clip_image036b-1-singlesubscription.png)
 
-- Depending on your requirements, you may choose to deploy additional network infrastructure for your Enterprise-Scale landing zones platform. The optional resources include:
+- Depending on your requirements, you may choose to deploy additional network infrastructure for your Azure architecture. The optional resources include:
 
   - **Enable DDoS Protection Standard**: Usage of [Azure DDoS Protection Standard protection](https://docs.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview) is recommended to help protect all public endpoints hosted within your virtual networks. When this option is selected an Azure DDoS Protection Plan is provisioned in your Platform Subscription and which can be used to protect public endpoints across your Platform and Landing Zone subscriptions. DDoS Protection Plan's costs cover up to 100 public endpoints. Protection of additional endpoints requires additional fees. See [Azure DDoS Protection pricing](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/) for further details.
   
@@ -149,7 +149,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
     ![networkTab-ddos](./media/clip_image036b-11-singlesubscription.png)
 
-  - **Create Private DNS Zones for Azure PaaS services** allows you to provision and connect to your Hub virtual network a number of Azure Private DNS Zones which are required to leverage Private Endpoints to access Azure PaaS services as [recommended for Enterprise Scale Landing Zones](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services). See [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns) for further details.
+  - **Create Private DNS Zones for Azure PaaS services** allows you to provision and connect to your Hub virtual network a number of Azure Private DNS Zones which are required to leverage Private Endpoints to access Azure PaaS services as [recommended for Azure Landing Zones](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services). See [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns) for further details.
 
     Enabling **Create Private DNS Zones for Azure PaaS services** is recommended if the workloads you are deploying to your Landing Zones are expected to be use Azure PaaS services.
 
@@ -225,7 +225,7 @@ Click **Next: Identity>** once you had configured your network setup.
 
 ## 8. Identity
 
-On the *Identity* blade you can specify if you want to assign recommended Azure Policies to govern Domain Controllers deployed to your Platform Subscription. If you decide to enable this feature, you can then select which Azure Policies you want to get assigned. Please note, those Azure Policies will apply to all Virtual Machines deployed to the Platform Subscription regardless of their role. See [Enterprise Scale Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the recommended set of Azure Policies.
+On the *Identity* blade you can specify if you want to assign recommended Azure Policies to govern Domain Controllers deployed to your Platform Subscription. If you decide to enable this feature, you can then select which Azure Policies you want to get assigned. Please note, those Azure Policies will apply to all Virtual Machines deployed to the Platform Subscription regardless of their role. See [Azure landing zone Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the recommended set of Azure Policies.
 
 ![identityTab](./media/clip_image036c-singlesubscription.png)
 
@@ -265,12 +265,12 @@ For Corp Landing Zones its virtual network can be connected (recommended) to the
 
   ![lzTab-onlineLZs](./media/clip_image037-3-singlesubscription.jpg)
 
-- Finally, you can **select** from a set of **recommended Azure policies** which ones you want to apply to secure and govern your Landing Zones. All Enterprise Scale's Azure Policies are enabled by default (recommended) but are fully customizable.
-- **Please note:** Enterprise Scale Azure Policies can be assigned at any time.
+- Finally, you can **select** from a set of **recommended Azure policies** which ones you want to apply to secure and govern your Landing Zones. All landing zone Azure Policies are enabled by default (recommended) but are fully customizable.
+- **Please note:** Landing zone Azure Policies can be assigned at any time.
 
-  Any Azure Policies you selected will be assigned to the [Landing Zones Management Group](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure) under the root of your Enterprise Scale Management Group hierarchy. See [Enterprise Scale Azure's Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the configurable set of Azure Policies.
+  Any Azure Policies you selected will be assigned to the [Landing Zones Management Group](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure) under the root of your Enterprise Scale Management Group hierarchy. See [landing zone Azure's Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the configurable set of Azure Policies.
 
-  As part of the policies that you can assign to your landing zones, the Enterprise-Scale Landing Zones deployment experience will allow you to protect your landing zones with a DDoS Standard plan. For connected Landing Zones (*Corp* Landing Zones), you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones.
+  As part of the policies that you can assign to your landing zones, the Azure landing zone portal accelerator experience will allow you to protect your landing zones with a DDoS Standard plan. For connected Landing Zones (*Corp* Landing Zones), you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones.
 
   **In this tutorial, all recommended Azure Policies are enabled.**
 
@@ -288,4 +288,4 @@ Click **Next: Review + Create>** to complete your deployment.
 
 ## 11. Post deployment activities
 
-Once Enterprise-Scale has deployed, you can grant your application teams/business units access to their respective landing zones. Whenever there’s a need for a new landing zone, you can place them into their respective management groups (Online or Corp) given the characteristics of assumed workloads and their requirements.
+Once Azure landing zone portal accelerator deployment finishes, you can grant your application teams/business units access to their respective landing zones. Whenever there’s a need for a new landing zone, you can place them into their respective management groups (Online or Corp) given the characteristics of assumed workloads and their requirements.
