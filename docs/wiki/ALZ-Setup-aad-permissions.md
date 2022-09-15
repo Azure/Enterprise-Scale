@@ -64,4 +64,4 @@ Please note, it may take up to 15-30 minutes for permission to propagate in Azur
 
 ## Next steps
 
-Please proceed with [deploying reference implementation](EnterpriseScale-Deploy-reference-implentations).
+Please proceed with [deploying reference implementation](ALZ-Deploy-reference-implementations).
