@@ -9,7 +9,7 @@
 ---
 Enterprise-Scale can be deployed both from the Azure portal directly, or from [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 
-![Graphical user interface, text, application  Description automatically generated](./media/clip_image004.jpg)
+![Graphical user interface, text, application  Description automatically generated](media/clip_image004.jpg)
 
 ## Pre-requisites
 
@@ -33,11 +33,11 @@ This requires the following:
 
 1.3  Under *Manage*, select *Properties
 
-![Graphical user interface, text, application, Teams  Description automatically generated](./media/clip_image006.jpg)
+![Graphical user interface, text, application, Teams  Description automatically generated](media/clip_image006.jpg)
 
 1.4  Under *Access management for Azure resources,* set the toggle to *Yes
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image008.jpg)
+![Graphical user interface, text, application, email  Description automatically generated](media/clip_image008.jpg)
 
 ### Grant Access to the User at *tenant root scope “/”* to deploy Enterprise-Scale
 
@@ -78,80 +78,80 @@ Please note that the steps below are for the AdventureWorks reference implementa
 
 On the first page, select the *Region*. This region will primarily be used to place the deployment resources in an Azure region, but also used as the initial region for some of the resources that are deployed, such as Azure Log Analytics and Azure automation.
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image010.jpg)
+![Graphical user interface, text, application, email  Description automatically generated](media/clip_image010.jpg)
 
 ### Enterprise-Scale core setup
 
 Provide a prefix that will be used to create the management group hierarchy and platform resources, and select if you would use dedicated subscriptions or a single subscription for platform resources (please note that dedicates subscriptions are recommended). For this scenario, select Dedicated.
 
-![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix.JPG)
+![ESLZ-Company-Prefix](media/ESLZ-Company-Prefix.JPG)
 
 ### Platform management, security, and governance
 
 On the *Platform management, security, and governance* blade, you will configure the core components to enable platform monitoring and security. The options you enable will also be enforced using Azure Policy to ensure resources, landing zones, and more are continuously compliant as your deployments scales and grows. To enable this, you must provide a dedicated (empty) subscription that will be used to host the requisite infrastructure.
 
-![Graphical user interface, text, application  Description automatically generated](./media/clip_image014.jpg)
+![Graphical user interface, text, application  Description automatically generated](media/clip_image014.jpg)
 
 Please note that if you enable the "Deploy Azure Security Center and enable security monitoring for your platform and resources" option, you will need to provide an email address to get email notifications from Azure Security Center.
 
-![Azure Security Center Email Contact](./media/clip_image014asc.jpg)
+![Azure Security Center Email Contact](media/clip_image014asc.jpg)
 
 ### Platform DevOps and Automation
 
 You can choose to bootstrap your CI/CD pipeline (GitHub with GitHub actions). Provide your GitHub user/org name, the preferred name of the GitHub repository that is to be created, as well as the PA token that the deployment will use to create a new repository and discover the Enterprise-Scale deployment ARM templates and merge them into your main branch.
 
-![Graphical user interface, text, application  Description automatically generated](./media/clip_image015.png)
+![Graphical user interface, text, application  Description automatically generated](media/clip_image015.png)
 
 1.1.1    To create a PA token, follow the instructions here: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
 
 1.1.2    Ensure the PA token has the following permissions:
 
-![Graphical user interface, text, application  Description automatically generated](./media/github_developer_createPAT.png)
+![Graphical user interface, text, application  Description automatically generated](media/github_developer_createPAT.png)
 
 > For Microsoft employees who are enrolled into the Azure GitHub organization, you must also authorize the PA token to this Org!
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/github_developer_enablesso.png)
+![Graphical user interface, text, application, email  Description automatically generated](media/github_developer_enablesso.png)
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/github_developer_disablesso.png)
+![Graphical user interface, text, application, email  Description automatically generated](media/github_developer_disablesso.png)
 
 1.2  Lastly, a Service Principal is required for Git to authenticate to – and be authorized to your Azure tenant. You can either use an existing Service Principal or create a new one. The Service Principal will be granted *Owner* permission on the top level Management Group that gets created.
 
 1.2.1    If using an existing Service Principal, ensure you have the *client secret* as this must be provided as the *Password* for the service principal and confirm it has the right level of permission.
 
-![Graphical user interface, text, application  Description automatically generated](./media/clip_image020.jpg)
+![Graphical user interface, text, application  Description automatically generated](media/clip_image020.jpg)
 
 1.2.2    If creating a new Service Principal, select "Create New" and click on Make selection” and the portal will open a new blade for app registration
 
-![img](./media/clip_image022.png)
+![img](media/clip_image022.png)
 
- ![img](./media/clip_image024.png)
+ ![img](media/clip_image024.png)
 
 Once the App has been registered, you must explicitly create a new secret.
 
- ![img](./media/clip_image026.png)
+ ![img](media/clip_image026.png)
 
- ![img](./media/clip_image028.jpg)
+ ![img](media/clip_image028.jpg)
 
 Make sure to note down the “Value” of the new client secret.
- ![img](./media/clip_image030.jpg)
+ ![img](media/clip_image030.jpg)
 
 The default API Permissions for this App are “User.Read”, as depicted below:
 
-![img](./media/clip_image032.jpg)
+![img](media/clip_image032.jpg)
 
  After copying the secret, go to “Enterprise-Scale Landing Zones” (in the upper left) to return to the deployment.
 
- ![img](./media/clip_image034.png)
+ ![img](media/clip_image034.png)
 
  At this point, paste the client secret value of the newly created client secret from a few step above into the Password field.
 
- ![Graphical user interface, application  Description automatically generated](./media/clip_image035.png)
+ ![Graphical user interface, application  Description automatically generated](media/clip_image035.png)
 
 
 ### Network topology and connectivity
 On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology (for this scenario, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA"), provide the address space to be assigned to the hub virtual network, select an Azure region where the hub virtual network will be created and provide a dedicated (empty) subscription that will be used to host the requisite infrastructure. For this example, we will select the "Hub and spoke with Azure Firewall" network topology.
 
- ![img](./media/clip_image036a.png)
+ ![img](media/clip_image036a.png)
 
 Depending on your requirements, you may choose to deploy additional network infrastructure for your Enterprise-Scale landing zones platform. The optional resources include:
 
@@ -162,13 +162,13 @@ Depending on your requirements, you may choose to deploy additional network infr
 * Azure Firewall
   * If you choose to deploy Azure Firewall, you will have the option to select the subnet, select to deploy the Firewall as regional or zone redundant as well as indicate if you want to enable DNS Proxy in Azure Firewall
 
- ![img](./media/clip_image036b.png)
+ ![img](media/clip_image036b.png)
 
 
 ### Identity
 On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering. 
 
- ![img](./media/clip_image036c.png)
+ ![img](media/clip_image036c.png)
 
 ### Landing zone configuration
 
@@ -178,13 +178,13 @@ You can also indicate which subscriptions you would like to be bootstrapped as l
 
 As part of the policies that you can assign to your landing zones, the Enterprise-Scale Landing Zones deployment experience will allow you to protect your landing zones with a DDoS Standard plan, and for corp connected landing zones, you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones. 
 
-![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
+![Graphical user interface, application  Description automatically generated](media/clip_image037.jpg)
 
 ### Review + create
 
 *Review + Create* page will validate your permission and configuration before you can click deploy. Once it has been validated successfully, you can click *Create*
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image039.jpg)
+![Graphical user interface, text, application, email  Description automatically generated](media/clip_image039.jpg)
 
 ### Validation post deployment (GitHub)
 
@@ -192,7 +192,7 @@ Once Enterprise-Scale has deployed and you enabled the CI/CD bootstrap, you shou
 
 *    A new repository has been created, with the name provided during setup.
 
-![Graphical user interface, text, application  Description automatically generated](./media/clip_image040.png)
+![Graphical user interface, text, application  Description automatically generated](media/clip_image040.png)
 
 *    4 Secrets are created into this GitHub repository.
      - ARM_CLIENT_ID = Service Principal
@@ -200,20 +200,20 @@ Once Enterprise-Scale has deployed and you enabled the CI/CD bootstrap, you shou
      - ARM_SUBSCRIPTION_ID = The management subscription ID created in the Tenant
      - ARM_TENANT_ID = Tenant ID of the Azure Tenant that was used to create ESLZ
 
-![img](./media/clip_image042.jpg)
+![img](media/clip_image042.jpg)
 
 *    A Pull Request is either in progress or has completed and automatically merged into the main branch. Using the "AzOps - Pull" workflow.
 
-![img](./media/clip_image044.png)
+![img](media/clip_image044.png)
 
 *    The Azure hierarchy that is created using ARM templates as part of the Enterprise-Scale setup, such as management groups, subscription organization as well as policy definitions, policy assignments and role assignments are pulled and organized into the GitHub repository:
 
-![AzOps Initial Pull Commit](./media/azops-initial-commit.png)
+![AzOps Initial Pull Commit](media/azops-initial-commit.png)
 
 
 *    In each folder, you will find the ARM templates that were deployed at the scopes during the Enterprise-Scale setup. E.g., on the intermediate root group, you will find all policy definitions, and depending on the selection you made during the deployment, you will find resource templates in the platform subscriptions. Users can – whenever they are ready, start using these templates and bring their own templates to manage the platform using ARM templates and infrastructure as code.
 
-![AzOps - Inside root folder](./media/azops-inside-root-dir.png)
+![AzOps - Inside root folder](media/azops-inside-root-dir.png)
 
 ## Post deployment activities
 
@@ -249,7 +249,7 @@ Enterprise-Scale with its Policy Driven Governance principle relies heavily on A
 
 1.   In GitHub, navigate to your repository and click on the `root` folder. From here, navigate to your <prefix>-online folder which represents the management group for all your online landing zones.
 
-![AzOps - path to online folder](./media/azops-online-path.png)
+![AzOps - path to online folder](media/azops-online-path.png)
 
 2. Click on ‘Add file’, and ‘Create new file’.
 
@@ -362,15 +362,15 @@ In this exercise, we will modify the existing policy assignment to ensure the po
 
 1.   Navigate the locationAssignment.json file you placed into the <prefix>-online folder, representing the online landing zone.
 
-2.   Click on ‘Edit this file’ ![img](./media/clip_image063.png)
+2.   Click on ‘Edit this file’ ![img](media/clip_image063.png)
 
 3.   Change the parameter “policyAssignmentEnforcementMode” default value to be ‘Default’.
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image065.jpg)
+![Graphical user interface, text, application, email  Description automatically generated](media/clip_image065.jpg)
 
 1.   On the ‘Commit changes’ dialogue box, select ‘Create a new branch for this commit and start a pull request’, and provide a branch name. Click ‘Propose changes’ and create the pull request
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/ESLZ-Update-location-assignment-policy.JPG)
+![Graphical user interface, text, application, email  Description automatically generated](media/ESLZ-Update-location-assignment-policy.JPG)
 
 This will now start the same process as above by validating and showing a WhatIf output as a comment on the pull request. Once reviewed, approved and merged the AzOps push workflow will trigger and deploy the template with the updated property so that the policy effect will be enforced (in this case, deny resource creation outside of the ringfenced Azure regions).
 

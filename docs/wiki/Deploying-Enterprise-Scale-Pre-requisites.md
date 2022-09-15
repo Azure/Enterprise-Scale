@@ -20,11 +20,11 @@ This requires the following:
 
 1.3  Under *Manage*, select *Properties
 
-![Graphical user interface, text, application, Teams  Description automatically generated](./media/clip_image006.jpg)
+![Graphical user interface, text, application, Teams  Description automatically generated](media/clip_image006.jpg)
 
 1.4  Under *Access management for Azure resources,* set the toggle to *Yes
 
-![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image008.jpg)
+![Graphical user interface, text, application, email  Description automatically generated](media/clip_image008.jpg)
 
 ### Grant Access to the User at *tenant root scope “/”* to deploy Enterprise-Scale
 
