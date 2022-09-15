@@ -39,4 +39,4 @@ The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-
   * [Enable Service Principal to create landing zones](Create-Landingzones#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](Create-Landingzones#arm-template-repository)
   * [Create a new landing zone (subscriptions)](Create-Landingzones#create-a-new-landing-zone-subscriptions)
-* [Contribution](ALZ-Contribution)
+* [Contribution](ALZ-Contribution-Guide)
