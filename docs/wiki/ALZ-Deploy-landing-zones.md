@@ -4,9 +4,9 @@ It is now time to turn the lights ON :bulb:
 
 At this point you have the necessary platform setup configured to support one or many Landing Zone(s) with the required definitions (Roles, Policies and PolicySet) and assignments (Roles and Policies).
 
-Provisioning Landing Zone(s) will mean either **creating a new subscription** or **moving an existing subscription** to the desired Management Group and the platform will do the rest. In large environments with 10s and 100s of Landing Zones, the platform team can also delegate Landing Zone(s) to the respective business units and/or application portfolio owners while being confident that security, compliance and monitoring requirements are being met. Furthermore, the platform team may also delegate the necessary access permissions such as: 
+Provisioning Landing Zone(s) will mean either **creating a new subscription** or **moving an existing subscription** to the desired Management Group and the platform will do the rest. In large environments with 10s and 100s of Landing Zones, the platform team can also delegate Landing Zone(s) to the respective business units and/or application portfolio owners while being confident that security, compliance and monitoring requirements are being met. Furthermore, the platform team may also delegate the necessary access permissions such as:
 
-1) IAM roles to create new subscriptions 
+1) IAM roles to create new subscriptions
 2) Place subscriptions in the appropriate Management Groups for business units and/or application portfolio owners to provide self-service access to create their own Landing Zone(s).
 
 ## Create or move a Subscription under the Landing Zone Management Group
@@ -38,5 +38,3 @@ To use the ARM templates below to create new subscriptions, you must have Manage
 |:-------------------------|:-------------|:--------------|
 | Enterprise Agreement (EA) |[![Deploy To Azure](https://docs.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json) | Create 'N' number of subscriptions into multiple Management Groups
 | Enterprise Agreement (EA) |[![Deploy To Azure](https://docs.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fexamples%2Flanding-zones%2Fsubscription-with-rbac%2FsubscriptionWithRbac.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fexamples%2Flanding-zones%2Fsubscription-with-rbac%2Fportal-subscriptionWithRbac.json)| Create a subscription with RBAC for SPN
-
-

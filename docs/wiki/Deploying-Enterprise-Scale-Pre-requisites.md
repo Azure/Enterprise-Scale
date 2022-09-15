@@ -1,4 +1,4 @@
-## Enterprise-Scale Prerequisites
+## Enterprise-Scale Pre-requisites
 
 Enterprise-Scale can bootstrap an entire Azure tenant without any infrastructure dependencies, and the user must first have Owner permission on the tenant *root* before deploying.
 
@@ -6,11 +6,11 @@ Enterprise-Scale can bootstrap an entire Azure tenant without any infrastructure
 
 This requires the following:
 
-*    A user that is Global Admin in the Azure Active Directory
+* A user that is Global Admin in the Azure Active Directory
 
-*   Elevation of privileges of this user which grants him/her the “User Access Administrator” permission at the tenant root scope
+* Elevation of privileges of this user which grants him/her the “User Access Administrator” permission at the tenant root scope
 
-*    An explicit roleAssignment (RBAC) made at the tenant root scope via CLI or PowerShell (Note: There’s no portal UX to make this roleAssignment)
+* An explicit roleAssignment (RBAC) made at the tenant root scope via CLI or PowerShell (Note: There’s no portal UX to make this roleAssignment)
 
 ### Elevate Access to manage Azure resources in the directory
 
