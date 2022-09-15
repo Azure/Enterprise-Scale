@@ -16,7 +16,7 @@ All custom Azure Policy Definitions and Initiatives are the same across all 3 im
 
 This is because the single source of truth is the [`Enterprise-Scale` repo](https://github.com/Azure/Enterprise-Scale) that both the Terraform and Bicep implementation options pull from to build their `lib` folders respectively.
 
-For a complete list of all custom and built-in policies deployed within an Azure Landing Zone deployment, please refer to the following [section](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md#what-policy-definitions-are-assigned-within-the-azure-landing-zones-custom--built-in).
+For a complete list of all custom and built-in policies deployed within an Azure Landing Zone deployment, please refer to the following [section](ALZ-Policies#what-policy-definitions-are-assigned-within-the-azure-landing-zones-custom--built-in).
 
 > Our goal is always to try and use built-in policies where available and also work with product teams to adopt our custom policies and make them built-in, which takes time. This means there will always be a requirement for custom policies.
 
@@ -34,7 +34,7 @@ AzAdvertizer also updates once per day!
 
 As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure Landing Zone Management Group hierachy as depicted within the below diagram.
 
-![image](./media/MgmtGroups_Policies_v0.1.jpg)
+![image](media/MgmtGroups_Policies_v0.1.jpg)
 
 The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierachy.
 
@@ -49,7 +49,7 @@ This management group is a parent to all the other management groups created wit
 <tr></tr>
 <tr><td>
   
-![image](./media/IntRoot_v0.1.jpg)
+![image](media/IntRoot_v0.1.jpg)
   
 </td><td>
   
@@ -81,7 +81,7 @@ This management group contains all the platform child management groups, like ma
 <tr></tr>
 <tr><td>
   
-![image](./media/Platform_v0.1.jpg)
+![image](media/Platform_v0.1.jpg)
   
 </td><td>
   
@@ -100,7 +100,7 @@ This management group contains a dedicated subscription for connectivity. This s
 <tr></tr>
 <tr><td>
   
-![image](./media/Connectivity_v0.1.jpg)
+![image](media/Connectivity_v0.1.jpg)
   
 </td><td>
   
@@ -125,7 +125,7 @@ This management group contains a dedicated subscription for management, monitori
 <tr></tr>
 <tr><td>
   
-![image](./media/Management_v0.1.jpg)
+![image](media/Management_v0.1.jpg)
   
 </td><td>
   
@@ -150,7 +150,7 @@ This management group contains a dedicated subscription for identity. This subsc
 <tr></tr>
 <tr><td>
   
-![image](./media/Identity_v0.1.jpg)
+![image](media/Identity_v0.1.jpg)
   
 </td><td>
   
@@ -178,7 +178,7 @@ This is the parent management group for all the landing zone child management gr
 <tr></tr>
 <tr><td>
 
-![image](./media/LandingZone_v0.1.jpg)
+![image](media/LandingZone_v0.1.jpg)
 
 </td><td>
   
@@ -215,7 +215,7 @@ This management group is for corporate landing zones. This group is for workload
 <tr></tr>
 <tr><td>
 
-![image](./media/Corp_v0.1.jpg)
+![image](media/Corp_v0.1.jpg)
 
 </td><td>
   
@@ -244,7 +244,7 @@ This management group is for online landing zones. This group is for workloads t
 <tr></tr>
 <tr><td>
 
-![image](./media/Online_v0.1.jpg)
+![image](media/Online_v0.1.jpg)
 
 </td><td>
   
@@ -263,7 +263,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 <tr></tr>
 <tr><td>
 
-![image](./media/Decom_v0.1.jpg)
+![image](media/Decom_v0.1.jpg)
 
 </td><td>
   
@@ -282,7 +282,7 @@ This management group is for subscriptions that will only be used for testing an
 <tr></tr>
 <tr><td>
 
-![image](./media/Sandbox_v0.1.jpg)
+![image](media/Sandbox_v0.1.jpg)
 
 </td><td>
   
