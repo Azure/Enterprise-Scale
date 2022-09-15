@@ -22,7 +22,7 @@
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-Platform-DevOps#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
 * [Create subscriptions / landing zones using AzOps](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones)
   * [Create landing zones (subscription) using AzOps](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#create-landing-zones-subscription-using-azops)
-  * [Pre-requisites](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones.md#pre-requisites)
+  * [Pre-requisites](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#pre-requisites)
   * [Enable Service Principal to create landing zones](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#arm-template-repository)
   * [Create a new landing zone (subscriptions)](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#create-a-new-landing-zone-subscriptions)
