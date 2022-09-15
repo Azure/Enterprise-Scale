@@ -2,6 +2,8 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [September 2022](#september-2022)
+  - [August 2022](#august-2022)
   - [July 2022](#july-2022)
   - [June 2022](#june-2022)
   - [May 2022](#may-2022)
@@ -47,7 +49,22 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- *No updates, yet.*
+- Migrated the following pages to the [Enterprise-Scale Wiki](https://github.com/Azure/Enterprise-Scale/wiki/)
+
+| Original URL | New URL |
+| --- | --- |
+| [docs/ESLZ-Policies.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) | [wiki/ALZ-Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies) |
+| [docs/EnterpriseScale-Architecture.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Architecture.md) | [wiki/ALZ-Architecture](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Architecture) |
+| [docs/EnterpriseScale-Contribution.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Contribution.md) | [wiki/ALZ-Contribution](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution) |
+| [docs/EnterpriseScale-Deploy-landing-zones.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-landing-zones.md) | [wiki/ALZ-Deploy-landing-zones](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-landing-zones) |
+| [docs/EnterpriseScale-Deploy-reference-implentations.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) | [wiki/ALZ-Deploy-reference-implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-reference-implementations) |
+| [docs/EnterpriseScale-Deploy-workloads.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-workloads.md) | [wiki/ALZ-Deploy-workloads](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-workloads) |
+| [docs/EnterpriseScale-Known-Issues.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Known-Issues.md) | [wiki/ALZ-Known-Issues](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Known-Issues) |
+| [docs/EnterpriseScale-Roadmap.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Roadmap.md) | [wiki/ALZ-Roadmap](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Roadmap) |
+| [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md) | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions) |
+| [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md) | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure) |
+
+- Updated the guidance for contributing to the [Azure/Enterprise-Scale](https://github.com/Azure/Enterprise-Scale/) repository
 
 #### Tooling
 
@@ -116,7 +133,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- Updated the [Policies included in Enterprise-Scale Landing Zones](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) page.
+- Updated the [Policies included in Enterprise-Scale Landing Zones](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies) page.
 - Updated the ALZ Terraform module [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) with new examples and improved coverage of variable configuration.
 
 #### Tooling
@@ -265,7 +282,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - More of these to come, let us know via issues on other scenarios you'd like to see documented
   - [Design Areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) updated and reorganized in TOC (navigation pane)
 
-[![Updated TOC](./media/caf-docs-mstone-2-toc.png)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
+[![Updated TOC](media/caf-docs-mstone-2-toc.png)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
 
 - Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
   - Additional details of some deployment steps
@@ -367,7 +384,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
+- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
   - Added CSP, MCA & other billing offers
   - Added information on how an EA relates to Azure AD and ties in with RBAC
 - Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
@@ -483,7 +500,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- ["What's New?"](./Whats-new) page created
+- ["What's New?"](Whats-new) page created
 - Azure DDoS Standard design considerations and recommendations added to CAF docs ([Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) & [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology)) - closing issue [#603](https://github.com/Azure/Enterprise-Scale/issues/603)
 - [Connectivity to other cloud providers](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-other-providers) CAF document released
 - [Testing approach for enterprise-scale](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/testing-approach) CAF document released
