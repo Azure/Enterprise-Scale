@@ -30,7 +30,7 @@ The deployment experience in Azure portal allows you to bring in an existing (pr
 
 To learn how to create new subscriptions programmatically, please visit [Microsoft Docs](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription).
 
-To learn how to create new subscriptions using the Azure portal, please visit [Microsoft Docs](https://azure.microsoft.com/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/). 
+To learn how to create new subscriptions using the Azure portal, please visit [Microsoft Docs](https://azure.microsoft.com/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
 ## How to deploy this reference implementation
 
@@ -47,21 +47,21 @@ By default, all recommendations are enabled. You must explicitly disable them if
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
 - An Azure subscription dedicated for management, connectivity, and identity. This subscription hosts core platform capabilities such as:  
-  -	A Log Analytics workspace and an Automation account.
+  - A Log Analytics workspace and an Automation account.
   - Azure Sentinel.
-  -	A hub virtual network  
-  -	VPN Gateway (optional - deployment across Availability Zones)
+  - A hub virtual network  
+  - VPN Gateway (optional - deployment across Availability Zones)
   - ExpressRoute Gateway (optional - deployment across Availability Zones)
-  -	Azure Firewall (optional - deployment across Availability Zones)
+  - Azure Firewall (optional - deployment across Availability Zones)
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 - Landing Zone Management Group for **online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
   - This is where you will create your Subscriptions that will host your online workloads.
 - Azure Policies that will enable autonomy for the platform and the landing zones:
   - The following Azure Policies are applied at the root of the Enterprise Scale Management Group hierarchy enabling core platform capabilities at scale:
-    -	Azure Security monitoring
-    -	Azure Security Center (Azure Defender OFF (free) and Azure Defender ON)
-    -	Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
+    - Azure Security monitoring
+    - Azure Security Center (Azure Defender OFF (free) and Azure Defender ON)
+    - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
   - On the other hand, Azure Policies that will apply to all your landing zones. That includes Online, Corp and additional Landing Zone's types you may add in the future:
     - Enforce VM in-guest monitoring (Windows & Linux)
     - Enforce Backup for all virtual machines (Windows & Linux) by deploying a recovery services vault in the same location and resource group as the virtual machine
@@ -73,11 +73,11 @@ By default, all recommendations are enabled. You must explicitly disable them if
     - Enforce auditing for Azure SQL
     - Enforce secure access (HTTPS) to storage accounts
   
-![Trey Research](media/es-lite.png)
+![Trey Research](./media/es-lite.png)
 
 ## Next steps
 
-### From an application perspective:
+### From an application perspective
 
 #### Configure security roles for your Azure resources
 

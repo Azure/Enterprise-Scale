@@ -35,7 +35,7 @@ We then work with the Azure Policy and associated engineering teams to continuou
 
 ## Where can I see the policy definitions used by the enterprise-scale landing zones reference implementation?
 
-You can find a list of policy definitions here: [Policies included in enterprise-scale landing zones reference implementations](ALZ-Policies)
+You can find a list of policy definitions here: [Policies included in enterprise-scale landing zones reference implementations](./ALZ-Policies)
 
 We also add changes to our [What's New? wiki page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new).
 

@@ -66,9 +66,9 @@ Please note, it may take up to 15-30 minutes for permission to propagate at tena
 
 ### Creating a scoped role assignment
 
-The Owner privileged root tenant scope *is required* in the deployment of the [Reference implementation](ALZ-Deploy-reference-implementations).  However post deployment, and as your use of Enterprise Scale matures, you are able to limit the scope of the Service principal roleAssignments to a subsection of the Management Group hierarchy.
+The Owner privileged root tenant scope *is required* in the deployment of the [Reference implementation](./ALZ-Deploy-reference-implementations).  However post deployment, and as your use of Enterprise Scale matures, you are able to limit the scope of the Service principal roleAssignments to a subsection of the Management Group hierarchy.
 Eg. `"/providers/Microsoft.Management/managementGroups/YourMgGroup"`.
 
 ## Next steps
 
-Please proceed with [deploying reference implementation](ALZ-Deploy-reference-implementations).
+Please proceed with [deploying reference implementation](./ALZ-Deploy-reference-implementations).

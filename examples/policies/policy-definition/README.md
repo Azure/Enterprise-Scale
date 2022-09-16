@@ -34,7 +34,7 @@ The ARM template provided in this folder shows how a new policy definition is cr
 
 ## Deploy using AzOps
 
-See these [instructions]( https://github.com/azure/azops/wiki/deployments) for how to deploy ARM templates with the AzOps GitHub Actions/DevOps pipeline.
+See these [instructions](./ https://github.com/azure/azops/wiki/deployments) for how to deploy ARM templates with the AzOps GitHub Actions/DevOps pipeline.
 
 ## Deploy using Azure PowerShell
 

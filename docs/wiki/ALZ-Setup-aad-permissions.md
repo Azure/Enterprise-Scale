@@ -13,11 +13,11 @@ The service principal used by the Enterprise-Scale reference implementation requ
 1.2 Open Azure Active Directory.
 
 1.3 Under _Manage_ > _Roles and administrators_, select _Directory readers_.
-![alt](media/aad-rolesandadministrators.png)
+![alt](./media/aad-rolesandadministrators.png)
 
 1.4 Under _Manage_ > _Assignments_ > _Add assignments_, find for and select your AzOps service principal and finally add it to the directory role.
 
-![alt](media/directory-reader.png)
+![alt](./media/directory-reader.png)
 
 > Note: In case you are using Azure AD Privileged Identity management, ensure you add the service principal to the role with a permanent assignment.
 
@@ -64,4 +64,4 @@ Please note, it may take up to 15-30 minutes for permission to propagate in Azur
 
 ## Next steps
 
-Please proceed with [deploying reference implementation](ALZ-Deploy-reference-implementations).
+Please proceed with [deploying reference implementation](./ALZ-Deploy-reference-implementations).
