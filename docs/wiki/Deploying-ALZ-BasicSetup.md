@@ -1,4 +1,4 @@
-## Deploy Azure landing zone portal accelerator for Small Enterprises
+## Azure landing zone portal accelerator deployment for Small Enterprises
 
 In this tutorial, you will deploy an Azure landing zone portal accelerator with connectivity to on-premises datacenters and branch offices based on a [hub and spoke network topology](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology), and where Management, Connectivity and Identity resources are consolidated in a single Platform Subscription.
 
@@ -116,7 +116,7 @@ Click **Next: Platform Devops and Automation>** to configure how your Azure envi
 
 ## 6. Platform DevOps and Automation
 
-Azure landing zone portal accelerator provides an integrated CI/CD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. The *Platform Devops and Automation* tab allows you to bootstrap your CI/CD pipeline including your Azure landing zone deployment settings. For detailed steps for setting up this configuration, refer to the [Deploy Azure landing zone portal accelerator Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
+Azure landing zone portal accelerator provides an integrated CI/CD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. The *Platform Devops and Automation* tab allows you to bootstrap your CI/CD pipeline including your Azure landing zone deployment settings. For detailed steps for setting up this configuration, refer to the [Deploy Azure landing zone portal accelerator Platform DevOps and Automation](./Deploying-ALZ-Platform-DevOps) article.
 
 **In this tutorial, your Azure landing zone deployment will be triggered using the Azure Portal experience**.
 

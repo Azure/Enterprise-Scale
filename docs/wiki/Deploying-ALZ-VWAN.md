@@ -46,7 +46,7 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 
 ## 6. Platform DevOps and Automation
 
-Azure landing zone portal accelerator provides an integrated CICD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
+Azure landing zone portal accelerator provides an integrated CICD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Platform DevOps and Automation](./Deploying-ALZ-Platform-DevOps) article.
 
 ## 7. Network topology and connectivity
 On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology. For this scenario:

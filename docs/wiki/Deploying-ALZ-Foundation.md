@@ -1,6 +1,6 @@
-## Azure landing zone deployment without hybrid connectivity
+## Azure landing zone portal accelerator deployment without hybrid connectivity
 
-This section will describe how to deploy an the Azure landing zone Portal accelerator without connectivity to on-premises datacenters and branch offices. Please refer to [WingTip reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) for further details on this reference architecture.
+This section will describe how to deploy an the Azure landing zone portal accelerator without connectivity to on-premises datacenters and branch offices. Please refer to [WingTip reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) for further details on this reference architecture.
 
 ## 1. Pre-requisites
 
@@ -46,7 +46,7 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 
 ## 6. Platform DevOps and Automation
 
-Azure landing zone portal accelerator provides an integrated CICD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Enterprise-Scale Landing Zones Platform DevOps and Automation](./Deploying-Enterprise-Scale-Platform-DevOps) article.
+Azure landing zone portal accelerator provides an integrated CICD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Platform DevOps and Automation](./Deploying-ALZ-Platform-DevOps) article.
 
 ## 7. Network topology and connectivity
 On the *Network topology and connectivity* blade, you can configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology.
