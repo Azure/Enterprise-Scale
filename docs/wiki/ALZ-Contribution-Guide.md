@@ -22,7 +22,7 @@ The following is a set of general guidelines for contributing to any of these re
 ## How do we manage contributions
 
 Contributions to each Azure landing zone reference implementation option is moderated by a common committee of maintainers.
-The committee is responsible for reviewing and approving all contributions, whether via **GitHub Issues**, **Pull Requests**, or internally driven development.
+The committee is responsible for reviewing and approving all contributions, whether via **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues), **Pull Requests** [[ARM]](https://github.com/Azure/Enterprise-Scale/pulls) [[Bicep]](https://github.com/Azure/ALZ-Bicep/pulls) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/pulls), or internally driven development.
 
 The committee is also responsible for reviewing and sponsoring new features or design changes to ensure they meet the needs of our broad community of consumers.
 
@@ -50,7 +50,7 @@ Moreover, as the Azure platform evolves or our guidance changes there will likel
 
 If you believe you have found a bug, please use the following process:
 
-1. Check the **FAQ** [[ARM]](./FAQ) [[Bicep]](https://github.com/Azure/ALZ-Bicep/wiki/FAQ) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/FAQ) and **Known Issues** [[ARM]](./ALZ-Known-Issues) [[Bicep]](./FAQ) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/Known-Issues)  for a list of common questions and issues.
+1. Check the **FAQ** [[ARM]](./FAQ) [[Bicep]](https://github.com/Azure/ALZ-Bicep/wiki/FAQ) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/Frequently-Asked-Questions) and **Known Issues** [[ARM]](./ALZ-Known-Issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/Troubleshooting)  for a list of common questions and issues.
 1. Check existing **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues) to see whether the issue has already been reported.
     1. If the issue is **open**, add a comment rather than create a new one.
     1. If the issue is **closed**, check whether the proposed fix resolves your issue.
@@ -59,7 +59,7 @@ If you believe you have found a bug, please use the following process:
 1. Ensure you fill out the template with as much information as possible, being sure to cover off what's needed for maintainers and the community to:
     1. Understand your issue :memo:
     1. Reproduce the behavior :computer:
-    1. Provide evidence :mag_right:.
+    1. Provide evidence :mag_right:
     1. Optionally, let us know if you would like to contribute a fix via a **Pull Request** [[ARM]](https://github.com/Azure/Enterprise-Scale/pulls) [[Bicep]](https://github.com/Azure/ALZ-Bicep/pulls) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/pulls) :wrench:
 
 ### Feature requests
