@@ -47,7 +47,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- *No updates, yet.*
+- Updated the Enterprise-scale  [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest updates on Azure landing zone accelerator.
+  
+    - [Deploy Azure landing zone portal accelerator](./Deploying-ALZ)
+    - [Deployment guidance for Small Enterprises](./Deploying-ALZ-BasicSetup)
+    - [How to deploy without hybrid connectivity](./Deploying-ALZ-Foundation)
+    - [Deployment with hub and spoke network topology](./Deploying-ALZ-HubAndSpoke)
+    - [Deployment with Azure VWAN network topology](./Deploying-ALZ-VWAN)
 
 #### Tooling
 
