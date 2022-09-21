@@ -1,42 +1,7 @@
-# Enterprise-Scale Landing Zones User Guide
+# Azure landing zones User Guide
 
-The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-to-end documentation for the Enterprise-Scale deployment and configuration experience to accelerate both adoption and deployment. 
+> **NOTE:** _Enterprise-Scale is now Azure landing zones_
 
-## Navigation
+This user guide aims to provide comprehensive end-to-end documentation for the Azure landing zone deployment and configuration experience to accelerate both adoption and deployment.
 
-* [What's New?](./Whats-new)
-* [Community Calls](./Community-Calls)
-* [Frequently Asked Questions (FAQ)](./FAQ)
-* [Known issues](./ALZ-Known-Issues)
-* [Roadmap](./ALZ-Roadmap)
-* [What is Enterprise-Scale](./What-is-Enterprise-Scale)
-  * [Architecture](./ALZ-Architecture)
-  * [Policies](./ALZ-Policies)
-  * [What is Enterprise-Scale reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
-  * [Pricing](./What-is-Enterprise-Scale#pricing)
-  * [What if I already have an existing Azure footprint](./What-is-Enterprise-Scale#what-if-i-already-have-an-existing-azure-footprint)
-* [How Enterprise-Scale Works](./How-Enterprise-Scale-Works)
-  * [Enterprise-Scale design principles](./How-Enterprise-Scale-Works#enterprise-scale-design-principles)
-  * [Separating platform and landing zones](./How-Enterprise-Scale-Works#separating-platform-and-landing-zones)
-  * [Enterprise-Scale Management Group Structure](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure)
-  * [What happens when you deploy Enterprise-Scale?](./How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
-* Deploying Enterprise-Scale
-  * [Pre-requisites](./Deploying-ALZ-Pre-requisites)
-  * [Configure AAD permissions](./ALZ-Setup-aad-permissions)
-  * [Configure Azure permissions](./ALZ-Setup-azure)
-  * [Deploy landing zones](./ALZ-Deploy-landing-zones)
-  * [Deploy reference implementations](./ALZ-Deploy-reference-implementations)
-  * [Telemetry Tracking Using Customer Usage Attribution (PID)](./Deploying-ALZ-CustomerUsage)
-  * [Deploy Enterprise-Scale without hybrid connectivity to on-premises](./Deploying-ALZ-Foundation)
-  * [Deploy Enterprise-Scale with a hub and spoke based network topology](./Deploying-ALZ-HubAndSpoke)
-  * [Deploy Enterprise-Scale with an Azure Virtual WAN based network topology](./Deploying-ALZ-VWAN)
-  * [Deploy Enterprise-Scale for Small Enterprises](./Deploying-ALZ-BasicSetup)
-  * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-ALZ-Platform-DevOps#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
-  * [Deploy workloads](./ALZ-Deploy-workloads)
-* [Create subscriptions / landing zones using AzOps](./Create-Landingzones)
-  * [Create landing zones (subscription) using AzOps](./Create-Landingzones#create-landing-zones-subscription-using-azops)
-  * [Pre-requisites](./Create-Landingzones#pre-requisites)
-  * [Enable Service Principal to create landing zones](./Create-Landingzones#enable-service-principal-to-create-landing-zones)
-  * [ARM template repository](./Create-Landingzones#arm-template-repository)
-  * [Create a new landing zone (subscriptions)](./Create-Landingzones#create-a-new-landing-zone-subscriptions)
-* [Contribution](./ALZ-Contribution-Guide)
+Please use the navigation links to browse our content...
