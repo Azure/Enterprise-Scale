@@ -1,4 +1,4 @@
-## Enterprise-Scale Platform DevOps and Automation
+## Azure landing zone portal deployment for Platform DevOps and Automation
 
 ### In this section:
 
@@ -51,7 +51,7 @@ The default API Permissions for this App are “User.Read”, as depicted below:
 
 ![img](./media/clip_image032.jpg)
 
- After copying the secret, go to “Azure landing zone accelerator” (in the upper left) to return to the deployment.
+ After copying the secret, go to “Enterprise-Scale Landing Zones” (in the upper left) to return to the deployment.
 
  ![img](./media/clip_image034.png)
 
