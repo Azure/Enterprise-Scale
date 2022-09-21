@@ -51,20 +51,28 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Migrated the following pages to the [Enterprise-Scale Wiki](https://github.com/Azure/Enterprise-Scale/wiki/)
 
-| Original URL | New URL |
-| --- | --- |
-| [docs/ESLZ-Policies.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) | [wiki/ALZ-Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies) |
-| [docs/EnterpriseScale-Architecture.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Architecture.md) | [wiki/ALZ-Architecture](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Architecture) |
-| [docs/EnterpriseScale-Contribution.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Contribution.md) | [wiki/ALZ-Contribution](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution) |
-| [docs/EnterpriseScale-Deploy-landing-zones.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-landing-zones.md) | [wiki/ALZ-Deploy-landing-zones](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-landing-zones) |
-| [docs/EnterpriseScale-Deploy-reference-implentations.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) | [wiki/ALZ-Deploy-reference-implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-reference-implementations) |
-| [docs/EnterpriseScale-Deploy-workloads.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-workloads.md) | [wiki/ALZ-Deploy-workloads](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-workloads) |
-| [docs/EnterpriseScale-Known-Issues.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Known-Issues.md) | [wiki/ALZ-Known-Issues](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Known-Issues) |
-| [docs/EnterpriseScale-Roadmap.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Roadmap.md) | [wiki/ALZ-Roadmap](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Roadmap) |
-| [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md) | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions) |
-| [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md) | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure) |
+  | Original URL | New URL |
+  | --- | --- |
+  | [docs/ESLZ-Policies.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) | [wiki/ALZ-Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies) |
+  | [docs/EnterpriseScale-Architecture.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Architecture.md) | [wiki/ALZ-Architecture](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Architecture) |
+  | [docs/EnterpriseScale-Contribution.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Contribution.md) | [wiki/ALZ-Contribution](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution) |
+  | [docs/EnterpriseScale-Deploy-landing-zones.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-landing-zones.md) | [wiki/ALZ-Deploy-landing-zones](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-landing-zones) |
+  | [docs/EnterpriseScale-Deploy-reference-implentations.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) | [wiki/ALZ-Deploy-reference-implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-reference-implementations) |
+  | [docs/EnterpriseScale-Deploy-workloads.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-workloads.md) | [wiki/ALZ-Deploy-workloads](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-workloads) |
+  | [docs/EnterpriseScale-Known-Issues.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Known-Issues.md) | [wiki/ALZ-Known-Issues](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Known-Issues) |
+  | [docs/EnterpriseScale-Roadmap.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Roadmap.md) | [wiki/ALZ-Roadmap](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Roadmap) |
+  | [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md) | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions) |
+  | [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md) | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure) |
 
 - Updated the guidance for contributing to the [Azure/Enterprise-Scale](https://github.com/Azure/Enterprise-Scale/) repository
+
+- Updated the Enterprise-scale [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest updates on Azure landing zone accelerator.
+
+  - [Deploy Azure landing zone portal accelerator](./Deploying-ALZ)
+  - [Deployment guidance for Small Enterprises](./Deploying-ALZ-BasicSetup)
+  - [How to deploy without hybrid connectivity](./Deploying-ALZ-Foundation)
+  - [Deployment with hub and spoke network topology](./Deploying-ALZ-HubAndSpoke)
+  - [Deployment with Azure VWAN network topology](./Deploying-ALZ-VWAN)
 
 #### Tooling
 
