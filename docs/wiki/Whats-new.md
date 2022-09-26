@@ -57,6 +57,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- Release [`v2.4.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.4.0) of the Azure landing zones Terraform module
 - Updated [Automation Account region mapping](https://docs.microsoft.com/azure/automation/how-to/region-mappings) in the Terraform implementation option
 
 ### Policy
