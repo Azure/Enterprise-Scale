@@ -62,8 +62,11 @@
                             "name": "getSubscriptions",
                             "type": "Microsoft.Solutions.ArmApiControl",
                             "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2020-01-01"
+                                "method": "POST",
+                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+                                "body": {
+                                    "query": "ResourceContainers | where type =~ 'microsoft.resources/subscriptions' | where properties.state =~ 'enabled' | project label=tostring(name), description=subscriptionId, value=subscriptionId | order by label asc"
+                                }
                             }
                         },
                         {
@@ -1968,7 +1971,7 @@
                             "multiLine": true,
                             "visible": "[or(or(equals(steps('landingZones').esLzConnectivity, 'No'), equals(steps('connectivity').enableHub, 'No')), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('landingZones').esLzConnectivity, 'No'))]",
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('basics').getSubscriptions.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                "allowedValues": "[steps('basics').getSubscriptions.data]",
                                 "required": false
                             }
                         },
@@ -2003,7 +2006,7 @@
                                             "filterPlaceholder": "Filter items ...",
                                             "multiLine": false,
                                             "constraints": {
-                                                "allowedValues": "[map(steps('basics').getSubscriptions.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                                "allowedValues": "[steps('basics').getSubscriptions.data]",
                                                 "required": false
                                             }
                                         }
@@ -2054,7 +2057,7 @@
                             "multiLine": true,
                             "visible": true,
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('basics').getSubscriptions.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
+                                "allowedValues": "[steps('basics').getSubscriptions.data]",
                                 "required": false
                             }
                         },
