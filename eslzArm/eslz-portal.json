@@ -1,5 +1,5 @@
 {
-    "$schema": "<relative path to createFormUI.schema.json>",
+    "$schema": "https://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json#",
     "view": {
         "kind": "Form",
         "properties": {
@@ -62,8 +62,11 @@
                             "name": "getSubscriptions",
                             "type": "Microsoft.Solutions.ArmApiControl",
                             "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2020-01-01"
+                                "method": "POST",
+                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+                                "body": {
+                                    "query": "ResourceContainers | where type =~ 'microsoft.resources/subscriptions' | where properties.state =~ 'enabled' | project label=tostring(name), description=subscriptionId, value=subscriptionId | order by label asc"
+                                }
                             }
                         },
                         {
@@ -163,9 +166,21 @@
                                     }
                                 },
                                 {
-                                    "type": "Microsoft.Common.SubscriptionSelector",
                                     "name": "selector",
-                                    "label": "Single platform subscription"
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Platform subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": true
+                                    }
                                 }
                             ],
                             "visible": "[equals(steps('core').platformSubscription, 'Single')]"
@@ -289,9 +304,21 @@
                                     }
                                 },
                                 {
-                                    "type": "Microsoft.Common.SubscriptionSelector",
                                     "name": "esMgmtSub",
-                                    "label": "Management subscription"
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Management subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": false
+                                    }
                                 }
                             ],
                             "visible": "[and(equals(steps('management').enableLogAnalytics, 'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
@@ -983,9 +1010,21 @@
                                     }
                                 },
                                 {
-                                    "type": "Microsoft.Common.SubscriptionSelector",
                                     "name": "esNwSub",
-                                    "label": "Connectivity subscription"
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Connectivity subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": true
+                                    }
                                 }
                             ],
                             "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('core').platformSubscription, 'Single')))]"
@@ -1765,9 +1804,21 @@
                                     }
                                 },
                                 {
-                                    "type": "Microsoft.Common.SubscriptionSelector",
                                     "name": "esIdentitySub",
-                                    "label": "Management subscription"
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Identity subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": true
+                                    }
                                 }
                             ],
                             "visible": "[and(equals(steps('identity').esIdentity,'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
@@ -1959,7 +2010,7 @@
                             "name": "esCorpLzSub",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Corp landing zone subscriptions (optional)",
-                            "defaultValue": [],
+                            "defaultValue": "[parse('[]')]",
                             "toolTip": "",
                             "multiselect": true,
                             "selectAll": true,
@@ -1968,7 +2019,7 @@
                             "multiLine": true,
                             "visible": "[or(or(equals(steps('landingZones').esLzConnectivity, 'No'), equals(steps('connectivity').enableHub, 'No')), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('landingZones').esLzConnectivity, 'No'))]",
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('basics').getSubscriptions.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                "allowedValues": "[steps('basics').getSubscriptions.data]",
                                 "required": false
                             }
                         },
@@ -1995,7 +2046,7 @@
                                             "name": "esLzConnectedSub",
                                             "type": "Microsoft.Common.DropDown",
                                             "label": "Landing zone subscription",
-                                            "defaultValue": [],
+                                            "defaultValue": "[parse('[]')]",
                                             "toolTip": "",
                                             "multiselect": false,
                                             "selectAll": false,
@@ -2003,7 +2054,7 @@
                                             "filterPlaceholder": "Filter items ...",
                                             "multiLine": false,
                                             "constraints": {
-                                                "allowedValues": "[map(steps('basics').getSubscriptions.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
+                                                "allowedValues": "[steps('basics').getSubscriptions.data]",
                                                 "required": false
                                             }
                                         }
@@ -2045,7 +2096,7 @@
                             "name": "esOnlineLzSub",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Online landing zone subscriptions (optional)",
-                            "defaultValue": [],
+                            "defaultValue": "[parse('[]')]",
                             "toolTip": "",
                             "multiselect": true,
                             "selectAll": true,
@@ -2054,7 +2105,7 @@
                             "multiLine": true,
                             "visible": true,
                             "constraints": {
-                                "allowedValues": "[map(filter(steps('basics').getSubscriptions.value, (sub) => equals(sub.state, 'Enabled')), (sub) => parse(concat('{\"label\":\"',sub.displayName,'\",\"description\":\"',sub.subscriptionId,'\",\"value\":\"',toLower(sub.subscriptionId),'\"}')))]",
+                                "allowedValues": "[steps('basics').getSubscriptions.data]",
                                 "required": false
                             }
                         },
@@ -2557,11 +2608,11 @@
         "outputs": {
             "parameters": {
                 "enterpriseScaleCompanyPrefix": "[steps('core').enterpriseScaleCompanyPrefix]",
-                "singlePlatformSubscriptionId": "[steps('core').singleSubscription.selector.subscriptionId]",
+                "singlePlatformSubscriptionId": "[steps('core').singleSubscription.selector]",
                 "telemetryOptOut": "[steps('core').cuaSection.telemetryOptOut]",
                 "enableLogAnalytics": "[steps('management').enableLogAnalytics]",
                 "retentionInDays": "[string(steps('management').retentionInDays)]",
-                "managementSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub.subscriptionId]",
+                "managementSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub]",
                 "enableAgentHealth": "[steps('management').enableAgentHealth]",
                 "enableChangeTracking": "[steps('management').enableChangeTracking]",
                 "enableUpdateMgmt": "[steps('management').enableUpdateMgmt]",
@@ -2591,8 +2642,8 @@
                 "principalId": "[steps('automation').spnSection.esServicePrincipal.objectId]",
                 "principalSecret": "[steps('automation').spnSection.esServicePrincipal.password]",
                 "appId": "[steps('automation').spnSection.esServicePrincipal.appId]",
-                "azOpsSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub.subscriptionId]",
-                "connectivitySubscriptionId": "[if(not(equals(steps('connectivity').esNwSubSection.esNwSub.subscriptionId,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),steps('connectivity').esNwSubSection.esNwSub.subscriptionId,'')]",
+                "azOpsSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub]",
+                "connectivitySubscriptionId": "[if(not(equals(steps('connectivity').esNwSubSection.esNwSub,steps('management').esMgmtSubSection.esMgmtSub)),steps('connectivity').esNwSubSection.esNwSub,'')]",
                 "addressPrefix": "[coalesce(steps('connectivity').esAddressHubVWAN, steps('connectivity').esAddressHubHS, '')]",
                 "connectivityLocation": "[steps('connectivity').connectivityLocation]",
                 "enableDdoS": "[steps('connectivity').enableDdoS]",
@@ -2614,15 +2665,15 @@
                 "firewallSku": "[steps('connectivity').firewallSku]",
                 "firewallZones": "[steps('connectivity').firewallZones]",
                 "subnetMaskForAzFw": "[steps('connectivity').subnetMaskForAzFw]",
-                "identitySubscriptionId": "[if(or(not(equals(steps('identity').esIdentitySubSection.esIdentitySub.subscriptionId,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(equals(steps('identity').esIdentitySubSection.esIdentitySub.subscriptionId,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('identity').esIdentitySubSection.esIdentitySub.subscriptionId,'')]",
+                "identitySubscriptionId": "[if(or(not(equals(steps('identity').esIdentitySubSection.esIdentitySub,steps('management').esMgmtSubSection.esMgmtSub)),not(equals(steps('identity').esIdentitySubSection.esIdentitySub,steps('connectivity').esNwSubSection.esNwSub))),steps('identity').esIdentitySubSection.esIdentitySub,'')]",
                 "denyRdpForIdentity": "[steps('identity').denyRdpForIdentity]",
                 "denySubnetWithoutNsgForIdentity": "[steps('identity').denySubnetWithoutNsgForIdentity]",
                 "denyPipForIdentity": "[steps('identity').denyPipForIdentity]",
                 "enableVmBackupForIdentity": "[steps('identity').enableVmBackupForIdentity]",
                 "identityAddressPrefix": "[steps('identity').identityAddressPrefix]",
-                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('landingZones').lzConnectedSubs,'')]",
-                "corpLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('landingZones').esCorpLzSub,'')]",
-                "onlineLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esOnlineLzSub,steps('management').esMgmtSubSection.esMgmtSub.subscriptionId)),not(contains(steps('landingZones').esOnlineLzSub,steps('connectivity').esNwSubSection.esNwSub.subscriptionId))),steps('landingZones').esOnlineLzSub,'')]",
+                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').lzConnectedSubs,'')]",
+                "corpLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').esCorpLzSub,'')]",
+                "onlineLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esOnlineLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').esOnlineLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').esOnlineLzSub,'')]",
                 "enableLzDdoS": "[steps('landingZones').enableLzDdoS]",
                 "denyPublicEndpoints": "[steps('landingZones').denyPublicEndpoints]",
                 "enablePrivateDnsZonesForLzs": "[steps('landingZones').enablePrivateDnsZonesForLzs]",

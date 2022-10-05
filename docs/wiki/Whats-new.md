@@ -2,6 +2,9 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [October 2022](#october-2022)
+  - [September 2022](#september-2022)
+  - [August 2022](#august-2022)
   - [July 2022](#july-2022)
   - [June 2022](#june-2022)
   - [May 2022](#may-2022)
@@ -43,6 +46,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### October 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- Update the Azure landing zone portal accelerator to use Resource Graph with a generic drop down UI element to improve user experience for subscription selection.
+
+### Policy
+
+- *No updates, yet.*
+
+### Other
+
+- *No updates, yet.*
+
 ### September 2022
 
 #### Docs
@@ -57,6 +78,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- Release [`v2.4.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.4.0) of the Azure landing zones Terraform module
 - Updated [Automation Account region mapping](https://docs.microsoft.com/azure/automation/how-to/region-mappings) in the Terraform implementation option
 
 ### Policy
