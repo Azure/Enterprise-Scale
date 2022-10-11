@@ -51,15 +51,9 @@ For more information about tenant-level deployments in Azure, see [Deploy resour
 
 ## The enterprise-scale (also known as the Azure landing zone accelerator) portal-based deployment doesn't display all subscriptions in the drop-down lists?
 
-When you deploy enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online). When there are more than 50 subscriptions, the API can't display all of them in the drop-down lists.
+When you deploy enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online).
 
-Follow these steps as a workaround:
-
-1. Select or enable your usual options in the portal-based experience. In the subscription drop-downs, select any visible subscription as a placeholder so that you can see and select all options (some options don't appear until you select a subscription).
-1. After you've gone through each page, go back to the **Basics** page, and then select **Edit parameters**.
-1. Change the value for the specific `subscriptionId` parameter inputs with the actual subscription IDs you want to use.
-1. Select **Save**.
-1. Select **Review + create**, and then submit the deployment.
+We updated our Subscription selection method in [October 2022](./Whats-new.md#october-2022) to increase the limit from 50 to 1,000. If you have more than 1,000 subscriptions, the API may still not be able to display all of them in the drop-down list. If this causes you a problem, please let us know via the [issues](https://github.com/Azure/Enterprise-Scale/issues).
 
 ## Can we use and customize the ARM templates for enterprise-scale architecture and check them into our repository and deploy it from there?
 
