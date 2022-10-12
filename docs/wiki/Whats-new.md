@@ -56,6 +56,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Release [`v2.4.1`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.4.1) of the Azure landing zones Terraform module adds a new diagnostic category for Azure Firewall, as reported in issue [#1063](https://github.com/Azure/Enterprise-Scale/issues/1063)
 - Update the Azure landing zone portal accelerator to use Resource Graph with a generic drop down UI element to improve user experience for subscription selection.
+- Update the Azure landing zone portal accelerator to have more unique naming for deployment names in same tenant, using `utcNow()` function in `deploymentSuffix` variable - fixes [#1077](https://github.com/Azure/Enterprise-Scale/issues/1077)
+- Update the Azure landing zone portal accelerator to have more unique naming for vNet names - fixes [#881](https://github.com/Azure/Enterprise-Scale/issues/881)
+  - vNet naming pattern changed:
+    - **From:**
+      - Identity vNet: `<Subscription ID>-<Root ID Prefix>-vnet-<Region Short Name>`
+      - Corp vNets: `<Subscription ID>-<Root ID Prefix>-vnet-<Region Short Name>`
+    - **To:**
+      - Identity vNet: `<Root ID Prefix>-vnet-<Region Short Name>-<Subscription ID>` (then trimmed to 64 characters, using `take()` function, starting at front - so Subscription ID will get trimmed)
+      - Corp vNets: `<Root ID Prefix>-vnet-<Region Short Name>-<Subscription ID>` (then trimmed to 64 characters, using `take()` function, starting at front - so Subscription ID will get trimmed)
+  - **⚠️This is a breaking change, only if you attempt to redeploy the Azure landing zone portal accelerator over the top of an existing Azure landing zone portal accelerator deployment that was deployed prior to 12/10/2022 (12th October 2022)⚠️**
+    - The outcome if you do this will be that new vNets will be created based on what you input into the Azure landing zone portal accelerator form when you fill it out. Even if you input exactly the same inputs and details as the first time you deployed it.
+      - However, this is a very uncommon action and if you are impacted [please raise an issue](https://github.com/Azure/Enterprise-Scale/issues) on the repo and we can assist further
 
 ### Policy
 
