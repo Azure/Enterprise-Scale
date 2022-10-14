@@ -13,10 +13,12 @@ If you are leveraging policy, you will want to keep up with changes to policies 
 This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives.
 
 ## Detect updates to policy
-1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upone release. fixme link to what's new with Deny Public IP update. fixme list of deprecated policies
+1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upone release. 
+fixme link to what's new with Deny Public IP update. 
+fixme list of deprecated policies
 
 2. Alternatively or supplementary to the information available in [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new), the AzPolicyAdvertizer with the ALZ flag enabled (see [here](https://www.azadvertizer.net/azpolicyadvertizer_all.html#%7B%22col_10%22%3A%7B%22flt%22%3A%22ALZ%22%7D%2C%22col_9%22%3A%7B%7D%7D)) can be leveraged to determine deprecated ALZ policies
-fixme need screenshot once it's deprecated.
+fixme need screenshot from AzPolicyAdvertizer for Deny Public IP once it's deprecated.
 
 3. A third alternative or supplementary tool is [Azure Governance Visualizer](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting) which can be run in your environment and reveal information about the current state of policies and policy assignments. Note that Azure Governance Visualizer requires permissions in your tenant as described [here](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting#permissions-overview)
 
@@ -162,10 +164,3 @@ that the provided example has a simple parameter set. If more complex parameters
 
 - When the initiative materializes, click the ellipsis and choose Assign.
 - Set relevant parameters for the initiative, then assign the policy to the scopes previously determined.
-
-
-
-fixme do one version where the initiative is updated as is as well
-fixme aka.ms/alz/repo
-
-
