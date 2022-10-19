@@ -37,9 +37,17 @@ param ()
     "Microsoft.Management/managementGroups/subscriptions"
 )
 
-[String[]]$removeEscapingByFormat = @(
+[String[]]$removePolicyEscapingByFormat = @(
     "Terraform"
     "Bicep"
+)
+
+[String[]]$removePolicySetEscapingByFormat = @(
+    "Terraform"
+)
+
+[String[]]$removeResourceEscapingByFormat = @(
+    "Terraform"
 )
 
 ################################
@@ -151,12 +159,12 @@ function GetObjectByResourceTypeFromJson {
     elseif ($regex_schema_managementGroupDeploymentTemplate.IsMatch($objectFromJson."`$schema")) {
         foreach ($policyDefinition in $objectFromJson.variables.policies.policyDefinitions) {
             ProcessObjectByResourceType `
-                -ResourceObject ($ExportFormat -in $removeEscapingByFormat ? (Remove-Escaping -InputObject $policyDefinition) : $policyDefinition) `
+                -ResourceObject ($ExportFormat -in $removePolicyEscapingByFormat ? (Remove-Escaping -InputObject $policyDefinition) : $policyDefinition) `
                 -ResourceType ("Microsoft.Authorization/policyDefinitions")
         }
         foreach ($policySetDefinition in $objectFromJson.variables.initiatives.policySetDefinitions) {
             ProcessObjectByResourceType `
-                -ResourceObject ($ExportFormat -in $removeEscapingByFormat ? (Remove-Escaping -InputObject $policySetDefinition) : $policySetDefinition) `
+                -ResourceObject ($ExportFormat -in $removePolicySetEscapingByFormat ? (Remove-Escaping -InputObject $policySetDefinition) : $policySetDefinition) `
                 -ResourceType ("Microsoft.Authorization/policySetDefinitions")
         }
         foreach (
@@ -165,7 +173,7 @@ function GetObjectByResourceTypeFromJson {
             Where-Object { $_.name -ne "[variables('policies').policyDefinitions[copyIndex()].name]" }
         ) {
             ProcessObjectByResourceType `
-                -ResourceObject ($ExportFormat -in $removeEscapingByFormat ? (Remove-Escaping -InputObject $policySetDefinition) : $policySetDefinition) `
+                -ResourceObject ($ExportFormat -in $removePolicyEscapingByFormat ? (Remove-Escaping -InputObject $policySetDefinition) : $policySetDefinition) `
                 -ResourceType ("Microsoft.Authorization/policyDefinitions")
         }
         foreach (
@@ -174,14 +182,14 @@ function GetObjectByResourceTypeFromJson {
             Where-Object { $_.name -ne "[variables('initiatives').policySetDefinitions[copyIndex()].name]" }
         ) {
             ProcessObjectByResourceType `
-                -ResourceObject ($ExportFormat -in $removeEscapingByFormat ? (Remove-Escaping -InputObject $policySetDefinition) : $policySetDefinition) `
+                -ResourceObject ($ExportFormat -in $removePolicySetEscapingByFormat ? (Remove-Escaping -InputObject $policySetDefinition) : $policySetDefinition) `
                 -ResourceType ("Microsoft.Authorization/policySetDefinitions")
         }
     }
     # The following elseif block handles resource files stored in ARM template format
     elseif ($objectFromJson.type -in $allowedResourceTypes) {
         ProcessObjectByResourceType `
-            -ResourceObject ($ExportFormat -in $removeEscapingByFormat ? (Remove-Escaping -InputObject $objectFromJson) : $objectFromJson) `
+            -ResourceObject ($ExportFormat -in $removeResourceEscapingByFormat ? (Remove-Escaping -InputObject $objectFromJson) : $objectFromJson) `
             -ResourceType $objectFromJson.type
     }
     # The following block handles processing generic files where the source content is unknown
