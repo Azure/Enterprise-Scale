@@ -44,4 +44,5 @@ enum ExportFormat {
     Raw
     Jinja2
     Terraform
+    Bicep
 }
