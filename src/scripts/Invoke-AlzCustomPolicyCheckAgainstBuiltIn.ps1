@@ -34,7 +34,7 @@ $ALZRetryCount = 0
 do {
     $ALZRetryCount++
     $ALZPoliciesRaw = Invoke-WebRequest -uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/eslzArm/managementGroupTemplates/policyDefinitions/policies.json"
-    
+
     if ($ALZPoliciesRaw.StatusCode -ne 200) {
         Write-Output "getALZPolicies: $($ALZPoliciesRaw.StatusCode -eq 200) - try again in $($ALZRetryCount * 2) seconds"
         start-sleep -seconds ($ALZRetryCount * 2)
@@ -85,7 +85,7 @@ else {
                 $eff
             }
             $arrEff += $policyObject.properties.parameters.effect.defaultvalue
-            $effectBuiltIn = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite " 
+            $effectBuiltIn = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
         }
         else {
             if ($policyObject.properties.parameters.policyEffect.defaultValue) {
@@ -93,7 +93,7 @@ else {
                     $eff
                 }
                 $arrEff += $policyObject.properties.parameters.policyEffect.defaultvalue
-                $effectBuiltIn = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite " 
+                $effectBuiltIn = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
             }
             else {
                 $effectBuiltIn = $policyObject.Properties.policyRule.then.effect
@@ -117,7 +117,7 @@ else {
                 $eff
             }
             $arrEff += $policyObject.properties.parameters.effect.defaultvalue
-            $effectALZ = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite " 
+            $effectALZ = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
         }
         else {
             if ($policyObject.properties.parameters.policyEffect.defaultValue) {
@@ -125,7 +125,7 @@ else {
                     $eff
                 }
                 $arrEff += $policyObject.properties.parameters.policyEffect.defaultvalue
-                $effectALZ = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite " 
+                $effectALZ = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
             }
             else {
                 $effectALZ = $policyObject.Properties.policyRule.then.effect
@@ -134,7 +134,7 @@ else {
 
         $policyRuleHash = getHash -object ($policyObject.properties.policyRule | ConvertTo-Json -depth 99)
         if ($htHashesBuiltIn.values.policyRuleHash -contains $policyRuleHash) {
-            $ref = ($htHashesBuiltIn.values.where({ $_.policyRuleHash -eq $policyRuleHash }) | Select-Object effectBuiltIn, @{Label = 'name'; Expression = { $_.policy.Name } }, @{Label = 'displayName'; Expression = { $_.policy.properties.displayName } }) 
+            $ref = ($htHashesBuiltIn.values.where({ $_.policyRuleHash -eq $policyRuleHash }) | Select-Object effectBuiltIn, @{Label = 'name'; Expression = { $_.policy.Name } }, @{Label = 'displayName'; Expression = { $_.policy.properties.displayName } })
             Write-Host "ALZ '$($policyObject.name)' policy-Rule matches a BuiltIn policy def: id:'$($ref.Name)' displayName: '$($ref.displayName)'" -ForegroundColor Magenta
             Write-Host " - AzA ALZ Link: https://www.azadvertizer.net/azpolicyadvertizer/$($policyObject.name).html" -ForegroundColor Magenta
             Write-Host " - AzA BuiltIn Link: https://www.azadvertizer.net/azpolicyadvertizer/$($ref.Name).html" -ForegroundColor Magenta
