@@ -264,7 +264,7 @@ function Edit-LineEndings {
 
     Process {
 
-        [String[]]$outputText = $InputText |
+        [String[]]$outputText += $InputText |
         ForEach-Object { $_ -replace "`r`n", "`n" } |
         ForEach-Object { $_ -replace "`r", "`n" } |
         ForEach-Object { $_ -replace "`n", "$eol" }
