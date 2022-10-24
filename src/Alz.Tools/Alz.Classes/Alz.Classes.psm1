@@ -477,6 +477,7 @@ class ArmTemplateResource : ALZBase {
                 $policyDefinitionId = switch ($ExportFormat) {
                     "ArmResource" { "/providers/Microsoft.Management/managementGroups/contoso$($regexMatches.Value)" }
                     "ArmVariable" { "[concat(variables('scope'), '$($regexMatches.Value)')]" }
+                    "Bicep" { "`${varTargetManagementGroupResourceId}$($regexMatches.Value)" }
                     "Raw" { "$($policyDefinition.policyDefinitionId)" }
                     "Jinja2" { "$([ArmTemplateResource]::ConvertToTemplateVariable("root_scope_resource_id", $ExportFormat))$($regexMatches.Value)" }
                     "Terraform" { "$([ArmTemplateResource]::ConvertToTemplateVariable("root_scope_resource_id", $ExportFormat))$($regexMatches.Value)" }

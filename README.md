@@ -48,7 +48,7 @@ It is also assumed that readers have a broad understanding of key Azure construc
 
 ## Deploying Enterprise-Scale Architecture in your own environment
 
-The Enterprise-Scale architecture is modular by design and allows customers to start with foundational Landing Zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point. In this repository we are providing the following four templates representing different scenarios composed using ARM templates.
+The Enterprise-Scale architecture is modular by design and allows customers to start with foundational Landing Zones that support their application portfolios, regardless of whether the applications are being migrated or are newly developed and deployed to Azure. The architecture can scale alongside the customer's business requirements regardless of scale point. In this repository we are providing the following five templates representing different scenarios composed using ARM templates.
 
 | Reference implementation | Description | ARM Template | Link |
 |:-------------------------|:-------------|:-------------|------|
