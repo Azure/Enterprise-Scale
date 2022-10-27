@@ -50,7 +50,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- *No updates, yet.*
+- Added 2 new FAQ Q&As based on issue [#1080](https://github.com/Azure/Enterprise-Scale/issues/1080)
+  - [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
+  - [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
 
 #### Tooling
 
@@ -68,6 +70,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - **⚠️This is a breaking change, only if you attempt to redeploy the Azure landing zone portal accelerator over the top of an existing Azure landing zone portal accelerator deployment that was deployed prior to 12/10/2022 (12th October 2022)⚠️**
     - The outcome if you do this will be that new vNets will be created based on what you input into the Azure landing zone portal accelerator form when you fill it out. Even if you input exactly the same inputs and details as the first time you deployed it.
       - However, this is a very uncommon action and if you are impacted [please raise an issue](https://github.com/Azure/Enterprise-Scale/issues) on the repo and we can assist further
+- Release of various [ALZ-Bicep](https://aka.ms/alz/bicep) versions:
+  - [`v0.10.6`](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.10.6)
+  - [`v0.10.5`](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.10.5)
+  - [`v0.10.4`](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.10.4)
+- Updated Azure landing zone portal accelerator with a note around existing Management Group Name/IDs on "Azure core setup" blade linking to FAQ Q&As
 
 ### Policy
 
