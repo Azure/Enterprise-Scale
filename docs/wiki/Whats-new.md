@@ -78,7 +78,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
-- *No updates, yet.*
+- Updated the Diagnostic Settings Policies to leverage the profileName parameter properly, rather than hardcoded value (setByPolicy) - Fixing issue [issue #478](https://github.com/Azure/Enterprise-Scale/issues/478)
 
 ### Other
 
