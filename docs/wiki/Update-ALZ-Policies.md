@@ -12,6 +12,8 @@ If you are leveraging policy, you will want to keep up with changes to policies 
 # Introduction
 This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives.
 
+Fixme permissions required
+
 ## Detect updates to policy
 1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upone release. 
 fixme link to what's new with Deny Public IP update. 
@@ -31,6 +33,8 @@ There are the following scenarios for ALZ custom policies being superseded by Az
 ### Migrate single ALZ custom policy to built-in policy
 For this scenario we will use the ALZ custom policy _Deny the creation of public IP_ which will be migrated to the built-in policy _Not allowed resource types_
 
+To carry out the instructions in the scenario the operator will require Resource Policy Permissions at the root of the ALZ management group hierarchy
+
 [Azure Portal](#tab/azure-portal)
 
 - Go to https://portal.azure.com
@@ -40,12 +44,12 @@ For this scenario we will use the ALZ custom policy _Deny the creation of public
   ![alz-custom-policy-def-search](media/alz-update-to-builtin-01.png)
 
 - Click on the hyperlink for the policy definition
-- To determine if the policy is assigned at any scope in the ALZ management group structure start by getting the policy name
+- To determine if the policy is assigned at any scope in the ALZ management group structure start by getting the policy definition ID
 
   ![alz-custom-policy-def-name](media/alz-determine-policy-assign-01.png)
 
-- Since there is no easy way to get the various scopes a policy is assigned to, got Azure Resource Graph Explorer
-- Execute the following kusto query:
+- Since there is no easy way to get the various scopes a policy is assigned to, go to Azure Resource Graph Explorer
+- Ensure that scope for the query is Directory and then execute the following kusto query:
 
   ```kusto
     PolicyResources | 
@@ -71,7 +75,7 @@ For this scenario we will use the ALZ custom policy _Deny the creation of public
 that the provided example has a simple parameter set. If more complex parameters are assigned to a policy which is to be migrated those should be noted down. In that respect the possibility to download the query results as CSV could be leveraged.
 
 - Switch from Azure Resource Graph Explorer back to the Policy view 
-- Change the scope to include the two scopes described above, and search for the relevant policy
+- Change the scope to include the scopes determined in the previous step. and search for the relevant policy
 
   ![alz-delete-policy-assignments](media/alz-delete-policy-assign-01.png)
 
@@ -90,6 +94,8 @@ that the provided example has a simple parameter set. If more complex parameters
 
 For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Settings to Azure Services_ which is leveraging quite a large number of ALZ custom policies to apply diagnostics settings for various resources. As the initiative is updated at [source](https://github.com/Azure/Enterprise-Scale/tree/main/src/resources/Microsoft.Authorization/policySetDefinitions), the easiest way to achieve the migration in a manual way is to pull the newest version of the initiative from there.
 
+To carry out the instructions in the scenario the operator will require Resource Policy Permissions at the root of the ALZ management group hierarchy
+
 [Azure Portal](#tab/azure-portal)
 
 - Go to https://portal.azure.com
@@ -104,7 +110,7 @@ For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Setti
   ![alz-custom-initiative-def-name](media/alz-update-initiative-with-builtin-02.png)
 
 - Since there is no easy way to get the various scopes an initiative is assigned to, got Azure Resource Graph Explorer
-- Execute the following kusto query:
+- Ensure that scope for the query is Directory and then execute the following kusto query:
 
   ```kusto
     PolicyResources | 
@@ -146,7 +152,7 @@ that the provided example has a simple parameter set. If more complex parameters
 
   ```posh
   $policySetDefinitionPath = "./Deploy-Diagnostics-LogAnalytics.json"
-  curl https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.json | out-file $policySetDefinitionPath   
+  Invoke-WebRequest -Uri https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.json -OutFile $policySetDefinitionPath
   $policySetDef = Get-Content $policySetDefinitionPath | ConvertFrom-Json -Depth 100
   $policyName = $policySetDef.name
   $displayName = $policySetDef.properties.displayName
@@ -157,6 +163,7 @@ that the provided example has a simple parameter set. If more complex parameters
   $policyDefinitions = $policyDefinitions.Replace('[[', '[')
   New-AzPolicySetDefinition -Name $policyName -DisplayName $displayname -Description $description -PolicyDefinition $policyDefinitions -Metadata $metadata -Parameter $parameters -ManagementGroupName Contoso
   ```
+> Note that if you decide on another approach from the script above, there are a number of double brackets ('[[') in the file. These need to be replaced with single brackets before the policy set definition is valid syntax.
 
 - After running the above script go to the Definitions pane, and search for the initiative definition. Note that the initiative may take a while to show in the portal
 
