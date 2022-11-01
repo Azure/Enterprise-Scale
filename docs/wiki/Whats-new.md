@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [November 2022](#november-2022)
   - [October 2022](#october-2022)
   - [September 2022](#september-2022)
   - [August 2022](#august-2022)
@@ -46,6 +47,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### November 2022
+
+#### Docs
+
+- *No updates, yet.*
+
+#### Tooling
+
+- *No updates, yet.*
+
+### Policy
+
+- Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
+
+### Other
+
+- *No updates, yet.*
+
 ### October 2022
 
 #### Docs
@@ -78,6 +97,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
+- Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
 - Updated the Diagnostic Settings Policies to leverage the profileName parameter properly, rather than hardcoded value (setByPolicy) - Fixing issue [issue #478](https://github.com/Azure/Enterprise-Scale/issues/478)
 
 ### Other
@@ -293,11 +313,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Updated in Public (Commercial), Fairfax (Gov) and Mooncake (China)
   - Updated portal experiences for Public and Fairfax
 
-| Policy Definition Display Name | Policy Definition ID | Note |
-| ------- | -- | ----- |
-| [Deprecated]: Configure Azure Defender for container registries to be enabled | d3d1e68e-49d4-4b56-acff-93cef644b432 | REMOVED - Old ACR policy |
-| [Deprecated]: Configure Azure Defender for Kubernetes to be enabled | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy |
-| Configure Microsoft Defender for Containers to be enabled | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
+| Policy Definition Display Name                                                | Policy Definition ID                 | Note                                                   |
+| ----------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------ |
+| [Deprecated]: Configure Azure Defender for container registries to be enabled | d3d1e68e-49d4-4b56-acff-93cef644b432 | REMOVED - Old ACR policy                               |
+| [Deprecated]: Configure Azure Defender for Kubernetes to be enabled           | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy                               |
+| Configure Microsoft Defender for Containers to be enabled                     | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
 
 ### Other
 
@@ -400,12 +420,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
-| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category | Notes |
-| :---------------------: | :-----------------------------: | :-------------: | :---------------------: | :--------------------------: | :---------------: | :---: |
-| Deny-Databricks-NoPublicIp | Deny public IPs for Databricks cluster | Databricks |  |  |  | Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs. |
-| Deny-Databricks-Sku | Deny non-premium Databricks sku | Databricks |  |  |  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
-| Deny-Databricks-VirtualNetwork | Deny Databricks workspaces without Vnet injection | Databricks |  |  |  | Enforces the use of vnet injection for Databricks workspaces. |
-| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |  |  |  | Denies public network access for Azure Machine Learning workspaces. |
+|         Custom ESLZ Policy Name          |                  Custom ESLZ Policy Display Name                  | Custom Category  | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |                                                                                                 Notes                                                                                                  |
+| :--------------------------------------: | :---------------------------------------------------------------: | :--------------: | :---------------------: | :--------------------------: | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|        Deny-Databricks-NoPublicIp        |              Deny public IPs for Databricks cluster               |    Databricks    |                         |                              |                   |                                       Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.                                       |
+|           Deny-Databricks-Sku            |                  Deny non-premium Databricks sku                  |    Databricks    |                         |                              |                   | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
+|      Deny-Databricks-VirtualNetwork      |         Deny Databricks workspaces without Vnet injection         |    Databricks    |                         |                              |                   |                                                                     Enforces the use of vnet injection for Databricks workspaces.                                                                      |
+| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |                         |                              |                   |                                                                  Denies public network access for Azure Machine Learning workspaces.                                                                   |
 
 ### Other
 
@@ -480,42 +500,42 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 **Policy Definitions Updates**
 
-| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category | Notes |
-| :---------------------: | :-----------------------------: | :-------------: | :---------------------: | :--------------------------: | :---------------: | :---: |
-| Deny-PublicEndpoint-Aks | Public network access on AKS API should be disabled | Kubernetes | 040732e8-d947-40b8-95d6-854c95024bf8 | Azure Kubernetes Service Private Clusters should be enabled | Kubernetes | |
-| Deny-PublicEndpoint-CosmosDB | Public network access should be disabled for CosmosDB | SQL | 797b37f7-06b8-444c-b1ad-fc62867f335a | Azure Cosmos DB should disable public network access | Cosmos DB | |
-| Deny-PublicEndpoint-KeyVault | Public network access should be disabled for KeyVault | Key Vault | 55615ac9-af46-4a59-874e-391cc3dfb490 | [Preview]: Azure Key Vault should disable public network access | Key Vault | |
-| Deny-PublicEndpoint-MySQL | Public network access should be disabled for MySQL | SQL | c9299215-ae47-4f50-9c54-8a392f68a052 | Public network access should be disabled for MySQL flexible servers | SQL | |
-| Deny-PublicEndpoint-PostgreSql | Public network access should be disabled for PostgreSql | SQL | 5e1de0e3-42cb-4ebc-a86d-61d0c619ca48 | Public network access should be disabled for PostgreSQL flexible servers | SQL | |
-| Deny-PublicEndpoint-Sql | Public network access on Azure SQL Database should be disabled | SQL | 1b8ca024-1d5c-4dec-8995-b1a932b41780 | Public network access on Azure SQL Database should be disabled | SQL | |
-| Deny-PublicEndpoint-Storage | Public network access onStorage accounts should be disabled | Storage | 34c877ad-507e-4c82-993e-3452a6e0ad3c | Storage accounts should restrict network access | Storage | |
-| Deploy-Diagnostics-AKS | Deploy Diagnostic Settings for Kubernetes Service to Log Analytics workspace | Monitoring | 6c66c325-74c8-42fd-a286-a74b0e2939d | Deploy - Configure diagnostic settings for Azure Kubernetes Service to Log Analytics workspace | Kubernetes | |
-| Deploy-Diagnostics-Batch | Deploy Diagnostic Settings for Batch to Log Analytics workspace | Monitoring | c84e5349-db6d-4769-805e-e14037dab9b5 | Deploy Diagnostic Settings for Batch Account to Log Analytics workspace | Monitoring | |
-| Deploy-Diagnostics-DataLakeStore | Deploy Diagnostic Settings for Azure Data Lake Store to Log Analytics workspace | Monitoring | d56a5a7c-72d7-42bc-8ceb-3baf4c0eae03 | Deploy Diagnostic Settings for Data Lake Analytics to Log Analytics workspace | Monitoring | |
-| Deploy-Diagnostics-EventHub | Deploy Diagnostic Settings for Event Hubs to Log Analytics workspace | Monitoring | 1f6e93e8-6b31-41b1-83f6-36e449a42579 | Deploy Diagnostic Settings for Event Hub to Log Analytics workspace | Monitoring | |
-| Deploy-Diagnostics-KeyVault | Deploy Diagnostic Settings for Key Vault to Log Analytics workspace | Monitoring | bef3f64c-5290-43b7-85b0-9b254eef4c47 | Deploy Diagnostic Settings for Key Vault to Log Analytics workspace | Monitoring | |
-| Deploy-Diagnostics-LogicAppsWF | Deploy Diagnostic Settings for Logic Apps Workflow runtime to Log Analytics workspace | Monitoring | b889a06c-ec72-4b03-910a-cb169ee18721 | Deploy Diagnostic Settings for Logic Apps to Log Analytics workspace | Monitoring | ~~This is currently not assigned as per [#691](https://github.com/Azure/Enterprise-Scale/issues/691)~~ |
-| Deploy-Diagnostics-RecoveryVault | Deploy Diagnostic Settings for Recovery Services vaults to Log Analytics workspace | Monitoring | c717fb0c-d118-4c43-ab3d-ece30ac81fb3 | Deploy Diagnostic Settings for Recovery Services Vault to Log Analytics workspace for resource specific categories | Backup | |
-| Deploy-Diagnostics-SearchServices | Deploy Diagnostic Settings for Search Services to Log Analytics workspace | Monitoring | 08ba64b8-738f-4918-9686-730d2ed79c7d | Deploy Diagnostic Settings for Search Services to Log Analytics workspace | Monitoring | |
-| Deploy-Diagnostics-ServiceBus | Deploy Diagnostic Settings for Service Bus namespaces to Log Analytics workspace | Monitoring | 04d53d87-841c-4f23-8a5b-21564380b55e | Deploy Diagnostic Settings for Service Bus to Log Analytics workspace | Monitoring | |
-| Deploy-Diagnostics-SQLDBs | Deploy Diagnostic Settings for SQL Databases  to Log Analytics workspace | Monitoring | b79fa14e-238a-4c2d-b376-442ce508fc84 | Deploy - Configure diagnostic settings for SQL Databases to Log Analytics workspace | SQL | |
-| Deploy-Diagnostics-StreamAnalytics | Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace | Monitoring | 237e0f7e-b0e8-4ec4-ad46-8c12cb66d673 | Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace | Monitoring | |
-| Deploy-DNSZoneGroup-For-Blob-PrivateEndpoint | Deploy DNS Zone Group for Storage-Blob Private Endpoint | Network | TBC | TBC | TBC | This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon! |
-| Deploy-DNSZoneGroup-For-File-PrivateEndpoint | Deploy DNS Zone Group for Storage-File Private Endpoint | Network | TBC | TBC | TBC | This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon! |
-| Deploy-DNSZoneGroup-For-KeyVault-PrivateEndpoint | Deploy DNS Zone Group for Key Vault Private Endpoint | Network | ac673a9a-f77d-4846-b2d8-a57f8e1c01d4 | [Preview]: Configure Azure Key Vaults to use private DNS zones | Key Vault |
-| Deploy-DNSZoneGroup-For-Queue-PrivateEndpoint | Deploy DNS Zone Group for Storage-Queue Private Endpoint | Network | TBC | TBC | TBC | This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon! |
-| Deploy-DNSZoneGroup-For-Sql-PrivateEndpoint | Deploy DNS  Zone Group for SQL Private Endpoint | Network | TBC | TBC | TBC | This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon! |
-| Deploy-DNSZoneGroup-For-Table-PrivateEndpoint | Deploy DNS  Zone Group for Storage-Table Private Endpoint | Network | TBC | TBC | TBC | This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon! |
-| Deploy-LA-Config | Deploy the configurations to the Log Analytics in the subscription | Monitoring | ***Policy Removed*** | ***Policy Removed*** | TBC | This policy has been removed as it is handled as a resource deployment in the ARM templates, portal experience and Terraform module. |
-| Deploy-Log-Analytics | Deploy the Log Analytics in the subscription | Monitoring | 8e3e61b3-0b32-22d5-4edf-55f87fdb5955 | Configure Log Analytics workspace and automation account to centralize logs and monitoring | Monitoring | |
+|             Custom ESLZ Policy Name              |                            Custom ESLZ Policy Display Name                            | Custom Category |       Built-In Policy Name/ID        |                                            Built-In Policy Display Name                                            | Built-In Category |                                                                Notes                                                                 |
+| :----------------------------------------------: | :-----------------------------------------------------------------------------------: | :-------------: | :----------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------: |
+|             Deny-PublicEndpoint-Aks              |                  Public network access on AKS API should be disabled                  |   Kubernetes    | 040732e8-d947-40b8-95d6-854c95024bf8 |                            Azure Kubernetes Service Private Clusters should be enabled                             |    Kubernetes     |                                                                                                                                      |
+|           Deny-PublicEndpoint-CosmosDB           |                 Public network access should be disabled for CosmosDB                 |       SQL       | 797b37f7-06b8-444c-b1ad-fc62867f335a |                                Azure Cosmos DB should disable public network access                                |     Cosmos DB     |                                                                                                                                      |
+|           Deny-PublicEndpoint-KeyVault           |                 Public network access should be disabled for KeyVault                 |    Key Vault    | 55615ac9-af46-4a59-874e-391cc3dfb490 |                          [Preview]: Azure Key Vault should disable public network access                           |     Key Vault     |                                                                                                                                      |
+|            Deny-PublicEndpoint-MySQL             |                  Public network access should be disabled for MySQL                   |       SQL       | c9299215-ae47-4f50-9c54-8a392f68a052 |                        Public network access should be disabled for MySQL flexible servers                         |        SQL        |                                                                                                                                      |
+|          Deny-PublicEndpoint-PostgreSql          |                Public network access should be disabled for PostgreSql                |       SQL       | 5e1de0e3-42cb-4ebc-a86d-61d0c619ca48 |                      Public network access should be disabled for PostgreSQL flexible servers                      |        SQL        |                                                                                                                                      |
+|             Deny-PublicEndpoint-Sql              |            Public network access on Azure SQL Database should be disabled             |       SQL       | 1b8ca024-1d5c-4dec-8995-b1a932b41780 |                           Public network access on Azure SQL Database should be disabled                           |        SQL        |                                                                                                                                      |
+|           Deny-PublicEndpoint-Storage            |              Public network access onStorage accounts should be disabled              |     Storage     | 34c877ad-507e-4c82-993e-3452a6e0ad3c |                                  Storage accounts should restrict network access                                   |      Storage      |                                                                                                                                      |
+|              Deploy-Diagnostics-AKS              |     Deploy Diagnostic Settings for Kubernetes Service to Log Analytics workspace      |   Monitoring    | 6c66c325-74c8-42fd-a286-a74b0e2939d  |           Deploy - Configure diagnostic settings for Azure Kubernetes Service to Log Analytics workspace           |    Kubernetes     |                                                                                                                                      |
+|             Deploy-Diagnostics-Batch             |            Deploy Diagnostic Settings for Batch to Log Analytics workspace            |   Monitoring    | c84e5349-db6d-4769-805e-e14037dab9b5 |                      Deploy Diagnostic Settings for Batch Account to Log Analytics workspace                       |    Monitoring     |                                                                                                                                      |
+|         Deploy-Diagnostics-DataLakeStore         |    Deploy Diagnostic Settings for Azure Data Lake Store to Log Analytics workspace    |   Monitoring    | d56a5a7c-72d7-42bc-8ceb-3baf4c0eae03 |                   Deploy Diagnostic Settings for Data Lake Analytics to Log Analytics workspace                    |    Monitoring     |                                                                                                                                      |
+|           Deploy-Diagnostics-EventHub            |         Deploy Diagnostic Settings for Event Hubs to Log Analytics workspace          |   Monitoring    | 1f6e93e8-6b31-41b1-83f6-36e449a42579 |                        Deploy Diagnostic Settings for Event Hub to Log Analytics workspace                         |    Monitoring     |                                                                                                                                      |
+|           Deploy-Diagnostics-KeyVault            |          Deploy Diagnostic Settings for Key Vault to Log Analytics workspace          |   Monitoring    | bef3f64c-5290-43b7-85b0-9b254eef4c47 |                        Deploy Diagnostic Settings for Key Vault to Log Analytics workspace                         |    Monitoring     |                                                                                                                                      |
+|          Deploy-Diagnostics-LogicAppsWF          | Deploy Diagnostic Settings for Logic Apps Workflow runtime to Log Analytics workspace |   Monitoring    | b889a06c-ec72-4b03-910a-cb169ee18721 |                        Deploy Diagnostic Settings for Logic Apps to Log Analytics workspace                        |    Monitoring     |                ~~This is currently not assigned as per [#691](https://github.com/Azure/Enterprise-Scale/issues/691)~~                |
+|         Deploy-Diagnostics-RecoveryVault         |  Deploy Diagnostic Settings for Recovery Services vaults to Log Analytics workspace   |   Monitoring    | c717fb0c-d118-4c43-ab3d-ece30ac81fb3 | Deploy Diagnostic Settings for Recovery Services Vault to Log Analytics workspace for resource specific categories |      Backup       |                                                                                                                                      |
+|        Deploy-Diagnostics-SearchServices         |       Deploy Diagnostic Settings for Search Services to Log Analytics workspace       |   Monitoring    | 08ba64b8-738f-4918-9686-730d2ed79c7d |                     Deploy Diagnostic Settings for Search Services to Log Analytics workspace                      |    Monitoring     |                                                                                                                                      |
+|          Deploy-Diagnostics-ServiceBus           |   Deploy Diagnostic Settings for Service Bus namespaces to Log Analytics workspace    |   Monitoring    | 04d53d87-841c-4f23-8a5b-21564380b55e |                       Deploy Diagnostic Settings for Service Bus to Log Analytics workspace                        |    Monitoring     |                                                                                                                                      |
+|            Deploy-Diagnostics-SQLDBs             |       Deploy Diagnostic Settings for SQL Databases  to Log Analytics workspace        |   Monitoring    | b79fa14e-238a-4c2d-b376-442ce508fc84 |                Deploy - Configure diagnostic settings for SQL Databases to Log Analytics workspace                 |        SQL        |                                                                                                                                      |
+|        Deploy-Diagnostics-StreamAnalytics        |      Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace       |   Monitoring    | 237e0f7e-b0e8-4ec4-ad46-8c12cb66d673 |                     Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace                     |    Monitoring     |                                                                                                                                      |
+|   Deploy-DNSZoneGroup-For-Blob-PrivateEndpoint   |                Deploy DNS Zone Group for Storage-Blob Private Endpoint                |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
+|   Deploy-DNSZoneGroup-For-File-PrivateEndpoint   |                Deploy DNS Zone Group for Storage-File Private Endpoint                |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
+| Deploy-DNSZoneGroup-For-KeyVault-PrivateEndpoint |                 Deploy DNS Zone Group for Key Vault Private Endpoint                  |     Network     | ac673a9a-f77d-4846-b2d8-a57f8e1c01d4 |                           [Preview]: Configure Azure Key Vaults to use private DNS zones                           |     Key Vault     |
+|  Deploy-DNSZoneGroup-For-Queue-PrivateEndpoint   |               Deploy DNS Zone Group for Storage-Queue Private Endpoint                |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
+|   Deploy-DNSZoneGroup-For-Sql-PrivateEndpoint    |                    Deploy DNS  Zone Group for SQL Private Endpoint                    |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
+|  Deploy-DNSZoneGroup-For-Table-PrivateEndpoint   |               Deploy DNS  Zone Group for Storage-Table Private Endpoint               |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
+|                 Deploy-LA-Config                 |          Deploy the configurations to the Log Analytics in the subscription           |   Monitoring    |         ***Policy Removed***         |                                                ***Policy Removed***                                                |        TBC        | This policy has been removed as it is handled as a resource deployment in the ARM templates, portal experience and Terraform module. |
+|               Deploy-Log-Analytics               |                     Deploy the Log Analytics in the subscription                      |   Monitoring    | 8e3e61b3-0b32-22d5-4edf-55f87fdb5955 |             Configure Log Analytics workspace and automation account to centralize logs and monitoring             |    Monitoring     |                                                                                                                                      |
 
 **Policy Initiatives Updates**
 
-| Custom ESLZ Policy Name | Custom ESLZ Policy Display Name | Custom Category | New Policy Name/ID | New Policy Display Name | New Category | Notes |
-| :---------------------: | :-----------------------------: | :-------------: | :---------------------: | :--------------------------: | :---------------: | :---: |
-| Deploy-Diag-LogAnalytics | Deploy Diagnostic Settings to Azure Services | N/A | Deploy-Diagnostics-LogAnalytics | Deploy Diagnostic Settings to Azure Services | Monitoring | Moved to using a mix of Built-In (as above) and custom policy definitions |
-| Deny-PublicEndpoints | Public network access should be disabled for PAAS services | Network | Deny-PublicPaaSEndpoints | Public network access should be disabled for PaaS services | N/A | Moved to using Built-In policy definitions only (as above) |
-| ***New Policy*** | ***New Policy*** | N/A | Deploy-Private-DNS-Zones | Configure Azure PaaS services to use private DNS zones | Network | |
+| Custom ESLZ Policy Name  |              Custom ESLZ Policy Display Name               | Custom Category |       New Policy Name/ID        |                  New Policy Display Name                   | New Category |                                   Notes                                   |
+| :----------------------: | :--------------------------------------------------------: | :-------------: | :-----------------------------: | :--------------------------------------------------------: | :----------: | :-----------------------------------------------------------------------: |
+| Deploy-Diag-LogAnalytics |        Deploy Diagnostic Settings to Azure Services        |       N/A       | Deploy-Diagnostics-LogAnalytics |        Deploy Diagnostic Settings to Azure Services        |  Monitoring  | Moved to using a mix of Built-In (as above) and custom policy definitions |
+|   Deny-PublicEndpoints   | Public network access should be disabled for PAAS services |     Network     |    Deny-PublicPaaSEndpoints     | Public network access should be disabled for PaaS services |     N/A      |        Moved to using Built-In policy definitions only (as above)         |
+|     ***New Policy***     |                      ***New Policy***                      |       N/A       |    Deploy-Private-DNS-Zones     |   Configure Azure PaaS services to use private DNS zones   |   Network    |                                                                           |
 
 - Moved several of the diagnostics Policies to built-in, and updating the diagnostics Initiative 
   - This means there's a new resource name as update of existing one is not be allowed due to removal of parameters
