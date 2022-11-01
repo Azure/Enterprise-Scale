@@ -6,8 +6,6 @@
   - [October 2022](#october-2022)
   - [September 2022](#september-2022)
   - [August 2022](#august-2022)
-  - [Policy](#policy-3)
-  - [Other](#other-2)
   - [July 2022](#july-2022)
   - [June 2022](#june-2022)
   - [May 2022](#may-2022)
