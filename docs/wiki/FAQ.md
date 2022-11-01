@@ -9,6 +9,8 @@
 - [What if we can't deploy by using the Azure landing zone accelerator portal-based experience, but can deploy via infrastructure-as-code?](#what-if-we-cant-deploy-by-using-the-azure-landing-zone-accelerator-portal-based-experience-but-can-deploy-via-infrastructure-as-code)
 - [If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?](#if-we-already-deployed-enterprise-scale-architecture-without-using-infrastructure-as-code-do-we-have-to-delete-everything-and-start-again-to-use-infrastructure-as-code)
 - [The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?](#the-azurediagnostics-table-in-my-log-analytics-workspace-has-hit-the-500-column-limit-what-should-i-do)
+- [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
+- [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
 
 ---
 
@@ -119,3 +121,34 @@ As of today only a limited number of services support the [**Resource-specific**
 We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://docs.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
 
 Stay tuned to our [What's New page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) where we will be announcing when we migrate services to the new collection type. Also watch [Azure Updates](https://azure.microsoft.com/updates/) for announcements from service teams for adding support to their services for this collection type.
+
+## What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?
+
+As raised in issue [#1080](https://github.com/Azure/Enterprise-Scale/issues/1080) it is possible for you to deploy the ALZ Portal Accelerator in a AAD Tenant with existing Management Groups. If these existing Management Groups have the same Name/ID (not Display Name) as the ones deployed as part of the ALZ Portal Accelerator these existing Management Groups will be targeted in the deployment and brought into the ALZ hierarchy and deployment. This means that the Management Groups will be:
+
+- Display Name will be changed to ALZ default for that Management Group
+- Moved into the ALZ Management Group hierarchy
+- Have Subscriptions placed beneath them based on selections during ALZ portal accelerator deployment
+- Have Azure Policy Definitions and Assignments created upon them
+- Have Azure RBAC Custom Role Definitions & Assignments created upon them
+
+You should be aware of this and decide if this is something you want to happen, if not you need to ensure the naming prefix entered is unique for the Management Group Name/IDs that the ALZ Portal Accelerator will create to ensure the existing Management Groups are not targeted in the deployment. These are listed in the following FAQ Q&A: [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
+
+## What are the ALZ Portal Accelerator Management Group Name/IDs that are created?
+
+The Management Group Names/IDs created via the ALZ Portal Accelerator deployment are all based on the Resource Prefix (Root ID) that you enter in the ALZ Portal Experience on the "Azure core setup" blade that is shown below:
+
+![ALZ Portal Accelerator Resource Prefix (Root ID) Screenshot](media/mg-resource-prefix-portal.png)
+
+The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment are listed below:
+
+- `<Resource Prefix (Root ID)>` - Intermediate Root Management Group - e.g. `Contoso`
+  - `<Resource Prefix (Root ID)>-platform`
+    - `<Resource Prefix (Root ID)>-management`
+    - `<Resource Prefix (Root ID)>-connectivity`
+    - `<Resource Prefix (Root ID)>-identity`
+  - `<Resource Prefix (Root ID)>-landingzones`
+    - `<Resource Prefix (Root ID)>-online`
+    - `<Resource Prefix (Root ID)>-corp`
+  - `<Resource Prefix (Root ID)>-decommissioned`
+  - `<Resource Prefix (Root ID)>-sandbox`
