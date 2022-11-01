@@ -117,6 +117,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added ALZ Azure Policy [deprecation process](Deprecating-ALZ-Policies.md) to the Wiki.
 - Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality.
 
+| Old Policy ID(s)                               | New Policy ID(s)                     |
+|------------------------------------------------|--------------------------------------|
+| Deploy-Nsg-FlowLogs, Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
+
 ### October 2022
 
 #### Docs
