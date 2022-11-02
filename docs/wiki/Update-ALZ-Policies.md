@@ -10,14 +10,16 @@ Over time Azure Landing Zone (ALZ) custom policies and policy initiatives may be
 If you are leveraging policy, you will want to keep up with changes to policies to avoid drift as well as lack of overview in the overall policy compliance status. 
 
 # Introduction
-This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives.
+This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives. For guidance on how to migrate policies leveraging the ALZ Terraform Module please refer to [here](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-alz-policies#update-steps-for-azure-landing-zone-terraform-module-deployments)
+For guidance on how to migrate policies leveraging ALZ Bicep please refer to [here](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-alz-policies#update-steps-for-azure-landing-zone-bicep-deployments)
 
-Fixme permissions required
+
+Links to ALZ-Terraform module and ALZ-Bicep guidance are included as well. 
 
 ## Detect updates to policy
 1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upone release. 
-fixme link to what's new with Deny Public IP update. 
-fixme list of deprecated policies
+fixme link to what's new with Deny Public IP update. https://github.com/Azure/Enterprise-Scale/pull/1099 
+fixme list of deprecated policies https://github.com/Azure/Enterprise-Scale/pull/1099 
 
 2. Alternatively or supplementary to the information available in [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new), the AzPolicyAdvertizer with the ALZ flag enabled (see [here](https://www.azadvertizer.net/azpolicyadvertizer_all.html#%7B%22col_10%22%3A%7B%22flt%22%3A%22ALZ%22%7D%2C%22col_9%22%3A%7B%7D%7D)) can be leveraged to determine deprecated ALZ policies
 fixme need screenshot from AzPolicyAdvertizer for Deny Public IP once it's deprecated.
@@ -25,7 +27,7 @@ fixme need screenshot from AzPolicyAdvertizer for Deny Public IP once it's depre
 3. A third alternative or supplementary tool is [Azure Governance Visualizer](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting) which can be run in your environment and reveal information about the current state of policies and policy assignments. Note that Azure Governance Visualizer requires permissions in your tenant as described [here](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting#permissions-overview)
 
 ## Update scenarios
-There are the following scenarios for ALZ custom policies being superseded by Azure built-in policies, listed in order of complexity:
+There are the following scenarios for ALZ custom policies being superseded by Azure built-in policies, listed in increasing order of complexity:
 1. A single ALZ custom policy, which is not assigned anywhere in your Azure estate, is superseded by an Azure built-in policy. This is the simplest scenario, and is not covered in more detail.
 2. A single ALZ custom policy, which is assigned at one or more scopes in your Azure estate, is superseded by an Azure built-in policy. The process for managing this is described in [Migrate single ALZ custom policy to built-in policy](#migrate-single-pol).
 3. One or more ALZ custom policies, assigned via ALZ custom policy intiative, which are superseded by Azure built-in policies. The process for managing this is described in [Migrate ALZ custom policies in initiatives to built-in policies](#migrate-multiple-pol).
