@@ -26,3 +26,5 @@
   * [Enable Service Principal to create landing zones](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#arm-template-repository)
   * [Create a new landing zone (subscriptions)](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#create-a-new-landing-zone-subscriptions)
+* [Azure Landing Zone (ALZ) Policies]
+  * [Deprecation process of ALZ Policies to built-in](https://github.com/Azure/Enterprise-Scale/wiki/Deprecating-ALZ-Policies)

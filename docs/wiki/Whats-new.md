@@ -51,7 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- *No updates, yet.*
+- Added ALZ Azure Policy [deprecation process](Deprecating-ALZ-Policies.md) to the Wiki.
 
 #### Tooling
 
@@ -60,6 +60,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 ### Policy
 
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
+- Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality.
+
+| Old Policy ID(s)                               | New Policy ID(s)                     |
+|------------------------------------------------|--------------------------------------|
+| Deploy-Nsg-FlowLogs, Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
 
 ### Other
 
