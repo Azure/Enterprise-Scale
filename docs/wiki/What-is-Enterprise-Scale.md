@@ -47,7 +47,7 @@ Another example are some of the networking resources that we provide prescriptiv
 - [ExpressRoute Gateways & Circuits](https://azure.microsoft.com/pricing/details/expressroute/)
 - [Azure Firewalls](https://azure.microsoft.com/pricing/details/azure-firewall/)
 - [Virtual WANs](https://azure.microsoft.com/pricing/details/virtual-wan/)
-- [DDoS Standard Protection Plans](https://azure.microsoft.com/pricing/details/ddos-protection/)
+- [DDoS Network Protection Plans](https://azure.microsoft.com/pricing/details/ddos-protection/)
 
 Each of these resources have an associated cost that varies based on how they are deployed, configured and consumed as part of your Enterprise-Scale deployment.
 
