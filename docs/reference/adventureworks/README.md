@@ -66,7 +66,7 @@ By default, all recommendations are enabled and you must explicitly disable them
   - ExpressRoute Gateway (optional - deployment across Availability Zones)
   - VPN Gateway (optional - deployment across Availability Zones)
   - Azure Private DNS Zones for Private Link (optional)
-  - Azure DDoS Standard protection plan (optional)
+  - Azure DDoS Network Protection (optional)
 - (Optionally) An Azure subscription dedicated for **identity** in case your organization requires to have Active Directory Domain Controllers in a dedicated subscription.
   - A virtual network will be deployed and will be connected to the hub VNet via VNet peering.
 - Landing Zone Management Group for **corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.

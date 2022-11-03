@@ -143,9 +143,9 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
 - Depending on your requirements, you may choose to deploy additional network infrastructure for your Azure architecture. The optional resources include:
 
-  - **Enable DDoS Protection Standard**: Usage of [Azure DDoS Protection Standard protection](https://docs.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview) is recommended to help protect all public endpoints hosted within your virtual networks. When this option is selected an Azure DDoS Protection Plan is provisioned in your Platform Subscription and which can be used to protect public endpoints across your Platform and Landing Zone subscriptions. DDoS Protection Plan's costs cover up to 100 public endpoints. Protection of additional endpoints requires additional fees. See [Azure DDoS Protection pricing](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/) for further details.
+  - **Enable DDoS Network Protection**: Usage of [Azure DDoS Network Protection](https://docs.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview) is recommended to help protect all public endpoints hosted within your virtual networks. When this option is selected an Azure DDoS Protection Plan is provisioned in your Platform Subscription and which can be used to protect public endpoints across your Platform and Landing Zone subscriptions. DDoS Protection Plan's costs cover up to 100 public endpoints. Protection of additional endpoints requires additional fees. See [Azure DDoS Protection pricing](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/) for further details.
   
-    **In this tutorial, DDoS Standard protection it is enabled**. Set **Enable DDoS Protection Standard** to **Yes**.
+    **In this tutorial, DDoS Network Protection it is enabled**. Set **Enable DDoS Network Protection** to **Yes**.
 
     ![networkTab-ddos](./media/clip_image036b-11-singlesubscription.png)
 
@@ -270,7 +270,7 @@ For Corp Landing Zones its virtual network can be connected (recommended) to the
 
   Any Azure Policies you selected will be assigned to the [Landing Zones Management Group](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure) under the root of your Enterprise Scale Management Group hierarchy. See [landing zone Azure's Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the configurable set of Azure Policies.
 
-  As part of the policies that you can assign to your landing zones, the Azure landing zone portal accelerator experience will allow you to protect your landing zones with a DDoS Standard plan. For connected Landing Zones (*Corp* Landing Zones), you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones.
+  As part of the policies that you can assign to your landing zones, the Azure landing zone portal accelerator experience will allow you to protect your landing zones with a DDoS Network Protection. For connected Landing Zones (*Corp* Landing Zones), you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones.
 
   **In this tutorial, all recommended Azure Policies are enabled.**
 
