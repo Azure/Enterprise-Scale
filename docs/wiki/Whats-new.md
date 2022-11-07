@@ -51,7 +51,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- *No updates, yet.*
+- Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
+- Added ALZ Azure Policy [deprecation process](Deprecating-ALZ-Policies.md) to the Wiki.
+
 
 #### Tooling
 
@@ -59,7 +61,15 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
+- Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
+- Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
+- Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality.
+
+
+| Old Policy ID(s)                               | New Policy ID(s)                     |
+|------------------------------------------------|--------------------------------------|
+| Deploy-Nsg-FlowLogs, Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
 
 ### Other
 
@@ -552,7 +562,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - ["What's New?"](./Whats-new) page created
-- Azure DDoS Standard design considerations and recommendations added to CAF docs ([Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) & [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology)) - closing issue [#603](https://github.com/Azure/Enterprise-Scale/issues/603)
+- Azure DDoS Network Protection design considerations and recommendations added to CAF docs ([Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) & [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology)) - closing issue [#603](https://github.com/Azure/Enterprise-Scale/issues/603)
 - [Connectivity to other cloud providers](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-other-providers) CAF document released
 - [Testing approach for enterprise-scale](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/testing-approach) CAF document released
 - Updated [pricing section](https://github.com/Azure/Enterprise-Scale/wiki/What-is-Enterprise-Scale#pricing) on "What is Enterprise Scale" wiki page to provide further clarity.
