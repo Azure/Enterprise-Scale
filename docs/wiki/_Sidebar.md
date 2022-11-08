@@ -26,6 +26,6 @@
   * [Enable Service Principal to create landing zones](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#arm-template-repository)
   * [Create a new landing zone (subscriptions)](https://github.com/Azure/Enterprise-Scale/wiki/Create-Landingzones#create-a-new-landing-zone-subscriptions)
+* [Azure Landing Zones Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services.md)
 * Azure Landing Zone (ALZ) Policies
   * [Policies included in Azure landing zones reference implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)
-  * [Azure Landing Zones Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services.md)
