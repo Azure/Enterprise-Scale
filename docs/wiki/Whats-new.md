@@ -61,6 +61,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
+- "**Deploy SQL Database security Alert Policies configuration with email admin accounts**" definition update
+  - Version 1.0.0 -> 1.1.0
+  - Changed email addresses from hardcoding to array parameter
+- "**Deploy SQL Database Transparent Data Encryption**" definition update
+  - Version 1.0.0 -> 1.1.0
+  - Added system databases master, model, tempdb, msdb, resource to exclusion parameter as default values
+  - Added as Policy Rule 'notIn' which will exclude the above databases from the policy
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
