@@ -28,13 +28,13 @@ On either the [Policy](https://www.azadvertizer.net/azpolicyadvertizer_all.html#
 
 AzAdvertizer also updates once per day!
 
-![AzAdvertizer ALZ Integration Slide](media/alzPolicyAzAdvertizer.png)
+![AzAdvertizer ALZ Integration Slide](../media/alzPolicyAzAdvertizer.png)
 
 ## What policy definitions are assigned within the Azure landing zones (Custom & Built-in)?
 
 As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure landing zone Management Group hierachy as depicted within the below diagram.
 
-![image](./media/MgmtGroups_Policies_v0.1.jpg)
+![image](../media/MgmtGroups_Policies_v0.1.jpg)
 
 The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierachy.
 
@@ -49,7 +49,7 @@ This management group is a parent to all the other management groups created wit
 <tr></tr>
 <tr><td>
   
-![image](./media/IntRoot_v0.1.jpg)
+![image](../media/IntRoot_v0.1.jpg)
   
 </td><td>
   
@@ -79,7 +79,7 @@ This management group contains all the platform child management groups, like ma
 <tr></tr>
 <tr><td>
   
-![image](./media/Platform_v0.1.jpg)
+![image](../media/Platform_v0.1.jpg)
   
 </td><td>
   
@@ -98,7 +98,7 @@ This management group contains a dedicated subscription for connectivity. This s
 <tr></tr>
 <tr><td>
   
-![image](./media/Connectivity_v0.1.jpg)
+![image](../media/Connectivity_v0.1.jpg)
   
 </td><td>
   
@@ -123,7 +123,7 @@ This management group contains a dedicated subscription for management, monitori
 <tr></tr>
 <tr><td>
   
-![image](./media/Management_v0.1.jpg)
+![image](../media/Management_v0.1.jpg)
   
 </td><td>
   
@@ -148,7 +148,7 @@ This management group contains a dedicated subscription for identity. This subsc
 <tr></tr>
 <tr><td>
   
-![image](./media/Identity_v0.1.jpg)
+![image](../media/Identity_v0.1.jpg)
   
 </td><td>
   
@@ -176,7 +176,7 @@ This is the parent management group for all the landing zone child management gr
 <tr></tr>
 <tr><td>
 
-![image](./media/LandingZone_v0.1.jpg)
+![image](../media/LandingZone_v0.1.jpg)
 
 </td><td>
   
@@ -213,7 +213,7 @@ This management group is for corporate landing zones. This group is for workload
 <tr></tr>
 <tr><td>
 
-![image](./media/Corp_v0.1.jpg)
+![image](../media/Corp_v0.1.jpg)
 
 </td><td>
   
@@ -242,7 +242,7 @@ This management group is for online landing zones. This group is for workloads t
 <tr></tr>
 <tr><td>
 
-![image](./media/Online_v0.1.jpg)
+![image](../media/Online_v0.1.jpg)
 
 </td><td>
   
@@ -261,7 +261,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 <tr></tr>
 <tr><td>
 
-![image](./media/Decom_v0.1.jpg)
+![image](../media/Decom_v0.1.jpg)
 
 </td><td>
   
@@ -280,7 +280,7 @@ This management group is for subscriptions that will only be used for testing an
 <tr></tr>
 <tr><td>
 
-![image](./media/Sandbox_v0.1.jpg)
+![image](../media/Sandbox_v0.1.jpg)
 
 </td><td>
   

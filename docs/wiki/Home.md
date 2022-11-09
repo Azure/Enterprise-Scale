@@ -6,7 +6,7 @@ The Enterprise-Scale Landing Zones User Guide aims to provide comprehensive end-
 
 * [What's New?](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new)
 * [Community Calls](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
-* [Azure Landing Zones Deprecated Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services.md)
+* [Azure Landing Zones Deprecated Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services)
 * [What is Enterprise-Scale?](https://github.com/Azure/Enterprise-Scale/wiki/What-is-Enterprise-Scale)
   * [What is Enterprise-Scale reference implementation?](https://github.com/Azure/Enterprise-Scale/wiki/What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](https://github.com/Azure/Enterprise-Scale/wiki/What-is-Enterprise-Scale#pricing)
