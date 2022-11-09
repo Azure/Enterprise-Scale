@@ -17,7 +17,7 @@
 * [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
 * [Deploy workloads into Landing Zones](./workloads)
 * [Getting started with Infrastructure-as-Code](https://github.com/Azure/AzOps-Accelerator/wiki)
-* [Azure Landing Zones Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services.md)
+* [Azure Landing Zones Deprecated Services](./docs/wiki/ALZ-Deprecated-Services.md)
 * [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
 * [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
 * [Frequently Asked Questions (FAQ)](https://github.com/Azure/Enterprise-Scale/wiki/FAQ)

@@ -32,13 +32,13 @@ AzAdvertizer also updates once per day!
 
 ## What policy definitions are assigned within the Azure landing zones (Custom & Built-in)?
 
-As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure landing zone Management Group hierachy as depicted within the below diagram.
+As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure landing zone Management Group hierarchy as depicted within the below diagram.
 
 ![image](../media/MgmtGroups_Policies_v0.1.jpg)
 
-The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierachy.
+The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierarchy.
 
-> **NOTE**: Although the below sections will define which policy definitions/sets are applied at specific scopes, please remember that policy will inherit within your management group hierachy.
+> **NOTE**: Although the below sections will define which policy definitions/sets are applied at specific scopes, please remember that policy will inherit within your management group hierarchy.
 
 ### Intermediate Root
 
@@ -169,7 +169,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 
 ### Landing Zones
 
-This is the parent management group for all the landing zone child management groups. Policy assignment is predominantly focused on ensuring workloads residing under this hierachy are secure and compliant.
+This is the parent management group for all the landing zone child management groups. Policy assignment is predominantly focused on ensuring workloads residing under this hierarchy are secure and compliant.
 
 <table>
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
@@ -206,7 +206,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 
 ### Corp
 
-This management group is for corporate landing zones. This group is for workloads that require connectivity or hybrid connectivity with the corporate network via the hub in the connectivity subscription. Policy assignment is predominantly focused on ensuring workloads residing under this hierachy are secure and compliant.
+This management group is for corporate landing zones. This group is for workloads that require connectivity or hybrid connectivity with the corporate network via the hub in the connectivity subscription. Policy assignment is predominantly focused on ensuring workloads residing under this hierarchy are secure and compliant.
 
 <table>
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
