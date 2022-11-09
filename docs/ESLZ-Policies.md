@@ -56,7 +56,7 @@ This management group is a parent to all the other management groups created wit
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **5**     |
-| `Policy Definitions`      | **3**     |
+| `Policy Definitions`      | **1**     |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Intermediate Root Management Group**.
