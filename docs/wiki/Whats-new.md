@@ -52,7 +52,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
-- Added ALZ Azure Policy [deprecation process](Deprecating-ALZ-Policies.md) to the Wiki.
+- Added ALZ deprecated [policies section](Deprecating-ALZ-Policies.md) to the Wiki.
 
 
 #### Tooling
@@ -64,7 +64,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
-- Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality.
+- Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality. More information in the [ALZ deprecated policies section](ALZ-Deprecated-Services.md)
 
 
 | Old Policy ID(s)                               | New Policy ID(s)                     |
