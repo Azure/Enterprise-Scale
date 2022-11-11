@@ -49,7 +49,7 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 Azure landing zone portal accelerator provides an integrated CICD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Platform DevOps and Automation](./Deploying-ALZ-Platform-DevOps) article.
 
 ## 7. Network topology and connectivity
-On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Protection Standard and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology. For this scenario:
+On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Network Protection and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology. For this scenario:
 
 * Select "Virtual WAN (Microsoft managed)") as the network topology
 * Provide a dedicated (empty) subscription that will be used to host the requisite networking infrastructure.
@@ -58,7 +58,7 @@ On the *Network topology and connectivity* blade, you will configure the core ne
 
 Depending on your requirements, you may choose to deploy additional network infrastructure for your Azure landing zone architecture. The optional resources include:
 
-* DDoS Protection Standard
+* DDoS Network Protection
 * VPN and ExpressRoute Gateways
   * If you choose to deploy either or both of these gateways, you will have the option to select the scale unit based on your requirements
 * Azure Firewall
@@ -77,7 +77,7 @@ You can optionally bring in N number of subscriptions that will be bootstrapped 
 
 You can also indicate which subscriptions you would like to be bootstrapped as landing zones but without corp connectivity. Finally, you can select which policy you want to assign broadly to all of your landing zones.
 
-As part of the policies that you can assign to your landing zones, the Azure landing zone portal accelerator experience will allow you to protect your landing zones with a DDoS Standard plan, and for corp connected landing zones, you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones. 
+As part of the policies that you can assign to your landing zones, the Azure landing zone portal accelerator experience will allow you to protect your landing zones with a DDoS Network Protection, and for corp connected landing zones, you will have the option to prevent usage of public endpoints for Azure PaaS services as well as ensure that private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones. 
 
 ![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
 

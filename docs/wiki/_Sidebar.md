@@ -35,4 +35,5 @@
   * [Enable Service Principal to create landing zones](./Create-Landingzones#enable-service-principal-to-create-landing-zones)
   * [ARM template repository](./Create-Landingzones#arm-template-repository)
   * [Create a new landing zone (subscriptions)](./Create-Landingzones#create-a-new-landing-zone-subscriptions)
+* [Azure Landing Zones Deprecated Services](./ALZ-Deprecated-Services)
 * [Contribution](./ALZ-Contribution-Guide)

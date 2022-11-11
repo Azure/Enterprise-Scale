@@ -127,7 +127,7 @@ Any publically reachable Azure resource is exposed to threat of Distributed Deni
 
 Azure DDoS Protection service defends Azure resources against DDoS attacks. Azure DDoS Protection continuously monitors incoming traffic to identify potential indications of a DDoS attack. Enterprises benefit from working with Microsoft's DDoS Rapid Response (DRR) team during an active attack.
 
-ESLZ deploys a custom policy that automatically provisions Azure DDoS Standard plan on all Azure subscriptions under its scope. Same policy also enables enterprises to select the Azure regions to be covered as part of the assignment.  
+ESLZ deploys a custom policy that automatically provisions Azure DDoS Network Protection on all Azure subscriptions under its scope. Same policy also enables enterprises to select the Azure regions to be covered as part of the assignment.  
 
 ## Auto-provision Private Link/Endpoint with Private DNS Zone
 
