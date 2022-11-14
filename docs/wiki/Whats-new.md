@@ -64,12 +64,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
 - Added `AZFWFlowTrace` category for Azure Firewall in associated Diagnostic Policy
-- Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality. More information in the [ALZ deprecated policies section](ALZ-Deprecated-Services.md)
+- Deprecated the following ALZ policies 
+  - [Deploy-Nsg-FlowLogs](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html)
+  - [Deploy-Nsg-FlowLogs-to-LA](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)
+  - [Deny-PublicIp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicIP.html)
 
+  in favor of Azure built-in policies with the same or enhanced functionality.
 
-| Old Policy ID(s)                               | New Policy ID(s)                     |
-|------------------------------------------------|--------------------------------------|
-| Deploy-Nsg-FlowLogs, Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
+  | ALZ Policy ID(s)                               | Azure Builti-in Policy ID(s)                     |
+  |------------------------------------------------|--------------------------------------|
+  | Deploy-Nsg-FlowLogs-to-LA                      | e920df7f-9a64-4066-9b58-52684c02a091 |
+  | Deploy-Nsg-FlowLogs                            | e920df7f-9a64-4066-9b58-52684c02a091 |
+  | Deny-PublicIp                                  | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 |
 
 ### Other
 
