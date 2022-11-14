@@ -58,11 +58,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated ALZ Portal Accelerator to support all available Availability Zones as listed [here](https://learn.microsoft.com/azure/reliability/availability-zones-service-support#azure-regions-with-availability-zone-support)
 
-### P
+### Policy
 
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
+- Added `AZFWFlowTrace` category for Azure Firewall in associated Diagnostic Policy
 - Deprecated two ALZ policies ([#1](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html), [#2](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)) as a [built-in Azure Policy](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) has been developed with the same functionality. More information in the [ALZ deprecated policies section](ALZ-Deprecated-Services.md)
 
 
