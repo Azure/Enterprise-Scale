@@ -61,7 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 ### Policy
 
 - "**Deploy SQL Database security Alert Policies configuration with email admin accounts**" definition update
-  - Version 1.0.0 -> 1.1.0
+  - Version 1.0.0 -> 1.1.1
   - Changed email addresses from hardcoding to array parameter
 - "**Deploy SQL Database Transparent Data Encryption**" definition update
   - Version 1.0.0 -> 1.1.0
