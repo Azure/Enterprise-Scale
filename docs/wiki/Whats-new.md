@@ -60,6 +60,16 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
+- "**Configure Azure PaaS services to use private DNS zones**" Custom Initiative update, to include latest built in Policies. Policies for Services included:
+  - Azure Automation
+  - Azure Cosmos DB
+  - Azure Data Factory
+  - Azure HDInsight
+  - Azure Migrate
+  - Azure Storage (Blob, Queue, File, Static Web and Dfs)
+  - Azure Synapse Analytics
+  - Azure Media Services
+  - Azure Monitor
 - "**Deploy SQL Database security Alert Policies configuration with email admin accounts**" definition update
   - Version 1.0.0 -> 1.1.1
   - Changed email addresses from hardcoding to array parameter
