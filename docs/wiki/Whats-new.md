@@ -60,6 +60,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
+- "**Deploy Diagnostic Settings for Databricks to Log Analytics workspace**" definition update
+  - Version 1.1.0 -> 1.2.0
+  - Added missing log categories
 - "**Deploy SQL Database security Alert Policies configuration with email admin accounts**" definition update
   - Version 1.0.0 -> 1.1.1
   - Changed email addresses from hardcoding to array parameter
