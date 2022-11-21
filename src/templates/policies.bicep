@@ -120,6 +120,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-HDInsight.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-iotHub.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-LoadBalancer.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-LogAnalytics.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-LogicAppsISE.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-MariaDB.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-MediaService.json')
