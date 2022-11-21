@@ -2,12 +2,9 @@
 This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives. 
 
 ## Detect updates to policy
-1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upon release. 
-fixme link to what's new with Deny Public IP update. https://github.com/Azure/Enterprise-Scale/pull/1099 
-fixme list of deprecated policies https://github.com/Azure/Enterprise-Scale/pull/1099 
+1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upon release. An example of what that will look like can be seen [here](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new#policy). Also note that a cumulative list of deprecated services for ALZ, including policies, is maintained [here](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services)
 
-2. Alternatively or supplementary to the information available in [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new), the AzPolicyAdvertizer with the ALZ flag enabled (see [here](https://www.azadvertizer.net/azpolicyadvertizer_all.html#%7B%22col_10%22%3A%7B%22flt%22%3A%22ALZ%22%7D%2C%22col_9%22%3A%7B%7D%7D)) can be leveraged to determine deprecated ALZ policies
-fixme need screenshot from AzPolicyAdvertizer for Deny Public IP once it's deprecated.
+2. Alternatively or supplementary to the information available in [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new), the AzPolicyAdvertizer with the ALZ and deprecated flags enabled (see [here](https://www.azadvertizer.net/azpolicyadvertizer_all.html#%7B%22col_10%22%3A%7B%22flt%22%3A%22Deprecated%22%7D%2C%22col_9%22%3A%7B%7D%2C%22col_11%22%3A%7B%22flt%22%3A%22ALZ%22%7D%7D)) can be leveraged to determine deprecated ALZ policies
 
 3. A third alternative or supplementary tool is [Azure Governance Visualizer](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting) which can be run in your environment and reveal information about the current state of policies and policy assignments. Note that Azure Governance Visualizer requires permissions in your tenant as described [here](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting#permissions-overview)
 
