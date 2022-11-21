@@ -2,7 +2,7 @@
 This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives. 
 
 ## Detect updates to policy
-1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upone release. 
+1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upon release. 
 fixme link to what's new with Deny Public IP update. https://github.com/Azure/Enterprise-Scale/pull/1099 
 fixme list of deprecated policies https://github.com/Azure/Enterprise-Scale/pull/1099 
 
