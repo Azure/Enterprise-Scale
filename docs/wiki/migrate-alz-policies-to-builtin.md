@@ -1,20 +1,5 @@
-# Why update ALZ policies
-
-Over time Azure Landing Zone (ALZ) custom policies and policy initiatives may become superseded by Azure built-in policies or replaced by updated ALZ custom policies and policy initiatives. This may occur for a number of reasons:
-1. Features may change so that the particular policy setting is no longer required or configurable.
-2. Security issues with current policies has been identified and fixed
-3. Policy does not function as intended
-4. New features are added requiring new settings
-5. Services become obsolete thus no longer requiring policy.
-
-If you are leveraging policy, you will want to keep up with changes to policies to avoid drift as well as lack of overview in the overall policy compliance status. 
-
 # Introduction
-This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives. For guidance on how to migrate policies leveraging the ALZ Terraform Module please refer to [here](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-alz-policies#update-steps-for-azure-landing-zone-terraform-module-deployments)
-For guidance on how to migrate policies leveraging ALZ Bicep please refer to [here](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-alz-policies#update-steps-for-azure-landing-zone-bicep-deployments)
-
-
-Links to ALZ-Terraform module and ALZ-Bicep guidance are included as well. 
+This article describes how to migrate ALZ custom policies and policy initiatives to Azure built-in policies. The guidance provided in this document describes manual steps for performing the migration, based on a set of specific policies and initiatives. 
 
 ## Detect updates to policy
 1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upone release. 
@@ -36,8 +21,6 @@ There are the following scenarios for ALZ custom policies being superseded by Az
 For this scenario we will use the ALZ custom policy _Deny the creation of public IP_ which will be migrated to the built-in policy _Not allowed resource types_
 
 To carry out the instructions in the scenario the operator will require Resource Policy Permissions at the root of the ALZ management group hierarchy
-
-[Azure Portal](#tab/azure-portal)
 
 - Go to https://portal.azure.com
 - Open Policy
@@ -97,8 +80,6 @@ that the provided example has a simple parameter set. If more complex parameters
 For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Settings to Azure Services_ which is leveraging quite a large number of ALZ custom policies to apply diagnostics settings for various resources. As the initiative is updated at [source](https://github.com/Azure/Enterprise-Scale/tree/main/src/resources/Microsoft.Authorization/policySetDefinitions), the easiest way to achieve the migration in a manual way is to pull the newest version of the initiative from there.
 
 To carry out the instructions in the scenario the operator will require Resource Policy Permissions at the root of the ALZ management group hierarchy
-
-[Azure Portal](#tab/azure-portal)
 
 - Go to https://portal.azure.com
 - Open Policy
