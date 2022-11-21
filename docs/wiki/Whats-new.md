@@ -53,6 +53,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
 - Added ALZ deprecated [policies section](Deprecating-ALZ-Policies.md) to the Wiki.
+- Included documentation on how to [Migrate ALZ custom policies to Azure builtin policies](migrate-alz-policies-to-builtin.md) to the Wiki.
 
 #### Tooling
 
