@@ -1,15 +1,15 @@
 {
-  "name": "Deploy-Diagnostics-Databricks",
+  "name": "Deploy-Diagnostics-LogAnalytics",
   "type": "Microsoft.Authorization/policyDefinitions",
   "apiVersion": "2021-06-01",
   "scope": null,
   "properties": {
     "policyType": "Custom",
     "mode": "Indexed",
-    "displayName": "Deploy Diagnostic Settings for Databricks to Log Analytics workspace",
-    "description": "Deploys the diagnostic settings for Databricks to stream to a Log Analytics workspace when any Databricks which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
+    "displayName": "Deploy Diagnostic Settings for Log Analytics to Log Analytics workspace",
+    "description": "Deploys the diagnostic settings for Log Analytics workspaces to stream to a Log Analytics workspace when any Log Analytics workspace which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
     "metadata": {
-      "version": "1.2.0",
+      "version": "1.1.0",
       "category": "Monitoring",
       "source": "https://github.com/Azure/Enterprise-Scale/",
       "alzCloudEnvironments": [
@@ -47,6 +47,18 @@
           "description": "The diagnostic settings profile name"
         }
       },
+      "metricsEnabled": {
+        "type": "String",
+        "defaultValue": "True",
+        "allowedValues": [
+          "True",
+          "False"
+        ],
+        "metadata": {
+          "displayName": "Enable metrics",
+          "description": "Whether to enable metrics stream to the Log Analytics workspace - True or False"
+        }
+      },
       "logsEnabled": {
         "type": "String",
         "defaultValue": "True",
@@ -63,7 +75,7 @@
     "policyRule": {
       "if": {
         "field": "type",
-        "equals": "Microsoft.Databricks/workspaces"
+        "equals": "microsoft.operationalinsights/workspaces"
       },
       "then": {
         "effect": "[[parameters('effect')]",
@@ -74,6 +86,10 @@
             "allOf": [
               {
                 "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                "equals": "true"
+              },
+              {
+                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
                 "equals": "true"
               },
               {
@@ -105,6 +121,9 @@
                   "profileName": {
                     "type": "String"
                   },
+                  "metricsEnabled": {
+                    "type": "String"
+                  },
                   "logsEnabled": {
                     "type": "String"
                   }
@@ -112,112 +131,27 @@
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.Databricks/workspaces/providers/diagnosticSettings",
+                    "type": "microsoft.operationalinsights/workspaces/providers/diagnosticSettings",
                     "apiVersion": "2017-05-01-preview",
                     "name": "[[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
                     "location": "[[parameters('location')]",
                     "dependsOn": [],
                     "properties": {
                       "workspaceId": "[[parameters('logAnalytics')]",
+                      "metrics": [
+                        {
+                          "category": "AllMetrics",
+                          "enabled": "[[parameters('metricsEnabled')]",
+                          "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                          },
+                          "timeGrain": null
+                        }
+                      ],
                       "logs": [
                         {
-                          "category": "dbfs",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "clusters",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "accounts",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "jobs",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "notebook",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "ssh",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "workspace",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "secrets",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "sqlPermissions",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "instancePools",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "sqlanalytics",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "genie",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "globalInitScripts",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "iamRole",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "mlflowExperiment",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "featureStore",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "RemoteHistoryService",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "mlflowAcledArtifact",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "databrickssql",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "deltaPipelines",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "modelRegistry",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "repos",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "unityCatalog",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "gitCredentials",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "webTerminal",
+                          "category": "Audit",
                           "enabled": "[[parameters('logsEnabled')]"
                         }
                       ]
@@ -238,6 +172,9 @@
                 },
                 "profileName": {
                   "value": "[[parameters('profileName')]"
+                },
+                "metricsEnabled": {
+                  "value": "[[parameters('metricsEnabled')]"
                 },
                 "logsEnabled": {
                   "value": "[[parameters('logsEnabled')]"
