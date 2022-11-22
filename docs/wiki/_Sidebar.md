@@ -29,3 +29,4 @@
 * [Azure Landing Zones Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services)
 * Azure Landing Zone (ALZ) Policies
   * [Policies included in Azure landing zones reference implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)
+  * [Migrate Azure landing zones custom policies to Azure built-in policies](https://github.com/Azure/Enterprise-Scale/wiki/migrate-alz-policies-to-builtin)

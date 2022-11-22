@@ -53,6 +53,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
 - Added ALZ deprecated [policies section](Deprecating-ALZ-Policies.md) to the Wiki.
+- Included documentation on how to [Migrate ALZ custom policies to Azure builtin policies](migrate-alz-policies-to-builtin.md) to the Wiki.
 
 #### Tooling
 
@@ -60,16 +61,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
-- "**Configure Azure PaaS services to use private DNS zones**" Custom Initiative update, to include latest built in Policies. Policies for Services included:
-  - Azure Automation
-  - Azure Cosmos DB
-  - Azure Data Factory
-  - Azure HDInsight
-  - Azure Migrate
-  - Azure Storage (Blob, Queue, File, Static Web and Dfs)
-  - Azure Synapse Analytics
-  - Azure Media Services
-  - Azure Monitor
+- "**Deploy Diagnostic Settings for Log Analytics to Log Analytics workspace**" definition added and also added to `Deploy-Diagnostics-LogAnalytics` initiative 
+- "**Deploy Diagnostic Settings for Databricks to Log Analytics workspace**" definition update
+  - Version 1.1.0 -> 1.2.0
+  - Added missing log categories
 - "**Deploy SQL Database security Alert Policies configuration with email admin accounts**" definition update
   - Version 1.0.0 -> 1.1.1
   - Changed email addresses from hardcoding to array parameter
