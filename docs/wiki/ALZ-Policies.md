@@ -16,7 +16,7 @@ All custom Azure Policy Definitions and Initiatives are the same across all 3 im
 
 This is because the single source of truth is the [`Enterprise-Scale` repo](https://github.com/Azure/Enterprise-Scale) that both the Terraform and Bicep implementation options pull from to build their `lib` folders respectively.
 
-For a complete list of all custom and built-in policies deployed within an Azure landing zone deployment, please refer to the following [section](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md#what-policy-definitions-are-assigned-within-the-azure-landing-zones-custom--built-in).
+For a complete list of all custom and built-in policies deployed within an Azure landing zone deployment, please refer to the following [section](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies#what-policy-definitions-are-assigned-within-the-azure-landing-zones-custom--built-in).
 
 > Our goal is always to try and use built-in policies where available and also work with product teams to adopt our custom policies and make them built-in, which takes time. This means there will always be a requirement for custom policies.
 
@@ -28,13 +28,13 @@ On either the [Policy](https://www.azadvertizer.net/azpolicyadvertizer_all.html#
 
 AzAdvertizer also updates once per day!
 
-![AzAdvertizer ALZ Integration Slide](../media/alzPolicyAzAdvertizer.png)
+![AzAdvertizer ALZ Integration Slide](./media/alzPolicyAzAdvertizer.png)
 
 ## What policy definitions are assigned within the Azure landing zones (Custom & Built-in)?
 
 As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure landing zone Management Group hierarchy as depicted within the below diagram.
 
-![image](../media/MgmtGroups_Policies_v0.1.jpg)
+![image](./media/MgmtGroups_Policies_v0.1.jpg)
 
 The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierarchy.
 
@@ -49,7 +49,7 @@ This management group is a parent to all the other management groups created wit
 <tr></tr>
 <tr><td>
   
-![image](../media/IntRoot_v0.1.jpg)
+![image](./media/IntRoot_v0.1.jpg)
   
 </td><td>
   
@@ -79,7 +79,7 @@ This management group contains all the platform child management groups, like ma
 <tr></tr>
 <tr><td>
   
-![image](../media/Platform_v0.1.jpg)
+![image](./media/Platform_v0.1.jpg)
   
 </td><td>
   
@@ -98,7 +98,7 @@ This management group contains a dedicated subscription for connectivity. This s
 <tr></tr>
 <tr><td>
   
-![image](../media/Connectivity_v0.1.jpg)
+![image](./media/Connectivity_v0.1.jpg)
   
 </td><td>
   
@@ -123,7 +123,7 @@ This management group contains a dedicated subscription for management, monitori
 <tr></tr>
 <tr><td>
   
-![image](../media/Management_v0.1.jpg)
+![image](./media/Management_v0.1.jpg)
   
 </td><td>
   
@@ -148,7 +148,7 @@ This management group contains a dedicated subscription for identity. This subsc
 <tr></tr>
 <tr><td>
   
-![image](../media/Identity_v0.1.jpg)
+![image](./media/Identity_v0.1.jpg)
   
 </td><td>
   
@@ -162,7 +162,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 
 | Assignment Name                                                                                                     | Definition Name                                                                                                     | Policy Type                       | Description                                                                                                                                    | Effect(s)         | Version |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------- |
-| **Deny the creation of public IP**                                                                                  | **Deny the creation of public IP**                                                                                  | `Policy Definition`, **Custom**   | This policy denies creation of Public IPs under the assigned scope.                                                                            | Deny              | 1.0.0   |
+| **Deny the creation of public IP**                                                                                  | **Not allowed resource types**                                                                                  | `Policy Definition`, **Built-in**   | This policy denies creation of Public IPs under the assigned scope. Single parameter value for `listOfResourceTypesNotAllowed` which is `Microsoft.Network/publicIPAddresses`                                                                         | Deny              | 1.0.0   |
 | **RDP access from the Internet should be blocked**                                                                  | **RDP access from the Internet should be blocked**                                                                  | `Policy Definition`, **Custom**   | This policy denies any network security rule that allows RDP access from Internet.                                                             | Deny              | 1.0.0   |
 | **Subnets should have a Network Security Group**                                                                    | **Subnets should have a Network Security Group**                                                                    | `Policy Definition`, **Custom**   | This policy denies the creation of a subnet without a Network Security Group. NSG help to protect traffic across subnet-level.                 | Deny              | 2.0.0   |
 | **Configure backup on virtual machines without a given tag to a new recovery services vault with a default policy** | **Configure backup on virtual machines without a given tag to a new recovery services vault with a default policy** | `Policy Definition`, **Built-in** | Enforce backup for all virtual machines by deploying a recovery services vault in the same location and resource group as the virtual machine. | DeployIfNotExists | 8.0.0   |
@@ -176,7 +176,7 @@ This is the parent management group for all the landing zone child management gr
 <tr></tr>
 <tr><td>
 
-![image](../media/LandingZone_v0.1.jpg)
+![image](./media/LandingZone_v0.1.jpg)
 
 </td><td>
   
@@ -213,7 +213,7 @@ This management group is for corporate landing zones. This group is for workload
 <tr></tr>
 <tr><td>
 
-![image](../media/Corp_v0.1.jpg)
+![image](./media/Corp_v0.1.jpg)
 
 </td><td>
   
@@ -242,7 +242,7 @@ This management group is for online landing zones. This group is for workloads t
 <tr></tr>
 <tr><td>
 
-![image](../media/Online_v0.1.jpg)
+![image](./media/Online_v0.1.jpg)
 
 </td><td>
   
@@ -261,7 +261,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 <tr></tr>
 <tr><td>
 
-![image](../media/Decom_v0.1.jpg)
+![image](./media/Decom_v0.1.jpg)
 
 </td><td>
   
@@ -280,7 +280,7 @@ This management group is for subscriptions that will only be used for testing an
 <tr></tr>
 <tr><td>
 
-![image](../media/Sandbox_v0.1.jpg)
+![image](./media/Sandbox_v0.1.jpg)
 
 </td><td>
   

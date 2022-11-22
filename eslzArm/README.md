@@ -240,7 +240,6 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-public-ip" `
                                 -Location $Location `
                                 -ManagementGroupId "$($ESLZPrefix)-identity" `
                                 -TemplateFile .\eslzArm\managementGroupTemplates\policyAssignments\DENY-PublicIpAddressPolicyAssignment.json `
-                                -topLevelManagementGroupPrefix $ESLZPrefix `
                                 -Verbose
 
 # Assign Azure Policy to enforce VM Backup on VMs in the identity subscription
