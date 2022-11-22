@@ -72,7 +72,7 @@ that the provided example has a simple parameter set. If more complex parameters
 
 - Set relevant parameters, for this particular policy this would be the resource type to disallow, i.e. Microsoft.Network/publicIpAddresses, then assign the policy to the scopes previously determined.
 
-### Migrate ALZ custom policies in initiatives to built-in policies
+### How to update child definitions in ALZ custom initiatives
 
 For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Settings to Azure Services_ which is leveraging quite a large number of ALZ custom policies to apply diagnostics settings for various resources. As the initiative is updated at [source](https://github.com/Azure/Enterprise-Scale/tree/main/src/resources/Microsoft.Authorization/policySetDefinitions), the easiest way to achieve the migration in a manual way is to pull the newest version of the initiative from there.
 
