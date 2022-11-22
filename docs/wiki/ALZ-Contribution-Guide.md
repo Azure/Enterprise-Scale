@@ -22,7 +22,7 @@ The following is a set of general guidelines for contributing to any of these re
 ## How do we manage contributions
 
 Contributions to each Azure landing zone reference implementation option is moderated by a common committee of maintainers.
-The committee is responsible for reviewing and approving all contributions, whether via **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues), **Pull Requests** [[ARM]](https://github.com/Azure/Enterprise-Scale/pulls) [[Bicep]](https://github.com/Azure/ALZ-Bicep/pulls) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/pulls), or internally driven development.
+The committee is responsible for reviewing and approving all contributions, whether via [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues), [**Pull Requests**](https://github.com/Azure/Enterprise-Scale/pulls), or internally driven development.
 
 The committee is also responsible for reviewing and sponsoring new features or design changes to ensure they meet the needs of our broad community of consumers.
 
@@ -41,7 +41,7 @@ After the RFC has been discussed, a unanimous vote will be required for the new 
 
 As an open source project, the reference implementation works best when it reflects the needs of our community of consumers.
 As such, we welcome contributions however big or small.
-All we ask is that you follow some simple guidelines, including participating according to our **code of conduct** [[ARM]](https://github.com/Azure/Enterprise-Scale/blob/main/CODE_OF_CONDUCT.md) [[Bicep]](https://github.com/Azure/ALZ-Bicep/blob/main/CODE_OF_CONDUCT.md) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/blob/main/CODE_OF_CONDUCT.md).
+All we ask is that you follow some simple guidelines, including participating according to our [**code of conduct**](https://github.com/Azure/Enterprise-Scale/blob/main/CODE_OF_CONDUCT.md).
 
 ### Reporting bugs
 
@@ -50,17 +50,17 @@ Moreover, as the Azure platform evolves or our guidance changes there will likel
 
 If you believe you have found a bug, please use the following process:
 
-1. Check the **FAQ** [[ARM]](./FAQ) [[Bicep]](https://github.com/Azure/ALZ-Bicep/wiki/FAQ) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/Frequently-Asked-Questions) and **Known Issues** [[ARM]](./ALZ-Known-Issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/Troubleshooting)  for a list of common questions and issues.
-1. Check existing **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues) to see whether the issue has already been reported.
+1. Check the [**FAQ**](./FAQ) and [**Known Issues**](./ALZ-Known-Issues) for a list of common questions and issues.
+1. Check existing [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues) to see whether the issue has already been reported.
     1. If the issue is **open**, add a comment rather than create a new one.
     1. If the issue is **closed**, check whether the proposed fix resolves your issue.
-1. Report it via our **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues)
+1. Report it via our [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues).
 1. Select `New issue` and use the `Bug report 🐛` template
 1. Ensure you fill out the template with as much information as possible, being sure to cover off what's needed for maintainers and the community to:
     1. Understand your issue :memo:
     1. Reproduce the behavior :computer:
     1. Provide evidence :mag_right:
-    1. Optionally, let us know if you would like to contribute a fix via a **Pull Request** [[ARM]](https://github.com/Azure/Enterprise-Scale/pulls) [[Bicep]](https://github.com/Azure/ALZ-Bicep/pulls) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/pulls) :wrench:
+    1. Optionally, let us know if you would like to contribute a fix via a [**Pull Request**](https://github.com/Azure/Enterprise-Scale/pulls) :wrench:
 
 ### Feature requests
 
@@ -70,21 +70,41 @@ This is where you can really make a difference to how the solution is shaped for
 If you have an idea you would like to be considered for inclusion, please use the following process:
 
 1. Familiarize yourself with our [conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) to ensure the feature aligns with the Azure landing zone guidance.
-1. Check existing **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues) to see whether the issue has already been reported.
+1. Check existing [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues) to see whether the issue has already been reported.
     1. If the issue is **open**, add a comment rather than create a new one.
     1. If the issue is **closed**, check whether the proposed fix resolves your issue.
-1. Report it via our **GitHub Issues** [[ARM]](https://github.com/Azure/Enterprise-Scale/issues) [[Bicep]](https://github.com/Azure/ALZ-Bicep/issues) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/issues)
+1. Report it via our [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues)
 1. Select `New issue` and use the `Feature request 🚀` template
 1. Ensure you fill out the template with as much information as possible, being sure to cover off what's needed for maintainers and the community to:
     1. Understand your feature and how it aligns to our [conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) :memo:
-    1. Optionally, let us know if you would like to contribute by adding your requested feature via a **Pull Request** [[ARM]](https://github.com/Azure/Enterprise-Scale/pulls) [[Bicep]](https://github.com/Azure/ALZ-Bicep/pulls) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/pulls) :wrench:
+    1. Optionally, let us know if you would like to contribute by adding your requested feature via a [**Pull Request**](https://github.com/Azure/Enterprise-Scale/pulls) :wrench:
 
 > **IMPORTANT:** If you are proposing a change to any of the Azure landing zone guidance, please include a business case explaining why you feel this will benefit our community.
 
 ### Report a security vulnerability
 
-Please see our **security policy** for more information.
-[[ARM]](https://github.com/Azure/Enterprise-Scale/security/policy) [[Bicep]](https://github.com/Azure/ALZ-Bicep/security/policy) [[Terraform]](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/security/policy)
+Please see our [**security policy**](https://github.com/Azure/Enterprise-Scale/security/policy) for more information.
+
+### Working with ALZ Custom policies
+
+Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones.
+
+To work with policies, they are location in `src/resources/Microsoft.Authorization/*`.
+
+To create a new policy, it is worth taking the framework from an already existing policy.
+
+Inside of the JSON is a `metadata` section which is required for policy creation.
+
+| Metadata Value       | Description                                                |
+|----------------------|------------------------------------------------------------|
+| Version              | Version of the policy definition                           |
+| Category             | The category which the policy definition will reside in    |
+| Source               | The source repository for the policy definition            |
+| alzCloudEnvironments | The cloud environment for which the policy is designed for |
+
+Once the policy has been created and a pull request has been submitted, the policy definition files will be compiled into a `policies.json` file which is used across the repository. It is located under `eslzArm/` folder under the specific policy definition scope.
+
+Policy versioning follows the same protocol as built-in policies. More information on that can be found here: [Azure Policy | Versioning.](https://github.com/Azure/azure-policy/blob/master/built-in-policies/README.md#versioning)
 
 ### Contribution scope
 
