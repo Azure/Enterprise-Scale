@@ -95,6 +95,8 @@ To create a new policy, it is worth taking the framework from an already existin
 
 Inside of the JSON is a `metadata` section which is required for policy creation.
 
+![Policy Metadata](./media/policy-metadata-example.png)
+
 | Metadata Value       | Description                                                |
 |----------------------|------------------------------------------------------------|
 | Version              | Version of the policy definition                           |
@@ -102,9 +104,23 @@ Inside of the JSON is a `metadata` section which is required for policy creation
 | Source               | The source repository for the policy definition            |
 | alzCloudEnvironments | The cloud environment for which the policy is designed for |
 
-Once the policy has been created and a pull request has been submitted, the policy definition files will be compiled into a `policies.json` file which is used across the repository. It is located under `eslzArm/` folder under the specific policy definition scope.
+The definition created then needs to be included in the `policies.bicep` file inside of `src/templates/` under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
+
+![Policies bicep file example 1](./media/policies-bicep-example.png)
+
+For a policy definition, additional code should be added inside of the `loadPolicyDefinitions` variable under the correct environment:
+
+`loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Name-Of-The-Policy.json')`
+
+For a policy set definition, additional code should be added inside of the `loadPolicySetDefinitions` variable under the correct environment:
+
+`loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')`
+
+Once the policy has been created and a pull request has been submitted, the policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.
 
 Policy versioning follows the same protocol as built-in policies. More information on that can be found here: [Azure Policy | Versioning.](https://github.com/Azure/azure-policy/blob/master/built-in-policies/README.md#versioning)
+
+For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](./ALZ-Deprecated-Services.md) page.
 
 ### Contribution scope
 
