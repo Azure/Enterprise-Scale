@@ -72,6 +72,20 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Version 1.0.0 -> 1.1.0
   - Added system databases master, model, tempdb, msdb, resource to exclusion parameter as default values
   - Added as Policy Rule 'notIn' which will exclude the above databases from the policy
+- Updated "**Deploy-Private-DNS-Zones**" Custom initiative for **Azure Public Cloud**, with latest built-in Policies. Policies were added for the following Services:
+  - Azure Automation
+  - Azure Cosmos DB (all APIs: SQL, MongoDB, Cassandra, Gremlin, Table)
+  - Azure Data Factory
+  - Azure HDInsight
+  - Azure Migrate (missing Private DNS Zone also added)
+  - Azure Storage (Blob, Queue, File, Static Web, DFS and all relative secondaries)
+  - Azure Synapse Analytics
+  - Azure Media Services
+  - Azure Monitor
+- Minor fixes related to "**Deploy-Private-DNS-Zones**" Custom Initiative and respective Assignment:
+  - Added missing Zones for **"WebPubSub"** and **"azure-devices-provisioning"**, so Initiative Assignment works correctly
+  - Minor correction related to **ASR Private DNS Zone variable**, so Initiative Assignment works correctly
+  - Convertion of **"Azure Batch"** Private DNS Zone (from regional to global), to properly align with latest respective documentation and functionality
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
