@@ -116,7 +116,11 @@ For a policy set definition, additional code should be added inside of the `load
 
 `loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')`
 
-Once the policy has been created and a pull request has been submitted, the policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.
+The policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.
+
+Once the policy work has been completed, a pull request has been submitted to the repository:
+
+![pr-example](./media/pr-example.png)
 
 Policy versioning follows the same protocol as built-in policies. More information on that can be found here: [Azure Policy | Versioning.](https://github.com/Azure/azure-policy/blob/master/built-in-policies/README.md#versioning)
 
