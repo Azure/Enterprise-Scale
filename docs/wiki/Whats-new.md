@@ -112,7 +112,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - "**"Deploy-MDFC-Config"**" definition update
   - Updated policy definitions set Deploy-MDFC-Config, Deploy-MDFC-Config(US Gov), Deploy-MDFC-Config (China)
     - added new parameter 'minimalSeverity'.
-    - added default value for multiple  parameters added. 
+    - added default value for multiple  parameters. 
   
 ### Other
 
