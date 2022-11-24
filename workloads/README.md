@@ -7,7 +7,7 @@ The following workloads outlined here provides best-practices, and curated deplo
 This folder contains ARM templates and Bicep files that are developed and composed to ensure organizations can:
 
 - Accelerate adoption and Azure service enablement for their application teams and business units
-- Deploy compliant Azure services aligned with the proactive and preventive policies provided by Enterprise-Scale landing zones, aligned with [Azure Security Benchmark](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance#azure-security-benchmark)
+- Deploy compliant Azure services aligned with the proactive and preventive policies provided by Enterprise-Scale landing zones, aligned with [Microsoft Cloud Security Benchmark](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/security-governance-and-compliance#azure-security-benchmark)
 
 ## Who should use this library?
 
