@@ -103,6 +103,17 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   | Deploy-Nsg-FlowLogs                            | e920df7f-9a64-4066-9b58-52684c02a091 |
   | Deny-PublicIp                                  | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 |
 
+- "**"Deploy-ASC-SecurityContacts"**" definition update
+  - displayName and description update to "Deploy Microsoft Defender for Cloud Security Contacts"
+  - Added new parameter "minimalSeverity" with settings
+    - Default value "High"
+    - Allowed values: "High", "Medium", "Low"
+    
+- "**"Deploy-MDFC-Config"**" definition update
+  - Updated policy definitions set Deploy-MDFC-Config, Deploy-MDFC-Config(US Gov), Deploy-MDFC-Config (China)
+    - added new parameter 'minimalSeverity'.
+    - added default value for multiple  parameters added. 
+  
 ### Other
 
 - *No updates, yet.*
