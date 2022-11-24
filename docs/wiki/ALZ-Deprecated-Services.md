@@ -21,6 +21,6 @@ Over time, a deprecation process of there `ALZ / custom` policies will have to t
 
 | Deprecated ALZ Policy IDs                     | Superseded by built-in policy IDs    | Justification                                                            |
 |-----------------------------------------------|--------------------------------------|--------------------------------------------------------------------------|
-| Deploy-Nsg-FlowLogs | e920df7f-9a64-4066-9b58-52684c02a091 | Custom policy replaced by built-in requires less administration overhead |
-| Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 | Custom policy replaced by built-in requires less administration overhead |
-| Deny-PublicIP | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 | Custom policy replaced by built-in requires less administration overhead |½
+| Deploy-Nsg-FlowLogs | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
+| Deploy-Nsg-FlowLogs-to-LA | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
+| Deny-PublicIP | [6c112d4e-5bc7-47ae-a041-ea2d9dccd749](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html?) | Custom policy replaced by built-in requires less administration overhead |½
