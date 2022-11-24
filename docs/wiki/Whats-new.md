@@ -106,12 +106,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - "**"Deploy-ASC-SecurityContacts"**" definition update
   - displayName and description update to "Deploy Microsoft Defender for Cloud Security Contacts"
   - Added new parameter `minimalSeverity` with settings
-    - Default value "High"
-    - Allowed values: "High", "Medium", "Low"
+    - Default value `High`
+    - Allowed values: `High`, `Medium`, `Low`
     
 - "**"Deploy-MDFC-Config"**" definition update
   - Updated policy definitions set Deploy-MDFC-Config, Deploy-MDFC-Config(US Gov), Deploy-MDFC-Config (China)
-    - added new parameter 'minimalSeverity'.
+    - added new parameter `minimalSeverity`.
     - added default value for multiple  parameters. 
   
 ### Other
