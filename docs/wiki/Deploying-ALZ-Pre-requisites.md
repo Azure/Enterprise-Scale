@@ -47,7 +47,7 @@ Powershell:
 Connect-AzAccount
 
 #get object Id of  the current user (that is used above)
-$user = Get-AzADUser -UserPrincipalName (Get-AzContext).Account
+$user = Get-AzAduser -SignedIn
 
 #assign Owner  role to Tenant root scope ("/") as a User Access Administrator
 New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
