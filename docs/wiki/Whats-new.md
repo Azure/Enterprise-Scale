@@ -60,6 +60,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Updated ALZ Portal Accelerator to support all available Availability Zones as listed [here](https://learn.microsoft.com/azure/reliability/availability-zones-service-support#azure-regions-with-availability-zone-support)
+- Update ALZ Portal Accelerator Private DNS Zones for Private Link, fixing issue [#1073](https://github.com/Azure/Enterprise-Scale/issues/1073)
 
 ### Policy
 
@@ -87,7 +88,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Minor fixes related to "**Deploy-Private-DNS-Zones**" Custom Initiative and respective Assignment:
   - Added missing Zones for **"WebPubSub"** and **"azure-devices-provisioning"**, so Initiative Assignment works correctly
   - Minor correction related to **ASR Private DNS Zone variable**, so Initiative Assignment works correctly
-  - Convertion of **"Azure Batch"** Private DNS Zone (from regional to global), to properly align with latest respective documentation and functionality
+  - Conversion of **"Azure Batch"** Private DNS Zone (from regional to global), to properly align with latest respective documentation and functionality
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
@@ -97,7 +98,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [Deploy-Nsg-FlowLogs-to-LA](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)
   - [Deny-PublicIp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicIP.html)
 
-  in favor of Azure built-in policies with the same or enhanced functionality.
+  in favour of Azure built-in policies with the same or enhanced functionality.
 
   | ALZ Policy ID(s)                               | Azure Builti-in Policy ID(s)                     |
   |------------------------------------------------|--------------------------------------|
@@ -110,7 +111,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Added new parameter `minimalSeverity` with settings
     - Default value `High`
     - Allowed values: `High`, `Medium`, `Low`
-    
+
 - "**"Deploy-MDFC-Config"**" definition update
   - Updated policy definitions set Deploy-MDFC-Config, Deploy-MDFC-Config(US Gov), Deploy-MDFC-Config (China)
     - added new parameter `minimalSeverity`.
