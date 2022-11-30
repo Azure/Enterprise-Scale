@@ -1,0 +1,70 @@
+{
+  "name": "Deny-EventHub-MaximumThroughputUnits",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Limit maximum throughput units for Event Hub",
+    "description": "Enforces maximum throughput units for Event Hub.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Event Hub",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "maxThroughputUnits": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum Throughput Units",
+          "description": "Specifies the maximum throughput units"
+        },
+        "defaultValue": 20
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.EventHub/namespaces"
+          },
+          {
+            "field": "Microsoft.EventHub/namespaces/isAutoInflateEnabled",
+            "equals": true
+          },
+          {
+            "field": "Microsoft.EventHub/namespaces/maximumThroughputUnits",
+            "exists": true
+          },
+          {
+            "field": "Microsoft.EventHub/namespaces/maximumThroughputUnits",
+            "greater": "[[parameters('maxThroughputUnits')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

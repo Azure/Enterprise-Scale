@@ -1,0 +1,61 @@
+{
+  "name": "Deny-DataFactory-ManagedPrivateEndpoints",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Data Factory should use private endpoints in trusted subscriptions",
+    "description": "Denies connecting Data Factory to private endpoints for linked services when not in a specified subscription.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Data Factory",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "allowedSubscriptions": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed subscriptions",
+          "description": "A list of subscriptions IDs that are allowed."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints"
+          },
+          {
+            "value": "[[split(field('Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints/privateLinkResourceId'), '/')[2]]",
+            "notIn": "[[parameters('allowedSubscriptions')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

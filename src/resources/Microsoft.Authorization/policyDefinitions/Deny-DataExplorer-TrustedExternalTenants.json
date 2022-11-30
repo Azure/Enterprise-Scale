@@ -1,0 +1,56 @@
+{
+  "name": "Deny-DataExplorer-TrustedExternalTenants",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Azure Data Explorer should not trust external tenants",
+    "description": "Disables configuration of trusted external tenants for Azure Data Explorer.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Azure Data Explorer",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Kusto/clusters"
+          },
+          {
+            "count": {
+              "field": "Microsoft.Kusto/clusters/trustedExternalTenants[*]"
+            },
+            "greater": 0
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

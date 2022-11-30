@@ -1,0 +1,56 @@
+{
+  "name": "Deny-Synapse-Spark-AutoPause",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "Do not allow Auto Pause settings on Synapse Spark Pools",
+    "description": "Enforces auto pause settings for Synapse Spark Pools.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Synapse"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.Synapse/workspaces/bigDataPools/autoPause.enabled",
+                "notEquals": true
+              },
+              {
+                "field": "Microsoft.Synapse/workspaces/bigDataPools/autoPause.delayInMinutes",
+                "greater": 60
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

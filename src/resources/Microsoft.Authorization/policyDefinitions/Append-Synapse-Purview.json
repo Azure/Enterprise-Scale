@@ -1,0 +1,68 @@
+{
+  "name": "Append-Synapse-Purview",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "Append-Synapse-Purview",
+    "description": "Enforce connection between central purview instance and Synapse Workspace.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Synapse"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Append",
+          "Disabled"
+        ],
+        "defaultValue": "Append"
+      },
+      "purviewResourceId": {
+        "type": "String",
+        "metadata": {
+          "description": "The resource Id of the central Azure Purview instance",
+          "displayName": "Purview Resoruce ID"
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Synapse/workspaces"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.Synapse/workspaces/purviewConfiguration.purviewResourceId",
+                "exists": true
+              },
+              {
+                "value": "[[empty(field('Microsoft.Synapse/workspaces/purviewConfiguration.purviewResourceId'))]",
+                "notEquals": true
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]",
+        "details": [
+          {
+            "field": "Microsoft.Synapse/workspaces/purviewConfiguration.purviewResourceId",
+            "value": "[[parameters('purviewResourceId')]"
+          }
+        ]
+      }
+    }
+  }
+}

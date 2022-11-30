@@ -1,0 +1,78 @@
+{
+  "name": "Deny-DataFactory-IntegrationRuntimeManagedVirtualNetwork",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Data Factory Integration Runtimes should use Managed Virtual Network",
+    "description": "Denies Integration Runtimes that are not connected to the Managed Virtual Network.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Data Factory",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.DataFactory/factories/integrationruntimes"
+          },
+          {
+            "field": "name",
+            "notEquals": "AutoResolveIntegrationRuntime"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.referenceName",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.referenceName",
+                "notEquals": "default"
+              },
+              {
+                "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.type",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.managedVirtualNetwork.type",
+                "notEquals": "ManagedVirtualNetworkReference"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

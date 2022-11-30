@@ -1,0 +1,62 @@
+{
+  "name": "Deny-StreamAnalytics-StreamingUnits",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Limit maximum streaming units for Stream Analytics",
+    "description": "Enforces number of Stream Analytics Streaming Units.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Stream Analytics",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "maxStreamingUnits": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum Streaming Units",
+          "description": "Specifies the maximum streaming units that should be allowed"
+        },
+        "defaultValue": 192
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.StreamAnalytics/streamingjobs"
+          },
+          {
+            "field": "Microsoft.StreamAnalytics/streamingjobs/transformation.streamingUnits",
+            "greater": "[[parameters('maxStreamingUnits')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

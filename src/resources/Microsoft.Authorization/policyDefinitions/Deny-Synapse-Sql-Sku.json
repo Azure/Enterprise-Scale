@@ -1,0 +1,73 @@
+{
+  "name": "Deny-Synapse-Sql-Sku",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Synapse SQL pools should use specific SKUs",
+    "description": "Enforces use of specific SKUs for Synapse SQL pools for cost management.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Synapse"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "allowedSynapseSqlSkus": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed subscriptions",
+          "description": "A list of subscriptions IDs"
+        },
+        "defaultValue": [
+          "DW100c",
+          "DW200c",
+          "DW300c",
+          "DW400c",
+          "DW500c",
+          "DW1000c",
+          "DW1500c",
+          "DW2000c",
+          "DW2500c",
+          "DW3000c",
+          "DW5000c",
+          "DW6000c",
+          "DW7500C",
+          "DW10000c",
+          "DW15000c",
+          "DW30000c"
+        ]
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Synapse/workspaces/sqlPools"
+          },
+          {
+            "field": "Microsoft.Synapse/workspaces/sqlPools/sku.name",
+            "notIn": "[[parameters('allowedSynapseSqlSkus')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

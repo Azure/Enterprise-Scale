@@ -1,0 +1,115 @@
+{
+  "name": "Deny-DataExplorer-Sku",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Azure Data Explorer should use specific SKUs",
+    "description": "Enforces use of specific SKUs for Azure Data Explorer for cost management.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Azure Data Explorer",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "allowedSkuNames": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed SKU Names",
+          "description": "Specifies the allowed sku names"
+        },
+        "defaultValue": [
+          "Dev(No SLA)_Standard_D11_v2",
+          "Dev(No SLA)_Standard_E2a_v4",
+          "Standard_D11_v2",
+          "Standard_D12_v2",
+          "Standard_D13_v2",
+          "Standard_D14_v2",
+          "Standard_DS13_v2+1TB_PS",
+          "Standard_DS13_v2+2TB_PS",
+          "Standard_DS14_v2+3TB_PS",
+          "Standard_DS14_v2+4TB_PS",
+          "Standard_L4s",
+          "Standard_L8s",
+          "Standard_L16s",
+          "Standard_E2a_v4",
+          "Standard_E4a_v4",
+          "Standard_E8a_v4",
+          "Standard_E16a_v4",
+          "Standard_E8as_v4+1TB_PS",
+          "Standard_E8as_v4+2TB_PS",
+          "Standard_E16as_v4+3TB_PS",
+          "Standard_E16as_v4+4TB_PS"
+        ]
+      },
+      "allowedSkuTiers": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed SKU Tiers",
+          "description": "Specifies the allowed sku tiers"
+        },
+        "defaultValue": [
+          "Basic",
+          "Standard"
+        ]
+      },
+      "maxSkuCapacity": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum SKU Capacity",
+          "description": "Specifies the maximum sku capacity"
+        },
+        "defaultValue": 1000
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Kusto/clusters"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.Kusto/clusters/sku.tier",
+                "notIn": "[[parameters('allowedSkuTiers')]"
+              },
+              {
+                "field": "Microsoft.Kusto/clusters/sku.name",
+                "notIn": "[[parameters('allowedSkuNames')]"
+              },
+              {
+                "field": "Microsoft.Kusto/clusters/sku.capacity",
+                "greater": "[[parameters('maxSkuCapacity')]"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

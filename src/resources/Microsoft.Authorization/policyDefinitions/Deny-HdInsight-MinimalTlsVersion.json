@@ -1,0 +1,72 @@
+{
+  "name": "Deny-HdInsight-MinimalTlsVersion",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Azure HDInsight clusters should use minimal TLS version",
+    "description": "Enforces minimal TLS versions for HD Insight clusters.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "HDInsight",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "tlsVersions": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "TLS Versions",
+          "description": "Specifies the TLS versions that should be enforced"
+        },
+        "defaultValue": [
+          "1.2"
+        ]
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.HDInsight/clusters"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.HDInsight/clusters/minSupportedTlsVersion",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.HDInsight/clusters/minSupportedTlsVersion",
+                "notIn": "[[parameters('tlsVersions')]"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

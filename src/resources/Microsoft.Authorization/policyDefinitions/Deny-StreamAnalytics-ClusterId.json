@@ -1,0 +1,62 @@
+{
+  "name": "Deny-StreamAnalytics-ClusterId",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Stream Analytics must specify cluster",
+    "description": "Enforces use of Stream Analytics cluster.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Stream Analytics",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.StreamAnalytics/streamingjobs"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.StreamAnalytics/streamingjobs/cluster.id",
+                "exists": false
+              },
+              {
+                "value": "[[empty(field('Microsoft.StreamAnalytics/streamingjobs/cluster.id'))]",
+                "equals": true
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

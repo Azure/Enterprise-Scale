@@ -1,0 +1,74 @@
+{
+  "name": "Deny-HdInsight-NetworkProperties",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Azure HDInsight clusters should use private link",
+    "description": "Enforces private link for HDInsight clusters.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "HDInsight",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.HDInsight/clusters"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.HDInsight/clusters/networkProperties",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.HDInsight/clusters/networkProperties.resourceProviderConnection",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.HDInsight/clusters/networkProperties.resourceProviderConnection",
+                "notEquals": "Outbound"
+              },
+              {
+                "field": "Microsoft.HDInsight/clusters/networkProperties.privateLink",
+                "exists": false
+              },
+              {
+                "field": "Microsoft.HDInsight/clusters/networkProperties.privateLink",
+                "notEquals": "Enabled"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

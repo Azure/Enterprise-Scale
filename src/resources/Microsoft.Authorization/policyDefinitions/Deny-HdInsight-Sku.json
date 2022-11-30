@@ -1,0 +1,159 @@
+{
+  "name": "Deny-HdInsight-Sku",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Azure HDInsight should use specific SKUs",
+    "description": "Enforces use of specific SKUs for HDInsight clusters for cost management.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Budget",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "allowedVmSizes": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed VM Sizes",
+          "description": "Specifies the allowed vm sizes for HDInsight"
+        },
+        "defaultValue": [
+          "Standard_A1_v2",
+          "Standard_A2_v2",
+          "Standard_A4_v2",
+          "Standard_A8_v2",
+          "Standard_D1_v2",
+          "Standard_D2_v2",
+          "Standard_D3_v2",
+          "Standard_D4_v2",
+          "Standard_D5_v2",
+          "Standard_D12_v2",
+          "Standard_D13_v2",
+          "Standard_D14_v2",
+          "Standard_DS2_V2",
+          "Standard_DS3_V2",
+          "Standard_E4_v3",
+          "Standard_E8_v3"
+        ]
+      },
+      "maxTargetInstanceCount": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum Target Instance Count",
+          "description": "Specifies the maximum target instance count"
+        },
+        "defaultValue": 100
+      },
+      "maxAutoscaleInstanceCount": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum Autoscale Instance Count",
+          "description": "Specifies the maximum autoscale instance count"
+        },
+        "defaultValue": 100
+      }
+    },
+    "policyRule": {
+      "if": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.HDInsight/clusters"
+              },
+              {
+                "anyOf": [
+                  {
+                    "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].hardwareProfile.vmSize",
+                    "notIn": "[[parameters('allowedVmSizes')]"
+                  },
+                  {
+                    "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].targetInstanceCount",
+                    "greater": "[[parameters('maxTargetInstanceCount')]"
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].autoscale",
+                        "exists": true
+                      },
+                      {
+                        "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].autoscale.capacity",
+                        "exists": true
+                      },
+                      {
+                        "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].autoscale.capacity.maxInstanceCount",
+                        "greater": "[[parameters('maxAutoscaleInstanceCount')]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "field": "type",
+                "equals": "Microsoft.HDInsight/clusters/applications"
+              },
+              {
+                "anyOf": [
+                  {
+                    "field": "Microsoft.HDInsight/clusters/applications/computeProfile.roles[*].hardwareProfile.vmSize",
+                    "notIn": "[[parameters('allowedVmSizes')]"
+                  },
+                  {
+                    "field": "Microsoft.HDInsight/clusters/applications/computeProfile.roles[*].targetInstanceCount",
+                    "greater": "[[parameters('maxTargetInstanceCount')]"
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.HDInsight/clusters/applications/computeProfile.roles[*].autoscale",
+                        "exists": true
+                      },
+                      {
+                        "field": "Microsoft.HDInsight/clusters/applications/computeProfile.roles[*].autoscale.capacity",
+                        "exists": true
+                      },
+                      {
+                        "field": "Microsoft.HDInsight/clusters/applications/computeProfile.roles[*].autoscale.capacity.maxInstanceCount",
+                        "greater": "[[parameters('maxAutoscaleInstanceCount')]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

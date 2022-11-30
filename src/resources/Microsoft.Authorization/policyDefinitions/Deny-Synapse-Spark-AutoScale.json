@@ -1,0 +1,64 @@
+{
+  "name": "Deny-Synapse-Spark-AutoScale",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "Auto Scale should be enabled on Synapse Spark Pools",
+    "description": "Enforces auto scale settings for Synapse Spark Pools.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Synapse"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "maxNodeCount": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum Node Count",
+          "description": "Specifies the maximum node count of Spark clusters"
+        },
+        "defaultValue": 20
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.Synapse/workspaces/bigDataPools/autoScale.enabled",
+                "notEquals": true
+              },
+              {
+                "field": "Microsoft.Synapse/workspaces/bigDataPools/autoScale.maxNodeCount",
+                "greater": "[[parameters('maxNodeCount')]"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}

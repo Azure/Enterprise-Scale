@@ -1,0 +1,101 @@
+{
+  "name": "Deploy-Synapse-Sql-MetadataSync",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "Metadata sync should be enabled on Synapse SQL pools",
+    "description": "Configure metadata sync for Synapse SQL pools.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Synapse"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "DeployIfNotExists",
+          "Disabled"
+        ],
+        "defaultValue": "DeployIfNotExists"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Synapse/workspaces/sqlPools"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]",
+        "details": {
+          "type": "Microsoft.Synapse/workspaces/sqlPools/metadataSync",
+          "name": "default",
+          "existenceCondition": {
+            "allOf": [
+              {
+                "field": "Microsoft.Synapse/workspaces/sqlPools/metadataSync/enabled",
+                "equals": "true"
+              }
+            ]
+          },
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+          ],
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "location": {
+                    "type": "string"
+                  },
+                  "synapseWorkspaceName": {
+                    "type": "string"
+                  },
+                  "synapseSqlPoolName": {
+                    "type": "string"
+                  }
+                },
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.Synapse/workspaces/sqlPools/metadataSync",
+                    "apiVersion": "2019-06-01-preview",
+                    "name": "[[concat(parameters('synapseWorkspaceName'), '/', parameters('synapseSqlPoolName'), '/default')]",
+                    "properties": {
+                      "enabled": true
+                    }
+                  }
+                ],
+                "outputs": {}
+              },
+              "parameters": {
+                "location": {
+                  "value": "[[field('location')]"
+                },
+                "synapseWorkspaceName": {
+                  "value": "[[first(split(field('fullname'),'/'))]"
+                },
+                "synapseSqlPoolName": {
+                  "value": "[[field('name')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

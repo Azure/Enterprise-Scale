@@ -1,0 +1,81 @@
+{
+  "name": "Deny-EventHub-Sku",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Event Hub should use specific SKUs",
+    "description": "Enforces use of specific SKUs for Event Hub for cost management.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Event Hub",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled",
+          "Deny"
+        ],
+        "defaultValue": "Deny"
+      },
+      "allowedSkuNames": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed SKU Names",
+          "description": "Specifies the allowed sku names"
+        },
+        "defaultValue": [
+          "Standard",
+          "Premium"
+        ]
+      },
+      "maxSkuCapacity": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Maximum SKU Capacity",
+          "description": "Specifies the maximum sku capacity"
+        },
+        "defaultValue": 20
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.EventHub/namespaces"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.EventHub/namespaces/sku.name",
+                "notIn": "[[parameters('allowedSkuNames')]"
+              },
+              {
+                "field": "Microsoft.EventHub/namespaces/sku.capacity",
+                "greater": "[[parameters('maxSkuCapacity')]"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}
