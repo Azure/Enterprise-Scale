@@ -64,6 +64,46 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
+- Added the following new policy definitions to help customers secure data workloads (no corresponding assignments currently available):
+  - `Append-Synapse-Purview.json`
+  - `Deny-Cosmos-Cors.json`
+  - `Deny-Cosmos-KeyBasedMetadataWriteAccess.json`
+  - `Deny-DataExplorer-Sku.json`
+  - `Deny-DataExplorer-TrustedExternalTenants.json`
+  - `Deny-DataFactory-ApiVersion.json`
+  - `Deny-DataFactory-IdentityType.json`
+  - `Deny-DataFactory-IntegrationRuntimeManagedVirtualNetwork.json`
+  - `Deny-DataFactory-ManagedPrivateEndpoints.json`
+  - `Deny-DataFactory-PublicNetworkAccess.json`
+  - `Deny-EventHub-IpFilterRules.json`
+  - `Deny-EventHub-MaximumThroughputUnits.json`
+  - `Deny-EventHub-NetworkRuleSet.json`
+  - `Deny-EventHub-Sku.json`
+  - `Deny-EventHub-VNetRules.json`
+  - `Deny-HdInsight-MinimalTlsVersion.json`
+  - `Deny-HdInsight-NetworkProperties.json`
+  - `Deny-HdInsight-Sku.json`
+  - `Deny-IotHub-MinimalTlsVersion.json`
+  - `Deny-IotHub-Sku.json`
+  - `Deny-Search-PublicNetworkAccess.json`
+  - `Deny-Search-Sku.json`
+  - `Deny-StreamAnalytics-ClusterId.json`
+  - `Deny-StreamAnalytics-StreamingUnits.json`
+  - `Deny-Synapse-Firewall.json`
+  - `Deny-Synapse-LinkedAccessCheckOnTargetResource.json`
+  - `Deny-Synapse-Spark-AutoPause.json`
+  - `Deny-Synapse-Spark-AutoScale.json`
+  - `Deny-Synapse-Spark-ComputeIsolation.json`
+  - `Deny-Synapse-Spark-DefaultSparkLogFolder.json`
+  - `Deny-Synapse-Sql-Sku.json`
+  - `Deploy-DataFactory-ManagedVnet.json`
+  - `Deploy-Synapse-AuditingSettings.json`
+  - `Deploy-Synapse-Sql-AuditingSettings.json`
+  - `Deploy-Synapse-Sql-MetadataSync.json`
+  - `Deploy-Synapse-Sql-SecurityAlertPolicies.json`
+  - `Deploy-Synapse-Sql-TransparentDataEncryption.json`
+  - `Deploy-Synapse-Sql-VulnerabilityAssessment.json`
+  - `Deploy-Synapse-VulnerabilityAssessment.json`
 - "**Deploy Diagnostic Settings for Log Analytics to Log Analytics workspace**" definition added and also added to `Deploy-Diagnostics-LogAnalytics` initiative 
 - "**Deploy Diagnostic Settings for Databricks to Log Analytics workspace**" definition update
   - Version 1.1.0 -> 1.2.0
