@@ -104,7 +104,7 @@ Inside of the JSON is a `metadata` section which is required for policy creation
 | Source               | The source repository for the policy definition            |
 | alzCloudEnvironments | The cloud environment for which the policy is designed for |
 
-The definition created then needs to be included in the `policies.bicep` file inside of `src/templates/` under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
+The definition created then needs to be included in the [policies.bicep](../../src/templates/policies.bicep) file inside of [src/templates/](../../src/templates/) under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
 
 ![Policies bicep file example 1](./media/policies-bicep-example.png)
 
@@ -125,6 +125,18 @@ Once the policy work has been completed, a pull request has been submitted to th
 Policy versioning follows the same protocol as built-in policies. More information on that can be found here: [Azure Policy | Versioning.](https://github.com/Azure/azure-policy/blob/master/built-in-policies/README.md#versioning)
 
 For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](./ALZ-Deprecated-Services.md) page.
+
+If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](../../src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertiser](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
+
+![Example policy def in initiative](./media/example-def-in-init.png)
+
+Also find it in the policyDefinitions and remove reference as well:
+
+![Example policy def in initiative 2](./media/example-def-in-init-2.png)
+
+When working within the policy files, to read parameters which are set at the top level of the policy definition a double escape is needed. So instead of using `[parameters('someParameter')]` within the policy effect, it should read as `[[parameters('someParameter')]`.
+
+When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](../../eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies.md).
 
 ### Contribution scope
 
