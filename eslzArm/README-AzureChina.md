@@ -147,7 +147,7 @@ New-AzManagementGroupDeployment -Name "$($DeploymentName)-mdfc-config" `
                                 -emailContactAsc $SecurityContactEmailAddress `
                                 -Verbose
 
-# Assign Azure Policy to enable Azure Security Benchmark, deployed to top level management group
+# Assign Azure Policy to enable Microsoft Cloud Security Benchmark, deployed to top level management group
 
 New-AzManagementGroupDeployment -Name "$($DeploymentName)-asb" `
                                 -Location $Location `
