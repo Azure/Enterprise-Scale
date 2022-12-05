@@ -2,6 +2,8 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+
+  - [December 2022](#december-2022)
   - [November 2022](#november-2022)
   - [October 2022](#october-2022)
   - [September 2022](#september-2022)
@@ -46,6 +48,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### December 2022
+
+#### Policy
+
+- Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
+Impacted assignment: Deploy-ASC-Monitoring
 
 ### November 2022
 
