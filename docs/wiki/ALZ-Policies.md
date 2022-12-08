@@ -296,7 +296,13 @@ Each policy definition and initiative contains a version in its metadata section
 ```json
 "metadata": {
    "version": "1.0.0",
-   "category": "{categoryName}"
+   "category": "{categoryName}",
+   "source": "https://github.com/Azure/Enterprise-Scale/",
+   "alzCloudEnvironments": [
+      "AzureCloud",
+      "AzureChinaCloud",
+      "AzureUSGovernment"
+   ]
 }
 ```
 

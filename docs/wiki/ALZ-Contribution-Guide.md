@@ -122,7 +122,7 @@ Once the policy work has been completed, a pull request has been submitted to th
 
 ![pr-example](./media/pr-example.png)
 
-Policy versioning follows the same protocol as built-in policies. More information on that can be found here: [Azure Policy | Versioning.](https://github.com/Azure/azure-policy/blob/master/built-in-policies/README.md#versioning)
+Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](./ALZ-Policies.md#versioning).
 
 For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](./ALZ-Deprecated-Services.md) page.
 
@@ -141,6 +141,8 @@ When working within the policy files, to read parameters which are set at the to
 When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](../../eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies.md).
 
 Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [is located here](../../eslzArm/eslzArm.json).
+
+Details of 
 
 ### Contribution scope
 
