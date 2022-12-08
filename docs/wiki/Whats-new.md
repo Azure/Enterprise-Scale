@@ -2,6 +2,8 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+
+  - [December 2022](#december-2022)
   - [November 2022](#november-2022)
   - [October 2022](#october-2022)
   - [September 2022](#september-2022)
@@ -47,6 +49,14 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### December 2022
+
+#### Policy
+
+- Updated "**Deploy Diagnostic Settings to Azure Services**" initiative replacing deprecated policy for diagnostic settings on Storage Account
+- Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
+Impacted assignment: Deploy-ASC-Monitoring
+
 ### November 2022
 
 #### Docs
@@ -64,7 +74,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### Policy
 
-- "**Deploy Diagnostic Settings for Log Analytics to Log Analytics workspace**" definition added and also added to `Deploy-Diagnostics-LogAnalytics` initiative 
+- "**Deploy Diagnostic Settings for Log Analytics to Log Analytics workspace**" definition added and also added to `Deploy-Diagnostics-LogAnalytics` initiative
 - "**Deploy Diagnostic Settings for Databricks to Log Analytics workspace**" definition update
   - Version 1.1.0 -> 1.2.0
   - Added missing log categories
