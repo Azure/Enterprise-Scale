@@ -134,7 +134,9 @@ Also find it in the policyDefinitions and remove reference as well:
 
 ![Example policy def in initiative 2](./media/example-def-in-init-2.png)
 
-When working within the policy files, to read parameters which are set at the top level of the policy definition a double escape is needed. So instead of using `[parameters('someParameter')]` within the policy effect, it should read as `[[parameters('someParameter')]`.
+When working within the policy files, to read parameters which are set at the top level of the policy definition a double escape is needed for ARM. So instead of using `[parameters('someParameter')]` within the policy, you should use `[[parameters('someParameter')]` instead.
+
+> **Note:** When testing the policy manually in the portal or another deployment outside of the ALZ Accelerator (Portal), you will need to remove the double escaping, `[[`, and revert to normal ,`[`'
 
 When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](../../eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies.md).
 
