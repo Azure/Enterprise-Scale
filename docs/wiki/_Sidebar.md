@@ -4,7 +4,6 @@
 * [Community Calls](./Community-Calls)
 * [Frequently Asked Questions (FAQ)](./FAQ)
 * [Known issues](./ALZ-Known-Issues)
-* [Roadmap](./ALZ-Roadmap)
 * [What is Enterprise-Scale](./What-is-Enterprise-Scale)
   * [Architecture](./ALZ-Architecture)
   * [Policies](./ALZ-Policies)
