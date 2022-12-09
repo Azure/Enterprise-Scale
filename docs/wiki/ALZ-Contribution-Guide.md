@@ -87,9 +87,9 @@ Please see our [**security policy**](https://github.com/Azure/Enterprise-Scale/s
 
 ### Working with ALZ Custom policies
 
-Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones.
+Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones. The policies used in the reference implementations are mastered from the Enterprise-Scale repository.
 
-To work with policies, they are location in `src/resources/Microsoft.Authorization/*`.
+To work with policies, they are location in [src/resources/Microsoft.Authorization/*](../../src/resources/Microsoft.Authorization/).
 
 To create a new policy, it is worth taking the framework from an already existing policy.
 
@@ -140,20 +140,7 @@ When working within the policy files, to read parameters which are set at the to
 
 When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](../../eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies.md).
 
-Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [is located here](../../eslzArm/eslzArm.json).
-
-Details of 
-
-### Contribution scope
-
-The following is the scope of contributions to this repository:
-
-As the Azure platform evolves and new services and features are validated in production with customers, the design guidelines will be updated in the overall architecture context.
-
-With new Services, Resources, Resource properties and API versions, the implementation guide and reference implementation must be updated as appropriate.
-Primarily, the code contribution would be centered on Azure Policy definitions and Azure Policy assignments for the reference implementation.
-
-Submit a pull request for documentation updates using the following template 'placeholder'.
+Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](../../eslzArm/eslzArm.json).
 
 ### How to submit Pull Request to upstream repo
 
@@ -180,4 +167,4 @@ Submit a pull request for documentation updates using the following template 'pl
 
 ## Code of Conduct
 
-We are working hard to build strong and productive collaboration with our passionate community. We heard you loud and clear. We are working on set of principles and guidelines with Do's and Don'ts.
+We are working hard to build strong and productive collaboration with our passionate community. We heard you loud and clear. Follow the [Code of Conduct](https://github.com/Azure/Enterprise-Scale/blob/main/CODE_OF_CONDUCT.md).
