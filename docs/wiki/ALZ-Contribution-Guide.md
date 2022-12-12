@@ -142,28 +142,9 @@ When working with policies that are assigned by default, these are located under
 
 Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](../../eslzArm/eslzArm.json).
 
-### How to submit Pull Request to upstream repo
+### Forking the repository and submitting a Pull Request
 
-1. Create a new branch based on upstream/main by executing following command
-
-    ```shell
-    git checkout -b feature upstream/main
-    ```
-
-2. Checkout the file(s) from your working branch that you may want to include in PR
-
-    ```shell
-    #substitute file name as appropriate. below example
-    git checkout feature: .\.docs\Deploy\Deploy-lz.md
-    ```
-
-3. Push your Git branch to your origin
-
-    ```shell
-    git push origin -u
-    ```
-
-4. Create a pull request from upstream to your remote main
+To start contributing to this guide is it worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
 
 ## Code of Conduct
 
