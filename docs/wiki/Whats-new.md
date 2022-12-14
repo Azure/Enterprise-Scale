@@ -56,6 +56,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated "**Deploy Diagnostic Settings to Azure Services**" initiative replacing deprecated policy for diagnostic settings on Storage Account
 - Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
 Impacted assignment: Deploy-ASC-Monitoring
+- Removed ActivityLog Solution as an option to be deployed into the Log Analytics Workspace.
 
 ### November 2022
 
