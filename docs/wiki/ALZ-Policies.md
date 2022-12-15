@@ -350,4 +350,4 @@ Here are the changes that occur when a policy gets deprecated:
 - Description gets updated to provide additional information regarding the deprecation. 
 - The version number is updated with ‘-deprecated’ suffix. (see [Policy Versioning](#versioning) above) 
 
-> **NOTE:** The `name` value does not change in the file through deprecation or preview.
+> **NOTE:** The `name` value must not change in the file through deprecation or preview.

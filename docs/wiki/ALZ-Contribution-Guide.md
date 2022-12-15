@@ -89,7 +89,7 @@ Please see our [**security policy**](https://github.com/Azure/Enterprise-Scale/s
 
 Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones. The policies used in the reference implementations are mastered from the Enterprise-Scale repository.
 
-To work with policies, they are location in [src/resources/Microsoft.Authorization/*](../../src/resources/Microsoft.Authorization/).
+To work with policies, they are location in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/src/resources/Microsoft.Authorization).
 
 To create a new policy, it is worth taking the framework from an already existing policy.
 
