@@ -30,3 +30,4 @@
 * Azure Landing Zone (ALZ) Policies
   * [Policies included in Azure landing zones reference implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)
   * [Migrate Azure landing zones custom policies to Azure built-in policies](https://github.com/Azure/Enterprise-Scale/wiki/migrate-alz-policies-to-builtin)
+  * [Updating Azure landing zones custom policies to latest ALZ custom policies](https://github.com/Azure/Enterprise-Scale/wiki/update-alz-custom-policies-to-latest)
