@@ -56,6 +56,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated "**Deploy Diagnostic Settings to Azure Services**" initiative replacing deprecated policy for diagnostic settings on Storage Account
 - Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
 Impacted assignment: Deploy-ASC-Monitoring
+- Updated "**Deploy Diagnostic Settings for Data Factory to Log Analytics workspace" to include new categories of: `SandboxPipelineRuns` & `SandboxActivityRuns`
 
 ### November 2022
 
