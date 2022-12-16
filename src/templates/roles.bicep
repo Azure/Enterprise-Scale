@@ -11,18 +11,9 @@ param scope string = tenantResourceId('Microsoft.Management/managementGroups', t
 // Extract the environment name to dynamically determine which policies to deploy.
 var cloudEnv = environment().name
 
-// Default deployment locations used in templates
-var defaultDeploymentLocationByCloudType = {
-  AzureCloud: 'northeurope'
-  AzureChinaCloud: 'chinaeast2'
-  AzureUSGovernment: 'usgovvirginia'
-}
-
 // Used to identify template variables used in the templates for replacement.
 var templateVars = {
   scope: '/providers/Microsoft.Management/managementGroups/contoso'
-  defaultDeploymentLocation: '"location": "northeurope"'
-  localizedDeploymentLocation: '"location": "${defaultDeploymentLocationByCloudType[cloudEnv]}"'
   roleDisplayNameScope: '[contoso]'
 }
 
@@ -32,6 +23,9 @@ var templateVars = {
 var loadRoleDefinitions = {
   All: [
     loadTextContent('../resources/Microsoft.Authorization/roleDefinitions/Application-Owners.json')
+    loadTextContent('../resources/Microsoft.Authorization/roleDefinitions/Network-Management.json')
+    loadTextContent('../resources/Microsoft.Authorization/roleDefinitions/Security-Operations.json')
+    loadTextContent('../resources/Microsoft.Authorization/roleDefinitions/Subscription-Owner.json')
   ]
   AzureCloud: []
   AzureChinaCloud: []
@@ -67,12 +61,10 @@ var roleDefinitions = concat(roleDefinitionsByCloudType.All, roleDefinitionsByCl
 resource RoleDefinitions 'Microsoft.Authorization/roleDefinitions@2022-04-01' = [for role in roleDefinitions: {
   name: guid(role.roleName, topLevelManagementGroupPrefix)
   properties: {
-    roleName: role.roleName
-    description: role.description
-    type: role.type
-    permissions: role.permissions
-    assignableScopes: role.assignableScopes
+    roleName: role.properties.roleName
+    description: role.properties.description
+    type: role.properties.type
+    permissions: role.properties.permissions
+    assignableScopes: role.properties.assignableScopes
   }
 }]
-
-output roleDefinitionNames array = [for role in roleDefinitions: role.name]
