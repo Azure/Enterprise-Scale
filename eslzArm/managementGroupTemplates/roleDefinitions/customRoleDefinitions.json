@@ -1,0 +1,158 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "topLevelManagementGroupPrefix": {
+      "type": "string",
+      "defaultValue": "alz",
+      "maxLength": 10,
+      "metadata": {
+        "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of an Azure landing zone. DEFAULT VALUE = \"alz\""
+      }
+    }
+  },
+  "variables": {
+    "rolesInfo": {
+      "appOwner": {
+        "name": "[concat('[', managementGroup().name, '] Application owners (DevOps/AppOps)')]",
+        "description": "Contributor role granted for application/operations team at resource group level",
+        "id": "[guid(variables('rolesInfo').appOwner.name, parameters('topLevelManagementGroupPrefix'))]"
+      },
+      "netOps": {
+        "name": "[concat('[', managementGroup().name, '] Network management (NetOps)')]",
+        "description": "Platform-wide global connectivity management: Virtual networks, UDRs, NSGs, NVAs, VPN, Azure ExpressRoute, and others",
+        "id": "[guid(variables('rolesInfo').netOps.name, parameters('topLevelManagementGroupPrefix'))]"
+      },
+      "secOps": {
+        "name": "[concat('[', managementGroup().name, '] Security operations (SecOps)')]",
+        "description": "Security administrator role with a horizontal view across the entire Azure estate and the Azure Key Vault purge policy",
+        "id": "[guid(variables('rolesInfo').secOps.name, parameters('topLevelManagementGroupPrefix'))]"
+      },
+      "subOwner": {
+        "name": "[concat('[', managementGroup().name, '] Subscription owner')]",
+        "description": "Delegated role for subscription owner derived from subscription Owner role",
+        "id": "[guid(variables('rolesInfo').subOwner.name, parameters('topLevelManagementGroupPrefix'))]"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "name": "[variables('rolesInfo').appOwner.id]",
+      "properties": {
+        "roleName": "[variables('rolesInfo').appOwner.name]",
+        "description": "[variables('rolesInfo').appOwner.description]",
+        "type": "CustomRole",
+        "permissions": [
+          {
+            "actions": [
+              "*"
+            ],
+            "notActions": [
+              "Microsoft.Authorization/*/write",
+              "Microsoft.Network/publicIPAddresses/write",
+              "Microsoft.Network/virtualNetworks/write",
+              "Microsoft.KeyVault/locations/deletedVaults/purge/action"
+            ],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "[managementGroup().id]"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "name": "[variables('rolesInfo').netOps.id]",
+      "properties": {
+        "roleName": "[variables('rolesInfo').netOps.name]",
+        "description": "[variables('rolesInfo').netOps.description]",
+        "type": "CustomRole",
+        "permissions": [
+          {
+            "actions": [
+              "*/read",
+              "Microsoft.Network/*",
+              "Microsoft.Resources/deployments/*",
+              "Microsoft.Support/*"
+            ],
+            "notActions": [],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "[managementGroup().id]"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "name": "[variables('rolesInfo').secOps.id]",
+      "properties": {
+        "roleName": "[variables('rolesInfo').secOps.name]",
+        "description": "[variables('rolesInfo').secOps.description]",
+        "type": "CustomRole",
+        "permissions": [
+          {
+            "actions": [
+              "*/read",
+              "*/register/action",
+              "Microsoft.KeyVault/locations/deletedVaults/purge/action",
+              "Microsoft.PolicyInsights/*",
+              "Microsoft.Authorization/policyAssignments/*",
+              "Microsoft.Authorization/policyDefinitions/*",
+              "Microsoft.Authorization/policyExemptions/*",
+              "Microsoft.Authorization/policySetDefinitions/*",
+              "Microsoft.Insights/alertRules/*",
+              "Microsoft.Resources/deployments/*",
+              "Microsoft.Security/*",
+              "Microsoft.Support/*"
+            ],
+            "notActions": [],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "[managementGroup().id]"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "name": "[variables('rolesInfo').subOwner.id]",
+      "properties": {
+        "roleName": "[variables('rolesInfo').subOwner.name]",
+        "description": "[variables('rolesInfo').subOwner.description]",
+        "type": "CustomRole",
+        "permissions": [
+          {
+            "actions": [
+              "*"
+            ],
+            "notActions": [
+              "Microsoft.Authorization/*/write",
+              "Microsoft.Network/vpnGateways/*",
+              "Microsoft.Network/expressRouteCircuits/*",
+              "Microsoft.Network/routeTables/write",
+              "Microsoft.Network/vpnSites/*"
+            ],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "[managementGroup().id]"
+        ]
+      }
+    }
+  ],
+  "outputs": {}
+}
