@@ -59,7 +59,7 @@ var roleDefinitions = concat(roleDefinitionsByCloudType.All, roleDefinitionsByCl
 
 // Create the Role Definitions as needed for the target cloud environment
 resource RoleDefinitions 'Microsoft.Authorization/roleDefinitions@2022-04-01' = [for role in roleDefinitions: {
-  name: guid(role.roleName, topLevelManagementGroupPrefix)
+  name: guid(role.properties.roleName, topLevelManagementGroupPrefix)
   properties: {
     roleName: role.properties.roleName
     description: role.properties.description
