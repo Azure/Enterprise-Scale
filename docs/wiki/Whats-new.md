@@ -62,6 +62,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 Impacted assignment: Deploy-ASC-Monitoring
 - Updated "**Deploy Diagnostic Settings for Data Factory to Log Analytics workspace" to include new categories of: `SandboxPipelineRuns` & `SandboxActivityRuns`
 
+#### Tooling
+
+- Removed `ActivityLog` Solution as an option to be deployed into the Log Analytics Workspace. As this has been superseded by the Activity Log Insights Workbook, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights)
+
 ### November 2022
 
 #### Docs

@@ -1,11 +1,8 @@
-# Azure Landing Zones Deprecated Policies
+# Azure Landing Zones Deprecated Services
 
 ## In this section
 
-- [Azure Landing Zones Deprecated Policies](#azure-landing-zones-deprecated-policies)
-  - [In this section](#in-this-section)
-  - [Overview](#overview)
-  - [Deprecated policies](#deprecated-policies)
+- [Azure Landing Zones Deprecated Services](#azure-landing-zones-deprecated-services)
 
 ## Overview
 
@@ -24,3 +21,7 @@ Over time, a deprecation process of there `ALZ / custom` policies will have to t
 | Deploy-Nsg-FlowLogs | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
 | Deploy-Nsg-FlowLogs-to-LA | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
 | Deny-PublicIP | [6c112d4e-5bc7-47ae-a041-ea2d9dccd749](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html?) | Custom policy replaced by built-in requires less administration overhead |½
+
+## Deprecated services
+
+- Removed `ActivityLog` Solution as an option to be deployed into the Log Analytics Workspace. As this has been superseded by the Activity Log Insights Workbook, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights)
