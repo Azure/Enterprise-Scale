@@ -51,11 +51,16 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### December 2022
 
+#### Tooling
+
+- Added ALZ Custom RBAC Role Definitions, as listed [here](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access-landing-zones#rbac-recommendations) to ALZ Portal Experience. Fixing [#1079](https://github.com/Azure/Enterprise-Scale/issues/1079)
+
 #### Policy
 
 - Updated "**Deploy Diagnostic Settings to Azure Services**" initiative replacing deprecated policy for diagnostic settings on Storage Account
 - Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
 Impacted assignment: Deploy-ASC-Monitoring
+- Updated "**Deploy Diagnostic Settings for Data Factory to Log Analytics workspace" to include new categories of: `SandboxPipelineRuns` & `SandboxActivityRuns`
 
 #### Tooling
 

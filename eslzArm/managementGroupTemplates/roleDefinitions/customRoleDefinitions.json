@@ -1,0 +1,169 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.13.1.58284",
+      "templateHash": "12224779871540963425"
+    }
+  },
+  "variables": {
+    "$fxv#0": {
+      "name": "c9a07a05-a1fc-53fe-a565-5eed25597c03",
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "roleName": "Application-Owners",
+        "description": "Contributor role granted for application/operations team at resource group level",
+        "type": "customRole",
+        "permissions": [
+          {
+            "actions": [
+              "*"
+            ],
+            "notActions": [
+              "Microsoft.Authorization/*/write",
+              "Microsoft.Network/publicIPAddresses/write",
+              "Microsoft.Network/virtualNetworks/write",
+              "Microsoft.KeyVault/locations/deletedVaults/purge/action"
+            ],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "/providers/Microsoft.Management/managementGroups/contoso"
+        ]
+      }
+    },
+    "$fxv#1": {
+      "name": "dc726155-3983-5405-b446-9bb27b94e02c",
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "roleName": "Network-Management",
+        "description": "Platform-wide global connectivity management: virtual networks, UDRs, NSGs, NVAs, VPN, Azure ExpressRoute, and others",
+        "type": "customRole",
+        "permissions": [
+          {
+            "actions": [
+              "*/read",
+              "Microsoft.Network/*",
+              "Microsoft.Resources/deployments/*",
+              "Microsoft.Support/*"
+            ],
+            "notActions": [],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "/providers/Microsoft.Management/managementGroups/contoso"
+        ]
+      }
+    },
+    "$fxv#2": {
+      "name": "d3584a79-4f0d-5980-aa3c-7a76ba783b76",
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "roleName": "Security-Operations",
+        "description": "Security Administrator role with a horizontal view across the entire Azure estate and the Azure Key Vault purge policy.",
+        "type": "customRole",
+        "permissions": [
+          {
+            "actions": [
+              "*/read",
+              "*/register/action",
+              "Microsoft.KeyVault/locations/deletedVaults/purge/action",
+              "Microsoft.PolicyInsights/*",
+              "Microsoft.Authorization/policyAssignments/*",
+              "Microsoft.Authorization/policyDefinitions/*",
+              "Microsoft.Authorization/policyExemptions/*",
+              "Microsoft.Authorization/policySetDefinitions/*",
+              "Microsoft.Insights/alertRules/*",
+              "Microsoft.Resources/deployments/*",
+              "Microsoft.Security/*",
+              "Microsoft.Support/*"
+            ],
+            "notActions": [],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "/providers/Microsoft.Management/managementGroups/contoso"
+        ]
+      }
+    },
+    "$fxv#3": {
+      "name": "402344ce-48c4-5ac1-9320-16726050f964",
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "roleName": "Subscription-Owner",
+        "description": "Delegated role for subscription owner generated from subscription Owner role",
+        "type": "customRole",
+        "permissions": [
+          {
+            "actions": [
+              "*"
+            ],
+            "notActions": [
+              "Microsoft.Authorization/*/write",
+              "Microsoft.Network/vpnGateways/*",
+              "Microsoft.Network/expressRouteCircuits/*",
+              "Microsoft.Network/routeTables/write",
+              "Microsoft.Network/vpnSites/*"
+            ],
+            "dataActions": [],
+            "notDataActions": []
+          }
+        ],
+        "assignableScopes": [
+          "/providers/Microsoft.Management/managementGroups/contoso"
+        ]
+      }
+    },
+    "cloudEnv": "[environment().name]",
+    "loadRoleDefinitions": {
+      "All": [
+        "[variables('$fxv#0')]",
+        "[variables('$fxv#1')]",
+        "[variables('$fxv#2')]",
+        "[variables('$fxv#3')]"
+      ],
+      "AzureCloud": [],
+      "AzureChinaCloud": [],
+      "AzureUSGovernment": []
+    },
+    "roleDefinitionsByCloudType": {
+      "All": "[variables('loadRoleDefinitions').All]",
+      "AzureCloud": "[variables('loadRoleDefinitions').AzureCloud]",
+      "AzureChinaCloud": "[variables('loadRoleDefinitions').AzureChinaCloud]",
+      "AzureUSGovernment": "[variables('loadRoleDefinitions').AzureUSGovernment]"
+    },
+    "roleDefinitions": "[concat(variables('roleDefinitionsByCloudType').All, variables('roleDefinitionsByCloudType')[variables('cloudEnv')])]"
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "RoleDefinitions",
+        "count": "[length(variables('roleDefinitions'))]"
+      },
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(variables('roleDefinitions')[copyIndex()].properties.roleName, managementGroup().name)]",
+      "properties": {
+        "roleName": "[format('[{0}] {1}', managementGroup().name, variables('roleDefinitions')[copyIndex()].properties.roleName)]",
+        "description": "[variables('roleDefinitions')[copyIndex()].properties.description]",
+        "type": "[variables('roleDefinitions')[copyIndex()].properties.type]",
+        "permissions": "[variables('roleDefinitions')[copyIndex()].properties.permissions]",
+        "assignableScopes": [
+          "[managementGroup().id]"
+        ]
+      }
+    }
+  ]
+}
