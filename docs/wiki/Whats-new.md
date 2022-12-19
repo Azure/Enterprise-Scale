@@ -51,6 +51,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### December 2022
 
+#### Tooling
+
+- Added ALZ Custom RBAC Role Definitions, as listed [here](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access-landing-zones#rbac-recommendations) to ALZ Portal Experience. Fixing [#1079](https://github.com/Azure/Enterprise-Scale/issues/1079)
+
 #### Policy
 
 - Updated "**Deploy Diagnostic Settings to Azure Services**" initiative replacing deprecated policy for diagnostic settings on Storage Account
