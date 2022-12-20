@@ -50,7 +50,7 @@ Moreover, as the Azure platform evolves or our guidance changes there will likel
 
 If you believe you have found a bug, please use the following process:
 
-1. Check the [**FAQ**](./FAQ) and [**Known Issues**](https://github.com/Azure/Enterprise-Scale/docs/wiki/ALZ-Known-Issues) for a list of common questions and issues.
+1. Check the [**FAQ**](./FAQ) and [**Known Issues**](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Known-Issues) for a list of common questions and issues.
 1. Check existing [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues) to see whether the issue has already been reported.
     1. If the issue is **open**, add a comment rather than create a new one.
     1. If the issue is **closed**, check whether the proposed fix resolves your issue.
@@ -89,13 +89,13 @@ Please see our [**security policy**](https://github.com/Azure/Enterprise-Scale/s
 
 Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones. The policies used in the reference implementations are mastered from the Enterprise-Scale repository.
 
-To work with policies, they are location in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/src/resources/Microsoft.Authorization).
+To work with policies, they are location in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization).
 
 To create a new policy, it is worth taking the framework from an already existing policy.
 
 Inside of the JSON is a `metadata` section which is required for policy creation.
 
-![Policy Metadata](https://github.com/Azure/Enterprise-Scale/docs/wiki/media/policy-metadata-example.png)
+![Policy Metadata](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policy-metadata-example.png)
 
 | Metadata Value       | Description                                                |
 |----------------------|------------------------------------------------------------|
@@ -104,9 +104,9 @@ Inside of the JSON is a `metadata` section which is required for policy creation
 | Source               | The source repository for the policy definition            |
 | alzCloudEnvironments | The cloud environment for which the policy is designed for |
 
-The definition created then needs to be included in the [policies.bicep](https://github.com/Azure/Enterprise-Scale/src/templates/policies.bicep) file inside of [src/templates/](https://github.com/Azure/Enterprise-Scale/src/templates/) under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
+The definition created then needs to be included in the [policies.bicep](https://github.com/Azure/Enterprise-Scale/blob/main/src/templates/policies.bicep) file inside of [src/templates/](https://github.com/Azure/Enterprise-Scale/blob/main/src/templates/) under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
 
-![Policies bicep file example 1](https://github.com/Azure/Enterprise-Scale/docs/wiki/media/policies-bicep-example.png)
+![Policies bicep file example 1](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policies-bicep-example.png)
 
 For a policy definition, additional code should be added inside of the `loadPolicyDefinitions` variable under the correct environment:
 
@@ -120,27 +120,27 @@ The policy definition files will be compiled into a `policies.json` file from th
 
 Once the policy work has been completed, a pull request has been submitted to the repository:
 
-![pr-example](https://github.com/Azure/Enterprise-Scale/docs/wiki/media/pr-example.png)
+![pr-example](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/pr-example.png)
 
-Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](https://github.com/Azure/Enterprise-Scale/docs/wiki/ALZ-Policies.md#versioning).
+Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Policies.md#versioning).
 
-For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](https://github.com/Azure/Enterprise-Scale/docs/wiki/ALZ-Deprecated-Services.md) page.
+For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Deprecated-Services.md) page.
 
-If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](https://github.com/Azure/Enterprise-Scale/src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertiser](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
+If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertiser](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
 
-![Example policy def in initiative](https://github.com/Azure/Enterprise-Scale/docs/wiki/media/example-def-in-init.png)
+![Example policy def in initiative](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/example-def-in-init.png)
 
 Also find it in the policyDefinitions and remove reference as well:
 
-![Example policy def in initiative 2](https://github.com/Azure/Enterprise-Scale/docs/wiki/media/example-def-in-init-2.png)
+![Example policy def in initiative 2](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/example-def-in-init-2.png)
 
 When working within the policy files, to read parameters which are set at the top level of the policy definition a double escape is needed for ARM. So instead of using `[parameters('someParameter')]` within the policy, you should use `[[parameters('someParameter')]` instead.
 
 > **Note:** When testing the policy manually in the portal or another deployment outside of the ALZ Accelerator (Portal), you will need to remove the double escaping, `[[`, and revert to normal ,`[`'
 
-When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](https://github.com/Azure/Enterprise-Scale/docs/wiki/ALZ-Policies.md).
+When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Policies.md).
 
-Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](https://github.com/Azure/Enterprise-Scale/eslzArm/eslzArm.json).
+Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/eslzArm.json).
 
 ### Forking the repository and submitting a Pull Request
 
