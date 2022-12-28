@@ -127,11 +127,11 @@ Impacted assignment: Deploy-ASC-Monitoring
   - Added missing Zones for **"WebPubSub"** and **"azure-devices-provisioning"**, so Initiative Assignment works correctly
   - Minor correction related to **ASR Private DNS Zone variable**, so Initiative Assignment works correctly
   - Conversion of **"Azure Batch"** Private DNS Zone (from regional to global), to properly align with latest respective documentation and functionality
-- Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection). 
+- Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
 - Incremented version for policy Deploy-DDoSProtection from "version":"1.0.0" to "version": "1.0.1"
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
 - Added `AZFWFlowTrace` category for Azure Firewall in associated Diagnostic Policy
-- Deprecated the following ALZ policies 
+- Deprecated the following ALZ policies
   - [Deploy-Nsg-FlowLogs](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html)
   - [Deploy-Nsg-FlowLogs-to-LA](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)
   - [Deny-PublicIp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicIP.html)
@@ -153,7 +153,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 - "**"Deploy-MDFC-Config"**" definition update
   - Updated policy definitions set Deploy-MDFC-Config, Deploy-MDFC-Config(US Gov), Deploy-MDFC-Config (China)
     - added new parameter `minimalSeverity`.
-    - added default value for multiple  parameters. 
+    - added default value for multiple  parameters.
   
 ### Other
 
@@ -294,7 +294,7 @@ Impacted assignment: Deploy-ASC-Monitoring
   - Add 2 new categories for Host Pools Diagnostic Settings
     - `NetworkData`
     - `SessionHostManagement`
-- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
+- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per <https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan> - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
   - Added to `Deploy-Diagnostics-LogAnalytics` Policy Initiative
 - Added additional log categories to `Deploy-Diagnostics-Firewall` for Azure Firewall Diagnostic Settings Policy - Fixing issue [issue #985](https://github.com/Azure/Enterprise-Scale/issues/985)
 - Added additional log categories to `Deploy-Diagnostics-APIMgmt` for Azure API Management Diagnostic Settings Policy - Fixing issue [issue #986](https://github.com/Azure/Enterprise-Scale/issues/986)
@@ -469,9 +469,8 @@ Impacted assignment: Deploy-ASC-Monitoring
 
 #### Docs
 
-
 - Updates to [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) to include instructions for deploying each of the reference implementations.
-- Updated Deploying Enterprise Scale wiki page with updated workflow steps. (https://github.com/Azure/Enterprise-Scale/pull/827)
+- Updated Deploying Enterprise Scale wiki page with updated workflow steps. (<https://github.com/Azure/Enterprise-Scale/pull/827>)
 - Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki
 - Added [architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
 
@@ -503,14 +502,14 @@ Impacted assignment: Deploy-ASC-Monitoring
 
 #### Docs
 
-- Added reference to Enterprise-Scale Analytics (https://github.com/Azure/Enterprise-Scale/pull/809)
-- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions (https://github.com/Azure/Enterprise-Scale/pull/802)
+- Added reference to Enterprise-Scale Analytics (<https://github.com/Azure/Enterprise-Scale/pull/809>)
+- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions (<https://github.com/Azure/Enterprise-Scale/pull/802>)
 
 #### Tooling
 
-- Added Option to select Azure Firewall SKU (https://github.com/Azure/Enterprise-Scale/pull/793)
+- Added Option to select Azure Firewall SKU (<https://github.com/Azure/Enterprise-Scale/pull/793>)
 - [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
-- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (https://github.com/Azure/Enterprise-Scale/pull/820)
+- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (<https://github.com/Azure/Enterprise-Scale/pull/820>)
 
 ### Policy
 
@@ -541,14 +540,15 @@ Impacted assignment: Deploy-ASC-Monitoring
 - [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
 - Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
 - Removed old codebase for the different reference implementations, and converged to a single [ARM codebase](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
-- Improved Network CIDR Range Validation within the Azure Portal experience (https://github.com/Azure/Enterprise-Scale/pull/767).
+- Improved Network CIDR Range Validation within the Azure Portal experience (<https://github.com/Azure/Enterprise-Scale/pull/767>).
 
 #### Policy
 
-- Some minor changes to parameters and variables, tidying up some code. 
+- Some minor changes to parameters and variables, tidying up some code.
   - See [PR #727](https://github.com/Azure/Enterprise-Scale/pull/727)
 - Updated policy Deploy-VNET-HubSpoke to address [#726](https://github.com/Azure/Enterprise-Scale/issues/726) and [#728](https://github.com/Azure/Enterprise-Scale/issues/728)
   - See [PR #772](https://github.com/Azure/Enterprise-Scale/pull/772)
+
 #### Other
 
 - Published resources from the first Enterprise Scale Community Call - held on the 25th August 2021
@@ -580,7 +580,7 @@ Impacted assignment: Deploy-ASC-Monitoring
   - The composite ARM templates can be sequenced on their own, independently of each other (although strict sequencing is required to ensure the same outcome)
     - Guidance coming soon for this
   - Customers can deploy from private repository if they want to sequence at their own pace.
-- ~~[AzOps release v1.3.0](https://github.com/Azure/AzOps/releases/tag/1.3.0)~~ 
+- ~~[AzOps release v1.3.0](https://github.com/Azure/AzOps/releases/tag/1.3.0)~~
 - ~~[AzOps release v1.3.1](https://github.com/Azure/AzOps/releases/tag/1.3.1)~~
 - [AzOps release v1.4.0](https://github.com/Azure/AzOps/releases/tag/1.4.0)
 
@@ -588,8 +588,8 @@ Impacted assignment: Deploy-ASC-Monitoring
 
 - Various custom ESLZ Azure Policies have moved to Built-In Azure Policies, see below table for more detail:
 
-> You may continue to use the ESLZ custom Azure Policy as it will still function as it does today. However, we recommend you move to assigning the new Built-In version of the Azure Policy. 
-> 
+> You may continue to use the ESLZ custom Azure Policy as it will still function as it does today. However, we recommend you move to assigning the new Built-In version of the Azure Policy.
+>
 > **Please note** that moving to the new Built-In Policy Definition will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
 
 **Policy Definitions Updates**
@@ -631,7 +631,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 |   Deny-PublicEndpoints   | Public network access should be disabled for PAAS services |     Network     |    Deny-PublicPaaSEndpoints     | Public network access should be disabled for PaaS services |     N/A      |        Moved to using Built-In policy definitions only (as above)         |
 |     ***New Policy***     |                      ***New Policy***                      |       N/A       |    Deploy-Private-DNS-Zones     |   Configure Azure PaaS services to use private DNS zones   |   Network    |                                                                           |
 
-- Moved several of the diagnostics Policies to built-in, and updating the diagnostics Initiative 
+- Moved several of the diagnostics Policies to built-in, and updating the diagnostics Initiative
   - This means there's a new resource name as update of existing one is not be allowed due to removal of parameters
 - Added Policy Initiative for enforcing Private DNS Zone Association with Private Link (using built-in)
 - Added Policy Initiative for denying Public Endpoints (using built-in)
