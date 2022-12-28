@@ -103,4 +103,4 @@ In order to create subscriptions at scale using ARM templates, we strongly recom
 
     It is recommend to enable the management group hierarchy settings in your Azure tenant to ensure that role-based-access-control is required to create, update, and delete management groups. By enabling this setting default management group for new subscription has to be specified.
 
-    ![management group hierarchy settings](../../docs/media/mg-hierarchy-settings.png)
+    ![management group hierarchy settings](../../docs/wiki/media/mg-hierarchy-settings.png)
