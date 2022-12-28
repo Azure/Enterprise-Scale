@@ -37,5 +37,6 @@ The below URLs can be updated where the placeholders are, look for `{YOUR GITHUB
 - [ ] Associated it with relevant [issues](https://github.com/Azure/Enterprise-Scale/issues), for tracking and closure.
 - [ ] Ensured my code/branch is up-to-date with the latest changes in the `main` [branch](https://github.com/Azure/Enterprise-Scale/tree/main)
 - [ ] Performed testing and provided evidence.
+- [ ] Ensured [contribution guidance](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution-Guide) is followed.
 - [ ] Updated relevant and associated documentation.
 - [ ] Updated the ["What's New?"](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) wiki page (located: `/docs/wiki/whats-new.md`)

@@ -80,6 +80,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
 Impacted assignment: Deploy-ASC-Monitoring
 - Updated "**Deploy Diagnostic Settings for Data Factory to Log Analytics workspace" to include new categories of: `SandboxPipelineRuns` & `SandboxActivityRuns`
+- Add missing `minimalSeverity` parameter to `Deploy-ASC-SecurityContacts` Policy Definition
 
 #### Tooling
 
