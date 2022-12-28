@@ -70,14 +70,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated the guidance for contributing to the [Azure/Enterprise-Scale](https://github.com/Azure/Enterprise-Scale/) repository
 
-- Updated the Enterprise-scale [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest updates on Azure landing zone accelerator.
-
-  - [Deploy Azure landing zone portal accelerator](./Deploying-ALZ)
-  - [Deployment guidance for Small Enterprises](./Deploying-ALZ-BasicSetup)
-  - [How to deploy without hybrid connectivity](./Deploying-ALZ-Foundation)
-  - [Deployment with hub and spoke network topology](./Deploying-ALZ-HubAndSpoke)
-  - [Deployment with Azure VWAN network topology](./Deploying-ALZ-VWAN)
-
 #### Tooling
 
 - Added ALZ Custom RBAC Role Definitions, as listed [here](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access-landing-zones#rbac-recommendations) to ALZ Portal Experience. Fixing [#1079](https://github.com/Azure/Enterprise-Scale/issues/1079)
@@ -207,6 +199,16 @@ Impacted assignment: Deploy-ASC-Monitoring
 - *No updates, yet.*
 
 ### September 2022
+
+#### Docs
+
+- Updated the Enterprise-scale [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest updates on Azure landing zone accelerator.
+
+  - [Deploy Azure landing zone portal accelerator](./Deploying-ALZ)
+  - [Deployment guidance for Small Enterprises](./Deploying-ALZ-BasicSetup)
+  - [How to deploy without hybrid connectivity](./Deploying-ALZ-Foundation)
+  - [Deployment with hub and spoke network topology](./Deploying-ALZ-HubAndSpoke)
+  - [Deployment with Azure VWAN network topology](./Deploying-ALZ-VWAN)
 
 #### Tooling
 
