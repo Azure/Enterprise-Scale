@@ -13,7 +13,7 @@
 - [Enterprise-Scale Management Group Structure](#enterprise-scale-management-group-structure)
 - [What happens when you deploy Enterprise-Scale?](#what-happens-when-you-deploy-enterprise-scale)
 
------- 
+------
 This section describes at a high level how Enterprise-Scale reference implementation works. Your landing zones are the output of a multi-subscription environment for all your Azure services, where compliance, guardrails, security, networking, and identity is provided at scale by the platform.
 
 ## Enterprise-Scale design principles
@@ -86,7 +86,7 @@ By default, all recommended settings and resources recommendations are enabled a
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
 
-- Azure Policies that will enable autonomy for the platform and the landing zones. The full list of policies leveraged by Enterprise-Scale, their intent, assignment scope, and life-cycle can be [viewed here](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md).
+- Azure Policies that will enable autonomy for the platform and the landing zones. The full list of policies leveraged by Enterprise-Scale, their intent, assignment scope, and life-cycle can be [viewed here](./ALZ-Policies).
 - An Azure subscription dedicated for **Management**, which enables core platform capabilities at scale using Azure Policy such as:
 
   - A Log Analytics workspace and an Automation account

@@ -3,29 +3,9 @@
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/azure/enterprise-scale.svg)](http://isitmaintained.com/project/azure/enterprise-scale "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/azure/enterprise-scale.svg)](http://isitmaintained.com/project/azure/enterprise-scale "Percentage of issues still open")
 
-## Navigation Menu
+## User documentation
 
-* [What's New?](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new)
-* [Community Calls](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls)
-* [Enterprise-Scale Landing Zones - User Guide](https://github.com/Azure/Enterprise-Scale/wiki#enterprise-scale-landing-zones-user-guide)
-* [Enterprise-Scale Architecture](./docs/EnterpriseScale-Architecture.md)
-* [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
-* [Configure Azure permission for ARM Template deployments](./docs/EnterpriseScale-Setup-azure.md)
-* [Deploy Reference Implementation](./docs/EnterpriseScale-Deploy-reference-implentations.md)
-  * [Policies included in Azure landing zones reference implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)
-  * [Contoso Reference - Scope and Design](./docs/reference/contoso/Readme.md)
-  * [AdventureWorks Reference - Scope and Design](./docs/reference/adventureworks/README.md)
-  * [WingTip Reference - Scope and Design](./docs/reference/wingtip/README.md)
-  * [Trey Research Reference - Scope and Design](./docs/reference/treyresearch/README.md)
-* [Create Landing Zones](./docs/EnterpriseScale-Deploy-landing-zones.md)
-* [Deploy workloads into Landing Zones](./workloads)
-* [Getting started with Infrastructure-as-Code](https://github.com/Azure/AzOps-Accelerator/wiki)
-* [Azure Landing Zones Deprecated Services](./docs/wiki/ALZ-Deprecated-Services.md)
-* [Known Issues](./docs/EnterpriseScale-Known-Issues.md)
-* [How Do I Contribute?](./docs/EnterpriseScale-Contribution.md)
-* [Frequently Asked Questions (FAQ)](https://github.com/Azure/Enterprise-Scale/wiki/FAQ)
-* [Roadmap](./docs/EnterpriseScale-Roadmap.md)
-* [Microsoft Support Policy](./SUPPORT.md)
+To find out more about the Azure landing zones reference implementation, please refer to the [documentation on our Wiki](https://github.com/Azure/Enterprise-Scale/wiki)
 
 ---
 
@@ -35,7 +15,7 @@ The Enterprise-Scale architecture provides prescriptive guidance coupled with Az
 
 The Enterprise-Scale architecture is modular by design and allows organizations to start with foundational landing zones that support their application portfolios, and the architecture enables organizations to start as small as needed and scale alongside their business requirements regardless of scale point.
 
-![hippo](./docs/media/ESLZ.gif)
+![Animated image showing the modularity of Azure landing zones](./docs/wiki/media/ESLZ.gif)
 
 ---
 
@@ -55,7 +35,7 @@ The Enterprise-Scale reference implementations in this repository are intended t
 | Be aligned with cloud provider’s platform roadmap | Yes |
 | UI Experience and simplified setup | Yes, Azure portal |
 | All critical services are present and properly configured according to recommend best practices for identity & access management, governance, security, network and logging | Yes, using a multi-subscription design, aligned with Azure platform roadmap |
-| Automation capabilities (IaC/DevOps) | Yes: ARM, Policy, GitHub/Azure DevOps CICD pipeline option included |
+| Automation capabilities (IaC/DevOps) | Yes: ARM, Policy, GitHub/Azure DevOps CI/CD pipeline option included |
 | Provides long-term self-sufficiency | Yes, enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency, the RIs are there to get you started |
 | Enables migration velocity across the organization | Yes, enterprise-scale architecture -> 1:N landing zones, Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
 | Achieves operational excellence | Yes. Enables autonomy for platform and application teams with a policy driven governance and management |
@@ -66,7 +46,7 @@ To fully leverage this reference implementation in this repository, readers must
 
 It is also assumed that readers have a broad understanding of key Azure constructs and services in order to fully contextualize the prescriptive recommendations contained within Enterprise-Scale.
 <!--
-![Enterprise-Scale ](./docs/media/ES-process.png)
+![Enterprise-Scale ](./docs/wiki/media/ES-process.png)
 -->
 
 ## Deploying Enterprise-Scale Architecture in your own environment
@@ -87,7 +67,7 @@ The Enterprise-Scale architecture is modular by design and allows customers to s
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+the rights to use your contribution. For details, visit [Contributor License Agreement (CLA)](https://cla.opensource.microsoft.com).
 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
