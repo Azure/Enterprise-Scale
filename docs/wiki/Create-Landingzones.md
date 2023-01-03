@@ -23,7 +23,7 @@ One of the benefits using this approach is the management of platform security a
 
 ## Pre-requisites
 
-Before getting started with this first steps ensure that AzOps has been [setup and configured for the target environment](Deploying-Enterprise-Scale.md#validation-post-deployment-github). In this documentation the same Service Principal will be used to to assign the permission to create landing zones (subscription).
+Before getting started with this first steps ensure that AzOps has been [setup and configured for the target environment](./Deploying-Enterprise-Scale#validation-post-deployment-github). In this documentation the same Service Principal will be used to to assign the permission to create landing zones (subscription).
 
 For the Service Principal permissions to create subscriptions, access to an *enrollment account* that has a billing id associated is required.
 
@@ -35,7 +35,7 @@ Creating Azure subscriptions programmatically is allowed on specific types of Az
 
 This section describes how AzOps is used to create subscriptions (landing zones) under management groups using ARM templates. In the following steps the *Enrollment account subscription creator* role will be assigned to a SPN as illustrated in the following article:
 
-![EA account / Service Principal](media/ea-account-spn.png)
+![EA account / Service Principal](./media/ea-account-spn.png)
 
 **Login and fetch access token**
 Login with the *enrollment account* (e.g. with `Login-AzAccount`) and execute the following commands to fetch a valid access token for the account:
@@ -140,11 +140,11 @@ PlatformOps will use AzOps CI/CD pipelines to create subscriptions (landing zone
 
 ## Create a new landing zone (subscriptions)
 
-Creating a landing zone (subscription) is as simple as creating any other resource in Azure. The same sequence of steps will be needed as used for other platform resource deployments (e.g. [deploy a policyAssignments](./Deploying-Enterprise-Scale.md#create-new-policy-assignment-for-validation)).
+Creating a landing zone (subscription) is as simple as creating any other resource in Azure. The same sequence of steps will be needed as used for other platform resource deployments (e.g. [deploy a policyAssignments](./Deploying-Enterprise-Scale#create-new-policy-assignment-for-validation)).
 
 To successfully deploy a subscription using AzOps the following steps will be required:
 
-- 'Connect' AzOps to the Azure Environment, ensure that ['Pull' workflow runs successfully](./Deploying-Enterprise-Scale.md#validation-post-deployment-github)
+- 'Connect' AzOps to the Azure Environment, ensure that ['Pull' workflow runs successfully](./Deploying-Enterprise-Scale#validation-post-deployment-github)
 - Enable the AzOps SPN for subscription creation as documented [here](#enable-service-principal-to-create-landing-zones)
 - Ensure that SPN has Owner permissions at the target management group the subscription will be deployed under
 

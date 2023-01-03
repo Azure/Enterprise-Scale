@@ -72,14 +72,6 @@
             ],
             "defaultValue": "Yes"
         },
-        "enableActivityLog": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
-        },
         "enableVmInsights": {
             "type": "string",
             "allowedValues": [
@@ -702,6 +694,7 @@
         "deploymentUris": {
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
+            "roleDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleDefinitions/customRoleDefinitions.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
@@ -756,6 +749,7 @@
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
+            "roleDefsDeploymentName": "[take(concat('alz-RoleDefs', variables('deploymentSuffix')), 64)]",
             "policyDeploymentName": "[take(concat('alz-Policy', variables('deploymentSuffix')), 64)]",
             "azOpsRbacDeploymentName": "[take(concat('alz-AzOpsRbac', variables('deploymentSuffix')), 64)]",
             "azOpsRgDeploymentName": "[take(concat('alz-AzOpsRg', variables('deploymentSuffix')), 64)]",
@@ -875,60 +869,72 @@
             "backupForIdentity": "[take(guid(concat(parameters('enterpriseScaleCompanyPrefix'), 'idbackup')), 10)]"
         },
         "privateDnsZones": [
-            "privatelink.azure-automation.net",
-            "privatelink.database.windows.net",
-            "privatelink.sql.azuresynapse.net",
-            "privatelink.dev.azuresynapse.net",
-            "privatelink.azuresynapse.net",
-            "privatelink.blob.core.windows.net",
-            "privatelink.table.core.windows.net",
-            "privatelink.queue.core.windows.net",
-            "privatelink.file.core.windows.net",
-            "privatelink.web.core.windows.net",
-            "privatelink.dfs.core.windows.net",
-            "privatelink.documents.azure.com",
-            "privatelink.mongo.cosmos.azure.com",
-            "privatelink.cassandra.cosmos.azure.com",
-            "privatelink.gremlin.cosmos.azure.com",
-            "privatelink.table.cosmos.azure.com",
-            "privatelink.batch.azure.com",
-            "privatelink.postgres.database.azure.com",
-            "privatelink.mysql.database.azure.com",
-            "privatelink.mariadb.database.azure.com",
-            "privatelink.vaultcore.azure.net",
-            "privatelink.managedhsm.azure.net",
-            "[concat('privatelink.', parameters('connectivityLocation'), '.azmk8s.io')]",
-            "privatelink.search.windows.net",
-            "privatelink.azurecr.io",
-            "privatelink.azconfig.io",
-            "privatelink.siterecovery.windowsazure.com",
-            "privatelink.servicebus.windows.net",
-            "privatelink.azure-devices.net",
-            "privatelink.eventgrid.azure.net",
-            "privatelink.azurewebsites.net",
-            "privatelink.api.azureml.ms",
-            "privatelink.notebooks.azure.net",
-            "privatelink.service.signalr.net",
-            "privatelink.monitor.azure.com",
-            "privatelink.oms.opinsights.azure.com",
-            "privatelink.ods.opinsights.azure.com",
-            "privatelink.agentsvc.azure-automation.net",
-            "privatelink.cognitiveservices.azure.com",
-            "privatelink.afs.azure.net",
-            "privatelink.datafactory.azure.net",
+            "[format('privatelink.{0}.azmk8s.io', toLower(parameters('connectivityLocation')))]",
+            "[format('privatelink.{0}.batch.azure.com', toLower(parameters('connectivityLocation')))]",
+            "[format('privatelink.{0}.kusto.windows.net', toLower(parameters('connectivityLocation')))]",
             "privatelink.adf.azure.com",
-            "privatelink.redis.cache.windows.net",
-            "privatelink.redisenterprise.cache.azure.net",
+            "privatelink.afs.azure.net",
+            "privatelink.agentsvc.azure-automation.net",
+            "privatelink.analysis.windows.net",
+            "privatelink.api.azureml.ms",
+            "privatelink.azconfig.io",
+            "privatelink.azure-api.net",
+            "privatelink.azure-automation.net",
+            "privatelink.azurecr.io",
+            "privatelink.azure-devices.net",
+            "privatelink.azure-devices-provisioning.net",
+            "privatelink.azurehdinsight.net",
+            "privatelink.azurehealthcareapis.com",
+            "privatelink.azurestaticapps.net",
+            "privatelink.azuresynapse.net",
+            "privatelink.azurewebsites.net",
+            "privatelink.batch.azure.com",
+            "privatelink.blob.core.windows.net",
+            "privatelink.cassandra.cosmos.azure.com",
+            "privatelink.cognitiveservices.azure.com",
+            "privatelink.database.windows.net",
+            "privatelink.datafactory.azure.net",
+            "privatelink.dev.azuresynapse.net",
+            "privatelink.dfs.core.windows.net",
+            "privatelink.dicom.azurehealthcareapis.com",
+            "privatelink.digitaltwins.azure.net",
+            "privatelink.directline.botframework.com",
+            "privatelink.documents.azure.com",
+            "privatelink.eventgrid.azure.net",
+            "privatelink.file.core.windows.net",
+            "privatelink.gremlin.cosmos.azure.com",
+            "privatelink.guestconfiguration.azure.com",
+            "privatelink.his.arc.azure.com",
+            "privatelink.kubernetesconfiguration.azure.com",
+            "privatelink.managedhsm.azure.net",
+            "privatelink.mariadb.database.azure.com",
+            "privatelink.media.azure.net",
+            "privatelink.mongo.cosmos.azure.com",
+            "privatelink.monitor.azure.com",
+            "privatelink.mysql.database.azure.com",
+            "privatelink.notebooks.azure.net",
+            "privatelink.ods.opinsights.azure.com",
+            "privatelink.oms.opinsights.azure.com",
+            "privatelink.pbidedicated.windows.net",
+            "privatelink.postgres.database.azure.com",
+            "privatelink.prod.migration.windowsazure.com",
             "privatelink.purview.azure.com",
             "privatelink.purviewstudio.azure.com",
-            "privatelink.digitaltwins.azure.net",
-            "privatelink.azurehdinsight.net",
-            "privatelink.his.arc.azure.com",
-            "privatelink.guestconfiguration.azure.com",
-            "privatelink.media.azure.net",
-            "privatelink.prod.migration.windowsazure.com",
-            "privatelink.webpubsub.azure.com",
-            "privatelink.azure-devices-provisioning.net"
+            "privatelink.queue.core.windows.net",
+            "privatelink.redis.cache.windows.net",
+            "privatelink.redisenterprise.cache.azure.net",
+            "privatelink.search.windows.net",
+            "privatelink.service.signalr.net",
+            "privatelink.servicebus.windows.net",
+            "privatelink.siterecovery.windowsazure.com",
+            "privatelink.sql.azuresynapse.net",
+            "privatelink.table.core.windows.net",
+            "privatelink.table.cosmos.azure.com",
+            "privatelink.tip1.powerquery.microsoft.com",
+            "privatelink.token.botframework.com",
+            "privatelink.vaultcore.azure.net",
+            "privatelink.web.core.windows.net",
+            "privatelink.webpubsub.azure.com"
         ],
         "azBackupGeoCodes": {
             "australiacentral": "acl",
@@ -1026,6 +1032,25 @@
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
+                }
+            }
+        },
+        {
+            // Deploying ALZ Custom RBAC Role Definitions
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').roleDefsDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleDefinitions]"
                 }
             }
         },
@@ -1212,7 +1237,7 @@
         },
         {
             // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
+            "condition": "[and(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
@@ -1249,9 +1274,6 @@
                     },
                     "enableUpdateMgmt": {
                         "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableActivityLog": {
-                        "value": "[parameters('enableActivityLog')]"
                     },
                     "enableVmInsights": {
                         "value": "[parameters('enableVmInsights')]"
@@ -1315,7 +1337,7 @@
             }
         },
         {
-            // Assigning Azure Security Benchmark policy to intermediate root management group if condition is true
+            // Assigning Microsoft Cloud Security Benchmark policy to intermediate root management group if condition is true
             "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), or(equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAsc'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -3128,7 +3150,7 @@
         */
         {
             // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
+            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
@@ -3165,9 +3187,6 @@
                     },
                     "enableUpdateMgmt": {
                         "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableActivityLog": {
-                        "value": "[parameters('enableActivityLog')]"
                     },
                     "enableVmInsights": {
                         "value": "[parameters('enableVmInsights')]"
