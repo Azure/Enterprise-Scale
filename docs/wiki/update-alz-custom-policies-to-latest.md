@@ -2,15 +2,15 @@
 
 This article describes how to update ALZ custom policies and policy initiatives to latest versions of ALZ custom policies. The guidance provided in this document describes manual steps for performing the update, based on a set of specific policies and initiatives, with PowerShell.
 
-> Note: If you are already managing Azure Policies through Infrastructure as Code (IaC), you may not want to be updating your Azure Policies outside of your pipeline. This article assume a manual approach to updating Azure landing zone (ALZ) policies.
+> Note: If you are already managing Azure Policies through Infrastructure as Code (IaC), you may not want to be updating your Azure Policies outside of your pipeline. This article assumes a manual approach to updating Azure landing zone (ALZ) policies.
 
-> Important: To carry out the instructions below, the operator will require Resource Policy Permissions at the root of the ALZ management group hierarchy.
+> Important: To carry out the instructions below, the operator will require Resource Policy Contributor permissions at the root of the ALZ management group hierarchy.
 
 ## Detect updates to policy
 
 1. To determine if there has been updates to ALZ your first reference should be [What's New](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new). Any updates to policies or other ALZ related artifacts will be reflected here upon release. An example of what that will look like can be seen [here](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new#policy).
 
-2. An alternatively or supplementary tool is [Azure Governance Visualizer](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting) which can be run in your environment and reveal information about the current state of policies and policy assignments. Part of the output of Azure Governance Visualizer is Azure Landing Zones (ALZ) Policy Version Checker which will allows you to see all **outDated** ALZ policies in your environment (see figure 1).
+2. Alternatively, [Azure Governance Visualizer](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting) can be run in your environment and reveal information about the current state of policies and policy assignments. Part of the output of Azure Governance Visualizer is Azure Landing Zones (ALZ) Policy Version Checker which will allows you to see all **outDated** ALZ policies in your environment (see figure 1).
 ![AzGovViz-ALZ-Policy-Checker](media/AzGovViz-ALZ-Policy-outDated.png)
 *Figure 1: Azure Governance Visualizer filtering on outDated ALZ policies*
 
@@ -20,17 +20,17 @@ This article describes how to update ALZ custom policies and policy initiatives 
 
 These are the following scenarios for ALZ custom policies being updated to latest versions of the custom ALZ policies, listed in increasing order of complexity:
 
-1. One or more ALZ custom policies, whether assigned or not at one or more scopes in your Azure estate, is outdated by a newer ALZ custom policy. The process for managing this is described in [Updating a one or more ALZ custom policy to newer ALZ custom policies](#updating-a-one-or-more-alz-custom-policies-to-newer-alz-custom-policy).
+1. One or more ALZ custom policies, whether assigned or not at one or more scopes in your Azure estate, is superseded by a newer version of that same ALZ custom policy. The process for managing this is described in [Updating one or more ALZ custom policy to newer ALZ custom policies](#updating-one-or-more-alz-custom-policies-to-newer-alz-custom-policy).
 
-2. One or more ALZ custom policies, assigned at one or more scopes in your Azure estate, is outdated by a newer ALZ custom policy with **updated parameters**. The process for managing this is described in [Updating a one or more ALZ custom policies to a newer ALZ custom policy with updated parameters](#updating-one-or-more-alz-custom-policies-to-newer-alz-custom-policy-with-updated-parameters)
+2. One or more ALZ custom policies, assigned at one or more scopes in your Azure estate, is superseded by a newer version of the same ALZ custom policy with **updated parameters**. The process for managing this is described in [Updating one or more ALZ custom policies to a newer ALZ custom policy with updated parameters](#updating-one-or-more-alz-custom-policies-to-newer-alz-custom-policy-with-updated-parameters)
 
-3. One or more ALZ custom policies, assigned via ALZ custom policy initiative, are outdated by newer ALZ custom policy(s) with **updated parameters**. The process for managing this is described in [Updating ALZ custom policies in ALZ custom policy initiative to newer ALZ custom policies](need a reference)
+3. One or more ALZ custom policies, assigned via ALZ custom policy initiative, are superseded by a newer version of the same ALZ custom policy(s) with **updated parameters**. The process for managing this is described in [Updating ALZ custom policies in ALZ custom policy initiative to newer ALZ custom policies](#updating-alz-custom-policies-in-alz-custom-policy-initiative-to-newer-alz-custom-policies)
 
-### Updating a one or more ALZ custom policies to newer ALZ custom policy
+### Updating one or more ALZ custom policies to newer ALZ custom policy
 
 For this scenario we will use the ALZ custom policy *Deploy Diagnostic Settings for WVD Host Pools to Log Analytics workspace*.
 
-Considering no parameters have changed, this is a simple exercise that consists of replacing the policy definition content with the latest policy definition. While it is possible to update the policy via the portal GUI, there will be a lot of copying and pasting content. To minimize errors, we will be updating this policy via a PowerShell script.
+Considering no parameters have changed, this is a simple exercise that consists of replacing the policy definition content with the latest policy definition. While it is possible to update the policy definition via the portal GUI, there are some properties than can't be updated, like version. To minimize errors and include all updated policy definition properties, we will be updating this policy via a PowerShell script.
 
 Before we begin, we need to identify the policy definition name and location to be used in our PowerShell script below.
 
@@ -49,7 +49,7 @@ Before we begin, we need to identify the policy definition name and location to 
 
 - Go to https://portal.azure.com
 - Start an Azure Cloud Shell with PowerShell engine
-- Execute the following PowerShell script for each ALZ custom policy definition:
+- Execute the following PowerShell script ([disclaimer](https://github.com/Azure/Enterprise-Scale/blob/main/SUPPORT.md)) for each ALZ custom policy definition:
   - Before executing the following PowerShell script, update the first two variables:
     - `$policyDefinitionName`
     - `$policyDefinitionLocation`
@@ -132,7 +132,7 @@ For this scenario, we will use the ALZ custom policy *Deploy Diagnostic Settings
 
 - Go to https://portal.azure.com
 - Start an Azure Cloud Shell with PowerShell engine
-- Execute the following PowerShell script for each ALZ custom policy definition:
+- Execute the following PowerShell script ([disclaimer](https://github.com/Azure/Enterprise-Scale/blob/main/SUPPORT.md)) for each ALZ custom policy definition:
   - Before executing the following PowerShell script, update the first two variables:
     - `$policyDefinitionName`
     - `$policyDefinitionLocation`
@@ -179,7 +179,7 @@ For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Setti
 
   ![alz-custom-initiative-def-name](media/alz-update-initiative-with-builtin-02.png)
 
-- Since there is no easy way to get the various scopes an initiative is assigned to, got Azure Resource Graph Explorer
+- Since there is no easy way to get the various scopes an initiative is assigned to, go to Azure Resource Graph Explorer
 - Ensure that scope for the query is Directory and then execute the following kusto query:
 
   ```kusto
@@ -224,7 +224,7 @@ For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Setti
 
 - Go to https://portal.azure.com
 - Start an Azure Cloud Shell with PowerShell engine
-- Before executing the following PowerShell script, update the first three variables:
+- Before executing the following PowerShell script ([disclaimer](https://github.com/Azure/Enterprise-Scale/blob/main/SUPPORT.md)), update the first three variables:
   - `$updateCustomALZPolicies`
   - `$policySetDefinitionName`
   - `$policySetDefinitionLocation`
@@ -270,7 +270,7 @@ For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Setti
   New-AzPolicySetDefinition -Name $policyName -DisplayName $displayname -Description $description -PolicyDefinition $policyDefinitions -Metadata $metadata -Parameter $parameters -ManagementGroupName $policyDefinitionLocation
   ```
 
-> Note that if you decide on another approach from the script above, there are a number of double brackets ('[[') in the file. These need to be replaced with single brackets before the policy set definition is valid syntax.
+> Note that if you decide on another approach from the script above, there are a number of double square brackets ('[[') in the file. These need to be replaced with single square brackets before the policy set definition is valid syntax.
 
 - After running the above script go to the Definitions pane, and search for the initiative definition. Note that the initiative may take a while to show in the portal
 
