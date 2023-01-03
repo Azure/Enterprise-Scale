@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [January 2023](#january-2023)
   - [November 2022](#november-2022)
   - [October 2022](#october-2022)
   - [September 2022](#september-2022)
@@ -46,6 +47,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### January 2023
+
+#### Policy
+
+- Updated `Deploy-SQLVulnerabilityAssessments.json` to reflect usage of parameters. Added Storage Account Contributor to RBAC roles used to manage and use keys to store vulnerability logs to the storage account.
 
 ### November 2022
 
