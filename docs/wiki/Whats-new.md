@@ -2,7 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
-
+  - [January 2023](#january-2023)
   - [December 2022](#december-2022)
   - [November 2022](#november-2022)
   - [October 2022](#october-2022)
@@ -48,6 +48,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### January 2023
+
+#### Policy
+
+- Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
+- Updated the same policy parameter description for email recipients explaining string type and how to format input.
 
 ### December 2022
 
