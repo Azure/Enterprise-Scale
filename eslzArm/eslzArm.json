@@ -72,14 +72,6 @@
             ],
             "defaultValue": "Yes"
         },
-        "enableActivityLog": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
-        },
         "enableVmInsights": {
             "type": "string",
             "allowedValues": [
@@ -702,6 +694,7 @@
         "deploymentUris": {
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
+            "roleDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleDefinitions/customRoleDefinitions.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
@@ -756,6 +749,7 @@
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
+            "roleDefsDeploymentName": "[take(concat('alz-RoleDefs', variables('deploymentSuffix')), 64)]",
             "policyDeploymentName": "[take(concat('alz-Policy', variables('deploymentSuffix')), 64)]",
             "azOpsRbacDeploymentName": "[take(concat('alz-AzOpsRbac', variables('deploymentSuffix')), 64)]",
             "azOpsRgDeploymentName": "[take(concat('alz-AzOpsRg', variables('deploymentSuffix')), 64)]",
@@ -1041,6 +1035,25 @@
                 }
             }
         },
+        {
+            // Deploying ALZ Custom RBAC Role Definitions
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').roleDefsDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleDefinitions]"
+                }
+            }
+        },
         /*
             The following deployments will deploy the required proactive and preventive Azure policies for ESLZ policy driven governance
         */
@@ -1224,7 +1237,7 @@
         },
         {
             // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
+            "condition": "[and(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
@@ -1261,9 +1274,6 @@
                     },
                     "enableUpdateMgmt": {
                         "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableActivityLog": {
-                        "value": "[parameters('enableActivityLog')]"
                     },
                     "enableVmInsights": {
                         "value": "[parameters('enableVmInsights')]"
@@ -3140,7 +3150,7 @@
         */
         {
             // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableActivityLog'), 'Yes')), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
+            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableServiceMap'), 'Yes'), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
@@ -3177,9 +3187,6 @@
                     },
                     "enableUpdateMgmt": {
                         "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableActivityLog": {
-                        "value": "[parameters('enableActivityLog')]"
                     },
                     "enableVmInsights": {
                         "value": "[parameters('enableVmInsights')]"

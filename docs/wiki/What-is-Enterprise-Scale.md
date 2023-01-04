@@ -59,4 +59,4 @@ Therefore it is important to complete the design process following the Enterpris
 
 Enterprise-Scale reference implementation will meet you where you are, and the design has catered for existing subscriptions and workloads in Azure.
 
-See the following [article](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/transition) to learn more how you can transition into Enterprise-Scale.
+See the following [article](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/transition) to learn more how you can transition into Enterprise-Scale.

@@ -1,3 +1,3 @@
-## This page has moved
+# This page has moved to our Wiki
 
-Please refer to [Policies included in Azure landing zones reference implementations](./wiki/ALZ-Policies.md)
+Please refer to [Policies included in Azure Landing Zones reference implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)
