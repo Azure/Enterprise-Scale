@@ -477,6 +477,14 @@
                 "No"
             ]
         },
+        "denyPipOnNICforCorp": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
         "enablePrivateDnsZonesForLzs": {
             "type": "string",
             "defaultValue": "No",
@@ -723,6 +731,7 @@
             "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json')]",
             "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, variables('azPrivateDnsPolicyAssignment'))]",
             "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
+            "pipOnNICPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressOnNICPolicyAssignment.json')]",
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
@@ -782,6 +791,7 @@
             "publicEndpointPolicyDeploymentName": "[take(concat('alz-PEndpoint', variables('deploymentSuffix')), 64)]",
             "privateDnsPolicyDeploymentName": "[take(concat('alz-PrivDNSAssignment', variables('deploymentSuffix')), 64)]",
             "pipPolicyDeploymentName": "[take(concat('alz-PIP', variables('deploymentSuffix')), 64)]",
+            "pipOnNICPolicyDeploymentName": "[take(concat('alz-PIPOnNIC', variables('deploymentSuffix')), 64)]",
             "rdpFromInternetPolicyDeploymentName": "[take(concat('alz-RDP', variables('deploymentSuffix')), 64)]",
             "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-RDPIdentity', variables('deploymentSuffix')), 64)]",
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
@@ -2482,6 +2492,30 @@
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning deny NIC with Public IP policy to corp connected landing zones management group if condition is true
+            "condition": "[equals(parameters('denyPipOnNICforCorp'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').pipOnNICPolicyDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').pipOnNICPolicyAssignment]"
+                },
+                "parameters": {
                     "enforcementMode": {
                         "value": "Default"
                     }
