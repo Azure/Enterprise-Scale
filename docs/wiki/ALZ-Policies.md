@@ -220,7 +220,7 @@ This management group is for corporate landing zones. This group is for workload
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **2**     |
-| `Policy Definitions`      | **3**     |
+| `Policy Definitions`      | **4**     |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Corp Management Group**.
@@ -232,6 +232,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Prevent usage of Databricks with public IP**                 | **Deny public IPs for Databricks cluster**                     | `Policy Definition`, **Custom**     | Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.                                                                             | Deny              | 1.0.0   |
 | **Enforces the use of Premium Databricks workspaces**          | **Deny non-premium Databricks sku**                            | `Policy Definition`, **Custom**     | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. | Deny              | 1.0.0   |
 | **Enforces the use of vnet injection for Databricks**          | **Deny Databricks workspaces without Vnet injection**          | `Policy Definition`, **Custom**     | Enforces the use of vnet injection for Databricks workspaces.                                                                                                                                          | Deny              | 1.0.0   |
+| **Deny the the network interfaces which are configured with any public IP**          | **Network interfaces should not have public IPs**          | `Policy Definition`, **Built-in**     | This policy denies the network interfaces which are configured with any public IP under the assigned scope.                                                                                                                                          | Deny              | 1.0.0   |
 
 ### Online
 
