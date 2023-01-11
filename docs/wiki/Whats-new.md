@@ -55,7 +55,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
-- Added "Network interfaces should not have public IPs" built-in Policy for the Corp-connected Landing Zones
+- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 
 ### December 2022
 
