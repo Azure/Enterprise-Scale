@@ -41,7 +41,7 @@ Before we begin, we need to identify the policy definition name and location to 
   ![alz-custom-policy-def-search](media/1.1.update-alz-custom-policy-def-search.png)
 
 - Click on the hyperlink for the policy definition
-- Capture the policy definition name and location from `Definition ID` and `Definition location`. In this example, the `Definition ID` is `/providers/Microsoft.Management/managementGroups/MTB/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-WVDHostPools` with a policy definition name of **Deploy-Diagnostics-WVDHostPools** and a location of **MTB**. The policy definition name is the set of characters following the last `/`. Both the policy definition name and location will be used in the PowerShell script below.
+- Capture the policy definition name and scope from `Definition ID` and `Definition location`. In this example, the `Definition ID` is `/providers/Microsoft.Management/managementGroups/MTB/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-WVDHostPools` with a policy definition name of **Deploy-Diagnostics-WVDHostPools** and a scope of **MTB**. The policy definition name is the set of characters following the last `/`. Both the policy definition name and scope will be used in the PowerShell script below.
 
   ![alz-custom-policy-def-name](media/1.2.update-alz-custom-policy-def-name.png)
 
@@ -86,7 +86,7 @@ For this scenario, we will use the ALZ custom policy *Deploy Diagnostic Settings
 - Click on the hyperlink for the policy definition
 
 - To determine if the policy is assigned at any scope in the ALZ management group structure start by getting the policy definition ID
-  - Capture the policy definition name and location from `Definition ID` and `Definition location`. In this example, the `Definition ID` is `/providers/Microsoft.Management/managementGroups/MTB/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-WVDHostPools` with a policy definition name of **Deploy-Diagnostics-WVDHostPools** and a location of **MTB**. The policy definition name is the set of characters following the last `/`. Both the policy definition name and location will be used in the PowerShell script below.
+  - Capture the policy definition name and scope from `Definition ID` and `Definition location`. In this example, the `Definition ID` is `/providers/Microsoft.Management/managementGroups/MTB/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-WVDHostPools` with a policy definition name of **Deploy-Diagnostics-WVDHostPools** and a scope of **MTB**. The policy definition name is the set of characters following the last `/`. Both the policy definition name and scope will be used in the PowerShell script below.
 
   ![alz-custom-policy-def-name](media/1.2.update-alz-custom-policy-def-name.png)
 
