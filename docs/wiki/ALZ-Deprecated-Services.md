@@ -16,12 +16,15 @@ Over time, a deprecation process of there `ALZ / custom` policies will have to t
 
 [Azure Policy - Preview and deprecated policies](https://github.com/Azure/azure-policy/blob/master/built-in-policies/README.md#preview-and-deprecated-policies)
 
-| Deprecated ALZ Policy IDs                     | Superseded by built-in policy IDs    | Justification                                                            |
-|-----------------------------------------------|--------------------------------------|--------------------------------------------------------------------------|
-| Deploy-Nsg-FlowLogs | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
+| Deprecated ALZ Policy IDs | Superseded by built-in policy IDs                                                                                                  | Justification                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| Deploy-Nsg-FlowLogs       | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
 | Deploy-Nsg-FlowLogs-to-LA | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
-| Deny-PublicIP | [6c112d4e-5bc7-47ae-a041-ea2d9dccd749](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html?) | Custom policy replaced by built-in requires less administration overhead |½
+| Deny-PublicIP             | [6c112d4e-5bc7-47ae-a041-ea2d9dccd749](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html?) | Custom policy replaced by built-in requires less administration overhead |
+| 8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e | [f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b](https://www.azadvertizer.net/azpolicyadvertizer/f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b.html) | Deprecated policy removed as existing policy supercedes it |
+| 0d134df8-db83-46fb-ad72-fe0c9428c8dd | [0a370ff3-6cab-4e85-8995-295fd854c5b8](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html) | Deprecated policy replaced with new policy |
 
 ## Deprecated services
 
 - Removed `ActivityLog` Solution as an option to be deployed into the Log Analytics Workspace. As this has been superseded by the Activity Log Insights Workbook, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights)
+
