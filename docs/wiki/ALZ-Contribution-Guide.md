@@ -93,6 +93,24 @@ To work with policies, they are location in [src/resources/Microsoft.Authorizati
 
 To create a new policy, it is worth taking the framework from an already existing policy.
 
+In ALZ Custom there is a way to name the custom policies that are used. They are prefixed with one of the following: `Append`, `Audit`, `Deny` or `Deploy`
+
+#### Append
+
+When contributing a custom policy based on appending resources at scale, the correct prefix would be `Append` - such as `Append-AppService-httpsonly.json`.
+
+#### Audit
+
+Auditing resources at scale via policy is achievable using the correct effect inside the definition. This policy contribution should be prefixed with `Audit` - in example, `Audit-MachineLearning-PrivateEndpointId.json`. 
+
+#### Deny
+
+Deny policies are used to prevent the creation/action of and on Azure resources. Policies being created and contributed should be prefixed with 'Deny' - in example `Deny-Databricks-Sku.json`.
+
+#### Deploy
+
+Deploy follows the DeployIfNotExists (DINE) methodology. Policy contribution should be named prefixed with `Deploy` - in example `Deploy-Custom-Route-Table.json`. 
+
 Inside of the JSON is a `metadata` section which is required for policy creation.
 
 ![Policy Metadata](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policy-metadata-example.png)
