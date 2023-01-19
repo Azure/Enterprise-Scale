@@ -111,6 +111,8 @@ Deny policies are used to prevent the creation/action of and on Azure resources.
 
 Deploy follows the DeployIfNotExists (DINE) methodology. Policy contribution should be named prefixed with `Deploy` - in example `Deploy-Custom-Route-Table.json`. 
 
+> NOTE: When creating the naming convention for the definition, it must company with the [Naming rule and restrictions for Azure resources | Microsoft Authorization](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules#microsoftauthorization) standard.
+
 Inside of the JSON is a `metadata` section which is required for policy creation.
 
 ![Policy Metadata](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policy-metadata-example.png)
