@@ -35,6 +35,10 @@
   * [ARM template repository](./Create-Landingzones#arm-template-repository)
   * [Create a new landing zone (subscriptions)](./Create-Landingzones#create-a-new-landing-zone-subscriptions)
 * [Azure Landing Zones Deprecated Services](./ALZ-Deprecated-Services)
+* Azure Landing Zone (ALZ) Policies
+  * [Policies included in Azure landing zones reference implementations](./ALZ-Policies)
+  * [Migrate Azure landing zones custom policies to Azure built-in policies](./Migrate-ALZ-Policies-to-Built%E2%80%90in)
+  * [Updating Azure landing zones custom policies to latest](./Update-ALZ-Custom-Policies-to-Latest)
 * [Contributing](./ALZ-Contribution-Guide)
   * [Reporting Bugs](./ALZ-Contribution-Guide.md#reporting-bugs)
   * [Feature Requests](./ALZ-Contribution-Guide.md#feature-requests)
