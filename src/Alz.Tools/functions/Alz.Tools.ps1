@@ -755,6 +755,10 @@ function Invoke-RemoveMgHierarchy {
         # Set WhatIfPreference from parent session
         $WhatIfPreference = $using:WhatIfPreference
 
+        # Import required PowerShell modules
+        Import-Module -Name Az.Accounts -MinimumVersion "2.9.0" | Out-Null
+        Import-Module -Name Az.Resources -MinimumVersion "5.6.0" | Out-Null
+
         # Parse functions from parent session
         ${function:Invoke-RemoveMgHierarchy} = $using:InvokeRemoveMgHierarchy
 
