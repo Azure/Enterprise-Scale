@@ -627,6 +627,24 @@
                 "No"
             ]
         },
+        "enableDecommissioned": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "enableSandbox": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "enableSqlAudit": {
             "type": "string",
             "defaultValue": "No",
@@ -672,7 +690,9 @@
             "identity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'identity')]",
             "lzs": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'landingzones')]",
             "corp": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'corp')]",
-            "online": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'online')]"
+            "online": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'online')]",
+            "decommissioned": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'decommissioned')]",
+            "sandbox": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'sandbox')]"
         },
         // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
         "scopes": {
@@ -683,7 +703,9 @@
             "identityManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').identity)]",
             "lzsManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').lzs)]",
             "corpManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').corp)]",
-            "onlineManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').online)]"
+            "onlineManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').online)]",
+            "decommissionedManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').decommissioned)]",
+            "sandboxManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').sandbox)]"
         },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
         "azPrivateDnsPolicyAssignmentMapping": {
@@ -728,6 +750,8 @@
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
             "sqlAuditPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
             "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLEncryptionPolicyAssignment.json')]",
+            "decommissionLzPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LZDecommissionedPolicyAssignment.json')]",
+            "sandboxLzPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LZSandboxPolicyAssignment.json')]",
             "ddosPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-DDoSPolicyAssignment.json')]",
             "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
             "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
@@ -789,6 +813,8 @@
             "subnetNsgIdentityPolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "sqlAuditPolicyDeploymentName": "[take(concat('alz-SqlAudit', variables('deploymentSuffix')), 64)]",
             "sqlEncryptionPolicyDeploymentName": "[take(concat('alz-SqlEncrypt', variables('deploymentSuffix')), 64)]",
+            "decommissionLzPolicyDeploymentName": "[take(concat('alz-LzDecommission', variables('deploymentSuffix')), 64)]",
+            "sandboxLzPolicyDeploymentName": "[take(concat('alz-LzSandbox', variables('deploymentSuffix')), 64)]",
             "onlineLzSubs": "[take(concat('alz-OnlineLzs', variables('deploymentSuffix')), 60)]",
             "corpLzSubs": "[take(concat('alz-CorpLzs', variables('deploymentSuffix')), 60)]",
             "corpConnectedMoveLzSubs": "[take(concat('alz-CorpConnLzs', variables('deploymentSuffix')), 50)]",
@@ -2609,6 +2635,60 @@
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
                     "uri": "[variables('deploymentUris').sqlEncryptionPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning decommissioned initiative to decommissioned management group if condition is true
+            "condition": "[equals(parameters('enableDecommissioned'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').decommissionLzPolicyDeploymentName]",
+            "scope": "[variables('scopes').decommissionedManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').decommissionLzPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning sandbox initiative to sandbox management group if condition is true
+            "condition": "[equals(parameters('enableSandbox'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').sandboxLzPolicyDeploymentName]",
+            "scope": "[variables('scopes').sandboxManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').sandboxLzPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
