@@ -546,6 +546,15 @@
                 "No"
             ]
         },
+        "denyClassicResourceCreation": {
+            "type": "string",
+            "defaultValue": "True",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "denyHttpIngressForAks": {
             "type": "string",
             "defaultValue": "No",
@@ -736,6 +745,7 @@
             "databricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksSkuPolicyAssignment.json')]",
             "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
             "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
+            "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
@@ -1477,6 +1487,31 @@
                     },
                     "enableAscForCosmosDbs": {
                         "value": "[parameters('enableAscForCosmosDbs')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Deny Classic Resource Creation policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), not(equals(parameters('denyClassicResourceCreation'), 'No')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').activityDiagnosticsPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').classicResourcesPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "policyEffect": {
+                        "value": "[if(equals(parameters('denyClassicResourceCreation'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }
