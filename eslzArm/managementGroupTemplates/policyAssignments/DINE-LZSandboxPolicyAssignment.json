@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "listOfResourceTypesNotAllowed": {
+            "type": "Array",
+            "defaultValue": [
+                "microsoft.network/expressroutecircuits",
+                "microsoft.network/expressroutegateways",
+                "microsoft.network/virtualwans",
+                "microsoft.network/vpngateways",
+                "microsoft.network/vpnsites"
+            ]
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "enforceLZSandbox": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-LZ-Sandbox')]"
+        },
+        "policyAssignmentNames": {
+            "lZSandbox": "Enforce-LZ-Sandbox",
+            "description": "Enforce policies in the Sandbox Landing Zone initiative.",
+            "displayName": "Enforce policies in the Sandbox Landing Zone"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').lZSandbox]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').enforceLZSandbox]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "listOfResourceTypesNotAllowed": {
+                        "value": "[parameters('listOfResourceTypesNotAllowed')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
