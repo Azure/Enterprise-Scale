@@ -204,7 +204,7 @@ var loadPolicySetDefinitions = {
   All: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-LZ-Decommissioned.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-LZ-Decomm.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-LZ-Sandbox.json')
   ]
   AzureCloud: [
