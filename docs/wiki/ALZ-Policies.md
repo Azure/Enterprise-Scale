@@ -267,9 +267,13 @@ This management group is for landing zones that are being cancelled. Cancelled l
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **0**     |
 </td></tr> </table>
+
+| Assignment Name                                                | Definition Name                                                | Policy Type                         | Description                                                                                                                                                                                            | Effect(s)         | Version |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ------- |
+| **Enforce policies in the Decommisioned Landing Zone** | **Enforce policies in the Decommisioned Landing Zone** | `Policy Definition Set`, **Custom** | This policy initiative is a group of policies that enforces minimal controls for Decommissioned subscriptions                                                                             | Enforce              | 1.0.0   |
 
 ### Sandbox
 
@@ -286,9 +290,13 @@ This management group is for subscriptions that will only be used for testing an
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **0**     |
 </td></tr> </table>
+
+| Assignment Name                                                | Definition Name                                                | Policy Type                         | Description                                                                                                                                                                                            | Effect(s)         | Version |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ------- |
+| **Enforce policies in the Sandbox Landing ZoneEnforce policies in the Sandbox Landing Zone** | `Policy Definition Set`, **Custom** | This policy initiative is a group of policies that enforces minimal controls for Sandbox subscriptions                                                                              | Enforce              | 1.0.0   |
 
 ### Versioning
 
