@@ -70,6 +70,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - [Not allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) - blocking the deployment of ER/VPN/vWAN
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
+- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 
 ### January 2023
 
@@ -77,7 +78,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
-- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Fix typo in Deny-MachineLearning-PublicAccessWhenBehindVnet.json.
 
 ### December 2022
