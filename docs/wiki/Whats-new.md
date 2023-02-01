@@ -57,6 +57,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
 - Fix typo in Deny-MachineLearning-PublicAccessWhenBehindVnet.json.
 
+#### Other
+
+- ALZ External Community Call held. Recording and slides can be found [here.](https://aka.ms/alz/community)
+
 ### December 2022
 
 #### Docs
