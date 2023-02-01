@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [February 2023](#february-2023)
   - [January 2023](#january-2023)
   - [December 2022](#december-2022)
   - [November 2022](#november-2022)
@@ -48,6 +49,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### February 2023
+
+#### Tooling
+
+- Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
 
 ### January 2023
 
