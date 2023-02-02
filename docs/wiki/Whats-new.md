@@ -110,9 +110,9 @@ Impacted assignment: Deploy-ASC-Monitoring
 #### Docs
 
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
-- Added ALZ deprecated [policies section](Deprecating-ALZ-Policies.md) to the Wiki.
+- Added ALZ deprecated [policies section](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services#deprecated-policies) to the Wiki.
 - Included documentation on how to [Migrate ALZ custom policies to Azure builtin policies](migrate-alz-policies-to-builtin.md) to the Wiki.
-- Added links to the superseding policies on the [ALZ Deprecated Services](./ALZ-Deprecated-Services.md) page.
+- Added links to the superseding policies on the [ALZ Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services#deprecated-policies) page.
 - Renamed Azure Security Benchmark references to [Microsoft Cloud Security Benchmark](https://learn.microsoft.com/security/benchmark/azure/introduction).
   
 #### Tooling
