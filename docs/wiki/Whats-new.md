@@ -52,6 +52,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### February 2023
 
+#### Policy
+
+- Added a Policy Assignment to deny Classic resources at the intermediate root management group
+
 #### Tooling
 
 - Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
