@@ -50,6 +50,23 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### TBD 2023
+
+#### Policy
+
+- Removed deprecated policy [[Deprecated]: Latest TLS version should be used in your API App (azadvertizer.net)](https://www.azadvertizer.net/azpolicyadvertizer/8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e.html) from initiative [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) as recommended policy is already included in the initiative.
+- Updated initiative [Deny or Audit resources without Encryption with a customer-managed key (CMK) (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html) deprecated policy [[Deprecated]: SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0d134df8-db83-46fb-ad72-fe0c9428c8dd.html) to new policy [Azure Policy definition SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)
+- Updated intiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
+  - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
+  - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
+  - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
+
+### February 2023
+
+#### Tooling
+
+- Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
+
 ### February 2023
 
 #### Tooling
@@ -62,6 +79,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
+- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Fix typo in Deny-MachineLearning-PublicAccessWhenBehindVnet.json.
 
 #### Other
@@ -73,20 +91,21 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Migrated the following pages to the [Enterprise-Scale Wiki](https://github.com/Azure/Enterprise-Scale/wiki/)
-
-  | Original URL | New URL |
-  | --- | --- |
-  | [docs/ESLZ-Policies.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) | [wiki/ALZ-Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies) |
-  | [docs/EnterpriseScale-Architecture.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Architecture.md) | [wiki/ALZ-Architecture](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Architecture) |
-  | [docs/EnterpriseScale-Contribution.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Contribution.md) | [wiki/ALZ-Contribution](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution) |
-  | [docs/EnterpriseScale-Deploy-landing-zones.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-landing-zones.md) | [wiki/ALZ-Deploy-landing-zones](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-landing-zones) |
-  | [docs/EnterpriseScale-Deploy-reference-implentations.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) | [wiki/ALZ-Deploy-reference-implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-reference-implementations) |
-  | [docs/EnterpriseScale-Deploy-workloads.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-workloads.md) | [wiki/ALZ-Deploy-workloads](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-workloads) |
-  | [docs/EnterpriseScale-Known-Issues.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Known-Issues.md) | [wiki/ALZ-Known-Issues](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Known-Issues) |
-  | [docs/EnterpriseScale-Roadmap.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Roadmap.md) | [wiki/ALZ-Roadmap](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Roadmap) |
-  | [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md) | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions) |
-  | [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md) | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure) |
-
+  
+  | Original URL                                                                                                                                                         | New URL                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [docs/ESLZ-Policies.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md)                                                                   | [wiki/ALZ-Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)                                                 |
+| [docs/EnterpriseScale-Architecture.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Architecture.md)                                     | [wiki/ALZ-Architecture](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Architecture)                                         |
+| [docs/EnterpriseScale-Contribution.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Contribution.md)                                     | [wiki/ALZ-Contribution](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution)                                         |
+| [docs/EnterpriseScale-Deploy-landing-zones.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-landing-zones.md)                     | [wiki/ALZ-Deploy-landing-zones](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-landing-zones)                         |
+| [docs/EnterpriseScale-Deploy-reference-implentations.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-reference-implentations.md) | [wiki/ALZ-Deploy-reference-implementations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-reference-implementations) |
+| [docs/EnterpriseScale-Deploy-workloads.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Deploy-workloads.md)                             | [wiki/ALZ-Deploy-workloads](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deploy-workloads)                                 |
+| [docs/EnterpriseScale-Known-Issues.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Known-Issues.md)                                     | [wiki/ALZ-Known-Issues](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Known-Issues)                                         |
+| [docs/EnterpriseScale-Roadmap.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Roadmap.md)                                               | [wiki/ALZ-Roadmap](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Roadmap)                                                   |
+| [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md)                   | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions)                       |
+| [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)                                       | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure)                                           |
+  
+  
 - Updated the guidance for contributing to the [Azure/Enterprise-Scale](https://github.com/Azure/Enterprise-Scale/) repository
 
 #### Tooling
@@ -97,7 +116,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated "**Deploy Diagnostic Settings to Azure Services**" initiative replacing deprecated policy for diagnostic settings on Storage Account
 - Removed all exclusions (parameters) from the Microsoft Cloud Security Benchmark (currently Azure Security Benchmark) initiative assignment to standardize across reference architectures and align with best practice.
-Impacted assignment: Deploy-ASC-Monitoring
+  Impacted assignment: Deploy-ASC-Monitoring
 - Updated "**Deploy Diagnostic Settings for Data Factory to Log Analytics workspace" to include new categories of: `SandboxPipelineRuns` & `SandboxActivityRuns`
 - Add missing `minimalSeverity` parameter to `Deploy-ASC-SecurityContacts` Policy Definition
 
@@ -114,7 +133,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 - Included documentation on how to [Migrate ALZ custom policies to Azure builtin policies](migrate-alz-policies-to-builtin.md) to the Wiki.
 - Added links to the superseding policies on the [ALZ Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services#deprecated-policies) page.
 - Renamed Azure Security Benchmark references to [Microsoft Cloud Security Benchmark](https://learn.microsoft.com/security/benchmark/azure/introduction).
-  
+
 #### Tooling
 
 - Updated ALZ Portal Accelerator to support all available Availability Zones as listed [here](https://learn.microsoft.com/azure/reliability/availability-zones-service-support#azure-regions-with-availability-zone-support)
@@ -124,16 +143,20 @@ Impacted assignment: Deploy-ASC-Monitoring
 
 - "**Deploy Diagnostic Settings for Log Analytics to Log Analytics workspace**" definition added and also added to `Deploy-Diagnostics-LogAnalytics` initiative
 - "**Deploy Diagnostic Settings for Databricks to Log Analytics workspace**" definition update
+  
   - Version 1.1.0 -> 1.2.0
   - Added missing log categories
 - "**Deploy SQL Database security Alert Policies configuration with email admin accounts**" definition update
+  
   - Version 1.0.0 -> 1.1.1
   - Changed email addresses from hardcoding to array parameter
 - "**Deploy SQL Database Transparent Data Encryption**" definition update
+  
   - Version 1.0.0 -> 1.1.0
   - Added system databases master, model, tempdb, msdb, resource to exclusion parameter as default values
   - Added as Policy Rule 'notIn' which will exclude the above databases from the policy
 - Updated "**Deploy-Private-DNS-Zones**" Custom initiative for **Azure Public Cloud**, with latest built-in Policies. Policies were added for the following Services:
+  
   - Azure Automation
   - Azure Cosmos DB (all APIs: SQL, MongoDB, Cassandra, Gremlin, Table)
   - Azure Data Factory
@@ -144,6 +167,7 @@ Impacted assignment: Deploy-ASC-Monitoring
   - Azure Media Services
   - Azure Monitor
 - Minor fixes related to "**Deploy-Private-DNS-Zones**" Custom Initiative and respective Assignment:
+  
   - Added missing Zones for **"WebPubSub"** and **"azure-devices-provisioning"**, so Initiative Assignment works correctly
   - Minor correction related to **ASR Private DNS Zone variable**, so Initiative Assignment works correctly
   - Conversion of **"Azure Batch"** Private DNS Zone (from regional to global), to properly align with latest respective documentation and functionality
@@ -152,29 +176,32 @@ Impacted assignment: Deploy-ASC-Monitoring
 - Added `Configure Microsoft Defender for Azure Cosmos DB to be enabled` to the `Deploy Microsoft Defender for Cloud configuration` initiative and updated version to `3.1.0` - Fixing issue [issue #1081](https://github.com/Azure/Enterprise-Scale/issues/1081)
 - Added `AZFWFlowTrace` category for Azure Firewall in associated Diagnostic Policy
 - Deprecated the following ALZ policies
+  
   - [Deploy-Nsg-FlowLogs](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs.html)
   - [Deploy-Nsg-FlowLogs-to-LA](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Nsg-FlowLogs-to-LA.html)
   - [Deny-PublicIp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicIP.html)
-
+  
   in favour of Azure built-in policies with the same or enhanced functionality.
-
-  | ALZ Policy ID(s)                               | Azure Builti-in Policy ID(s)                     |
-  |------------------------------------------------|--------------------------------------|
-  | Deploy-Nsg-FlowLogs-to-LA                      | e920df7f-9a64-4066-9b58-52684c02a091 |
-  | Deploy-Nsg-FlowLogs                            | e920df7f-9a64-4066-9b58-52684c02a091 |
-  | Deny-PublicIp                                  | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 |
-
+  
+  | ALZ Policy ID(s)          | Azure Builti-in Policy ID(s)         |
+| --------------------------- | -------------------------------------- |
+| Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
+| Deploy-Nsg-FlowLogs       | e920df7f-9a64-4066-9b58-52684c02a091 |
+| Deny-PublicIp             | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 |
+  
+  
 - "**"Deploy-ASC-SecurityContacts"**" definition update
+  
   - displayName and description update to "Deploy Microsoft Defender for Cloud Security Contacts"
   - Added new parameter `minimalSeverity` with settings
     - Default value `High`
     - Allowed values: `High`, `Medium`, `Low`
-
 - "**"Deploy-MDFC-Config"**" definition update
+  
   - Updated policy definitions set Deploy-MDFC-Config, Deploy-MDFC-Config(US Gov), Deploy-MDFC-Config (China)
     - added new parameter `minimalSeverity`.
     - added default value for multiple  parameters.
-  
+
 ### Other
 
 - *No updates, yet.*
@@ -223,7 +250,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 #### Docs
 
 - Updated the Enterprise-scale [Wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/) to reflect the latest updates on Azure landing zone accelerator.
-
+  
   - [Deploy Azure landing zone portal accelerator](./Deploying-ALZ)
   - [Deployment guidance for Small Enterprises](./Deploying-ALZ-BasicSetup)
   - [How to deploy without hybrid connectivity](./Deploying-ALZ-Foundation)
@@ -314,7 +341,7 @@ Impacted assignment: Deploy-ASC-Monitoring
   - Add 2 new categories for Host Pools Diagnostic Settings
     - `NetworkData`
     - `SessionHostManagement`
-- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per <https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan> - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
+- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per [https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan](https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan) - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
   - Added to `Deploy-Diagnostics-LogAnalytics` Policy Initiative
 - Added additional log categories to `Deploy-Diagnostics-Firewall` for Azure Firewall Diagnostic Settings Policy - Fixing issue [issue #985](https://github.com/Azure/Enterprise-Scale/issues/985)
 - Added additional log categories to `Deploy-Diagnostics-APIMgmt` for Azure API Management Diagnostic Settings Policy - Fixing issue [issue #986](https://github.com/Azure/Enterprise-Scale/issues/986)
@@ -428,7 +455,7 @@ Impacted assignment: Deploy-ASC-Monitoring
   - Updated portal experiences for Public and Fairfax
 
 | Policy Definition Display Name                                                | Policy Definition ID                 | Note                                                   |
-| ----------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------ |
+| ------------------------------------------------------------------------------- | -------------------------------------- | -------------------------------------------------------- |
 | [Deprecated]: Configure Azure Defender for container registries to be enabled | d3d1e68e-49d4-4b56-acff-93cef644b432 | REMOVED - Old ACR policy                               |
 | [Deprecated]: Configure Azure Defender for Kubernetes to be enabled           | 133047bf-1369-41e3-a3be-74a11ed1395a | REMOVED - Old AKS Policy                               |
 | Configure Microsoft Defender for Containers to be enabled                     | c9ddb292-b203-4738-aead-18e2716e858f | ADDED - New grouped containers policy for the new plan |
@@ -458,7 +485,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 
 - The following policy definitions for Microsoft Defender for Cloud configurations are not available as built-in in Azure China. The policy set definition will be updated as when these policy definitions are available:
   - defenderForOssDb, defenderForSqlServerVirtualMachines, defenderForAppServices, defenderForAppServices, defenderForStorageAccounts, defenderForKeyVaults, defenderForDns, defenderForArm
-  
+
 ### November 2021
 
 #### Docs
@@ -472,11 +499,10 @@ Impacted assignment: Deploy-ASC-Monitoring
 ### Policy
 
 - Replaced `Deploy-Default-Udr` policy with `Deploy-Custom-Route-Table` that allows deploying custom route tables with an arbitrary set of UDRs (including a 0/0 default route if needed). See [here](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/deploy-policy-driven-routing.md) for usage details.
-
 - Updated `Deploy-Budget` policy, to v1.1.0, adding new parameter of `budgetName` that defaults to: `budget-set-by-policy` - closing issue [#842](https://github.com/Azure/Enterprise-Scale/issues/842)
+  
   - Including Fairfax
   - Also Mooncake (Azure China) even though not in use yet
-
 - Added `AuditEvent` to `Deploy-Diagnostics-AA` Policy Definition to ensure correct compliance reporting on Automation Account used for diagnostics - closing issue [#864](https://github.com/Azure/Enterprise-Scale/issues/864)
 
 ### Other
@@ -490,7 +516,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 #### Docs
 
 - Updates to [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) to include instructions for deploying each of the reference implementations.
-- Updated Deploying Enterprise Scale wiki page with updated workflow steps. (<https://github.com/Azure/Enterprise-Scale/pull/827>)
+- Updated Deploying Enterprise Scale wiki page with updated workflow steps. ([https://github.com/Azure/Enterprise-Scale/pull/827](https://github.com/Azure/Enterprise-Scale/pull/827))
 - Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki
 - Added [architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
 
@@ -522,23 +548,23 @@ Impacted assignment: Deploy-ASC-Monitoring
 
 #### Docs
 
-- Added reference to Enterprise-Scale Analytics (<https://github.com/Azure/Enterprise-Scale/pull/809>)
-- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions (<https://github.com/Azure/Enterprise-Scale/pull/802>)
+- Added reference to Enterprise-Scale Analytics ([https://github.com/Azure/Enterprise-Scale/pull/809](https://github.com/Azure/Enterprise-Scale/pull/809))
+- Added Do-It-Yourself instructions for deploying Enterprise-Scale in Azure China regions ([https://github.com/Azure/Enterprise-Scale/pull/802](https://github.com/Azure/Enterprise-Scale/pull/802))
 
 #### Tooling
 
-- Added Option to select Azure Firewall SKU (<https://github.com/Azure/Enterprise-Scale/pull/793>)
+- Added Option to select Azure Firewall SKU ([https://github.com/Azure/Enterprise-Scale/pull/793](https://github.com/Azure/Enterprise-Scale/pull/793))
 - [AzOps release v1.5.0](https://github.com/Azure/AzOps/releases/tag/1.5.0)
-- Enabled support for Enterprise-Scale landing zones deployments to Azure gov (<https://github.com/Azure/Enterprise-Scale/pull/820>)
+- Enabled support for Enterprise-Scale landing zones deployments to Azure gov ([https://github.com/Azure/Enterprise-Scale/pull/820](https://github.com/Azure/Enterprise-Scale/pull/820))
 
 ### Policy
 
-|         Custom ESLZ Policy Name          |                  Custom ESLZ Policy Display Name                  | Custom Category  | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |                                                                                                 Notes                                                                                                  |
-| :--------------------------------------: | :---------------------------------------------------------------: | :--------------: | :---------------------: | :--------------------------: | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|        Deny-Databricks-NoPublicIp        |              Deny public IPs for Databricks cluster               |    Databricks    |                         |                              |                   |                                       Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.                                       |
-|           Deny-Databricks-Sku            |                  Deny non-premium Databricks sku                  |    Databricks    |                         |                              |                   | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
-|      Deny-Databricks-VirtualNetwork      |         Deny Databricks workspaces without Vnet injection         |    Databricks    |                         |                              |                   |                                                                     Enforces the use of vnet injection for Databricks workspaces.                                                                      |
-| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |                         |                              |                   |                                                                  Denies public network access for Azure Machine Learning workspaces.                                                                   |
+|         Custom ESLZ Policy Name         |                  Custom ESLZ Policy Display Name                  | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |                                                                                                 Notes                                                                                                 |
+| :----------------------------------------: | :-----------------------------------------------------------------: | :----------------: | :-----------------------: | :----------------------------: | :-----------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|        Deny-Databricks-NoPublicIp        |              Deny public IPs for Databricks cluster              |    Databricks    |                        |                              |                  |                                       Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.                                       |
+|           Deny-Databricks-Sku           |                  Deny non-premium Databricks sku                  |    Databricks    |                        |                              |                  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
+|      Deny-Databricks-VirtualNetwork      |         Deny Databricks workspaces without Vnet injection         |    Databricks    |                        |                              |                  |                                                                     Enforces the use of vnet injection for Databricks workspaces.                                                                     |
+| Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |                        |                              |                  |                                                                  Denies public network access for Azure Machine Learning workspaces.                                                                  |
 
 ### Other
 
@@ -560,7 +586,7 @@ Impacted assignment: Deploy-ASC-Monitoring
 - [Do-It-Yourself deployment instructions for Enterprise-Scale using Azure PowerShell released](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
 - Update subscription filter in reference implementation UI experience. Subscriptions with state != "Enabled" will be excluded from the list of available subscriptions.
 - Removed old codebase for the different reference implementations, and converged to a single [ARM codebase](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm)
-- Improved Network CIDR Range Validation within the Azure Portal experience (<https://github.com/Azure/Enterprise-Scale/pull/767>).
+- Improved Network CIDR Range Validation within the Azure Portal experience ([https://github.com/Azure/Enterprise-Scale/pull/767](https://github.com/Azure/Enterprise-Scale/pull/767)).
 
 #### Policy
 
@@ -609,47 +635,47 @@ Impacted assignment: Deploy-ASC-Monitoring
 - Various custom ESLZ Azure Policies have moved to Built-In Azure Policies, see below table for more detail:
 
 > You may continue to use the ESLZ custom Azure Policy as it will still function as it does today. However, we recommend you move to assigning the new Built-In version of the Azure Policy.
->
+> 
 > **Please note** that moving to the new Built-In Policy Definition will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
 
 **Policy Definitions Updates**
 
-|             Custom ESLZ Policy Name              |                            Custom ESLZ Policy Display Name                            | Custom Category |       Built-In Policy Name/ID        |                                            Built-In Policy Display Name                                            | Built-In Category |                                                                Notes                                                                 |
-| :----------------------------------------------: | :-----------------------------------------------------------------------------------: | :-------------: | :----------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------: |
-|             Deny-PublicEndpoint-Aks              |                  Public network access on AKS API should be disabled                  |   Kubernetes    | 040732e8-d947-40b8-95d6-854c95024bf8 |                            Azure Kubernetes Service Private Clusters should be enabled                             |    Kubernetes     |                                                                                                                                      |
+|             Custom ESLZ Policy Name             |                            Custom ESLZ Policy Display Name                            | Custom Category |       Built-In Policy Name/ID       |                                            Built-In Policy Display Name                                            | Built-In Category |                                                                Notes                                                                |
+| :------------------------------------------------: | :-------------------------------------------------------------------------------------: | :---------------: | :------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :-----------------: | :------------------------------------------------------------------------------------------------------------------------------------: |
+|             Deny-PublicEndpoint-Aks             |                  Public network access on AKS API should be disabled                  |   Kubernetes   | 040732e8-d947-40b8-95d6-854c95024bf8 |                            Azure Kubernetes Service Private Clusters should be enabled                            |    Kubernetes    |                                                                                                                                      |
 |           Deny-PublicEndpoint-CosmosDB           |                 Public network access should be disabled for CosmosDB                 |       SQL       | 797b37f7-06b8-444c-b1ad-fc62867f335a |                                Azure Cosmos DB should disable public network access                                |     Cosmos DB     |                                                                                                                                      |
-|           Deny-PublicEndpoint-KeyVault           |                 Public network access should be disabled for KeyVault                 |    Key Vault    | 55615ac9-af46-4a59-874e-391cc3dfb490 |                          [Preview]: Azure Key Vault should disable public network access                           |     Key Vault     |                                                                                                                                      |
-|            Deny-PublicEndpoint-MySQL             |                  Public network access should be disabled for MySQL                   |       SQL       | c9299215-ae47-4f50-9c54-8a392f68a052 |                        Public network access should be disabled for MySQL flexible servers                         |        SQL        |                                                                                                                                      |
+|           Deny-PublicEndpoint-KeyVault           |                 Public network access should be disabled for KeyVault                 |    Key Vault    | 55615ac9-af46-4a59-874e-391cc3dfb490 |                          [Preview]: Azure Key Vault should disable public network access                          |     Key Vault     |                                                                                                                                      |
+|            Deny-PublicEndpoint-MySQL            |                  Public network access should be disabled for MySQL                  |       SQL       | c9299215-ae47-4f50-9c54-8a392f68a052 |                        Public network access should be disabled for MySQL flexible servers                        |        SQL        |                                                                                                                                      |
 |          Deny-PublicEndpoint-PostgreSql          |                Public network access should be disabled for PostgreSql                |       SQL       | 5e1de0e3-42cb-4ebc-a86d-61d0c619ca48 |                      Public network access should be disabled for PostgreSQL flexible servers                      |        SQL        |                                                                                                                                      |
-|             Deny-PublicEndpoint-Sql              |            Public network access on Azure SQL Database should be disabled             |       SQL       | 1b8ca024-1d5c-4dec-8995-b1a932b41780 |                           Public network access on Azure SQL Database should be disabled                           |        SQL        |                                                                                                                                      |
-|           Deny-PublicEndpoint-Storage            |              Public network access onStorage accounts should be disabled              |     Storage     | 34c877ad-507e-4c82-993e-3452a6e0ad3c |                                  Storage accounts should restrict network access                                   |      Storage      |                                                                                                                                      |
-|              Deploy-Diagnostics-AKS              |     Deploy Diagnostic Settings for Kubernetes Service to Log Analytics workspace      |   Monitoring    | 6c66c325-74c8-42fd-a286-a74b0e2939d  |           Deploy - Configure diagnostic settings for Azure Kubernetes Service to Log Analytics workspace           |    Kubernetes     |                                                                                                                                      |
-|             Deploy-Diagnostics-Batch             |            Deploy Diagnostic Settings for Batch to Log Analytics workspace            |   Monitoring    | c84e5349-db6d-4769-805e-e14037dab9b5 |                      Deploy Diagnostic Settings for Batch Account to Log Analytics workspace                       |    Monitoring     |                                                                                                                                      |
-|         Deploy-Diagnostics-DataLakeStore         |    Deploy Diagnostic Settings for Azure Data Lake Store to Log Analytics workspace    |   Monitoring    | d56a5a7c-72d7-42bc-8ceb-3baf4c0eae03 |                   Deploy Diagnostic Settings for Data Lake Analytics to Log Analytics workspace                    |    Monitoring     |                                                                                                                                      |
-|           Deploy-Diagnostics-EventHub            |         Deploy Diagnostic Settings for Event Hubs to Log Analytics workspace          |   Monitoring    | 1f6e93e8-6b31-41b1-83f6-36e449a42579 |                        Deploy Diagnostic Settings for Event Hub to Log Analytics workspace                         |    Monitoring     |                                                                                                                                      |
-|           Deploy-Diagnostics-KeyVault            |          Deploy Diagnostic Settings for Key Vault to Log Analytics workspace          |   Monitoring    | bef3f64c-5290-43b7-85b0-9b254eef4c47 |                        Deploy Diagnostic Settings for Key Vault to Log Analytics workspace                         |    Monitoring     |                                                                                                                                      |
-|          Deploy-Diagnostics-LogicAppsWF          | Deploy Diagnostic Settings for Logic Apps Workflow runtime to Log Analytics workspace |   Monitoring    | b889a06c-ec72-4b03-910a-cb169ee18721 |                        Deploy Diagnostic Settings for Logic Apps to Log Analytics workspace                        |    Monitoring     |                ~~This is currently not assigned as per [#691](https://github.com/Azure/Enterprise-Scale/issues/691)~~                |
-|         Deploy-Diagnostics-RecoveryVault         |  Deploy Diagnostic Settings for Recovery Services vaults to Log Analytics workspace   |   Monitoring    | c717fb0c-d118-4c43-ab3d-ece30ac81fb3 | Deploy Diagnostic Settings for Recovery Services Vault to Log Analytics workspace for resource specific categories |      Backup       |                                                                                                                                      |
-|        Deploy-Diagnostics-SearchServices         |       Deploy Diagnostic Settings for Search Services to Log Analytics workspace       |   Monitoring    | 08ba64b8-738f-4918-9686-730d2ed79c7d |                     Deploy Diagnostic Settings for Search Services to Log Analytics workspace                      |    Monitoring     |                                                                                                                                      |
-|          Deploy-Diagnostics-ServiceBus           |   Deploy Diagnostic Settings for Service Bus namespaces to Log Analytics workspace    |   Monitoring    | 04d53d87-841c-4f23-8a5b-21564380b55e |                       Deploy Diagnostic Settings for Service Bus to Log Analytics workspace                        |    Monitoring     |                                                                                                                                      |
-|            Deploy-Diagnostics-SQLDBs             |       Deploy Diagnostic Settings for SQL Databases  to Log Analytics workspace        |   Monitoring    | b79fa14e-238a-4c2d-b376-442ce508fc84 |                Deploy - Configure diagnostic settings for SQL Databases to Log Analytics workspace                 |        SQL        |                                                                                                                                      |
-|        Deploy-Diagnostics-StreamAnalytics        |      Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace       |   Monitoring    | 237e0f7e-b0e8-4ec4-ad46-8c12cb66d673 |                     Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace                     |    Monitoring     |                                                                                                                                      |
-|   Deploy-DNSZoneGroup-For-Blob-PrivateEndpoint   |                Deploy DNS Zone Group for Storage-Blob Private Endpoint                |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
-|   Deploy-DNSZoneGroup-For-File-PrivateEndpoint   |                Deploy DNS Zone Group for Storage-File Private Endpoint                |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
-| Deploy-DNSZoneGroup-For-KeyVault-PrivateEndpoint |                 Deploy DNS Zone Group for Key Vault Private Endpoint                  |     Network     | ac673a9a-f77d-4846-b2d8-a57f8e1c01d4 |                           [Preview]: Configure Azure Key Vaults to use private DNS zones                           |     Key Vault     |
-|  Deploy-DNSZoneGroup-For-Queue-PrivateEndpoint   |               Deploy DNS Zone Group for Storage-Queue Private Endpoint                |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
-|   Deploy-DNSZoneGroup-For-Sql-PrivateEndpoint    |                    Deploy DNS  Zone Group for SQL Private Endpoint                    |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
-|  Deploy-DNSZoneGroup-For-Table-PrivateEndpoint   |               Deploy DNS  Zone Group for Storage-Table Private Endpoint               |     Network     |                 TBC                  |                                                        TBC                                                         |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                  |
-|                 Deploy-LA-Config                 |          Deploy the configurations to the Log Analytics in the subscription           |   Monitoring    |         ***Policy Removed***         |                                                ***Policy Removed***                                                |        TBC        | This policy has been removed as it is handled as a resource deployment in the ARM templates, portal experience and Terraform module. |
-|               Deploy-Log-Analytics               |                     Deploy the Log Analytics in the subscription                      |   Monitoring    | 8e3e61b3-0b32-22d5-4edf-55f87fdb5955 |             Configure Log Analytics workspace and automation account to centralize logs and monitoring             |    Monitoring     |                                                                                                                                      |
+|             Deny-PublicEndpoint-Sql             |            Public network access on Azure SQL Database should be disabled            |       SQL       | 1b8ca024-1d5c-4dec-8995-b1a932b41780 |                           Public network access on Azure SQL Database should be disabled                           |        SQL        |                                                                                                                                      |
+|           Deny-PublicEndpoint-Storage           |              Public network access onStorage accounts should be disabled              |     Storage     | 34c877ad-507e-4c82-993e-3452a6e0ad3c |                                  Storage accounts should restrict network access                                  |      Storage      |                                                                                                                                      |
+|              Deploy-Diagnostics-AKS              |     Deploy Diagnostic Settings for Kubernetes Service to Log Analytics workspace     |   Monitoring   | 6c66c325-74c8-42fd-a286-a74b0e2939d |           Deploy - Configure diagnostic settings for Azure Kubernetes Service to Log Analytics workspace           |    Kubernetes    |                                                                                                                                      |
+|             Deploy-Diagnostics-Batch             |            Deploy Diagnostic Settings for Batch to Log Analytics workspace            |   Monitoring   | c84e5349-db6d-4769-805e-e14037dab9b5 |                      Deploy Diagnostic Settings for Batch Account to Log Analytics workspace                      |    Monitoring    |                                                                                                                                      |
+|         Deploy-Diagnostics-DataLakeStore         |    Deploy Diagnostic Settings for Azure Data Lake Store to Log Analytics workspace    |   Monitoring   | d56a5a7c-72d7-42bc-8ceb-3baf4c0eae03 |                   Deploy Diagnostic Settings for Data Lake Analytics to Log Analytics workspace                   |    Monitoring    |                                                                                                                                      |
+|           Deploy-Diagnostics-EventHub           |         Deploy Diagnostic Settings for Event Hubs to Log Analytics workspace         |   Monitoring   | 1f6e93e8-6b31-41b1-83f6-36e449a42579 |                        Deploy Diagnostic Settings for Event Hub to Log Analytics workspace                        |    Monitoring    |                                                                                                                                      |
+|           Deploy-Diagnostics-KeyVault           |          Deploy Diagnostic Settings for Key Vault to Log Analytics workspace          |   Monitoring   | bef3f64c-5290-43b7-85b0-9b254eef4c47 |                        Deploy Diagnostic Settings for Key Vault to Log Analytics workspace                        |    Monitoring    |                                                                                                                                      |
+|          Deploy-Diagnostics-LogicAppsWF          | Deploy Diagnostic Settings for Logic Apps Workflow runtime to Log Analytics workspace |   Monitoring   | b889a06c-ec72-4b03-910a-cb169ee18721 |                        Deploy Diagnostic Settings for Logic Apps to Log Analytics workspace                        |    Monitoring    |                ~~This is currently not assigned as per [#691](https://github.com/Azure/Enterprise-Scale/issues/691)~~                |
+|         Deploy-Diagnostics-RecoveryVault         |  Deploy Diagnostic Settings for Recovery Services vaults to Log Analytics workspace  |   Monitoring   | c717fb0c-d118-4c43-ab3d-ece30ac81fb3 | Deploy Diagnostic Settings for Recovery Services Vault to Log Analytics workspace for resource specific categories |      Backup      |                                                                                                                                      |
+|        Deploy-Diagnostics-SearchServices        |       Deploy Diagnostic Settings for Search Services to Log Analytics workspace       |   Monitoring   | 08ba64b8-738f-4918-9686-730d2ed79c7d |                     Deploy Diagnostic Settings for Search Services to Log Analytics workspace                     |    Monitoring    |                                                                                                                                      |
+|          Deploy-Diagnostics-ServiceBus          |   Deploy Diagnostic Settings for Service Bus namespaces to Log Analytics workspace   |   Monitoring   | 04d53d87-841c-4f23-8a5b-21564380b55e |                       Deploy Diagnostic Settings for Service Bus to Log Analytics workspace                       |    Monitoring    |                                                                                                                                      |
+|            Deploy-Diagnostics-SQLDBs            |       Deploy Diagnostic Settings for SQL Databases  to Log Analytics workspace       |   Monitoring   | b79fa14e-238a-4c2d-b376-442ce508fc84 |                Deploy - Configure diagnostic settings for SQL Databases to Log Analytics workspace                |        SQL        |                                                                                                                                      |
+|        Deploy-Diagnostics-StreamAnalytics        |      Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace      |   Monitoring   | 237e0f7e-b0e8-4ec4-ad46-8c12cb66d673 |                     Deploy Diagnostic Settings for Stream Analytics to Log Analytics workspace                     |    Monitoring    |                                                                                                                                      |
+|   Deploy-DNSZoneGroup-For-Blob-PrivateEndpoint   |                Deploy DNS Zone Group for Storage-Blob Private Endpoint                |     Network     |                 TBC                 |                                                        TBC                                                        |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                 |
+|   Deploy-DNSZoneGroup-For-File-PrivateEndpoint   |                Deploy DNS Zone Group for Storage-File Private Endpoint                |     Network     |                 TBC                 |                                                        TBC                                                        |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                 |
+| Deploy-DNSZoneGroup-For-KeyVault-PrivateEndpoint |                 Deploy DNS Zone Group for Key Vault Private Endpoint                 |     Network     | ac673a9a-f77d-4846-b2d8-a57f8e1c01d4 |                           [Preview]: Configure Azure Key Vaults to use private DNS zones                           |     Key Vault     |                                                                                                                                      |
+|  Deploy-DNSZoneGroup-For-Queue-PrivateEndpoint  |               Deploy DNS Zone Group for Storage-Queue Private Endpoint               |     Network     |                 TBC                 |                                                        TBC                                                        |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                 |
+|   Deploy-DNSZoneGroup-For-Sql-PrivateEndpoint   |                    Deploy DNS  Zone Group for SQL Private Endpoint                    |     Network     |                 TBC                 |                                                        TBC                                                        |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                 |
+|  Deploy-DNSZoneGroup-For-Table-PrivateEndpoint  |               Deploy DNS  Zone Group for Storage-Table Private Endpoint               |     Network     |                 TBC                 |                                                        TBC                                                        |        TBC        |                 This policy is still rolling out to the Built-In Definitions at this time. We'll be here very soon!                 |
+|                 Deploy-LA-Config                 |          Deploy the configurations to the Log Analytics in the subscription          |   Monitoring   |         ***Policy Removed***         |                                                ***Policy Removed***                                                |        TBC        | This policy has been removed as it is handled as a resource deployment in the ARM templates, portal experience and Terraform module. |
+|               Deploy-Log-Analytics               |                     Deploy the Log Analytics in the subscription                     |   Monitoring   | 8e3e61b3-0b32-22d5-4edf-55f87fdb5955 |             Configure Log Analytics workspace and automation account to centralize logs and monitoring             |    Monitoring    |                                                                                                                                      |
 
 **Policy Initiatives Updates**
 
-| Custom ESLZ Policy Name  |              Custom ESLZ Policy Display Name               | Custom Category |       New Policy Name/ID        |                  New Policy Display Name                   | New Category |                                   Notes                                   |
-| :----------------------: | :--------------------------------------------------------: | :-------------: | :-----------------------------: | :--------------------------------------------------------: | :----------: | :-----------------------------------------------------------------------: |
+| Custom ESLZ Policy Name |              Custom ESLZ Policy Display Name              | Custom Category |       New Policy Name/ID       |                  New Policy Display Name                  | New Category |                                   Notes                                   |
+| :------------------------: | :----------------------------------------------------------: | :---------------: | :-------------------------------: | :----------------------------------------------------------: | :------------: | :-------------------------------------------------------------------------: |
 | Deploy-Diag-LogAnalytics |        Deploy Diagnostic Settings to Azure Services        |       N/A       | Deploy-Diagnostics-LogAnalytics |        Deploy Diagnostic Settings to Azure Services        |  Monitoring  | Moved to using a mix of Built-In (as above) and custom policy definitions |
-|   Deny-PublicEndpoints   | Public network access should be disabled for PAAS services |     Network     |    Deny-PublicPaaSEndpoints     | Public network access should be disabled for PaaS services |     N/A      |        Moved to using Built-In policy definitions only (as above)         |
-|     ***New Policy***     |                      ***New Policy***                      |       N/A       |    Deploy-Private-DNS-Zones     |   Configure Azure PaaS services to use private DNS zones   |   Network    |                                                                           |
+|   Deny-PublicEndpoints   | Public network access should be disabled for PAAS services |     Network     |    Deny-PublicPaaSEndpoints    | Public network access should be disabled for PaaS services |     N/A     |        Moved to using Built-In policy definitions only (as above)        |
+|     ***New Policy***     |                      ***New Policy***                      |       N/A       |    Deploy-Private-DNS-Zones    |   Configure Azure PaaS services to use private DNS zones   |   Network   |                                                                          |
 
 - Moved several of the diagnostics Policies to built-in, and updating the diagnostics Initiative
   - This means there's a new resource name as update of existing one is not be allowed due to removal of parameters
@@ -691,3 +717,4 @@ Impacted assignment: Deploy-ASC-Monitoring
 #### Other
 
 - Contoso Reference Implementation Update - Virtual WAN Hub default CIDR changed from `/16` to `/23` - closing issue [#440](https://github.com/Azure/Enterprise-Scale/issues/440)
+
