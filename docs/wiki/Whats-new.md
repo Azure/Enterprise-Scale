@@ -2,7 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
-  - [TBD 2023](#tbd-2023)
+  - [February 2023](#february-2023)
   - [January 2023](#january-2023)
   - [December 2022](#december-2022)
   - [November 2022](#november-2022)
@@ -61,6 +61,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
+
+### February 2023
+
+#### Tooling
+
+- Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
+
+### February 2023
+
+#### Tooling
+
+- Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
 
 ### January 2023
 
