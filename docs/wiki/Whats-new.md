@@ -2,7 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
-  - [TBD 2023](#tbd-2023)
+  - [February 2023](#february-2023)
   - [January 2023](#january-2023)
   - [December 2022](#december-2022)
   - [November 2022](#november-2022)
@@ -72,6 +72,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 
+### February 2023
+
+#### Tooling
+
+- Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
+
+### February 2023
+
+#### Tooling
+
+- Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
+
 ### January 2023
 
 #### Policy
@@ -79,6 +91,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
 - Fix typo in Deny-MachineLearning-PublicAccessWhenBehindVnet.json.
+
+#### Other
+
+- ALZ External Community Call held. Recording and slides can be found [here.](https://aka.ms/alz/community)
 
 ### December 2022
 
@@ -123,9 +139,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Renamed Azure DDoS Standard Protection references to [Azure DDoS Network Protection](https://learn.microsoft.com/azure/ddos-protection/ddos-protection-sku-comparison#ddos-network-protection).
-- Added ALZ deprecated [policies section](Deprecating-ALZ-Policies.md) to the Wiki.
+- Added ALZ deprecated [policies section](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services#deprecated-policies) to the Wiki.
 - Included documentation on how to [Migrate ALZ custom policies to Azure builtin policies](migrate-alz-policies-to-builtin.md) to the Wiki.
-- Added links to the superseding policies on the [ALZ Deprecated Services](./ALZ-Deprecated-Services.md) page.
+- Added links to the superseding policies on the [ALZ Deprecated Services](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Deprecated-Services#deprecated-policies) page.
 - Renamed Azure Security Benchmark references to [Microsoft Cloud Security Benchmark](https://learn.microsoft.com/security/benchmark/azure/introduction).
 
 #### Tooling

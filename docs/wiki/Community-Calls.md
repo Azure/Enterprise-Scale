@@ -1,6 +1,7 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
+- [January 2023](#31st-january-2023-31012023)
 - [May 2022](#2nd-may-2022-02052022)
 - [November 2021](#17th-november-2021-17112021)
 - [August 2021](#25th-august-2021-25082021)
@@ -8,6 +9,18 @@
 ---
 
 On this page you will find the meeting recordings and PowerPoint slides from previous Enterprise Scale Community Calls
+
+> Short link to this page is [aka.ms/alz/community](https://aka.ms/alz/community)
+
+## 31st January 2023 (31/01/2023)
+
+### Recording
+
+[![Screenshot of Azure Landing Zones Community Call from January 2023 recording on YouTube](./media/community-calls/jan-2023/alz-jan-2023-youtube-screenshot.png)](https://youtu.be/l5P6lc6C59U)
+
+### Slides
+
+A PDF of the PowerPoint slides is available [here.](./media/community-calls/jan-2023/ALZ-Community-Call-31012023.pdf)
 
 ## 2nd May 2022 (02/05/2022)
 
