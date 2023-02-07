@@ -71,6 +71,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
+- Added a Policy Assignment to deny Classic resources at the intermediate root management group
 
 ### February 2023
 

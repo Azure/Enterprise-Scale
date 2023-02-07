@@ -586,6 +586,15 @@
                 "No"
             ]
         },
+        "denyClassicResources": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "denyHttpIngressForAks": {
             "type": "string",
             "defaultValue": "No",
@@ -799,6 +808,7 @@
             "databricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksSkuPolicyAssignment.json')]",
             "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
             "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
+            "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
@@ -865,7 +875,8 @@
             "identityPeeringDeploymentName": "[take(concat('alz-IDPeering', variables('deploymentSuffix')), 64)]",
             "identityVwanPeeringDeploymentName": "[take(concat('alz-IDVwanPeering', variables('deploymentSuffix')), 64)]",
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
-            "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]"
+            "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
+            "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1555,6 +1566,34 @@
                     },
                     "enableAscForCosmosDbs": {
                         "value": "[parameters('enableAscForCosmosDbs')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Deny Classic Resource Creation policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), not(equals(parameters('denyClassicResources'), 'No')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').denyClassicResourcePolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments',variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').classicResourcesPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "policyEffect": {
+                        "value": "[if(equals(parameters('denyClassicResources'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }
