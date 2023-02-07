@@ -90,7 +90,7 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 ![Enterprise-Scale with connectivity](./media/es-hubspoke.png)
 
-> For a detailed networking topology diagram for this reference implementation click [here](../../media/es-hubspoke-nw.png)
+> For a detailed networking topology diagram for this reference implementation click [here](../../wiki/media/es-hubspoke-nw.png). This is also available in Visio format from [here](https://raw.githubusercontent.com/microsoft/CloudAdoptionFramework/master/ready/enterprise-scale-architecture.vsdx)
 
 ## Next steps
 
