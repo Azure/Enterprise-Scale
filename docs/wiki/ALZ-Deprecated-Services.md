@@ -24,6 +24,7 @@ Over time, a deprecation process of there `ALZ / custom` policies will have to t
 | 8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e | [f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b](https://www.azadvertizer.net/azpolicyadvertizer/f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b.html)  | Deprecated policy in intiative removed as existing policy supercedes it |
 | 0d134df8-db83-46fb-ad72-fe0c9428c8dd | [0a370ff3-6cab-4e85-8995-295fd854c5b8](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)  | Deprecated policy in intiative replaced with new policy                  |
 
+Guidance on how to migrate deprecated ALZ custom policies to Azure built-in policies can be found [here](https://github.com/Azure/Enterprise-Scale/wiki/Migrate-ALZ-Policies-to-Built%E2%80%90in)
 ## Deprecated services
 
 - Removed `ActivityLog` Solution as an option to be deployed into the Log Analytics Workspace. As this has been superseded by the Activity Log Insights Workbook, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights)
