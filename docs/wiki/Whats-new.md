@@ -51,6 +51,8 @@ This article will be updated as and when changes are made to the above and anyth
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### TBD 2023
+- Add Policy initiative [Unused resources driving cost should be avoided (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html)
+  - Added a Policy Assignment `Audit-UnusedResourcesCostOptimization` ([Unused resources driving cost should be avoided (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html)) to audit unused resources that are driving cost at the intermediate root management group
 
 #### Policy
 
