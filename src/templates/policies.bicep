@@ -73,6 +73,9 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-KV-SoftDelete.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-Redis-disableNonSslPort.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-Redis-sslEnforcement.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-Disks-UnusedResourcesCostOptimization.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-ServerFarms-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppGW-Without-WAF.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppServiceApiApp-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppServiceFunctionApp-http.json')
@@ -201,6 +204,7 @@ var loadPolicyDefinitions = {
 // We use loadTextContent instead of loadJsonContent  as this allows us to perform string replacement operations against the imported templates.
 var loadPolicySetDefinitions = {
   All: [
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
   ]
