@@ -16,7 +16,7 @@ The policy supports the parameters documented below.
 
 - **effect**: A `String` that defines the effect of the policy. Allowed values are `DeployIfNotExist` (default) and `Disabled`.
 
-- **requiredRoutes**: An `Array` of `String` objects. Each `String` object defines a User-Defined Route (UDR) in the custom route table deployed by the policy. The format is `"address-prefix;next-hop-type;next-hop-ip-address"`. The next-hop IP address must be provided on when the next hop type is "VirtualAppliance". Allowed values for the next hop type field are documented [here](https://docs.microsoft.com/azure/virtual-network/virtual-networks-udr-overview#next-hop-types-across-azure-tools). This is an example of a *requiredRoutes* array that defines four UDRs:  
+- **requiredRoutes**: An `Array` of `String` objects. Each `String` object defines a User-Defined Route (UDR) in the custom route table deployed by the policy. The format is `"address-prefix;next-hop-type;next-hop-ip-address"`. The next-hop IP address must be provided on when the next hop type is "VirtualAppliance". Allowed values for the next hop type field are documented [here](https://learn.microsoft.com/azure/virtual-network/virtual-networks-udr-overview#next-hop-types-across-azure-tools). This is an example of a *requiredRoutes* array that defines four UDRs:  
 
 ```json
 [

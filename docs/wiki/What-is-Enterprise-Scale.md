@@ -53,10 +53,10 @@ Each of these resources have an associated cost that varies based on how they ar
 
 > A difference for the networking resources is that they have costs that are incurred once deployed, as well as how they are consumed, e.g. bandwidth and traffic processed.
 
-Therefore it is important to complete the design process following the Enterprise-Scale [Design Principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) and [Design Guidelines](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines) as part of your implementation of Enterprise-Scale. From reading and making design decisions from the guidance provided, you will know all of the Azure resources that are to be deployed/enabled as part of your deployment and with this information you will be able to determine any costs for the associated resources using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
+Therefore it is important to complete the design process following the Enterprise-Scale [Design Principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) and [Design Guidelines](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-guidelines) as part of your implementation of Enterprise-Scale. From reading and making design decisions from the guidance provided, you will know all of the Azure resources that are to be deployed/enabled as part of your deployment and with this information you will be able to determine any costs for the associated resources using the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
 
 ## What if I already have an existing Azure footprint?
 
 Enterprise-Scale reference implementation will meet you where you are, and the design has catered for existing subscriptions and workloads in Azure.
 
-See the following [article](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/transition) to learn more how you can transition into Enterprise-Scale.
+See the following [article](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/transition) to learn more how you can transition into Enterprise-Scale.

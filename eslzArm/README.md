@@ -12,8 +12,8 @@ For customers who cannot deploy via portal, but rather want to clone the reposit
 
 Prerequisites:
 
-* [Azure PowerShell module](https://docs.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
-* [Sign in and get started](https://docs.microsoft.com/powershell/azure/get-started-azureps?view=azps-6.3.0#sign-in-to-azure)
+* [Azure PowerShell module](https://learn.microsoft.com/powershell/azure/install-az-ps?view=azps-6.3.0)
+* [Sign in and get started](https://learn.microsoft.com/powershell/azure/get-started-azureps?view=azps-6.3.0#sign-in-to-azure)
 * [Configure Azure permissions for ARM tenant deployments](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)
 * [How to clone a GitHub repository](https://docs.github.com/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository)
 
@@ -215,7 +215,7 @@ New-AzSubscriptionDeployment -Name "$($DeploymentName)-hubspoke" `
                              -enableDdoS "No" `
                              -Verbose
 
-# Create Private DNS Zones for Azure PaaS services. Note, you must repeat this deployment for all Azure PaaS services as requested, and an updated table can be found at https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns#azure-services-dns-zone-configuration
+# Create Private DNS Zones for Azure PaaS services. Note, you must repeat this deployment for all Azure PaaS services as requested, and an updated table can be found at https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns#azure-services-dns-zone-configuration
 # The following example will first create a resource group, and the subsequent deployment will create Private DNS Zone for Storage Account into that resource group
 
 Select-AzSubscription -SubscriptionId $ConnectivitySubscriptionId
