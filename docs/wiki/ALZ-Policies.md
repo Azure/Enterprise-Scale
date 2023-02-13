@@ -275,7 +275,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 
 | Assignment Name                                                | Definition Name                                                | Policy Type                         | Description                                                                                                                                                                                            | Effect(s)         | Version |
 | -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ------- |
-| **Enforce policies in the Decommisioned Landing Zone** | **Enforce policies in the Decommisioned Landing Zone** | `Policy Definition Set`, **Custom** | This policy initiative is a group of policies that enforces minimal controls for Decommissioned subscriptions                                                                             | Enforce              | 1.0.0   |
+| **Enforce ALZ Decommissioned Guardrails** | **Enforce ALZ Decommissioned Guardrails** | `Policy Definition Set`, **Custom** | This initiative will help enforce and govern subscriptions that are placed within the decommissioned Management Group as part of your Subscription decommissioning process.  Policies included: <ul><li>Deny the deployment of new resources<li>Deploy an auto VM shutdown policy at UTC 00:00</ul>                                                                           | Enforce              | 1.0.0   |
 
 ### Sandbox
 
@@ -298,7 +298,7 @@ This management group is for subscriptions that will only be used for testing an
 
 | Assignment Name                                                | Definition Name                                                | Policy Type                         | Description                                                                                                                                                                                            | Effect(s)         | Version |
 | -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ------- |
-| **Enforce policies in the Sandbox Landing ZoneEnforce policies in the Sandbox Landing Zone** | `Policy Definition Set`, **Custom** | This policy initiative is a group of policies that enforces minimal controls for Sandbox subscriptions                                                                              | Enforce              | 1.0.0   |
+| **Enforce ALZ Sandbox Guardrails** | **Enforce ALZ Sandbox Guardrails** | `Policy Definition Set`, **Custom** | This initiative will help enforce and govern subscriptions that are placed within the Sandobx Management Group. Policies included: <ul><li>Deny vNET peering across subscriptions<li>Deny the deployment of vWAN/ER/VPN gateways.</ul>                                                                              | Enforce              | 1.0.0   |
 
 ### Versioning
 

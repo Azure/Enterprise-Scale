@@ -61,12 +61,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
 - New Initiative for the Decommissioned landingzones including policies:
-  - Initiative name: Enforce-LZ-Decomm.json
+  - Initiative name: Enforce-ALZ-Decomm
     - [Allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/a08ec900-254a-4555-9bf5-e42af04b5c5c.html) - nothing allowed, however the policy requires at least one resource, so defaulting to 'microsoft.consumption/tags'.
     - New policy to deploy an auto shutdown policy for virtual machines - Deploy-Vm-autoShutdown.json
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - New Initiative for the Sandboxes landingzones including policies:
-  - Initiative name: Enforce-LZ-Sanbox.json
+  - Initiative name: Enforce-ALZ-Sanbox
     - [Not allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) - blocking the deployment of ER/VPN/vWAN
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
