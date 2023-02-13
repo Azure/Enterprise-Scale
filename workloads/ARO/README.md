@@ -8,7 +8,7 @@ Additionally ARM templates and sample scripts are provided to support a deployme
 
 Before getting started with this guidance, ensure that:
 
-- Enterprise-Scale landing zones has been deployed by using the Hub and Spoke reference implementation or Enterprise-Scale landing zones was deployed as per [architectural guidance](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
+- Enterprise-Scale landing zones has been deployed by using the Hub and Spoke reference implementation or Enterprise-Scale landing zones was deployed as per [architectural guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/) in the Cloud Adoption Framework.
 - There is at least one landing zone under the corp management group where ARO cluster will be deployed, which is peered to the hub VNet.
 - Within Enterprise-Scale landing zones there is a segregation between platform and workload/application specific roles. For this guide the segregation of duties is fully respected and it is mentioned which role is able to perform the actions.
 - This guide follows the principle of least-privilege by assign permissions to the user installing ARO or the respective SPN's.
@@ -78,7 +78,7 @@ Enterprise-Scale landing zones manages compliant resource and landing zone confi
 - Public network access should be disabled for PaaS services (-> ARO installer deploys and manages Azure Storage Accounts)
 - Deny creation of Public IP Addresses (-> ARO installer creates a public IP address for egress)
 
-**Platform team** can create [exemptions](https://docs.microsoft.com/en-us/azure/governance/policy/concepts/exemption-structure) for these existing Policy assignments.
+**Platform team** can create [exemptions](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/exemption-structure) for these existing Policy assignments.
 
 ### Network
 
@@ -123,9 +123,9 @@ az network vnet subnet update \
 
 ### Firewall rule configuration
 
-Firewall configuration documented [here](https://docs.microsoft.com/en-us/azure/openshift/howto-restrict-egress) needs to be applied by the Platform/NetOps team in Azure Firewall (or third party NVA) in the connectivity subscription.
+Firewall configuration documented [here](https://learn.microsoft.com/en-us/azure/openshift/howto-restrict-egress) needs to be applied by the Platform/NetOps team in Azure Firewall (or third party NVA) in the connectivity subscription.
 
-It is essential your firewall can resolve DNS names so its can resolve the endpoints needed by Azure RedHat Openshift. Specific steps for Azure Firewall are here https://docs.microsoft.com/en-us/azure/firewall/dns-settings
+It is essential your firewall can resolve DNS names so its can resolve the endpoints needed by Azure RedHat Openshift. Specific steps for Azure Firewall are here https://learn.microsoft.com/en-us/azure/firewall/dns-settings
 
 ## Deploy Azure Red Hat OpenShift using Azure CLI
 

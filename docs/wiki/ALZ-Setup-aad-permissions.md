@@ -1,6 +1,6 @@
 # Configure Azure Active Directory permissions for Service Principal
 
-This article will guide you through the process to add your AzOps service principal to the  Azure Active Directory [Directory Readers](https://docs.microsoft.com/azure/active-directory/users-groups-roles/directory-assign-admin-roles) role.
+This article will guide you through the process to add your AzOps service principal to the  Azure Active Directory [Directory Readers](https://learn.microsoft.com/azure/active-directory/users-groups-roles/directory-assign-admin-roles) role.
 
 > Note: The steps below requires you to use an identity that is local to the Azure AD, and **_not_** Guest user account due to known restrictions.
 
@@ -23,7 +23,7 @@ The service principal used by the Enterprise-Scale reference implementation requ
 
 ## Add service principal to directory role with Azure AD PowerShell (Option 2)
 
-Ensure that you have the [AzureAD PowerShell module installed on your machine](https://docs.microsoft.com/powershell/module/azuread/?view=azureadps-2.0) and that you have connected to Azure AD with the [Connect-AzureAD](https://docs.microsoft.com/powershell/module/azuread/connect-azuread?view=azureadps-2.0) cmdlet.
+Ensure that you have the [AzureAD PowerShell module installed on your machine](https://learn.microsoft.com/powershell/module/azuread/?view=azureadps-2.0) and that you have connected to Azure AD with the [Connect-AzureAD](https://learn.microsoft.com/powershell/module/azuread/connect-azuread?view=azureadps-2.0) cmdlet.
 
 
 ````powershell

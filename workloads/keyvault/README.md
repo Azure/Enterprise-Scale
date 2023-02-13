@@ -58,4 +58,4 @@ az ts create --name AzKeyVault --version 1.0.0 --resource-group <rgName> --locat
 
 ### Deploy as Bicep
 
->Note: Currently, Azure CLI doesn't support deploying remote Bicep files. Use [Bicep CLI](https://docs.microsoft.com/azure/azure-resource-manager/bicep/install#development-environment) to compile the Bicep file to a JSON template, and then load the JSON file to the remote location
+>Note: Currently, Azure CLI doesn't support deploying remote Bicep files. Use [Bicep CLI](https://learn.microsoft.com/azure/azure-resource-manager/bicep/install#development-environment) to compile the Bicep file to a JSON template, and then load the JSON file to the remote location

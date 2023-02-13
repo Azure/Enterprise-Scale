@@ -1,6 +1,6 @@
 ## Azure landing zone portal accelerator deployment for Small Enterprises
 
-In this tutorial, you will deploy an Azure landing zone portal accelerator with connectivity to on-premises datacenters and branch offices based on a [hub and spoke network topology](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology), and where Management, Connectivity and Identity resources are consolidated in a single Platform Subscription.
+In this tutorial, you will deploy an Azure landing zone portal accelerator with connectivity to on-premises datacenters and branch offices based on a [hub and spoke network topology](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology), and where Management, Connectivity and Identity resources are consolidated in a single Platform Subscription.
 
 This setup is meant for Small and Medium Enterprises and organizations that do not have a large IT team and do not require fine grained administration delegation models, and that are willing to leverage Azure native capabilities for simplicity and cost efficiency.
 
@@ -19,7 +19,7 @@ The deployment experience in Azure portal allows you to bring in an existing (pr
 
 To learn how to create new subscriptions using Azure portal, please visit this [link](https://azure.microsoft.com/en-us/blog/create-enterprise-subscription-experience-in-azure-portal-public-preview/).
 
-To learn how to create new subscriptions programmatically, please visit this [link](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription).
+To learn how to create new subscriptions programmatically, please visit this [link](https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/programmatically-create-subscription).
 
 **For this tutorial, three empty subscriptions are required: one subscription dedicated to host your Platform resources and two subscriptions to host your applications .**
 
@@ -27,7 +27,7 @@ To learn how to create new subscriptions programmatically, please visit this [li
 
 You can **initiate the deployment** by clicking the "Deploy to Azure" button below:
 
-[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json)
+[![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json)
 
 Alternatively you can start your Azure landing zone portal accelerator deployment via [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
 
@@ -72,28 +72,28 @@ On the *Platform management, security, and governance* blade, you will:
 
 ![mgmtTab-intro](./media/clip_image014-singlesubscription.jpg)
 
-- Enable **Deploy Log Analytics workspace and enable monitoring for your platform and resources** to get a central [Log Analytics Workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/data-platform-logs#log-analytics-and-workspaces) and an [Automation Account deployed](https://docs.microsoft.com/en-us/azure/automation/automation-intro) deployed, and a set of [Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) applied at the root of the Azure landing zone Management Group hierarchy to make sure Activity Logs from all your Subscriptions, and Diagnostic Logs from all your VMs and PaaS resources are sent to Log Analytics.
+- Enable **Deploy Log Analytics workspace and enable monitoring for your platform and resources** to get a central [Log Analytics Workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/data-platform-logs#log-analytics-and-workspaces) and an [Automation Account deployed](https://learn.microsoft.com/en-us/azure/automation/automation-intro) deployed, and a set of [Azure Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) applied at the root of the Azure landing zone Management Group hierarchy to make sure Activity Logs from all your Subscriptions, and Diagnostic Logs from all your VMs and PaaS resources are sent to Log Analytics.
 
   ![mgmtTab-enableLogs](./media/clip_image014-1-singlesubscription.jpg)
 
   - If required you can customize the retention time of your monitoring data from it's default of 30 days by using the **Log Analytics Data Retention (days)** slider.
 **Please note:** Increasing the retention time to more than 30 days will increase your costs.
-See [Manage usage and costs with Azure Monitor Logs](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/manage-cost-storage) for further details on Azure Monitor pricing. The data retention time [can be changed at any time](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/manage-cost-storage#change-the-data-retention-period).
+See [Manage usage and costs with Azure Monitor Logs](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/manage-cost-storage) for further details on Azure Monitor pricing. The data retention time [can be changed at any time](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/manage-cost-storage#change-the-data-retention-period).
 
   ![mgmtTab-logsRetention](./media/clip_image014-2-singlesubscription.jpg)
 
-  - You can customize what [Azure Monitor solutions](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/solutions?tabs=portal) are enabled in your Log Analytics Workspace:
+  - You can customize what [Azure Monitor solutions](https://learn.microsoft.com/en-us/azure/azure-monitor/insights/solutions?tabs=portal) are enabled in your Log Analytics Workspace:
   
     ![mgmtTab-logsSolutions](./media/clip_image014-3-singlesubscription.jpg)
 
-    - [Agent Health](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/solution-agenthealth) helps you understand which monitoring agents are unresponsive and submitting operational data.
-    - [Change Tracking](https://docs.microsoft.com/en-us/azure/automation/change-tracking/overview) tracks changes in virtual machines hosted in Azure, on-premises, and other cloud environments to help you pinpoint operational and environmental issues.
-    - [Update Management](https://docs.microsoft.com/en-us/azure/automation/update-management/overview) assesses the status of available updates and allows you manage the process of installing required updates for your machines leveraging Azure Automation.
-    - [VM Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-overview) monitors the performance and health of your virtual machines and virtual machine scale sets, including their running processes and dependencies on other resources.
-    - [Service Map](https://docs.microsoft.com/en-us/azure/azure-monitor/vm/service-map) automatically discovers application components on Windows and Linux systems and maps the communication between services.
-    - [SQL Assessment](https://docs.microsoft.com/en-us/azure/azure-monitor/insights/sql-assessment) provides a prioritized list of recommendations specific to your deployed server infrastructure. The recommendations are categorized across six focus areas which help you quickly understand the risk and take corrective action.
+    - [Agent Health](https://learn.microsoft.com/en-us/azure/azure-monitor/insights/solution-agenthealth) helps you understand which monitoring agents are unresponsive and submitting operational data.
+    - [Change Tracking](https://learn.microsoft.com/en-us/azure/automation/change-tracking/overview) tracks changes in virtual machines hosted in Azure, on-premises, and other cloud environments to help you pinpoint operational and environmental issues.
+    - [Update Management](https://learn.microsoft.com/en-us/azure/automation/update-management/overview) assesses the status of available updates and allows you manage the process of installing required updates for your machines leveraging Azure Automation.
+    - [VM Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-overview) monitors the performance and health of your virtual machines and virtual machine scale sets, including their running processes and dependencies on other resources.
+    - [Service Map](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/service-map) automatically discovers application components on Windows and Linux systems and maps the communication between services.
+    - [SQL Assessment](https://learn.microsoft.com/en-us/azure/azure-monitor/insights/sql-assessment) provides a prioritized list of recommendations specific to your deployed server infrastructure. The recommendations are categorized across six focus areas which help you quickly understand the risk and take corrective action.
 
-- **Enable** **Deploy Azure Security Center and enable security monitoring for your platform and resources** option to allow Azure Security Center assess your subscriptions and detect security misconfigurations in your Azure resources, and leverage [Azure Defender](https://docs.microsoft.com/en-us/azure/security-center/azure-defender) to protect your workloads. An Azure Policy will be applied to the root of the Azure landing zone Management Group hierarchy to enforce your settings across all your subscriptions.
+- **Enable** **Deploy Azure Security Center and enable security monitoring for your platform and resources** option to allow Azure Security Center assess your subscriptions and detect security misconfigurations in your Azure resources, and leverage [Azure Defender](https://learn.microsoft.com/en-us/azure/security-center/azure-defender) to protect your workloads. An Azure Policy will be applied to the root of the Azure landing zone Management Group hierarchy to enforce your settings across all your subscriptions.
 
   You will need to **provide an email address** to get email notifications from Azure Security Center. It is best practices to provide a distribution list instead of an email address tied to a single person.
 
@@ -103,9 +103,9 @@ See [Manage usage and costs with Azure Monitor Logs](https://docs.microsoft.com/
 
   ![mgmtTab-asc](./media/clip_image014asc-2-singlesubscription.jpg)
 
-- Depending on your requirements, you may want to select **Deploy Azure Sentinel** to enable [Azure Sentinel](https://docs.microsoft.com/en-us/azure/sentinel/overview) in your Log Analytics Workspace. Please note, enabling Azure Sentinel will introduce additional costs. See [Azure Sentinel Pricing](https://azure.microsoft.com/en-us/pricing/details/azure-sentinel/) for additional information.
+- Depending on your requirements, you may want to select **Deploy Azure Sentinel** to enable [Azure Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/overview) in your Log Analytics Workspace. Please note, enabling Azure Sentinel will introduce additional costs. See [Azure Sentinel Pricing](https://azure.microsoft.com/en-us/pricing/details/azure-sentinel/) for additional information.
 
-  **In this tutorial, Azure Sentinel is not enabled**. [Azure Sentinel](https://docs.microsoft.com/en-us/azure/sentinel/quickstart-onboard) can be deployed at any stage after the the Landing Zone has been deployed.
+  **In this tutorial, Azure Sentinel is not enabled**. [Azure Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/quickstart-onboard) can be deployed at any stage after the the Landing Zone has been deployed.
 
   ![mgmtTab-asc](./media/clip_image014asc-3-singlesubscription.jpg)
 
@@ -135,28 +135,28 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
 - **Deploy networking topology**:
   - For this scenario, select **Hub and spoke with Azure Firewall**.
-  - **Address Space**: Provide the private IP Address Space to be assigned to the hub virtual network. Please make sure the address space provided does not overlap with neither the ones being used on-premises or those that you will be assigning to the virtual networks where your are deploying your workloads. See [Plan for IP Addressing](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations.
+  - **Address Space**: Provide the private IP Address Space to be assigned to the hub virtual network. Please make sure the address space provided does not overlap with neither the ones being used on-premises or those that you will be assigning to the virtual networks where your are deploying your workloads. See [Plan for IP Addressing](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations.
   - **Region for the first networking hub**: **Select an Azure region where the hub virtual network will be created**. That is most usually the same Region you chose in the *Deployment location* tab but can be a different one if needed.
 
   ![networkTab-topology](./media/clip_image036b-1-singlesubscription.png)
 
 - Depending on your requirements, you may choose to deploy additional network infrastructure for your Azure architecture. The optional resources include:
 
-  - **Enable DDoS Network Protection**: Usage of [Azure DDoS Network Protection](https://docs.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview) is recommended to help protect all public endpoints hosted within your virtual networks. When this option is selected an Azure DDoS Protection Plan is provisioned in your Platform Subscription and which can be used to protect public endpoints across your Platform and Landing Zone subscriptions. DDoS Protection Plan's costs cover up to 100 public endpoints. Protection of additional endpoints requires additional fees. See [Azure DDoS Protection pricing](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/) for further details.
+  - **Enable DDoS Network Protection**: Usage of [Azure DDoS Network Protection](https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview) is recommended to help protect all public endpoints hosted within your virtual networks. When this option is selected an Azure DDoS Protection Plan is provisioned in your Platform Subscription and which can be used to protect public endpoints across your Platform and Landing Zone subscriptions. DDoS Protection Plan's costs cover up to 100 public endpoints. Protection of additional endpoints requires additional fees. See [Azure DDoS Protection pricing](https://azure.microsoft.com/en-us/pricing/details/ddos-protection/) for further details.
   
     **In this tutorial, DDoS Network Protection it is enabled**. Set **Enable DDoS Network Protection** to **Yes**.
 
     ![networkTab-ddos](./media/clip_image036b-11-singlesubscription.png)
 
-  - **Create Private DNS Zones for Azure PaaS services** allows you to provision and connect to your Hub virtual network a number of Azure Private DNS Zones which are required to leverage Private Endpoints to access Azure PaaS services as [recommended for Azure Landing Zones](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services). See [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-dns) for further details.
+  - **Create Private DNS Zones for Azure PaaS services** allows you to provision and connect to your Hub virtual network a number of Azure Private DNS Zones which are required to leverage Private Endpoints to access Azure PaaS services as [recommended for Azure Landing Zones](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services). See [Azure Private Endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns) for further details.
 
     Enabling **Create Private DNS Zones for Azure PaaS services** is recommended if the workloads you are deploying to your Landing Zones are expected to be use Azure PaaS services.
 
-    **In this tutorial, deployment of Private DNS Zones required by Azure PaaS Service's Private Endpoints will not be enabled**. Please note you can [deploy those Private DNS Zones](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) at any time if later on needed.
+    **In this tutorial, deployment of Private DNS Zones required by Azure PaaS Service's Private Endpoints will not be enabled**. Please note you can [deploy those Private DNS Zones](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) at any time if later on needed.
 
   ![networkTab-dns](./media/clip_image036b-12-singlesubscription.png)
 
-- Choose to deploy either or both VPN (**Deploy VPN Gateway**) and ExpressRoute Gateways (**Deploy ExpressRoute Gateway**) and provide additional configuration settings. In this tutorial, we will be deploying a VPN Gateway to enable hybrid connectivity using a Site to Site VPN connection but you can opt of using ExpressRoute instead or [both](https://docs.microsoft.com/en-us/azure/expressroute/use-s2s-vpn-as-backup-for-expressroute-privatepeering).
+- Choose to deploy either or both VPN (**Deploy VPN Gateway**) and ExpressRoute Gateways (**Deploy ExpressRoute Gateway**) and provide additional configuration settings. In this tutorial, we will be deploying a VPN Gateway to enable hybrid connectivity using a Site to Site VPN connection but you can opt of using ExpressRoute instead or [both](https://learn.microsoft.com/en-us/azure/expressroute/use-s2s-vpn-as-backup-for-expressroute-privatepeering).
 
   Set **Deploy VPN Gateway** to **Yes**:
   
@@ -168,7 +168,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
   
     ![networkTab-gwDeploy](./media/clip_image036b-3-singlesubscription.png)
 
-  - **Select the VPN Gateway SKU** and **Select the ExpressRoute Gateway VPN**: choose the right SKU based on your requirements (capabilities, throughput and availability). See [VPN Gateway SKUs](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpn-gateway-settings#gwsku) and [ExpressRoute Gateway SKUs](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-about-virtual-network-gateways#gwsku) for further details on the virtual gateway's SKUs you have available in Azure. In this tutorial you will deploy a VpnGw2AZ which provides an aggregated throughput of up to 1 Gbps:
+  - **Select the VPN Gateway SKU** and **Select the ExpressRoute Gateway VPN**: choose the right SKU based on your requirements (capabilities, throughput and availability). See [VPN Gateway SKUs](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpn-gateway-settings#gwsku) and [ExpressRoute Gateway SKUs](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-about-virtual-network-gateways#gwsku) for further details on the virtual gateway's SKUs you have available in Azure. In this tutorial you will deploy a VpnGw2AZ which provides an aggregated throughput of up to 1 Gbps:
   
     ![networkTab-gwSku](./media/clip_image036b-4-singlesubscription.png)
 
@@ -184,17 +184,17 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
   Continue with configuring the rest of your Azure Firewall deployment settings:
 
-  - **Enable Azure Firewall as a DNS proxy**: select this option if you are planning to use [FQDNs in Network rules](https://docs.microsoft.com/en-us/azure/firewall/fqdn-filtering-network-rules).
+  - **Enable Azure Firewall as a DNS proxy**: select this option if you are planning to use [FQDNs in Network rules](https://learn.microsoft.com/en-us/azure/firewall/fqdn-filtering-network-rules).
 
-    In this tutorial, you will not enable this feature. Please note you can [enable DNS Proxy feature](https://docs.microsoft.com/en-us/azure/firewall/dns-settings) at any moment.
+    In this tutorial, you will not enable this feature. Please note you can [enable DNS Proxy feature](https://learn.microsoft.com/en-us/azure/firewall/dns-settings) at any moment.
   
     Set **Enable Azure Firewall as a DNS proxy** to **No**.
 
     ![networkTab-fwDNSProxy](./media/clip_image036b-7-singlesubscription.png)
 
-  - **Select Azure Firewall tier**: choose the right SKU based on your requirements. See [Azure Firewall features](https://docs.microsoft.com/en-us/azure/firewall/features) and [Azure Firewall Premium features](https://docs.microsoft.com/en-us/azure/firewall/premium-features) for further details.
+  - **Select Azure Firewall tier**: choose the right SKU based on your requirements. See [Azure Firewall features](https://learn.microsoft.com/en-us/azure/firewall/features) and [Azure Firewall Premium features](https://learn.microsoft.com/en-us/azure/firewall/premium-features) for further details.
 
-    **Note:** In this tutorial, you will deploy an Azure Firewall Standard. You can [upgrade to Azure Firewall Premium](https://docs.microsoft.com/en-us/azure/firewall/premium-migrate) if needed. However the upgrade process will cause downtime.
+    **Note:** In this tutorial, you will deploy an Azure Firewall Standard. You can [upgrade to Azure Firewall Premium](https://learn.microsoft.com/en-us/azure/firewall/premium-migrate) if needed. However the upgrade process will cause downtime.
   
     Set **Select Azure Firewall tier** to **Standard**:
 
@@ -204,7 +204,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
     In this tutorial you will deploy a zone-redudant Azure Firewall.
 
-    **Select two or more zones** to configure your Azure Firewall deployment to span multiple [Availability Zones](https://docs.microsoft.com/en-us/azure/firewall/features#availability-zones) (recommended for increased availability).
+    **Select two or more zones** to configure your Azure Firewall deployment to span multiple [Availability Zones](https://learn.microsoft.com/en-us/azure/firewall/features#availability-zones) (recommended for increased availability).
 
     ![networkTab-fwAZs](./media/clip_image036b-9-singlesubscription.png)
 
@@ -247,7 +247,7 @@ It is possible to bring in N number of existing subscriptions that will be boots
 - **Select the subscriptions you want to move to corp management group:**
   Corp Landing Zones are meant to host workloads that require connectivity to other resources within the corporate network via the Hub in the Platform Subscription.
 
-For Corp Landing Zones its virtual network can be connected (recommended) to the hub virtual network using virtual network peering, enabling access to your corporate network. Please note you will need to provide a non-overlapping private IP address space to be assigned to each Landing Zone. See [Plan for IP Addressing](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations. Also, if you deployed and enabled Azure Firewall as DNS proxy, [DNS settings on these VNets will be configured](https://docs.microsoft.com/en-us/azure/firewall/dns-settings#configure-virtual-network-dns-servers) with the Azure Firewall private IP address.
+For Corp Landing Zones its virtual network can be connected (recommended) to the hub virtual network using virtual network peering, enabling access to your corporate network. Please note you will need to provide a non-overlapping private IP address space to be assigned to each Landing Zone. See [Plan for IP Addressing](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations. Also, if you deployed and enabled Azure Firewall as DNS proxy, [DNS settings on these VNets will be configured](https://learn.microsoft.com/en-us/azure/firewall/dns-settings#configure-virtual-network-dns-servers) with the Azure Firewall private IP address.
 
   In this tutorial, a "Corp" Landing Zone is provisioned using an existing (empty) subscription and connected to the Hub virtual network previously configured. Please note, additional subscriptions can be added.
 

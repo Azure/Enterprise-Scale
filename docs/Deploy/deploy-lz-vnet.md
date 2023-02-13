@@ -12,7 +12,7 @@ deploy our landing zones. That process, often referred to "File -\> New
 -\> Landing Zone" encompasses the recurring activities that are required
 to instantiate a new landing zone.
 
-In Corp connected landing zone scenarios, regardless of chosen [Azure network topology](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity#define-an-azure-network-topology)
+In Corp connected landing zone scenarios, regardless of chosen [Azure network topology](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/network-topology-and-connectivity#define-an-azure-network-topology)
 (hub-spoke or Virtual WAN), there is an additional set of network
 related deployments that needs to happen to ensure that the landing zone
 is ready for the application teams to use, such as;
@@ -72,7 +72,7 @@ Subscription creation is covered in [the following doc](https://github.com/Azure
     ![Assign policy](./media/vnet_image4.png)
 
     **b)**  Provide all required parameters and adjust settings for
-     [GatewayTransit and UseRemoteGateway](https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
+     [GatewayTransit and UseRemoteGateway](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-peering-gateway-transit#:~:text=In%20the%20Azure%20portal%2C%20navigate,Peerings%2C%20then%20select%20%2B%20Add.&text=Verify%20the%20subscription%20is%20correct,the%20Hub%2DRM%20virtual%20network.)
      if you have a VPN or ExpressRoute gateway that you plan to use for
      on-premises connectivity in the hub network.
 
