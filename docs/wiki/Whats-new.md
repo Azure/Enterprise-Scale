@@ -63,7 +63,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - New Initiative for the Decommissioned landingzones including policies:
   - Initiative name: Enforce-ALZ-Decomm
     - [Allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/a08ec900-254a-4555-9bf5-e42af04b5c5c.html) - nothing allowed, however the policy requires at least one resource, so defaulting to 'microsoft.consumption/tags'.
-    - New policy to deploy an auto shutdown policy for virtual machines - Deploy-Vm-autoShutdown.json
+    - New policy to deploy an auto shutdown policy for virtual machines - Deploy-Vm-autoShutdown
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - New Initiative for the Sandboxes landingzones including policies:
   - Initiative name: Enforce-ALZ-Sanbox
