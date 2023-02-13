@@ -18,7 +18,7 @@
 
 This article answers frequently asked questions relating to Enterprise-scale.
 
-Some FAQ questions that relate more to the architecture are based over in the CAF docs here: [Enterprise-scale architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq)
+Some FAQ questions that relate more to the architecture are based over in the CAF docs here: [Enterprise-scale architecture FAQ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq)
 
 ## How long does enterprise-scale architecture take to deploy?
 
@@ -49,7 +49,7 @@ Management group creation, subscription creation, and placing subscriptions into
 
 To establish the management group hierarchy and create subscriptions and place them into the defined management groups, the initial deployment must be invoked at the tenant root "`/`" scope. Once you deploy enterprise-scale architecture, you can remove the owner permission from the tenant root "`/`" scope. The user deploying the enterprise-scale reference implementation is made an owner at the intermediate root management group (for example "Contoso").
 
-For more information about tenant-level deployments in Azure, see [Deploy resources to tenant](https://docs.microsoft.com/azure/azure-resource-manager/templates/deploy-to-tenant).
+For more information about tenant-level deployments in Azure, see [Deploy resources to tenant](https://learn.microsoft.com/azure/azure-resource-manager/templates/deploy-to-tenant).
 
 ## The enterprise-scale (also known as the Azure landing zone accelerator) portal-based deployment doesn't display all subscriptions in the drop-down lists?
 
@@ -69,7 +69,7 @@ However, if you want to deploy and manage enterprise-scale architecture via infr
 
 The following implementation options are available when you use infrastructure-as-code:
 
-- The [Azure landing zone accelerator](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-accelerator) portal-based experience can integrate and bootstrap a CI/CD pipeline using GitHub with [AzOps](https://github.com/Azure/AzOps) as documented at [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale).
+- The [Azure landing zone accelerator](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-accelerator) portal-based experience can integrate and bootstrap a CI/CD pipeline using GitHub with [AzOps](https://github.com/Azure/AzOps) as documented at [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale).
 - The [Enterprise-scale Do-It-Yourself (DIY) ARM templates](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm#enterprise-scale-landing-zones-arm-templates) method
 - The [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale#terraform-module-for-cloud-adoption-framework-enterprise-scale)
 - The [Azure Landing Zone (formerly Enterprise-scale) Bicep Modules - Public Preview](https://github.com/Azure/ALZ-Bicep)
@@ -82,13 +82,13 @@ If you used the Azure landing zone accelerator portal-based experience to deploy
 
 To use ARM templates to deploy, manage, and operate your enterprise-scale deployment, you don't have to delete everything and start again. You can configure and connect [AzOps](https://github.com/Azure/AzOps) tooling by using the [AzOps Accelerator](https://github.com/Azure/AzOps-Accelerator) and associated instructions, regardless of the stage of your Azure tenant.
 
-Once configured, AzOps connects to your Azure tenant, scans it, and then pulls individual ARM templates into your repository in a structure that represents the [four Azure scopes](https://docs.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope).
+Once configured, AzOps connects to your Azure tenant, scans it, and then pulls individual ARM templates into your repository in a structure that represents the [four Azure scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope).
 
 To see a demo of AzOps being used, check out this YouTube video on the Microsoft DevRadio channel: [Enterprise-scale landing zones DevOps and automation step by step](https://www.youtube.com/watch?v=wWLxxj-uMsY)
 
 ### Bicep
 
-The [AzOps](https://github.com/Azure/AzOps) tooling supports deploying Bicep files at the [four Azure scopes](https://docs.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope). Its pull process only stores the scan of your Azure tenants resources in ARM templates that use JSON.
+The [AzOps](https://github.com/Azure/AzOps) tooling supports deploying Bicep files at the [four Azure scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope). Its pull process only stores the scan of your Azure tenants resources in ARM templates that use JSON.
 
 Leave us feedback via [GitHub issues on the AzOps repository](https://github.com/Azure/AzOps/issues) if you want to see something added to AzOps.
 
@@ -104,21 +104,21 @@ To see a demo of Terraform being used, check out this YouTube video on the Micro
 
 ## The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?
 
-In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://docs.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property. 
+In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://learn.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property. 
 
 However, some customers may not want this as it can make it more difficult and complex to query the data when the 500 column limit is breached and data is stored in the `AdditionalFields` column.
 
-> More details on this can be found here: [AzureDiagnostics Table Docs](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics)
+> More details on this can be found here: [AzureDiagnostics Table Docs](https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics)
 
-To overcome this issue the Azure Monitor team has created a new collection type for diagnostic settings for resources called [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific). In this mode a separate table per Azure service is created in the Log Analytics Workspace which will mean the 500 column limit will not be hit and therefore querying and managing the data in the Log Analytics Workspace is simplified and more performant.
+To overcome this issue the Azure Monitor team has created a new collection type for diagnostic settings for resources called [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific). In this mode a separate table per Azure service is created in the Log Analytics Workspace which will mean the 500 column limit will not be hit and therefore querying and managing the data in the Log Analytics Workspace is simplified and more performant.
 
-> An explanation of the 2 modes can be found here: [Azure resource logs](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs)
+> An explanation of the 2 modes can be found here: [Azure resource logs](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs)
 
 ### Next steps
 
-As of today only a limited number of services support the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
+As of today only a limited number of services support the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
 
-We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://docs.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
+We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
 
 Stay tuned to our [What's New page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) where we will be announcing when we migrate services to the new collection type. Also watch [Azure Updates](https://azure.microsoft.com/updates/) for announcements from service teams for adding support to their services for this collection type.
 

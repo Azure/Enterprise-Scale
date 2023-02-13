@@ -8,7 +8,7 @@ Enterprise-Scale reference implementation requires permission at tenant root sco
 
 Once the User Access Administrator (UAA) role is enabled, a UAA can grant **_other users and service principals_** within organization to deploy/manage Enterprise-Scale reference implementation by granting "Owner" permission at tenant root scope "/".
 
-Once permission is granted to other **users and service principals**, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)
+Once permission is granted to other **users and service principals**, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)
 
 ## 1. Elevate Access to manage Azure resources in the directory
 
@@ -17,11 +17,11 @@ Once permission is granted to other **users and service principals**, you can sa
 1.2 Open Azure Active Directory.
 
 1.3 Under _Manage_, select _Properties_.
-![alt](https://docs.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
+![alt](https://learn.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
 
 1.4 Under _Access management for Azure resources_, set the toggle to Yes.
 
-![alt](https://docs.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
+![alt](https://learn.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/aad-properties-global-admin-setting.png)
 
 ## 2. Grant Access to User and/or Service principal at root scope "/" to deploy Enterprise-Scale reference implementation
 

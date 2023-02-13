@@ -25,13 +25,13 @@ _Using an analogy, this is similar to how city utilities such as water, gas, and
 
 # Design Principles
 
-The Enterprise-Scale architecture is based on the [five design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles). These principles serve as a compass for subsequent design decisions across critical technical domains. Readers and users of the reference implementation are strongly advised to familiarize themselves with these principles to better understand their impact and the trade-offs associated with non-adherence.
+The Enterprise-Scale architecture is based on the [five design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles). These principles serve as a compass for subsequent design decisions across critical technical domains. Readers and users of the reference implementation are strongly advised to familiarize themselves with these principles to better understand their impact and the trade-offs associated with non-adherence.
 
-* [Subscription democratization](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?branch#subscription-democratization)
-* [Policy-driven governance](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance)
-* [Single control and management plane](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#single-control-and-management-plane)
-* [Application-centric service model](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?#application-centric-service-model)
-* [Align with Azure-native design and roadmaps](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#align-with-azure-native-design-and-roadmaps)
+* [Subscription democratization](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?branch#subscription-democratization)
+* [Policy-driven governance](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance)
+* [Single control and management plane](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#single-control-and-management-plane)
+* [Application-centric service model](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles?#application-centric-service-model)
+* [Align with Azure-native design and roadmaps](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#align-with-azure-native-design-and-roadmaps)
 
 # Design Guidelines
 
@@ -39,15 +39,15 @@ At the centre of the Enterprise-Scale architecture lies a critical design path, 
 
 ## Critical Design Areas
 
-The [eight critical design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) are intended to support the translation of customer requirements to Azure constructs and capabilities, to address the mismatch between on-premises infrastructure and cloud-design which typically creates dissonance and friction with respect to the Enterprise-Scale definition and Azure adoption.
+The [eight critical design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) are intended to support the translation of customer requirements to Azure constructs and capabilities, to address the mismatch between on-premises infrastructure and cloud-design which typically creates dissonance and friction with respect to the Enterprise-Scale definition and Azure adoption.
 
 The impact of decisions made within these critical areas will reverberate across the Enterprise-Scale architecture and influence other decisions. Readers and reference implementation users are strongly advised to familiarize themselves with these eight areas, to better understand the consequences of encompassed decisions, which may later produce trade-offs within related areas.
 
-* [Billing and Active Directory tenants](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/azure-billing-ad-tenant)
-* [Identity and access management](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access)
-* [Network topology and connectivity](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/network-topology-and-connectivity)
-* [Resource organization](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org)
-* [Security](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/security)
-* [Management](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/management)
-* [Governance](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/governance)
-* [Platform automation and DevOps](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/platform-automation-devops)
+* [Billing and Active Directory tenants](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/azure-billing-ad-tenant)
+* [Identity and access management](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access)
+* [Network topology and connectivity](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/network-topology-and-connectivity)
+* [Resource organization](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org)
+* [Security](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/security)
+* [Management](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/management)
+* [Governance](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/governance)
+* [Platform automation and DevOps](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/platform-automation-devops)
