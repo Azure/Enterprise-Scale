@@ -694,6 +694,15 @@
                 "No"
             ]
         },
+        "enforceKVGuardrails": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "delayCount": {
             "type": "int",
             "defaultValue": 30,
@@ -775,6 +784,7 @@
             "pipOnNicPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressOnNICPolicyAssignment.json')]",
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
+            "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-Guardrails-KeyVault.json')]",
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
             "sqlAuditPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
             "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLEncryptionPolicyAssignment.json')]",
@@ -837,6 +847,7 @@
             "rdpFromInternetPolicyDeploymentName": "[take(concat('alz-RDP', variables('deploymentSuffix')), 64)]",
             "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-RDPIdentity', variables('deploymentSuffix')), 64)]",
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
+            "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
             "subnetNsgPolicyDeploymentName": "[take(concat('alz-SubnetNsg', variables('deploymentSuffix')), 64)]",
             "subnetNsgIdentityPolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "sqlAuditPolicyDeploymentName": "[take(concat('alz-SqlAudit', variables('deploymentSuffix')), 64)]",
@@ -2648,6 +2659,30 @@
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
                     "uri": "[variables('deploymentUris').storageHttpsPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Key Vault guardrails initiative to landing zones management group if condition is true
+            "condition": "[equals(parameters('enforceKVGuardrails'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').kvGuardrailsPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').kvGuardrailsPolicyAssignment]"
                 },
                 "parameters": {
                     "enforcementMode": {

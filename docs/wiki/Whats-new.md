@@ -63,7 +63,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
 - Added new Initiative and Assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
   - Initiative name: ENFORCE-Guardrails-KeyVault
-  - Policies included: https://aka.ms/alz/policies
+  - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
 
 ### February 2023
 
