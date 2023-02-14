@@ -60,6 +60,17 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
+- New Initiative for the Decommissioned landingzones including policies:
+  - Initiative name: Enforce-ALZ-Decomm
+    - [Allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/a08ec900-254a-4555-9bf5-e42af04b5c5c.html) - nothing allowed, however the policy requires at least one resource, so defaulting to 'microsoft.consumption/tags'.
+    - New policy to deploy an auto shutdown policy for virtual machines - Deploy-Vm-autoShutdown
+    - Portal accelerator updated with additional tab and options to enable this initiative.
+- New Initiative for the Sandboxes landingzones including policies:
+  - Initiative name: Enforce-ALZ-Sanbox
+    - [Not allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) - blocking the deployment of ER/VPN/vWAN
+    - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
+    - Portal accelerator updated with additional tab and options to enable this initiative.
+- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
 - Added new Initiative and Assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
   - Initiative name: ENFORCE-Guardrails-KeyVault
@@ -84,7 +95,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
-- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Fix typo in Deny-MachineLearning-PublicAccessWhenBehindVnet.json.
 
 #### Other
