@@ -13,9 +13,9 @@
 
 Managing all the platform resources in a a single repository is one of the guiding principle for PlatformOps to manage the platform. Subscriptions representing landing zones are resource types manage by the PlatformOps team. As every other platform resource type subscriptions are created using the ARM API. For Subscriptions the API and versions vary and depend on the commercial contract.
 
-- [Enterprise Enrollment (EA)](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-enterprise-agreement)
-- [Microsoft Customer Agreement (MCA)](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-customer-agreement)
-- [Microsoft Partner Agreement (MPA)](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-partner-agreement)
+- [Enterprise Enrollment (EA)](https://learn.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-enterprise-agreement)
+- [Microsoft Customer Agreement (MCA)](https://learn.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-customer-agreement)
+- [Microsoft Partner Agreement (MPA)](https://learn.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription-microsoft-partner-agreement)
 
 This article describes the flow to create subscriptions/landing zones in an Enterprise Enrollment (EA). Natively in Azure, *enrollment owner* have the permission to create and own subscriptions. *Enrollment owners* are user identities in Azure AD and in order to create subscriptions in an fully automated process the permission to create subscription need to be delegate to a Service Principal (SPN) or Managed Service Identity (MSI).
 
@@ -29,7 +29,7 @@ For the Service Principal permissions to create subscriptions, access to an *enr
 
 >Note: When using this Service Principal the subscription will be created under specified billing scope of *enrollment account*. Multiple enrollment account permissions can be granted to a Service Principal. The billing scope will be specified in the ARM template during the subscription creation process.
 
-Creating Azure subscriptions programmatically is allowed on specific types of Azure agreement types (EA, MCA, MPA). Refer to guidance on [Creating Azure subscriptions programmatically](https://docs.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription) to know supported agreement types.
+Creating Azure subscriptions programmatically is allowed on specific types of Azure agreement types (EA, MCA, MPA). Refer to guidance on [Creating Azure subscriptions programmatically](https://learn.microsoft.com/azure/cost-management-billing/manage/programmatically-create-subscription) to know supported agreement types.
 
 ## Enable Service Principal to create landing zones
 

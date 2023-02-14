@@ -15,7 +15,7 @@ To meet the diverse needs of our community, we offer the following reference imp
 - [ALZ Bicep modules](https://github.com/Azure/ALZ-Bicep)
 - [ALZ Terraform module](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
 
-Whilst each reference implementation is uniquely characterized by its target community, they all aim to deliver against the Azure landing zone [conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas).
+Whilst each reference implementation is uniquely characterized by its target community, they all aim to deliver against the Azure landing zone [conceptual architecture](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas).
 
 The following is a set of general guidelines for contributing to any of these reference implementations.
 
@@ -26,7 +26,7 @@ The committee is responsible for reviewing and approving all contributions, whet
 
 The committee is also responsible for reviewing and sponsoring new features or design changes to ensure they meet the needs of our broad community of consumers.
 
-The intent of this approach is to ensures that each reference implementation continues to deliver against the Azure landing zone [conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas).
+The intent of this approach is to ensures that each reference implementation continues to deliver against the Azure landing zone [conceptual architecture](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas).
 This also helps us to drive towards consistency across the reference implementation options, where possible.
 
 The committee currently consists of Microsoft employees only.
@@ -69,14 +69,14 @@ This is where you can really make a difference to how the solution is shaped for
 
 If you have an idea you would like to be considered for inclusion, please use the following process:
 
-1. Familiarize yourself with our [conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) to ensure the feature aligns with the Azure landing zone guidance.
+1. Familiarize yourself with our [conceptual architecture](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) to ensure the feature aligns with the Azure landing zone guidance.
 1. Check existing [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues) to see whether the issue has already been reported.
     1. If the issue is **open**, add a comment rather than create a new one.
     1. If the issue is **closed**, check whether the proposed fix resolves your issue.
 1. Report it via our [**GitHub Issues**](https://github.com/Azure/Enterprise-Scale/issues)
 1. Select `New issue` and use the `Feature request 🚀` template
 1. Ensure you fill out the template with as much information as possible, being sure to cover off what's needed for maintainers and the community to:
-    1. Understand your feature and how it aligns to our [conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) :memo:
+    1. Understand your feature and how it aligns to our [conceptual architecture](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) :memo:
     1. Optionally, let us know if you would like to contribute by adding your requested feature via a [**Pull Request**](https://github.com/Azure/Enterprise-Scale/pulls) :wrench:
 
 > **IMPORTANT:** If you are proposing a change to any of the Azure landing zone guidance, please include a business case explaining why you feel this will benefit our community.

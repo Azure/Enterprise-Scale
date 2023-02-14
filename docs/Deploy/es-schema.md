@@ -10,7 +10,7 @@ This article will help you to familiarize with the [Enterprise-Scale ARM templat
 
 ## ARM template objectives for Enterprise-Scale
 
-Some of the key [design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) of Enterprise-Scale is to have a single control and management plane, be Azure native and aligned to the platform roadmap, and employ Azure Policy to enable policy driven governance and management. That means we rely on platform capabilities in order to compose and deploy the Enterprise-Scale architecture end-2-end.
+Some of the key [design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles) of Enterprise-Scale is to have a single control and management plane, be Azure native and aligned to the platform roadmap, and employ Azure Policy to enable policy driven governance and management. That means we rely on platform capabilities in order to compose and deploy the Enterprise-Scale architecture end-2-end.
 
 The objectives includes:
 
