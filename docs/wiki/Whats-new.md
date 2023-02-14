@@ -61,6 +61,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
+- Added new Initiative and Assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
+  - Initiative name: ENFORCE-Guardrails-KeyVault
+  - Policies included: https://aka.ms/alz/policies
 
 ### February 2023
 
