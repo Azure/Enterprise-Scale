@@ -10,7 +10,7 @@ Deploy Kubernetes to Azure and integrate with ARM, Azure AD, Azure Policy, and A
 a
 | Landing zone | ARM Template | Details |
 |:-------------------------|:-------------|:-----------|
-| Online |[![Deploy To Azure](https://docs.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fonline-aks.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fportal-online-aks.json) | [Detailed description](https://github.com/Azure/Enterprise-Scale/tree/main/workloads/AKS/README.md)
+| Online |[![Deploy To Azure](https://learn.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fonline-aks.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fportal-online-aks.json) | [Detailed description](https://github.com/Azure/Enterprise-Scale/tree/main/workloads/AKS/README.md)
 | Corp  | Coming soon | Detailed description
 
 

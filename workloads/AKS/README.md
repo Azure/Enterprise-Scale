@@ -22,4 +22,4 @@ By default, all recommendations are enabled and you must explicitly disable them
 
 | Landing zone | ARM Template |
 |:-------------------------|:-------------|
-| Online |[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fonline-aks.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fportal-online-aks.json) | 
+| Online |[![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fonline-aks.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fworkloads%2FAKS%2FarmTemplates%2Fportal-online-aks.json) | 
