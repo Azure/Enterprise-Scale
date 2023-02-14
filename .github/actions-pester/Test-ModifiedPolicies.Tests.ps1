@@ -40,6 +40,7 @@ Describe 'UnitTest-ModifiedPolicies' {
                     $parameters | ForEach-Object {
                         $key = $_.name
                         $defaultValue = $policyParameters.$key | Get-Member -MemberType NoteProperty | Where-Object Name -EQ "defaultValue"
+                        Write-Warning "This is a default value: $($defaultValue)"
                         $policyParameters.$key.defaultValue | Should -Not -BeNullOrEmpty
                     }
                 }
