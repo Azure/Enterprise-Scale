@@ -64,6 +64,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new Initiative and Assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
   - Initiative name: ENFORCE-Guardrails-KeyVault
   - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
+  - Portal accelerator updated
 
 ### February 2023
 
