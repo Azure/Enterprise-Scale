@@ -160,6 +160,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Storage-sslEnforcement.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke.json') // Only difference is hard-coded template deployment location (handled by this template)
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Windows-DomainJoin.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VWanS2SVPNGW.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
