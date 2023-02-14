@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyEffect": {
+            "type": "string",
+            "allowedValues": [
+                "Deny",
+                "Audit"
+            ],
+            "defaultValue": "Deny"
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "denyCorpNetworking": "/providers/Microsoft.Authorization/policyDefinitions/6c112d4e-5bc7-47ae-a041-ea2d9dccd749"
+        },
+        "policyAssignmentNames": {
+            "denyCorpNetworking": "Deny-AlzCorp-Networking",
+            "description": "Denies deployment of networking gateway resources in the Corp landing zone.",
+            "displayName": "Deny the deployment of networking gateway resources in Corp landing zone"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').denyCorpNetworking]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').denyCorpNetworking]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "listOfResourceTypesNotAllowed": {
+                        "value": [
+                            "microsoft.network/expressroutecircuits",
+                            "microsoft.network/expressroutegateways",
+                            "microsoft.network/virtualwans",
+                            "microsoft.network/virtualhubs",
+                            "microsoft.network/vpngateways",
+                            "microsoft.network/vpnsites"
+                        ]
+                    },
+                    "effect": {
+                        "value": "[parameters('policyEffect')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
