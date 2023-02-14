@@ -2,7 +2,7 @@
 
 Azure Policy and deployIfNotExist enables autonomy in the platform, and reduces operational burden as you scale your deployments and subscriptions in the Azure landing zone architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy.
 
-> Please refer to [Policy Driven Governance](https://docs.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/landing-zone/design-principles#policy-driven-governance) for further information.
+> Please refer to [Policy Driven Governance](https://learn.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/landing-zone/design-principles#policy-driven-governance) for further information.
 
 ## Why are there custom policy definitions as part of Azure landing zones?
 
@@ -269,9 +269,13 @@ This management group is for landing zones that are being cancelled. Cancelled l
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **0**     |
 </td></tr> </table>
+
+| Assignment Name                                                | Definition Name                                                | Policy Type                         | Description                                                                                                                                                                                            | Effect(s)         | Version |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ------- |
+| **Enforce ALZ Decommissioned Guardrails** | **Enforce ALZ Decommissioned Guardrails** | `Policy Definition Set`, **Custom** | This initiative will help enforce and govern subscriptions that are placed within the decommissioned Management Group as part of your Subscription decommissioning process.  Policies included: <ul><li>Deny the deployment of new resources<li>Deploy an auto VM shutdown policy at UTC 00:00</ul>                                                                           | Enforce              | 1.0.0   |
 
 ### Sandbox
 
@@ -288,9 +292,13 @@ This management group is for subscriptions that will only be used for testing an
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **0**     |
 </td></tr> </table>
+
+| Assignment Name                                                | Definition Name                                                | Policy Type                         | Description                                                                                                                                                                                            | Effect(s)         | Version |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | ------- |
+| **Enforce ALZ Sandbox Guardrails** | **Enforce ALZ Sandbox Guardrails** | `Policy Definition Set`, **Custom** | This initiative will help enforce and govern subscriptions that are placed within the Sandobx Management Group. Policies included: <ul><li>Deny vNET peering across subscriptions<li>Deny the deployment of vWAN/ER/VPN gateways.</ul>                                                                              | Enforce              | 1.0.0   |
 
 ### Versioning
 

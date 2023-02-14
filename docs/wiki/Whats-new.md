@@ -28,7 +28,7 @@
 Enterprise Scale/Azure Landing Zones is updated regularly. This page is where you'll find out about the latest updates to Enterprise Scale/Azure Landing Zones for:
 
 - [CAF (Cloud Adoption Framework) Documentation](https://aka.ms/alz) Updates
-  - Check out the CAF specific [What's new in the Microsoft Cloud Adoption Framework for Azure](https://docs.microsoft.com/azure/cloud-adoption-framework/get-started/whats-new) page
+  - Check out the CAF specific [What's new in the Microsoft Cloud Adoption Framework for Azure](https://learn.microsoft.com/azure/cloud-adoption-framework/get-started/whats-new) page
 - Improvements to existing guidance and artifacts
 - Azure Policy changes
 - Bug fixes
@@ -62,6 +62,17 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
+- New Initiative for the Decommissioned landingzones including policies:
+  - Initiative name: Enforce-ALZ-Decomm
+    - [Allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/a08ec900-254a-4555-9bf5-e42af04b5c5c.html) - nothing allowed, however the policy requires at least one resource, so defaulting to 'microsoft.consumption/tags'.
+    - New policy to deploy an auto shutdown policy for virtual machines - Deploy-Vm-autoShutdown
+    - Portal accelerator updated with additional tab and options to enable this initiative.
+- New Initiative for the Sandboxes landingzones including policies:
+  - Initiative name: Enforce-ALZ-Sanbox
+    - [Not allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) - blocking the deployment of ER/VPN/vWAN
+    - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
+    - Portal accelerator updated with additional tab and options to enable this initiative.
+- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
 
 ### February 2023
@@ -82,7 +93,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deploy-SQLVulnerabilityAssessments.json` policy to use Storage Account Contributor for storing the logs.
 - Updated the same policy parameter description for email recipients explaining string type and how to format input.
-- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Fix typo in Deny-MachineLearning-PublicAccessWhenBehindVnet.json.
 
 #### Other
@@ -263,7 +273,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Release [`v2.4.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.4.0) of the Azure landing zones Terraform module
-- Updated [Automation Account region mapping](https://docs.microsoft.com/azure/automation/how-to/region-mappings) in the Terraform implementation option
+- Updated [Automation Account region mapping](https://learn.microsoft.com/azure/automation/how-to/region-mappings) in the Terraform implementation option
 
 ### Policy
 
@@ -344,7 +354,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Add 2 new categories for Host Pools Diagnostic Settings
     - `NetworkData`
     - `SessionHostManagement`
-- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per [https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan](https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan) - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
+- Added AVD Scaling Plans Diagnostic Settings called `Deploy-Diagnostics-AVDScalingPlans` for Azure Public only - as not supported in Fairfax or Mooncake as per [https://learn.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan](https://docs.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan) - Fixing issue [issue #962](https://github.com/Azure/Enterprise-Scale/issues/962)
   - Added to `Deploy-Diagnostics-LogAnalytics` Policy Initiative
 - Added additional log categories to `Deploy-Diagnostics-Firewall` for Azure Firewall Diagnostic Settings Policy - Fixing issue [issue #985](https://github.com/Azure/Enterprise-Scale/issues/985)
 - Added additional log categories to `Deploy-Diagnostics-APIMgmt` for Azure API Management Diagnostic Settings Policy - Fixing issue [issue #986](https://github.com/Azure/Enterprise-Scale/issues/986)
@@ -362,14 +372,14 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- Updated the [What is an Azure landing zone?](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) page
-- Updated the [Azure landing zone - design principles](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) page
-- Updated the [Azure landing zone design areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) overview page
-- Updated the [Landing zone implementation options](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/implementation-options) page
+- Updated the [What is an Azure landing zone?](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) page
+- Updated the [Azure landing zone - design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) page
+- Updated the [Azure landing zone design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) overview page
+- Updated the [Landing zone implementation options](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/implementation-options) page
 
 #### Tooling
 
-- Updating Azure Firewall to use Availability Zones inside of Azure Virtual WAN Secure Hub: [Azure Firewall Updates](https://azure.microsoft.com/blog/boost-your-network-security-with-new-updates-to-azure-firewall/) and [Azure Firewall with Availability Zones](https://docs.microsoft.com/azure/virtual-wan/virtual-wan-faq#how-are-availability-zones-and-resiliency-handled-in-virtual-wan)
+- Updating Azure Firewall to use Availability Zones inside of Azure Virtual WAN Secure Hub: [Azure Firewall Updates](https://azure.microsoft.com/blog/boost-your-network-security-with-new-updates-to-azure-firewall/) and [Azure Firewall with Availability Zones](https://learn.microsoft.com/azure/virtual-wan/virtual-wan-faq#how-are-availability-zones-and-resiliency-handled-in-virtual-wan)
 - ALZ Terraform module patch release [v2.0.2](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.2) - three minor bugs squashed 🐛 🐛 🐛 🥳
 
 ### Policy
@@ -386,12 +396,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- New CAF document [Plan for virtual machine remote access](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-virtual-machine-remote-access)
-- New CAF document [Use Terraform to deploy Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/deploy-landing-zones-with-terraform)
+- New CAF document [Plan for virtual machine remote access](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-virtual-machine-remote-access)
+- New CAF document [Use Terraform to deploy Azure landing zones](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/deploy-landing-zones-with-terraform)
   - Helps you to understand what Terraform approach and module to use to deploy, manage and operate ALZ
-- New CAF document [Tailor the Azure landing zone architecture to meet requirements](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/tailoring-alz)
+- New CAF document [Tailor the Azure landing zone architecture to meet requirements](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/tailoring-alz)
   - Guidance to help you understand how to tailor the ALZ architecture to meet your additional requirements
-- New CAF document [Independent software vendor (ISV) considerations for Azure landing zones](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/isv-landing-zone)
+- New CAF document [Independent software vendor (ISV) considerations for Azure landing zones](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/isv-landing-zone)
 
 #### Tooling
 
@@ -399,7 +409,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Adds support for Virtual WAN plus much more
   - Checkout [release notes](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v2.0.0) for details on all the changes and fixes
   - Checkout [upgrade guide](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v1.1.4-to-v2.0.0) for details on how to upgrade to the latest release
-- Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://docs.microsoft.com/azure/private-link/private-endpoint-dns)
+- Updated Private DNS Zones that are created for Private Link/Endpoints in Portal Experience as per documentation here: [Azure Private Endpoint DNS configuration](https://learn.microsoft.com/azure/private-link/private-endpoint-dns)
   - Also fixes [issue 944](https://github.com/Azure/Enterprise-Scale/issues/944)
 - Added Telemetry to Portal Experience. More info here [Telemetry Tracking Using Customer Usage Attribution (PID)](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale-CustomerUsage)
 - Increase `preparingToLaunch` deployment delay in portal experience to improve scenario in [issue 902](https://github.com/Azure/Enterprise-Scale/issues/902)
@@ -453,7 +463,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deny-Subnet-Without-Nsg` & `Deny-Subnet-Without-Udr` to version 2.0.0
   - Fixes scenario described in issue issue [#407](https://github.com/Azure/Enterprise-Scale/issues/407)
-- Updated `Deploy-ASCDF-Config` policy initiative with changes relating to new [Microsoft Defender for Cloud Containers plan](https://docs.microsoft.com/azure/defender-for-cloud/release-notes#microsoft-defender-for-containers-plan-released-for-general-availability-ga) as documented in issue [#874](https://github.com/Azure/Enterprise-Scale/issues/874)
+- Updated `Deploy-ASCDF-Config` policy initiative with changes relating to new [Microsoft Defender for Cloud Containers plan](https://learn.microsoft.com/azure/defender-for-cloud/release-notes#microsoft-defender-for-containers-plan-released-for-general-availability-ga) as documented in issue [#874](https://github.com/Azure/Enterprise-Scale/issues/874)
   - Updated in Public (Commercial), Fairfax (Gov) and Mooncake (China)
   - Updated portal experiences for Public and Fairfax
 
@@ -472,12 +482,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - CAF ready lots of doc updates relating to Azure Landing Zones/Enterprise Scale
-  - Added doc on [Adopting policy driven guardrails](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/dine-guidance)
-  - Added doc called [Scenario: Transition existing Azure environments to the Azure landing zone conceptual architecture](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/align-scenarios)
+  - Added doc on [Adopting policy driven guardrails](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/dine-guidance)
+  - Added doc called [Scenario: Transition existing Azure environments to the Azure landing zone conceptual architecture](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/align-scenarios)
     - More of these to come, let us know via issues on other scenarios you'd like to see documented
-  - [Design Areas](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) updated and reorganized in TOC (navigation pane)
+  - [Design Areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas) updated and reorganized in TOC (navigation pane)
 
-[![Updated TOC](./media/caf-docs-mstone-2-toc.png)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
+[![Updated TOC](./media/caf-docs-mstone-2-toc.png)](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas)
 
 - Updated [DIY instructions](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/README-AzureChina.md) for deploying Enterprise-Scale in Azure China with:
   - Additional details of some deployment steps
@@ -521,7 +531,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updates to [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) to include instructions for deploying each of the reference implementations.
 - Updated Deploying Enterprise Scale wiki page with updated workflow steps. ([https://github.com/Azure/Enterprise-Scale/pull/827](https://github.com/Azure/Enterprise-Scale/pull/827))
 - Updated [implementation FAQ](https://github.com/Azure/Enterprise-Scale/wiki/FAQ) and moved to the Wiki
-- Added [architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
+- Added [architecture FAQ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq) to the CAF docs
 
 #### Tooling
 
@@ -577,7 +587,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
+- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
   - Added CSP, MCA & other billing offers
   - Added information on how an EA relates to Azure AD and ties in with RBAC
 - Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
@@ -608,8 +618,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 
-- Added guidance for Resource Group usage for Azure Networking topologies in [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) & [Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) CAF docs - closing issue [#632](https://github.com/Azure/Enterprise-Scale/issues/632)
-- Updated [Connectivity to Azure PaaS services](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services) CAF docs based on customer feedback around Private Link /Service Endpoints differences and guidance, including ExpressRoute peering options relating to this. Closing issue - [#519 on CAF repository](https://github.com/MicrosoftDocs/cloud-adoption-framework/issues/519)
+- Added guidance for Resource Group usage for Azure Networking topologies in [Hub & Spoke](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) & [Virtual WAN](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) CAF docs - closing issue [#632](https://github.com/Azure/Enterprise-Scale/issues/632)
+- Updated [Connectivity to Azure PaaS services](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-azure-paas-services) CAF docs based on customer feedback around Private Link /Service Endpoints differences and guidance, including ExpressRoute peering options relating to this. Closing issue - [#519 on CAF repository](https://github.com/MicrosoftDocs/cloud-adoption-framework/issues/519)
 - Updated [Contoso](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/contoso/Readme.md), [Adventure Works](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) & [Wingtip Toys](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/wingtip/README.md) reference implementations with new Deploy To Azure buttons for new portal experience
   - Also updated guidance and option availability for each of them respectively
 - [User Guide](https://github.com/Azure/Enterprise-Scale/wiki) updated to reflect latest release and new portal experience
@@ -695,13 +705,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - ["What's New?"](./Whats-new) page created
-- Azure DDoS Network Protection design considerations and recommendations added to CAF docs ([Virtual WAN](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) & [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology)) - closing issue [#603](https://github.com/Azure/Enterprise-Scale/issues/603)
-- [Connectivity to other cloud providers](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-other-providers) CAF document released
-- [Testing approach for enterprise-scale](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/testing-approach) CAF document released
+- Azure DDoS Network Protection design considerations and recommendations added to CAF docs ([Virtual WAN](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) & [Hub & Spoke](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology)) - closing issue [#603](https://github.com/Azure/Enterprise-Scale/issues/603)
+- [Connectivity to other cloud providers](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/connectivity-to-other-providers) CAF document released
+- [Testing approach for enterprise-scale](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/testing-approach) CAF document released
 - Updated [pricing section](https://github.com/Azure/Enterprise-Scale/wiki/What-is-Enterprise-Scale#pricing) on "What is Enterprise Scale" wiki page to provide further clarity.
-- Updated [DNS for on-premises and Azure resources](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/dns-for-on-premises-and-azure-resources) - related to issue [#609](https://github.com/Azure/Enterprise-Scale/issues/609)
-- Update [Hub & Spoke](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) guidance related to BGP propagation on UDRs for transit connectivity - to close issue [#618](https://github.com/Azure/Enterprise-Scale/issues/618)
-- Added guidance to [Management group and subscription organization - CAF Docs](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization#configure-subscription-tenant-transfer-restrictions) for [Azure Subscription Policies](https://docs.microsoft.com/azure/cost-management-billing/manage/manage-azure-subscription-policy), which allow you to control Azure Subscription Tenant transfers to/from your AAD Tenant.
+- Updated [DNS for on-premises and Azure resources](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/dns-for-on-premises-and-azure-resources) - related to issue [#609](https://github.com/Azure/Enterprise-Scale/issues/609)
+- Update [Hub & Spoke](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) guidance related to BGP propagation on UDRs for transit connectivity - to close issue [#618](https://github.com/Azure/Enterprise-Scale/issues/618)
+- Added guidance to [Management group and subscription organization - CAF Docs](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization#configure-subscription-tenant-transfer-restrictions) for [Azure Subscription Policies](https://learn.microsoft.com/azure/cost-management-billing/manage/manage-azure-subscription-policy), which allow you to control Azure Subscription Tenant transfers to/from your AAD Tenant.
 
 #### Tooling
 
