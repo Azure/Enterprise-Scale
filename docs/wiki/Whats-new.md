@@ -52,6 +52,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### February 2023
 
+#### Policy
+
+- Updated `Deploy-Diagnostics-Website.json` policy to set Diagnostic Settings based on the AppService plan, as the Premium Tier has more settings available.
+
 #### Tooling
 
 - Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
