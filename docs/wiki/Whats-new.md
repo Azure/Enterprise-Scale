@@ -79,6 +79,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added two new policy assignments to govern Corp Management Group networking:
   - DENY-AlzCorpNetworking - blocks the provisioning onf vWAN/ER/VPN gateways in Corp
   - AUDIT-AlzCorpNetworking - audits the provisioning of Private Link / Private DNS Zones in Corp
+- Added new policy assignment to audit WAF enabled on Application Gateways (Audit-AppGW-WAF)
 
 ### February 2023
 
