@@ -25,7 +25,11 @@
             "enforceACSB": "Enforce-ACSB",
             "description": "This initiative assignment enables Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines.",
             "displayName": "Enforce Azure Compute Security Baseline compliance auditing"
-        }
+        },
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "roleAssignmentNames": {
+            "deployGCroles": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').alzDecommission))]"
+            }
     },
     "resources": [
         {
@@ -37,6 +41,19 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').enforceACSB]",
                 "enforcementMode": "[parameters('enforcementMode')]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployGCroles]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').enforceACSB]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').enforceACSB), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
     ],
