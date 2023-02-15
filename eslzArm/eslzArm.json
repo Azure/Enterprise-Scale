@@ -737,6 +737,15 @@
                 "No"
             ]
         },
+        "enforceACSB": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "delayCount": {
             "type": "int",
             "defaultValue": 30,
@@ -826,6 +835,7 @@
             "denyCorpNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AlzCorpNetworkingPolicyAssignment.json')]",
             "auditCorpNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AlzCorpNetworkingPolicyAssignment.json')]",
             "auditAppGwWafPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AppGWWafPolicyAssignment.json')]",
+            "enforceACSBPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-ACSBPolicyAssignment.json')]",
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
             "sqlAuditPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
             "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLEncryptionPolicyAssignment.json')]",
@@ -894,6 +904,7 @@
             "denyCorpNetworkingPolicyDeploymentName": "[take(concat('alz-DenyCorpNetworking', variables('deploymentSuffix')), 64)]",
             "auditCorpNetworkingPolicyDeploymentName": "[take(concat('alz-AuditCorpNetworking', variables('deploymentSuffix')), 64)]",
             "auditAppGWWafPolicyDeploymentName": "[take(concat('alz-AppGWWaf', variables('deploymentSuffix')), 64)]",
+            "enforceACSBPolicyDeploymentName": "[take(concat('alz-ACSB', variables('deploymentSuffix')), 64)]",
             "subnetNsgPolicyDeploymentName": "[take(concat('alz-SubnetNsg', variables('deploymentSuffix')), 64)]",
             "subnetNsgIdentityPolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "sqlAuditPolicyDeploymentName": "[take(concat('alz-SqlAudit', variables('deploymentSuffix')), 64)]",
@@ -2806,6 +2817,30 @@
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
                     "uri": "[variables('deploymentUris').auditAppGwWafPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning policy to audit Azure Compute Security Baseline compliance to the landing zones management group if condition is true
+            "condition": "[equals(parameters('enforceACSB'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').enforceACSBPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').enforceACSBPolicyAssignment]"
                 },
                 "parameters": {
                     "enforcementMode": {

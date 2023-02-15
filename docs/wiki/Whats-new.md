@@ -71,8 +71,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
-- Added a Policy Assignment to deny Classic resources at the intermediate root management group
-- Added new Initiative and Assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
+- Added a policy assignment to deny Classic resources at the intermediate root management group
+- Added new initiative and assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
   - Initiative name: ENFORCE-Guardrails-KeyVault
   - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
   - Portal accelerator updated
@@ -80,6 +80,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - DENY-AlzCorpNetworking - blocks the provisioning onf vWAN/ER/VPN gateways in Corp
   - AUDIT-AlzCorpNetworking - audits the provisioning of Private Link / Private DNS Zones in Corp
 - Added new policy assignment to audit WAF enabled on Application Gateways (Audit-AppGW-WAF)
+- Added new intiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (Enforce-ACSB)
 
 ### February 2023
 
