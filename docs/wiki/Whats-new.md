@@ -76,6 +76,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Initiative name: ENFORCE-Guardrails-KeyVault
   - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
   - Portal accelerator updated
+- Added two new policy assignments to govern Corp Management Group networking:
+  - DENY-AlzCorpNetworking - blocks the provisioning onf vWAN/ER/VPN gateways in Corp
+  - AUDIT-AlzCorpNetworking - audits the provisioning of Private Link / Private DNS Zones in Corp
 
 ### February 2023
 

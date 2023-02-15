@@ -222,7 +222,7 @@ This management group is for corporate landing zones. This group is for workload
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **2**     |
-| `Policy Definitions`      | **4**     |
+| `Policy Definitions`      | **6**     |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Corp Management Group**.
@@ -235,6 +235,8 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Enforces the use of Premium Databricks workspaces**          | **Deny non-premium Databricks sku**                            | `Policy Definition`, **Custom**     | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. | Deny              | 1.0.0   |
 | **Enforces the use of vnet injection for Databricks**          | **Deny Databricks workspaces without Vnet injection**          | `Policy Definition`, **Custom**     | Enforces the use of vnet injection for Databricks workspaces.                                                                                                                                          | Deny              | 1.0.0   |
 | **Deny network interfaces having a public IP associated**          | **Network interfaces should not have public IPs**          | `Policy Definition`, **Built-in**     | This policy denies network interfaces from having a public IP associated to it under the assigned scope.                                                                                                                                          | Deny              | 1.0.0   |
+| **Deny the deployment of vWAN/ER/VPN gateway resources**          | **Not allowed resource types**          | `Policy Definition`, **Built-in**     | Denies deployment of vWAN/ER/VPN gateway resources in the Corp landing zone.                                                                                                                                          | Deny              | 1.0.0   |
+| **Audit Private Link / Private DNS Zone resources**          | **Not allowed resource types**          | `Policy Definition`, **Built-in**     | Audits the deployment of Private Link / Private DNS Zone resources in the Corp landing zone.                                                                                                                                         | Audit              | 1.0.0   |
 
 ### Online
 
