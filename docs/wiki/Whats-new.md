@@ -81,6 +81,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - AUDIT-AlzCorpNetworking - audits the provisioning of Private Link / Private DNS Zones in Corp
 - Added new policy assignment to audit WAF enabled on Application Gateways (Audit-AppGW-WAF)
 - Added new intiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (Enforce-ACSB)
+- Updated the initiative Deny-PublicPaaSEndpoints to include additional policies available to block public access for PaaS services
 
 ### February 2023
 
