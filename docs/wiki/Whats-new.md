@@ -56,6 +56,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added note to the portal experience on the "Platform DevOps and automation" blade warning that a management/platform subscription must be selected otherwise the blade will be blank
 
+#### Policy
+- Removed duplicated entry from `Deploy-Diagnostics-VNetGW.json` policy.
+
 ### January 2023
 
 #### Policy
