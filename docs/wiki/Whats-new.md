@@ -55,6 +55,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - Updated `Deploy-Diagnostics-Website.json` policy to set Diagnostic Settings based on the AppService plan, as the Premium Tier has more categories available.
+- Removed duplicated category entry from `Deploy-Diagnostics-VNetGW.json` policy.
 
 #### Tooling
 
