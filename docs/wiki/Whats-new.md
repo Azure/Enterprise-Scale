@@ -61,6 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
+- Added new policy that is enabling diagnostic settings for vwan s2s and added as part of diagnostic settings policy initiative. https://dev.azure.com/CSUSolEng/Azure%20Landing%20Zones/_workitems/edit/23793/
 
 ### February 2023
 
