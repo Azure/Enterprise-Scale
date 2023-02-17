@@ -20,7 +20,7 @@ The following table outlines key customer requirements in terms of landing zones
 
 | **Key customer landing zone requirement**                    | **Enterprise-Scale reference implementations**               |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Timelines to reach security and compliance requirements for a workload | Enabling all recommendations during setup, will ensure resources are compliant from a monitoring and security perspective |
+| Timelines to reach security and compliance requirements for a workload | Yes. Enabling all recommendations during setup will ensure resources are compliant from a monitoring and security perspective |
 | Provides a baseline architecture using multi-subscription design | Yes, for the entire Azure tenant regardless of customer’s scale-point |
 | Best-practices from cloud provider                           | Yes, proven and validated with customers                     |
 | Be aligned with cloud provider’s platform roadmap            | Yes                                                          |
