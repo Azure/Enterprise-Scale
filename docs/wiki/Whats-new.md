@@ -72,7 +72,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
-- Added new policy that is enabling diagnostic settings for vwan s2s and added as part of diagnostic settings policy initiative. https://dev.azure.com/CSUSolEng/Azure%20Landing%20Zones/_workitems/edit/23793/
+- Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
 
 ### February 2023
 
