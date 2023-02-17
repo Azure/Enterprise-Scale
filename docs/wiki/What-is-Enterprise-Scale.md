@@ -14,7 +14,7 @@ The Enterprise-Scale architecture is modular by design and allow organizations o
 
 The Enterprise-Scale reference implementations support Azure adoption at scale and provides guidance and architecture based on the authoritative design for the Azure platform as a whole.
 
-Enterprise-Scale reference implementations are tying together all the Azure platform primitives and creates a proven, well-defined Azure architecture based on a multi-subscription design, leveraging native platform capabilities to ensure organizations can create and operationalize their landing zones in Azure at scale.
+Enterprise-Scale reference implementations are tying together all the Azure platform primitives and create a proven, well-defined Azure architecture based on a multi-subscription design, leveraging native platform capabilities to ensure organizations can create and operationalize their landing zones in Azure at scale.
 
 The following table outlines key customer requirements in terms of landing zones, and how it is they are being addressed with Enterprise-Scale:
 
