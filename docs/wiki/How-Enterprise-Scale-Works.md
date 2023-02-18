@@ -106,11 +106,11 @@ By default, all recommended settings and resources recommendations are enabled a
 - (Optionally) An Azure subscription dedicated for **Identity** in case your organization requires to have Active Directory Domain Controllers to provide authorization and authentication for workloads deployed into the landing zones.
 - (Optionally) Integrate your Azure environment with GitHub, where you provide the Personal Access Token (PAT) to create a new repository and automatically discover and merge your deployment into Git.
 
-- Landing Zone Management Group for **Corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
+- A Landing Zone Management Group for **Corp**-connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided by the hub virtual network.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
 
-- Landing Zone Management Group for **Online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
-  - This is where you will create your Subscriptions that will host your online workloads.
+- A Landing Zone Management Group for **Online** applications that will be internet-facing, where a virtual network is optional and hybrid connectivity is not required.
+  - This is where you will create your subscriptions that will host your online workloads.
 
 - Landing zone subscriptions for Azure native, internet-facing **Online** applications and resources.
 
