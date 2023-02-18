@@ -2,7 +2,7 @@
 
 This article will guide you through the process to add your AzOps service principal to the  Azure Active Directory [Directory Readers](https://learn.microsoft.com/azure/active-directory/users-groups-roles/directory-assign-admin-roles) role.
 
-> Note: The steps below requires you to use an identity that is local to the Azure AD, and **_not_** Guest user account due to known restrictions.
+> Note: The steps below requires you to use an identity that is local to the Azure AD, and **_not_** a Guest user account due to known restrictions.
 
 The service principal used by the Enterprise-Scale reference implementation requires Azure AD directory reader permissions to be able to discover Azure role assignments. These permissions are used to enrich data around the role assignments with additional Azure AD context such as ObjectType and Azure AD Object DisplayName.
 
