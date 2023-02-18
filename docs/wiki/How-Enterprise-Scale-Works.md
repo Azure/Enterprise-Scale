@@ -56,7 +56,7 @@ Platform resource are managed by a cross-functional platform team. The team cons
 
 Enterprise-scale landing zones support both centralized and federated application DevOps models. The most common model are dedicated **DevOps** teams which are each associated with a single workload. In case of smaller workloads, COTS, or 3rd party applications, a single **AppDevOps** team is responsible for the workload's operation. Independent of the model every DevOps team manages several workload staging environments (DEV, UAT, PROD), deployed to individual landing zones /subscriptions. Each landing zone has a set of RBAC permissions managed with Azure AD PIM provided by the Platform SecOps team.
 
-When the landing zones/subscriptions are handed over to the DevOps team, the team is end-to-end responsible for the workload. They can independently operate within the security guardrails provided by the platform team. If dependency on central teams or functions are discovered, it is highly recommended to review the process and eliminated as soon as possible to unblock DevOps teams.
+When the landing zones / subscriptions are handed over to the DevOps team, the team is end-to-end responsible for the workload. They can operate within the security guardrails provided by the platform team independently. If dependencies on central teams or functions are discovered, it is highly recommended to review the process and eliminate these as soon as possible to unblock DevOps teams.
 
 ## Enterprise-Scale Management Group Structure
 
