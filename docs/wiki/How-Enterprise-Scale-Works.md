@@ -104,7 +104,7 @@ By default, all recommended settings and resources recommendations are enabled a
   - Azure Private DNS Zones for Private Link
 
 - (Optionally) An Azure subscription dedicated for **Identity** in case your organization requires to have Active Directory Domain Controllers to provide authorization and authentication for workloads deployed into the landing zones.
-- (Optionally) Integrate your Azure environment with GitHub, where you provide the PA Token to create a new repository and automatically discover and merge your deployment into Git.
+- (Optionally) Integrate your Azure environment with GitHub, where you provide the Personal Access Token (PAT) to create a new repository and automatically discover and merge your deployment into Git.
 
 - Landing Zone Management Group for **Corp** connected applications that require connectivity to on-premises, to other landing zones or to the internet via shared services provided in the hub virtual network.
   - This is where you will create your subscriptions that will host your corp-connected workloads.
