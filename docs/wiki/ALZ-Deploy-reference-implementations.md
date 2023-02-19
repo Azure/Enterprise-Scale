@@ -19,7 +19,7 @@ The Enterprise-Scale design principles and reference implementations can be adop
 
 An Enterprise-Scale reference implementation is rooted in the principle that **Everything in Azure is a Resource**. All of the reference scenarios leverage native **Azure Resource Manager (ARM)** to describe and manage their resources as part of their target state architecture at-scale.
 
-Reference implementations enable security, monitoring, networking, and any other plumbing needed for landing zones (i.e. subscriptions) autonomously through policy enforcement. Companies will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy Driven Governance" for landing zones by using Azure Policy. The benefits of a policy-driven approach are many but the most significant are:
+Reference implementations enable security, monitoring, networking, and any other plumbing needed for landing zones (i.e. subscriptions) autonomously through policy enforcement. Companies will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy-driven Governance" for landing zones by using Azure Policy. The benefits of a policy-driven approach are many but the most significant are:
 
 1. Platform can provide an orchestration capability to bring target resources (in this case a subscription) to a desired goal state.
 
