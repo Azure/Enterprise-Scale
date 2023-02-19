@@ -15,7 +15,7 @@ The service principal used by the Enterprise-Scale reference implementation requ
 1.3 Under _Manage_ > _Roles and administrators_, select _Directory readers_.
 ![alt](./media/aad-rolesandadministrators.png)
 
-1.4 Under _Manage_ > _Assignments_ > _Add assignments_, find for and select your AzOps service principal and finally add it to the directory role.
+1.4 Under _Manage_ > _Assignments_ > _Add assignments_, find and select your AzOps service principal and finally add it to the directory role.
 
 ![alt](./media/directory-reader.png)
 
