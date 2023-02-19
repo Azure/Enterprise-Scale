@@ -21,10 +21,10 @@ An Enterprise-Scale reference implementation is rooted in the principle that **E
 
 Reference implementations enable security, monitoring, networking, and any other plumbing needed for landing zones (i.e. subscriptions) autonomously through policy enforcement. Companies will deploy the Azure environment with ARM templates to create the necessary structure for management and networking to declare a desired goal state. All scenarios will apply the principle of "Policy-Driven Governance" for landing zones by using Azure Policy. The benefits of a policy-driven approach are many but the most significant are:
 
-1. Platform can provide an orchestration capability to bring target resources (in this case a subscription) to a desired goal state.
+1. The platform can provide an orchestration capability to bring target resources (in this case a subscription) to a desired goal state.
 
 2. Continuous conformance to ensure all platform-level resources are compliant. Because the platform is aware of the goal state, the platform can assist with the monitoring and remediation of resources throughout their life-cycle.
 
-3. Platform enables autonomy regardless of the customer's scale point.
+3. The platform enables autonomy regardless of the customer's scale point.
 
 To know and learn more about ARM templates used for above reference implementation, please follow [this](https://github.com/Azure/Enterprise-Scale/blob/main/docs/Deploy/es-schema.md) article.
