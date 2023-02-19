@@ -31,27 +31,23 @@ Ensure that you have the [AzureAD PowerShell module installed on your machine](h
 $ADServicePrincipal = "AZOps"
 
 #verify if AzureAD module is installed and running a minimum version, if not install with the latest version.
-if ((Get-InstalledModule -Name "AzureAD" -MinimumVersion 2.0.2.130 ` -ErrorAction SilentlyContinue) -eq $null) {
+if ((Get-InstalledModule -Name "AzureAD" -MinimumVersion 2.0.2.130 ` -ErrorAction 'SilentlyContinue') -eq $null) {
 
-    Write-Host "AzureAD Module does not exist" -ForegroundColor Yellow
-    Install-Module -Name AzureAD -Force
-    Import-Module -Name AzureAD
-    Connect-AzureAD #sign in to Azure from Powershell, this will redirect you to a webbrowser for authentication, if required
-
+    Write-Host "AzureAD Module does not exist" -ForegroundColor 'Yellow'
+    Install-Module -Name 'AzureAD' -Force
 }
 else {
-    Write-Host "AzureAD Module exists with minimum version" -ForegroundColor Yellow
-    Import-Module -Name AzureAD
-    Connect-AzureAD #sign in to Azure from Powershell, this will redirect you to a webbrowser for authentication, if required
+    Write-Host "AzureAD Module exists with minimum version" -ForegroundColor 'Yellow'
 }
+Connect-AzureAD #sign in to Azure from Powershell, this will redirect you to a webbrowser for authentication, if required
 
 #Verify Service Principal and if not pick a new one.
-if (!(Get-AzureADServicePrincipal -Filter "DisplayName eq '$ADServicePrincipal'")) { 
-    Write-Host "ServicePrincipal doesn't exist or is not AZOps" -ForegroundColor Red
+if (-not (Get-AzureADServicePrincipal -Filter "DisplayName eq '$ADServicePrincipal'")) { 
+    Write-Host "ServicePrincipal doesn't exist or is not AZOps" -ForegroundColor 'Red'
     break
 }
 else { 
-    Write-Host "$ADServicePrincipal exist" -ForegroundColor Green
+    Write-Host "$ADServicePrincipal exist" -ForegroundColor 'Green'
     $ServicePrincipal = Get-AzureADServicePrincipal -Filter "DisplayName eq '$ADServicePrincipal'"
     #Get Azure AD Directory Role
     $DirectoryRole = Get-AzureADDirectoryRole -Filter "DisplayName eq 'Directory Readers'"
