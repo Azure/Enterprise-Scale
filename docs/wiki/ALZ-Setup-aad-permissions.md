@@ -31,7 +31,7 @@ Ensure that you have the [AzureAD PowerShell module installed on your machine](h
 $ADServicePrincipal = "AZOps"
 
 #verify if AzureAD module is installed and running a minimum version, if not install with the latest version.
-if ((Get-InstalledModule -Name "AzureAD" -MinimumVersion 2.0.2.130 ` -ErrorAction 'SilentlyContinue') -eq $null) {
+if (-not (Get-InstalledModule -Name "AzureAD" -MinimumVersion 2.0.2.130 ` -ErrorAction 'SilentlyContinue')) {
 
     Write-Host "AzureAD Module does not exist" -ForegroundColor 'Yellow'
     Install-Module -Name 'AzureAD' -Force
