@@ -32,9 +32,13 @@
             "description": "To ensure the operations performed against your SQL assets are captured, SQL servers should have auditing enabled. If auditing is not enabled, this policy will configure auditing events to flow to the specified Log Analytics workspace.",
             "displayName": "Configure SQL servers to have auditing enabled to Log Analytics workspace"
         },
-        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
-        "roleAssignmentNames": {
-            "deploySqlAuditing": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing))]"
+        "rbacRole1": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "rbacRole2": "056cd41c-7e88-42e1-933e-88ba6a50c9c3",
+        "roleAssignmentName1": {
+            "deploySqlAuditingRole1": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing,'-1'))]"
+        },
+        "roleAssignmentName2": {
+            "deploySqlAuditingRole2": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing,'-2'))]"
         }
     },
     "resources": [
@@ -61,13 +65,26 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deploySqlAuditing]",
+            "name": "[variables('roleAssignmentName1').deploySqlAuditingRole1]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').deploySqlAuditing]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacRole1'))]",
+                "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full' ).identity.principalId]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentName2').deploySqlAuditingRole2]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlAuditing]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacRole2'))]",
                 "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full' ).identity.principalId]"
             }
         }
