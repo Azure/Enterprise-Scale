@@ -1,0 +1,69 @@
+{
+    "name": "Deny-VM-with-unmanaged-disk",
+    "apiVersion": "2021-06-01",
+    "scope": "null",
+    "properties": {
+        "policyType": "Custom",
+        "mode": "all",
+        "displayName": "Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks",
+        "description": "Deny Virtual Machines and Virtual Machine Scale Sets from not using Managed Disks. It checks the managedDisk property on Virtual Machine & Virtual Machine Scale Sets OS Disk fields.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Compute",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effectType": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "anyOf": [
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Compute/virtualMachines"
+                            },
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.managedDisk",
+                                "exists": "false"
+                            }
+                        ]
+                    },
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Compute/virtualMachineScaleSets"
+                            },
+                            {
+                                "field": "Microsoft.Compute/virtualMachineScaleSets/virtualMachineProfile.storageProfile.osDisk.managedDisk",
+                                "exists": "false"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effectType')]"
+            }
+        }
+    }
+}
