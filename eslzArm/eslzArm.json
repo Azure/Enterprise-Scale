@@ -595,6 +595,15 @@
                 "No"
             ]
         },
+        "denyVMUnmanagedDisk": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "denyHttpIngressForAks": {
             "type": "string",
             "defaultValue": "No",
@@ -850,6 +859,7 @@
             "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
             "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
+            "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
@@ -922,7 +932,8 @@
             "identityVwanPeeringDeploymentName": "[take(concat('alz-IDVwanPeering', variables('deploymentSuffix')), 64)]",
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
-            "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]"
+            "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]",
+            "denyVMUnmanagedDiskPolicyDeploymentName": "[take(concat('alz-NoUnmanagedDiskResource', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1640,6 +1651,36 @@
                     },
                     "policyEffect": {
                         "value": "[if(equals(parameters('denyClassicResources'), 'Yes'), 'Deny', 'Audit')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Deny VM Unmanaged Disk Creation policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), not(equals(parameters('denyVMUnmanagedDisk'), 'No')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').denyVMUnmanagedDiskPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').VMUnmanagedDiskPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyEffect": {
+                        "value": "[if(equals(parameters('denyVMUnmanagedDisk'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }

@@ -83,6 +83,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new intiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (Enforce-ACSB)
 - Updated the initiative Deny-PublicPaaSEndpoints to include additional policies available to block public access for PaaS services
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
+- Added new policy and assignment to deny deployment of virtual machines using unmanaged OS disks (Deny-VM-with-unmanaged-disk)
 - Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
 
 ### February 2023
