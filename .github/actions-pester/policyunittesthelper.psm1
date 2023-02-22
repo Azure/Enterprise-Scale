@@ -14,7 +14,7 @@ function Get-AddedPolicies
         [int]$Counter = 0
     )
 
-    $NewPolicies = @(git diff --diff-filter=A --name-only main policy-unittests -- $Policy_Dir)
+    $NewPolicies = @(git diff --diff-filter=A --name-only HEAD^ HEAD -- $Policy_Dir)
     $NewPolicies | ForEach-Object {
         $Counter++
         Write-Output $_
@@ -33,7 +33,7 @@ function Get-ModifiedPolicies
         [int]$Counter = 0
     )
 
-    $NewPolicies = @(git diff --diff-filter=M --name-only main policy-unittests -- $Policy_Dir)
+    $NewPolicies = @(git diff --diff-filter=M --name-only HEAD^ HEAD -- $Policy_Dir)
     $NewPolicies | ForEach-Object {
         $Counter++
         Write-Output $_    

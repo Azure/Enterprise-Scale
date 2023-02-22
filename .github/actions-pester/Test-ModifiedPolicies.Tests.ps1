@@ -6,11 +6,11 @@ Describe 'UnitTest-ModifiedPolicies' {
     Context "Validate policy metadata" {
         It 'Check for valid metadata key-pair values' {
             
-            $NewPolicies = Get-ModifiedPolicies -Policy_Dir "C:\Repos\ALZ\Enterprise-Scale\src\resources\Microsoft.Authorization\policyDefinitions" -Verbose
+            $ModifiedPolicies = Get-ModifiedPolicies -Verbose
             
-            Write-Warning "These are the new policies: $($NewPolicies)"
+            Write-Warning "These are the modified policies: $($ModifiedPolicies)"
 
-            $NewPolicies | ForEach-Object {
+            $ModifiedPolicies | ForEach-Object {
                 $policy = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 
                 $policy.properties.metadata.version | Should -Be '1.0.0'
@@ -26,9 +26,9 @@ Describe 'UnitTest-ModifiedPolicies' {
     }
     Context "Validate policy parameters" {
         It 'Check for parameter default values' {
-            $NewPolicies = Get-ModifiedPolicies -Policy_Dir "C:\Repos\ALZ\Enterprise-Scale\src\resources\Microsoft.Authorization\policyDefinitions" -Verbose
+            $ModifiedPolicies = Get-ModifiedPolicies -Verbose
             
-            $NewPolicies | ForEach-Object {
+            $ModifiedPolicies | ForEach-Object {
                 $policy = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyParameters = $policy.properties.parameters
                 if ($policyParameters | Get-Member -MemberType NoteProperty)
