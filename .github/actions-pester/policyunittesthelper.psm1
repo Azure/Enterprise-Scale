@@ -32,7 +32,8 @@ function Get-ModifiedPolicies
         [Parameter()]
         [int]$Counter = 0
     )
-
+    
+    Write-Verbose "Checking directory $($Policy_Dir)"
     $NewPolicies = @(git diff --diff-filter=M --name-only HEAD^ HEAD -- $Policy_Dir)
     $NewPolicies | ForEach-Object {
         $Counter++
