@@ -31,7 +31,6 @@ Describe 'UnitTest-ModifiedPolicies' {
             $NewPolicies | ForEach-Object {
                 $policy = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyParameters = $policy.properties.parameters
-                # 
                 if ($policyParameters | Get-Member -MemberType NoteProperty)
                 {
                     $parameters = $policyParameters | Get-Member -MemberType NoteProperty | Select-Object -Expand Name
