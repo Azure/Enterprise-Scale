@@ -26,7 +26,7 @@ The below URLs can be updated where the placeholders are, look for `{YOUR GITHUB
 
 #### Azure Public
 
-[![Deploy To Azure](https://docs.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2Feslz-portal.json)
+[![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2Feslz-portal.json)
 
 #### Azure US Gov (Fairfax)
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.svg?sanitize=true)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2F{YOUR GITHUB ORG/ACCOUNT HERE - Remove Curly Brackets Also}%2FEnterprise-Scale%2F{YOUR GITHUB BRANCH NAME HERE - Remove Curly Brackets Also}%2FeslzArm%2Ffairfaxeslz-portal.json)
@@ -37,5 +37,6 @@ The below URLs can be updated where the placeholders are, look for `{YOUR GITHUB
 - [ ] Associated it with relevant [issues](https://github.com/Azure/Enterprise-Scale/issues), for tracking and closure.
 - [ ] Ensured my code/branch is up-to-date with the latest changes in the `main` [branch](https://github.com/Azure/Enterprise-Scale/tree/main)
 - [ ] Performed testing and provided evidence.
+- [ ] Ensured [contribution guidance](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution-Guide) is followed.
 - [ ] Updated relevant and associated documentation.
 - [ ] Updated the ["What's New?"](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) wiki page (located: `/docs/wiki/whats-new.md`)

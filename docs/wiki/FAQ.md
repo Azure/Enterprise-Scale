@@ -9,6 +9,8 @@
 - [What if we can't deploy by using the Azure landing zone accelerator portal-based experience, but can deploy via infrastructure-as-code?](#what-if-we-cant-deploy-by-using-the-azure-landing-zone-accelerator-portal-based-experience-but-can-deploy-via-infrastructure-as-code)
 - [If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?](#if-we-already-deployed-enterprise-scale-architecture-without-using-infrastructure-as-code-do-we-have-to-delete-everything-and-start-again-to-use-infrastructure-as-code)
 - [The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?](#the-azurediagnostics-table-in-my-log-analytics-workspace-has-hit-the-500-column-limit-what-should-i-do)
+- [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
+- [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
 
 ---
 
@@ -16,7 +18,7 @@
 
 This article answers frequently asked questions relating to Enterprise-scale.
 
-Some FAQ questions that relate more to the architecture are based over in the CAF docs here: [Enterprise-scale architecture FAQ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq)
+Some FAQ questions that relate more to the architecture are based over in the CAF docs here: [Enterprise-scale architecture FAQ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq)
 
 ## How long does enterprise-scale architecture take to deploy?
 
@@ -35,7 +37,7 @@ We then work with the Azure Policy and associated engineering teams to continuou
 
 ## Where can I see the policy definitions used by the enterprise-scale landing zones reference implementation?
 
-You can find a list of policy definitions here: [Policies included in enterprise-scale landing zones reference implementations](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md)
+You can find a list of policy definitions here: [Policies included in enterprise-scale landing zones reference implementations](./ALZ-Policies)
 
 We also add changes to our [What's New? wiki page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new).
 
@@ -47,19 +49,13 @@ Management group creation, subscription creation, and placing subscriptions into
 
 To establish the management group hierarchy and create subscriptions and place them into the defined management groups, the initial deployment must be invoked at the tenant root "`/`" scope. Once you deploy enterprise-scale architecture, you can remove the owner permission from the tenant root "`/`" scope. The user deploying the enterprise-scale reference implementation is made an owner at the intermediate root management group (for example "Contoso").
 
-For more information about tenant-level deployments in Azure, see [Deploy resources to tenant](https://docs.microsoft.com/azure/azure-resource-manager/templates/deploy-to-tenant).
+For more information about tenant-level deployments in Azure, see [Deploy resources to tenant](https://learn.microsoft.com/azure/azure-resource-manager/templates/deploy-to-tenant).
 
 ## The enterprise-scale (also known as the Azure landing zone accelerator) portal-based deployment doesn't display all subscriptions in the drop-down lists?
 
-When you deploy enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online). When there are more than 50 subscriptions, the API can't display all of them in the drop-down lists.
+When you deploy enterprise-scale via the portal-based deployment (also known as the Azure landing zone accelerator), the portal lists subscriptions to be selected for deployment from the platform subscriptions (management, connectivity, identity) and the landing zones (corp and online).
 
-Follow these steps as a workaround:
-
-1. Select or enable your usual options in the portal-based experience. In the subscription drop-downs, select any visible subscription as a placeholder so that you can see and select all options (some options don't appear until you select a subscription).
-1. After you've gone through each page, go back to the **Basics** page, and then select **Edit parameters**.
-1. Change the value for the specific `subscriptionId` parameter inputs with the actual subscription IDs you want to use.
-1. Select **Save**.
-1. Select **Review + create**, and then submit the deployment.
+We updated our Subscription selection method in [October 2022](./Whats-new.md#october-2022) to increase the limit from 50 to 1,000. If you have more than 1,000 subscriptions, the API may still not be able to display all of them in the drop-down list. If this causes you a problem, please let us know via the [issues](https://github.com/Azure/Enterprise-Scale/issues).
 
 ## Can we use and customize the ARM templates for enterprise-scale architecture and check them into our repository and deploy it from there?
 
@@ -73,7 +69,7 @@ However, if you want to deploy and manage enterprise-scale architecture via infr
 
 The following implementation options are available when you use infrastructure-as-code:
 
-- The [Azure landing zone accelerator](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-accelerator) portal-based experience can integrate and bootstrap a CI/CD pipeline using GitHub with [AzOps](https://github.com/Azure/AzOps) as documented at [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale).
+- The [Azure landing zone accelerator](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-accelerator) portal-based experience can integrate and bootstrap a CI/CD pipeline using GitHub with [AzOps](https://github.com/Azure/AzOps) as documented at [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale).
 - The [Enterprise-scale Do-It-Yourself (DIY) ARM templates](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm#enterprise-scale-landing-zones-arm-templates) method
 - The [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale#terraform-module-for-cloud-adoption-framework-enterprise-scale)
 - The [Azure Landing Zone (formerly Enterprise-scale) Bicep Modules - Public Preview](https://github.com/Azure/ALZ-Bicep)
@@ -86,13 +82,13 @@ If you used the Azure landing zone accelerator portal-based experience to deploy
 
 To use ARM templates to deploy, manage, and operate your enterprise-scale deployment, you don't have to delete everything and start again. You can configure and connect [AzOps](https://github.com/Azure/AzOps) tooling by using the [AzOps Accelerator](https://github.com/Azure/AzOps-Accelerator) and associated instructions, regardless of the stage of your Azure tenant.
 
-Once configured, AzOps connects to your Azure tenant, scans it, and then pulls individual ARM templates into your repository in a structure that represents the [four Azure scopes](https://docs.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope).
+Once configured, AzOps connects to your Azure tenant, scans it, and then pulls individual ARM templates into your repository in a structure that represents the [four Azure scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope).
 
 To see a demo of AzOps being used, check out this YouTube video on the Microsoft DevRadio channel: [Enterprise-scale landing zones DevOps and automation step by step](https://www.youtube.com/watch?v=wWLxxj-uMsY)
 
 ### Bicep
 
-The [AzOps](https://github.com/Azure/AzOps) tooling supports deploying Bicep files at the [four Azure scopes](https://docs.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope). Its pull process only stores the scan of your Azure tenants resources in ARM templates that use JSON.
+The [AzOps](https://github.com/Azure/AzOps) tooling supports deploying Bicep files at the [four Azure scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope). Its pull process only stores the scan of your Azure tenants resources in ARM templates that use JSON.
 
 Leave us feedback via [GitHub issues on the AzOps repository](https://github.com/Azure/AzOps/issues) if you want to see something added to AzOps.
 
@@ -108,20 +104,51 @@ To see a demo of Terraform being used, check out this YouTube video on the Micro
 
 ## The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?
 
-In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://docs.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property. 
+In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://learn.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property. 
 
 However, some customers may not want this as it can make it more difficult and complex to query the data when the 500 column limit is breached and data is stored in the `AdditionalFields` column.
 
-> More details on this can be found here: [AzureDiagnostics Table Docs](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics)
+> More details on this can be found here: [AzureDiagnostics Table Docs](https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics)
 
-To overcome this issue the Azure Monitor team has created a new collection type for diagnostic settings for resources called [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific). In this mode a separate table per Azure service is created in the Log Analytics Workspace which will mean the 500 column limit will not be hit and therefore querying and managing the data in the Log Analytics Workspace is simplified and more performant.
+To overcome this issue the Azure Monitor team has created a new collection type for diagnostic settings for resources called [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific). In this mode a separate table per Azure service is created in the Log Analytics Workspace which will mean the 500 column limit will not be hit and therefore querying and managing the data in the Log Analytics Workspace is simplified and more performant.
 
-> An explanation of the 2 modes can be found here: [Azure resource logs](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs)
+> An explanation of the 2 modes can be found here: [Azure resource logs](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs)
 
 ### Next steps
 
-As of today only a limited number of services support the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://docs.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
+As of today only a limited number of services support the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
 
-We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://docs.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://docs.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
+We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
 
 Stay tuned to our [What's New page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) where we will be announcing when we migrate services to the new collection type. Also watch [Azure Updates](https://azure.microsoft.com/updates/) for announcements from service teams for adding support to their services for this collection type.
+
+## What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?
+
+As raised in issue [#1080](https://github.com/Azure/Enterprise-Scale/issues/1080) it is possible for you to deploy the ALZ Portal Accelerator in a AAD Tenant with existing Management Groups. If these existing Management Groups have the same Name/ID (not Display Name) as the ones deployed as part of the ALZ Portal Accelerator these existing Management Groups will be targeted in the deployment and brought into the ALZ hierarchy and deployment. This means that the Management Groups will be:
+
+- Display Name will be changed to ALZ default for that Management Group
+- Moved into the ALZ Management Group hierarchy
+- Have Subscriptions placed beneath them based on selections during ALZ portal accelerator deployment
+- Have Azure Policy Definitions and Assignments created upon them
+- Have Azure RBAC Custom Role Definitions & Assignments created upon them
+
+You should be aware of this and decide if this is something you want to happen, if not you need to ensure the naming prefix entered is unique for the Management Group Name/IDs that the ALZ Portal Accelerator will create to ensure the existing Management Groups are not targeted in the deployment. These are listed in the following FAQ Q&A: [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
+
+## What are the ALZ Portal Accelerator Management Group Name/IDs that are created?
+
+The Management Group Names/IDs created via the ALZ Portal Accelerator deployment are all based on the Resource Prefix (Root ID) that you enter in the ALZ Portal Experience on the "Azure core setup" blade that is shown below:
+
+![ALZ Portal Accelerator Resource Prefix (Root ID) Screenshot](media/mg-resource-prefix-portal.png)
+
+The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment are listed below:
+
+- `<Resource Prefix (Root ID)>` - Intermediate Root Management Group - e.g. `Contoso`
+  - `<Resource Prefix (Root ID)>-platform`
+    - `<Resource Prefix (Root ID)>-management`
+    - `<Resource Prefix (Root ID)>-connectivity`
+    - `<Resource Prefix (Root ID)>-identity`
+  - `<Resource Prefix (Root ID)>-landingzones`
+    - `<Resource Prefix (Root ID)>-online`
+    - `<Resource Prefix (Root ID)>-corp`
+  - `<Resource Prefix (Root ID)>-decommissioned`
+  - `<Resource Prefix (Root ID)>-sandbox`

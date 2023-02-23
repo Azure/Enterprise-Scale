@@ -9,10 +9,10 @@ name: Update Portal Experience
 on:
   pull_request_target:
     types:
-      - edited
       - opened
       - reopened
       - synchronize
+      - ready_for_review
 
 env:
   github_user_name: 'github-actions'
@@ -57,6 +57,9 @@ jobs:
       - name: Update policies
         run: bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json
 
+      - name: Update roles
+        run: bicep build ./src/templates/roles.bicep --outfile ./eslzArm/managementGroupTemplates/roleDefinitions/customRoleDefinitions.json
+
       - name: Check git status
         run: |
           echo "==> Check git status..."
@@ -87,7 +90,7 @@ jobs:
 
               echo "==> Push changes..."
               echo "Pushing changes to: $github_pr_repo"
-              git push "https://$GITHUB_TOKEN@github.com/$github_pr_repo.git"
+              git push "https://$GITHUB_TOKEN@github.com/$github_pr_repo.git" "HEAD:$GITHUB_HEAD_REF"
 
           else
               echo "No changes found."
