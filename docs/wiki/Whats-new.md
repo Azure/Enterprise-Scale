@@ -60,6 +60,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
+- Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on 'Landing Zones' Management Group, to suitably assign respective DINE policy definition, instead of AINE 
 - New Initiative for the Decommissioned landingzones including policies:
   - Initiative name: Enforce-ALZ-Decomm
     - [Allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/a08ec900-254a-4555-9bf5-e42af04b5c5c.html) - nothing allowed, however the policy requires at least one resource, so defaulting to 'microsoft.consumption/tags'.
@@ -96,6 +97,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Updated `Deploy-Diagnostics-Databricks.json` policy with missing log categories
+- Updated `Deploy-Diagnostics-PostgreSQL.json` policy to include setting Diagnostic Settings on PostgreSQL flexible server
 - Updated `Deploy-Diagnostics-Website.json` policy to set Diagnostic Settings based on the AppService plan, as the Premium Tier has more categories available.
 - Removed duplicated category entry from `Deploy-Diagnostics-VNetGW.json` policy.
 
