@@ -595,6 +595,15 @@
                 "No"
             ]
         },
+        "denyVMUnmanagedDisk": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "denyHttpIngressForAks": {
             "type": "string",
             "defaultValue": "No",
@@ -810,7 +819,8 @@
             "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]",
-            "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-CostOptimizationPolicyAssignment.json')]"
+            "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-CostOptimizationPolicyAssignment.json')]",
+            "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -863,6 +873,8 @@
             "subnetNsgPolicyDeploymentName": "[take(concat('alz-SubnetNsg', variables('deploymentSuffix')), 64)]",
             "subnetNsgIdentityPolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "sqlAuditPolicyDeploymentName": "[take(concat('alz-SqlAudit', variables('deploymentSuffix')), 64)]",
+            "sqlAuditRoleAssignmentDeploymentName1": "[take(concat('alz-SqlAuditRbac1', variables('deploymentSuffix')), 64)]", 
+            "sqlAuditRoleAssignmentDeploymentName2": "[take(concat('alz-SqlAuditRbac2', variables('deploymentSuffix')), 64)]", 
             "sqlEncryptionPolicyDeploymentName": "[take(concat('alz-SqlEncrypt', variables('deploymentSuffix')), 64)]",
             "decommissionPolicyDeploymentName": "[take(concat('alz-DecommissionPol', variables('deploymentSuffix')), 64)]",
             "sandboxPolicyDeploymentName": "[take(concat('alz-SandboxPol', variables('deploymentSuffix')), 64)]",
@@ -878,7 +890,8 @@
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]",
-            "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]"
+            "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]",
+            "denyVMUnmanagedDiskPolicyDeploymentName": "[take(concat('alz-NoUnmanagedDiskResource', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1616,6 +1629,36 @@
                     },
                     "policyEffect": {
                         "value": "[if(equals(parameters('denyClassicResources'), 'Yes'), 'Deny', 'Audit')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Deny VM Unmanaged Disk Creation policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), not(equals(parameters('denyVMUnmanagedDisk'), 'No')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').denyVMUnmanagedDiskPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').VMUnmanagedDiskPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyEffect": {
+                        "value": "[if(equals(parameters('denyVMUnmanagedDisk'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }
@@ -2738,7 +2781,10 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "policyCompletion"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2750,8 +2796,71 @@
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
                     "enforcementMode": {
                         "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Log Analytics Contributor RBAC Role for SQL Auditing Assignment on Management Subscription
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').sqlAuditRoleAssignmentDeploymentName1]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[variables('singleVsDedicatedMgmtSub')]",
+            "dependsOn": [
+                "[variables('deploymentNames').sqlAuditPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleAssignments]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[if(equals(parameters('enableSqlAudit'), 'Yes'), reference(variables('deploymentNames').sqlAuditPolicyDeploymentName).outputs.principalId.value, 'na')]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+                    }
+                }
+            }
+        },
+        		{
+            // Assigning SQL Security Manager RBAC Role for SQL Auditing Assignment on Management Subscription
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').sqlAuditRoleAssignmentDeploymentName2]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[variables('singleVsDedicatedMgmtSub')]",
+            "dependsOn": [
+                "[variables('deploymentNames').sqlAuditPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleAssignments]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[if(equals(parameters('enableSqlAudit'), 'Yes'), reference(variables('deploymentNames').sqlAuditPolicyDeploymentName).outputs.principalId.value, 'na')]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "056cd41c-7e88-42e1-933e-88ba6a50c9c3"
                     }
                 }
             }
