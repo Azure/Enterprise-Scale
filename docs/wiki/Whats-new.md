@@ -51,6 +51,7 @@ This article will be updated as and when changes are made to the above and anyth
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### TBD 2023
+- Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
 
 #### Policy
 
