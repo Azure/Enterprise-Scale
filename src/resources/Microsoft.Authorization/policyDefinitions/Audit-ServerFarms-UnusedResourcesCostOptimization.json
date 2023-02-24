@@ -1,0 +1,57 @@
+{
+    "name": "Audit-ServerFarms-UnusedResourcesCostOptimization",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "displayName": "Unused App Service plans driving cost should be avoided",
+        "mode": "All",
+        "description": "Optimize cost by detecting unused but chargeable resources. Leverage this Policy definition as a cost control to reveal orphaned App Service plans that are driving cost.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Cost Optimization",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Web/serverfarms"
+                    },
+                    {
+                        "field": "Microsoft.Web/serverFarms/sku.tier",
+                        "notEquals": "Free"
+                    },
+                    {
+                        "field": "Microsoft.Web/serverFarms/numberOfSites",
+                        "equals": 0
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}
