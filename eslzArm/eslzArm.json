@@ -873,8 +873,8 @@
             "subnetNsgPolicyDeploymentName": "[take(concat('alz-SubnetNsg', variables('deploymentSuffix')), 64)]",
             "subnetNsgIdentityPolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "sqlAuditPolicyDeploymentName": "[take(concat('alz-SqlAudit', variables('deploymentSuffix')), 64)]",
-            "sqlAuditRoleAssignmentDeploymentName1": "[take(concat('alz-SqlAuditRbac1', variables('deploymentSuffix')), 64)]", 
-            "sqlAuditRoleAssignmentDeploymentName2": "[take(concat('alz-SqlAuditRbac2', variables('deploymentSuffix')), 64)]", 
+            "sqlAuditRoleAssignmentDeploymentName1": "[take(concat('alz-SqlAuditRbac1', variables('deploymentSuffix')), 64)]",
+            "sqlAuditRoleAssignmentDeploymentName2": "[take(concat('alz-SqlAuditRbac2', variables('deploymentSuffix')), 64)]",
             "sqlEncryptionPolicyDeploymentName": "[take(concat('alz-SqlEncrypt', variables('deploymentSuffix')), 64)]",
             "decommissionPolicyDeploymentName": "[take(concat('alz-DecommissionPol', variables('deploymentSuffix')), 64)]",
             "sandboxPolicyDeploymentName": "[take(concat('alz-SandboxPol', variables('deploymentSuffix')), 64)]",
@@ -1511,7 +1511,7 @@
         },
         {
             // Assigning Cost Optimization policy initiative to intermediate root management group
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(environment().resourceManager, 'https://management.azure.com/'))]",
+            "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').costOptimizationDeploymentName]",
@@ -1527,6 +1527,9 @@
                     "uri": "[variables('deploymentUris').costOptimizationPolicyInitiative]"
                 },
                 "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
                 }
             }
         },
@@ -2836,7 +2839,7 @@
                 }
             }
         },
-        		{
+        {
             // Assigning SQL Security Manager RBAC Role for SQL Auditing Assignment on Management Subscription
             "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
