@@ -39,8 +39,7 @@ function Get-ModifiedPolicies
         [int]$Counter = 0
     )
     
-    Write-Verbose "Checking directory $($Policy_Dir)"
-    $NewPolicies = @(git diff --diff-filter=M --name-only origin/main origin/$PRBranch -- $Policy_Dir)
+    $NewPolicies = @(git diff --diff-filter=M --name-only policy-unittests testing -- C:\Repos\ALZ\Enterprise-Scale\src\resources\Microsoft.Authorization\policyDefinitions)
     $NewPolicies | ForEach-Object {
         $Counter++
         Write-Output $_    
