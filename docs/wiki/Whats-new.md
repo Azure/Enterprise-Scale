@@ -54,6 +54,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Updated `Deploy-Diagnostics-Databricks.json` policy with missing log categories
+- Updated `Deploy-Diagnostics-PostgreSQL.json` policy to include setting Diagnostic Settings on PostgreSQL flexible server
 - Updated `Deploy-Diagnostics-Website.json` policy to set Diagnostic Settings based on the AppService plan, as the Premium Tier has more categories available.
 - Removed duplicated category entry from `Deploy-Diagnostics-VNetGW.json` policy.
 
