@@ -728,7 +728,7 @@
                 "No"
             ]
         },
-        "denyCorpNetworking": {
+        "denyHybridNetworking": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -737,7 +737,7 @@
                 "No"
             ]
         },
-        "auditCorpNetworking": {
+        "auditPeDnsZones": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -841,8 +841,8 @@
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
             "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsKeyVaultPolicyAssignment.json')]",
-            "denyCorpNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AlzCorpNetworkingPolicyAssignment.json')]",
-            "auditCorpNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AlzCorpNetworkingPolicyAssignment.json')]",
+            "denyHybridNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-HybridNetworkingPolicyAssignment.json')]",
+            "auditPeDnsZonesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-PeDnsZonesPolicyAssignment.json')]",
             "auditAppGwWafPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AppGwWafPolicyAssignment.json')]",
             "enforceAcsbPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-AcsbPolicyAssignment.json')]",
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
@@ -912,8 +912,8 @@
             "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-RDPIdentity', variables('deploymentSuffix')), 64)]",
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
-            "denyCorpNetworkingPolicyDeploymentName": "[take(concat('alz-DenyCorpNetworking', variables('deploymentSuffix')), 64)]",
-            "auditCorpNetworkingPolicyDeploymentName": "[take(concat('alz-AuditCorpNetworking', variables('deploymentSuffix')), 64)]",
+            "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
+            "auditPeDnsZonesPolicyDeploymentName": "[take(concat('alz-AuditPeDnsZones', variables('deploymentSuffix')), 64)]",
             "auditAppGwWafPolicyDeploymentName": "[take(concat('alz-AppGwWaf', variables('deploymentSuffix')), 64)]",
             "enforceAcsbPolicyDeploymentName": "[take(concat('alz-Acsb', variables('deploymentSuffix')), 64)]",
             "subnetNsgPolicyDeploymentName": "[take(concat('alz-SubnetNsg', variables('deploymentSuffix')), 64)]",
@@ -2824,10 +2824,10 @@
         },
         {
             // Assigning policy to deny deployment of vWAN/ER/VPN Gateways to corp management group if condition is true
-            "condition": "[equals(parameters('denyCorpNetworking'), 'Yes')]",
+            "condition": "[equals(parameters('denyHybridNetworking'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').denyCorpNetworkingPolicyDeploymentName]",
+            "name": "[variables('deploymentNames').denyHybridNetworkingPolicyDeploymentName]",
             "scope": "[variables('scopes').corpManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -2837,21 +2837,21 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').denyCorpNetworkingPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').denyHybridNetworkingPolicyAssignment]"
                 },
                 "parameters": {
                     "enforcementMode": {
-                        "value": "[if(equals(parameters('denyCorpNetworking'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                        "value": "[if(equals(parameters('denyHybridNetworking'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }
         },
         {
-            // Assigning policy to audit deployment of Private Link / Private DNS Zones to landing zones management group if condition is true
-            "condition": "[equals(parameters('auditCorpNetworking'), 'Yes')]",
+            // Assigning policy to audit deployment of Private DNS Zones to landing zones management group if condition is true
+            "condition": "[equals(parameters('auditPeDnsZones'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').auditCorpNetworkingPolicyDeploymentName]",
+            "name": "[variables('deploymentNames').auditPeDnsZonesPolicyDeploymentName]",
             "scope": "[variables('scopes').corpManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -2861,7 +2861,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').auditCorpNetworkingPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').auditPeDnsZonesPolicyAssignment]"
                 },
                 "parameters": {
                     "enforcementMode": {
