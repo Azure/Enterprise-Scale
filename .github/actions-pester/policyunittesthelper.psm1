@@ -33,15 +33,11 @@ function Get-ModifiedPolicies
         [String]$Policy_Dir = "$($env:POLICY_DIR)",
 
         [Parameter()]
-        [String]$PRBranch = "$($env:GITHUB_HEAD_REF)",
-
-        [Parameter()]
-        [int]$Counter = 0
+        [String]$PRBranch = "$($env:GITHUB_HEAD_REF)"
     )
-    
+
     $NewPolicies = @(git diff --diff-filter=M --name-only policy-unittests testing -- C:\Repos\ALZ\Enterprise-Scale\src\resources\Microsoft.Authorization\policyDefinitions)
     $NewPolicies | ForEach-Object {
-        $Counter++
         Write-Output $_    
     }
 }
