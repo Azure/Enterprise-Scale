@@ -1,13 +1,18 @@
 BeforeAll {
-    $PRBranch = "$($env:GITHUB_HEAD_REF)"
-
     Import-Module -Name $PSScriptRoot\policyunittesthelper.psm1 -Force -Verbose
     Find-Module -Name SemVerPS | Install-Module -Force
 
     $ModifiedPolicies = Get-ModifiedPolicies -Verbose 
     Write-Warning "These are the modified policies: $($ModifiedPolicies)"
+    
     $ModifiedPolicies | ForEach-Object {
         $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+        $policyFile = Split-Path $_ -leaf
+    }
+
+    git checkout policy-unittests
+    $ModifiedPolicies | ForEach-Object {
+        $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
         $policyFile = Split-Path $_ -leaf
     }
 }
@@ -15,12 +20,10 @@ BeforeAll {
 Describe 'UnitTest-ModifiedPolicies' {
     Context "Validate policy metadata" {
         It "Check for valid metadata version" {
-            git checkout main
-            $policyMetadataVersionMainBranch = $policyJson.properties.metadata.version
+            $policyMetadataVersion = $policyJson.properties.metadata.version
             Write-Warning "$($policyFile) - This is the policy metadata version from the main branch: $($policyMetadataVersionMainBranch)"
 
-            git checkout $PRBranch
-            $policyMetadataVersionPRBranch = $policyJson.properties.metadata.version
+            $policyMetadataMainBranch = $policyJsonMain.properties.metadata.version
             Write-Warning "$($policyFile) - This is the policy metadata version from the PR branch: $($policyMetadataVersionMainBranch)"
             
             Write-Warning "$($policyFile) - This is the policy metadata version: $($policyMetadataVersion)"
