@@ -26,7 +26,6 @@ Describe 'UnitTest-ModifiedPolicies' {
             $policyMetadataMainBranch = $policyJsonMain.properties.metadata.version
             Write-Warning "$($policyFile) - This is the policy metadata version from the PR branch: $($policyMetadataVersionMainBranch)"
             
-            Write-Warning "$($policyFile) - This is the policy metadata version: $($policyMetadataVersion)"
             $policyMetadataVersion | Should -Be '1.0.0'
         }
 
