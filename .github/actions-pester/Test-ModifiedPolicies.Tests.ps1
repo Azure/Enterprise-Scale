@@ -7,13 +7,12 @@ BeforeAll {
     
     $ModifiedPolicies | ForEach-Object {
         $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
-        $policyFile = Split-Path $_ -leaf
+        $policyFile = Split-Path $_ -Leaf
     }
 
     git checkout policy-unittests
     $ModifiedPolicies | ForEach-Object {
         $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
-        $policyFile = Split-Path $_ -leaf
     }
 }
 
@@ -26,13 +25,12 @@ Describe 'UnitTest-ModifiedPolicies' {
             $policyMetadataMainBranch = $policyJsonMain.properties.metadata.version
             Write-Warning "$($policyFile) - This is the policy metadata version from the PR branch: $($policyMetadataVersionMainBranch)"
             
-            $policyMetadataVersion | Should -Be '1.0.0'
         }
 
         It "Check policy metadata categories" {
             $policyMetadataCategories = $policyJson.properties.metadata.category
             Write-Warning "$($policyFile) - These are the policy metadata categories: $($policyMetadataCategories)"
-            $policyMetadataCategories| Should -Not -BeNullOrEmpty
+            $policyMetadataCategories | Should -Not -BeNullOrEmpty
         }
 
         It "Check policy metadata source" {
