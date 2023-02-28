@@ -9,6 +9,7 @@ BeforeAll {
 Describe 'UnitTest-ModifiedPolicies' {
     Context "Validate policy metadata" {
         It "Check for valid metadata version" {
+            git checkout testing
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
@@ -27,6 +28,7 @@ Describe 'UnitTest-ModifiedPolicies' {
         }
 
         It "Check policy metadata categories" {
+            git checkout testing
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
