@@ -1,31 +1,34 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
+    "name": "Audit-PrivateLinkDnsZones",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "Audit the creation of Private Link Private DNS Zones",
+    "description": "This policy audits the creation of a Private Link Private DNS Zones in the current scope, used in combination with policies that create centralized private DNS in connectivity subscription",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Network",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
     "parameters": {
-        "topLevelManagementGroupPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
-            }
-        },
-        "policyEffect": {
-            "type": "string",
-            "allowedValues": [
-                "Audit",
-                "Deny",
-                "Disabled"
-            ],
-            "defaultValue": "Audit"
-        },
-        "enforcementMode": {
-            "type": "string",
-            "allowedValues": [
-                "Default",
-                "DoNotEnforce"
-            ],
-            "defaultValue": "Default"
-        },
-        "connectivityLocation": {
+      "effect": {
+        "type": "String",
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        }
+      },
+      "connectivityLocation": {
           "type": "String",
           "defaultValue": "[[deployment().location]"
       },
@@ -105,39 +108,21 @@
         ]
       }
     },
-    "variables": {
-        "policyDefinitions": {
-            "auditPeDnsZones": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Audit-PrivateLinkDnsZones')]"
-        },
-        "policyAssignmentNames": {
-            "auditPeDnsZones": "Audit-PeDnsZones",
-            "description": "Audits the deployment of Private Link Private DNS Zone resources in the Corp landing zone.",
-            "displayName": "Audit Private Link Private DNS Zone resources"
-        }
-    },
-    "resources": [
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
-            "name": "[variables('policyAssignmentNames').auditPeDnsZones]",
-            "properties": {
-                "description": "[variables('policyAssignmentNames').description]",
-                "displayName": "[variables('policyAssignmentNames').displayName]",
-                "policyDefinitionId": "[variables('policyDefinitions').auditPeDnsZones]",
-                "enforcementMode": "[parameters('enforcementMode')]",
-                "parameters": {
-                    "connectivityLocation": {
-                        "value": "[parameters('connectivityLocation')]"
-                    },
-                    "privateLinkDnsZones": {
-                        "value": "[parameters('privateLinkDnsZones')]"
-                    },
-                    "effect": {
-                        "value": "[parameters('policyEffect')]"
-                    }
-                }
-            }
-        }
-    ],
-    "outputs": {}
-}
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Network/privateDnsZones"
+          },
+          {
+            "field": "name",
+            "in": "[[parameters('privateLinkDnsZones')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
