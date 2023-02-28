@@ -81,11 +81,11 @@ else {
         (
             [object]
             $policyDefinition,
-    
+
             [object]
             $validEffects
         )
-    
+
         $arrayeffect = @()
         if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.policyRule.then.effect)) {
             if ($policyDefinition.properties.policyRule.then.effect -in $validEffects) {
@@ -93,11 +93,11 @@ else {
                 return $arrayeffect
             }
             else {
-                $Regex = [Regex]::new("(?<=\[parameters\(')(.*)(?='\)\])")           
-                $Match = $Regex.Match($policyDefinition.properties.policyRule.then.effect)           
-                if ($Match.Success) {           
+                $Regex = [Regex]::new("(?<=\[parameters\(')(.*)(?='\)\])")
+                $Match = $Regex.Match($policyDefinition.properties.policyRule.then.effect)
+                if ($Match.Success) {
                     if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.parameters.($Match.Value))) {
-    
+
                         #defaultValue
                         if (($policyDefinition.properties.parameters.($Match.Value) | Get-Member).name -contains 'defaultvalue') {
                             if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.parameters.($Match.Value).defaultValue)) {
@@ -134,12 +134,12 @@ else {
                         else {
                             Write-Host "no allowedValues- $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
                         }
-    
-                    }   
+
+                    }
                     else {
                         Write-Host "unexpected - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
-                    }  
-                    
+                    }
+
                     return $arrayeffect
                 }
             }
@@ -241,5 +241,5 @@ else {
     }
 
     $fileTimestamp = (Get-Date -Format $FileTimeStampFormat)
-    $arrayResults | Export-Csv -delimiter $CsvDelimiter -path "alzvsbuiltin_$($fileTimestamp).csv"-Encoding utf8
+    $arrayResults | Export-Csv -delimiter $CsvDelimiter -path "alzvsbuiltin_$($fileTimestamp).csv" -Encoding utf8 -UseQuotes AsNeeded
 }
