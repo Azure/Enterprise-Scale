@@ -20,10 +20,10 @@ Describe 'UnitTest-ModifiedPolicies' {
     Context "Validate policy metadata" {
         It "Check for valid metadata version" {
             $policyMetadataVersion = $policyJson.properties.metadata.version
-            Write-Warning "$($policyFile) - This is the policy metadata version from the main branch: $($policyMetadataVersion)"
+            Write-Warning "$($policyFile) - This is the policy metadata version from the pr branch: $($policyMetadataVersion)"
 
             $policyMetadataVersionMainBranch = $policyJsonMain.properties.metadata.version
-            Write-Warning "$($policyFile) - This is the policy metadata version from the PR branch: $($policyMetadataVersionMainBranch)"
+            Write-Warning "$($policyFile) - This is the policy metadata version from the main branch: $($policyMetadataVersionMainBranch)"
         }
 
         It "Check policy metadata categories" {
