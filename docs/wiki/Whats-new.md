@@ -51,7 +51,6 @@ This article will be updated as and when changes are made to the above and anyth
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### TBD 2023
-- Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
 
 #### Policy
 
@@ -88,6 +87,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
 - Added new policy and assignment to deny deployment of virtual machines using unmanaged OS disks (Deny-VM-with-unmanaged-disk)
 - Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
+- Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
 
 ### February 2023
 
