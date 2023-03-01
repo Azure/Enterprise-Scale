@@ -75,7 +75,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
 - Added a policy assignment to deny Classic resources at the intermediate root management group
 - Added new initiative and assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
-  - Initiative name: ENFORCE-Guardrails-KeyVault
+  - Initiative name: `ENFORCE-Guardrails-KeyVault`
   - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
   - Portal accelerator updated
 - Added two new policy assignments to govern Corp Management Group networking:
