@@ -83,7 +83,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - AUDIT-PeDnsZones - audits the provisioning of Private Link Private DNS Zones in Corp
     - NOTE: The policy default values include all the static Private DNS Zones only. The ALZ assignment includes dynamic assignments for Azure Backup, AKS, Kusto and Batch.
 - Added new policy assignment to audit WAF enabled on Application Gateways (Audit-AppGW-WAF)
-- Added new intiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (Enforce-ACSB)
+- Added new initiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (`Enforce-ACSB`)
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
 - Added new policy and assignment to deny deployment of virtual machines using unmanaged OS disks (Deny-VM-with-unmanaged-disk)
