@@ -73,6 +73,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
+- Added a policy assignment to deny Classic resources at the intermediate root management group
+- Added new initiative and assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
+  - Initiative name: `ENFORCE-Guardrails-KeyVault`
+  - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
+  - Portal accelerator updated
+- Added two new policy assignments to govern Corp Management Group networking:
+  - `DENY-HybridNetworking` - blocks the provisioning of vWAN/ER/VPN, including gateways, in Corp
+  - `AUDIT-PeDnsZones` - audits the provisioning of Private Link Private DNS Zones in Corp
+    - **NOTE**: The policy default values include all the static Private DNS Zones only. When assigned via the ALZ portal experience the assignment includes all the Private DNS Zones that are deployed as part of the ALZ Portal experience, including the geo code/regional zones for Azure Backup, AKS etc. 
+- Added new policy assignment to audit WAF enabled on Application Gateways (`Audit-AppGW-WAF`)
+- Added new initiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (`Enforce-ACSB`)
+- Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
 - Added a Policy Assignment to deny Classic resources at the intermediate root management group
 - Added new policy and assignment to deny deployment of virtual machines using unmanaged OS disks (Deny-VM-with-unmanaged-disk)
 - Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.

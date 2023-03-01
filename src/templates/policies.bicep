@@ -166,6 +166,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Windows-DomainJoin.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VWanS2SVPNGW.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VMUnmanagedDisk.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkPrivateDnsZones.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
@@ -210,6 +211,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
   ]
@@ -219,6 +221,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ACSB.json') // Unable to validate if Guest Configuration is working in other clouds
   ]
   AzureChinaCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureChinaCloud.json') // Due to missing built-in Policy Definitions ()
