@@ -80,7 +80,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Portal accelerator updated
 - Added two new policy assignments to govern Corp Management Group networking:
   - `DENY-HybridNetworking` - blocks the provisioning of vWAN/ER/VPN, including gateways, in Corp
-  - AUDIT-PeDnsZones - audits the provisioning of Private Link Private DNS Zones in Corp
+  - `AUDIT-PeDnsZones` - audits the provisioning of Private Link Private DNS Zones in Corp
     - **NOTE**: The policy default values include all the static Private DNS Zones only. When assigned via the ALZ portal experience the assignment includes all the Private DNS Zones that are deployed as part of the ALZ Portal experience, including the geo code/regional zones for Azure Backup, AKS etc. 
 - Added new policy assignment to audit WAF enabled on Application Gateways (Audit-AppGW-WAF)
 - Added new initiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (`Enforce-ACSB`)
