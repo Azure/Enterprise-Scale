@@ -20,7 +20,8 @@ Over time, a deprecation process of there `ALZ / custom` policies will have to t
 |-----------------------------------------------|--------------------------------------|--------------------------------------------------------------------------|
 | Deploy-Nsg-FlowLogs | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
 | Deploy-Nsg-FlowLogs-to-LA | [e920df7f-9a64-4066-9b58-52684c02a091](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html?) | Custom policy replaced by built-in requires less administration overhead |
-| Deny-PublicIP | [6c112d4e-5bc7-47ae-a041-ea2d9dccd749](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html?) | Custom policy replaced by built-in requires less administration overhead |½
+| Deny-PublicIP | [6c112d4e-5bc7-47ae-a041-ea2d9dccd749](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html?) | Custom policy replaced by built-in requires less administration overhead |
+| Deny-MachineLearning-Compute-SubnetId | [7804b5c7-01dc-4723-969b-ae300cc07ff1](https://www.azadvertizer.net/azpolicyadvertizer/7804b5c7-01dc-4723-969b-ae300cc07ff1.html?) | Custom policy replaced by built-in requires less administration overhead, built-in policy available currently in audit mode|½
 
 Guidance on how to migrate deprecated ALZ custom policies to Azure built-in policies can be found [here](https://github.com/Azure/Enterprise-Scale/wiki/Migrate-ALZ-Policies-to-Built%E2%80%90in)
 ## Deprecated services
