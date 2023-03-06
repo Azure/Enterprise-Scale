@@ -171,6 +171,9 @@ var loadPolicyDefinitions = {
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AA-child-resources.json') // Needs validating in AzureChinaCloud (already used in AzureUSGovernment)
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Databricks-NoPublicIp.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Databricks-Sku.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Databricks-VirtualNetwork.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-Aks.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-Compute-SubnetId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-Compute-VmSize.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
