@@ -160,9 +160,9 @@ Great question! Don't worry we are aware of this required migration and change t
 
 We are working hard internally with the Azure Monitor Product Group (PG) to ensure everything that Azure landing zones requires and gets from the Log Analytics Agent (Microsoft Monitoring Agent - MMA) approach today is covered and has a path for migration to the Azure Monitor Agent (AMA) approach. This has been underway for sometime and continues to progress.
 
-The AMA agent bring a number of number concepts, resources and changes to existing integrations with other services, such as Microsoft Defender for Cloud, that all require validation by each of the associated PGs as well as the Azure landing zone team, prior to migrating to AMA from MMA.
+The AMA agent bring a number of new concepts, resources and changes to existing integrations with other services, such as Microsoft Defender for Cloud, that all require validation by each of the associated PGs as well as the Azure landing zone team, prior to migrating to AMA from MMA.
 
-We will, when ready, provide Azure landing zones specific migration guidance that supports the existing and to be created PG documentation. We will also make the relevant changes to each of the implementation options (Portal, Bicep, Terraform) to support the migration, especially for greenfield scenarios.
+We will, when ready, provide Azure landing zones specific migration guidance that supports existing and to be created PG documentation. We will also make the relevant changes to each of the implementation options (Portal, Bicep, Terraform) to support the migration, especially for greenfield scenarios.
 
 > We have an existing GitHub Issue ([#1055](https://github.com/Azure/Enterprise-Scale/issues/1055)) opened for this feature request. Please feel free to give it a 👍 or add a comment.
 
