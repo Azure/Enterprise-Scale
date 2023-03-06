@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
   - [December 2022](#december-2022)
@@ -49,6 +50,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### March 2023
+
+#### Policy
+
+- Deprecated the following ALZ policy: [Deny-MachineLearning-Compute-SubnetId](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MachineLearning-Compute-SubnetId.html)
 
 ### February 2023
 
