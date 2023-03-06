@@ -88,6 +88,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new policy and assignment to deny deployment of virtual machines using unmanaged OS disks (Deny-VM-with-unmanaged-disk)
 - Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
 - Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
+- Deprecated Databricks custom policies and removed default ALZ and ALZ portal accelerator assignments at Corp management group level. Policies:
+  - Deny-Databricks-NoPublicIp
+  - Deny-Databricks-Sku
+  - Deny-Databricks-VirtualNetwork
 
 ### February 2023
 
