@@ -265,7 +265,7 @@ This management group is for online landing zones. This group is for workloads t
 
 ### Decommissioned
 
-This management group is for landing zones that are being cancelled. Cancelled landing zones will be moved to this management group before deletion by Azure after 30-60 days. There are currently no policies assigned at this management group.
+This management group is for landing zones that are being cancelled. Cancelled landing zones will be moved to this management group before deletion by Azure after 30-60 days.
 
 <table>
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
@@ -288,7 +288,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 
 ### Sandbox
 
-This management group is for subscriptions that will only be used for testing and exploration by an organization. These subscriptions will be securely disconnected from the corporate and online landing zones. Sandboxes also have a less restrictive set of policies assigned to enable testing, exploration, and configuration of Azure services. There are currently no policies assigned at this management group.
+This management group is for subscriptions that will only be used for testing and exploration by an organization. These subscriptions will be securely disconnected from the corporate and online landing zones. Sandboxes also have a less restrictive set of policies assigned to enable testing, exploration, and configuration of Azure services.
 
 <table>
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
