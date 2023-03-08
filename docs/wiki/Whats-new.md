@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
   - [December 2022](#december-2022)
@@ -97,6 +98,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
+
+### March 2023
+
+#### Docs
+
+- Added new question and answer to FAQ for ["Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?"](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
 
 ### February 2023
 
