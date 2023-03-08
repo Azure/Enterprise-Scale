@@ -613,33 +613,6 @@
                 "No"
             ]
         },
-        "denyDatabricksPip": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "Audit",
-                "No"
-            ]
-        },
-        "denyDatabricksVnet": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "Audit",
-                "No"
-            ]
-        },
-        "denyDatabricksSku": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "Audit",
-                "No"
-            ]
-        },
         "enableVmBackup": {
             "type": "string",
             "defaultValue": "No",
@@ -864,9 +837,6 @@
             "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
             "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]",
             "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]",
-            "databricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksSkuPolicyAssignment.json')]",
-            "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
-            "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]",
             "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-UnusedResourcesPolicyAssignment.json')]",
@@ -877,9 +847,6 @@
         "deploymentNames": {
             "mgmtGroupDeploymentName": "[take(concat('alz-Mgs', variables('deploymentSuffix')), 64)]",
             "mgmtSubscriptionPlacement": "[take(concat('alz-MgmtSub', variables('deploymentSuffix')), 64)]",
-            "databricksSkuDeploymentName": "[take(concat('alz-DBSku', variables('deploymentSuffix')), 64)]",
-            "databricksPipDeploymentName": "[take(concat('alz-DBPip', variables('deploymentSuffix')), 64)]",
-            "databricksVnetDeploymentName": "[take(concat('alz-DBVnet', variables('deploymentSuffix')), 64)]",
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
@@ -2467,87 +2434,6 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableLzDdoS'), 'Yes'), 'Default', 'DoNotEnforce')]"
-                    }
-                }
-            }
-        },
-        {
-            // Assigning Azure Policy to prevent Databricks using public IP
-            "condition": "[or(equals(parameters('denyDatabricksPip'), 'Yes'), equals(parameters('denyDatabricksPip'), 'Audit'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').databricksPipDeploymentName]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').databricksPip]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "[if(equals(parameters('denyDatabricksPip'), 'Yes'), 'Default', 'DoNotEnforce')]"
-                    }
-                }
-            }
-        },
-        {
-            // Assigning Azure Policy to prevent Databricks sku
-            "condition": "[or(equals(parameters('denyDatabricksSku'), 'Yes'), equals(parameters('denyDatabricksSku'), 'Audit'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').databricksSkuDeploymentName]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').databricksSku]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "[if(equals(parameters('denyDatabricksSku'), 'Yes'), 'Default', 'DoNotEnforce')]"
-                    }
-                }
-            }
-        },
-        {
-            // Assigning Azure Policy to prevent Databricks sku
-            "condition": "[or(equals(parameters('denyDatabricksVnet'), 'Yes'), equals(parameters('denyDatabricksVnet'), 'Audit'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').databricksVnetDeploymentName]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').databricksVnet]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "[if(equals(parameters('denyDatabricksVnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }
