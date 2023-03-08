@@ -22,9 +22,6 @@ Policies being deprecated:
 |Deny the creation of public IP<br>ID: `Deny-PublicIP  `                      | [`6c112d4e-5bc7-47ae-a041-ea2d9dccd749`](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) | Custom policy replaced by built-in requires less administration overhead |
 | Latest TLS version should be used in your API App<br>ID: `8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e` | [`f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b`](https://www.azadvertizer.net/azpolicyadvertizer/f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b.html)  | Deprecated policy in intiative removed as existing policy supercedes it |
 | SQL servers should use customer-managed keys to encrypt data at rest<br>ID: `0d134df8-db83-46fb-ad72-fe0c9428c8dd` | [`0a370ff3-6cab-4e85-8995-295fd854c5b8`](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)  | Deprecated policy in intiative replaced with new policy                  |
-| Deny public IPs for Databricks cluster<br>ID: `Deny-Databricks-NoPublicIp` | [`6c112d4e-5bc7-47ae-a041-ea2d9dccd749`](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) | Deprecated as this policy is a non-infrastrcuture service specific and public IP is denied through the superceding policy |
-| Deny non-premium Databricks sku<br>ID: `Deny-Databricks-Sku` | N/A | Deprecated as this policy is a non-infrastrcuture service specific policy |
-| Deny Databricks workspaces without Vnet injection<br>ID: `Deny-Databricks-VirtualNetwork` | N/A | Deprecated as this policy is a non-infrastrcuture service specific policy |
 
 ### More Information
 
