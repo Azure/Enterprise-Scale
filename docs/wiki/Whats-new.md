@@ -100,6 +100,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
+- Update ALZ Policies wiki: Excel file with all the policy/initiative assigments.
 
 ### March 2023
 
