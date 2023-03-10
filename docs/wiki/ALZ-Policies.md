@@ -40,7 +40,7 @@ The subsequent sections will provide a summary of policy sets and policy set def
 
 > **NOTE**: Although the below sections will define which policy definitions/sets are applied at specific scopes, please remember that policy will inherit within your management group hierarchy.
 
-For convenience, an Excel version of the below information is available [here](media/ALZ%20Policy%20Assignments%20v1.xlsx) (last updated January 2023).
+For convenience, an Excel version of the below information is available [here](media/ALZ%20Policy%20Assignments%20v2.xlsx) (last updated March 2023).
 
 ### Intermediate Root
 
