@@ -807,6 +807,8 @@
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
             "activityDiagnosticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ActivityLogPolicyAssignment.json')]",
             "mdfcConfigPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDFCConfigPolicyAssignment.json')]",
+            "atpOssDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpOssDbPolicyAssignment.json')]",
+            "atpSqlDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpSqlDbPolicyAssignment.json')]",
             "azVmMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMMonitoringPolicyAssignment.json')]",
             "azVmssMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMSSMonitoringPolicyAssignment.json')]",
             "azVmBackupPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMBackupPolicyAssignment.json')]",
@@ -866,6 +868,8 @@
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
             "activityDiagnosticsPolicyDeploymentName": "[take(concat('alz-ActivityDiagnostics', variables('deploymentSuffix')), 64)]",
             "ascPolicyDeploymentName": "[take(concat('alz-ASC', variables('deploymentSuffix')), 64)]",
+            "atpOssDbPolicyDeploymentName": "[take(concat('alz-AtpOssDb', variables('deploymentSuffix')), 64)]",
+            "atpSqlDbPolicyDeploymentName": "[take(concat('alz-AtpSqlDb', variables('deploymentSuffix')), 64)]",
             "ascGovPolicyDeploymentName": "[take(concat('alz-Gov-ASC', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubDeploymentName": "[take(concat('alz-HubSpoke', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubDeploymentName": "[take(concat('alz-VWanHub', variables('deploymentSuffix')), 64)]",
@@ -1629,6 +1633,46 @@
                         "value": "[parameters('enableAscForCosmosDbs')]"
                     }
                 }
+            }
+        },
+        {
+            // Assigning Azure Security Center for Open Source Databases configuration policy initiative to intermediate root management group if condition is true
+            "condition": "[and(and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.azure.com/')), equals(parameters('enableAscForOssDb'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').atpOssDbPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').atpOssDbPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').atpOssDbPolicyInitiative]"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            // Assigning Azure Security Center for Azure SQL, MI and Synapse Databases configuration policy initiative to intermediate root management group if condition is true
+            "condition": "[and(and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.azure.com/')), equals(parameters('enableAscForSql'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').atpSqlDbPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').atpSqlDbPolicyDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').atpSqlDbPolicyInitiative]"
+                },
+                "parameters": {}
             }
         },
         {
