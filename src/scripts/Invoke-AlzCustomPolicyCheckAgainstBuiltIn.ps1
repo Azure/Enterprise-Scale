@@ -9,7 +9,10 @@ Param
     [parameter(ValueFromPipeline)][ValidateSet(';', ',')][string]$CsvDelimiter = ';',
 
     [string]
-    $FileTimeStampFormat = 'yyyyMMdd_HHmmss'
+    $FileTimeStampFormat = 'yyyyMMdd_HHmmss',
+
+    [object]
+    $validEffects = @('append', 'audit', 'auditIfNotExists', 'deny', 'deployIfNotExists', 'modify', 'manual', 'disabled', 'EnforceRegoPolicy', 'enforceSetting')
 )
 
 #region helper
@@ -40,13 +43,13 @@ do {
     $ALZPoliciesRaw = Invoke-WebRequest -uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/eslzArm/managementGroupTemplates/policyDefinitions/policies.json"
 
     if ($ALZPoliciesRaw.StatusCode -ne 200) {
-        Write-Output "getALZPolicies: $($ALZPoliciesRaw.StatusCode -eq 200) - try again in $($ALZRetryCount * 2) seconds"
+        Write-Host "getALZPolicies: $($ALZPoliciesRaw.StatusCode -eq 200) - try again in $($ALZRetryCount * 2) seconds"
         start-sleep -seconds ($ALZRetryCount * 2)
     }
 }
 until($ALZPoliciesRaw.StatusCode -eq 200 -or $ALZRetryCount -gt $ALZRetryMax)
 if ($ALZRetryCount -gt 10 -and $ALZPoliciesRaw.StatusCode -ne 200) {
-    Write-Output "ALZ Policies failed"
+    Write-Host "ALZ Policies failed"
     throw
 }
 #endregion get ALZ policies.json
@@ -72,6 +75,80 @@ else {
         return [System.BitConverter]::ToString([System.Security.Cryptography.HashAlgorithm]::Create("sha256").ComputeHash([System.Text.Encoding]::UTF8.GetBytes($object)))
     }
 
+    function detectEffect {
+        [CmdletBinding()]
+        Param
+        (
+            [object]
+            $policyDefinition,
+
+            [object]
+            $validEffects
+        )
+
+        $arrayeffect = @()
+        if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.policyRule.then.effect)) {
+            if ($policyDefinition.properties.policyRule.then.effect -in $validEffects) {
+                $arrayeffect += "fixed: $($policyDefinition.properties.policyRule.then.effect)"
+                return $arrayeffect
+            }
+            else {
+                $Regex = [Regex]::new("(?<=\[parameters\(')(.*)(?='\)\])")
+                $Match = $Regex.Match($policyDefinition.properties.policyRule.then.effect)
+                if ($Match.Success) {
+                    if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.parameters.($Match.Value))) {
+
+                        #defaultValue
+                        if (($policyDefinition.properties.parameters.($Match.Value) | Get-Member).name -contains 'defaultvalue') {
+                            if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.parameters.($Match.Value).defaultValue)) {
+                                if ($policyDefinition.properties.parameters.($Match.Value).defaultValue -in $validEffects) {
+                                    $arrayeffect += "default: $($policyDefinition.properties.parameters.($Match.Value).defaultValue)"
+                                }
+                                else {
+                                    Write-Host "invalid defaultValue effect $($policyDefinition.properties.parameters.($Match.Value).defaultValue) - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                                }
+                            }
+                            else {
+                                Write-Host "defaultValue empty - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                            }
+                        }
+                        else {
+                            Write-Host "no defaultvalue - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                        }
+                        #allowedValues
+                        if (($policyDefinition.properties.parameters.($Match.Value) | Get-Member).name -contains 'allowedValues') {
+                            if (-not [string]::IsNullOrWhiteSpace($policyDefinition.properties.parameters.($Match.Value).allowedValues)) {
+                                if ($policyDefinition.properties.parameters.($Match.Value).allowedValues.Count -gt 0) {
+                                    #Write-Host "allowedValues count $($policyDefinition.properties.parameters.($Match.Value).allowedValues) - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                                    $arrayAllowed = @()
+                                    foreach ($allowedValue in $policyDefinition.properties.parameters.($Match.Value).allowedValues) {
+                                        $arrayAllowed += $allowedValue
+                                    }
+                                    $arrayeffect += "allowed: $(($arrayAllowed | sort-object) -join ', ')"
+                                }
+                            }
+                            else {
+                                Write-Host "allowedValues empty - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                            }
+                        }
+                        else {
+                            Write-Host "no allowedValues- $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                        }
+
+                    }
+                    else {
+                        Write-Host "unexpected - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+                    }
+
+                    return $arrayeffect
+                }
+            }
+        }
+        else {
+            Write-Host "no then effect - $($policyDefinition.name) ($($policyDefinition.properties.policyType))"
+        }
+    }
+
     $currentTask = 'Getting BuiltIn Policy definitions'
     $uri = "$($azAPICallConf['azAPIEndpointUrls'].ARM)/providers/Microsoft.Authorization/policyDefinitions?api-version=2021-06-01&`$filter=policyType eq 'BuiltIn'"
     $method = 'GET'
@@ -83,30 +160,11 @@ else {
     $htHashesBuiltIn = @{}
     foreach ($policyDefinitionBuiltIn in $policyDefinitionsBuiltIn) {
         $policyObject = $policyDefinitionBuiltIn
-
-        if ($policyObject.properties.parameters.effect.defaultvalue) {
-            $arrEff = foreach ($eff in $policyObject.properties.parameters.effect.allowedValues) {
-                $eff
-            }
-            $arrEff += $policyObject.properties.parameters.effect.defaultvalue
-            $effectBuiltIn = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
-        }
-        else {
-            if ($policyObject.properties.parameters.policyEffect.defaultValue) {
-                $arrEff = foreach ($eff in $policyObject.properties.parameters.policyEffect.allowedValues) {
-                    $eff
-                }
-                $arrEff += $policyObject.properties.parameters.policyEffect.defaultvalue
-                $effectBuiltIn = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
-            }
-            else {
-                $effectBuiltIn = $policyObject.Properties.policyRule.then.effect
-            }
-        }
+        $effectBuiltIn = detectEffect -policyDefinition $policyObject -validEffects $validEffects
 
         $htHashesBuiltIn.($policyObject.name) = @{}
         $htHashesBuiltIn.($policyObject.name).policy = $policyObject
-        $htHashesBuiltIn.($policyObject.name).effectBuiltIn = $effectBuiltIn
+        $htHashesBuiltIn.($policyObject.name).effectBuiltIn = $effectBuiltIn -join "$CsvDelimiterOpposite "
 
         $htHashesBuiltIn.($policyObject.name).policyRuleHash = getHash -object ($policyObject.properties.policyRule | ConvertTo-Json -depth 99)
         $htHashesBuiltIn.($policyObject.name).policyRuleIfHash = getHash -object ($policyObject.properties.policyRule.if | ConvertTo-Json -depth 99)
@@ -116,25 +174,7 @@ else {
     $arrayResults = [System.Collections.ArrayList]@()
     foreach ($policyDefinitionALZ in $policyDefinitionsALZ) {
         $policyObject = $policyDefinitionALZ | ConvertFrom-Json
-        if ($policyObject.properties.parameters.effect.defaultvalue) {
-            $arrEff = foreach ($eff in $policyObject.properties.parameters.effect.allowedValues) {
-                $eff
-            }
-            $arrEff += $policyObject.properties.parameters.effect.defaultvalue
-            $effectALZ = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
-        }
-        else {
-            if ($policyObject.properties.parameters.policyEffect.defaultValue) {
-                $arrEff = foreach ($eff in $policyObject.properties.parameters.policyEffect.allowedValues) {
-                    $eff
-                }
-                $arrEff += $policyObject.properties.parameters.policyEffect.defaultvalue
-                $effectALZ = ($arrEff | Sort-Object -Unique) -join "$CsvDelimiterOpposite "
-            }
-            else {
-                $effectALZ = $policyObject.Properties.policyRule.then.effect
-            }
-        }
+        $effectALZ = (detectEffect -policyDefinition $policyObject -validEffects $validEffects) -join "$CsvDelimiterOpposite "
 
         $policyRuleHash = getHash -object ($policyObject.properties.policyRule | ConvertTo-Json -depth 99)
         if ($htHashesBuiltIn.values.policyRuleHash -contains $policyRuleHash) {
@@ -144,13 +184,13 @@ else {
             Write-Host " - AzA BuiltIn Link: https://www.azadvertizer.net/azpolicyadvertizer/$($ref.Name).html" -ForegroundColor Magenta
 
             $null = $arrayResults.Add([PSCustomObject]@{
-                    ALZEffect                = $effectALZ
                     ALZPolicy                = $policyObject.name
                     ALZPolicyDisplayName     = $policyObject.properties.displayName
+                    ALZEffect                = $effectALZ
                     ALZPolicyLink            = "https://www.azadvertizer.net/azpolicyadvertizer/$($policyObject.name).html"
                     Match                    = 'policyRule'
                     MatchCount               = $ref.Count
-                    BuilTinEffect            = $ref.effectBuiltIn
+                    BuiltInEffect            = $ref.effectBuiltIn
                     BuiltinPolicy            = $ref.Name
                     BuiltinPolicyDisplayName = $ref.displayName
                     BuiltinPolicyLink        = "https://www.azadvertizer.net/azpolicyadvertizer/$($ref.Name).html"
@@ -163,15 +203,14 @@ else {
             Write-Host "ALZ '$($policyObject.name)' policy-Rule-If match in $($ref.count) Builtin Policy defs"
 
             foreach ($entry in $ref) {
-
                 $null = $arrayResults.Add([PSCustomObject]@{
-                        ALZEffect                = $effectALZ
                         ALZPolicy                = $policyObject.name
                         ALZPolicyDisplayName     = $policyObject.properties.displayName
+                        ALZEffect                = $effectALZ
                         ALZPolicyLink            = "https://www.azadvertizer.net/azpolicyadvertizer/$($policyObject.name).html"
                         Match                    = 'policyRuleIf'
                         MatchCount               = $ref.Count
-                        BuilTinEffect            = $entry.effectBuiltIn
+                        BuiltInEffect            = $entry.effectBuiltIn
                         BuiltinPolicy            = $entry.Name
                         BuiltinPolicyDisplayName = $entry.displayName
                         BuiltinPolicyLink        = "https://www.azadvertizer.net/azpolicyadvertizer/$($entry.Name).html"
@@ -186,13 +225,13 @@ else {
 
             foreach ($entry in $ref) {
                 $null = $arrayResults.Add([PSCustomObject]@{
-                        ALZEffect                = $effectALZ
                         ALZPolicy                = $policyObject.name
                         ALZPolicyDisplayName     = $policyObject.properties.displayName
+                        ALZEffect                = $effectALZ
                         ALZPolicyLink            = "https://www.azadvertizer.net/azpolicyadvertizer/$($policyObject.name).html"
                         Match                    = 'policyRuleThen'
                         MatchCount               = $ref.Count
-                        BuilTinEffect            = $entry.effectBuiltIn
+                        BuiltInEffect            = $entry.effectBuiltIn
                         BuiltinPolicy            = $entry.Name
                         BuiltinPolicyDisplayName = $entry.displayName
                         BuiltinPolicyLink        = "https://www.azadvertizer.net/azpolicyadvertizer/$($entry.Name).html"
@@ -202,5 +241,5 @@ else {
     }
 
     $fileTimestamp = (Get-Date -Format $FileTimeStampFormat)
-    $arrayResults | Export-Csv -delimiter $CsvDelimiter -path "alzvsbuiltin_$($fileTimestamp).csv"-Encoding utf8
+    $arrayResults | Export-Csv -delimiter $CsvDelimiter -path "alzvsbuiltin_$($fileTimestamp).csv" -Encoding utf8 -UseQuotes AsNeeded
 }

@@ -11,9 +11,9 @@ It is important to highlight that not all enterprises adopt Azure in the same wa
 
 ## Landing Zones Definition
 
-Within the context of the Enterprise-Scale architecture, a "Landing Zone" is a logical construct capturing everything that must be true to enable application migrations and development at an Enterprise-Scale in Azure. It considers all platform Resources that are required to support the customer's application portfolio and does not differentiate between IaaS or PaaS.
+Within the context of the Enterprise-Scale architecture, a "Landing Zone" is a logical construct capturing everything that must be true to enable application migrations and development at an Enterprise-Scale in Azure. It considers all platform resources that are required to support the customer's application portfolio and does not differentiate between IaaS or PaaS.
 
-Every large enterprise software estate will encompass a myriad of application archetypes and each Landing Zone essentially represents the common elements, such as networking and IAM, that are shared across instances of these archetypes and must be in place to ensure that migrating applications have access to requisite components when deployed. Each Landing Zone must consequently be designed and deployed in accordance with the requirements of archetypes within the customer's application portfolio.
+Every large enterprise software estate will encompass a myriad of application archetypes and each Landing Zone essentially represents the common elements, such as networking and IAM, that are shared across instances of these archetypes and must be in place to ensure that migrated applications have access to requisite components when deployed. Each Landing Zone must consequently be designed and deployed in accordance with the requirements of archetypes within the customer's application portfolio.
 
 The principle purpose of the "Landing Zones" is therefore to ensure that when an application lands on Azure, the required "plumbing" is already in place, providing greater agility and compliance with enterprise security and governance requirements.
 

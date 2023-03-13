@@ -595,34 +595,16 @@
                 "No"
             ]
         },
+        "denyVMUnmanagedDisk": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "denyHttpIngressForAks": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "Audit",
-                "No"
-            ]
-        },
-        "denyDatabricksPip": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "Audit",
-                "No"
-            ]
-        },
-        "denyDatabricksVnet": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "Audit",
-                "No"
-            ]
-        },
-        "denyDatabricksSku": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -676,6 +658,22 @@
                 "No"
             ]
         },
+        "enableDecommissioned": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableSandbox": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "enableSqlAudit": {
             "type": "string",
             "defaultValue": "No",
@@ -694,9 +692,54 @@
                 "No"
             ]
         },
+        "enforceKvGuardrails": {            
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "denyHybridNetworking": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "auditPeDnsZones": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "auditAppGwWaf": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "enforceAcsb": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "delayCount": {
             "type": "int",
-            "defaultValue": 30,
+            "defaultValue": 35,
             "minValue": 1,
             "maxValue": 60,
             "metadata": {
@@ -721,7 +764,9 @@
             "identity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'identity')]",
             "lzs": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'landingzones')]",
             "corp": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'corp')]",
-            "online": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'online')]"
+            "online": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'online')]",
+            "decommissioned": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'decommissioned')]",
+            "sandboxes": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'sandboxes')]"
         },
         // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
         "scopes": {
@@ -732,7 +777,9 @@
             "identityManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').identity)]",
             "lzsManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').lzs)]",
             "corpManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').corp)]",
-            "onlineManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').online)]"
+            "onlineManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').online)]",
+            "decommissionedManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').decommissioned)]",
+            "sandboxManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').sandboxes)]"
         },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
         "azPrivateDnsPolicyAssignmentMapping": {
@@ -760,6 +807,8 @@
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
             "activityDiagnosticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ActivityLogPolicyAssignment.json')]",
             "mdfcConfigPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDFCConfigPolicyAssignment.json')]",
+            "atpOssDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpOssDbPolicyAssignment.json')]",
+            "atpSqlDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpSqlDbPolicyAssignment.json')]",
             "azVmMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMMonitoringPolicyAssignment.json')]",
             "azVmssMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMSSMonitoringPolicyAssignment.json')]",
             "azVmBackupPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMBackupPolicyAssignment.json')]",
@@ -775,28 +824,31 @@
             "pipOnNicPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressOnNICPolicyAssignment.json')]",
             "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
+            "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsKeyVaultPolicyAssignment.json')]",
+            "denyHybridNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-HybridNetworkingPolicyAssignment.json')]",
+            "auditPeDnsZonesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-PeDnsZonesPolicyAssignment.json')]",
+            "auditAppGwWafPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AppGwWafPolicyAssignment.json')]",
+            "enforceAcsbPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-AcsbPolicyAssignment.json')]",
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
             "sqlAuditPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
             "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLEncryptionPolicyAssignment.json')]",
+            "decommissionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-ALZ-DecommissionedPolicyAssignment.json')]",
+            "sandboxPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-ALZ-SandboxPolicyAssignment.json')]",
             "ddosPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-DDoSPolicyAssignment.json')]",
             "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
             "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
             "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]",
             "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]",
-            "databricksSku": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksSkuPolicyAssignment.json')]",
-            "databricksPip": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksPipPolicyAssignment.json')]",
-            "databricksVnet": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DatabricksVnetPolicyAssignment.json')]",
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
-            "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]"
+            "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]",
+            "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-UnusedResourcesPolicyAssignment.json')]",
+            "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
         "deploymentNames": {
             "mgmtGroupDeploymentName": "[take(concat('alz-Mgs', variables('deploymentSuffix')), 64)]",
             "mgmtSubscriptionPlacement": "[take(concat('alz-MgmtSub', variables('deploymentSuffix')), 64)]",
-            "databricksSkuDeploymentName": "[take(concat('alz-DBSku', variables('deploymentSuffix')), 64)]",
-            "databricksPipDeploymentName": "[take(concat('alz-DBPip', variables('deploymentSuffix')), 64)]",
-            "databricksVnetDeploymentName": "[take(concat('alz-DBVnet', variables('deploymentSuffix')), 64)]",
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
@@ -816,6 +868,8 @@
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
             "activityDiagnosticsPolicyDeploymentName": "[take(concat('alz-ActivityDiagnostics', variables('deploymentSuffix')), 64)]",
             "ascPolicyDeploymentName": "[take(concat('alz-ASC', variables('deploymentSuffix')), 64)]",
+            "atpOssDbPolicyDeploymentName": "[take(concat('alz-AtpOssDb', variables('deploymentSuffix')), 64)]",
+            "atpSqlDbPolicyDeploymentName": "[take(concat('alz-AtpSqlDb', variables('deploymentSuffix')), 64)]",
             "ascGovPolicyDeploymentName": "[take(concat('alz-Gov-ASC', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubDeploymentName": "[take(concat('alz-HubSpoke', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubDeploymentName": "[take(concat('alz-VWanHub', variables('deploymentSuffix')), 64)]",
@@ -837,10 +891,19 @@
             "rdpFromInternetPolicyDeploymentName": "[take(concat('alz-RDP', variables('deploymentSuffix')), 64)]",
             "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-RDPIdentity', variables('deploymentSuffix')), 64)]",
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
+            "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
+            "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
+            "auditPeDnsZonesPolicyDeploymentName": "[take(concat('alz-AuditPeDnsZones', variables('deploymentSuffix')), 64)]",
+            "auditAppGwWafPolicyDeploymentName": "[take(concat('alz-AppGwWaf', variables('deploymentSuffix')), 64)]",
+            "enforceAcsbPolicyDeploymentName": "[take(concat('alz-Acsb', variables('deploymentSuffix')), 64)]",
             "subnetNsgPolicyDeploymentName": "[take(concat('alz-SubnetNsg', variables('deploymentSuffix')), 64)]",
             "subnetNsgIdentityPolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "sqlAuditPolicyDeploymentName": "[take(concat('alz-SqlAudit', variables('deploymentSuffix')), 64)]",
+            "sqlAuditRoleAssignmentDeploymentName1": "[take(concat('alz-SqlAuditRbac1', variables('deploymentSuffix')), 64)]",
+            "sqlAuditRoleAssignmentDeploymentName2": "[take(concat('alz-SqlAuditRbac2', variables('deploymentSuffix')), 64)]",
             "sqlEncryptionPolicyDeploymentName": "[take(concat('alz-SqlEncrypt', variables('deploymentSuffix')), 64)]",
+            "decommissionPolicyDeploymentName": "[take(concat('alz-DecommissionPol', variables('deploymentSuffix')), 64)]",
+            "sandboxPolicyDeploymentName": "[take(concat('alz-SandboxPol', variables('deploymentSuffix')), 64)]",
             "onlineLzSubs": "[take(concat('alz-OnlineLzs', variables('deploymentSuffix')), 60)]",
             "corpLzSubs": "[take(concat('alz-CorpLzs', variables('deploymentSuffix')), 60)]",
             "corpConnectedMoveLzSubs": "[take(concat('alz-CorpConnLzs', variables('deploymentSuffix')), 50)]",
@@ -852,7 +915,9 @@
             "identityVwanPeeringDeploymentName": "[take(concat('alz-IDVwanPeering', variables('deploymentSuffix')), 64)]",
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
-            "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]"
+            "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]",
+            "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]",
+            "denyVMUnmanagedDiskPolicyDeploymentName": "[take(concat('alz-NoUnmanagedDiskResource', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1471,6 +1536,30 @@
             }
         },
         {
+            // Assigning Cost Optimization policy initiative to intermediate root management group
+            "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').costOptimizationDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').costOptimizationPolicyInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
             // Assigning Azure Security Center configuration policy initiative to intermediate root management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.azure.com/'))]",
             "type": "Microsoft.Resources/deployments",
@@ -1547,6 +1636,60 @@
             }
         },
         {
+            // Assigning Azure Security Center for Open Source Databases configuration policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.azure.com/'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').atpOssDbPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').atpOssDbPolicyInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableAscForOssDb'), 'DeployIfNotExists'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Security Center for Azure SQL, MI and Synapse Databases configuration policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.azure.com/'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').atpSqlDbPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').atpSqlDbPolicyInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableAscForSql'), 'DeployIfNotExists'), 'Default', 'DoNotEnforce')]"
+                    }                    
+                }
+            }
+        },
+        {
             // Assigning Deny Classic Resource Creation policy to intermediate root management group if condition is true
             "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), not(equals(parameters('denyClassicResources'), 'No')))]",
             "type": "Microsoft.Resources/deployments",
@@ -1570,6 +1713,36 @@
                     },
                     "policyEffect": {
                         "value": "[if(equals(parameters('denyClassicResources'), 'Yes'), 'Deny', 'Audit')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Deny VM Unmanaged Disk Creation policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), not(equals(parameters('denyVMUnmanagedDisk'), 'No')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').denyVMUnmanagedDiskPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').VMUnmanagedDiskPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyEffect": {
+                        "value": "[if(equals(parameters('denyVMUnmanagedDisk'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }
@@ -2324,87 +2497,6 @@
             }
         },
         {
-            // Assigning Azure Policy to prevent Databricks using public IP
-            "condition": "[or(equals(parameters('denyDatabricksPip'), 'Yes'), equals(parameters('denyDatabricksPip'), 'Audit'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').databricksPipDeploymentName]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').databricksPip]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "[if(equals(parameters('denyDatabricksPip'), 'Yes'), 'Default', 'DoNotEnforce')]"
-                    }
-                }
-            }
-        },
-        {
-            // Assigning Azure Policy to prevent Databricks sku
-            "condition": "[or(equals(parameters('denyDatabricksSku'), 'Yes'), equals(parameters('denyDatabricksSku'), 'Audit'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').databricksSkuDeploymentName]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').databricksSku]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "[if(equals(parameters('denyDatabricksSku'), 'Yes'), 'Default', 'DoNotEnforce')]"
-                    }
-                }
-            }
-        },
-        {
-            // Assigning Azure Policy to prevent Databricks sku
-            "condition": "[or(equals(parameters('denyDatabricksVnet'), 'Yes'), equals(parameters('denyDatabricksVnet'), 'Audit'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').databricksVnetDeploymentName]",
-            "scope": "[variables('scopes').corpManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').databricksVnet]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "[if(equals(parameters('denyDatabricksVnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
-                    }
-                }
-            }
-        },
-        {
             // Assigning Azure Policy enablement policy for AKS to landing zones management group if condition is true
             "condition": "[or(equals(parameters('enableAksPolicy'), 'Yes'), equals(parameters('enableAksPolicy'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
@@ -2657,6 +2749,138 @@
             }
         },
         {
+            // Assigning Key Vault guardrails initiative to landing zones management group if condition is true
+            "condition": "[equals(parameters('enforceKvGuardrails'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').kvGuardrailsPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').kvGuardrailsPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceKvGuardrails'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning policy to deny deployment of vWAN/ER/VPN Gateways to corp management group if condition is true
+            "condition": "[equals(parameters('denyHybridNetworking'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').denyHybridNetworkingPolicyDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').denyHybridNetworkingPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('denyHybridNetworking'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning policy to audit deployment of Private Link Private DNS Zones to landing zones management group if condition is true
+            "condition": "[equals(parameters('auditPeDnsZones'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').auditPeDnsZonesPolicyDeploymentName]",
+            "scope": "[variables('scopes').corpManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').auditPeDnsZonesPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "privateLinkDnsZones": {
+                        "value": "[variables('privateDnsZonesMerge')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning policy to audit deployment of WAF on Application Gateways to landing zones management group if condition is true
+            "condition": "[equals(parameters('auditAppGwWaf'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').auditAppGWWafPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').auditAppGwWafPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning policy to audit Azure Compute Security Baseline compliance to the landing zones management group if condition is true
+            "condition": "[equals(parameters('enforceACSB'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').enforceACSBPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').enforceACSBPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceACSB'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
             // Assigning deny subnet without nsg policy to landing zones management group if condition is true
             "condition": "[equals(parameters('denySubnetWithoutNsg'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
@@ -2692,7 +2916,10 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "policyCompletion"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2704,8 +2931,71 @@
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
                     "enforcementMode": {
                         "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Log Analytics Contributor RBAC Role for SQL Auditing Assignment on Management Subscription
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').sqlAuditRoleAssignmentDeploymentName1]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[variables('singleVsDedicatedMgmtSub')]",
+            "dependsOn": [
+                "[variables('deploymentNames').sqlAuditPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleAssignments]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[if(equals(parameters('enableSqlAudit'), 'Yes'), reference(variables('deploymentNames').sqlAuditPolicyDeploymentName).outputs.principalId.value, 'na')]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning SQL Security Manager RBAC Role for SQL Auditing Assignment on Management Subscription
+            "condition": "[equals(parameters('enableSqlAudit'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').sqlAuditRoleAssignmentDeploymentName2]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[variables('singleVsDedicatedMgmtSub')]",
+            "dependsOn": [
+                "[variables('deploymentNames').sqlAuditPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').roleAssignments]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "principalId": {
+                        "value": "[if(equals(parameters('enableSqlAudit'), 'Yes'), reference(variables('deploymentNames').sqlAuditPolicyDeploymentName).outputs.principalId.value, 'na')]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "056cd41c-7e88-42e1-933e-88ba6a50c9c3"
                     }
                 }
             }
@@ -2733,6 +3023,60 @@
                     },
                     "enforcementMode": {
                         "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning decommissioned initiative to decommissioned management group if condition is true
+            "condition": "[or(equals(parameters('enableDecommissioned'), 'Yes'), equals(parameters('enableDecommissioned'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').decommissionPolicyDeploymentName]",
+            "scope": "[variables('scopes').decommissionedManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').decommissionPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableDecommissioned'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning sandbox initiative to sandbox management group if condition is true
+            "condition": "[or(equals(parameters('enableSandbox'), 'Yes'), equals(parameters('enableSandbox'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').sandboxPolicyDeploymentName]",
+            "scope": "[variables('scopes').sandboxManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').sandboxPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableSandbox'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }

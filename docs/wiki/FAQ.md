@@ -11,6 +11,7 @@
 - [The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?](#the-azurediagnostics-table-in-my-log-analytics-workspace-has-hit-the-500-column-limit-what-should-i-do)
 - [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
 - [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
+- [Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?](#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
 
 ---
 
@@ -152,3 +153,19 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
     - `<Resource Prefix (Root ID)>-corp`
   - `<Resource Prefix (Root ID)>-decommissioned`
   - `<Resource Prefix (Root ID)>-sandbox`
+
+## Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?
+
+Great question! Don't worry we are aware of this required migration and change to Azure landing zones with the Log Analytics Agent (Microsoft Monitoring Agent - MMA) being retired in August 2024 as detailed here: [Migrate to Azure Monitor Agent from Log Analytics agent](https://learn.microsoft.com/azure/azure-monitor/agents/azure-monitor-agent-migration).
+
+We are working hard internally with the Azure Monitor Product Group (PG) to ensure everything that Azure landing zones requires and gets from the Log Analytics Agent (Microsoft Monitoring Agent - MMA) approach today is covered and has a path for migration to the Azure Monitor Agent (AMA) approach. This has been underway for sometime and continues to progress.
+
+The AMA agent brings a number of new concepts, resources and changes to existing integrations with other services, such as Microsoft Defender for Cloud, that all require validation by each of the associated PGs as well as the Azure landing zone team, prior to migrating to AMA from MMA.
+
+We will, when ready, provide Azure landing zones specific migration guidance that supports existing and to be created PG documentation. We will also make the relevant changes to each of the implementation options (Portal, Bicep, Terraform) to support the migration, especially for greenfield scenarios.
+
+> We have an existing GitHub Issue ([#1055](https://github.com/Azure/Enterprise-Scale/issues/1055)) opened for this feature request. Please feel free to give it a 👍 or add a comment.
+
+### What if we are not ready to make the switch and migrate, right now?
+
+Another good question. You will need to plan, and complete, the migration to the Azure Monitor Agent before the Log Analytics Agent is retired as [documented here.](https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/)
