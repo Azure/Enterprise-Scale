@@ -86,6 +86,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicEndpoint-MariaDB.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicIP.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MgmtPorts-From-Internet.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Redis-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Sql-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-SqlMi-minTLS.json')
