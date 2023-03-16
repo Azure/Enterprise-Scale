@@ -56,6 +56,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Added new question and answer to FAQ for ["Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?"](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
+- Published new CAF docs for Azure landing zones and multiple Azure Active Directory tenants - [aka.ms/ALZ/MultiTenant](https://aka.ms/ALZ/MultiTenant)
+
+#### Tooling
+
+- Added additional deployment telemetry collection data point for Zero Trust Networking intent as [documented here.](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-CustomerUsage#alz-acceleratoreslz-arm-deployment---zero-trust-networking---phase-1--definition)
+- Defaulted Azure Firewall SKU/Tier to `Premium` from `Standard`. SKU/Tier can still be set back to `Standard` if desired
 
 ### February 2023
 

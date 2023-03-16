@@ -799,7 +799,8 @@
             "identityPeeringDeploymentName": "[take(concat('alz-IDPeering', variables('deploymentSuffix')), 64)]",
             "identityVwanPeeringDeploymentName": "[take(concat('alz-IDVwanPeering', variables('deploymentSuffix')), 64)]",
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
-            "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]"
+            "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
+            "ztnPhase1PidCuaDeploymentName": "[take(concat('pid-', variables('ztnPhase1CuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1009,7 +1010,8 @@
         "roleDefinitions": {
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
-        "cuaid": "35c42e79-00b3-42eb-a9ac-e542953efb3c"
+        "cuaid": "35c42e79-00b3-42eb-a9ac-e542953efb3c",
+        "ztnPhase1CuaId": "f09f64b8-5cb3-4b16-900d-6ba1df8a597e"
     },
     "resources": [
         /*
@@ -3764,12 +3766,28 @@
                     "resources": []
                 }
             }
+        },
+        {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableAzFw'), 'Yes'), equals(parameters('firewallSku'), 'Premium'), equals(parameters('denySubnetWithoutNsg'), 'Yes'), equals(parameters('denySubnetWithoutNsgForIdentity'), 'Yes'), equals(parameters('enableStorageHttps'), 'Yes'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'vwan')), or(not(empty(parameters('connectivitySubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))))]",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').ztnPhase1PidCuaDeploymentName]",
+            "subscriptionId": "[coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
         }
     ],
     "outputs": {
         "deployment": {
             "type": "string",
-            "value": "[concat(deployment().name, ' has successfully deployed. Welcome to Enterprise-Scale!')]"
+            "value": "[concat(deployment().name, ' has successfully deployed. Welcome to Azure Landing Zones!')]"
         }
     }
 }
