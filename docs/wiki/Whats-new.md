@@ -102,8 +102,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Added the option to download an Excel file with all the policy/initiative assigments.
 - Update ALZ Policies wiki: Excel file with all the policy/initiative assigments.
 - Renamed Policies from `WVD` to `AVD` - Display names and Descriptions only
-- Added new category for Host Pools Diagnostic Settings to `Deploy-Diagnostics-WVDHostPools`
+- Added new Diagnostic setting category for Host Pools Diagnostic Settings to `Deploy-Diagnostics-WVDHostPools`
   - `ConnectionGraphicsData`
+- Added new Diagnostic setting category for EventGrid Topics Diagnostic Settings to `Deploy-Diagnostics-EventGridTopic`
+  - `DataPlaneRequests`
 
 ### March 2023
 
