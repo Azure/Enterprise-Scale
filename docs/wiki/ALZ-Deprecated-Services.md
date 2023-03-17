@@ -22,6 +22,7 @@ Policies being deprecated:
 |Deny the creation of public IP<br>ID: `Deny-PublicIP  `                      | [`6c112d4e-5bc7-47ae-a041-ea2d9dccd749`](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) | Custom policy replaced by built-in requires less administration overhead |
 | Latest TLS version should be used in your API App<br>ID: `8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e` | [`f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b`](https://www.azadvertizer.net/azpolicyadvertizer/f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b.html)  | Deprecated policy in intiative removed as existing policy supercedes it |
 | SQL servers should use customer-managed keys to encrypt data at rest<br>ID: `0d134df8-db83-46fb-ad72-fe0c9428c8dd` | [`0a370ff3-6cab-4e85-8995-295fd854c5b8`](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)  | Deprecated policy in intiative replaced with new policy                  |
+| RDP access from the Internet should be blocked<br>ID: `Deny-RDP-From-Internet` | [`Deny-MgmtPorts-From-Internet`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html)  | Deprecated policy as it is superceded by a more flexible policy                  |
 
 ### More Information
 

@@ -430,7 +430,7 @@
                 "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for identity."
             }
         },
-        "denyRdpForIdentity": {
+        "denyMgmtPortsForIdentity": {
             "type": "string",
             "allowedValues": [
                 "Yes",
@@ -622,7 +622,7 @@
                 "No"
             ]
         },
-        "denyRdp": {
+        "denyMgmtPorts": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -822,7 +822,7 @@
             "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, variables('azPrivateDnsPolicyAssignment'))]",
             "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
             "pipOnNicPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressOnNICPolicyAssignment.json')]",
-            "rdpFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-RDPFromInternetPolicyAssignment.json')]",
+            "mgmtFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-MgmtPortsFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
             "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsKeyVaultPolicyAssignment.json')]",
             "denyHybridNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-HybridNetworkingPolicyAssignment.json')]",
@@ -888,8 +888,8 @@
             "privateDnsPolicyDeploymentName": "[take(concat('alz-PrivDNSAssignment', variables('deploymentSuffix')), 64)]",
             "pipPolicyDeploymentName": "[take(concat('alz-PIP', variables('deploymentSuffix')), 64)]",
             "pipOnNicPolicyDeploymentName": "[take(concat('alz-PipOnNic', variables('deploymentSuffix')), 64)]",
-            "rdpFromInternetPolicyDeploymentName": "[take(concat('alz-RDP', variables('deploymentSuffix')), 64)]",
-            "rdpFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-RDPIdentity', variables('deploymentSuffix')), 64)]",
+            "mgmtFromInternetPolicyDeploymentName": "[take(concat('alz-MgmtPorts', variables('deploymentSuffix')), 64)]",
+            "mgmtFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-MgmtPortsIdentity', variables('deploymentSuffix')), 64)]",
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
             "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
@@ -921,7 +921,7 @@
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
-            "rdpFromInternetIdentityLitePolicyDeploymentName": "[take(concat('alz-RDPIdentity', variables('deploymentSuffix')), 64)]",
+            "mgmtFromInternetIdentityLitePolicyDeploymentName": "[take(concat('alz-MgmtIdentity', variables('deploymentSuffix')), 64)]",
             "azBackupIdentityLitePolicyDeploymentName": "[take(concat('alz-AzBackupIdentity', variables('deploymentSuffix')), 64)]",
             "subnetNsgIdentityLitePolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "monitoringLiteDeploymentName": "[take(concat('alz-MonitoringLite', variables('deploymentSuffix')), 64)]",
@@ -2698,11 +2698,11 @@
             }
         },
         {
-            // Assigning deny rpd from internet policy landing zones management group if condition is true
-            "condition": "[equals(parameters('denyRdp'), 'Yes')]",
+            // Assigning deny management ports from internet policy landing zones management group if condition is true
+            "condition": "[equals(parameters('denyMgmtPorts'), 'Yes')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').rdpFromInternetPolicyDeploymentName]",
+            "name": "[variables('deploymentNames').mgmtFromInternetPolicyDeploymentName]",
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -2712,7 +2712,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').rdpFromInternetPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').mgmtFromInternetPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
@@ -3165,11 +3165,11 @@
             }
         },
         {
-            // Assigning deny rpd from internet on identity management group if condition is true
-            "condition": "[and(equals(parameters('denyRdpForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
+            // Assigning deny management ports from internet on identity management group if condition is true
+            "condition": "[and(equals(parameters('denyMgmtPortsForIdentity'), 'Yes'), not(empty(parameters('identitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').rdpFromInternetIdentityPolicyDeploymentName]",
+            "name": "[variables('deploymentNames').mgmtFromInternetIdentityPolicyDeploymentName]",
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -3180,7 +3180,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').rdpFromInternetPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').mgmtFromInternetPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
@@ -4181,14 +4181,14 @@
             }
         },
         /*
-            Note: ES Lite only: assign policy to deny RDP from internet to platform MG 
+            Note: ES Lite only: assign policy to deny management ports from internet to platform MG 
         */
         {
-            // Assigning deny rpd from internet policy landing zones management group if condition is true
-            "condition": "[and(equals(parameters('denyRdpForIdentity'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            // Assigning deny management ports from internet policy landing zones management group if condition is true
+            "condition": "[and(equals(parameters('denyMgmtPortsForIdentity'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('esLitedeploymentNames').rdpFromInternetIdentityLitePolicyDeploymentName]",
+            "name": "[variables('esLitedeploymentNames').mgmtFromInternetIdentityLitePolicyDeploymentName]",
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -4199,7 +4199,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').rdpFromInternetPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').mgmtFromInternetPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
