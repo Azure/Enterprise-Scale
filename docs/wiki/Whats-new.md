@@ -103,6 +103,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
 - Update ALZ Policies wiki: Excel file with all the policy/initiative assigments.
+- Renamed Policies from `WVD` to `AVD` - Display names and Descriptions only
+- Added new Diagnostic setting category for Host Pools Diagnostic Settings to `Deploy-Diagnostics-WVDHostPools`
+  - `ConnectionGraphicsData`
+- Added new Diagnostic setting category for EventGrid Topics Diagnostic Settings to `Deploy-Diagnostics-EventGridTopic`
+  - `DataPlaneRequests`
 - Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
 
 ### March 2023
