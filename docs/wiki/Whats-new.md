@@ -53,7 +53,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2023
 
-- Many ESLZ Azure Policies and Initiatives have have been added or updated. As part of this release, we have transitioned away from deprecated policies, moved from custom to built-in policies, as far as possible, and implemented new policies identified to enhance the security, governance and management of ESLZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+- We have moved to a quarterly cycle of reviewing and implementing remediations or recommendations for Azure Policy. This release includes updates for quarter 1 of calendar year 2023, in which many ESLZ Azure Policies and Initiatives have have been added or updated. As part of this release, we have transitioned away from deprecated policies, moved from custom to built-in policies (as far as possible), and implemented new policies identified to enhance the security, governance and management of ESLZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
 
 > You may continue to use the existing ESLZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGE** called out in the captured changes and follow these steps:
 > 
