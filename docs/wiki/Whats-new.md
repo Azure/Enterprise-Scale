@@ -53,9 +53,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2023
 
-- Many ESLZ Azure Policies and Initiatives have have been added or updated improving the security, governance and management of ESLZ. As part of this release, we have transitioned away from deprecated policies, moved from custom to built-in policies, as far as possible, and implemented new policies identified to enhance the security, governance and management of ESLZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+- Many ESLZ Azure Policies and Initiatives have have been added or updated. As part of this release, we have transitioned away from deprecated policies, moved from custom to built-in policies, as far as possible, and implemented new policies identified to enhance the security, governance and management of ESLZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
 
-> You may continue to use the existing ESLZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month.
+> You may continue to use the existing ESLZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGE** called out in the captured changes and follow these steps:
 > 
 > **Please note** that moving to the new Built-In Policy Definition or deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
 
