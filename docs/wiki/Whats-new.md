@@ -117,9 +117,11 @@ While it is not mandatory to follow our recommended best practice policies, we s
 - Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on 'Landing Zones' Management Group, to suitably assign respective DINE policy definition, instead of AINE
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
   - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
-  - **BREAKING CHANGE**: delete assignment [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
+  - **BREAKING CHANGE** (parameters changed): 
+    - Delete assignment [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) prior to applying updates as parameters have changed, then re-assign.
 - Added new policy to inintiative that enablies diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
-  - **BREAKING CHANGE**: delete assignment [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
+  - **BREAKING CHANGE** (parameters changed): 
+    - Delete assignment [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) prior to applying updates as parameters have changed, then re-assign.
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
