@@ -55,21 +55,21 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - We have moved to a quarterly cycle of reviewing and implementing remediations or recommendations for Azure Policy. This release includes updates for quarter 1 of calendar year 2023 (Q1CY2023), in which many ALZ Azure Policies and Initiatives have have been added or updated. As part of this release, we have transitioned away from deprecated policies (where possible), moved from custom to built-in policies (as far as possible), and implemented new policies identified to enhance the security, governance and management of ALZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
 
-> You may continue to use the existing ALZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGES** called out in the captured changes and follow these steps:
+> Greenfield deployments are straight forward, however, there are breaking changes if upgrading an exisiting deployment or policies. You may continue to use the existing ALZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGES** called out in the captured changes and follow these steps:
 > 
 > **Please note** that moving to the new Built-In Policy Definition or deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
 
-Breaking Changes:
+##### Breaking Changes:
 
 - Enforce-EncryptTransit
 - Deploy-Diagnostics-LogAnalytics
 - Deny-PublicPaasEndpoints
-- Deploy-MDFC-Vonfig
+- Deploy-MDFC-Config
 
 #### Policy
 
 - Removed deprecated policy [[Deprecated]: Latest TLS version should be used in your API App (azadvertizer.net)](https://www.azadvertizer.net/azpolicyadvertizer/8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e.html) from initiative [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) as recommended policy is already included in the initiative.
-  - **BREAKING CHANGE**: delete assignment [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
+  - **BREAKING CHANGE**: delete assignment [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) and custom initiative prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
 - Updated initiative [Deny or Audit resources without Encryption with a customer-managed key (CMK) (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html) deprecated policy [[Deprecated]: SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0d134df8-db83-46fb-ad72-fe0c9428c8dd.html) to new policy [Azure Policy definition SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)
 - Updated intiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
   - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
@@ -77,6 +77,7 @@ Breaking Changes:
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
   - [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html)
   - [Configure Azure Kubernetes Service clusters to enable Defender profile](https://www.azadvertizer.net/azpolicyadvertizer/64def556-fbad-4622-930e-72d1d5589bf5.html)
+  - **BREAKING CHANGE**: delete assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
 - Added initiative assignment [[Preview]: Deploy Microsoft Defender for Endpoint agent](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e20d08c5-6d64-656d-6465-ce9e37fd0ebc.html) to 'Intermediate Root' Management Group.
 - Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on 'Landing Zones' Management Group, to suitably assign respective DINE policy definition, instead of AINE
 - New Initiative for the Decommissioned landingzones including policies:
@@ -103,8 +104,10 @@ Breaking Changes:
 - Added new initiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (`Enforce-ACSB`)
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
   - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
+  - **BREAKING CHANGE**: delete assignment [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
 - Added new policy and assignment to deny deployment of virtual machines using unmanaged OS disks (Deny-VM-with-unmanaged-disk)
 - Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
+  - **BREAKING CHANGE**: delete assignment [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
 - Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
 - Added two new policy initiative assignments to enable Advanced Threat Detection for databases at intermediate root:
   - [Configure Advanced Threat Protection to be enabled on open-source relational databases](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e.html)
