@@ -53,7 +53,15 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2023
 
-- We have moved to a quarterly cycle of reviewing and implementing remediations or recommendations for Azure Policy. This release includes updates for quarter 1 of calendar year 2023 (Q1CY2023), in which many ALZ Azure Policies and Initiatives have have been added or updated. As part of this release, we have transitioned away from deprecated policies (where possible), moved from custom to built-in policies (as far as possible), and implemented new policies identified to enhance the security, governance and management of ALZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+We are pleased to announce that we have transitioned to a quarterly review cycle for Azure Policy, and we are excited to share with you our latest release for Q1CY2023. This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also made several changes to our policy implementation process. We have transitioned away from deprecated policies where possible, moved from custom to built-in policies as far as possible, and implemented new policies to keep our practices up-to-date.
+
+We have initiated this program to address the fact that we haven't updated or addressed policies in earnest for the past two years. We believe that this quarterly review cycle will allow us to stay on top of emerging threats and new policies, ensuring that our Azure environment remains secure and compliant. For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+
+While it is not mandatory to follow our recommended best practice policies, we strongly advise staying up-to-date to ensure the best possible security posture for your Azure environment. For those with existing deployments or policies, we have provided [Brownfield guidance](aka.ms/alz/brownfield) to help you navigate the process of updating to the latest policies. We recognize that there may be breaking changes when upgrading an existing deployment or policies, but we assure you that our [Brownfield guidance](aka.ms/alz/brownfield) provides step-by-step instructions to ensure a smooth transition.
+
+Please note that moving to the new Built-In Policy Definition or removing deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
+
+---
 
 > Greenfield deployments are straight forward, however, there are breaking changes if upgrading an exisiting deployment or policies. You may continue to use the existing ALZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGES** called out in the captured changes and follow these steps:
 > 
@@ -65,6 +73,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Deploy-Diagnostics-LogAnalytics
 - Deny-PublicPaasEndpoints
 - Deploy-MDFC-Config
+
+Breaking
+New
+Hygiene
+
 
 #### Policy
 
