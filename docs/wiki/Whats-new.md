@@ -59,6 +59,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 > 
 > **Please note** that moving to the new Built-In Policy Definition or deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
 
+Breaking Changes:
+
+- Enforce-EncryptTransit
+- Deploy-Diagnostics-LogAnalytics
+- Deny-PublicPaasEndpoints
+- Deploy-MDFC-Vonfig
+
 #### Policy
 
 - Removed deprecated policy [[Deprecated]: Latest TLS version should be used in your API App (azadvertizer.net)](https://www.azadvertizer.net/azpolicyadvertizer/8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e.html) from initiative [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) as recommended policy is already included in the initiative.
@@ -91,7 +98,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added two new policy assignments to govern Corp Management Group networking:
   - `DENY-HybridNetworking` - blocks the provisioning of vWAN/ER/VPN, including gateways, in Corp
   - `AUDIT-PeDnsZones` - audits the provisioning of Private Link Private DNS Zones in Corp
-    - **NOTE**: The policy default values include all the static Private DNS Zones only. When assigned via the ALZ portal experience the assignment includes all the Private DNS Zones that are deployed as part of the ALZ Portal experience, including the geo code/regional zones for Azure Backup, AKS etc. 
+    - **NOTE**: The policy default values include all the static Private DNS Zones only. When assigned via the ALZ portal experience the assignment includes all the Private DNS Zones that are deployed as part of the ALZ Portal experience, including the geo code/regional zones for Azure Backup, AKS etc.
 - Added new policy assignment to audit WAF enabled on Application Gateways (`Audit-AppGW-WAF`)
 - Added new initiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (`Enforce-ACSB`)
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
@@ -121,7 +128,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added new question and answer to FAQ for ["Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?"](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
 - Published new CAF docs for Azure landing zones and multiple Azure Active Directory tenants - [aka.ms/ALZ/MultiTenant](https://aka.ms/ALZ/MultiTenant)
-
 
 #### Tooling
 
