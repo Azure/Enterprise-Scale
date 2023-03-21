@@ -59,13 +59,7 @@ We have initiated this program to address the fact that we haven't updated or ad
 
 While it is not mandatory to follow our recommended best practice policies, we strongly advise staying up-to-date to ensure the best possible security posture for your Azure environment. For those with existing deployments or policies, we have provided [Brownfield guidance](aka.ms/alz/brownfield) to help you navigate the process of updating to the latest policies. We recognize that there may be breaking changes when upgrading an existing deployment or policies, but we assure you that our [Brownfield guidance](aka.ms/alz/brownfield) provides step-by-step instructions to ensure a smooth transition.
 
-Please note that moving to the new Built-In Policy Definition or removing deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
-
----
-
-> Greenfield deployments are straight forward, however, there are breaking changes if upgrading an exisiting deployment or policies. You may continue to use the existing ALZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGES** called out in the captured changes and follow these steps:
-> 
-> **Please note** that moving to the new Built-In Policy Definition or deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
+> **Please note** that moving to the new Built-In Policy Definitions or removing deprecated policies will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
 
 ##### Breaking Changes:
 
