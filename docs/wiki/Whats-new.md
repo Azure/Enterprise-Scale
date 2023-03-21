@@ -76,7 +76,7 @@ While it is not mandatory to follow our recommended best practice policies, we s
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
 - Added initiative assignment [[Preview]: Deploy Microsoft Defender for Endpoint agent](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e20d08c5-6d64-656d-6465-ce9e37fd0ebc.html) to 'Intermediate Root' Management Group.
-- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
+- Added assignment of [Network interfaces should not have public IPs](https://www.azadvertizer.net/azpolicyadvertizer/83a86a26-fd1f-447c-b59d-e51f44264114.html) built-in Policy to the 'Corp' Management Group.
 - Added new initiative and assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
   - Initiative name: `ENFORCE-Guardrails-KeyVault`
   - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
