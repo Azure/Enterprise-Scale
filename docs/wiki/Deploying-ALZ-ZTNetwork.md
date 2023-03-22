@@ -1,6 +1,17 @@
 ## Azure landing zone portal accelerator deployment with Zero Trust network principles
 
-This section will describe how to deploy the Azure landing zone portal accelerator with Zero Trust Principles. For more information on Zero Trust security model and principles visit [Embrace proactive security with Zero Trust](https://www.microsoft.com/security/business/zero-trust). 
+This section will describe how to deploy the Azure landing zone portal accelerator with Zero Trust Principles. For more information on Zero Trust security model and principles visit [Embrace proactive security with Zero Trust](https://www.microsoft.com/security/business/zero-trust). Let's review the Zero Trust aligned networking configurations in the Azure landing zone portal accelerator.
+
+## Deploy networking topology
+
+Hub and spoke is the best option for Zero Trust ...
+
+## Enable DDoS Protection Standard
+
+## Deploy Azure Firewall Premium
+
+## Ensure the Selected Defaults
+
 
 ## 1. Pre-requisites
 
