@@ -273,7 +273,7 @@ While it is not mandatory to follow our recommended best practice policies, we s
   
   in favour of Azure built-in policies with the same or enhanced functionality.
   
-  | ALZ Policy ID(s)          | Azure Builti-in Policy ID(s)         |
+| ALZ Policy ID(s)          | Azure Builti-in Policy ID(s)         |
 | --------------------------- | -------------------------------------- |
 | Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
 | Deploy-Nsg-FlowLogs       | e920df7f-9a64-4066-9b58-52684c02a091 |
