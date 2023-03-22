@@ -55,7 +55,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 We are pleased to announce that we have transitioned to a quarterly review cycle for Azure Policy, and we are excited to share with you our latest release for Q1CY2023. This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also made several changes to our policy implementation process. We have transitioned away from deprecated policies where possible, moved from custom to built-in policies as far as possible, and implemented new policies to keep our practices up-to-date.
 
-We have initiated this program to address the fact that we haven't updated or addressed policies in earnest for the past two years. We believe that this quarterly review cycle will allow us to stay on top of emerging threats and new policies, ensuring that our Azure environment remains secure and compliant. For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version. 
+We have initiated this program to address the fact that we haven't updated or addressed policies in earnest for the past two years. We believe that this quarterly review cycle will allow us to stay on top of emerging threats and new policies, ensuring that our Azure environment remains secure and compliant. For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
 
 While it is not mandatory to follow our recommended best practice policies, we strongly advise staying up-to-date to ensure the best possible security posture for your Azure environment. For those with existing deployments or policies, we have provided [Brownfield guidance](https://aka.ms/alz/brownfield) to help you navigate the process of updating to the latest policies. We recognize that there may be breaking changes when upgrading an existing deployment or policies and for detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
 
@@ -113,16 +113,21 @@ While it is not mandatory to follow our recommended best practice policies, we s
   - [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html)
   - [Configure Azure Kubernetes Service clusters to enable Defender profile](https://www.azadvertizer.net/azpolicyadvertizer/64def556-fbad-4622-930e-72d1d5589bf5.html)
   - **BREAKING CHANGE** (parameters changed): 
-    - Delete assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) prior to applying updates as parameters have changed, then re-assign. 
+    - Delete assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) prior to applying updates as parameters have changed, then re-assign.
+    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
+    - Delete orphaned indentity on Intermediate Root scope.
 - Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on `Landing Zones` Management Group, to suitably assign respective DINE policy definition, instead of AINE
 - Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
   - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
   - **BREAKING CHANGE** (parameters changed): 
     - Delete assignment [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) prior to applying updates as parameters have changed, then re-assign.
+    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
 - Added new policy to inintiative that enablies diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
   - **BREAKING CHANGE** (parameters changed): 
     - Delete assignment [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) prior to applying updates as parameters have changed, then re-assign.
+    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
+    - Delete orphaned indentity on Intermediate Root scope.
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
