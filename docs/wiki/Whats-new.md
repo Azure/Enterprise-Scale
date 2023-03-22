@@ -53,11 +53,16 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2023
 
-We are pleased to announce that we have transitioned to a quarterly review cycle for Azure Policy, and we are excited to share with you our latest release for Q1CY2023. This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also made several changes to our policy implementation process. We have transitioned away from deprecated policies where possible, moved from custom to built-in policies as far as possible, and implemented new policies to keep our practices up-to-date.
+We are pleased to announce that we are starting regular Azure Policy reviews for Azure Landing Zone. This includes a review of new built-in policies released and their suitability for ALZ, built-in policies that can replace custom ALZ policies, built-in policies that have been deprecated and addition of new ALZ custom policies and initiatives as identified based on best practices, issues raised and customer feedback.
 
-We have initiated this program to address the fact that we haven't updated or addressed policies in earnest for the past two years. We believe that this quarterly review cycle will allow us to stay on top of emerging threats and new policies, ensuring that our Azure environment remains secure and compliant. For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also made several changes to our policy implementation process. We have transitioned away from deprecated policies where possible, moved from custom to built-in policies providing the same or enhanced functionality, and implemented new policies to keep ALZ as part of the current review cycle.
 
-While it is not mandatory to follow our recommended best practice policies, we strongly advise staying up-to-date to ensure the best possible security posture for your Azure environment. For those with existing deployments or policies, we have provided [Brownfield guidance](https://aka.ms/alz/brownfield) to help you navigate the process of updating to the latest policies. We recognize that there may be breaking changes when upgrading an existing deployment or policies and for detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
+This is the first major review and refresh of Azure Policy since ALZ was GA'd. Since GA many new built-in policies and initiatives have been released which has driven the need for this review. We believe that a regular review cycle will allow us to stay on top of emerging threats and new policies, ensuring that our Azure environment remains secure and compliant. Should you identify policies or initiatives that should be considered for ALZ, kindly submit an [GitHub issue](https://github.com/Azure/Enterprise-Scale/issues). For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+
+We strongly advise staying up-to-date to ensure the best possible security posture for your Azure environment, see [Keep your Azure landing zone up to date](https://aka.ms/alz/update). For those with existing deployments or policies, we have provided [Brownfield guidance](https://aka.ms/alz/brownfield) to help you navigate the process of updating to the latest policies. We recognize that there may be breaking changes when upgrading an existing deployment or policies and for details follow our recently released guidance to support you in this process:
+
+- [Update Azure landing zone custom policies](https://aka.ms/alz/update/custom)
+- [Migrate Azure landing zone policies to Azure built-in policies](https://aka.ms/alz/update/builtin)
 
 > **Please note** that moving to the new Built-In Policy definitions, deploying changes to existing custom policies or removing deprecated policies will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
 
@@ -140,6 +145,8 @@ While it is not mandatory to follow our recommended best practice policies, we s
   - Deny-Databricks-NoPublicIp
   - Deny-Databricks-Sku
   - Deny-Databricks-VirtualNetwork
+
+> If you are not using these policies, we advise you remove the assignment at `Corp` management group level.
 
 #### Docs
 
