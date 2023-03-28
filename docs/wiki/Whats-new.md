@@ -149,7 +149,7 @@ We strongly advise staying up-to-date to ensure the best possible security postu
   - Deny-Databricks-Sku
   - Deny-Databricks-VirtualNetwork
 
-> If you are not using these policies, we advise you remove the assignment at `Corp` management group level.
+> If you are not using these policies, we advise you remove the assignment at `Corp` management group level, if you are not utilizing them.
 
 #### Docs
 
