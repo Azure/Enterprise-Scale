@@ -16,7 +16,7 @@ In the next section you will want to leave the defaults to "Enable DDoS Network 
 
 ![image](https://user-images.githubusercontent.com/8091766/228363102-af09f069-c5f1-4be0-91e8-1050dc994bf9.png)
 
-## Protect the Identity Subscription
+## Protect the Identity subscription
 
 On the "Identity" section, ensure the default (Yes) is selected on "Prevent inbound RDP from internet" and "Ensure subnets are associated with NSG".
 
@@ -41,6 +41,3 @@ On the "landing zones configuration" section ensure the default (Yes) is selecte
 "Ensure secure connections (HTTPS) to storage accounts"
 
 ![image](https://user-images.githubusercontent.com/8091766/228367531-73377d39-f37d-4e9f-bab1-9f8de35b4702.png)
-
-
-
