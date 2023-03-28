@@ -70,6 +70,17 @@ We strongly advise staying up-to-date to ensure the best possible security postu
 
 #### Policy
 
+##### Breaking Changes
+
+Note that a number of initiatives have been updated that will fail to deploy if you have existing deployments. This is due to the fact that the number of parameters and default values have changed, as we've added or removed policies from the initiative. To resolve this, you will need to remove the existing initiative assignments and then redeploy the updated initiative.
+
+| Initiative Name | Change | Recommended Action |
+| --- | --- | --- |
+| [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) | Removed a deprecated policy, superceding policy is already in the initiative | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
+| [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) | Added 5 addtional policies to the intiative | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
+| [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) | Updated 2 policies to use a newer version | Remove existing initiative assignment and delete the custom initiative. Deploy the updated initiative. |
+| [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) | Added an additional policy | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
+
 ##### New
 
 - New Initiative for the Decommissioned landingzones including policies:
@@ -109,9 +120,10 @@ We strongly advise staying up-to-date to ensure the best possible security postu
 
 - Removed deprecated policy [[Deprecated]: Latest TLS version should be used in your API App (azadvertizer.net)](https://www.azadvertizer.net/azpolicyadvertizer/8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e.html) from initiative [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) as recommended policy is already included in the initiative.
   - **BREAKING CHANGE** (parameters changed): 
-    - Delete assignment [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) 
+    - Delete assignment [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html).
     - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
     - Delete orphaned indentity on Landing Zone scope.
+    - Deploy new initiative on Landing Zone scope.
 - Updated initiative [Deny or Audit resources without Encryption with a customer-managed key (CMK) (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html) deprecated policy [[Deprecated]: SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0d134df8-db83-46fb-ad72-fe0c9428c8dd.html) to new policy [Azure Policy definition SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)
 - Updated intiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
   - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
@@ -123,6 +135,7 @@ We strongly advise staying up-to-date to ensure the best possible security postu
     - Delete assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) prior to applying updates as parameters have changed, then re-assign.
     - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
     - Delete orphaned indentity on Intermediate Root scope.
+    - Deploy new initiative on Intermediate Root scope.
 - Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on `Landing Zones` Management Group, to suitably assign respective DINE policy definition, instead of AINE
 - Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
@@ -130,11 +143,13 @@ We strongly advise staying up-to-date to ensure the best possible security postu
   - **BREAKING CHANGE** (parameters changed): 
     - Delete assignment [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) prior to applying updates as parameters have changed, then re-assign.
     - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
+    - Deploy new initiative on Corp scope.
 - Added new policy to inintiative that enablies diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
   - **BREAKING CHANGE** (parameters changed): 
     - Delete assignment [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) prior to applying updates as parameters have changed, then re-assign.
     - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
     - Delete orphaned indentity on Intermediate Root scope.
+    - Deploy new initiative on Intermediate Root scope.
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
