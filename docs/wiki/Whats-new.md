@@ -140,6 +140,7 @@ We strongly advise staying up-to-date to ensure the best possible security postu
   - Added the option to download an Excel file with all the policy/initiative assigments.
 - Update ALZ Policies wiki: Excel file with all the policy/initiative assigments.
 - Renamed Policies from `WVD` to `AVD` - Display names and Descriptions only
+- Update the `Deploy SQL Database built-in SQL security configuration` initiative to point to the built-in policy [Deploy SQL DB transparent data encryption](https://www.azadvertizer.net/azpolicyadvertizer/86a912f6-9a06-4e26-b447-11b16ba8659f.html) instead of the deprecated custom policy `Deploy SQL Database built-in SQL security configuration`.
 
 ##### Retire
 
