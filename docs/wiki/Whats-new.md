@@ -141,6 +141,7 @@ We strongly advise staying up-to-date to ensure the best possible security postu
 
 ##### Retire
 
+- Deprecated the custom ALZ policy `Deploy SQL Database Transparent Data Encryption` as there is now a built-in policy available in Azure Policy [Deploy SQL DB transparent data encryption](https://www.azadvertizer.net/azpolicyadvertizer/86a912f6-9a06-4e26-b447-11b16ba8659f.html).
 - No longer assign Databricks custom policies at `Corp` management group scope. Policies:
   - Deny-Databricks-NoPublicIp
   - Deny-Databricks-Sku
