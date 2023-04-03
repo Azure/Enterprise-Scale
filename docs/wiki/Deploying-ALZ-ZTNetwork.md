@@ -8,7 +8,7 @@ On the "Network Topology and Connectivity" section of the Azure landing zone por
 
 ![image](https://user-images.githubusercontent.com/8091766/228360733-9713f5ff-dd53-4995-b309-220442f978b5.png)
 
-Hub and spoke is the best option for Zero Trust Organizations should not have one single connection in and out of their cloud network. Network should be segmented into smaller islands with their own ingress and egress controls in minimize "blast radius". 
+Hub and spoke is the primary topology option for Zero Trust Organizations.  These deployments should have traffic coming in to Azure, going between spokes, or leaving Azure be inspected and only permitted when explicitly allowed. Spoke networks should be segmented into smaller islands with their own ingress and egress controls in minimize "blast radius". 
 
 ## Enable Threat protection
 
@@ -24,7 +24,7 @@ On the "Identity" section, ensure the default (Yes) is selected on "Prevent inbo
 
 ![image](https://user-images.githubusercontent.com/8091766/228366016-4eee4817-3885-491b-a064-7fdbaae9dc80.png)
 
-Here we are enforcing network protection on resources in the identity subscription like domain controller for example and what protocols can reach them with Network Security Groups.
+Here we are enforcing network protection on resources in the identity subscription (like domain controllers) and what protocols can reach them with Network Security Groups.  The current deployment enforces NSGs, but does not have explicit allows, which would be managed post-deployment.
 
 ## Secure Application landing zones
 
