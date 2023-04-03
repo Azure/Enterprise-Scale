@@ -12,7 +12,7 @@ Hub and spoke is the primary topology option for Zero Trust Organizations.  Thes
 
 ## Enable Threat protection
 
-In the next section you will want to leave the defaults to "Enable DDoS Network Protection" and "Deploy Azure Firewall" as these are pivotal requirements for threat protection. It's also recommended to select at least two avaibility zones for Azure Firewall.  
+In the next section you will want to leave the defaults to "Enable DDoS Network Protection" and "Deploy Azure Firewall" as these are pivotal requirements for threat protection. It's also recommended to select at least two availability zones for Azure Firewall, but ideally all 3, if the region has availability zone support.  
 
 ![image](https://user-images.githubusercontent.com/8091766/228363102-af09f069-c5f1-4be0-91e8-1050dc994bf9.png)
 
