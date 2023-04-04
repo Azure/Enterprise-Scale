@@ -53,25 +53,33 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2023
 
-- We have moved to a quarterly cycle of reviewing and implementing remediations or recommendations for Azure Policy. This release includes updates for quarter 1 of calendar year 2023 (Q1CY2023), in which many ALZ Azure Policies and Initiatives have have been added or updated. As part of this release, we have transitioned away from deprecated policies (where possible), moved from custom to built-in policies (as far as possible), and implemented new policies identified to enhance the security, governance and management of ALZ. For more information, see [ALZ Policies](ALZ-Policies.md) or the handy new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+We are pleased to announce that we are starting regular Azure Policy reviews for Azure Landing Zone. This includes a review of new built-in policies released and their suitability for ALZ, built-in policies that can replace custom ALZ policies, built-in policies that have been deprecated and addition of new ALZ custom policies and initiatives as identified based on best practices, issues raised and customer feedback. Most importantly, we have also provided default assignments for all the new policies at the appropriate ALZ Management Group level. This will ensure that all new policies are automatically assigned to the appropriate scope and will be in compliance with the ALZ baseline. This will also ensure that the ALZ is always up to date with the latest Azure Policy definitions.
 
-> You may continue to use the existing ALZ Azure Policy assignments as it will still function as it does today. However, we recommend to implement the updated list of policies as captured in the Policy section for this month. However, please be aware of **BREAKING CHANGES** called out in the captured changes and follow these steps:
-> 
-> **Please note** that moving to the new Built-In Policy Definition or deprecated policy will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace; Policy Assignment historic data will be stored here as per the retention duration configured.
+This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also enhanced our policy review  process, with a focus on transitioning away from deprecated policies where possible, move from custom to built-in policies providing the same or enhanced functionality, and implementing new policies to keep ALZ as part of the current review cycle.
+
+This is the first major review and refresh of Azure Policy since ALZ was GA'd. Since GA many new built-in policies and initiatives have been released which has driven the need for this review. We believe that a regular review cycle will allow us to stay on top of emerging trends and new policies, ensuring that our Azure environment remains secure and compliant. Should you identify policies or initiatives that should be considered for ALZ, kindly submit an [GitHub issue](https://github.com/Azure/Enterprise-Scale/issues). For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
+
+We strongly advise staying up-to-date to ensure the best possible security posture for your Azure environment, see [Keep your Azure landing zone up to date](https://aka.ms/alz/update). For those with existing deployments or policies, we have provided [Brownfield guidance](https://aka.ms/alz/brownfield) to help you navigate the process of updating to the latest policies. We recognize that there may be breaking changes when upgrading an existing deployment or policies and for details follow our recently released guidance to support you in this process:
+
+- [Update Azure landing zone custom policies](https://aka.ms/alz/update/custom)
+- [Migrate Azure landing zone policies to Azure built-in policies](https://aka.ms/alz/update/builtin)
+
+> **Please note** that, in some cases, moving to the new Built-In Policy definitions, deploying changes to existing custom policies or removing deprecated policies will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
+
+> While we've made every effort to test the stability of this release, should you have any issues and the guidance provided does not resolve your issue, please open a [GitHub issue](https://github.com/Azure/Enterprise-Scale/issues) so we can do our best to support you and document the fix for others.
 
 #### Policy
 
-- Removed deprecated policy [[Deprecated]: Latest TLS version should be used in your API App (azadvertizer.net)](https://www.azadvertizer.net/azpolicyadvertizer/8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e.html) from initiative [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) as recommended policy is already included in the initiative.
-  - **BREAKING CHANGE**: delete assignment [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) prior to applying updates as parameters have changed, then re-assign. For detailed information: [Update Azure landing zone custom policies](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/guides/standard/update-custom-policies).
-- Updated initiative [Deny or Audit resources without Encryption with a customer-managed key (CMK) (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html) deprecated policy [[Deprecated]: SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0d134df8-db83-46fb-ad72-fe0c9428c8dd.html) to new policy [Azure Policy definition SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)
-- Updated intiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
-  - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
-  - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
-  - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
-  - [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html)
-  - [Configure Azure Kubernetes Service clusters to enable Defender profile](https://www.azadvertizer.net/azpolicyadvertizer/64def556-fbad-4622-930e-72d1d5589bf5.html)
-- Added initiative assignment [[Preview]: Deploy Microsoft Defender for Endpoint agent](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e20d08c5-6d64-656d-6465-ce9e37fd0ebc.html) to 'Intermediate Root' Management Group.
-- Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on 'Landing Zones' Management Group, to suitably assign respective DINE policy definition, instead of AINE
+##### Breaking Changes
+
+Note that a number of initiatives have been updated that will fail to deploy if you have existing deployments. This is due to the fact that the number of parameters and default values have changed, as we've added or removed policies from the initiative. To resolve this, you will need to remove the existing initiative assignments and then redeploy the updated initiative.
+
+| Initiative Name | Change | Recommended Action |
+| --- | --- | --- |
+| [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) | Removed a deprecated policy, superceding policy is already in the initiative | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
+
+##### New
+
 - New Initiative for the Decommissioned landingzones including policies:
   - Initiative name: `Enforce-ALZ-Decomm`
     - [Allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/a08ec900-254a-4555-9bf5-e42af04b5c5c.html) - resources are not allowed to be deployed, however, authorization, lock and tag management are permitted.
@@ -82,8 +90,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - [Not allowed resource types](https://www.azadvertizer.net/azpolicyadvertizer/6c112d4e-5bc7-47ae-a041-ea2d9dccd749.html) - blocking the deployment of ER/VPN/vWAN
     - [Deny vNet peering cross subscription.](https://www.azadvertizer.net/azpolicyadvertizer/Deny-VNET-Peer-Cross-Sub.html)
     - Portal accelerator updated with additional tab and options to enable this initiative.
-- Added assignment of "Network interfaces should not have public IPs" built-in Policy to the 'Corp' Management Group.
-- Added a policy assignment to deny Classic resources at the intermediate root management group
+- Added initiative assignment [[Preview]: Deploy Microsoft Defender for Endpoint agent](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e20d08c5-6d64-656d-6465-ce9e37fd0ebc.html) to 'Intermediate Root' Management Group.
+- Added assignment of [Network interfaces should not have public IPs](https://www.azadvertizer.net/azpolicyadvertizer/83a86a26-fd1f-447c-b59d-e51f44264114.html) built-in Policy to the 'Corp' Management Group.
 - Added new initiative and assignment to implement recommended guardrails for Azure Key Vault at the landing zones management group
   - Initiative name: `ENFORCE-Guardrails-KeyVault`
   - Policies included: [ALZ Polices](https://aka.ms/alz/policies)
@@ -91,37 +99,61 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added two new policy assignments to govern Corp Management Group networking:
   - `DENY-HybridNetworking` - blocks the provisioning of vWAN/ER/VPN, including gateways, in Corp
   - `AUDIT-PeDnsZones` - audits the provisioning of Private Link Private DNS Zones in Corp
-    - **NOTE**: The policy default values include all the static Private DNS Zones only. When assigned via the ALZ portal experience the assignment includes all the Private DNS Zones that are deployed as part of the ALZ Portal experience, including the geo code/regional zones for Azure Backup, AKS etc. 
+    - **NOTE**: The policy default values include all the static Private DNS Zones only. When assigned via the ALZ portal experience the assignment includes all the Private DNS Zones that are deployed as part of the ALZ Portal experience, including the geo code/regional zones for Azure Backup, AKS etc.
 - Added new policy assignment to audit WAF enabled on Application Gateways (`Audit-AppGW-WAF`)
 - Added new initiative and assignment to enable Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines (`Enforce-ACSB`)
-- Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
-  - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
-- Added new assignment to deny deployment of virtual machines and virtual machine scale sets using unmanaged OS disks.
-- Added new policy that is enabling diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
-- Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
+- Added new Diagnostic setting category for Host Pools Diagnostic Settings to `Deploy-Diagnostics-WVDHostPools`
+  - `ConnectionGraphicsData`
+- Added new Diagnostic setting category for EventGrid Topics Diagnostic Settings to `Deploy-Diagnostics-EventGridTopic`
+  - `DataPlaneRequests`
 - Added two new policy initiative assignments to enable Advanced Threat Detection for databases at intermediate root:
   - [Configure Advanced Threat Protection to be enabled on open-source relational databases](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e.html)
   - [Configure Azure Defender to be enabled on SQL Servers and SQL Managed Instances](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97.html)
-- No longer assign Databricks custom policies at `Corp` management group scope. Policies:
-  - Deny-Databricks-NoPublicIp
-  - Deny-Databricks-Sku
-  - Deny-Databricks-VirtualNetwork
+- Add new Azure Policy Initiative and assignment [(Audit-UnusedResourcesCostOptimization)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Audit-UnusedResourcesCostOptimization.html), at the intermediate root management group (e.g. `contoso`), to audit unused resources that are driving costs.
+- Added new assignment to deny deployment of virtual machines and virtual machine scale sets using unmanaged OS disks.
+- Added a policy assignment to deny Classic resources at the `Intermediate Root` management group
+
+##### Update
+
+- Removed deprecated policy [[Deprecated]: Latest TLS version should be used in your API App (azadvertizer.net)](https://www.azadvertizer.net/azpolicyadvertizer/8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e.html) from initiative [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) as recommended policy is already included in the initiative.
+  - **BREAKING CHANGE** (parameters changed): 
+    - Delete assignment [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html).
+    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
+    - Delete orphaned indentity on Landing Zone scope.
+    - Deploy new initiative on Landing Zone scope.
+- Updated initiative [Deny or Audit resources without Encryption with a customer-managed key (CMK) (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html) deprecated policy [[Deprecated]: SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0d134df8-db83-46fb-ad72-fe0c9428c8dd.html) to new policy [Azure Policy definition SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)
+- Updated intiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
+  - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
+  - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
+  - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
+  - [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html)
+  - [Configure Azure Kubernetes Service clusters to enable Defender profile](https://www.azadvertizer.net/azpolicyadvertizer/64def556-fbad-4622-930e-72d1d5589bf5.html)
+- Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on `Landing Zones` Management Group, to suitably assign respective DINE policy definition, instead of AINE
+- Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
+- Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
+  - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
+- Added new policy to inintiative that enablies diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
 - Update ALZ Policies wiki: Excel file with all the policy/initiative assigments.
 - Renamed Policies from `WVD` to `AVD` - Display names and Descriptions only
-- Added new Diagnostic setting category for Host Pools Diagnostic Settings to `Deploy-Diagnostics-WVDHostPools`
-  - `ConnectionGraphicsData`
-- Added new Diagnostic setting category for EventGrid Topics Diagnostic Settings to `Deploy-Diagnostics-EventGridTopic`
-  - `DataPlaneRequests`
-- Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
+- Update the `Deploy SQL Database built-in SQL security configuration` initiative to point to the built-in policy [Deploy SQL DB transparent data encryption](https://www.azadvertizer.net/azpolicyadvertizer/86a912f6-9a06-4e26-b447-11b16ba8659f.html) instead of the deprecated custom policy `Deploy SQL Database built-in SQL security configuration`.
+
+##### Retire
+
+- Deprecated the custom ALZ policy `Deploy SQL Database Transparent Data Encryption` as there is now a built-in policy available in Azure Policy [Deploy SQL DB transparent data encryption](https://www.azadvertizer.net/azpolicyadvertizer/86a912f6-9a06-4e26-b447-11b16ba8659f.html).
+- No longer assign Databricks custom policies at `Corp` management group scope. Policies:
+  - Deny-Databricks-NoPublicIp
+  - Deny-Databricks-Sku
+  - Deny-Databricks-VirtualNetwork
+
+> If you are not using these policies, we advise you remove the assignment at `Corp` management group level, if you are not utilizing them.
 
 #### Docs
 
 - Added new question and answer to FAQ for ["Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?"](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
 - Published new CAF docs for Azure landing zones and multiple Azure Active Directory tenants - [aka.ms/ALZ/MultiTenant](https://aka.ms/ALZ/MultiTenant)
-
 
 #### Tooling
 
@@ -159,7 +191,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Migrated the following pages to the [Enterprise-Scale Wiki](https://github.com/Azure/Enterprise-Scale/wiki/)
   
-  | Original URL                                                                                                                                                         | New URL                                                                                                                          |
+| Original URL                                                                                                                                                         | New URL                                                                                                                          |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ESLZ-Policies.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md)                                                                   | [wiki/ALZ-Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies)                                                 |
 | [docs/EnterpriseScale-Architecture.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Architecture.md)                                     | [wiki/ALZ-Architecture](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Architecture)                                         |
@@ -250,7 +282,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   
   in favour of Azure built-in policies with the same or enhanced functionality.
   
-  | ALZ Policy ID(s)          | Azure Builti-in Policy ID(s)         |
+| ALZ Policy ID(s)          | Azure Builti-in Policy ID(s)         |
 | --------------------------- | -------------------------------------- |
 | Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
 | Deploy-Nsg-FlowLogs       | e920df7f-9a64-4066-9b58-52684c02a091 |
@@ -784,4 +816,3 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Other
 
 - Contoso Reference Implementation Update - Virtual WAN Hub default CIDR changed from `/16` to `/23` - closing issue [#440](https://github.com/Azure/Enterprise-Scale/issues/440)
-
