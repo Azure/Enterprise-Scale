@@ -77,9 +77,6 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 | Initiative Name | Change | Recommended Action |
 | --- | --- | --- |
 | [Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) | Removed a deprecated policy, superceding policy is already in the initiative | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
-| [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) | Added 5 addtional policies to the intiative | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
-| [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) | Updated 2 policies to use a newer version | Remove existing initiative assignment and delete the custom initiative. Deploy the updated initiative. |
-| [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) | Added an additional policy | Remove existing initiative assignment, delete the custom initiative and remove the orphaned identity. Deploy the updated initiative. |
 
 ##### New
 
@@ -131,25 +128,11 @@ Note that a number of initiatives have been updated that will fail to deploy if 
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
   - [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html)
   - [Configure Azure Kubernetes Service clusters to enable Defender profile](https://www.azadvertizer.net/azpolicyadvertizer/64def556-fbad-4622-930e-72d1d5589bf5.html)
-  - **BREAKING CHANGE** (parameters changed): 
-    - Delete assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) prior to applying updates as parameters have changed, then re-assign.
-    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
-    - Delete orphaned indentity on Intermediate Root scope.
-    - Deploy new initiative on Intermediate Root scope.
 - Replaced policy assignment "Auditing on SQL server should be enabled" with "Configure SQL servers to have auditing enabled to Log Analytics workspace" on `Landing Zones` Management Group, to suitably assign respective DINE policy definition, instead of AINE
 - Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
   - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
-  - **BREAKING CHANGE** (parameters changed): 
-    - Delete assignment [Public network access should be disabled for PaaS services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) prior to applying updates as parameters have changed, then re-assign.
-    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
-    - Deploy new initiative on Corp scope.
 - Added new policy to inintiative that enablies diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
-  - **BREAKING CHANGE** (parameters changed): 
-    - Delete assignment [Deploy Diagnostic Settings to Azure Services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Diagnostics-LogAnalytics.html) prior to applying updates as parameters have changed, then re-assign.
-    - Delete custom initiative prior to applying updates as parameters have changed, then re-assign.
-    - Delete orphaned indentity on Intermediate Root scope.
-    - Deploy new initiative on Intermediate Root scope.
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
   - Added the option to download an Excel file with all the policy/initiative assigments.
