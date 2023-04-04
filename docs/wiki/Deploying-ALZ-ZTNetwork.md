@@ -24,7 +24,7 @@ On the "Identity" section, ensure the default (Yes) is selected on "Prevent inbo
 
 ![Zero Trust protect the identity subscription](./media/zt3.png)
 
-Here we are enforcing network protection on resources in the identity subscription (like domain controllers) and what protocols can reach them with Network Security Groups. The current deployment enforces NSGs, but does not have explicit allows, which would be managed post-deployment.
+Here we are enforcing network protection on resources in the identity subscription (like domain controllers) and what protocols can reach them with Network Security Groups. The current deployment enforces NSGs, but does not have specific rules as these would be managed post-deployment.
 
 ## Secure Application landing zones
 
