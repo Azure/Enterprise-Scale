@@ -46,4 +46,4 @@ On the "landing zones configuration" section ensure the default (Yes) is selecte
 
 ![Zero Trust enable secure application landing zones](./media/zt6.png)
 
-These configurations ensure that the spokes of our network hosting applications create service boundaries and protect them.
+These configurations ensure that the spokes in your topology that are hosting applications start following zero trust networking principles and practices to enhance and improve their security posture.
