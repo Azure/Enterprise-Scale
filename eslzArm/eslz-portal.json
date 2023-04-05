@@ -2146,620 +2146,493 @@
                             "type": "Microsoft.Common.InfoBox",
                             "visible": true,
                             "options": {
-                                "text": "You can optionally provide subscriptions for your first landing zones for both 'online' and 'corp' and assign recommended policies that will ensure workloads will be secure, monitored, and protected according to best practices.",
+                                "text": "You can optionally provide subscriptions for your first landing zones for both 'online' and 'corp' and assign recommended policies for 'landing zone', 'online' and 'corp' management groups that will ensure workloads will be secure, monitored, and protected according to best practices.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance",
                                 "style": "Info"
                             }
                         },
                         {
-                            "name": "corpText",
-                            "type": "Microsoft.Common.TextBlock",
-                            "visible": true,
-                            "options": {
-                                "text": "Select the subscriptions you want to move to corp management group.",
-                                "link": {
-                                    "label": "Learn more",
-                                    "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
-                                }
-                            }
-                        },
-                        {
-                            "name": "esLzConnectivity",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Connect corp landing zones to the connectivity hub (optional)?",
-                            "defaultValue": "No",
-                            "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": "[or(equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableHub, 'vhub'))]"
-                        },
-                        {
-                            "name": "esCorpLzSub",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Corp landing zone subscriptions (optional)",
-                            "defaultValue": "[parse('[]')]",
-                            "toolTip": "",
-                            "multiselect": true,
-                            "selectAll": true,
-                            "filter": true,
-                            "filterPlaceholder": "Filter items ...",
-                            "multiLine": true,
-                            "visible": "[or(or(equals(steps('landingZones').esLzConnectivity, 'No'), equals(steps('connectivity').enableHub, 'No')), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('landingZones').esLzConnectivity, 'No'))]",
-                            "constraints": {
-                                "allowedValues": "[steps('basics').getSubscriptions.data]",
-                                "required": false
-                            }
-                        },
-                        {
-                            "name": "lzConnectedSubs",
-                            "type": "Microsoft.Common.EditableGrid",
-                            "ariaLabel": "Add existing subscriptions into the management group landing zone and provide address space for virtual network peering",
-                            "label": "Corp connected landing zone subscriptions (optional)",
-                            "visible": "[equals(steps('landingZones').esLzConnectivity, 'Yes')]",
-                            "constraints": {
-                                "width": "Full",
-                                "rows": {
-                                    "count": {
-                                        "min": 1,
-                                        "max": 10
+                            "name": "lzSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Landing Zone Management Group",
+                            "elements": [
+                                {
+                                    "name": "azMonText",
+                                    "type": "Microsoft.Common.TextBlock",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Select which of the the recommended policies you will assign to your landing zone management group.",
+                                        "link": {
+                                            "label": "Learn more",
+                                            "uri": "https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance"
+                                        }
                                     }
                                 },
-                                "columns": [
-                                    {
-                                        "id": "subs",
-                                        "header": "Subscription",
-                                        "width": "1fr",
-                                        "element": {
-                                            "name": "esLzConnectedSub",
-                                            "type": "Microsoft.Common.DropDown",
-                                            "label": "Landing zone subscription",
-                                            "defaultValue": "[parse('[]')]",
-                                            "toolTip": "",
-                                            "multiselect": false,
-                                            "selectAll": false,
-                                            "filter": true,
-                                            "filterPlaceholder": "Filter items ...",
-                                            "multiLine": false,
-                                            "constraints": {
-                                                "allowedValues": "[steps('basics').getSubscriptions.data]",
-                                                "required": false
+                                {
+                                    "name": "enableLzDdoS",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable DDoS Network Protection",
+                                    "defaultValue": "Yes (recommended)",
+                                    "visible": "[and(not(equals(steps('connectivity').enableHub,'No')),equals(steps('connectivity').enableDdoS,'Yes'))]",
+                                    "toolTip": "If 'Yes' is selected when also adding a connectivity subscription earlier, DDoS Network Protection will be enabled.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
                                             }
-                                        }
-                                    },
-                                    {
-                                        "id": "addresses",
-                                        "header": "Virtual Network Address space",
-                                        "width": "1fr",
-                                        "element": {
-                                            "type": "Microsoft.Common.TextBox",
-                                            "placeholder": "Ensure there are no overlapping IP addresses!",
-                                            "constraints": {
-                                                "required": true,
-                                                "validations": [
-                                                    {
-                                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(1[0-9]|2[0-4]))$",
-                                                        "message": "Invalid CIDR range. The address prefix must be in the range [10,24]."
-                                                    }
-                                                ]
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "enablePrivateDnsZonesForLzs",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the corp connected landing zones",
+                                    "defaultValue": "Yes (recommended)",
+                                    "visible": "[equals(steps('connectivity').enablePrivateDnsZones, 'Yes')]",
+                                    "toolTip": "If 'Yes' is selected then Azure Policy will ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the connectivity subscription on behalf of the users.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
                                             }
-                                        }
+                                        ]
                                     }
-                                ]
-                            }
-                        },
-                        {
-                            "name": "onlineText",
-                            "type": "Microsoft.Common.TextBlock",
-                            "visible": true,
-                            "options": {
-                                "text": "Select the subscriptions you want to move to online management group.",
-                                "link": {
-                                    "label": "Learn more",
-                                    "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
+                                },
+                                {
+                                    "name": "enableEncryptionInTransit",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure encryption in transit is enabled for PaaS services",
+                                    "defaultValue": "Yes (recommended)",
+                                    "visible": true,
+                                    "toolTip": "If 'Yes' is selected then Azure Policy will ensure PaaS resources uses TLS and SSL.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "enableVmMonitoring",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure Azure VMs (Windows & Linux) and Azure Arc-enabled servers are being monitored",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "Enabling this Azure Policy will ensure that every virtual machine (Windows, Linux, including Azure Arc enabled servers) are onboarded to Azure Monitor and Security",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
+                                },
+                                {
+                                    "name": "enableVmssMonitoring",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure Azure VMSS (Windows & Linux) are being monitored",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "Enabling this Azure Policy will ensure that every virtual machine scale set (Windows & Linux) are onboarded to Azure Monitor and Security",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
+                                },
+                                {
+                                    "name": "enableAksPolicy",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable Kubernetes (AKS) for Azure Policy",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "denyAksPrivileged",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Prevent privileged containers in Kubernetes clusters",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, policy will be assigned to prevent privileged containers in AKS",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "denyAksPrivilegedEscalation",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Prevent privileged escalation in Kubernetes clusters",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, policy will be assigned to prevent privileged escalations in AKS",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "denyHttpIngressForAks",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure HTTPS ingress is enforced in Kubernetes clusters",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, HTTPS ingress will be required in AKS",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableVmBackup",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure Azure VMs (Windows & Linux) are enabled for Azure Backup",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "denyMgmtPorts",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Prevent inbound management ports from internet",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent inbound management ports (22, 3389) from internet",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "denySubnetWithoutNsg",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure subnets are associated with NSG",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure NSGs must be associated with subnets being created",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "denyIpForwarding",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Prevent IP forwarding",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent IP forwarding",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableSqlEncryption",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure Azure SQL is enabled with transparent data encryption",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableSqlAudit",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure auditing is enabled on Azure SQL",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure auditing is enabled on Azure SQLs",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableStorageHttps",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Ensure secure connections (HTTPS) to storage accounts",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure storage can only be accessed using HTTPS",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enforceKvGuardrails",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enforce Key Vault recommended guardrails",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Key Vault policies are enabled.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "auditAppGwWaf",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Audit WAF enabled on Application Gateways",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to audit whether WAF is enabled on Application Gateways.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enforceAcsb",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable Azure Compute Security Baseline compliance auditing",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to audit whether Windows and Linux virtual machines are Azure Compute Security Baseline compliant.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
                                 }
-                            }
-                        },
-                        {
-                            "name": "esOnlineLzSub",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Online landing zone subscriptions (optional)",
-                            "defaultValue": "[parse('[]')]",
-                            "toolTip": "",
-                            "multiselect": true,
-                            "selectAll": true,
-                            "filter": true,
-                            "filterPlaceholder": "Filter items ...",
-                            "multiLine": true,
-                            "visible": true,
-                            "constraints": {
-                                "allowedValues": "[steps('basics').getSubscriptions.data]",
-                                "required": false
-                            }
-                        },
-                        {
-                            "name": "azMonText",
-                            "type": "Microsoft.Common.TextBlock",
-                            "visible": true,
-                            "options": {
-                                "text": "Select which of the the recommended policies you will assign to your landing zones.",
-                                "link": {
-                                    "label": "Learn more",
-                                    "uri": "https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#policy-driven-governance"
-                                }
-                            }
-                        },
-                        {
-                            "name": "enableLzDdoS",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Enable DDoS Network Protection",
-                            "defaultValue": "Yes (recommended)",
-                            "visible": "[and(not(equals(steps('connectivity').enableHub,'No')),equals(steps('connectivity').enableDdoS,'Yes'))]",
-                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription earlier, DDoS Network Protection will be enabled.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "name": "enablePrivateDnsZonesForLzs",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the corp connected landing zones",
-                            "defaultValue": "Yes (recommended)",
-                            "visible": "[equals(steps('connectivity').enablePrivateDnsZones, 'Yes')]",
-                            "toolTip": "If 'Yes' is selected then Azure Policy will ensure private endpoints to Azure PaaS services are integrated with Azure Private DNS Zones in the connectivity subscription on behalf of the users.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "name": "enableEncryptionInTransit",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure encryption in transit is enabled for PaaS services",
-                            "defaultValue": "Yes (recommended)",
-                            "visible": true,
-                            "toolTip": "If 'Yes' is selected then Azure Policy will ensure PaaS resources uses TLS and SSL.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "name": "enableVmMonitoring",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure Azure VMs (Windows & Linux) and Azure Arc-enabled servers are being monitored",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "Enabling this Azure Policy will ensure that every virtual machine (Windows, Linux, including Azure Arc enabled servers) are onboarded to Azure Monitor and Security",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
-                        },
-                        {
-                            "name": "enableVmssMonitoring",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure Azure VMSS (Windows & Linux) are being monitored",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "Enabling this Azure Policy will ensure that every virtual machine scale set (Windows & Linux) are onboarded to Azure Monitor and Security",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
-                        },
-                        {
-                            "name": "enableAksPolicy",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Enable Kubernetes (AKS) for Azure Policy",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "denyAksPrivileged",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Prevent privileged containers in Kubernetes clusters",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, policy will be assigned to prevent privileged containers in AKS",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "denyAksPrivilegedEscalation",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Prevent privileged escalation in Kubernetes clusters",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, policy will be assigned to prevent privileged escalations in AKS",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "denyHttpIngressForAks",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure HTTPS ingress is enforced in Kubernetes clusters",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, HTTPS ingress will be required in AKS",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "enableVmBackup",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure Azure VMs (Windows & Linux) are enabled for Azure Backup",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and enable Azure Backup on all VMs in the landing zones.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "denyMgmtPorts",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Prevent inbound management ports from internet",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent inbound management ports (22, 3389) from internet",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "denySubnetWithoutNsg",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure subnets are associated with NSG",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure NSGs must be associated with subnets being created",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "denyIpForwarding",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Prevent IP forwarding",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned and prevent IP forwarding",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "enableSqlEncryption",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure Azure SQL is enabled with transparent data encryption",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "enableSqlAudit",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure auditing is enabled on Azure SQL",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure auditing is enabled on Azure SQLs",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "enableStorageHttps",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Ensure secure connections (HTTPS) to storage accounts",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to ensure storage can only be accessed using HTTPS",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "enforceKvGuardrails",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Enforce Key Vault recommended guardrails",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Key Vault policies are enabled.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "auditAppGwWaf",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Audit WAF enabled on Application Gateways",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to audit whether WAF is enabled on Application Gateways.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
-                        },
-                        {
-                            "name": "enforceAcsb",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Enable Azure Compute Security Baseline compliance auditing",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected, Azure Policy will be assigned to audit whether Windows and Linux virtual machines are Azure Compute Security Baseline compliant.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "Audit only",
-                                        "value": "Audit"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": true
+                            ],
+                            "visible": "[equals(steps('basics').cloudEnvironment.selection, 'AzureCloud')]"
                         },
                         {
                             "name": "corpOnlineSettingsInfo",
                             "type": "Microsoft.Common.InfoBox",
                             "visible": true,
                             "options": {
-                                "text": "You can optionally choose to enable the assignment of recommended policies for the Corp and Online landing zones that will enable policies according to best practices.",
+                                "text": "You can optionally provide subscriptions for your first landing zones for both 'online' and 'corp' and choose to enable the assignment of recommended policies for the corp and online landing zones that will enable policies according to best practices.",
                                 "uri": "https://aka.ms/alz/policies",
                                 "style": "Info"
                             }
@@ -2769,6 +2642,112 @@
                             "type": "Microsoft.Common.Section",
                             "label": "Corp Management Group",
                             "elements": [
+                                {
+                                    "name": "corpText",
+                                    "type": "Microsoft.Common.TextBlock",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Select the subscriptions you want to move to corp management group.",
+                                        "link": {
+                                            "label": "Learn more",
+                                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "esLzConnectivity",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Connect corp landing zones to the connectivity hub (optional)?",
+                                    "defaultValue": "No",
+                                    "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": "[or(equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableHub, 'vhub'))]"
+                                },
+                                {
+                                    "name": "esCorpLzSub",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Corp landing zone subscriptions (optional)",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter items ...",
+                                    "multiLine": true,
+                                    "visible": "[or(or(equals(steps('landingZones').esLzConnectivity, 'No'), equals(steps('connectivity').enableHub, 'No')), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('landingZones').esLzConnectivity, 'No'))]",
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "lzConnectedSubs",
+                                    "type": "Microsoft.Common.EditableGrid",
+                                    "ariaLabel": "Add existing subscriptions into the management group landing zone and provide address space for virtual network peering",
+                                    "label": "Corp connected landing zone subscriptions (optional)",
+                                    "visible": "[equals(steps('landingZones').esLzConnectivity, 'Yes')]",
+                                    "constraints": {
+                                        "width": "Full",
+                                        "rows": {
+                                            "count": {
+                                                "min": 1,
+                                                "max": 10
+                                            }
+                                        },
+                                        "columns": [
+                                            {
+                                                "id": "subs",
+                                                "header": "Subscription",
+                                                "width": "1fr",
+                                                "element": {
+                                                    "name": "esLzConnectedSub",
+                                                    "type": "Microsoft.Common.DropDown",
+                                                    "label": "Landing zone subscription",
+                                                    "defaultValue": "[parse('[]')]",
+                                                    "toolTip": "",
+                                                    "multiselect": false,
+                                                    "selectAll": false,
+                                                    "filter": true,
+                                                    "filterPlaceholder": "Filter items ...",
+                                                    "multiLine": false,
+                                                    "constraints": {
+                                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                                        "required": false
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "id": "addresses",
+                                                "header": "Virtual Network Address space",
+                                                "width": "1fr",
+                                                "element": {
+                                                    "type": "Microsoft.Common.TextBox",
+                                                    "placeholder": "Ensure there are no overlapping IP addresses!",
+                                                    "constraints": {
+                                                        "required": true,
+                                                        "validations": [
+                                                            {
+                                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(1[0-9]|2[0-4]))$",
+                                                                "message": "Invalid CIDR range. The address prefix must be in the range [10,24]."
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },                                
                                 {
                                     "name": "denyPublicEndpoints",
                                     "type": "Microsoft.Common.OptionsGroup",
@@ -2870,11 +2849,40 @@
                             "label": "Online Management Group",
                             "elements": [
                                 {
+                                    "name": "onlineText",
+                                    "type": "Microsoft.Common.TextBlock",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Select the subscriptions you want to move to online management group.",
+                                        "link": {
+                                            "label": "Learn more",
+                                            "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/design-principles#subscription-democratization"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "esOnlineLzSub",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Online landing zone subscriptions (optional)",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter items ...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": false
+                                    }
+                                },
+                                {
                                     "name": "onlineSettingsInfo1",
                                     "type": "Microsoft.Common.InfoBox",
                                     "visible": true,
                                     "options": {
-                                        "text": "Settings are not currently available for the Online Management Group.",
+                                        "text": "The are no policies available for the online management group.",
                                         "style": "Info"
                                     }
                                 }
@@ -3063,32 +3071,32 @@
                 "denyPipForIdentity": "[steps('identity').denyPipForIdentity]",
                 "enableVmBackupForIdentity": "[steps('identity').enableVmBackupForIdentity]",
                 "identityAddressPrefix": "[steps('identity').identityAddressPrefix]",
-                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').lzConnectedSubs,'')]",
-                "corpLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').esCorpLzSub,'')]",
-                "onlineLzSubscriptionId": "[if(or(not(contains(steps('landingZones').esOnlineLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').esOnlineLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').esOnlineLzSub,'')]",
-                "enableLzDdoS": "[steps('landingZones').enableLzDdoS]",
+                "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').corpSection.lzConnectedSubs,'')]",
+                "corpLzSubscriptionId": "[if(or(not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').corpSection.esCorpLzSub,'')]",
+                "onlineLzSubscriptionId": "[if(or(not(contains(steps('landingZones').onlineSection.esOnlineLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').onlineSection.esOnlineLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').onlineSection.esOnlineLzSub,'')]",
+                "enableLzDdoS": "[steps('landingZones').lzSection.enableLzDdoS]",
                 "denyPublicEndpoints": "[steps('landingZones').corpSection.denyPublicEndpoints]",
                 "denyPipOnNicForCorp": "[steps('landingZones').corpSection.denyPipOnNicForCorp]",
-                "enablePrivateDnsZonesForLzs": "[steps('landingZones').enablePrivateDnsZonesForLzs]",
-                "enableEncryptionInTransit": "[steps('landingZones').enableEncryptionInTransit]",
-                "enableVmMonitoring": "[steps('landingZones').enableVmMonitoring]",
-                "enableVmssMonitoring": "[steps('landingZones').enableVmssMonitoring]",
-                "enableAksPolicy": "[steps('landingZones').enableAksPolicy]",
-                "denyAksPrivileged": "[steps('landingZones').denyAksPrivileged]",
-                "denyAksPrivilegedEscalation": "[steps('landingZones').denyAksPrivilegedEscalation]",
-                "denyHttpIngressForAks": "[steps('landingZones').denyHttpIngressForAks]",
-                "enableVmBackup": "[steps('landingZones').enableVmBackup]",
-                "denyMgmtPorts": "[steps('landingZones').denyMgmtPorts]",
-                "denySubnetWithoutNsg": "[steps('landingZones').denySubnetWithoutNsg]",
-                "denyIpForwarding": "[steps('landingZones').denyIpForwarding]",
-                "enableSqlEncryption": "[steps('landingZones').enableSqlEncryption]",
-                "enableSqlAudit": "[steps('landingZones').enableSqlAudit]",
-                "enableStorageHttps": "[steps('landingZones').enableStorageHttps]",
-                "enforceKvGuardrails": "[steps('landingZones').enforceKvGuardrails]",
+                "enablePrivateDnsZonesForLzs": "[steps('landingZones').lzSection.enablePrivateDnsZonesForLzs]",
+                "enableEncryptionInTransit": "[steps('landingZones').lzSection.enableEncryptionInTransit]",
+                "enableVmMonitoring": "[steps('landingZones').lzSection.enableVmMonitoring]",
+                "enableVmssMonitoring": "[steps('landingZones').lzSection.enableVmssMonitoring]",
+                "enableAksPolicy": "[steps('landingZones').lzSection.enableAksPolicy]",
+                "denyAksPrivileged": "[steps('landingZones').lzSection.denyAksPrivileged]",
+                "denyAksPrivilegedEscalation": "[steps('landingZones').lzSection.denyAksPrivilegedEscalation]",
+                "denyHttpIngressForAks": "[steps('landingZones').lzSection.denyHttpIngressForAks]",
+                "enableVmBackup": "[steps('landingZones').lzSection.enableVmBackup]",
+                "denyMgmtPorts": "[steps('landingZones').lzSection.denyMgmtPorts]",
+                "denySubnetWithoutNsg": "[steps('landingZones').lzSection.denySubnetWithoutNsg]",
+                "denyIpForwarding": "[steps('landingZones').lzSection.denyIpForwarding]",
+                "enableSqlEncryption": "[steps('landingZones').lzSection.enableSqlEncryption]",
+                "enableSqlAudit": "[steps('landingZones').lzSection.enableSqlAudit]",
+                "enableStorageHttps": "[steps('landingZones').lzSection.enableStorageHttps]",
+                "enforceKvGuardrails": "[steps('landingZones').lzSection.enforceKvGuardrails]",
                 "denyHybridNetworking": "[steps('landingZones').corpSection.denyHybridNetworking]",
                 "auditPeDnsZones": "[steps('landingZones').corpSection.auditPeDnsZones]",
-                "auditAppGwWaf": "[steps('landingZones').auditAppGwWaf]",
-                "enforceAcsb": "[steps('landingZones').enforceAcsb]",
+                "auditAppGwWaf": "[steps('landingZones').lzSection.auditAppGwWaf]",
+                "enforceAcsb": "[steps('landingZones').lzSection.enforceAcsb]",
                 "enableDecommissioned": "[steps('decommissionedSandboxZones').decommSection.enableDecommissioned]",
                 "enableSandbox": "[steps('decommissionedSandboxZones').sandboxSection.enableSandbox]"
             },
