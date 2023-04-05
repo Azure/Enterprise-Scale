@@ -166,7 +166,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json') 
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Windows-DomainJoin.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VWanS2SVPNGW.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VMUnmanagedDisk.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkPrivateDnsZones.json')
   ]
   AzureCloud: [
