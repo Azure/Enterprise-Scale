@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [April 2023](#april-2023)
   - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
@@ -51,7 +52,7 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### March 2023
+### April 2023
 
 We are pleased to announce that we are starting regular Azure Policy reviews for Azure Landing Zone. This includes a review of new built-in policies released and their suitability for ALZ, built-in policies that can replace custom ALZ policies, built-in policies that have been deprecated and addition of new ALZ custom policies and initiatives as identified based on best practices, issues raised and customer feedback. Most importantly, we have also provided default assignments for all the new policies at the appropriate ALZ Management Group level. This will ensure that all new policies are automatically assigned to the appropriate scope and will be in compliance with the ALZ baseline. This will also ensure that the ALZ is always up to date with the latest Azure Policy definitions.
 
@@ -149,6 +150,8 @@ Note that a number of initiatives have been updated that will fail to deploy if 
   - Deny-Databricks-VirtualNetwork
 
 > If you are not using these policies, we advise you remove the assignment at `Corp` management group level, if you are not utilizing them.
+
+### March 2023
 
 #### Docs
 
