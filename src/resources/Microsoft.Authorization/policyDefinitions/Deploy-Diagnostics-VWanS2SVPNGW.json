@@ -1,15 +1,15 @@
 {
-  "name": "Deploy-Diagnostics-WVDHostPools",
+  "name": "Deploy-Diagnostics-VWanS2SVPNGW",
   "type": "Microsoft.Authorization/policyDefinitions",
   "apiVersion": "2021-06-01",
   "scope": null,
   "properties": {
     "policyType": "Custom",
     "mode": "Indexed",
-    "displayName": "Deploy Diagnostic Settings for AVD Host Pools to Log Analytics workspace",
-    "description": "Deploys the diagnostic settings for AVD Host Pools to stream to a Log Analytics workspace when any Host Pools which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all and categorys enabled.",
+    "displayName": "Deploy Diagnostic Settings for VWAN S2S VPN Gateway to Log Analytics workspace",
+    "description": "Deploys the diagnostic settings for VWAN S2S VPN Gateway to stream to a Log Analytics workspace when any VWAN S2S VPN Gateway which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled.",
     "metadata": {
-      "version": "1.3.0",
+      "version": "1.0.0",
       "category": "Monitoring",
       "source": "https://github.com/Azure/Enterprise-Scale/",
       "alzCloudEnvironments": [
@@ -47,6 +47,18 @@
           "description": "The diagnostic settings profile name"
         }
       },
+      "metricsEnabled": {
+        "type": "String",
+        "defaultValue": "True",
+        "allowedValues": [
+          "True",
+          "False"
+        ],
+        "metadata": {
+          "displayName": "Enable metrics",
+          "description": "Whether to enable metrics stream to the Log Analytics workspace - True or False"
+        }
+      },
       "logsEnabled": {
         "type": "String",
         "defaultValue": "True",
@@ -63,7 +75,7 @@
     "policyRule": {
       "if": {
         "field": "type",
-        "equals": "Microsoft.DesktopVirtualization/hostpools"
+        "equals": "Microsoft.Network/vpnGateways"
       },
       "then": {
         "effect": "[[parameters('effect')]",
@@ -74,6 +86,10 @@
             "allOf": [
               {
                 "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                "equals": "true"
+              },
+              {
+                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
                 "equals": "true"
               },
               {
@@ -105,6 +121,9 @@
                   "profileName": {
                     "type": "String"
                   },
+                  "metricsEnabled": {
+                    "type": "String"
+                  },
                   "logsEnabled": {
                     "type": "String"
                   }
@@ -112,48 +131,39 @@
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.DesktopVirtualization/hostpools/providers/diagnosticSettings",
+                    "type": "Microsoft.Network/vpnGateways/providers/diagnosticSettings",
                     "apiVersion": "2017-05-01-preview",
                     "name": "[[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
                     "location": "[[parameters('location')]",
                     "dependsOn": [],
                     "properties": {
                       "workspaceId": "[[parameters('logAnalytics')]",
+                      "metrics": [
+                        {
+                          "category": "AllMetrics",
+                          "enabled": "[[parameters('metricsEnabled')]",
+                          "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                          },
+                          "timeGrain": null
+                        }
+                      ],
                       "logs": [
                         {
-                          "category": "Checkpoint",
+                          "category": "GatewayDiagnosticLog",
                           "enabled": "[[parameters('logsEnabled')]"
                         },
                         {
-                          "category": "Error",
+                          "category": "IKEDiagnosticLog",
                           "enabled": "[[parameters('logsEnabled')]"
                         },
                         {
-                          "category": "Management",
+                          "category": "RouteDiagnosticLog",
                           "enabled": "[[parameters('logsEnabled')]"
                         },
                         {
-                          "category": "Connection",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "HostRegistration",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "AgentHealthStatus",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "NetworkData",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "SessionHostManagement",
-                          "enabled": "[[parameters('logsEnabled')]"
-                        },
-                        {
-                          "category": "ConnectionGraphicsData",
+                          "category": "TunnelDiagnosticLog",
                           "enabled": "[[parameters('logsEnabled')]"
                         }
                       ]
@@ -174,6 +184,9 @@
                 },
                 "profileName": {
                   "value": "[[parameters('profileName')]"
+                },
+                "metricsEnabled": {
+                  "value": "[[parameters('metricsEnabled')]"
                 },
                 "logsEnabled": {
                   "value": "[[parameters('logsEnabled')]"

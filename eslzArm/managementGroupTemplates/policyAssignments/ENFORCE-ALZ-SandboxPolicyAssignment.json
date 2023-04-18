@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "listOfResourceTypesNotAllowed": {
+            "type": "Array",
+            "defaultValue": [
+                "microsoft.network/expressroutecircuits",
+                "microsoft.network/expressroutegateways",
+                "microsoft.network/virtualwans",
+                "microsoft.network/virtualhubs",
+                "microsoft.network/vpngateways",
+                "microsoft.network/vpnsites"
+            ]
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "enforceAlzSandbox": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox')]"
+        },
+        "policyAssignmentNames": {
+            "alzSandbox": "Enforce-ALZ-Sandbox",
+            "description": "This initiative will help enforce and govern subscriptions that are placed within the Sandobx Management Group. See https://aka.ms/alz/policies for more information.",
+            "displayName": "Enforce ALZ Sandbox Guardrails"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('policyAssignmentNames').alzSandbox]",
+            "location": "[deployment().location]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').enforceAlzSandbox]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "listOfResourceTypesNotAllowed": {
+                        "value": "[parameters('listOfResourceTypesNotAllowed')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
