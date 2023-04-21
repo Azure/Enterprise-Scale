@@ -24,6 +24,7 @@
   * [Telemetry Tracking Using Customer Usage Attribution (PID)](./Deploying-ALZ-CustomerUsage)
   * [Deploy without hybrid connectivity to on-premises](./Deploying-ALZ-Foundation)
   * [Deploy with a hub and spoke based network topology](./Deploying-ALZ-HubAndSpoke)
+  * [Deploy with a hub and spoke based network topology with Zero Trust principles](./Deploying-ALZ-ZTNetwork)
   * [Deploy with an Azure Virtual WAN based network topology](./Deploying-ALZ-VWAN)
   * [Deploy for Small Enterprises](./Deploying-ALZ-BasicSetup)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-ALZ-Platform-DevOps#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)

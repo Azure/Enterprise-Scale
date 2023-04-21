@@ -73,6 +73,9 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-KV-SoftDelete.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-Redis-disableNonSslPort.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Append-Redis-sslEnforcement.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-Disks-UnusedResourcesCostOptimization.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-ServerFarms-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppGW-Without-WAF.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppServiceApiApp-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppServiceFunctionApp-http.json')
@@ -83,6 +86,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicEndpoint-MariaDB.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicIP.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MgmtPorts-From-Internet.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Redis-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Sql-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-SqlMi-minTLS.json')
@@ -159,7 +163,10 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-SqlMi-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Storage-sslEnforcement.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke.json') // Only difference is hard-coded template deployment location (handled by this template)
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json') 
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Windows-DomainJoin.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VWanS2SVPNGW.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkPrivateDnsZones.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
@@ -201,8 +208,12 @@ var loadPolicyDefinitions = {
 // We use loadTextContent instead of loadJsonContent  as this allows us to perform string replacement operations against the imported templates.
 var loadPolicySetDefinitions = {
   All: [
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
@@ -210,6 +221,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ACSB.json') // Unable to validate if Guest Configuration is working in other clouds
   ]
   AzureChinaCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureChinaCloud.json') // Due to missing built-in Policy Definitions ()
