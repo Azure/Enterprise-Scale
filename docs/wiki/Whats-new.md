@@ -152,6 +152,10 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 
 > If you are not using these policies, we advise you remove the assignment at `Corp` management group level, if you are not utilizing them.
 
+#### Portal Accelerator
+
+- FIX: Updated the Fairfax (US Gov) portal accelerator experience so it now works as expected.
+
 ### March 2023
 
 #### Docs
