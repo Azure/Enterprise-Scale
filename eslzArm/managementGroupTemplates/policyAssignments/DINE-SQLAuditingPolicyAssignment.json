@@ -8,6 +8,12 @@
                 "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
             }
         },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId for the central Log Analytics workspace."
+            }
+        },
         "enforcementMode": {
             "type": "string",
             "allowedValues": [
@@ -15,26 +21,35 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
         "policyDefinitions": {
-            "deploySqlAuditing": "/providers/Microsoft.Authorization/policyDefinitions/a6fb4358-5bf4-4ad7-ba82-2cd2f41ce5e9"
+            "deploySqlAuditing": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb"
         },
         "policyAssignmentNames": {
-            "deploySqlAuditing": "Deploy-SQL-DB-Auditing",
-            "description": "Auditing on your SQL Server should be enabled to track database activities across all databases on the server and save them in an audit log.",
-            "displayName": "Auditing on SQL server should be enabled"
+            "deploySqlAuditing": "Deploy-AzSqlDb-Auditing",
+            "description": "To ensure the operations performed against your SQL assets are captured, SQL servers should have auditing enabled. If auditing is not enabled, this policy will configure auditing events to flow to the specified Log Analytics workspace.",
+            "displayName": "Configure SQL servers to have auditing enabled to Log Analytics workspace"
         },
-        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
-        "roleAssignmentNames": {
-            "deploySqlAuditing": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing))]"
-        }
+        "nonComplianceMessage": {
+            "message": "SQL servers {enforcementMode} have auditing enabled to Log Analytics workspace.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "rbacSqlSecurityManager": "056cd41c-7e88-42e1-933e-88ba6a50c9c3",
+        "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing,'-1'))]",
+        "roleAssignmentNameSqlSecurityManager": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing,'-2'))]"
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').deploySqlAuditing]",
             "location": "[deployment().location]",
             "identity": {
@@ -44,22 +59,50 @@
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deploySqlAuditing]",
-                "enforcementMode": "[parameters('enforcementMode')]"
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[parameters('logAnalyticsResourceId')]"
+                    }
+                }
             }
         },
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deploySqlAuditing]",
+            "name": "[variables('roleAssignmentNameLogAnalyticsContributor')]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').deploySqlAuditing]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full' ).identity.principalId]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNameSqlSecurityManager')]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlAuditing]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacSqlSecurityManager'))]",
                 "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full' ).identity.principalId]"
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "principalId": {
+            "type": "string",
+            "value": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full').identity.principalId]"
+        }
+    }
 }

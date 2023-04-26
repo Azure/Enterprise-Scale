@@ -16,6 +16,10 @@
             ],
             "defaultValue": "Default"
         },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
         "logAnalyticsResourceId": {
             "type": "string",
             "metadata": {
@@ -35,6 +39,22 @@
                 "DeployIfNotExists"
             ],
             "defaultValue": "Disabled"            
+        },
+        "enableAscForServersVulnerabilityAssessments": {
+            "type": "string",
+            "allowedValues": [
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
+        },
+        "vulnerabilityAssessmentProvider": {
+            "type": "string",
+            "allowedValues": [
+                "default",
+                "mdeTvm"
+            ],
+            "defaultValue": "default"            
         },
         "enableAscForSql": {
             "type": "string",
@@ -115,6 +135,22 @@
                 "DeployIfNotExists"
             ],
             "defaultValue": "Disabled"
+        },
+        "enableAscForApis": {
+            "type": "string",  
+            "allowedValues": [
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"
+        },
+        "enableAscForCspm": {
+            "type": "string",  
+            "allowedValues": [
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"
         }
     },
     "variables": {
@@ -126,6 +162,11 @@
             "description": "Deploy Microsoft Defender for Cloud and Security Contacts",
             "displayName": "Deploy Microsoft Defender for Cloud configuration"
         },
+        "nonComplianceMessage": {
+            "message": "Microsoft Defender for Cloud and Security Contacts {enforcementMode} be deployed.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
             "deployAzureSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureSecurity))]"
@@ -134,7 +175,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').azureSecurity]",
             "location": "[deployment().location]",
             "identity": {
@@ -145,6 +186,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployAzureSecurity]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "emailSecurityContact": {
                         "value": "[parameters('emailContactAsc')]"
@@ -160,6 +206,12 @@
                     },
                     "enableAscForServers": {
                         "value": "[parameters('enableAscForServers')]"
+                    },
+                    "enableAscForServersVulnerabilityAssessments": {
+                        "value": "[parameters('enableAscForServersVulnerabilityAssessments')]"
+                    },
+                    "vulnerabilityAssessmentProvider": {
+                        "value": "[parameters('vulnerabilityAssessmentProvider')]"
                     },
                     "enableAscForSql": {
                         "value": "[parameters('enableAscForSql')]"
@@ -190,6 +242,12 @@
                     },
                     "enableAscForCosmosDbs": {
                         "value": "[parameters('enableAscForCosmosDbs')]"
+                    },
+                    "enableAscForApis": {
+                        "value": "[parameters('enableAscForApis')]"
+                    },
+                    "enableAscForCspm": {
+                        "value": "[parameters('enableAscForCspm')]"
                     }
                 }
             }

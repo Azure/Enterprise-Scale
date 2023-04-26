@@ -28,7 +28,7 @@ These are the following scenarios for ALZ custom policies being updated to lates
 
 ### Updating one or more ALZ custom policies to newer ALZ custom policy
 
-For this scenario we will use the ALZ custom policy *Deploy Diagnostic Settings for WVD Host Pools to Log Analytics workspace*.
+For this scenario we will use the ALZ custom policy *Deploy Diagnostic Settings for AVD Host Pools to Log Analytics workspace*.
 
 Considering no parameters have changed, this is a simple exercise that consists of replacing the policy definition content with the latest policy definition. While it is possible to update the policy definition via the portal GUI, there are some properties than can't be updated, like version. To minimize errors and include all updated policy definition properties, we will be updating this policy via a PowerShell script.
 
@@ -75,7 +75,7 @@ Before we begin, we need to identify the policy definition name and location to 
 
 ### Updating one or more ALZ custom policies to newer ALZ custom policy with updated parameters
 
-For this scenario, we will use the ALZ custom policy *Deploy Diagnostic Settings for WVD Host Pools to Log Analytics workspace*. Even though this policy doesn't have any updated parameters, we will walk through the steps as though it does.
+For this scenario, we will use the ALZ custom policy *Deploy Diagnostic Settings for AVD Host Pools to Log Analytics workspace*. Even though this policy doesn't have any updated parameters, we will walk through the steps as though it does.
 
 - Go to [Azure Portal](https://portal.azure.com)
 - Open Policy
