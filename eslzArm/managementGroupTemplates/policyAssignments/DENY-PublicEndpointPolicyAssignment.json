@@ -15,6 +15,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -25,12 +29,17 @@
             "denyPublicEndpoint": "Deny-Public-Endpoints",
             "displayName": "Public network access should be disabled for PaaS services",
             "description": "This policy initiative is a group of policies that prevents creation of Azure PaaS services with exposed public endpoints"
+        },
+        "nonComplianceMessage": {
+            "message": "Public network access {enforcementMode} be disabled for PaaS services.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').denyPublicEndpoint]",
             "location": "[deployment().location]",
             "properties": {
@@ -38,6 +47,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').denyPublicEndpoint]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {}
             }
         }

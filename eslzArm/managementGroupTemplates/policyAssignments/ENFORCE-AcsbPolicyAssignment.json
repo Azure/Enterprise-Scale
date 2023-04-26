@@ -15,6 +15,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -26,6 +30,11 @@
             "description": "This initiative assignment enables Azure Compute Security Baseline compliance auditing for Windows and Linux virtual machines.",
             "displayName": "Enforce Azure Compute Security Baseline compliance auditing"
         },
+        "nonComplianceMessage": {
+            "message": "Azure Compute Security Baseline compliance auditing {enforcementMode} be enforced.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
         "roleAssignmentNames": {
             "deployRoles": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').enforceAcsb))]"
@@ -34,7 +43,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').enforceAcsb]",
             "location": "[deployment().location]",
             "identity": {
@@ -44,7 +53,12 @@
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').enforceAcsb]",
-                "enforcementMode": "[parameters('enforcementMode')]"
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ]
             }
         },
         {
