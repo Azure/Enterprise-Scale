@@ -156,6 +156,10 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 
 - FIX: Updated the Fairfax (US Gov) portal accelerator experience so it now works as expected.
 
+#### Other
+
+- [Azure Landing Zone External Community Call - April 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#27th-april-2023-27042023)
+
 ### March 2023
 
 #### Docs
