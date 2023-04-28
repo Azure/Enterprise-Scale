@@ -20,6 +20,10 @@ For a complete list of all custom and built-in policies deployed within an Azure
 
 > Our goal is always to try and use built-in policies where available and also work with product teams to adopt our custom policies and make them built-in, which takes time. This means there will always be a requirement for custom policies.
 
+## Why are managed identities deployed as part of the ALZ policies?
+
+Managed Identities provide an alternative way to access Azure resources without having to manage credentials. They are created as a part of the ALZ policies mainly for policies that have the deployIfNotExists (DINE) effect in this initiative. The managed identities are used in order to remediate resources that are not compliant with the policy. For further information on how remediation works with access control, please refer to the following documentation: [Remediate non-compliant resources - Azure Policy | Microsoft](https://learn.microsoft.com/en-us/azure/governance/policy/how-to/remediate-resources?tabs=azure-portal#how-remediation-access-control-works)
+
 ## AzAdvertizer Integration
 
 We have worked with the creator of [AzAdvertizer](https://www.azadvertizer.net) to integrate all of the custom Azure Policy Definitions and Initiatives as part of Azure landing zones into it to help customers use the tool to look at the policies further in an easy to use tool that is popular in the community.
