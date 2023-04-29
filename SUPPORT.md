@@ -2,7 +2,7 @@
 
 ## Microsoft Support Policy
 
-If issues are encountered when deploying these reference implementations users will be able to engage Microsoft support via their usual channels. Please provide corelation IDs where possible when contacting support to be able to investigate issue effectively and in timely fashion. For instruction on how to get deployments and correlation ID, please follow this link [here](https://learn.microsoft.com/azure/azure-resource-manager/templates/deployment-history?tabs=azure-portal#get-deployments-and-correlation-id).
+If issues are encountered when deploying these reference implementations users will be able to engage Microsoft support via their usual channels. Please provide correlation IDs where possible when contacting support to be able to investigate issue effectively and in timely fashion. For instruction on how to get deployments and correlation ID, please follow this link [here](https://learn.microsoft.com/azure/azure-resource-manager/templates/deployment-history?tabs=azure-portal#get-deployments-and-correlation-id).
 
 Following list of issues are within the scope of Microsoft support:
 
