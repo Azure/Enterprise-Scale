@@ -156,6 +156,7 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 #### Portal Accelerator
 
 - FIX: Updated the Fairfax (US Gov) portal accelerator experience so it now works as expected.
+- Service Map solution has been removed as an option to be deployed, as this has been superseded by VM Insights, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights) Guidance on migrating and removing the Service Map solution can be found [here.](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-migrate-from-service-map)
 
 #### Other
 
