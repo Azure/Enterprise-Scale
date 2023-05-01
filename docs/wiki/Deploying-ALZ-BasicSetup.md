@@ -119,7 +119,7 @@ Azure landing zone portal accelerator provides an integrated CI/CD pipeline via 
 
 **In this tutorial, your Azure landing zone deployment will be triggered using the Azure Portal experience**.
 
-Set **Deploy integrated CICD pipeline** to **No**.
+Set **Deploy integrated CI/CD pipeline** to **No**.
 
 ![iacTab-next](./media/clip_image-iac-1-singlesubscription.jpg)
 
@@ -162,7 +162,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
   
   ![networkTab-topology](./media/clip_image036b-2-singlesubscription.png)
 
-  - **Deploy zone redundant or regional VPN Gateway** and **Deploy zone redundant or regional ExpressRoute Gateway**: Zone-redundant gateways are recommended and enabled by default (as per the capabilities of the Region you are deploying your hub virtual network) as they provide higher resiliency and availability. You might opt for a regional deployment depending on your availability requirements and budget. In this tutorial you will deploy a zone-redudant VPN Gateway:
+  - **Deploy zone redundant or regional VPN Gateway** and **Deploy zone redundant or regional ExpressRoute Gateway**: Zone-redundant gateways are recommended and enabled by default (as per the capabilities of the Region you are deploying your hub virtual network) as they provide higher resiliency and availability. You might opt for a regional deployment depending on your availability requirements and budget. In this tutorial you will deploy a zone-redundant VPN Gateway:
   
     Select **Zone redundant (recommended)**.
   
@@ -241,6 +241,7 @@ Click **Next: Landing Zone configuration>** to continue with your deployment.
 ## 9. Landing zones configuration
 
 In the top section you can **select** from a set of **recommended Azure policies** which ones you want to apply to secure and govern your Landing Zones. All landing zone Azure Policies are enabled by default (recommended) but are fully customizable.
+
 - **Please note:** Landing zone Azure Policies can be assigned at any time.
 
   Any Azure Policies you selected will be assigned to the [Landing Zones Management Group](./How-Enterprise-Scale-Works#enterprise-scale-management-group-structure) under the root of your Enterprise Scale Management Group hierarchy. See [landing zone Azure's Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md) for further details on the configurable set of Azure Policies.
@@ -258,7 +259,7 @@ In the bottom two sections you can choose to bring in N number of existing subsc
 - **Select the subscriptions you want to move to corp management group:**
   Corp Landing Zones are meant to host workloads that require connectivity to other resources within the corporate network via the Hub in the Platform Subscription.
 
-For Corp Landing Zones its virtual network can be connected (recommended) to the hub virtual network using virtual network peering, enabling access to your corporate network. Please note you will need to provide a non-overlapping private IP address space to be assigned to each Landing Zone. See [Plan for IP Addressing](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations. Also, if you deployed and enabled Azure Firewall as DNS proxy, [DNS settings on these VNets will be configured](https://learn.microsoft.com/en-us/azure/firewall/dns-settings#configure-virtual-network-dns-servers) with the Azure Firewall private IP address.
+For Corp Landing Zones its virtual network can be connected (recommended) to the hub virtual network using virtual network peering, enabling access to your corporate network. Please note you will need to provide a non-overlapping private IP address space to be assigned to each Landing Zone. See [Plan for IP Addressing](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/plan-for-ip-addressing) for further recommendations. Also, if you deployed and enabled Azure Firewall as DNS proxy, [DNS settings on these VNets will be configured](https://learn.microsoft.com/en-us/azure/firewall/dns-settings#configure-virtual-network-dns-servers) with the Azure Firewall private IP address. In this section you can also select which Azure Policies you would like to enable for the corp management group specifically.
 
   In this tutorial, a "Corp" Landing Zone is provisioned using an existing (empty) subscription and connected to the Hub virtual network previously configured. Please note, additional subscriptions can be added.
 
@@ -275,16 +276,19 @@ For Corp Landing Zones its virtual network can be connected (recommended) to the
 
   ![lzTab-onlineLZs](./media/clip_image037-3-singlesubscription.jpg)
 
+Click **Next: Decommissioned/Sandbox>** to continue with your deployment.
 
-Click **Next: Review + Create>** to complete your deployment.
-
-![lzTab-next](./media/clip_image037-5-singlesubscription.jpg)
+![lzTab-next](./media/clip_image037-6-singlesubscription.jpg)
 
 ## 10. Decommissioned/Sandbox
 
 You can optionally choose to change whether default policy assignments for Decommissioned and Sandbox management groups are enabled, set to audit only or disabled.
 
 ![Decommissioned and Sandbox options](./media/alz-portal-decommsandbox.jpg)
+
+Click **Next: Review + Create>** to complete your deployment.
+
+![lzTab-next](./media/clip_image037-5-singlesubscription.jpg)
 
 ## 11. Review + create
 
