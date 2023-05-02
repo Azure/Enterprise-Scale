@@ -16,6 +16,10 @@
             ],
             "defaultValue": "Default"
         },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
         "effectDisks": {
             "type": "string",
             "allowedValues": [
@@ -49,12 +53,17 @@
             "costOptimization": "Audit-UnusedResources",
             "description": "This Policy initiative is a group of Policy definitions that help optimize cost by detecting unused but chargeable resources. Leverage this Policy initiative as a cost control to reveal orphaned resources that are driving cost.",
             "displayName": "Unused resources driving cost should be avoided"
+        },
+        "nonComplianceMessage": {
+            "message": "Unused resources driving cost {enforcementMode} be avoided.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').costOptimization]",
             "location": "[deployment().location]",
             "properties": {
@@ -62,6 +71,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').auditCostOptimization]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "EffectDisks": {
                         "value": "[parameters('effectDisks')]"

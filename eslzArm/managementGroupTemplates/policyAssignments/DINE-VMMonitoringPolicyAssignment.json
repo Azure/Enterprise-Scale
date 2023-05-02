@@ -22,26 +22,35 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
         "policyDefinitions": {
             "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a"
-            },
+        },
         "policyAssignmentNames": {
             "vmMonitoring": "Deploy-VM-Monitoring",
             "description": "Enable Azure Monitor for the virtual machines (VMs) in the specified scope (management group, subscription or resource group). Takes Log Analytics workspace as parameter.",
             "displayName": "Enable Azure Monitor for VMs"
-            },
+        },
+        "nonComplianceMessage": {
+            "message": "Azure Monitor {enforcementMode} be enabled for Virtual Machines.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
             "deployVmMonitoring": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring))]"
-            }
-        },
+        }
+    },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').vmMonitoring]",
             "location": "[deployment().location]",
             "identity": {
@@ -52,6 +61,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').vmMonitoring]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "logAnalytics_1": {
                         "value": "[parameters('logAnalyticsResourceId')]"

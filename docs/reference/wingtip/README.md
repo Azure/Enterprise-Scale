@@ -22,7 +22,7 @@ For more details, see the *next steps* section at the end of this document.
 To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
 See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access before you proceed.
 
-### Optional pre-requsites
+### Optional pre-requisites
 
 The deployment experience in Azure portal allows you to bring in an existing (preferably empty) subscription dedicated for platform management, and an existing subscription that can be used as the initial landing zone for your applications.
 

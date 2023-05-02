@@ -25,8 +25,12 @@
             ],
             "defaultValue": "Default"
         },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
         "privateLinkDnsZones": {
-            "type": "Array",
+            "type": "array",
             "metadata": {
                 "displayName": "Private Link Private DNS Zones",
                 "description": "An array of Private Link Private DNS Zones to check for the existence of in the assigned scope."
@@ -106,18 +110,28 @@
             "auditPeDnsZones": "Audit-PeDnsZones",
             "description": "Audits the deployment of Private Link Private DNS Zone resources in the Corp landing zone.",
             "displayName": "Audit Private Link Private DNS Zone resources"
+        },
+        "nonComplianceMessage": {
+            "message": "Private Link Private DNS Zone resources {enforcementMode} be deployed in the Corp landing zone.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').auditPeDnsZones]",
             "properties": {
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').auditPeDnsZones]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "privateLinkDnsZones": {
                         "value": "[parameters('privateLinkDnsZones')]"

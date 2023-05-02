@@ -16,6 +16,10 @@
             ],
             "defaultValue": "Default"
         },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
         "enableMDEndpoints": {
             "type": "string",
             "allowedValues": [
@@ -35,6 +39,11 @@
             "description": "Deploy Microsoft Defender for Endpoint agent on applicable images.",
             "displayName": "[Preview]: Deploy Microsoft Defender for Endpoint agent"
         },
+        "nonComplianceMessage": {
+            "message": "Microsoft Defender for Endpoint agent {enforcementMode} be deployed on applicable images.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
         "roleAssignmentNames": {
             "deployMDEndpoints": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureSecurityMDE))]"
@@ -43,7 +52,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').azureSecurityMDE]",
             "location": "[deployment().location]",
             "identity": {
@@ -54,6 +63,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployMDEndpoints]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "microsoftDefenderForEndpointWindowsVmAgentDeployEffect": {
                         "value": "[parameters('enableMDEndpoints')]"

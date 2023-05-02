@@ -17,6 +17,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -27,18 +31,28 @@
             "denyHybridNetworking": "Deny-HybridNetworking",
             "description": "Denies deployment of vWAN/ER/VPN gateway resources in the Corp landing zone.",
             "displayName": "Deny the deployment of vWAN/ER/VPN gateway resources"
+        },
+        "nonComplianceMessage": {
+            "message": "vWAN/ER/VPN gateway resources {enforcementMode} be deployed in the Corp landing zone.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').denyHybridNetworking]",
             "properties": {
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').denyHybridNetworking]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "listOfResourceTypesNotAllowed": {
                         "value": [

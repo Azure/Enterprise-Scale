@@ -9,6 +9,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -19,6 +23,11 @@
             "denyVMUnmanagedDisk": "Deny-UnmanagedDisk",
             "description": "Deny virtual machines that do not use managed disk. It checks the managed disk property on virtual machine OS Disk fields.",
             "displayName": "Deny virtual machines and virtual machine scale sets that do not use managed disk"
+        },
+        "nonComplianceMessage": {
+            "message": "Virtual machines and virtual machine scales sets {enforcementMode} use a managed disk.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
     },
     "resources": [
@@ -31,6 +40,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').denyVMUnmanagedDisk]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "overrides":[
                     {
                         "kind": "policyEffect",

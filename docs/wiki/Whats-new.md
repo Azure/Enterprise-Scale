@@ -56,7 +56,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 We are pleased to announce that we are starting regular Azure Policy reviews for Azure Landing Zone. This includes a review of new built-in policies released and their suitability for ALZ, built-in policies that can replace custom ALZ policies, built-in policies that have been deprecated and addition of new ALZ custom policies and initiatives as identified based on best practices, issues raised and customer feedback. Most importantly, we have also provided default assignments for all the new policies at the appropriate ALZ Management Group level. This will ensure that all new policies are automatically assigned to the appropriate scope and will be in compliance with the ALZ baseline. This will also ensure that the ALZ is always up to date with the latest Azure Policy definitions.
 
-This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also enhanced our policy review  process, with a focus on transitioning away from deprecated policies where possible, move from custom to built-in policies providing the same or enhanced functionality, and implementing new policies to keep ALZ as part of the current review cycle.
+This update includes many ALZ Azure Policies and Initiatives that have been added or updated to enhance the security, governance, and management of ALZ. As part of our commitment to continuous improvement, we have also enhanced our policy review  process, with a focus on transitioning away from deprecated policies where possible, move from custom to built-in policies providing the same or enhanced functionality, and implementing new policies to keep ALZ as part of the current review cycle. We have also implemented non-compliance messages where supported to provide a better user experience when a policy is non-compliant.
 
 This is the first major review and refresh of Azure Policy since ALZ was GA'd. Since GA many new built-in policies and initiatives have been released which has driven the need for this review. We believe that a regular review cycle will allow us to stay on top of emerging trends and new policies, ensuring that our Azure environment remains secure and compliant. Should you identify policies or initiatives that should be considered for ALZ, kindly submit an [GitHub issue](https://github.com/Azure/Enterprise-Scale/issues). For more information, please refer to the [ALZ Policies](ALZ-Policies.md) or the new [Excel spreadsheet](media/ALZ%20Policy%20Assignments%20v2.xlsx) version.
 
@@ -123,7 +123,7 @@ Note that a number of initiatives have been updated that will fail to deploy if 
     - Delete orphaned indentity on Landing Zone scope.
     - Deploy new initiative on Landing Zone scope.
 - Updated initiative [Deny or Audit resources without Encryption with a customer-managed key (CMK) (azadvertizer.net)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html) deprecated policy [[Deprecated]: SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0d134df8-db83-46fb-ad72-fe0c9428c8dd.html) to new policy [Azure Policy definition SQL servers should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/0a370ff3-6cab-4e85-8995-295fd854c5b8.html)
-- Updated intiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
+- Updated initiative and assignment [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) to include the new policies:
   - [[Preview]: Configure Microsoft Defender for APIs should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/e54d2be9-5f2e-4d65-98e4-4f0e670b23d6.html)
   - [Configure Microsoft Defender CSPM to be enabled](https://www.azadvertizer.net/azpolicyadvertizer/689f7782-ef2c-4270-a6d0-7664869076bd.html)
   - [Configure machines to receive a vulnerability assessment provider](https://www.azadvertizer.net/azpolicyadvertizer/13ce0167-8ca6-4048-8e6b-f996402e3c1b.html)
@@ -133,14 +133,15 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 - Deprecated `Deny-RDP-From-Internet` and added new policy `Deny-MgmtPorts-From-Internet` which is more flexible and blocks port 22 and 3389 by default
 - Updated the initiative `Deny-PublicPaaSEndpoints` to include additional policies available to block public access for PaaS services
   - Updated [storage](https://www.azadvertizer.net/azpolicyadvertizer/b2982f36-99f2-4db5-8eff-283140c09693.html) and [Key Vault](https://www.azadvertizer.net/azpolicyadvertizer/405c5871-3e91-4644-8a63-58e19d68ff5b.html) to use new policies using the `/publicNetworkAccess` alias
-- Added new policy to inintiative that enablies diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
+- Added new policy to initiative that enables diagnostic settings for VWAN S2S and added as part of diagnostic settings policy initiative.
 - Updated ALZ Policies wiki:
   - Removed the "Version" column to improve readability.
-  - Added the option to download an Excel file with all the policy/initiative assigments.
-- Update ALZ Policies wiki: Excel file with all the policy/initiative assigments.
+  - Added the option to download an Excel file with all the policy/initiative assignments.
+- Update ALZ Policies wiki: Excel file with all the policy/initiative assignments.
 - Renamed Policies from `WVD` to `AVD` - Display names and Descriptions only
 - Update the `Deploy SQL Database built-in SQL security configuration` initiative to point to the built-in policy [Deploy SQL DB transparent data encryption](https://www.azadvertizer.net/azpolicyadvertizer/86a912f6-9a06-4e26-b447-11b16ba8659f.html) instead of the deprecated custom policy `Deploy SQL Database built-in SQL security configuration`.
 - Update policy [Append-Redis-disableNonSslPort](https://www.azadvertizer.net/azpolicyadvertizer/Append-Redis-disableNonSslPort.html): remove not applicable 'modify' effect.
+- Update ALZ Policies Wiki to include guidance around the use of managed identities with the ALZ Policy Initiative.
 
 ##### Retire
 
@@ -155,6 +156,11 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 #### Portal Accelerator
 
 - FIX: Updated the Fairfax (US Gov) portal accelerator experience so it now works as expected.
+- Service Map solution has been removed as an option to be deployed, as this has been superseded by VM Insights, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights) Guidance on migrating and removing the Service Map solution can be found [here.](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-migrate-from-service-map)
+
+#### Other
+
+- [Azure Landing Zone External Community Call - April 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#27th-april-2023-27042023)
 
 ### March 2023
 

@@ -21,6 +21,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -32,6 +36,11 @@
             "description": "Deploys the diagnostic settings for Azure Activity to stream subscriptions audit logs to a Log Analytics workspace to monitor subscription-level events",
             "displayName": "Configure Azure Activity logs to stream to specified Log Analytics workspace"
         },
+        "nonComplianceMessage": {
+            "message": "Azure Activity logs {enforcementMode} be configured to stream to specified Log Analytics workspace.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
             "deployAzureActivityLog": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').azureActivityLog))]"
@@ -40,7 +49,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').azureActivityLog]",
             "location": "[deployment().location]",
             "identity": {
@@ -51,6 +60,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployAzureActivityLog]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "logAnalytics": {
                         "value": "[parameters('logAnalyticsResourceId')]"
