@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [May 2023](#may-2023)
   - [April 2023](#april-2023)
   - [March 2023](#march-2023)
   - [February 2023](#february-2023)
@@ -51,6 +52,14 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### May 2023
+
+#### Docs
+
+- Updated wiki deployment guides for the four main scenarios to include the new Decommissioned and Sandbox step in the portal accelerator.
+- Updated ALZ Policies wiki to make the link to the Excel spreadsheet more prominent.
+- Updated the ALZ Policy Assignments Excel spreadsheet to include a release version column so users can track when those policies last changed and verified all assignments have a relevant AzAdvertizer link for policy details.
 
 ### April 2023
 
