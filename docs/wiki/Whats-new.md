@@ -36,10 +36,10 @@ Enterprise Scale/Azure Landing Zones is updated regularly. This page is where yo
 - Azure Policy changes
 - Bug fixes
 - Tooling updates:
-  - [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
-    - [Releases](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases)
   - [ALZ-Bicep Modules](https://github.com/Azure/ALZ-Bicep)
     - [Releases](https://github.com/Azure/ALZ-Bicep/releases)
+  - [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
+    - [Releases](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases)
 
 > **Note:** Please check the latest release notes for each of the tools, as these will contain more detailed notes relating to changes in each of the tools.
 
