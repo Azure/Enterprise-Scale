@@ -1898,6 +1898,39 @@
                                     }
                                 ]
                             }
+                        },
+                        {
+                            "name": "subnetMaskForAzFwMgmt",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for Azure Firewall",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/26)",
+                            "defaultValue": "10.100.1.0/26",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), equals(steps('connectivity').firewallSku, 'Basic'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (first octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (second octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (third octet)."
+                                    },
+                                    {
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFwMgmt, '/')))]",
+                                        "message": "CIDR range not within virtual network CIDR range (subnet mask)."
+                                    }
+                                ]
+                            }
                         }
                     ]
                 },

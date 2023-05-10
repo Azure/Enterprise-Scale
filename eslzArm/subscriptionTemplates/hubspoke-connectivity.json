@@ -104,6 +104,13 @@
                 "description": "Provide subnet for Azure Firewall."
             }
         },
+        "subnetMaskForAzFwMgmt": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide subnet for Azure Firewall Management."
+            }
+        },
         "subnetMaskForGw": {
             "type": "string",
             "defaultValue": "",
@@ -170,6 +177,8 @@
         "azErGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
         "azFwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallSubnet')]",
         "azFwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwIpName'))]",
+        "azFwMgmtSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallManagementSubnet')]",
+        "azFwMgmtPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwMgmtIpName'))]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke', parameters('location')), 64)]",
         // Creating variable that later will be used in conjunction with the union() function to cater for conditional subnet creation while ensuring idempotency
         "gwSubnet": [
@@ -188,6 +197,14 @@
                 }
             }
         ],
+        "fwMgmtSubnet": [
+            {
+                "name": "AzureFirewallManagementSubnet",
+                "properties": {
+                    "addressPrefix": "[parameters('subnetMaskForAzFwMgmt')]"
+                }
+            }
+        ],   
         "ddosProtectionPlanId": {
             "id": "[parameters('ddosPlanResourceId')]"
         },
@@ -254,7 +271,10 @@
                                                                           empty(parameters('subnetMaskForGw'))), variables('gwSubnet'), json('[]')), 
                                                                           if(
                                                                               not(
-                                                                                  empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')))]",
+                                                                                  empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')),
+                                                                                  if(
+                                                                                      not(
+                                                                                          empty(parameters('subnetMaskForAzFwMgmt'))), variables('fwMgmtSubnet'), json('[]')))]",                                                                                  
                                                 "enableDdosProtection": "[if(equals(parameters('enableDdoS'), 'Yes'), 'true', 'false')]",
                                                 "ddosProtectionPlan": "[if(equals(parameters('enableDdoS'), 'Yes'), variables('ddosProtectionPlanId'), json('null'))]"
                                             }
@@ -397,8 +417,8 @@
                                                 "publicIPAllocationMethod": "Static"
                                             }
                                         },
-                                                                                {
-                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), equals(parameters('firewallSku'), 'Basic'), not(empty(parameters('subnetMaskForAzFw'))))]",
+                                        {
+                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), equals(parameters('firewallSku'), 'Basic'), not(empty(parameters('subnetMaskForAzFwMgmt'))))]",
                                             "apiVersion": "2020-05-01",
                                             "type": "Microsoft.Network/publicIpAddresses",
                                             "name": "[variables('azFwMgmtIpName')]",
@@ -424,7 +444,54 @@
                                             }
                                         },
                                         {
-                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), not(empty(parameters('subnetMaskForAzFw'))))]",
+                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), equals(parameters('firewallSku'), 'Basic'), not(empty(parameters('subnetMaskForAzFwMgmt'))), not(empty(parameters('subnetMaskForAzFw'))))]",
+                                            "apiVersion": "2020-05-01",
+                                            "type": "Microsoft.Network/azureFirewalls",
+                                            "name": "[variables('azfwname')]",
+                                            "location": "[parameters('location')]",
+                                            "zones": "[if(not(empty(parameters('firewallZones'))), parameters('firewallZones'), json('null'))]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]",
+                                                "[concat('Microsoft.Network/publicIpAddresses/', variables('azFwIpName'))]",
+                                                "[concat('Microsoft.Network/publicIpAddresses/', variables('azFwMgmtIpName'))]",
+                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
+                                            ],
+                                            "properties": {
+                                                "sku": {
+                                                    "name": "AZFW_VNet",
+                                                    "tier": "[parameters('firewallSku')]"
+                                                },
+                                                "ipConfigurations": [
+                                                    {
+                                                        "name": "[variables('azFwIpName')]",
+                                                        "properties": {
+                                                            "subnet": {
+                                                                "id": "[variables('azFwSubnetId')]"
+                                                            },
+                                                            "publicIPAddress": {
+                                                                "id": "[variables('azFwPipId')]"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "managementIpConfiguration": [
+                                                    {
+                                                        "name": "[variables('azFwMgmtIpName')]",
+                                                        "properties": {
+                                                            "subnet": {
+                                                                "id": "[variables('azFwMgmtSubnetId')]"
+                                                            },
+                                                            "publicIPAddress": {
+                                                                "id": "[variables('azFwMgmtPipId')]"
+                                                            }
+                                                        }
+                                                    }
+                                                ],                                                
+                                                "firewallPolicy": "[variables('azFirewallPolicyId')]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableAzFw'), 'Yes'), not(equals(parameters('firewallSku'), 'Basic')), not(empty(parameters('subnetMaskForAzFw'))))]",
                                             "apiVersion": "2020-05-01",
                                             "type": "Microsoft.Network/azureFirewalls",
                                             "name": "[variables('azfwname')]",
