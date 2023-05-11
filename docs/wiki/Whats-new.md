@@ -68,6 +68,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - ALZ Bicep [`v0.14.0`](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.14.0) released
   - [ALZ Bicep Accelerator (MVP) launched](https://github.com/Azure/ALZ-Bicep/wiki/Accelerator)
 - ALZ Terraform (`caf-enterprise-scale`) [`v4.0.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v4.0.0) released
+- Added support for Azure Firewall Basic SKU.
 
 ### April 2023
 
