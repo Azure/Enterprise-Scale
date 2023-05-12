@@ -36,12 +36,10 @@ Enterprise Scale/Azure Landing Zones is updated regularly. This page is where yo
 - Azure Policy changes
 - Bug fixes
 - Tooling updates:
-  - [AzOps](https://github.com/azure/azops)
-    - [Releases](https://github.com/Azure/AzOps/releases)
-  - [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
-    - [Releases](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases)
   - [ALZ-Bicep Modules](https://github.com/Azure/ALZ-Bicep)
     - [Releases](https://github.com/Azure/ALZ-Bicep/releases)
+  - [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
+    - [Releases](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases)
 
 > **Note:** Please check the latest release notes for each of the tools, as these will contain more detailed notes relating to changes in each of the tools.
 
@@ -55,6 +53,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### May 2023
 
+#### Policy
+
+- Bug fix for `effect` for the Key Vault setting (incorrect case) in `Deploy-MDFC-Config.json` initiative.
+
 #### Docs
 
 - Updated wiki deployment guides for the four main scenarios to include the new Decommissioned and Sandbox step in the portal accelerator.
@@ -62,13 +64,19 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the ALZ Policy Assignments Excel spreadsheet to include a release version column so users can track when those policies last changed and verified all assignments have a relevant AzAdvertizer link for policy details.
 - [Azure Enablement Show: Updating your Azure landing zones](https://www.youtube.com/watch?v=VvZDftlF20w) published
 - [Tech Community Blog: Azure Monitor Baseline Alerts (Preview)](https://techcommunity.microsoft.com/t5/azure-governance-and-management/azure-monitor-baseline-alerts-preview/ba-p/3810463) published
+- Updated wiki documentation to so reflect the removal of the "Platform DevOps and automation" section from ALZ Portal Accelerator
+- Added support for Azure Firewall Basic SKU to Hub & Spoke and Virtual WAN deployments in the ALZ Portal Accelerator
 
 #### Tooling
 
 - ALZ Bicep [`v0.14.0`](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.14.0) released
   - [ALZ Bicep Accelerator (MVP) launched](https://github.com/Azure/ALZ-Bicep/wiki/Accelerator)
 - ALZ Terraform (`caf-enterprise-scale`) [`v4.0.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v4.0.0) released
-- Added support for Azure Firewall Basic SKU.
+- ALZ Portal Accelerator: "Platform DevOps and automation" section removed
+
+#### Other
+
+- Removed resources from `workloads` folder and redirected to Azure Archtiecture Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
 
 ### April 2023
 
