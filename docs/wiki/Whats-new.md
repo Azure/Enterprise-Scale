@@ -69,6 +69,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - ALZ Terraform (`caf-enterprise-scale`) [`v4.0.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v4.0.0) released
 - ALZ Portal Accelerator: "Platform DevOps and automation" section removed
 
+#### Other
+
+- Removed resources from `workloads` folder and redirected to Azure Archtiecture Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
+
 ### April 2023
 
 We are pleased to announce that we are starting regular Azure Policy reviews for Azure Landing Zone. This includes a review of new built-in policies released and their suitability for ALZ, built-in policies that can replace custom ALZ policies, built-in policies that have been deprecated and addition of new ALZ custom policies and initiatives as identified based on best practices, issues raised and customer feedback. Most importantly, we have also provided default assignments for all the new policies at the appropriate ALZ Management Group level. This will ensure that all new policies are automatically assigned to the appropriate scope and will be in compliance with the ALZ baseline. This will also ensure that the ALZ is always up to date with the latest Azure Policy definitions.
