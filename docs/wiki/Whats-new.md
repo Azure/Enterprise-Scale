@@ -61,6 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated wiki deployment guides for the four main scenarios to include the new Decommissioned and Sandbox step in the portal accelerator.
 - Updated ALZ Policies wiki to make the link to the Excel spreadsheet more prominent.
+- Updated ALZ Policies wiki images to reflect policy initiative assignments now included for Decommissioned and Sandbox management groups.
 - Updated the ALZ Policy Assignments Excel spreadsheet to include a release version column so users can track when those policies last changed and verified all assignments have a relevant AzAdvertizer link for policy details.
 - [Azure Enablement Show: Updating your Azure landing zones](https://www.youtube.com/watch?v=VvZDftlF20w) published
 - [Tech Community Blog: Azure Monitor Baseline Alerts (Preview)](https://techcommunity.microsoft.com/t5/azure-governance-and-management/azure-monitor-baseline-alerts-preview/ba-p/3810463) published
