@@ -53,6 +53,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### May 2023
 
+#### Policy
+
+- Bug fix for `effect` for the Key Vault setting (incorrect case) in `Deploy-MDFC-Config.json` initiative.
+
 #### Docs
 
 - Updated wiki deployment guides for the four main scenarios to include the new Decommissioned and Sandbox step in the portal accelerator.
