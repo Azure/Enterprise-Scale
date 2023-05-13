@@ -65,6 +65,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - [Azure Enablement Show: Updating your Azure landing zones](https://www.youtube.com/watch?v=VvZDftlF20w) published
 - [Tech Community Blog: Azure Monitor Baseline Alerts (Preview)](https://techcommunity.microsoft.com/t5/azure-governance-and-management/azure-monitor-baseline-alerts-preview/ba-p/3810463) published
 - Updated wiki documentation to so reflect the removal of the "Platform DevOps and automation" section from ALZ Portal Accelerator
+- Added support for Azure Firewall Basic SKU to Hub & Spoke and Virtual WAN deployments in the ALZ Portal Accelerator
 
 #### Tooling
 
