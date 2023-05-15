@@ -35,7 +35,7 @@ The Enterprise-Scale reference implementations in this repository are intended t
 | Be aligned with cloud provider’s platform roadmap | Yes |
 | UI Experience and simplified setup | Yes, Azure portal |
 | All critical services are present and properly configured according to recommend best practices for identity & access management, governance, security, network and logging | Yes, using a multi-subscription design, aligned with Azure platform roadmap |
-| Automation capabilities (IaC/DevOps) | Yes: ARM, Policy, GitHub/Azure DevOps CI/CD pipeline option included |
+| Automation capabilities (IaC/DevOps) | Yes: ARM, Policy |
 | Provides long-term self-sufficiency | Yes, enterprise-scale architecture -> 1:N landing zones. Approach & architecture prepare the customer for long-term self-sufficiency, the RIs are there to get you started |
 | Enables migration velocity across the organization | Yes, enterprise-scale architecture -> 1:N landing zones, Architecture includes designs for segmentation and separation of duty to empower teams to act within appropriate landing zones |
 | Achieves operational excellence | Yes. Enables autonomy for platform and application teams with a policy driven governance and management |
