@@ -2,9 +2,7 @@
 
 - [Pre-requisites](#pre-requisites)
 - [Reference implementation deployment](#reference-implementation-deployment)
-- [Validation post deployment (GitHub)](#validation-post-deployment-github)
 - [Post deployment activities](#post-deployment-activities)
-- [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
 
 ---
 Azure landing zone portal accelerator can be deployed both from the Azure portal directly, or from [GitHub](https://github.com/Azure/Enterprise-Scale#deploying-enterprise-scale-architecture-in-your-own-environment)
