@@ -55,6 +55,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Updated `Deploy-Diagnostics-APIMgmt.json` to support resource-specific destination table in the diagnostic setting for API Management
+- Updated `Deploy-Diagnostics-LogAnalytics.json` policy initative with new parameter to support resource-specific destination table in the diagnostic setting for API Management
 - Bug fix for `effect` for the Key Vault setting (incorrect case) in `Deploy-MDFC-Config.json` initiative.
 
 #### Docs
