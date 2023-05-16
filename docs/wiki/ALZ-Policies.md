@@ -38,7 +38,7 @@ AzAdvertizer also updates once per day!
 
 As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure landing zone Management Group hierarchy as depicted within the below diagram.
 
-![image](./media/MgmtGroups_Policies_v0.1.jpg)
+![image](./media/MgmtGroups_Policies_v0.1.svg)
 
 The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierarchy.
 
@@ -276,7 +276,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 <tr></tr>
 <tr><td>
 
-![image](./media/Decom_v0.1.jpg)
+![image](./media/Decom_v0.1.svg)
 
 </td><td>
   
@@ -299,7 +299,7 @@ This management group is for subscriptions that will only be used for testing an
 <tr></tr>
 <tr><td>
 
-![image](./media/Sandbox_v0.1.jpg)
+![image](./media/Sandbox_v0.1.svg)
 
 </td><td>
   
