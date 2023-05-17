@@ -661,7 +661,7 @@
                 "No"
             ]
         },
-        "enforceKvGuardrails": {            
+        "enforceKvGuardrails": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -778,6 +778,7 @@
             "atpOssDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpOssDbPolicyAssignment.json')]",
             "atpSqlDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpSqlDbPolicyAssignment.json')]",
             "azVmMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMMonitoringPolicyAssignment.json')]",
+            "azVmHybridMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMHybridMonitoringPolicyAssignment.json')]",
             "azVmssMonitorPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMSSMonitoringPolicyAssignment.json')]",
             "azVmBackupPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-VMBackupPolicyAssignment.json')]",
             "azPolicyForAksPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AksPolicyPolicyAssignment.json')]",
@@ -840,6 +841,7 @@
             "vwanConnectivityHubDeploymentName": "[take(concat('alz-VWanHub', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubDeploymentName": "[take(concat('alz-NVAHub', variables('deploymentSuffix')), 64)]",
             "azVmMonitorPolicyDeploymentName": "[take(concat('alz-AzVmMonitor', variables('deploymentSuffix')), 64)]",
+            "azVmHybridMonitorPolicyDeploymentName": "[take(concat('alz-AzVmHybridMonitor', variables('deploymentSuffix')), 64)]",
             "azVmssMonitorPolicyDeploymentName": "[take(concat('alz-AzVmssMonitor', variables('deploymentSuffix')), 64)]",
             "azBackupLzPolicyDeploymentName": "[take(concat('alz-AzBackupLz', variables('deploymentSuffix')), 64)]",
             "azBackupIdentityPolicyDeploymentName": "[take(concat('alz-AzBackupIdentity', variables('deploymentSuffix')), 64)]",
@@ -1644,7 +1646,7 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableAscForSql'), 'DeployIfNotExists'), 'Default', 'DoNotEnforce')]"
-                    }                    
+                    }
                 }
             }
         },
@@ -1671,7 +1673,7 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableMDEndpoints'), 'DeployIfNotExists'), 'Default', 'DoNotEnforce')]"
-                    }                    
+                    }
                 }
             }
         },
@@ -1929,7 +1931,7 @@
                     },
                     "subnetMaskForAzFwMgmt": {
                         "value": "[parameters('subnetMaskForAzFwMgmt')]"
-                    },                    
+                    },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
                     },
@@ -2272,10 +2274,47 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "enableDependencies": {
+                        "value": true
                     }
                 }
             }
         },
+        {
+            // Assigning Azure Monitor for Hybrid VMs policy initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmHybridMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmHybridMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "enableDependencies": {
+                        "value": true
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+
         {
             // Assigning Azure Monitor for VMSS policy initiative to intermediate root management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
@@ -2299,6 +2338,9 @@
                     },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enableDependencies": {
+                        "value": true
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmssMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
@@ -3810,7 +3852,7 @@
                     },
                     "subnetMaskForAzFwMgmt": {
                         "value": "[parameters('subnetMaskForAzFwMgmt')]"
-                    },                    
+                    },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
                     },
