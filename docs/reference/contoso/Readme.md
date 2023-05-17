@@ -54,7 +54,6 @@ The rest of the options across the different blades will depend on your environm
   - Azure Security Center (Standard or Free tier)
   - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
-- (Optionally) Integrate your Azure environment with GitHub (Azure DevOps will come later), where you provide the PA Token to create a new repository and automatically discover and merge your deployment into Git.
 - An Azure Subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   -  Azure VWAN
   - VWAN Hub
