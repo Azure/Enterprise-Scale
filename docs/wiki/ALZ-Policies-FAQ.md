@@ -8,7 +8,17 @@ There is a lot of change happening for policies in Azure, and by extension ALZ, 
 
 ### Diagnostic Settings v2
 
+There are several issues raised here, and we acknowledge that this is a complex area. We are working on a solution to address these issues, but in the meantime, we have provided some guidance below.
+
+At this time, the owners of features/services are reworking their policies to comply with the new diagnostic settings v2 schema (which includes logging categories which is a major ask). New diagnostics settings policies are landing for Azure services, with dedicated policies depending on the target your require (Log Analytics, Event Hub or storage account). We are working with them to ensure that the policies are updated as soon as possible.
+
 ### Sovereign Clouds
+
+We have a number of sovereign cloud related GitHub issues, and we are working on a solution to address these issues.
+
+Unfortunately, our team does not have access to any of the sovereign clouds to validate the policies, their deployment or successful deployment of ALZ. Our access is limited to the public cloud due to obvious security reasons. We are working with the owners of the policies to ensure that they are updated as soon as possible.
+
+As we cannot test, we are relying on the community to help us identify issues and provide feedback. We will try address issues in sovereign clouds as soon as possible, but we cannot provide any timelines for resolution.
 
 ## Tips & Recommendations
 
