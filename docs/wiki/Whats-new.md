@@ -53,14 +53,22 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### May 2023
 
+#### Policy
+
+- Bug fix for `effect` for the Key Vault setting (incorrect case) in `Deploy-MDFC-Config.json` initiative.
+- Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) when a destination port array is submitted that contains port ranges that includes a denied port (22, 3389, and any others) when creating new NSG rules.
+
 #### Docs
 
 - Updated wiki deployment guides for the four main scenarios to include the new Decommissioned and Sandbox step in the portal accelerator.
 - Updated ALZ Policies wiki to make the link to the Excel spreadsheet more prominent.
+- Updated ALZ Policies wiki images to reflect policy initiative assignments now included for Decommissioned and Sandbox management groups.
 - Updated the ALZ Policy Assignments Excel spreadsheet to include a release version column so users can track when those policies last changed and verified all assignments have a relevant AzAdvertizer link for policy details.
 - [Azure Enablement Show: Updating your Azure landing zones](https://www.youtube.com/watch?v=VvZDftlF20w) published
 - [Tech Community Blog: Azure Monitor Baseline Alerts (Preview)](https://techcommunity.microsoft.com/t5/azure-governance-and-management/azure-monitor-baseline-alerts-preview/ba-p/3810463) published
 - Updated wiki documentation to so reflect the removal of the "Platform DevOps and automation" section from ALZ Portal Accelerator
+- Added support for Azure Firewall Basic SKU to Hub & Spoke and Virtual WAN deployments in the ALZ Portal Accelerator
+- Updated wiki documentation towards Subscription Vending approach for landing zone (subscription) creation
 
 #### Tooling
 
@@ -68,6 +76,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - [ALZ Bicep Accelerator (MVP) launched](https://github.com/Azure/ALZ-Bicep/wiki/Accelerator)
 - ALZ Terraform (`caf-enterprise-scale`) [`v4.0.0`](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/releases/tag/v4.0.0) released
 - ALZ Portal Accelerator: "Platform DevOps and automation" section removed
+
+#### Other
+
+- Removed resources from `workloads` folder and redirected to Azure Archtiecture Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
 
 ### April 2023
 

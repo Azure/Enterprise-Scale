@@ -44,12 +44,7 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 
 ![Azure Security Center Email Contact](./media/clip_image014asc.jpg)
 
-## 6. Platform DevOps and Automation
-
-Azure landing zone portal accelerator provides an integrated CICD pipeline via [AzOps](https://github.com/Azure/AzOps) that can be used with GitHub Actions. For detailed steps for setting up this configuration, refer to the [Deploy Platform DevOps and Automation](./Deploying-ALZ-Platform-DevOps) article.
-
-
-## 7. Network topology and connectivity
+## 6. Network topology and connectivity
 On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Network Protection and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must:
 
 * In the Deploy network topology option, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA".  For this example, we will select the "Hub and spoke with Azure Firewall".
@@ -74,12 +69,12 @@ Depending on your requirements, you may choose to deploy additional network infr
  ![img](./media/clip_image036b.png)
 
 
-## 8. Identity
+## 7. Identity
 On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering. 
 
  ![img](./media/clip_image036c.png)
 
-## 9. Landing zone configuration
+## 8. Landing zone configuration
 
 In the top section you can select which policies you want to assign broadly to all of your application landing zones. You also have the ability to set policies to *Audit only* which will assign the policies for Audit.
 
@@ -91,18 +86,18 @@ As part of the policies that you can assign to your landing zones, the Azure lan
 
 ![Landing zone configuration](./media/clip_image037.jpg)
 
-## 10. Decommissioned/Sandbox
+## 9. Decommissioned/Sandbox
 
 You can optionally choose to change whether default policy assignments for Decommissioned and Sandbox management groups are enabled, set to audit only or disabled.
 
 ![Decommissioned and Sandbox options](./media/alz-portal-decommsandbox.jpg)
 
-## 11. Review + create
+## 10. Review + create
 
 *Review + Create* page will validate your permission and configuration before you can click deploy. Once it has been validated successfully, you can click *Create*
 
 ![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image039.jpg)
 
-## 12. Post deployment activities
+## 11. Post deployment activities
 
 Once Azure landing zone portal accelerator has deployed, you can grant your application teams/business units access to their respective landing zones. Whenever there’s a need for a new landing zone, you can place them into their respective management groups (Online or Corp) given the characteristics of assumed workloads and their requirements.
