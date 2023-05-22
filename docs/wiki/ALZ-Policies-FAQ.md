@@ -36,6 +36,8 @@ It is strongly suggested that the enforcement mode be utilized over the audit ef
 
 By modifying the enforcement mode to a "do not enforce" state on a policy or initiative assignment, the enforcement of the effect (deny or DINE) is effectively suspended, while still maintaining the auditing of policy compliance. This strategy is particularly beneficial when seeking to deactivate deny or DINE on a policy or initiative assignment and comes highly recommended for such circumstances.
 
+For a detailed explanation of this topic, please review [Adopt policy-driven guardrails](https://learn.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/enterprise-scale/dine-guidance).
+
 ### Deny policies also audit
 
 Numerous deny policies, constituting a part of the ALZ deployment, inherently carry out an action (i.e., denying the action). Nonetheless, it is critical to recognize that these policies additionally incorporate an auditing capability, particularly for pre-existing resources that remain unremediated or are inherently unremediable in instances of deny policies.
