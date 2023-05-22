@@ -14,7 +14,11 @@ At this time, the owners of Azure features/services are reworking their policies
 
 Check back here for updates, and be sure to bookmark [What's New](https://aka.ms/alz/whatsnew) to see the latest updates to ALZ.
 
-To view the current list of GitHub issues related to diagnostic settings, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area%3A%20Diagnostic%20Settings).
+To view the current list of GitHub issues related to diagnostic settings, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area:%20Diagnostic%20Settings).
+
+### Azure Monitor Agent (May 2023)
+
+Similarly, as Microsoft Monitor Agent (MMA) is on a deprecation path, Azure Monitor Agent (AMA) is the recommended replacement. AMA is currently in preview, and we are working with the product group to ensure that the policies are updated as soon as possible. Some policies are ready, however, the initiative to activate all components is still being worked on.
 
 ### Sovereign Clouds
 
