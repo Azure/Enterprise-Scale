@@ -89,7 +89,7 @@ Please see our [**security policy**](https://github.com/Azure/Enterprise-Scale/s
 
 Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones. The policies used in the reference implementations are mastered from the Enterprise-Scale repository.
 
-To work with policies, they are location in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization).
+To work with policies, they are located in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization).
 
 To create a new policy, it is worth taking the framework from an already existing policy.
 
@@ -111,7 +111,7 @@ Deny policies are used to prevent the creation/action of and on Azure resources.
 
 Deploy follows the DeployIfNotExists (DINE) methodology. Policy contribution should be named prefixed with `Deploy` - in example `Deploy-Custom-Route-Table.json`. 
 
-The naming convetion should be formatted in the following manner: `{prefix}-{resourceType}-{targetSetting}.json`.  In an example: `Deny-SqlMi-minTLS.json`.
+The naming convention should be formatted in the following manner: `{prefix}-{resourceType}-{targetSetting}.json`.  In an example: `Deny-SqlMi-minTLS.json`.
 
 When creating the naming convention for the definition, it must company with the [Naming rule and restrictions for Azure resources | Microsoft Authorization](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules#microsoftauthorization) standard.
 
@@ -168,7 +168,7 @@ Policies in `eslzArm.json` file will also need updating if wanting to assign a n
 
 ### Forking the repository and submitting a Pull Request
 
-To start contributing to this guide is it worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
+To start contributing to this guide it is worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
 
 ## Code of Conduct
 
