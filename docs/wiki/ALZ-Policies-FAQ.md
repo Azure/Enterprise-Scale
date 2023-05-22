@@ -1,7 +1,5 @@
 # ALZ Policy FAQ and Tips
 
-[toc]
-
 ## Frequently asked questions about ALZ policies
 
 There is a lot of change happening for policies in Azure, and by extension ALZ, and we have a number of common issues being raised by our customers and partners. This page is intended to address those issues.
