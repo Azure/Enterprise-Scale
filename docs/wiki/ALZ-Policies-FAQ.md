@@ -32,7 +32,7 @@ To view the current list of GitHub issues related to sovereign clouds, please se
 
 ### Enforcement mode instead of the audit effect
 
-It is strongly suggested that the enforcement mode be utilized over the audit effect for policies such as deny or deployIfNotExists. The function of the audit effect primarily serves as a brief, introductory measure to gauge the impending impacts of the policy prior to activating the enforcement mode. This mechanism is not designed to act as a perpetual solution for these categories of policies.
+It is strongly suggested that the enforcement mode be utilized over the audit effect for policies such as deny or deployIfNotExists (DINE). The function of the audit effect primarily serves as a brief, introductory measure to gauge the impending impacts of the policy prior to activating the enforcement mode. This mechanism is not designed to act as a perpetual solution for these categories of policies.
 
 By modifying the enforcement mode to a "do not enforce" state on a policy or initiative assignment, the enforcement of the effect (deny or DINE) is effectively suspended, while still maintaining the auditing of policy compliance. This strategy is particularly beneficial when seeking to deactivate deny or DINE on a policy or initiative assignment and comes highly recommended for such circumstances.
 
