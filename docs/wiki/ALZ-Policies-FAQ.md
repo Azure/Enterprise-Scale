@@ -18,11 +18,11 @@ To view the current list of GitHub issues related to diagnostic settings, please
 
 ### Sovereign Clouds
 
-We have a number of sovereign cloud related GitHub issues, and we are trying to address these issues.
+Numerous GitHub issues related to sovereign clouds are currently within our scope, and our team is actively endeavoring to resolve these concerns.
 
-Unfortunately, our team does not have access to any of the sovereign clouds to validate the policies or test the successful deployment of ALZ. Our access is limited to the public cloud due to the obvious security requirements required to get access.
+Regrettably, due to stringent security requirements inherent in sovereign cloud environments, our team lacks the necessary access privileges to validate policies or authenticate the successful deployment of ALZ. Presently, our access permissions are confined exclusively to the public cloud.
 
-As we cannot test, we are relying on the community to help us identify issues and provide feedback. We will try address issues in sovereign clouds as soon as possible (best effort), but we cannot provide any timelines for resolution.
+Given our constraints in conducting direct tests, we are dependent on the invaluable support of the broader community to assist us in identifying potential issues and offering constructive feedback. We intend to respond to issues pertaining to sovereign clouds on an "as soon as possible" basis, deploying our best efforts. However, due to the aforementioned limitations, we are unable to offer precise timelines for issue resolution.
 
 To view the current list of GitHub issues related to sovereign clouds, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area%3A%20Sovereign).
 
@@ -30,15 +30,15 @@ To view the current list of GitHub issues related to sovereign clouds, please se
 
 ### Enforcement mode instead of the audit effect
 
-We recommend that you use enforcement mode instead of the audit effect for `deny` or `deployIfNotExists` policies. The audit effect is intended to be used for a short period of time to help you understand the impact of the policy before you enable enforcement mode, the audit effect is not intended to be used as a long term solution for these types of policies.
+It is strongly suggested that the enforcement mode be utilized over the audit effect for policies such as deny or deployIfNotExists. The function of the audit effect primarily serves as a brief, introductory measure to gauge the impending impacts of the policy prior to activating the enforcement mode. This mechanism is not designed to act as a perpetual solution for these categories of policies.
 
-Changing the enforcement mode to "do not enforce" on a policy or initiative assignment prevents the effect (deny or DINE) from being enforced, but still audits compliance of the policy. This is the recommended way to disable deny or DINE on a policy or initiative assignment.
+By modifying the enforcement mode to a "do not enforce" state on a policy or initiative assignment, the enforcement of the effect (deny or DINE) is effectively suspended, while still maintaining the auditing of policy compliance. This strategy is particularly beneficial when seeking to deactivate deny or DINE on a policy or initiative assignment and comes highly recommended for such circumstances.
 
 ### Deny policies also audit
 
-There are a number of deny policies deployed as part of ALZ that automatically take an action (deny the action). However, it is worth noting that these policies also provide an auditing capability for existing resources that have not been remediated (or can't be automatically remediated in the case of deny policies).
+Numerous deny policies, constituting a part of the ALZ deployment, inherently carry out an action (i.e., denying the action). Nonetheless, it is critical to recognize that these policies additionally incorporate an auditing capability, particularly for pre-existing resources that remain unremediated or are inherently unremediable in instances of deny policies.
 
-As an example, the policy assignment `Deny the deployment of classic resources` will deny the deployment of classic resources, but it will also audit the existence of classic resources that have already been deployed. This is useful to understand the scope of the issue and to help you remediate the issue.
+For instance, consider the policy assignment Deny the deployment of classic resources. While this policy predominantly prevents the deployment of classic resources, it also performs an audit of classic resources that have been previously deployed. This functionality is instrumental in comprehending the extent of the issue at hand and thereby facilitates effective remediation efforts.
 
 ### Unassigned custom policies deployed by ALZ
 
