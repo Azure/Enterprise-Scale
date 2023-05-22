@@ -16,7 +16,7 @@ At this time, the owners of features/services are reworking their policies to co
 
 We have a number of sovereign cloud related GitHub issues, and we are trying to address these issues.
 
-Unfortunately, our team does not have access to any of the sovereign clouds to validate the policies or the successful deployment of ALZ. Our access is limited to the public cloud due to obvious security reasons. 
+Unfortunately, our team does not have access to any of the sovereign clouds to validate the policies or the successful deployment of ALZ. Our access is limited to the public cloud due to obvious security reasons.
 
 As we cannot test, we are relying on the community to help us identify issues and provide feedback. We will try address issues in sovereign clouds as soon as possible (best effort), but we cannot provide any timelines for resolution.
 
