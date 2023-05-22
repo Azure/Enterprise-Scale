@@ -69,6 +69,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated wiki documentation to so reflect the removal of the "Platform DevOps and automation" section from ALZ Portal Accelerator
 - Added support for Azure Firewall Basic SKU to Hub & Spoke and Virtual WAN deployments in the ALZ Portal Accelerator
 - Updated wiki documentation towards Subscription Vending approach for landing zone (subscription) creation
+- A brand new [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ.md) page has been added to the wiki to help answer some of the most common questions and provide some useful tips for working with ALZ policies.
 
 #### Tooling
 
