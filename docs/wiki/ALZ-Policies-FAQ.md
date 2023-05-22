@@ -6,11 +6,13 @@
 
 There is a lot of change happening for policies in Azure, and by extension ALZ, and we have a number of common issues being raised by our customers and partners. This page is intended to address those issues.
 
-### Diagnostic Settings v2
+### Diagnostic Settings v2 (May 2023)
 
-There are several issues raised here, and we acknowledge that this is a complex area that is causing a lot of pain.
+There are several issues raised around Diagnostic Settings, and we acknowledge that this is a complex area that is causing a lot of pain.
 
-At this time (May 2023), the owners of features/services are reworking their policies to comply with the new diagnostic settings v2 schema (which includes logging categories which is a major ask). New diagnostics settings policies are landing for Azure services, with dedicated policies depending on the logging target required (Log Analytics, Event Hub or storage account). We are working with the product groups to ensure that the policies are updated as soon as possible.
+At this time, the owners of Azure features/services are reworking their policies to comply with the new diagnostic settings v2 schema (which includes logging categories which is a popular ask). New diagnostics settings policies are landing for Azure services, with dedicated policies depending on the logging target required (Log Analytics, Event Hub or storage accounts). We are working with the product groups to ensure that the policies are updated as soon as possible.
+
+Check back here for updates, and be sure to bookmark [What's New](https://aka.ms/alz/whatsnew) to see the latest updates to ALZ.
 
 To view the current list of GitHub issues related to diagnostic settings, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area%3A%20Diagnostic%20Settings).
 
@@ -49,3 +51,4 @@ As a starting point reviewing ALZ provided custom policies, we recommend that yo
 Alternatively, we highly recommend you run [AzGovViz](https://github.com/JulianHayward/Azure-MG-Sub-Governance-Reporting) against your Azure estate to understand the policies that are assigned to your subscriptions and management groups, and get a tailored report that includes unassigned policies. An example, based on a vanilla ALZ deployment, is shown below:
 
 ![AzGovViz ALZ Policy example](./media/AzGovViz-ALZ-Policy.png)
+To get the full list of unassigned ALZ policies, check "# Orphaned Custom Policy definitions" in the report.
