@@ -6,7 +6,7 @@ Azure Policy and deployIfNotExist enables autonomy in the platform, and reduces 
 
 ## FAQ and Tips
 
-   We have added a dedicated [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ.md) based on common issues raised or questions asked by customers and partners.
+   We have added a dedicated [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) based on common issues raised or questions asked by customers and partners.
 
 ## Why are there custom policy definitions as part of Azure landing zones?
 
