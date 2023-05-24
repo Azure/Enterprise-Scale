@@ -4,13 +4,17 @@ Azure Policy and deployIfNotExist enables autonomy in the platform, and reduces 
 
 > Please refer to [Policy Driven Governance](https://learn.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/landing-zone/design-principles#policy-driven-governance) for further information.
 
+## FAQ and Tips
+
+   We have added a dedicated [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) based on common issues raised or questions asked by customers and partners.
+
 ## Why are there custom policy definitions as part of Azure landing zones?
 
 We work with - and learn from our customers and partners to ensure that we evolve and enhance the reference implementations to meet customer requirements. The primary approach of the policies as part of Azure landing zones is to be proactive (deployIfNotExist, and modify), and preventive (deny). We are continuously moving these policies to built-ins.
 
 ## What Azure Policies does Azure landing zone provide additionally to those already built-in?
 
-There are around 106 custom Azure Policy Definitions included and around 7 Custom Azure Policy Initiatives included as part of the Azure Landing Zones implementation that add on to those already built-in within each Azure customers tenant.
+There are around 114 custom Azure Policy Definitions included and around 12 Custom Azure Policy Initiatives included as part of the Azure Landing Zones implementation that add on to those already built-in within each Azure customers tenant.
 
 All custom Azure Policy Definitions and Initiatives are the same across all 3 implementation options for Azure landing zones; [Terraform Module](https://aka.ms/alz/tf), [Bicep Modules](https://aka.ms/alz/bicep), [Azure landing zone portal accelerator](https://aka.ms/alz#azure-landing-zone-accelerator).
 
