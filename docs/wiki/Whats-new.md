@@ -62,6 +62,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Bug fix for [AppService append sites with minimum TLS version to enforce.](https://www.azadvertizer.net/azpolicyadvertizer/Append-AppService-latestTLS.html) where the policy was preventing the creation of connection strings via API. The fix revises the policy rule logic to address the blocking issue.
 - Fixed minor grammatical errors in two policy assignments.
 - Standardized denied network resources in policy assignments for Corp and Sandbox management groups as per GH #1333.
+- Added non-compliance message to `Enforce-ALZ-Sandbox` initiative assignment.
 
 #### Docs
 
