@@ -1,6 +1,5 @@
 ## In this Section
 
-- [In this Section](#in-this-section)
 - [Updates](#updates)
   - [May 2023](#may-2023)
   - [April 2023](#april-2023)
