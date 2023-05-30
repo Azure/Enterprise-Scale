@@ -1,32 +1,36 @@
-BeforeAll {
-    Import-Module -Name $PSScriptRoot\policyunittesthelper.psm1 -Force -Verbose
-    Find-Module -Name SemVerPS | Install-Module -Force
-
-    $ModifiedPolicies = Get-ModifiedPolicies -Verbose
-    Write-Warning "These are the modified policies: $($ModifiedPolicies)"
-}
-
 Describe 'UnitTest-ModifiedPolicies' {
+    BeforeAll {
+        Import-Module -Name $PSScriptRoot\policyunittesthelper.psm1 -Force -Verbose
+        Find-Module -Name SemVerPS | Install-Module -Force
+
+        $ModifiedPolicies = Get-ModifiedPolicies -Verbose
+        Write-Warning "These are the modified policies: $($ModifiedPolicies)"
+    }
+
     Context "Validate policy metadata" {
         It "Check for valid metadata version" {
-            git checkout testing
+            $policyMetadataVersions =  @()
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
-                $policyMetadataVersion += $policyJson.properties.metadata.version
-                Write-Warning "$($policyFile) - This is the policy metadata version from the PR branch: $($policyMetadataVersion)"
+                $policyMetadataVersions += $policyJson.properties.metadata.version
+                foreach ($policyMetadataVersion in $policyMetadataVersions) {
+                    Write-Warning "$($policyFile) - This is the policy metadata version for the PR branch: $($policyMetadataVersion)"
+                }
             }
 
+            $policyMetadataVersionsMainBranch =  @()
             git checkout policy-unittests
             $ModifiedPolicies | ForEach-Object {
-                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
-                $policyFile = Split-Path $_ -Leaf
                 $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
-                $policyMetadataVersionMainBranch += $policyJsonMain.properties.metadata.version
-                Write-Warning "$($policyFile) - This is the policy metadata version from the main branch: $($policyMetadataVersionMainBranch)"
+                $policyMetadataVersionsMainBranch += $policyJsonMain.properties.metadata.version
+                foreach ($policyFile in $policyFiles) {
+                    foreach ($policyMetadataVersion in $policyMetadataVersions) {
+                        Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersion)"
+                    }
+                }
             }
-            Write-Warning ([version]$policyMetadataVersion)
-            Write-Warning ([version]$policyMetadataVersionMainBranch)
+
             ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version]$policyMetadataVersionMainBranch)
         }
 
@@ -48,7 +52,7 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $policyFile = Split-Path $_ -Leaf
                 $policyMetadataSource = $policyJson.properties.metadata.source
                 Write-Warning "$($policyFile) - This is the policy source link: $($policyMetadataSource)"
-                $policyMetadataSource | Should -BeExactly 'https://github.com/Azure/Enterprise-Scale/'
+                $policyMetadataSource | Should - 'https://github.com/Azure/Enterprise-Scale/'
             }
         }
 
@@ -85,4 +89,3 @@ Describe 'UnitTest-ModifiedPolicies' {
         }
     }
 }
-
