@@ -13,7 +13,7 @@ Describe 'UnitTest-ModifiedPolicies' {
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
-                $policyMetadataVersion = $policyJson.properties.metadata.version
+                $policyMetadataVersion += $policyJson.properties.metadata.version
                 Write-Warning "$($policyFile) - This is the policy metadata version from the PR branch: $($policyMetadataVersion)"
             }
 
@@ -22,12 +22,12 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
                 $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
-                $policyMetadataVersionMainBranch = $policyJsonMain.properties.metadata.version
+                $policyMetadataVersionMainBranch += $policyJsonMain.properties.metadata.version
                 Write-Warning "$($policyFile) - This is the policy metadata version from the main branch: $($policyMetadataVersionMainBranch)"
             }
             Write-Warning ([version]$policyMetadataVersion)
             Write-Warning ([version]$policyMetadataVersionMainBranch)
-            ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version] $policyMetadataVersionMainBranch)
+            ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version]$policyMetadataVersionMainBranch)
         }
 
         It "Check policy metadata categories" {
