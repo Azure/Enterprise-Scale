@@ -55,12 +55,16 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
-- Updated `Deploy-Diagnostics-APIMgmt.json` to support resource-specific destination table in the diagnostic setting for API Management
-- Updated `Deploy-Diagnostics-LogAnalytics.json` policy initiative with new parameter to support resource-specific destination table in the diagnostic setting for API Management
+- Updated `Deploy-Diagnostics-APIMgmt.json` to support resource-specific destination table in the diagnostic setting for API Management.
+- Updated `Deploy-Diagnostics-LogAnalytics.json` policy initiative with new parameter to support resource-specific destination table in the diagnostic setting for API Management.
 - Bug fix for `effect` for the Key Vault setting (incorrect case) in `Deploy-MDFC-Config.json` initiative.
 - Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) when a destination port array is submitted that contains port ranges that includes a denied port (22, 3389, and any others) when creating new NSG rules.
 - Bug fix for [AppService append sites with minimum TLS version to enforce.](https://www.azadvertizer.net/azpolicyadvertizer/Append-AppService-latestTLS.html) where the policy was preventing the creation of connection strings via API. The fix revises the policy rule logic to address the blocking issue.
-- Fixed minor grammatical errors in two policy assignments. 
+- Fixed minor grammatical errors in two policy assignments.
+- Deprecated policy [`Deny-MachineLearning-PublicNetworkAccess`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MachineLearning-PublicNetworkAccess.html).
+- Update initiative [`Deny-PublicPaaSEndpoints`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) to replace deprecated policy `Deny-MachineLearning-PublicNetworkAccess` with builtin [`438c38d2-3772-465a-a9cc-7a6666a275ce`](https://www.azadvertizer.net/azpolicyadvertizer/438c38d2-3772-465a-a9cc-7a6666a275ce.html).
+- Deprecated policy [`Deny-PublicEndpoint-MariaDB`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicEndpoint-MariaDB.html).
+- Update initiative [`Deny-PublicPaaSEndpoints`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) to replace deprecated policy `Deny-PublicEndpoint-MariaDB` with builtin [`fdccbe47-f3e3-4213-ad5d-ea459b2fa077`](https://www.azadvertizer.net/azpolicyadvertizer/fdccbe47-f3e3-4213-ad5d-ea459b2fa077.html) - special note: US Gov/Fairfax still uses the now deprecated policy as the builtin is not yet available.
 
 #### Docs
 
