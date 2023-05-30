@@ -43,7 +43,6 @@ Describe 'UnitTest-ModifiedPolicies' {
                 Write-Warning "$($policyFile) - These are the policy metadata categories: $($policyMetadataCategories)"
                 $policyMetadataCategories | Should -Not -BeNullOrEmpty
             }
-
         }
 
         It "Check policy metadata source" {
