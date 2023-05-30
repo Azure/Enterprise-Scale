@@ -25,8 +25,8 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyMetadataVersionsMainBranch += $policyJsonMain.properties.metadata.version
                 foreach ($policyFile in $policyFiles) {
-                    foreach ($policyMetadataVersion in $policyMetadataVersions) {
-                        Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersion)"
+                    foreach ($policyMetadataVersionsMainBranch in $policyMetadataVersionsMainBranch) {
+                        Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersionsMainBranch)"
                     }
                 }
             }
