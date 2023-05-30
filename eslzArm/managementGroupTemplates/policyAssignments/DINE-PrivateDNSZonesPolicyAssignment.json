@@ -16,6 +16,10 @@
             ],
             "defaultValue": "Default"
         },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
         "dnsZoneResourceGroupId": {
             "type": "string",
             "metadata": {
@@ -92,6 +96,11 @@
             "displayName": "Configure Azure PaaS services to use private DNS zones",
             "description": "This policy initiative is a group of policies that ensures private endpoints to Azure PaaS services are integrated with Azure Private DNS zones"
         },
+        "nonComplianceMessage": {
+            "message": "Azure PaaS services {enforcementMode} use private DNS zones.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "roleAssignmentNames": {
             "deployPrivateDnsZones": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').deployPrivateDnsZones))]"
         },
@@ -100,7 +109,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').deployPrivateDnsZones]",
             "location": "[deployment().location]",
             "identity": {
@@ -111,6 +120,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployPrivateDnsZones]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "azureFilePrivateDnsZoneId": {
                         "value": "[variables('policyParameterMapping').azureFilePrivateDnsZoneId]"
@@ -220,7 +234,7 @@
                     "azureAsrPrivateDnsZoneId": {
                         "value": "[variables('policyParameterMapping').azureAsrPrivateDnsZoneId]"
                     },
-                    "azureIoTPrivateDnsZoneId": {
+                    "azureIotPrivateDnsZoneId": {
                         "value": "[variables('policyParameterMapping').azureIotPrivateDnsZoneId]"
                     },
                     "azureKeyVaultPrivateDnsZoneId": {

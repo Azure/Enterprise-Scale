@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "listOfResourceTypesAllowed": {
+            "type": "Array",
+            "defaultValue": [
+                "microsoft.consumption/tags",
+                "microsoft.authorization/roleassignments",
+                "microsoft.authorization/roledefinitions",
+                "microsoft.authorization/policyassignments",
+                "microsoft.authorization/locks",
+                "microsoft.authorization/policydefinitions",
+                "microsoft.authorization/policysetdefinitions",
+                "microsoft.resources/tags",
+                "microsoft.authorization/roleeligibilityschedules",
+                "microsoft.authorization/roleeligibilityscheduleinstances",
+                "microsoft.authorization/roleassignmentschedules",
+                "microsoft.authorization/roleassignmentscheduleinstances"
+            ]
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "enforceAlzDecommissioned": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm')]"
+        },
+        "policyAssignmentNames": {
+            "alzDecommission": "Enforce-ALZ-Decomm",
+            "description": "This initiative will help enforce and govern subscriptions that are placed within the decommissioned Management Group as part of your Subscription decommissioning process. See https://aka.ms/alz/policies for more information.",
+            "displayName": "Enforce ALZ Decommissioned Guardrails"
+        },
+        "nonComplianceMessage": {
+            "message": "ALZ Decommissioned Guardrails {enforcementMode} be enforced.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacVMContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+        "roleAssignmentNames": {
+            "deployDecommRoles": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').alzDecommission))]"
+            }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').alzDecommission]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').enforceAlzDecommissioned]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "listOfResourceTypesAllowed": {
+                        "value": "[parameters('listOfResourceTypesAllowed')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployDecommRoles]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').alzDecommission]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').alzDecommission), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

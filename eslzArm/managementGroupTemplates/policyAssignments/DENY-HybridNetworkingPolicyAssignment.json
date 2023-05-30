@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyEffect": {
+            "type": "string",
+            "allowedValues": [
+                "Deny",
+                "Audit"
+            ],
+            "defaultValue": "Deny"
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "denyHybridNetworking": "/providers/Microsoft.Authorization/policyDefinitions/6c112d4e-5bc7-47ae-a041-ea2d9dccd749"
+        },
+        "policyAssignmentNames": {
+            "denyHybridNetworking": "Deny-HybridNetworking",
+            "description": "Denies deployment of vWAN/ER/VPN gateway resources in the Corp landing zone.",
+            "displayName": "Deny the deployment of vWAN/ER/VPN gateway resources"
+        },
+        "nonComplianceMessage": {
+            "message": "vWAN/ER/VPN gateway resources {enforcementMode} not be deployed in the Corp landing zone.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').denyHybridNetworking]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').denyHybridNetworking]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "listOfResourceTypesNotAllowed": {
+                        "value": [
+                            "microsoft.network/expressroutecircuits",
+                            "microsoft.network/expressroutegateways",
+                            "microsoft.network/expressrouteports",                            
+                            "microsoft.network/virtualwans",
+                            "microsoft.network/virtualhubs",
+                            "microsoft.network/vpngateways",
+                            "microsoft.network/p2svpngateways",                            
+                            "microsoft.network/vpnsites",
+                            "microsoft.network/virtualnetworkgateways"
+                        ]
+                    },
+                    "effect": {
+                        "value": "[parameters('policyEffect')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

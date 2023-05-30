@@ -21,26 +21,35 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
         "policyDefinitions": {
             "deployResourceDiagnostics": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics')]"
-            },
+        },
         "policyAssignmentNames": {
             "resourceDiagnostics": "Deploy-Resource-Diag",
             "description": "This policy set deploys the configurations of application Azure resources to forward diagnostic logs and metrics to an Azure Log Analytics workspace. See the list of policies of the services that are included",
             "displayName": "Deploy Diagnostic Settings to Azure Services"
-            },
+        },
+        "nonComplianceMessage": {
+            "message": "Diagnostic settings {enforcementMode} be deployed to Azure services.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
             "deployResourceRiagnostics": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').resourceDiagnostics))]"
-            }
-        },
+        }
+    },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').resourceDiagnostics]",
             "location": "[deployment().location]",
             "identity": {
@@ -51,6 +60,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployResourceDiagnostics]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "logAnalytics": {
                         "value": "[parameters('logAnalyticsResourceId')]"

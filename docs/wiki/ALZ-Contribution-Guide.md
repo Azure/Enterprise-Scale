@@ -89,37 +89,54 @@ Please see our [**security policy**](https://github.com/Azure/Enterprise-Scale/s
 
 Policies in the Azure Landing Zone reference implementations and repository are custom to Azure environments. They are definitions which are recommended when working with ALZ landing zones. The policies used in the reference implementations are mastered from the Enterprise-Scale repository.
 
-To work with policies, they are location in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization).
+To work with policies, they are located in [src/resources/Microsoft.Authorization/*](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization).
 
 To create a new policy, it is worth taking the framework from an already existing policy.
 
+#### Naming convention
+
 In ALZ Custom there is a way to name the custom policies that are used. They are prefixed with one of the following: `Append`, `Audit`, `Deny` or `Deploy`
 
-#### **Append**
+##### **Append**
 
 When contributing a custom policy based on appending resources at scale, the correct prefix would be `Append` - such as `Append-AppService-httpsonly.json`.
 
-#### **Audit**
+##### **Audit**
 
-Auditing resources at scale via policy is achievable using the correct effect inside the definition. This policy contribution should be prefixed with `Audit` - in example, `Audit-MachineLearning-PrivateEndpointId.json`. 
+Auditing resources at scale via policy is achievable using the correct effect inside the definition. This policy contribution should be prefixed with `Audit` - example, `Audit-MachineLearning-PrivateEndpointId.json`. 
 
-#### **Deny**
+##### **Deny**
 
-Deny policies are used to prevent the creation/action of and on Azure resources. Policies being created and contributed should be prefixed with 'Deny' - in example `Deny-Databricks-Sku.json`.
+Deny policies are used to prevent the creation/action of and on Azure resources. Policies being created and contributed should be prefixed with 'Deny' - example, `Deny-Databricks-Sku.json`.
 
-#### **Deploy**
+##### **Deploy**
 
-Deploy follows the DeployIfNotExists (DINE) methodology. Policy contribution should be named prefixed with `Deploy` - in example `Deploy-Custom-Route-Table.json`. 
+Deploy follows the DeployIfNotExists (DINE) methodology. Policy contribution should be named prefixed with `Deploy` - example, `Deploy-Custom-Route-Table.json`.
 
-The naming convetion should be formatted in the following manner: `{prefix}-{resourceType}-{targetSetting}.json`.  In an example: `Deny-SqlMi-minTLS.json`.
+The naming convention should be formatted in the following manner: `{prefix}-{resourceType}-{targetSetting}.json`.  In an example: `Deny-SqlMi-minTLS.json`.
 
-When creating the naming convention for the definition, it must company with the [Naming rule and restrictions for Azure resources | Microsoft Authorization](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules#microsoftauthorization) standard.
+> When creating the naming convention for the definition, it must comply with the [Naming rule and restrictions for Azure resources | Microsoft Authorization](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules#microsoftauthorization) standard.
 
-Once the `Name` in the file name and `Name` in the policy definition have been set, it is worth noting that they should not be changed as it can impact initiatives and assignments.
+Once the `Name` in the file name and `Name` in the policy definition have been set, it is worth noting that they should not be changed as it can impact initiatives and assignments, with the exception of breaking policy changes.
+
+#### Breaking changes
+
+Breaking changes are changes to the policy definition which will adversely impact a policy assignment. This can be a change to the `Name` of the policy definition, or changes to the number of parameters, for example. If this is required, it is recommended to create a new policy definition and deprecate the old one.
+
+In order to implement a breaking change, the following steps should be followed:
+
+- Deprecate the existing policy following our [deprecation guidance](./ALZ-Policies#preview-and-deprecated-policies).
+- Create the new policy definition with the breaking change, but append the policy filename and `Name` with the first octet of a new GUID.
+  - The easiest way to achieve this is to run `new-guid` in PowerShell and take the first octet of the GUID.
+  - Example: new Guid is `a02c24b6-ae14-4d84-a7b7-106ba79d7634`, so we take the first 8 characters, and add to the end of the policy name: `deny-subnet-nsg-a02c24b6`.
+- Update initiatives and assignments to use the new policy definition.
+- Update the [ALZ Deprecated Services](./wiki/ALZ-Deprecated-Services) with the policy deprecation, replacement policy and justification.
+
+#### Metadata and `policies.json`
 
 Inside of the JSON is a `metadata` section which is required for policy creation.
 
-![Policy Metadata](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policy-metadata-example.png)
+![Policy Metadata](media/policy-metadata-example.png)
 
 | Metadata Value       | Description                                                |
 |----------------------|------------------------------------------------------------|
@@ -130,7 +147,7 @@ Inside of the JSON is a `metadata` section which is required for policy creation
 
 The definition created then needs to be included in the [policies.bicep](https://github.com/Azure/Enterprise-Scale/blob/main/src/templates/policies.bicep) file inside of [src/templates/](https://github.com/Azure/Enterprise-Scale/blob/main/src/templates/) under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
 
-![Policies bicep file example 1](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policies-bicep-example.png)
+![Policies bicep file example 1](media/policies-bicep-example.png)
 
 For a policy definition, additional code should be added inside of the `loadPolicyDefinitions` variable under the correct environment:
 
@@ -142,33 +159,41 @@ For a policy set definition, additional code should be added inside of the `load
 
 The policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.
 
-Once the policy work has been completed, a pull request has been submitted to the repository:
+Once the policy work has been completed, a pull request should be submitted to the repository:
 
-![pr-example](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/pr-example.png)
+![pr-example](media/pr-example.png)
 
-Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Policies.md#versioning).
+#### Versioning
 
-For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Deprecated-Services.md) page.
+Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](./ALZ-Policies#versioning).
+
+#### Deprecation
+
+For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](./ALZ-Deprecated-Services) page.
 
 If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertiser](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
 
-![Example policy def in initiative](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/example-def-in-init.png)
+![Example policy def in initiative](media/example-def-in-init.png)
 
 Also find it in the policyDefinitions and remove reference as well:
 
-![Example policy def in initiative 2](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/example-def-in-init-2.png)
+![Example policy def in initiative 2](media/example-def-in-init-2.png)
+
+#### Escaping policy functions
 
 When working within the policy files, to read parameters which are set at the top level of the policy definition a double escape is needed for ARM. So instead of using `[parameters('someParameter')]` within the policy, you should use `[[parameters('someParameter')]` instead.
 
 > **Note:** When testing the policy manually in the portal or another deployment outside of the ALZ Accelerator (Portal), you will need to remove the double escaping, `[[`, and revert to normal ,`[`'
 
-When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Policies.md).
+#### Default assignments
+
+When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies).
 
 Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/eslzArm.json).
 
 ### Forking the repository and submitting a Pull Request
 
-To start contributing to this guide is it worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
+To start contributing to this repository it is worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
 
 ## Code of Conduct
 

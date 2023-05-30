@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyEffect": {
+            "type": "string",
+            "allowedValues": [
+                "Deny",
+                "Audit"
+            ],
+            "defaultValue": "Deny"
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "denyClassicResources": "/providers/Microsoft.Authorization/policyDefinitions/6c112d4e-5bc7-47ae-a041-ea2d9dccd749"
+        },
+        "policyAssignmentNames": {
+            "denyClassicResources": "Deny-Classic-Resources",
+            "description": "Denies deployment of classic resource types under the assigned scope.",
+            "displayName": "Deny the deployment of classic resources"
+        },
+        "nonComplianceMessage": {
+            "message": "Classic resources {enforcementMode} not be deployed.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').denyClassicResources]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').denyClassicResources]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "listOfResourceTypesNotAllowed": {
+                        "value": [
+                            "Microsoft.ClassicCompute/capabilities",
+                            "Microsoft.ClassicCompute/checkDomainNameAvailability",
+                            "Microsoft.ClassicCompute/domainNames",
+                            "Microsoft.ClassicCompute/domainNames/capabilities",
+                            "Microsoft.ClassicCompute/domainNames/internalLoadBalancers",
+                            "Microsoft.ClassicCompute/domainNames/serviceCertificates",
+                            "Microsoft.ClassicCompute/domainNames/slots",
+                            "Microsoft.ClassicCompute/domainNames/slots/roles",
+                            "Microsoft.ClassicCompute/domainNames/slots/roles/metricDefinitions",
+                            "Microsoft.ClassicCompute/domainNames/slots/roles/metrics",
+                            "Microsoft.ClassicCompute/moveSubscriptionResources",
+                            "Microsoft.ClassicCompute/operatingSystemFamilies",
+                            "Microsoft.ClassicCompute/operatingSystems",
+                            "Microsoft.ClassicCompute/operations",
+                            "Microsoft.ClassicCompute/operationStatuses",
+                            "Microsoft.ClassicCompute/quotas",
+                            "Microsoft.ClassicCompute/resourceTypes",
+                            "Microsoft.ClassicCompute/validateSubscriptionMoveAvailability",
+                            "Microsoft.ClassicCompute/virtualMachines",
+                            "Microsoft.ClassicCompute/virtualMachines/diagnosticSettings",
+                            "Microsoft.ClassicCompute/virtualMachines/metricDefinitions",
+                            "Microsoft.ClassicCompute/virtualMachines/metrics",
+                            "Microsoft.ClassicInfrastructureMigrate/classicInfrastructureResources",
+                            "Microsoft.ClassicNetwork/capabilities",
+                            "Microsoft.ClassicNetwork/expressRouteCrossConnections",
+                            "Microsoft.ClassicNetwork/expressRouteCrossConnections/peerings",
+                            "Microsoft.ClassicNetwork/gatewaySupportedDevices",
+                            "Microsoft.ClassicNetwork/networkSecurityGroups",
+                            "Microsoft.ClassicNetwork/operations",
+                            "Microsoft.ClassicNetwork/quotas",
+                            "Microsoft.ClassicNetwork/reservedIps",
+                            "Microsoft.ClassicNetwork/virtualNetworks",
+                            "Microsoft.ClassicNetwork/virtualNetworks/remoteVirtualNetworkPeeringProxies",
+                            "Microsoft.ClassicNetwork/virtualNetworks/virtualNetworkPeerings",
+                            "Microsoft.ClassicStorage/capabilities",
+                            "Microsoft.ClassicStorage/checkStorageAccountAvailability",
+                            "Microsoft.ClassicStorage/disks",
+                            "Microsoft.ClassicStorage/images",
+                            "Microsoft.ClassicStorage/operations",
+                            "Microsoft.ClassicStorage/osImages",
+                            "Microsoft.ClassicStorage/osPlatformImages",
+                            "Microsoft.ClassicStorage/publicImages",
+                            "Microsoft.ClassicStorage/quotas",
+                            "Microsoft.ClassicStorage/storageAccounts",
+                            "Microsoft.ClassicStorage/storageAccounts/blobServices",
+                            "Microsoft.ClassicStorage/storageAccounts/fileServices",
+                            "Microsoft.ClassicStorage/storageAccounts/metricDefinitions",
+                            "Microsoft.ClassicStorage/storageAccounts/metrics",
+                            "Microsoft.ClassicStorage/storageAccounts/queueServices",
+                            "Microsoft.ClassicStorage/storageAccounts/services",
+                            "Microsoft.ClassicStorage/storageAccounts/services/diagnosticSettings",
+                            "Microsoft.ClassicStorage/storageAccounts/services/metricDefinitions",
+                            "Microsoft.ClassicStorage/storageAccounts/services/metrics",
+                            "Microsoft.ClassicStorage/storageAccounts/tableServices",
+                            "Microsoft.ClassicStorage/storageAccounts/vmImages",
+                            "Microsoft.ClassicStorage/vmImages",
+                            "Microsoft.ClassicSubscription/operations"
+                        ]
+                    },
+                    "effect": {
+                        "value": "[parameters('policyEffect')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

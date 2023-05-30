@@ -1,0 +1,84 @@
+{
+    "name": "Enforce-ALZ-Sandbox",
+    "type": "Microsoft.Authorization/policySetDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "displayName": "Enforce policies in the Sandbox Landing Zone",
+        "description": "Enforce policies in the Sandbox Landing Zone.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Sandbox",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "listOfResourceTypesNotAllowed": {
+                "type": "Array",
+                "defaultValue": [],
+                "metadata": {
+                    "displayName": "Not allowed resource types in the Sandbox landing zone",
+                    "description": "Not allowed resource types in the Sandbox landing zone, default is none.",
+                    "strongType": "resourceTypes"
+                }
+            },
+            "effectNotAllowedResources": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny"
+            },
+            "effectDenyVnetPeering": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny"
+            }
+        },
+        "policyDefinitions": [
+            {
+                "policyDefinitionReferenceId": "SandboxNotAllowed",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/6c112d4e-5bc7-47ae-a041-ea2d9dccd749",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectNotAllowedResources')]"
+                      },
+                    "listOfResourceTypesNotAllowed": {
+                        "value": "[[parameters('listOfResourceTypesNotAllowed')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "SandboxDenyVnetPeering",
+                "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deny-VNET-Peer-Cross-Sub",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectDenyVnetPeering')]"
+                      }
+                },
+                "groupNames": []
+            }
+        ],
+        "policyDefinitionGroups": null
+    }
+}
