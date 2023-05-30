@@ -193,7 +193,7 @@ Policies in `eslzArm.json` file will also need updating if wanting to assign a n
 
 ### Forking the repository and submitting a Pull Request
 
-To start contributing to this guide it is worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
+To start contributing to this repository it is worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
 
 ## Code of Conduct
 
