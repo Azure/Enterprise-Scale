@@ -113,9 +113,9 @@ Deploy follows the DeployIfNotExists (DINE) methodology. Policy contribution sho
 
 The naming convention should be formatted in the following manner: `{prefix}-{resourceType}-{targetSetting}.json`.  In an example: `Deny-SqlMi-minTLS.json`.
 
-When creating the naming convention for the definition, it must company with the [Naming rule and restrictions for Azure resources | Microsoft Authorization](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules#microsoftauthorization) standard.
+> When creating the naming convention for the definition, it must comply with the [Naming rule and restrictions for Azure resources | Microsoft Authorization](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules#microsoftauthorization) standard.
 
-Once the `Name` in the file name and `Name` in the policy definition have been set, it is worth noting that they should not be changed as it can impact initiatives and assignments.
+Once the `Name` in the file name and `Name` in the policy definition have been set, it is worth noting that they should not be changed as it can impact initiatives and assignments, with the exception of breaking policy changes.
 
 Inside of the JSON is a `metadata` section which is required for policy creation.
 
@@ -130,7 +130,7 @@ Inside of the JSON is a `metadata` section which is required for policy creation
 
 The definition created then needs to be included in the [policies.bicep](https://github.com/Azure/Enterprise-Scale/blob/main/src/templates/policies.bicep) file inside of [src/templates/](https://github.com/Azure/Enterprise-Scale/blob/main/src/templates/) under the correct context. An additional line needs to be created under the respective variable in the file, depending on it being a policy definition or a policy set definition:
 
-![Policies bicep file example 1](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/policies-bicep-example.png)
+![Policies bicep file example 1](media/policies-bicep-example.png)
 
 For a policy definition, additional code should be added inside of the `loadPolicyDefinitions` variable under the correct environment:
 
@@ -144,25 +144,25 @@ The policy definition files will be compiled into a `policies.json` file from th
 
 Once the policy work has been completed, a pull request has been submitted to the repository:
 
-![pr-example](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/pr-example.png)
+![pr-example](media/pr-example.png)
 
-Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Policies.md#versioning).
+Policy versioning follows the same protocol as built-in policies. More information on that can be found in the [ALZ Policies document in the wiki](./ALZ-Policies#versioning).
 
-For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Deprecated-Services.md) page.
+For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](./ALZ-Deprecated-Services) page.
 
 If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertiser](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
 
-![Example policy def in initiative](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/example-def-in-init.png)
+![Example policy def in initiative](media/example-def-in-init.png)
 
 Also find it in the policyDefinitions and remove reference as well:
 
-![Example policy def in initiative 2](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/media/example-def-in-init-2.png)
+![Example policy def in initiative 2](media/example-def-in-init-2.png)
 
 When working within the policy files, to read parameters which are set at the top level of the policy definition a double escape is needed for ARM. So instead of using `[parameters('someParameter')]` within the policy, you should use `[[parameters('someParameter')]` instead.
 
 > **Note:** When testing the policy manually in the portal or another deployment outside of the ALZ Accelerator (Portal), you will need to remove the double escaping, `[[`, and revert to normal ,`[`'
 
-When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](https://github.com/Azure/Enterprise-Scale/blob/main/docs/wiki/ALZ-Policies.md).
+When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies).
 
 Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/eslzArm.json).
 

@@ -69,7 +69,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Other
 
-- Removed resources from `workloads` folder and redirected to Azure Archtiecture Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
+- Removed resources from `workloads` folder and redirected to Azure Architectures Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
 
 ### April 2023
 
