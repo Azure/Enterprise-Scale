@@ -51,6 +51,17 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### June 2023
+
+#### Policy
+
+- Fixed default assignment for SQLEncryption (DINE-SQLEncryptionPolicyAssignment) to use the correct policy definition.
+- Added new default assignment for SQLThreatDetection (DINE-SQLThreatPolicyAssignment) to use the previous policy definition from DINE-SQLEncryptionPolicyAssignment.
+
+#### Tooling
+
+- Updated Portal Accelerator tooltips to provide more relevance and links to associated policies or initiatives.
+
 ### May 2023
 
 #### Policy
