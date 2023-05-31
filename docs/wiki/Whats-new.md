@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [June 2023](#june-2023)
   - [May 2023](#may-2023)
   - [April 2023](#april-2023)
   - [March 2023](#march-2023)
