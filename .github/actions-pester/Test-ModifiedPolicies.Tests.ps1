@@ -50,7 +50,7 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $policyFile = Split-Path $_ -Leaf
                 $policyMetadataSource = $policyJson.properties.metadata.source
                 Write-Warning "$($policyFile) - This is the policy source link: $($policyMetadataSource)"
-                $policyMetadataSource | Should - 'https://github.com/Azure/Enterprise-Scale/'
+                $policyMetadataSource | Should -Be 'https://github.com/Azure/Enterprise-Scale/'
             }
         }
 
