@@ -24,10 +24,8 @@ Describe 'UnitTest-ModifiedPolicies' {
             $ModifiedPolicies | ForEach-Object {
                 $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyMetadataVersionsMainBranch += $policyJsonMain.properties.metadata.version
-                foreach ($policyFile in $policyFiles) {
-                    foreach ($policyMetadataVersionsMainBranch in $policyMetadataVersionsMainBranch) {
-                        Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersionsMainBranch)"
-                    }
+                foreach ($policyMetadataVersionMainBranch in $policyMetadataVersionsMainBranch) {
+                    Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersionMainBranch)"
                 }
             }
             # ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version]$policyMetadataVersionMainBranch)
