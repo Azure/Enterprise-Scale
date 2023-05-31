@@ -627,6 +627,15 @@
                 "No"
             ]
         },
+        "enableSqlThreat": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "enableDecommissioned": {
             "type": "string",
             "defaultValue": "No",
@@ -800,6 +809,7 @@
             "subnetNsgPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-SubnetWithoutNsgPolicyAssignment.json')]",
             "sqlAuditPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLAuditingPolicyAssignment.json')]",
             "sqlEncryptionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLEncryptionPolicyAssignment.json')]",
+            "sqlThreatPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-SQLThreatPolicyAssignment.json')]",
             "decommissionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-ALZ-DecommissionedPolicyAssignment.json')]",
             "sandboxPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-ALZ-SandboxPolicyAssignment.json')]",
             "ddosPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-DDoSPolicyAssignment.json')]",
@@ -867,6 +877,7 @@
             "sqlAuditRoleAssignmentDeploymentName1": "[take(concat('alz-SqlAuditRbac1', variables('deploymentSuffix')), 64)]",
             "sqlAuditRoleAssignmentDeploymentName2": "[take(concat('alz-SqlAuditRbac2', variables('deploymentSuffix')), 64)]",
             "sqlEncryptionPolicyDeploymentName": "[take(concat('alz-SqlEncrypt', variables('deploymentSuffix')), 64)]",
+            "sqlThreatPolicyDeploymentName": "[take(concat('alz-SqlThreat', variables('deploymentSuffix')), 64)]",
             "decommissionPolicyDeploymentName": "[take(concat('alz-DecommissionPol', variables('deploymentSuffix')), 64)]",
             "sandboxPolicyDeploymentName": "[take(concat('alz-SandboxPol', variables('deploymentSuffix')), 64)]",
             "onlineLzSubs": "[take(concat('alz-OnlineLzs', variables('deploymentSuffix')), 60)]",
@@ -2883,6 +2894,33 @@
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
                     "uri": "[variables('deploymentUris').sqlEncryptionPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning sql threat detection policy to landing zones management group if condition is true
+            "condition": "[equals(parameters('enableSqlThreat'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').sqlThreatPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').sqlThreatPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
