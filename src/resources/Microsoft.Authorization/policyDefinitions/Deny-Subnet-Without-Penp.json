@@ -5,9 +5,9 @@
   "scope": null,
   "properties": {
     "policyType": "Custom",
-    "mode": "Indexed",
+    "mode": "All",
     "displayName": "Subnets without Private Endpoint Network Policies enabled should be denied",
-    "description": "This policy denies the creation of a subnet without Private Endpoint Netwotk Policies enabled. This policy is intended from 'workload' subnets, not 'central infrastructure' (aka, 'hub') subnets.",
+    "description": "This policy denies the creation of a subnet without Private Endpoint Netwotk Policies enabled. This policy is intended for 'workload' subnets, not 'central infrastructure' (aka, 'hub') subnets.",
     "metadata": {
       "version": "1.0.0",
       "category": "Network",
@@ -48,7 +48,34 @@
     },
     "policyRule": {
       "if": {
-
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "equals": "Microsoft.Network/virtualNetworks",
+                "field": "type"
+              },
+              {
+                "count": {
+                  "field": "Microsoft.Network/virtualNetworks/subnets[*]",
+                  "where": {
+                    "allOf": [
+                      {
+                        "field": "Microsoft.Network/virtualNetworks/subnets[*].privateEndpointNetworkPolicies",
+                        "notEquals": "Enabled"
+                      },
+                      {
+                        "field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+                        "notIn": "[[parameters('excludedSubnets')]"
+                      }
+                    ]
+                  }
+                },
+                "notEquals": 0
+              }
+            ]
+          },
+          {
             "allOf": [
               {
                 "field": "type",
@@ -63,6 +90,8 @@
                 "notEquals": "Enabled"
               }
             ]
+          }
+        ]
       },
       "then": {
         "effect": "[[parameters('effect')]"
