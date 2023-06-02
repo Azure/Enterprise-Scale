@@ -2,6 +2,7 @@
 
 - [In this Section](#in-this-section)
 - [Updates](#updates)
+  - [June 2023](#june-2023)
   - [May 2023](#may-2023)
   - [April 2023](#april-2023)
   - [March 2023](#march-2023)
@@ -50,6 +51,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### June 2023
+
+#### Policy
+
+- Added new custom policy for:
+  - 'User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied'
 
 ### May 2023
 
