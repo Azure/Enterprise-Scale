@@ -95,6 +95,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Penp.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Udr.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-UDR-With-Specific-NextHop.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VNET-Peer-Cross-Sub.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VNET-Peering-To-Non-Approved-VNETs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VNet-Peering.json')
