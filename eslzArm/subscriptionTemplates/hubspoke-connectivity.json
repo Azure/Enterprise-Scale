@@ -455,6 +455,10 @@
                                                 "[concat('Microsoft.Network/publicIpAddresses/', variables('azFwIpName'))]",
                                                 "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
+                                            "if": {
+                                                "field": "parameters('firewallSku')",
+                                                "equals": "Basic"
+                                            },
                                             "properties": {
                                                 "sku": {
                                                     "name": "AZFW_VNet",
@@ -485,6 +489,28 @@
                                                     }
                                                 },
                                                 "firewallPolicy": "[variables('azFirewallPolicyId')]"
+                                            }
+                                            "else": {
+                                                "properties": {
+                                                    "sku": {
+                                                        "name": "AZFW_VNet",
+                                                        "tier": "[parameters('firewallSku')]"
+                                                    },
+                                                    "ipConfigurations": [
+                                                        {
+                                                            "name": "[variables('azFwIpName')]",
+                                                            "properties": {
+                                                                "subnet": {
+                                                                    "id": "[variables('azFwSubnetId')]"
+                                                                },
+                                                                "publicIPAddress": {
+                                                                    "id": "[variables('azFwPipId')]"
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                    "firewallPolicy": "[variables('azFirewallPolicyId')]"
+                                                }
                                             }
                                         }
                                     ]
