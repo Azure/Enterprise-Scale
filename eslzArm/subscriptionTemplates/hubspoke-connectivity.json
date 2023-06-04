@@ -179,6 +179,17 @@
         "azFwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwIpName'))]",
         "azFwMgmtSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallManagementSubnet')]",
         "azFwMgmtPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azFwMgmtIpName'))]",
+        "azFwMgmtIpConfig": {
+            "name": "[variables('azFwMgmtIpName')]",
+            "properties": {
+                "subnet": {
+                    "id": "[variables('azFwMgmtSubnetId')]"
+                },
+                "publicIPAddress": {
+                    "id": "[variables('azFwMgmtPipId')]"
+                }
+            }
+        },
         "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke', parameters('location')), 64)]",
         // Creating variable that later will be used in conjunction with the union() function to cater for conditional subnet creation while ensuring idempotency
         "gwSubnet": [
@@ -508,17 +519,7 @@
                                                         }
                                                     }
                                                 ],
-                                                "[if(equals(parameters('firewallSku'), 'Basic'), 'managementIpConfiguration', json('null'))]": {
-                                                    "name": "managementIpConfig",
-                                                    "properties": {
-                                                        "subnet": {
-                                                            "id": "[variables('azFwMgmtSubnetId')]"
-                                                        },
-                                                        "publicIPAddress": {
-                                                            "id": "[variables('azFwMgmtPipId')]"
-                                                        }
-                                                    }
-                                                },
+                                                "managementIpConfiguration": "[if(equals(parameters('firewallSku'), 'Basic'), variables('azFwMgmtIpConfig'), json('null'))]",
                                                 "firewallPolicy": "[variables('azFirewallPolicyId')]"
                                             }
                                         }                                        
