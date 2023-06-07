@@ -2,7 +2,7 @@
 
 The ARM template provided in this folder can be used to create new, connected subscriptions into the targeted management group.
 
-## Pre-requsites
+## Pre-requisites
 
 This ARM template takes a dependency on the 'Deploy-VNET-HubSpoke' policy provided by Enterprise-Scale reference implementations, and will invoke the template deployment in the policyDefinition as part of assigning the policy to the newly created landing zone (subscription).
 When deploying the Enterprise-Scale reference implementations, the definition will be located at the top level management group, and the resource Id will be "/providers/Microsoft.Management/managementGroups/<prefixProvidedDuringSetup>/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke"
