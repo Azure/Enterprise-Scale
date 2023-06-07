@@ -58,7 +58,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Fixed default assignment for SQLEncryption (DINE-SQLEncryptionPolicyAssignment) to use the correct policy definition.
 - Added new default assignment for SQLThreatDetection (DINE-SQLThreatPolicyAssignment) to use the previous policy definition from DINE-SQLEncryptionPolicyAssignment.
-- Updated the assignment DINE-LogAnalyticsPolicyAssignment to default to "DoNotEnforce". The Log Analytics workspace is deployed directly by the reference implementations, and as a result this policy is no longer required to deploy the Log Analytics workspace. Retaining the assignment for auditing purposes.
+- Updated the assignment DINE-LogAnalyticsPolicyAssignment (Deploy-Log-Analytics) to default enforcement mode to "DoNotEnforce". The Log Analytics workspace is deployed directly by the reference implementations, and as a result this policy is no longer required to deploy the Log Analytics workspace. Retaining the assignment for auditing purposes.
 
 #### Tooling
 
