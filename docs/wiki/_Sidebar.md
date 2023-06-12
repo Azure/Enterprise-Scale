@@ -29,12 +29,7 @@
   * [Deploy for Small Enterprises](./Deploying-ALZ-BasicSetup)
   * [Operating the Azure platform using AzOps (Infrastructure as Code with GitHub Actions)](./Deploying-ALZ-Platform-DevOps#operating-the-azure-platform-using-azops-infrastructure-as-code-with-github-actions)
   * [Deploy workloads](./ALZ-Deploy-workloads)
-* [Create subscriptions / landing zones using AzOps](./Create-Landingzones)
-  * [Create landing zones (subscription) using AzOps](./Create-Landingzones#create-landing-zones-subscription-using-azops)
-  * [Pre-requisites](./Create-Landingzones#pre-requisites)
-  * [Enable Service Principal to create landing zones](./Create-Landingzones#enable-service-principal-to-create-landing-zones)
-  * [ARM template repository](./Create-Landingzones#arm-template-repository)
-  * [Create a new landing zone (subscriptions)](./Create-Landingzones#create-a-new-landing-zone-subscriptions)
+* [Create landing zones (subscriptions) via Subscription Vending](./Create-Landingzones)
 * [Azure Landing Zones Deprecated Services](./ALZ-Deprecated-Services)
 * Azure Landing Zone (ALZ) Policies
   * [Policies included in Azure landing zones reference implementations](./ALZ-Policies)
