@@ -65,6 +65,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - File Services with insecure SMB channel encryption should be denied - [Deny-FileServices-InsecureSMBChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSMBChannel.html)
   - File Services with insecure SMB versions should be denied - [Deny-FileServices-InsecureSMBVersions](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSMBVersions.html)
   - File Services with insecure authentication methods should be denied - [Deny-FileServices-InsecureAuth](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureAuth.html)
+  - 'User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied'
+  - 'Storage Accounts with SFTP enabled should be denied'
+  - 'Subnets without Private Endpoint Network Policies enabled should be denied'
 
 #### Tooling
 
@@ -84,6 +87,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Update initiative [`Deny-PublicPaaSEndpoints`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) to replace deprecated policy `Deny-MachineLearning-PublicNetworkAccess` with builtin [`438c38d2-3772-465a-a9cc-7a6666a275ce`](https://www.azadvertizer.net/azpolicyadvertizer/438c38d2-3772-465a-a9cc-7a6666a275ce.html).
 - Deprecated policy [`Deny-PublicEndpoint-MariaDB`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicEndpoint-MariaDB.html).
 - Update initiative [`Deny-PublicPaaSEndpoints`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) to replace deprecated policy `Deny-PublicEndpoint-MariaDB` with builtin [`fdccbe47-f3e3-4213-ad5d-ea459b2fa077`](https://www.azadvertizer.net/azpolicyadvertizer/fdccbe47-f3e3-4213-ad5d-ea459b2fa077.html) - special note: US Gov/Fairfax still uses the now deprecated policy as the builtin is not yet available.
+
 
 #### Docs
 
