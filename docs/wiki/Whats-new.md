@@ -56,10 +56,17 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Fixed default assignment for SQLEncryption (DINE-SQLEncryptionPolicyAssignment) to use the correct policy definition.
+- Added new default assignment for SQLThreatDetection (DINE-SQLThreatPolicyAssignment) to use the previous policy definition from DINE-SQLEncryptionPolicyAssignment.
+- Updated the assignment DINE-LogAnalyticsPolicyAssignment (Deploy-Log-Analytics) to default enforcement mode to "DoNotEnforce". The Log Analytics workspace is deployed directly by the reference implementations, and as a result this policy is no longer required to deploy the Log Analytics workspace. Retaining the assignment for auditing purposes.
 - Added new custom policies for:
   - 'User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied'
   - 'Storage Accounts with SFTP enabled should be denied'
   - 'Subnets without Private Endpoint Network Policies enabled should be denied'
+
+#### Tooling
+
+- Updated Portal Accelerator tooltips to provide more relevance and links to associated policies or initiatives.
 
 ### May 2023
 
