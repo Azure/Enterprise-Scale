@@ -96,6 +96,11 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VNET-Peer-Cross-Sub.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VNET-Peering-To-Non-Approved-VNETs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-VNet-Peering.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-StorageAccount-CustomDomain.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-FileServices-InsecureKerberos.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-FileServices-InsecureSmbChannel.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-FileServices-InsecureSmbVersions.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-FileServices-InsecureAuth.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-ASC-SecurityContacts.json') // Only difference is hard-coded template deployment location (handled by this template)
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Custom-Route-Table.json') // Equivalent to "Deploy-Default-Udr" in AzureChinaCloud and AzureUSGovernment but with differences
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-DDoSProtection.json') // Only difference is hard-coded template deployment location (handled by this template)
