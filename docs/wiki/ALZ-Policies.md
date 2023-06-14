@@ -199,7 +199,7 @@ This is the parent management group for all the landing zone child management gr
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **3**     |
-| `Policy Definitions`      | **13**    |
+| `Policy Definitions`      | **14**    |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Landing Zones Management Group**.

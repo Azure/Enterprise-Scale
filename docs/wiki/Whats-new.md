@@ -60,6 +60,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new default assignment for SQLThreatDetection (DINE-SQLThreatPolicyAssignment) to use the previous policy definition from DINE-SQLEncryptionPolicyAssignment.
 - Updated the assignment DINE-LogAnalyticsPolicyAssignment (Deploy-Log-Analytics) to default enforcement mode to "DoNotEnforce". The Log Analytics workspace is deployed directly by the reference implementations, and as a result this policy is no longer required to deploy the Log Analytics workspace. Retaining the assignment for auditing purposes.
 - Added new custom policies for:
+  - Storage Accounts with custom domains assigned should be denied - [Deny-StorageAccount-CustomDomain](https://www.azadvertizer.net/azpolicyadvertizer/Deny-StorageAccount-CustomDomain.html)
+  - File Services with insecure Kerberos ticket encryption should be denied - [Deny-FileServices-InsecureKerberos](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureKerberos.html)
+  - File Services with insecure SMB channel encryption should be denied - [Deny-FileServices-InsecureSMBChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSMBChannel.html)
+  - File Services with insecure SMB versions should be denied - [Deny-FileServices-InsecureSMBVersions](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSMBVersions.html)
+  - File Services with insecure authentication methods should be denied - [Deny-FileServices-InsecureAuth](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureAuth.html)
   - 'User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied'
   - 'Storage Accounts with SFTP enabled should be denied'
   - 'Subnets without Private Endpoint Network Policies enabled should be denied'
