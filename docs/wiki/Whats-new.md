@@ -1,6 +1,5 @@
 ## In this Section
 
-- [In this Section](#in-this-section)
 - [Updates](#updates)
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
@@ -9,23 +8,7 @@
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
   - [December 2022](#december-2022)
-  - [November 2022](#november-2022)
-  - [October 2022](#october-2022)
-  - [September 2022](#september-2022)
-  - [August 2022](#august-2022)
-  - [July 2022](#july-2022)
-  - [June 2022](#june-2022)
-  - [May 2022](#may-2022)
-  - [April 2022](#april-2022)
-  - [February 2022](#february-2022)
-  - [January 2022](#january-2022)
-  - [December 2021](#december-2021)
-  - [November 2021](#november-2021)
-  - [October 2021](#october-2021)
-  - [September 2021](#september-2021)
-  - [August 2021](#august-2021)
-  - [July 2021](#july-2021)
-  - [June 2021](#june-2021)
+  - [Previous Updates](#november-2022)
 
 ---
 
@@ -79,6 +62,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated `Deploy-Diagnostics-APIMgmt.json` to support resource-specific destination table in the diagnostic setting for API Management.
 - Updated `Deploy-Diagnostics-LogAnalytics.json` policy initiative with new parameter to support resource-specific destination table in the diagnostic setting for API Management.
+- Updated `Deploy-Diagnostics-Firewall.json` to support resource-specific destination table in the diagnostic setting for Firewall
+- Updated `Deploy-Diagnostics-LogAnalytics.json` policy initiative with new parameter to support resource-specific destination table in the diagnostic setting for Firewall
+- Updated `Deploy-Diagnostics-APIMgmt.json` to support resource-specific destination table in the diagnostic setting for API Management
+- Updated `Deploy-Diagnostics-LogAnalytics.json` policy initiative with new parameter to support resource-specific destination table in the diagnostic setting for API Management
 - Bug fix for `effect` for the Key Vault setting (incorrect case) in `Deploy-MDFC-Config.json` initiative.
 - Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) when a destination port array is submitted that contains port ranges that includes a denied port (22, 3389, and any others) when creating new NSG rules.
 - Bug fix for [AppService append sites with minimum TLS version to enforce.](https://www.azadvertizer.net/azpolicyadvertizer/Append-AppService-latestTLS.html) where the policy was preventing the creation of connection strings via API. The fix revises the policy rule logic to address the blocking issue.
@@ -87,7 +74,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Update initiative [`Deny-PublicPaaSEndpoints`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) to replace deprecated policy `Deny-MachineLearning-PublicNetworkAccess` with builtin [`438c38d2-3772-465a-a9cc-7a6666a275ce`](https://www.azadvertizer.net/azpolicyadvertizer/438c38d2-3772-465a-a9cc-7a6666a275ce.html).
 - Deprecated policy [`Deny-PublicEndpoint-MariaDB`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicEndpoint-MariaDB.html).
 - Update initiative [`Deny-PublicPaaSEndpoints`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html) to replace deprecated policy `Deny-PublicEndpoint-MariaDB` with builtin [`fdccbe47-f3e3-4213-ad5d-ea459b2fa077`](https://www.azadvertizer.net/azpolicyadvertizer/fdccbe47-f3e3-4213-ad5d-ea459b2fa077.html) - special note: US Gov/Fairfax still uses the now deprecated policy as the builtin is not yet available.
-
+- Standardized denied network resources in policy assignments for Corp and Sandbox management groups as per GH #1333.
+- Added non-compliance message to `Enforce-ALZ-Sandbox` initiative assignment.
 
 #### Docs
 
@@ -101,6 +89,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added support for Azure Firewall Basic SKU to Hub & Spoke and Virtual WAN deployments in the ALZ Portal Accelerator
 - Updated wiki documentation towards Subscription Vending approach for landing zone (subscription) creation
 - A brand new [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) page has been added to the wiki to help answer some of the most common questions and provide some useful tips for working with ALZ policies.
+- Updated [ALZ Contribution Guide](./ALZ-Contribution-Guide) to include new section on how to contribute to ALZ policies resulting in breaking changes, and some minor refactoring to make it more readable.
 
 #### Tooling
 
@@ -111,7 +100,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Other
 
-- Removed resources from `workloads` folder and redirected to Azure Archtiecture Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
+- Removed resources from `workloads` folder and redirected to Azure Architectures Center page of [Deploy Azure landing zones](https://aka.ms/alz/aac)
 
 ### April 2023
 
