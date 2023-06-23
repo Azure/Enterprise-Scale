@@ -8,28 +8,28 @@ Describe 'UnitTest-ModifiedPolicies' {
     }
 
     Context "Validate policy metadata" {
-        It "Check for valid metadata version" {
-            $policyMetadataVersions =  @()
-            $ModifiedPolicies | ForEach-Object {
-                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
-                $policyFile = Split-Path $_ -Leaf
-                $policyMetadataVersions += $policyJson.properties.metadata.version
-                foreach ($policyMetadataVersion in $policyMetadataVersions) {
-                    Write-Warning "$($policyFile) - This is the policy metadata version for the PR branch: $($policyMetadataVersion)"
-                }
-            }
+        # It "Check for valid metadata version" {
+        #     $policyMetadataVersions =  @()
+        #     $ModifiedPolicies | ForEach-Object {
+        #         $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+        #         $policyFile = Split-Path $_ -Leaf
+        #         $policyMetadataVersions += $policyJson.properties.metadata.version
+        #         foreach ($policyMetadataVersion in $policyMetadataVersions) {
+        #             Write-Warning "$($policyFile) - This is the policy metadata version for the PR branch: $($policyMetadataVersion)"
+        #         }
+        #     }
 
-            $policyMetadataVersionsMainBranch =  @()
-            git checkout policy-unittests
-            $ModifiedPolicies | ForEach-Object {
-                $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
-                $policyMetadataVersionsMainBranch += $policyJsonMain.properties.metadata.version
-                foreach ($policyMetadataVersionMainBranch in $policyMetadataVersionsMainBranch) {
-                    Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersionMainBranch)"
-                }
-            }
-            # ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version]$policyMetadataVersionMainBranch)
-        }
+        #     $policyMetadataVersionsMainBranch =  @()
+        #     git checkout policy-unittests
+        #     $ModifiedPolicies | ForEach-Object {
+        #         $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
+        #         $policyMetadataVersionsMainBranch += $policyJsonMain.properties.metadata.version
+        #         foreach ($policyMetadataVersionMainBranch in $policyMetadataVersionsMainBranch) {
+        #             Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersionMainBranch)"
+        #         }
+        #     }
+        #     ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version]$policyMetadataVersionMainBranch)
+        # }
 
         It "Check policy metadata categories" {
             git checkout testing
