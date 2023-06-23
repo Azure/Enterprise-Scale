@@ -56,6 +56,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated Portal Accelerator tooltips to provide more relevance and links to associated policies or initiatives.
 
+#### Other
+
+- When the option to deploy Log Analytics workspace and enable monitoring is enabled (Yes) in the Platform management, security, and governance section, Diagnostic Settings for Management Groups are also deployed. 
+
 ### May 2023
 
 #### Policy
