@@ -1,0 +1,66 @@
+{
+    "name": "Deny-FileServices-InsecureAuth",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+      "policyType": "Custom",
+      "mode": "All",
+      "displayName": "File Services with insecure authentication methods should be denied",
+      "description": "This policy denies the use of insecure authentication methods (NTLMv2) when using File Services on a storage account.",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Storage",
+        "source": "https://github.com/Azure/Enterprise-Scale/",
+        "alzCloudEnvironments": [
+          "AzureCloud",
+          "AzureChinaCloud",
+          "AzureUSGovernment"
+        ]
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Deny",
+          "allowedValues": [
+            "Audit",
+            "Deny",
+            "Disabled"
+          ],
+          "metadata": {
+            "displayName": "Effect",
+            "description": "The effect determines what happens when the policy rule is evaluated to match"
+          }
+        },
+        "notAllowedAuthMethods": {
+          "type": "String",
+          "defaultValue": "NTLMv2",
+          "allowedValues": [
+            "NTLMv2",
+            "Kerberos"
+          ],
+          "metadata": {
+            "displayName": "Authentication methods supported by server. Valid values are NTLMv2, Kerberos.",
+            "description": "The list of channelEncryption not allowed."
+          }
+         }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "Microsoft.Storage/storageAccounts/fileServices/protocolSettings.smb.authenticationMethods",
+              "contains": "[[parameters('notAllowedAuthMethods')]"
+            },
+            {
+              "field": "type",
+              "equals": "Microsoft.Storage/storageAccounts/fileServices"
+            }
+          ]
+        },
+        "then": {
+          "effect": "[[parameters('effect')]"
+        }
+      }
+    }
+  }
