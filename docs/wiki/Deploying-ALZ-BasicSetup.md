@@ -202,7 +202,7 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
   - **Select Availability Zones for the Azure Firewall**:
 
-    In this tutorial you will deploy a zone-redudant Azure Firewall.
+    In this tutorial you will deploy a zone-redundant Azure Firewall.
 
     **Select two or more zones** to configure your Azure Firewall deployment to span multiple [Availability Zones](https://learn.microsoft.com/en-us/azure/firewall/features#availability-zones) (recommended for increased availability).
 
