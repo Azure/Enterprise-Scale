@@ -1,38 +1,40 @@
 Describe 'UnitTest-ModifiedPolicies' {
     BeforeAll {
-        Import-Module -Name $PSScriptRoot\policyunittesthelper.psm1 -Force -Verbose
-        Find-Module -Name SemVerPS | Install-Module -Force
+        Import-Module -Name $PSScriptRoot\PolicyPesterTestHelper.psm1 -Force -Verbose
+        Install-Module -Name "SemVerPS" -Force
 
         $ModifiedPolicies = Get-ModifiedPolicies -Verbose
         Write-Warning "These are the modified policies: $($ModifiedPolicies)"
     }
 
     Context "Validate policy metadata" {
-        # It "Check for valid metadata version" {
-        #     $policyMetadataVersions =  @()
-        #     $ModifiedPolicies | ForEach-Object {
-        #         $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
-        #         $policyFile = Split-Path $_ -Leaf
-        #         $policyMetadataVersions += $policyJson.properties.metadata.version
-        #         foreach ($policyMetadataVersion in $policyMetadataVersions) {
-        #             Write-Warning "$($policyFile) - This is the policy metadata version for the PR branch: $($policyMetadataVersion)"
-        #         }
-        #     }
 
-        #     $policyMetadataVersionsMainBranch =  @()
-        #     git checkout policy-unittests
-        #     $ModifiedPolicies | ForEach-Object {
-        #         $policyJsonMain = Get-Content -Path $_ -Raw | ConvertFrom-Json
-        #         $policyMetadataVersionsMainBranch += $policyJsonMain.properties.metadata.version
-        #         foreach ($policyMetadataVersionMainBranch in $policyMetadataVersionsMainBranch) {
-        #             Write-Warning "$($policyFile) - This is the policy metadata version for the main branch: $($policyMetadataVersionMainBranch)"
-        #         }
-        #     }
-        #     ([version]$policyMetadataVersion) | Should -BeGreaterThan ([version]$policyMetadataVersionMainBranch)
-        # }
+        It "Check policy metadata version exists" {
+            $ModifiedPolicies | ForEach-Object {
+                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $policyMetadataVersion = $policyJson.properties.metadata.version
+                $policyMetadataVersion | Should -Not -BeNullOrEmpty
+            }
+        }
 
-        It "Check policy metadata categories" {
-            git checkout testing
+        It "Check policy metadata version is greater than its previous version" {
+            $ModifiedPolicies | ForEach-Object {
+                $policyFile = Split-Path $_ -Leaf
+
+                $previousPolicyDefinitionRawUrl = "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/$_"
+                $previousPolicyDefinitionOutputFile = "./previous-$policyFile"
+                Invoke-WebRequest -Uri $previousPolicyDefinitionRawUrl -OutFile $previousPolicyDefinitionOutputFile
+                $PreviousPolicyDefinitionsFile = Get-Content $previousVersionOutputFile -Raw | ConvertFrom-Json
+                $PreviousPolicyDefinitionsFileVersion = $PreviousPolicyDefinitionsFile.properties.metadata.version
+
+                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $policyMetadataVersion = $policyJson.properties.metadata.version
+                
+                $policyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
+            }
+        }
+
+        It "Check policy metadata category exists" {
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
@@ -42,7 +44,7 @@ Describe 'UnitTest-ModifiedPolicies' {
             }
         }
 
-        It "Check policy metadata source" {
+        It "Check policy metadata source is set to Enterprise-Scale repo" {
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
@@ -52,7 +54,7 @@ Describe 'UnitTest-ModifiedPolicies' {
             }
         }
 
-        It "Check policy metadata alzenvironments" {
+        It "Check policy metadata ALZ Environments are specified for Public, US Gov or China Clouds" {
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
@@ -64,7 +66,7 @@ Describe 'UnitTest-ModifiedPolicies' {
         }
     }
     Context "Validate policy parameters" {
-        It 'Check for parameter default values' {
+        It 'Check for policy parameters have default values' {
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyFile = Split-Path $_ -Leaf
