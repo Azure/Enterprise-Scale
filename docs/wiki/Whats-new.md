@@ -51,6 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - 'User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied'
   - 'Storage Accounts with SFTP enabled should be denied'
   - 'Subnets without Private Endpoint Network Policies enabled should be denied'
+- Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) not enforcing deny effect when a deployment includes rules defined in network security group properties.
 
 #### Tooling
 
