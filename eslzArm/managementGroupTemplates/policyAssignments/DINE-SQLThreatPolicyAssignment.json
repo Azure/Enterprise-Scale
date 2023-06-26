@@ -19,58 +19,59 @@
         "nonComplianceMessagePlaceholder": {
             "type": "string",
             "defaultValue": "{enforcementMode}"
-        },
-        "listOfResourceTypesNotAllowed": {
-            "type": "Array",
-            "defaultValue": [
-                "microsoft.network/expressroutecircuits",
-                "microsoft.network/expressroutegateways",
-                "microsoft.network/expressrouteports",                            
-                "microsoft.network/virtualwans",
-                "microsoft.network/virtualhubs",
-                "microsoft.network/vpngateways",
-                "microsoft.network/p2svpngateways",                            
-                "microsoft.network/vpnsites",
-                "microsoft.network/virtualnetworkgateways"
-            ]
         }
     },
     "variables": {
         "policyDefinitions": {
-            "enforceAlzSandbox": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox')]"
+            "deploySqlThreat": "/providers/Microsoft.Authorization/policyDefinitions/36d49e87-48c4-4f2e-beed-ba4ed02b71f5"
         },
         "policyAssignmentNames": {
-            "alzSandbox": "Enforce-ALZ-Sandbox",
-            "description": "This initiative will help enforce and govern subscriptions that are placed within the Sandbox Management Group. See https://aka.ms/alz/policies for more information.",
-            "displayName": "Enforce ALZ Sandbox Guardrails"
+            "deploySqlThreat": "Deploy-SQL-Threat",
+            "description": "This policy ensures that Threat Detection is enabled on SQL Servers.",
+            "displayName": "Deploy Threat Detection on SQL servers"
         },
         "nonComplianceMessage": {
-            "message": "ALZ Sandbox Guardrails {enforcementMode} be enforced.",
+            "message": "Threat Detection {enforcementMode} be deployed on SQL servers.",
             "Default": "must",
             "DoNotEnforce": "should"
+        },
+        "rbacSQLSecMan": "056cd41c-7e88-42e1-933e-88ba6a50c9c3",
+        "roleAssignmentNames": {
+            "deploySqlThreat": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlThreat))]"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
-            "name": "[variables('policyAssignmentNames').alzSandbox]",
+            "name": "[variables('policyAssignmentNames').deploySqlThreat]",
             "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
-                "policyDefinitionId": "[variables('policyDefinitions').enforceAlzSandbox]",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySqlThreat]",
                 "enforcementMode": "[parameters('enforcementMode')]",
                 "nonComplianceMessages": [
                     {
                         "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
                     }
-                ],
-                "parameters": {
-                    "listOfResourceTypesNotAllowed": {
-                        "value": "[parameters('listOfResourceTypesNotAllowed')]"
-                    }
-                }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deploySqlThreat]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deploySqlThreat]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacSQLSecMan'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlThreat), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
     ],

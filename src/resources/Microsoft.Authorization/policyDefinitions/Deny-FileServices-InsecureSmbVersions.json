@@ -1,0 +1,70 @@
+{
+    "name": "Deny-FileServices-InsecureSmbVersions",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+      "policyType": "Custom",
+      "mode": "All",
+      "displayName": "File Services with insecure SMB versions should be denied",
+      "description": "This policy denies the use of insecure versions of SMB (2.1 & 3.0) when using File Services on a storage account.",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Storage",
+        "source": "https://github.com/Azure/Enterprise-Scale/",
+        "alzCloudEnvironments": [
+          "AzureCloud",
+          "AzureChinaCloud",
+          "AzureUSGovernment"
+        ]
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Deny",
+          "allowedValues": [
+            "Audit",
+            "Deny",
+            "Disabled"
+          ],
+          "metadata": {
+            "displayName": "Effect",
+            "description": "The effect determines what happens when the policy rule is evaluated to match"
+          }
+        },
+        "allowedSmbVersion": {
+          "type": "String",
+          "defaultValue": "SMB3.1.1",
+          "allowedValues": [
+            "SMB2.1",
+            "SMB3.0",
+            "SMB3.1.1"
+          ],
+          "metadata": {
+            "displayName": "Allowed SMB Version",
+            "description": "The allowed SMB version for maximum security"
+          }
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "equals": "Microsoft.Storage/storageAccounts/fileServices"
+            },
+            {
+              "not":
+                {
+                  "field": "Microsoft.Storage/storageAccounts/fileServices/protocolSettings.smb.versions",
+                  "contains": "[[parameters('allowedSmbVersion')]"
+                }
+            }
+          ]
+        },
+        "then": {
+          "effect": "[[parameters('effect')]"
+        }
+      }
+    }
+  }
