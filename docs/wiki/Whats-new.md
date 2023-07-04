@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [July 2023](#july-2023)
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
   - [April 2023](#april-2023)
@@ -34,6 +35,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+
+### July 2023
+
+#### Tooling
+
+- Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator based on feedback from [#1370](https://github.com/Azure/Enterprise-Scale/issues/1370) by removing the DNS proxy option when selecting the `Basic` SKU
 
 ### June 2023
 
