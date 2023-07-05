@@ -33,4 +33,15 @@ jobs:
       - name: Pester Test for Modified Policies
         shell: pwsh
         run: |
-          Invoke-Pester .github\actions-pester\Test-ModifiedPolicies.Tests.ps1 -PassThru
+          Import-Module Pester -Force
+            $pesterConfiguration = @{
+              Run    = @{
+                Container = New-PesterContainer -Path "./.github/actions-pester/Test-ModifiedPolicies.Tests.ps1"
+                PassThru  = $true
+              }
+              Output = @{
+                Verbosity = 'Detailed'
+              }
+            }
+            $result = Invoke-Pester -Configuration $pesterConfiguration
+            exit $result.FailedCount
