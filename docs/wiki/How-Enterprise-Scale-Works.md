@@ -92,7 +92,7 @@ By default, all recommended settings and resources recommendations are enabled a
   - Azure Security Center (Standard or Free tier)
 
   - Azure Sentinel
-  - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
+  - Diagnostics settings for Activity Logs, VMs, Management Groups and PaaS resources sent to Log Analytics
 
 - When deploying [**Adventure Works**](./ALZ-Deploy-reference-implementations#deploy-a-reference-implementation) or [**Contoso**](./ALZ-Deploy-reference-implementations#deploy-a-reference-implementation): An Azure subscription dedicated for **Connectivity**, which deploys core Azure networking resources such as:
 
