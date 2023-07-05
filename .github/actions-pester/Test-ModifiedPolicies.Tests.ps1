@@ -1,7 +1,6 @@
 Describe 'UnitTest-ModifiedPolicies' {
     BeforeAll {
         Import-Module -Name $PSScriptRoot\PolicyPesterTestHelper.psm1 -Force -Verbose
-        Install-Module -Name "SemVerPS" -Force -Verbose
 
         $ModifiedPolicies = Get-ModifiedPolicies -Verbose
         Write-Warning "These are the modified policies: $($ModifiedPolicies)"
@@ -12,27 +11,28 @@ Describe 'UnitTest-ModifiedPolicies' {
         It "Check policy metadata version exists" {
             $ModifiedPolicies | ForEach-Object {
                 $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $policyFile = Split-Path $_ -Leaf
                 $policyMetadataVersion = $policyJson.properties.metadata.version
+                Write-Warning "$($policyFile) - The current metadata version for the PR branch is : $($policyMetadataVersion)"
                 $policyMetadataVersion | Should -Not -BeNullOrEmpty
+
             }
         }
 
         It "Check policy metadata version is greater than its previous version" {
             $ModifiedPolicies | ForEach-Object {
                 $policyFile = Split-Path $_ -Leaf
-
+                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $previousPolicyDefinitionRawUrl = "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/$_"
                 $previousPolicyDefinitionOutputFile = "./previous-$policyFile"
                 Invoke-WebRequest -Uri $previousPolicyDefinitionRawUrl -OutFile $previousPolicyDefinitionOutputFile
-                $PreviousPolicyDefinitionsFile = Get-Content $previousVersionOutputFile -Raw | ConvertFrom-Json
+                $PreviousPolicyDefinitionsFile = Get-Content $previousPolicyDefinitionOutputFile -Raw | ConvertFrom-Json
                 $PreviousPolicyDefinitionsFileVersion = $PreviousPolicyDefinitionsFile.properties.metadata.version
-                Write-Warning "$($policyFile) - The previous metadata version is : $($PreviousPolicyDefinitionsFileVersion)"
-
-                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                Write-Warning "$($policyFile) - The current metadata version for the main branch is : $($PreviousPolicyDefinitionsFileVersion)"
                 $policyMetadataVersion = $policyJson.properties.metadata.version
-                Write-Warning "$($policyFile) - The current metadata version is : $($policyMetadataVersion)"
-
+                $policyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $policyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
+
             }
         }
 
