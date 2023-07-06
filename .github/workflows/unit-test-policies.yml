@@ -1,0 +1,49 @@
+name: Unit Test Policies
+
+##########################################
+# Start the job on PR for all branches #
+##########################################
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+    paths:
+      - "src/resources/Microsoft.Authorization/policyDefinitions/**.json"
+      - "src/resources/Microsoft.Authorization/policySetDefinitions/**.json"
+  workflow_dispatch: {}
+
+env:
+  POLICY_DIR: "src/resources/Microsoft.Authorization/policyDefinitions"
+  POLICYSET_DIR: "src/resources/Microsoft.Authorization/policySetDefinitions"
+
+jobs:
+  validate-policy-files:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Pester Test for Modified Policies
+        shell: pwsh
+        run: |
+          Import-Module Pester -Force
+            $pesterConfiguration = @{
+              Run    = @{
+                Container = New-PesterContainer -Path "./.github/actions-pester/Test-ModifiedPolicies.Tests.ps1"
+                PassThru  = $true
+              }
+              Output = @{
+                Verbosity = 'Detailed'
+              }
+            }
+            $result = Invoke-Pester -Configuration $pesterConfiguration
+            exit $result.FailedCount
