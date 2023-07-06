@@ -15,7 +15,7 @@ New Azure Policies are being developed and created by product groups that suppor
 
 Policies being deprecated:
 
-| Deprecated ALZ Policy                | Superseded by built-in policy<br>(includes link to AzAdvertizer)                                                                                               | Justification                                                            |
+| Deprecated ALZ Policy                | Superseded by policy<br>(includes link to AzAdvertizer)                                                                                               | Justification                                                            |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Deploys NSG flow logs and traffic analytics<br>ID: `Deploy-Nsg-FlowLogs`                  | [`e920df7f-9a64-4066-9b58-52684c02a091`](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) | Custom policy replaced by built-in requires less administration overhead |
 | Deploys NSG flow logs and traffic analytics to Log Analytics<br>ID: `Deploy-Nsg-FlowLogs-to-LA`            | [`e920df7f-9a64-4066-9b58-52684c02a091`](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) | Custom policy replaced by built-in requires less administration overhead |
