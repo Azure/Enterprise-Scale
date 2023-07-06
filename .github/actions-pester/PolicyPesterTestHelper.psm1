@@ -1,51 +1,31 @@
 <#
 .DESCRIPTION
-Gets a list of new policy definitions
+Uses git diff to return a list of policy definitions and policy set definition file paths.
 #>
 
-function Get-AddedPolicies
+function Get-PolicyFiles
 {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter()]
-        [String]$Policy_Dir = "$($env:POLICY_DIR)",
+        [String]$DiffFilter,
 
         [Parameter()]
-        [String]$PRBranch = "$($env:GITHUB_HEAD_REF)",
+        [String]$PolicyDir = "$($env:POLICY_DIR)",
 
         [Parameter()]
-        [int]$Counter = 0
-    )
-
-    $NewPolicies = @(git diff --name-only origin/main origin/$PRBranch -- $Policy_Dir)
-    $NewPolicies | ForEach-Object {
-        $Counter++
-        Write-Output $_
-        Write-Verbose "New Policy #${Counter}: $_"
-    }
-}
-
-function Get-ModifiedPolicies
-{
-    [CmdletBinding(SupportsShouldProcess)]
-    param (
-        [Parameter()]
-        [String]$Policy_Dir = "$($env:POLICY_DIR)",
+        [String]$PolicySetDir = "$($env:POLICYSET_DIR)",
 
         [Parameter()]
         [String]$PRBranch = "$($env:GITHUB_HEAD_REF)"
     )
 
-    $NewPolicies = @(git diff --diff-filter=M --name-only policy-unittests testing -- C:\Repos\ALZ\Enterprise-Scale\src\resources\Microsoft.Authorization\policyDefinitions)
-    $NewPolicies | ForEach-Object {
-        Write-Output $_    
-    }
-}
+    $PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only main $PRBranch -- $PolicyDir)
+    $PolicySetsFiles = @(git diff --diff-filter=$DiffFilter --name-only main $PRBranch -- $PolicySetDir)
 
-function report
-{
-    process
-    {
-        $_ | Get-Member | Out-String | Write-Host 
-    } 
+    $PolicyAndSetFiles = $PolicyFiles + $PolicySetsFiles
+
+    $PolicyAndSetFiles | ForEach-Object {
+        Write-Output $_
+    }
 }
