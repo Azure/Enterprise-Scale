@@ -168,7 +168,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-SecurityAlertPolicies.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-Tde.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-vulnerabilityAssessments.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-vulnerabilityAssessments-c4327877.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-vulnerabilityAssessments-20230706.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-SqlMi-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Storage-sslEnforcement.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke.json') // Only difference is hard-coded template deployment location (handled by this template)

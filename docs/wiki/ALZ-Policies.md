@@ -387,12 +387,12 @@ Example (policy snippet of deprecated policy):
    "policyType": "Custom",
    "mode": "Indexed",
    "displayName": "[Deprecated]: Deploy SQL Database vulnerability Assessments",
-   "description": "Deploy SQL Database vulnerability Assessments when it not exist in the deployment. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments-c4327877.html",
+   "description": "Deploy SQL Database vulnerability Assessments when it not exist in the deployment. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments-20230706.html",
    "metadata": {
       "version": "1.0.1-deprecated",
       "category": "SQL",
       "source": "https://github.com/Azure/Enterprise-Scale/",
-      "supersededBy": "Deploy-Sql-vulnerabilityAssessments-c4327877",
+      "supersededBy": "Deploy-Sql-vulnerabilityAssessments-20230706",
       "alzCloudEnvironments": [
          "AzureCloud",
          "AzureChinaCloud",
