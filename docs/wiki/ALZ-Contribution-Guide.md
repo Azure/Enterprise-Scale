@@ -128,8 +128,35 @@ In order to implement a breaking change, the following steps should be followed:
 - Deprecate the existing policy following our [deprecation guidance](./ALZ-Policies#preview-and-deprecated-policies).
 - Create the new policy definition with the breaking change, but append the policy filename and policy `Name` with the date the new policy is created formatted as `_YYYYMMDD`. The underscore is important.
   - Example: add date to the end of the policy name: `deny-subnet-nsg_20230701`.
+- Add metadata property to the new policy definition with `replacesPolicy` and the name of the policy being deprecated.
+  - Example: `"replacesPolicy": "deny-subnet-nsg"`
 - Update initiatives and assignments to use the new policy definition.
 - Update the [ALZ Deprecated Services](./wiki/ALZ-Deprecated-Services) with the policy deprecation, replacement policy and justification.
+
+Example snippet from a new policy:
+
+```json
+  "name": "Deploy-Sql-vulnerabilityAssessments_20230706",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "Deploy SQL Database Vulnerability Assessments",
+    "description": "Deploy SQL Database Vulnerability Assessments when it does not exist in the deployment, and save results to the storage account specified in the parameters.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "SQL",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "replacesPolicy": "Deploy-Sql-vulnerabilityAssessments",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    }
+```
 
 #### Metadata and `policies.json`
 
