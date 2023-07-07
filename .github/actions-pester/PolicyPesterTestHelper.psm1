@@ -26,6 +26,6 @@ function Get-PolicyFiles
     $PolicyAndSetFiles = $PolicyFiles + $PolicySetsFiles
 
     $PolicyAndSetFiles | ForEach-Object {
-        Write-Output $_
+        return $_
     }
 }
