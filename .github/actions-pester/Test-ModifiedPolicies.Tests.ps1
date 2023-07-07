@@ -2,7 +2,7 @@ Describe 'UnitTest-ModifiedPolicies' {
     BeforeAll {
         Import-Module -Name $PSScriptRoot\PolicyPesterTestHelper.psm1 -Force -Verbose
 
-        $ModifiedFiles = Get-PolicyFiles -DiffFilter "M"
+        $ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
         if ($ModifiedFiles -ne $null)
         {
             Write-Warning "These are the modified policies: $($ModifiedFiles)"
@@ -12,7 +12,7 @@ Describe 'UnitTest-ModifiedPolicies' {
             Write-Warning "There are no modified policies"
         }
 
-        $AddedFiles = Get-PolicyFiles -DiffFilter "A"
+        $AddedFiles = @(Get-PolicyFiles -DiffFilter "A")
         if ($AddedFiles -ne $null)
         {
             Write-Warning "These are the added policies: $($AddedFiles)"
