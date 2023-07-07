@@ -39,6 +39,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### July 2023
 
+- Added new custom policy to audit Virtual Machines not using Azure Hybrid Benefit (Audit-AzureHybridBenefit)
+
 #### Tooling
 
 - Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator based on feedback from [#1370](https://github.com/Azure/Enterprise-Scale/issues/1370) by removing the DNS proxy option when selecting the `Basic` SKU
