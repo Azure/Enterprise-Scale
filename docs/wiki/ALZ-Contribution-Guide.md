@@ -126,8 +126,8 @@ Breaking changes are changes to the policy definition which will adversely impac
 In order to implement a breaking change, the following steps should be followed:
 
 - Deprecate the existing policy following our [deprecation guidance](./ALZ-Policies#preview-and-deprecated-policies).
-- Create the new policy definition with the breaking change, but append the policy filename and `Name` with the date the new policy is created formatted as `YYYYMMDD`.
-  - Example: add date to the end of the policy name: `deny-subnet-nsg-20230701`.
+- Create the new policy definition with the breaking change, but append the policy filename and policy `Name` with the date the new policy is created formatted as `_YYYYMMDD`. The underscore is important.
+  - Example: add date to the end of the policy name: `deny-subnet-nsg_20230701`.
 - Update initiatives and assignments to use the new policy definition.
 - Update the [ALZ Deprecated Services](./wiki/ALZ-Deprecated-Services) with the policy deprecation, replacement policy and justification.
 

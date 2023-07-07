@@ -379,6 +379,7 @@ Here are the changes that occur when a policy gets deprecated:
 - Display name is appended with ‘[Deprecated]: ’ prefix, so that customers have awareness to migrate or delete the policy.
 - Description gets updated to provide additional information regarding the deprecation with a link to the superseding policy.
 - Add `supersededBy` metadata property to the policy definition with the name of the superseding policy.
+- Add `deprecated` metadata property to the policy definition with value set to `true`.
 - The version number is updated with ‘-deprecated’ suffix. (see [Policy Versioning](#versioning) above).
 
 Example (policy snippet of deprecated policy):
@@ -387,12 +388,13 @@ Example (policy snippet of deprecated policy):
    "policyType": "Custom",
    "mode": "Indexed",
    "displayName": "[Deprecated]: Deploy SQL Database vulnerability Assessments",
-   "description": "Deploy SQL Database vulnerability Assessments when it not exist in the deployment. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments-20230706.html",
+   "description": "Deploy SQL Database vulnerability Assessments when it not exist in the deployment. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html",
    "metadata": {
       "version": "1.0.1-deprecated",
       "category": "SQL",
       "source": "https://github.com/Azure/Enterprise-Scale/",
-      "supersededBy": "Deploy-Sql-vulnerabilityAssessments-20230706",
+      "deprecated": true,
+      "supersededBy": "Deploy-Sql-vulnerabilityAssessments_20230706",
       "alzCloudEnvironments": [
          "AzureCloud",
          "AzureChinaCloud",
