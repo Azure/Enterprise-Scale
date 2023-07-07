@@ -40,15 +40,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
-- Fixing bug in [Deploy-Sql-vulnerabilityAssessments](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) to achieve compliance if successfully remediated. NOTE: Due to the need to change parameters, this is a breaking change. The original policy will remain in place but will be deprecated and a new policy will be deployed for the fix [Deploy-Sql-vulnerabilityAssessments_20230706](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) - please update assignments accordingly. (many thanks @Matt-FFFFFF)
+- Fixing bug in [Deploy-Sql-vulnerabilityAssessments](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) to achieve compliance if successfully remediated. NOTE: Due to the need to change parameters, this is a breaking change. The original policy will remain in place but will be deprecated and a new policy will be deployed for the fix [Deploy-Sql-vulnerabilityAssessments_20230706](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) - please update assignments accordingly - many thanks @Matt-FFFFFF.
+- Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) not enforcing deny effect when a deployment includes rules defined in network security group properties (i.e., when specifying rules when creating the NSG) -many thanks to @DavidRobson.
 
 #### Tooling
 
 - Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator based on feedback from [#1370](https://github.com/Azure/Enterprise-Scale/issues/1370) by removing the DNS proxy option when selecting the `Basic` SKU
-
-#### Policy
-
-- Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) not enforcing deny effect when a deployment includes rules defined in network security group properties (i.e., when specifying rules when creating the NSG).
 
 ### June 2023
 
