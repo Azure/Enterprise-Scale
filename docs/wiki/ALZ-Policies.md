@@ -370,13 +370,37 @@ This version is incremented according to the following rules (subject to change)
 
 This section aims to explain what it means when a built-in policy has a state of ‘preview’ or ‘deprecated’.  
 
-Policies can be in preview because a property (alias) referenced in the policy definition is in preview, or the policy is newly introduced and would like additional customer feedback. A policy may get deprecated when the property (alias) becomes deprecated & not supported in the resource type's latest API version, or when there is manual migration needed by customers due to a breaking change in a resource type's latest API version. 
+Policies can be in preview because a property (alias) referenced in the policy definition is in preview, or the policy is newly introduced and would like additional customer feedback. A policy may get deprecated when the property (alias) becomes deprecated & not supported in the resource type's latest API version, or when there is manual migration needed by customers due to a breaking change in a resource type's latest API version.
 
 When a policy gets deprecated or gets out of preview, there is no impact on existing assignments. Existing assignments continue to work as-is. The policy is still evaluated & enforced like normal and continues to produce compliance results.  
 
-Here are the changes that occur when a policy gets deprecated: 
-- Display name is appended with ‘[Deprecated]:’ prefix, so that customers have awareness to migrate or delete the policy.
-- Description gets updated to provide additional information regarding the deprecation. 
-- The version number is updated with ‘-deprecated’ suffix. (see [Policy Versioning](#versioning) above) 
+Here are the changes that occur when a policy gets deprecated:
+
+- Display name is appended with ‘[Deprecated]: ’ prefix, so that customers have awareness to migrate or delete the policy.
+- Description gets updated to provide additional information regarding the deprecation with a link to the superseding policy.
+- Add `supersededBy` metadata property to the policy definition with the name of the superseding policy.
+- Add `deprecated` metadata property to the policy definition with value set to `true`.
+- The version number is updated with ‘-deprecated’ suffix. (see [Policy Versioning](#versioning) above).
+
+Example (policy snippet of deprecated policy):
+
+```json
+   "policyType": "Custom",
+   "mode": "Indexed",
+   "displayName": "[Deprecated]: Deploy SQL Database vulnerability Assessments",
+   "description": "Deploy SQL Database vulnerability Assessments when it not exist in the deployment. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html",
+   "metadata": {
+      "version": "1.0.1-deprecated",
+      "category": "SQL",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "deprecated": true,
+      "supersededBy": "Deploy-Sql-vulnerabilityAssessments_20230706",
+      "alzCloudEnvironments": [
+         "AzureCloud",
+         "AzureChinaCloud",
+         "AzureUSGovernment"
+      ]
+   }
+```
 
 > **NOTE:** The `name` value must not change in the file through deprecation or preview.
