@@ -34,7 +34,7 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $PolicyFile = Split-Path $_ -Leaf
                 $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
-                Write-Warning "$($PolicyFile) - The current metadata version for the PR branch is : $($PolicyMetadataVersion)"
+                Write-Warning "$($PolicyFile) - The current metadata version for the policy in the PR branch is : $($PolicyMetadataVersion)"
                 $PolicyMetadataVersion | Should -Not -BeNullOrEmpty
             }
         }
@@ -48,9 +48,10 @@ Describe 'UnitTest-ModifiedPolicies' {
                 Invoke-WebRequest -Uri $PreviousPolicyDefinitionRawUrl -OutFile $PreviousPolicyDefinitionOutputFile
                 $PreviousPolicyDefinitionsFile = Get-Content $PreviousPolicyDefinitionOutputFile -Raw | ConvertFrom-Json
                 $PreviousPolicyDefinitionsFileVersion = $PreviousPolicyDefinitionsFile.properties.metadata.version
-                Write-Warning "$($PolicyFile) - The current metadata version for the main branch is : $($PreviousPolicyDefinitionsFileVersion)"
+                Write-Warning "$($PolicyFile) - The current metadata version for the policy in the main branch is : $($PreviousPolicyDefinitionsFileVersion)"
                 $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
                 $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                Write-Warning "$($PolicyFile) - The current metadata version for the policy in the PR branch is : $($PolicyMetadataVersion)"
                 $PolicyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
             }
         }
