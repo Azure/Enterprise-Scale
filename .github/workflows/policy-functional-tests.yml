@@ -1,31 +1,31 @@
 name: Functional Test for Policies
 on:
-    pull_request_target:
-      types:
-        - opened
-        - reopened
-        - synchronize
-        - ready_for_review
-      paths:
-        - "src/**.json"
-        - "src/**.bicep"
-    workflow_dispatch:
-      inputs:
-        remarks:
-          description: "Reason for triggering the workflow run"
-          required: false
-          default: "Testing Azure Policies..."
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+    paths:
+      - "tests/policy/*.tests.ps1"
+      - "src/resources/Microsoft.Authorization/policyDefinitions/**.json"
+      - "src/resources/Microsoft.Authorization/policySetDefinitions/**.json"
+  workflow_dispatch: {}
+
 jobs:
-  test-policies:
+  validate-policy-files:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
         with:
-            fetch-depth: 0
-            ref: ${{github.event.pull_request.head.ref}}
-            repository: ${{github.event.pull_request.head.repo.full_name}}
-      - name: Test Azure Policies
+          fetch-depth: 0
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - name: Pester Test for Modified Policies
         shell: pwsh
         run: |
           Invoke-Pester -Output Detailed -CI -Path "./tests/policy/*.tests.ps1"
