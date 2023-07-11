@@ -1,8 +1,8 @@
 Import-Module -Name Az.Network
 Import-Module -Name Az.Resources
-Import-Module "Policy.Utils.psm1" -Force
-Import-Module "Rest.Utils.psm1" -Force
-Import-Module "Test.Utils.psm1" -Force
+Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
+Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
+Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 
 Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-from-internet" {
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
