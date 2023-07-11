@@ -1,6 +1,6 @@
 Import-Module -Name Az.Network
 Import-Module -Name Az.Resources
-Import-Module "$($PSScriptRoot)/tests/utils/Policy.Utils.psm1" -Force
+Import-Module "/tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/tests/utils/Test.Utils.psm1" -Force
 
