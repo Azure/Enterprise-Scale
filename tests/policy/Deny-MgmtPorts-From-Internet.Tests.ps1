@@ -33,7 +33,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-MgmtPorts-From-Internet' }
         #$policyAssignment = Get-AzPolicyAssignment -Scope $mangementGroupScope -Name "TDeny-MgmtPorts-Internet"
         #if ($policyAssignment -eq $null) {
-            New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $env:SUBSCRIPTION_ID -PolicyDefinition $definition -PolicyParameterObject @{
+            New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope "/subscriptions/$env:SUBSCRIPTION_ID" -PolicyDefinition $definition -PolicyParameterObject @{
                 "ports" = @("3389", "22")
             }
         #}
