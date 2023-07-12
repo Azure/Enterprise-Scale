@@ -1,8 +1,51 @@
+[CmdletBinding()]
+param (
+    [Parameter()][String]$AlzToolsPath = "../../src/Alz.Tools",
+    [Parameter()][String]$DeploymentConfigPath = "$($env:TEMP_DEPLOYMENT_OBJECT_PATH)",
+    [Parameter()][String]$SubscriptionConfigPath = "$($env:TEMP_SUBSCRIPTIONS_JSON_PATH)",
+    [Parameter()][String]$RootId,
+    [Parameter()][String]$esCompanyPrefix
+)
+
 Import-Module -Name Az.Network
 Import-Module -Name Az.Resources
 Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
+
+BeforeAll {
+    
+    # Set the default context for Az commands.
+    Set-AzContext -SubscriptionId $env:SUBSCRIPTION_ID -TenantId $env:TENANT_ID -Force
+
+    if (-not [String]::IsNullOrEmpty($DeploymentConfigPath)) {
+        Write-Information "==> Loading deployment configuration from : $DeploymentConfigPath"
+        $deploymentObject = Get-Content -Path $DeploymentConfigPath | ConvertFrom-Json -AsHashTable
+        # Set the RootId from the deployment configuration if not specified
+        if ([String]::IsNullOrEmpty($RootId)) {
+            $RootId = $deploymentObject.Name
+            Write-Information "==> Set rootId [$RootId] from deployment configuration"
+        }
+        # $maxParameterKeyLength = (
+        #     $deploymentObject.TemplateParameterObject.Keys |
+        #     ForEach-Object { $_.Length } |
+        #     Measure-Object -Maximum
+        # ).Maximum
+        # $deploymentObject.TemplateParameterObject.Keys | Sort-Object | ForEach-Object {
+        #     Write-Information "[Parameter] $($_.PadRight($maxParameterKeyLength, ' ')) : $($deploymentObject.TemplateParameterObject[$_])"
+        # }
+        $esCompanyPrefix = $deploymentObject.TemplateParameterObject.enterpriseScaleCompanyPrefix
+        $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix/$esCompanyPrefix-landingzones/$esCompanyPrefix-corp"
+    }
+
+    $policyAssignment = Get-AzPolicyAssignment -Scope $mangementGroupScope -Name "Deny-MgmtPorts-From-Internet"
+    if ($policyAssignment -eq $null) {
+        New-AzPolicyAssignment -Name "Test=Deny-MgmtPorts-From-Internet" -Scope $mangementGroupScope -PolicyParameterObject @{
+            "ports" = "3389, 22"
+        } 
+    }
+
+}
 
 Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-from-internet" {
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
