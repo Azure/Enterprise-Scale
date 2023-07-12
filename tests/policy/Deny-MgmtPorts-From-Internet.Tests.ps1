@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param (
     # [Parameter()][String]$AlzToolsPath = "./src/Alz.Tools",
-    [Parameter()][String]$DeploymentConfigPath = "$($env:TEMP_DEPLOYMENT_OBJECT_PATH)",
+    # [Parameter()][String]$DeploymentConfigPath = "$($env:TEMP_DEPLOYMENT_OBJECT_PATH)",
+    [Parameter()][String]$DeploymentConfigPath = "./src/data/eslzArm.test.deployment.json",
     # [Parameter()][String]$SubscriptionConfigPath = "$($env:TEMP_SUBSCRIPTIONS_JSON_PATH)",
     # [Parameter()][String]$RootId,
     [Parameter()][String]$esCompanyPrefix
