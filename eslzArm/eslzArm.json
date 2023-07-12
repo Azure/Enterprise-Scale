@@ -48,6 +48,54 @@
                 "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for management. If you don't want to bring a subscription, leave this parameter empty as is."
             }
         },
+        "enableMonitorConnectivity": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select connectivity resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorIdentity": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select identity resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorManagement": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select management resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorLandingZones": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "ALZMonitorResourceGroupName": {
+            "type": "string",
+            "defaultValue": "ALZ-Monitoring-RG",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Name of the resource group to be created for monitoring resources in each subscription."
+            }
+        },
+        "emailContactActionGroup": {
+            "type": "string",
+            "defaultValue": "test.user@replace.me",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Email address for alerting purposes."
+            }
+        },
         "enableAgentHealth": {
             "type": "string",
             "defaultValue": "No",
@@ -777,6 +825,7 @@
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
             "roleDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleDefinitions/customRoleDefinitions.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
+            "monitorPolicyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/monitorPolicies.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
@@ -785,6 +834,11 @@
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
+            "monitorConnectivityPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MonitorConnectivityPolicyAssignment.json')]",
+            "monitorIdentityPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MonitorIdentityPolicyAssignment.json')]",
+            "monitorManagementPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MonitorManagementPolicyAssignment.json')]",
+            "monitorLandingZonesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MonitorLandingZonesPolicyAssignment.json')]",
+            "monitorServiceHealthPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MonitorServiceHealthPolicyAssignment.json')]",
             "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsSolutions.json')]",
             "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
@@ -846,6 +900,11 @@
             "ddosLzPolicyDeploymentName": "[take(concat('alz-DDoSLZPolicy', variables('deploymentSuffix')), 64)]",
             "monitoringDeploymentName": "[take(concat('alz-Monitoring', variables('deploymentSuffix')), 64)]",
             "logAnalyticsPolicyDeploymentName": "[take(concat('alz-LAPolicy', variables('deploymentSuffix')), 64)]",
+            "monitorConnectivityDeploymentName": "[take(concat('alz-ConnectivityMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorIdentityDeploymentName": "[take(concat('alz-IdentityMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorManagementDeploymentName": "[take(concat('alz-ManagementMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorLandingZonesDeploymentName": "[take(concat('alz-LandingZonesMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorSvcHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
             "monitoringSolutionsDeploymentName": "[take(concat('alz-Solutions', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -1182,6 +1241,30 @@
             }
         },
         {
+            // Deploying ESLZ monitor custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').policyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorPolicyDefinitions]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
             // One of Azure's untold stories.....
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -1429,6 +1512,149 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning connectivity monitor initiative to connectivity management group if condition is true
+            "condition": "[equals(parameters('enableMonitorConnectivity'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitorConnectivityDeploymentName]",
+            "scope": "[variables('scopes').connectivityManagementGroup",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorConnectivityPolicyAssignment]"
+                },
+                "parameters": {
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('ALZMonitorResourceGroupName')]"
+                    },                    
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning identity monitor initiative to identity management group if condition is true
+            "condition": "[equals(parameters('enableMonitorIdentity'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitorIdentityDeploymentName]",
+            "scope": "[variables('scopes').identityManagementGroup",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorIdentityPolicyAssignment]"
+                },
+                "parameters": {
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('ALZMonitorResourceGroupName')]"
+                    },                    
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Management monitor initiative to Management management group if condition is true
+            "condition": "[equals(parameters('enableMonitorManagement'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitorManagementDeploymentName]",
+            "scope": "[variables('scopes').ManagementManagementGroup",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorManagementPolicyAssignment]"
+                },
+                "parameters": {
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('ALZMonitorResourceGroupName')]"
+                    },                    
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning LandingZones monitor initiative to LandingZones management group if condition is true
+            "condition": "[equals(parameters('enableMonitorLandingZones'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitorLandingZonesDeploymentName]",
+            "scope": "[variables('scopes').LandingZonesManagementGroup",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorLandingZonesPolicyAssignment]"
+                },
+                "parameters": {
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('ALZMonitorResourceGroupName')]"
+                    },                    
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Serice health monitor initiative to intermediate root management group if one or more conditions is true
+            "condition": "[or(equals(parameters('enableMonitorLandingZones'), 'Yes'), equals(parameters('enableMonitorManagement'), 'Yes'), equals(parameters('enableIdentityManagement'), 'Yes'), equals(parameters('enableMonitorConnectivity'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitorServiceHealthDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorLandingZonesPolicyAssignment]"
+                },
+                "parameters": {
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('ALZMonitorResourceGroupName')]"
+                    },                    
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "ALZMonitorActionGroupEmail": {
+                        "value": "[parameters('emailContactActionGroup')]"
                     }
                 }
             }
