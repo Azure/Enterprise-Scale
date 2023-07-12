@@ -1,9 +1,9 @@
 [CmdletBinding()]
 param (
-    [Parameter()][String]$AlzToolsPath = "./src/Alz.Tools",
+    # [Parameter()][String]$AlzToolsPath = "./src/Alz.Tools",
     [Parameter()][String]$DeploymentConfigPath = "$($env:TEMP_DEPLOYMENT_OBJECT_PATH)",
-    [Parameter()][String]$SubscriptionConfigPath = "$($env:TEMP_SUBSCRIPTIONS_JSON_PATH)",
-    [Parameter()][String]$RootId,
+    # [Parameter()][String]$SubscriptionConfigPath = "$($env:TEMP_SUBSCRIPTIONS_JSON_PATH)",
+    # [Parameter()][String]$RootId,
     [Parameter()][String]$esCompanyPrefix
 )
 
@@ -24,10 +24,10 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             Write-Information "==> Loading deployment configuration from : $DeploymentConfigPath"
             $deploymentObject = Get-Content -Path $DeploymentConfigPath | ConvertFrom-Json -AsHashTable
             # Set the RootId from the deployment configuration if not specified
-            if ([String]::IsNullOrEmpty($RootId)) {
-                $RootId = $deploymentObject.Name
-                Write-Information "==> Set rootId [$RootId] from deployment configuration"
-            }
+            # if ([String]::IsNullOrEmpty($RootId)) {
+            #     $RootId = $deploymentObject.Name
+            #     Write-Information "==> Set rootId [$RootId] from deployment configuration"
+            # }
             # Set the esCompanyPrefix from the deployment configuration if not specified
             $esCompanyPrefix = $deploymentObject.TemplateParameterObject.enterpriseScaleCompanyPrefix
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
