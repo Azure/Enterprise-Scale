@@ -24,11 +24,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
         if (-not [String]::IsNullOrEmpty($DeploymentConfigPath)) {
             Write-Information "==> Loading deployment configuration from : $DeploymentConfigPath"
             $deploymentObject = Get-Content -Path $DeploymentConfigPath | ConvertFrom-Json -AsHashTable
-            # Set the RootId from the deployment configuration if not specified
-            # if ([String]::IsNullOrEmpty($RootId)) {
-            #     $RootId = $deploymentObject.Name
-            #     Write-Information "==> Set rootId [$RootId] from deployment configuration"
-            # }
+
             # Set the esCompanyPrefix from the deployment configuration if not specified
             $esCompanyPrefix = $deploymentObject.TemplateParameterObject.enterpriseScaleCompanyPrefix
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
@@ -37,14 +33,16 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-MgmtPorts-From-Internet' }
         $policyAssignment = Get-AzPolicyAssignment -Scope $mangementGroupScope -Name "TDeny-MgmtPorts-Internet"
         if ($policyAssignment -eq $null) {
-            New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject @{
+            $output = New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject @{
                 "ports" = @("3389", "22")
-            } 
+            }
+            Write-Information $output 
         }
     }
 
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
     Context "Test open ports NSG is created or updated" -Tag "deny-mgmtports-from-internet-nsg-port" {
+        
         It "Should deny non-compliant port '3389'" -Tag "deny-noncompliant-nsg-port-10" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
