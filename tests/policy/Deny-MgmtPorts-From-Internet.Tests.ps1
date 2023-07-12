@@ -1,10 +1,6 @@
 [CmdletBinding()]
 param (
-    # [Parameter()][String]$AlzToolsPath = "./src/Alz.Tools",
-    # [Parameter()][String]$DeploymentConfigPath = "$($env:TEMP_DEPLOYMENT_OBJECT_PATH)",
     [Parameter()][String]$DeploymentConfigPath = "./src/data/eslzArm.test.deployment.json",
-    # [Parameter()][String]$SubscriptionConfigPath = "$($env:TEMP_SUBSCRIPTIONS_JSON_PATH)",
-    # [Parameter()][String]$RootId,
     [Parameter()][String]$esCompanyPrefix
 )
 
@@ -31,12 +27,10 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
         }
 
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-MgmtPorts-From-Internet' }
-        #$policyAssignment = Get-AzPolicyAssignment -Scope $mangementGroupScope -Name "TDeny-MgmtPorts-Internet"
-        #if ($policyAssignment -eq $null) {
-            New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject @{
-                "ports" = @("3389", "22")
-            }
-        #}
+        New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject @{
+            "ports" = @("3389", "22")
+        }
+
     }
 
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
