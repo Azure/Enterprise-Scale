@@ -31,13 +31,12 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
         }
 
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-MgmtPorts-From-Internet' }
-        $policyAssignment = Get-AzPolicyAssignment -Scope $mangementGroupScope -Name "TDeny-MgmtPorts-Internet"
-        if ($policyAssignment -eq $null) {
-            $output = New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject @{
+        #$policyAssignment = Get-AzPolicyAssignment -Scope $mangementGroupScope -Name "TDeny-MgmtPorts-Internet"
+        #if ($policyAssignment -eq $null) {
+            New-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject @{
                 "ports" = @("3389", "22")
             }
-            Write-Information $output 
-        }
+        #}
     }
 
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
