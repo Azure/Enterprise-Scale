@@ -130,9 +130,9 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                 param($ResourceGroup)
 
                 {
-                    $sta = New-AzStorageAccount `
+                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999901" `
+                        -Name "testalzsta9999902" `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -143,11 +143,6 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
                     Start-Sleep -Seconds 60
                         
-                    while ($sta -eq $null) {
-                        $sta = Get-AzStorageAccount -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "testalzsta9999901"
-                        Start-Sleep -Seconds 15
-                    }
-
                 } | Should -Not -Throw
             }
         }
@@ -165,7 +160,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999901" `
+                        -Name "testalzsta9999902" `
                         -MinimumTlsVersion "TLS1_0" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
