@@ -47,7 +47,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     sku = $sku
                     properties = @{
                         minimumTlsVersion = "TLS1_0"
-                        allowBlobPublicAccess = false
+                        allowBlobPublicAccess = $false
                         publicNetworkAccess = "Disabled"
                     }
                     location = "uksouth"
