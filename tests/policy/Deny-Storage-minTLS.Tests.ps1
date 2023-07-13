@@ -55,7 +55,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Storage" `
                         -ResourceType "storageAccounts" `
-                        -accountName "testalzsta9999901" `
+                        -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
                         -Payload $payload
@@ -97,7 +97,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Storage" `
                         -ResourceType "storageAccounts" `
-                        -accountName "testalzsta9999901" `
+                        -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
                         -Payload $payload
@@ -138,7 +138,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Storage" `
                         -ResourceType "storageAccounts" `
-                        -accountName "testalzsta9999901" `
+                        -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
                         -Payload $payload
@@ -182,7 +182,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Storage" `
                         -ResourceType "storageAccounts" `
-                        -accountName "testalzsta9999901" `
+                        -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PATCH" `
                         -Payload $payload
