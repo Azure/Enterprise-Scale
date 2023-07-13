@@ -83,57 +83,57 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             }
         }
 
-        # It "Should allow compliant Storage Account - HTTPS Traffic only" -Tag "allow-noncompliant-storage" {
-        #     AzTest -ResourceGroup {
-        #         param($ResourceGroup)
+        It "Should allow compliant Storage Account - HTTPS Traffic only" -Tag "allow-noncompliant-storage" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
 
-        #         $sku = @{
-        #             name = "Standard_LRS"
-        #             tier = "Standard"
-        #         }
+                $sku = @{
+                    name = "Standard_LRS"
+                    tier = "Standard"
+                }
 
-        #         $object = @{
-        #             kind = "StorageV2"
-        #             sku = $sku
-        #             properties = @{
-        #                 minimumTlsVersion = "TLS1_2"
-        #                 allowBlobPublicAccess = false
-        #                 supportsHttpsTrafficOnly = false
-        #                 publicNetworkAccess = "Disabled"
-        #             }
-        #             location = "uksouth"
-        #         }
+                $object = @{
+                    kind = "StorageV2"
+                    sku = $sku
+                    properties = @{
+                        minimumTlsVersion = "TLS1_2"
+                        allowBlobPublicAccess = $false
+                        supportsHttpsTrafficOnly = $false
+                        publicNetworkAccess = "Disabled"
+                    }
+                    location = "uksouth"
+                }
 
-        #         $payload = ConvertTo-Json -InputObject $object -Depth 100
+                $payload = ConvertTo-Json -InputObject $object -Depth 100
 
-        #         # Should be disallowed by policy, so exception should be thrown.
-        #         {
-        #             $httpResponse = Invoke-AzRestMethod `
-        #                 -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                 -ResourceProviderName "Microsoft.Storage" `
-        #                 -ResourceType "storageAccounts" `
-        #                 -Name "testalzsta9999901" `
-        #                 -ApiVersion "2022-09-01" `
-        #                 -Method "PUT" `
-        #                 -AsJob `
-        #                 -Payload $payload
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Storage" `
+                        -ResourceType "storageAccounts" `
+                        -Name "testalzsta9999901" `
+                        -ApiVersion "2022-09-01" `
+                        -Method "PUT" `
+                        -AsJob `
+                        -Payload $payload
             
-        #             if ($httpResponse.StatusCode -eq 200) {
-        #                 # App Service - API created
-        #             }
-        #             elseif ($httpResponse.StatusCode -eq 202) {
-        #                 $asyncOperation = $httpResponse | Wait-AsyncOperation
-        #                 if ($asyncOperation.Status -ne "Succeeded") {
-        #                     throw "Asynchronous operation failed with message: '$($asyncOperation)'"
-        #                 }
-        #             }
-        #             # Error response describing why the operation failed.
-        #             else {
-        #                 throw "Operation failed with message: '$($httpResponse.Content)'"
-        #             }              
-        #         } | Should -Throw "*disallowed by policy*"
-        #     }
-        # }
+                    if ($httpResponse.StatusCode -eq 200) {
+                        # App Service - API created
+                    }
+                    elseif ($httpResponse.StatusCode -eq 202) {
+                        $asyncOperation = $httpResponse | Wait-AsyncOperation
+                        if ($asyncOperation.Status -ne "Succeeded") {
+                            throw "Asynchronous operation failed with message: '$($asyncOperation)'"
+                        }
+                    }
+                    # Error response describing why the operation failed.
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }              
+                } | Should -Throw "*disallowed by policy*"
+            }
+        }
 
         # It "Should allow compliant Storage Account - Minimum TLS version" -Tag "allow-noncompliant-storage" {
         #     AzTest -ResourceGroup {
