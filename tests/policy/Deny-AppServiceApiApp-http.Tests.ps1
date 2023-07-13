@@ -59,16 +59,16 @@ Describe "Testing policy 'Deny-AppServiceApiApp-http'" -Tag "deny-appservice-api
                         -Method "PUT" `
                         -Payload $payload
             
-                if ($httpResponse.StatusCode -eq 200) {
-                    # App Service - API created
-                }
-                elseif ($httpResponse.StatusCode -eq 202) {
-                    Write-Information "==> Async deployment started"
-                } throw "Operation error: '$($httpResponse.Content)'"
-                # Error response describing why the operation failed.
-                else {
-                    throw "Operation failed with message: '$($httpResponse.Content)'"
-                }              
+                    if ($httpResponse.StatusCode -eq 200) {
+                        # App Service - API created
+                    }
+                    elseif ($httpResponse.StatusCode -eq 202) {
+                        Write-Information "==> Async deployment started"
+                    } throw "Operation error: '$($httpResponse.Content)'"
+                    # Error response describing why the operation failed.
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }              
                 } | Should -Throw "*disallowed by policy*"
             }
         }

@@ -4,13 +4,13 @@ param (
     [Parameter()][String]$esCompanyPrefix
 )
 
-Import-Module -Name Az.Websites
+Import-Module -Name Az.Storage
 Import-Module -Name Az.Resources
 Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-webapp-http" {
+Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
     BeforeAll {
         
@@ -26,22 +26,23 @@ Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-web
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-AppServiceWebApp-http' }
-        New-AzPolicyAssignment -Name "TDeny-ASWeb-http" -Scope $mangementGroupScope -PolicyDefinition $definition
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-Storage-minTLS' }
+        New-AzPolicyAssignment -Name "TDeny-STA-minTLS" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
-    # Create or update App Service NSG is actually the same PUT request, hence testing create covers update as well.
-    Context "Test HTTPS enabled on App Service - Web App when created or updated" -Tag "deny-appservice-webapp-http" {
+    Context "Test minimum TLS version enabled on Storage Account when created" -Tag "deny-storage-mintls" {
         
-        It "Should deny non-compliant App Services - Web App - Windows" -Tag "deny-noncompliant-appservice" {
+        It "Should deny non-compliant Storage Account - Minimum TLS version" -Tag "deny-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
                 $object = @{
-                    kind = "app"
+                    kind = "StorageV2"
+                    sku = "Standard_LRS"
                     properties = @{
-                        httpsOnly = false
+                        minimumTlsVersion = "TLS1_0"
+                        allowBlobPublicAccess = false
                     }
                     location = "uksouth"
                 }
@@ -52,10 +53,10 @@ Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-web
                 {
                     $httpResponse = Invoke-AzRestMethod `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -ResourceProviderName "Microsoft.Web" `
-                        -ResourceType "sites" `
-                        -Name "testAppServicefunc01" `
-                        -ApiVersion "2022-03-01" `
+                        -ResourceProviderName "Microsoft.Storage" `
+                        -ResourceType "storageAccounts" `
+                        -accountName "testalzsta9999901" `
+                        -ApiVersion "2022-09-01" `
                         -Method "PUT" `
                         -Payload $payload
             
@@ -73,14 +74,16 @@ Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-web
             }
         }
 
-        It "Should deny non-compliant App Services - Web App - Linux" -Tag "deny-noncompliant-appservice" {
+        It "Should allow compliant Storage Account - Minimum TLS version" -Tag "allow-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
                 $object = @{
-                    kind = "app,linux"
+                    kind = "StorageV2"
+                    sku = "Standard_LRS"
                     properties = @{
-                        httpsOnly = false
+                        minimumTlsVersion = "TLS1_2"
+                        allowBlobPublicAccess = false
                     }
                     location = "uksouth"
                 }
@@ -91,11 +94,55 @@ Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-web
                 {
                     $httpResponse = Invoke-AzRestMethod `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -ResourceProviderName "Microsoft.Web" `
-                        -ResourceType "sites" `
-                        -Name "testAppServicefunc02" `
-                        -ApiVersion "2022-03-01" `
+                        -ResourceProviderName "Microsoft.Storage" `
+                        -ResourceType "storageAccounts" `
+                        -accountName "testalzsta9999901" `
+                        -ApiVersion "2022-09-01" `
                         -Method "PUT" `
+                        -Payload $payload
+            
+                    if ($httpResponse.StatusCode -eq 200) {
+                        # App Service - API created
+                    }
+                    elseif ($httpResponse.StatusCode -eq 202) {
+                        Write-Information "==> Async deployment started"
+                    } throw "Operation error: '$($httpResponse.Content)'"
+                    # Error response describing why the operation failed.
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }              
+                } | Should -Not -Throw
+            }
+        }
+    }
+
+    Context "Test minimum TLS version enabled on Storage Account when updated" -Tag "deny-storage-mintls" {
+
+        It "Should deny non-compliant Storage Account - Minimum TLS version" -Tag "deny-noncompliant-storage" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $object = @{
+                    kind = "StorageV2"
+                    sku = "Standard_LRS"
+                    properties = @{
+                        minimumTlsVersion = "TLS1_0"
+                        allowBlobPublicAccess = false
+                    }
+                    location = "uksouth"
+                }
+
+                $payload = ConvertTo-Json -InputObject $object -Depth 100
+
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Storage" `
+                        -ResourceType "storageAccounts" `
+                        -accountName "testalzsta9999901" `
+                        -ApiVersion "2022-09-01" `
+                        -Method "PATCH" `
                         -Payload $payload
             
                     if ($httpResponse.StatusCode -eq 200) {
@@ -110,6 +157,6 @@ Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-web
                     }              
                 } | Should -Throw "*disallowed by policy*"
             }
-        }        
+        }
     }
 }
