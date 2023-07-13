@@ -67,11 +67,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -Payload $payload
             
                     if ($httpResponse.StatusCode -eq 200) {
-                        # App Service - API created
+                        # Storage Account created
                     }
                     elseif ($httpResponse.StatusCode -eq 202) {
-                        Write-Information "==> Async deployment started"
-                    } throw "Operation error: '$($httpResponse.Content)'"
+                        $asyncOperation = $httpResponse | Wait-AsyncOperation
+                        if ($asyncOperation.Status -ne "Succeeded") {
+                            throw "Asynchronous operation failed with message: '$($asyncOperation)'"
+                        }
+                    } 
                     # Error response describing why the operation failed.
                     else {
                         throw "Operation failed with message: '$($httpResponse.Content)'"
@@ -118,8 +121,11 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         # App Service - API created
                     }
                     elseif ($httpResponse.StatusCode -eq 202) {
-                        Write-Information "==> Async deployment started"
-                    } throw "Operation error: '$($httpResponse.Content)'"
+                        $asyncOperation = $httpResponse | Wait-AsyncOperation
+                        if ($asyncOperation.Status -ne "Succeeded") {
+                            throw "Asynchronous operation failed with message: '$($asyncOperation)'"
+                        }
+                    }
                     # Error response describing why the operation failed.
                     else {
                         throw "Operation failed with message: '$($httpResponse.Content)'"
@@ -165,8 +171,11 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         # App Service - API created
                     }
                     elseif ($httpResponse.StatusCode -eq 202) {
-                        Write-Information "==> Async deployment started"
-                    } throw "Operation error: '$($httpResponse.Content)'"
+                        $asyncOperation = $httpResponse | Wait-AsyncOperation
+                        if ($asyncOperation.Status -ne "Succeeded") {
+                            throw "Asynchronous operation failed with message: '$($asyncOperation)'"
+                        }
+                    }
                     # Error response describing why the operation failed.
                     else {
                         throw "Operation failed with message: '$($httpResponse.Content)'"
@@ -218,8 +227,11 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                             # App Service - API created
                         }
                         elseif ($httpResponse.StatusCode -eq 202) {
-                            Write-Information "==> Async deployment started"
-                        } throw "Operation error: '$($httpResponse.Content)'"
+                            $asyncOperation = $httpResponse | Wait-AsyncOperation
+                            if ($asyncOperation.Status -ne "Succeeded") {
+                                throw "Asynchronous operation failed with message: '$($asyncOperation)'"
+                            }
+                        }
                         # Error response describing why the operation failed.
                         else {
                             throw "Operation failed with message: '$($httpResponse.Content)'"
