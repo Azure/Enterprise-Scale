@@ -37,9 +37,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $sku = @{
+                    name = "Standard_LRS"
+                    tier = "Standard"
+                }
+
                 $object = @{
                     kind = "StorageV2"
-                    sku = "Standard_LRS"
+                    sku = $sku
                     properties = @{
                         minimumTlsVersion = "TLS1_0"
                         allowBlobPublicAccess = false
@@ -78,9 +83,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $sku = @{
+                    name = "Standard_LRS"
+                    tier = "Standard"
+                }
+
                 $object = @{
                     kind = "StorageV2"
-                    sku = "Standard_LRS"
+                    sku = $sku
                     properties = @{
                         minimumTlsVersion = "TLS1_2"
                         allowBlobPublicAccess = false
@@ -120,9 +130,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $sku = @{
+                    name = "Standard_LRS"
+                    tier = "Standard"
+                }
+
                 $object = @{
                     kind = "StorageV2"
-                    sku = "Standard_LRS"
+                    sku = $sku
                     properties = @{
                         minimumTlsVersion = "TLS1_2"
                         allowBlobPublicAccess = false
@@ -164,9 +179,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $sku = @{
+                    name = "Standard_LRS"
+                    tier = "Standard"
+                }
+
                 $object = @{
                     kind = "StorageV2"
-                    sku = "Standard_LRS"
+                    sku = $sku
                     properties = @{
                         minimumTlsVersion = "TLS1_0"
                         allowBlobPublicAccess = false
