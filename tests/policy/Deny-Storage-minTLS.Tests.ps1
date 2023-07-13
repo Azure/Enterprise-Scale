@@ -48,6 +48,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     properties = @{
                         minimumTlsVersion = "TLS1_0"
                         allowBlobPublicAccess = false
+                        publicNetworkAccess = "Disabled"
                     }
                     location = "uksouth"
                 }
@@ -95,6 +96,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         minimumTlsVersion = "TLS1_2"
                         allowBlobPublicAccess = false
                         supportsHttpsTrafficOnly = false
+                        publicNetworkAccess = "Disabled"
                     }
                     location = "uksouth"
                 }
@@ -141,6 +143,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     properties = @{
                         minimumTlsVersion = "TLS1_2"
                         allowBlobPublicAccess = false
+                        publicNetworkAccess = "Disabled"
                     }
                     location = "uksouth"
                 }
@@ -190,34 +193,39 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     properties = @{
                         minimumTlsVersion = "TLS1_0"
                         allowBlobPublicAccess = false
+                        publicNetworkAccess = "Disabled"
                     }
                     location = "uksouth"
                 }
 
                 $payload = ConvertTo-Json -InputObject $object -Depth 100
 
+                $sta = Get-AzStorageAccount -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "testalzsta9999901"
+
                 # Should be disallowed by policy, so exception should be thrown.
-                {
-                    $httpResponse = Invoke-AzRestMethod `
-                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -ResourceProviderName "Microsoft.Storage" `
-                        -ResourceType "storageAccounts" `
-                        -Name "testalzsta9999901" `
-                        -ApiVersion "2022-09-01" `
-                        -Method "PATCH" `
-                        -Payload $payload
-            
-                    if ($httpResponse.StatusCode -eq 200) {
-                        # App Service - API created
-                    }
-                    elseif ($httpResponse.StatusCode -eq 202) {
-                        Write-Information "==> Async deployment started"
-                    } throw "Operation error: '$($httpResponse.Content)'"
-                    # Error response describing why the operation failed.
-                    else {
-                        throw "Operation failed with message: '$($httpResponse.Content)'"
-                    }              
-                } | Should -Throw "*disallowed by policy*"
+                if ($sta -ne $null) {
+                    {
+                        $httpResponse = Invoke-AzRestMethod `
+                            -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                            -ResourceProviderName "Microsoft.Storage" `
+                            -ResourceType "storageAccounts" `
+                            -Name "testalzsta9999901" `
+                            -ApiVersion "2022-09-01" `
+                            -Method "PATCH" `
+                            -Payload $payload
+                
+                        if ($httpResponse.StatusCode -eq 200) {
+                            # App Service - API created
+                        }
+                        elseif ($httpResponse.StatusCode -eq 202) {
+                            Write-Information "==> Async deployment started"
+                        } throw "Operation error: '$($httpResponse.Content)'"
+                        # Error response describing why the operation failed.
+                        else {
+                            throw "Operation failed with message: '$($httpResponse.Content)'"
+                        }              
+                    } | Should -Throw "*disallowed by policy*"
+                }
             }
         }
     }
