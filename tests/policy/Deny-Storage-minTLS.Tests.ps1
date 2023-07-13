@@ -74,6 +74,48 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             }
         }
 
+        It "Should allow compliant Storage Account - HTTPS Traffic only" -Tag "allow-noncompliant-storage" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $object = @{
+                    kind = "StorageV2"
+                    sku = "Standard_LRS"
+                    properties = @{
+                        minimumTlsVersion = "TLS1_2"
+                        allowBlobPublicAccess = false
+                        supportsHttpsTrafficOnly = false
+                    }
+                    location = "uksouth"
+                }
+
+                $payload = ConvertTo-Json -InputObject $object -Depth 100
+
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Storage" `
+                        -ResourceType "storageAccounts" `
+                        -accountName "testalzsta9999901" `
+                        -ApiVersion "2022-09-01" `
+                        -Method "PUT" `
+                        -Payload $payload
+            
+                    if ($httpResponse.StatusCode -eq 200) {
+                        # App Service - API created
+                    }
+                    elseif ($httpResponse.StatusCode -eq 202) {
+                        Write-Information "==> Async deployment started"
+                    } throw "Operation error: '$($httpResponse.Content)'"
+                    # Error response describing why the operation failed.
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }              
+                } | Should -Throw "*disallowed by policy*"
+            }
+        }
+
         It "Should allow compliant Storage Account - Minimum TLS version" -Tag "allow-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
