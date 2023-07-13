@@ -36,7 +36,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
     Context "Test open ports NSG is created or updated" -Tag "deny-mgmtports-from-internet-nsg-port" {
         
-        It "Should deny non-compliant port '3389'" -Tag "deny-noncompliant-nsg-port-10" {
+        It "Should deny non-compliant port '3389'" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -63,7 +63,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
 
-        It "Should deny non-compliant port '3389' inline" -Tag "deny-noncompliant-nsg-port-20" {
+        It "Should deny non-compliant port '3389' inline" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -88,7 +88,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
 
-        It "Should deny non-compliant port range (21-23)" -Tag "deny-noncompliant-nsg-port-30" {
+        It "Should deny non-compliant port range (21-23)" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -115,7 +115,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
 
-        It "Should allow compliant ports (443)" -Tag "allow-compliant-nsg-port-10" {
+        It "Should allow compliant ports (443)" -Tag "allow-compliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -142,7 +142,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
 
-        It "Should deny non-compliant port range (multi-rule)" -Tag "deny-noncompliant-nsg-port-50" {
+        It "Should deny non-compliant port range (multi-rule)" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -180,7 +180,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
 
-        It "Should deny non-compliant port ranges* - API" -Tag "deny-noncompliant-nsg-port-60" {
+        It "Should deny non-compliant port ranges* - API" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -249,7 +249,7 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
 
-        It "Should allow compliant port ranges* - API" -Tag "allow-compliant-nsg-port-20" {
+        It "Should allow compliant port ranges* - API" -Tag "allow-compliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
