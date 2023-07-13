@@ -100,7 +100,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly  $false `
-                        -PublicNetworkAccess = "Disabled"
+                        -PublicNetworkAccess "Disabled"
                 } | Should -Throw "*disallowed by policy*"
             }
         }
