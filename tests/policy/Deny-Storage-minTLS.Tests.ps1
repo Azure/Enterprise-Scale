@@ -139,12 +139,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly  $true `
-                        -PublicNetworkAccess "Disabled"  
+                        -PublicNetworkAccess "Disabled" 
+
+                    Start-Sleep -Seconds 60
                         
-                while ($sta -eq $null) {
-                    $sta = Get-AzStorageAccount -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "testalzsta9999901"
-                    Start-Sleep -Seconds 5
-                }
+                    while ($sta -eq $null) {
+                        $sta = Get-AzStorageAccount -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "testalzsta9999901"
+                        Start-Sleep -Seconds 15
+                    }
 
                 } | Should -Not -Throw
             }
