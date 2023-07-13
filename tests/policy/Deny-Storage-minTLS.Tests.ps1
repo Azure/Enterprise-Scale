@@ -33,7 +33,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
     Context "Test minimum TLS version enabled on Storage Account when created" -Tag "deny-storage-mintls" {
         
-        It "Should deny non-compliant Storage Account - Minimum TLS version" -Tag "deny-noncompliant-storage" {
+        It "Should deny non-compliant Storage Account - Minimum TLS version - via API" -Tag "deny-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -172,6 +172,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
                         -PublicNetworkAccess "Disabled"   
+                        
                 } | Should -Throw "*disallowed by policy*"
             }
         }
