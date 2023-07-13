@@ -156,8 +156,6 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -Name "testalzsta9999901" `
-                        -SkuName "Standard_LRS" `
-                        -Kind "StorageV2" `
                         -MinimumTlsVersion "TLS1_0" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
