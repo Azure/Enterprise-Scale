@@ -91,18 +91,17 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
                 # Should be disallowed by policy, so exception should be thrown.
                 {
-                    $sta = New-AzStorageAccount `
-                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999901" `
-                        -Location "uksouth" `
-                        -SkuName "Standard_LRS" `
-                        -Kind "StorageV2" `
-                        -MinimumTlsVersion "TLS1_2" `
-                        -AllowBlobPublicAccess $false `
-                        -EnableHttpsTrafficOnly  $false 
+                    New-AzStorageAccount `
+                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                    -Name "testalzsta9999901" `
+                    -Location "uksouth" `
+                    -SkuName "Standard_LRS" `
+                    -Kind "StorageV2" `
+                    -MinimumTlsVersion "TLS1_2" `
+                    -AllowBlobPublicAccess $false `
+                    -EnableHttpsTrafficOnly  $false `
+                    -PublicNetworkAccess = "Disabled"
 
-                    $sta.PublicNetworkAccess = "Disabled"
-                    
                 } | Should -Throw "*disallowed by policy*"
             }
         }
@@ -121,7 +120,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     -Kind "StorageV2" `
                     -MinimumTlsVersion "TLS1_1" `
                     -AllowBlobPublicAccess $false `
-                    -EnableHttpsTrafficOnly  $false `
+                    -EnableHttpsTrafficOnly  $true `
                     -PublicNetworkAccess "Disabled"             
                 } | Should -Throw "*disallowed by policy*"
             }
