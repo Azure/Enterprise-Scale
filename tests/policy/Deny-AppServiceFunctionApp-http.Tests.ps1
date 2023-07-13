@@ -10,7 +10,7 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-AppServiceApiApp-http'" -Tag "deny-appservice-api-http" {
+Describe "Testing policy 'Deny-AppServiceFunctionApp-http'" -Tag "deny-appservice-function-http" {
 
     BeforeAll {
         
@@ -26,20 +26,20 @@ Describe "Testing policy 'Deny-AppServiceApiApp-http'" -Tag "deny-appservice-api
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-AppServiceApiApp-http' }
-        New-AzPolicyAssignment -Name "TDeny-ASAPI-http" -Scope $mangementGroupScope -PolicyDefinition $definition
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-AppServiceFunctionApp-http' }
+        New-AzPolicyAssignment -Name "TDeny-ASFunc-http" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
-    Context "Test HTTPS enabled on App Service - API when created or updated" -Tag "deny-appservice-api-http" {
+    Context "Test HTTPS enabled on App Service - Function when created or updated" -Tag "deny-appservice-function-http" {
         
-        It "Should deny non-compliant App Services - API" -Tag "deny-noncompliant-appservice" {
+        It "Should deny non-compliant App Services - Function - Windows" -Tag "deny-noncompliant-appservice" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
                 $object = @{
-                    kind = "api"
+                    kind = "functionapp"
                     properties = @{
                         httpsOnly = false
                     }
@@ -73,5 +73,43 @@ Describe "Testing policy 'Deny-AppServiceApiApp-http'" -Tag "deny-appservice-api
             }
         }
 
+        It "Should deny non-compliant App Services - Function - Linux" -Tag "deny-noncompliant-appservice" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $object = @{
+                    kind = "functionapp,linux"
+                    properties = @{
+                        httpsOnly = false
+                    }
+                    location = "uksouth"
+                }
+
+                $payload = ConvertTo-Json -InputObject $object -Depth 100
+
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Web" `
+                        -ResourceType "sites" `
+                        -Name "testAppServiceAPI" `
+                        -ApiVersion "2022-03-01" `
+                        -Method "PUT" `
+                        -Payload $payload
+            
+                if ($httpResponse.StatusCode -eq 200) {
+                    # App Service - API created
+                }
+                elseif ($httpResponse.StatusCode -eq 202) {
+                    Write-Information "==> Async deployment started"
+                } throw "Operation error: '$($httpResponse.Content)'"
+                # Error response describing why the operation failed.
+                else {
+                    throw "Operation failed with message: '$($httpResponse.Content)'"
+                }              
+                } | Should -Throw "*disallowed by policy*"
+            }
+        }        
     }
 }
