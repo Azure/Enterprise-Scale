@@ -10,7 +10,7 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-AppServiceFunctionApp-http'" -Tag "deny-appservice-function-http" {
+Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-webapp-http" {
 
     BeforeAll {
         
@@ -26,20 +26,20 @@ Describe "Testing policy 'Deny-AppServiceFunctionApp-http'" -Tag "deny-appservic
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-AppServiceFunctionApp-http' }
-        New-AzPolicyAssignment -Name "TDeny-ASFunc-http" -Scope $mangementGroupScope -PolicyDefinition $definition
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-AppServiceWebApp-http' }
+        New-AzPolicyAssignment -Name "TDeny-ASWeb-http" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
-    # Create or update App Service is actually the same PUT request, hence testing create covers update as well.
-    Context "Test HTTPS enabled on App Service - Function when created or updated" -Tag "deny-appservice-function-http" {
+    # Create or update App Service NSG is actually the same PUT request, hence testing create covers update as well.
+    Context "Test HTTPS enabled on App Service - Web App when created or updated" -Tag "deny-appservice-webapp-http" {
         
-        It "Should deny non-compliant App Services - Function - Windows" -Tag "deny-noncompliant-appservice" {
+        It "Should deny non-compliant App Services - Web App - Windows" -Tag "deny-noncompliant-appservice" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
                 $object = @{
-                    kind = "functionapp"
+                    kind = "app"
                     properties = @{
                         httpsOnly = false
                     }
@@ -73,12 +73,12 @@ Describe "Testing policy 'Deny-AppServiceFunctionApp-http'" -Tag "deny-appservic
             }
         }
 
-        It "Should deny non-compliant App Services - Function - Linux" -Tag "deny-noncompliant-appservice" {
+        It "Should deny non-compliant App Services - Web App - Linux" -Tag "deny-noncompliant-appservice" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
                 $object = @{
-                    kind = "functionapp,linux"
+                    kind = "app,linux"
                     properties = @{
                         httpsOnly = false
                     }

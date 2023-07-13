@@ -31,7 +31,7 @@ Describe "Testing policy 'Deny-AppServiceApiApp-http'" -Tag "deny-appservice-api
 
     }
 
-    # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
+    # Create or update App Service is actually the same PUT request, hence testing create covers update as well.
     Context "Test HTTPS enabled on App Service - API when created or updated" -Tag "deny-appservice-api-http" {
         
         It "Should deny non-compliant App Services - API" -Tag "deny-noncompliant-appservice" {
