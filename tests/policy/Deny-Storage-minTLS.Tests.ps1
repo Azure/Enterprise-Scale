@@ -64,6 +64,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
+                        -AsJob `
                         -Payload $payload
             
                     if ($httpResponse.StatusCode -eq 200) {
@@ -115,6 +116,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
+                        -AsJob `
                         -Payload $payload
             
                     if ($httpResponse.StatusCode -eq 200) {
@@ -165,6 +167,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -Name "testalzsta9999901" `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
+                        -AsJob `
                         -Payload $payload
             
                     if ($httpResponse.StatusCode -eq 200) {
@@ -221,6 +224,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                             -Name "testalzsta9999901" `
                             -ApiVersion "2022-09-01" `
                             -Method "PATCH" `
+                            -AsJob `
                             -Payload $payload
                 
                         if ($httpResponse.StatusCode -eq 200) {
