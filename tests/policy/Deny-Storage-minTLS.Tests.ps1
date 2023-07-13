@@ -143,7 +143,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         
                 while ($sta -eq $null) {
                     $sta = Get-AzStorageAccount -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "testalzsta9999901"
-                    Start-Sleep -Seconds 10
+                    Start-Sleep -Seconds 5
                 }
 
                 } | Should -Not -Throw
@@ -159,6 +159,8 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
                 # Should be disallowed by policy, so exception should be thrown.
                 {
+                    Start-Sleep -Seconds 15
+
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -Name "testalzsta9999901" `
