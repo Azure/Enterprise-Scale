@@ -124,6 +124,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
         #             }
         #             elseif ($httpResponse.StatusCode -eq 202) {
         #                 # Storage Account provisioning is asynchronous, so wait for it to complete.
+        #                 Start-Sleep -Seconds 5
         #                 $asyncOperation = $httpResponse | Wait-AsyncOperation
         #                 if ($asyncOperation.Status -ne "Succeeded") {
         #                     throw "Asynchronous operation failed with message: '$($asyncOperation)'"
@@ -169,9 +170,11 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -Method "PUT" `
                         -AsJob `
                         -Payload $payload
-            
+
+                    Start-Sleep -Seconds 5
+
                     if ($httpResponse.StatusCode -eq 200) {
-                        # App Service - API created
+                        # Storage Account created
                     }
                     elseif ($httpResponse.StatusCode -eq 202) {
                         # Storage Account provisioning is asynchronous, so wait for it to complete.
