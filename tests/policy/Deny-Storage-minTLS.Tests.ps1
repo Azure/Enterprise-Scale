@@ -99,7 +99,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -Kind "StorageV2" `
                         -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
-                        -SupportsHttpsTrafficOnly $false `
+                        -EnableHttpsTrafficOnly  $false `
                         -PublicNetworkAccess "Disabled"
                 } | Should -Throw "*disallowed by policy*"
             }
@@ -119,7 +119,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     -Kind "StorageV2" `
                     -MinimumTlsVersion "TLS1_1" `
                     -AllowBlobPublicAccess $false `
-                    -SupportsHttpsTrafficOnly $true `
+                    -EnableHttpsTrafficOnly  $false `
                     -PublicNetworkAccess "Disabled"             
                 } | Should -Throw "*disallowed by policy*"
             }
@@ -138,69 +138,33 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     -Kind "StorageV2" `
                     -MinimumTlsVersion "TLS1_2" `
                     -AllowBlobPublicAccess $false `
-                    -SupportsHttpsTrafficOnly $true `
+                    -EnableHttpsTrafficOnly  $true `
                     -PublicNetworkAccess "Disabled"                                 
                 } | Should -Not -Throw
             }
         }
     }
 
-    # Context "Test minimum TLS version enabled on Storage Account when updated" -Tag "deny-storage-mintls" {
+    Context "Test minimum TLS version enabled on Storage Account when updated" -Tag "deny-storage-mintls" {
 
-    #     It "Should deny non-compliant Storage Account - Minimum TLS version" -Tag "deny-noncompliant-storage" {
-    #         AzTest -ResourceGroup {
-    #             param($ResourceGroup)
+        It "Should deny non-compliant Storage Account - Minimum TLS version" -Tag "deny-noncompliant-storage" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
 
-    #             $sku = @{
-    #                 name = "Standard_LRS"
-    #                 tier = "Standard"
-    #             }
-
-    #             $object = @{
-    #                 kind = "StorageV2"
-    #                 sku = $sku
-    #                 properties = @{
-    #                     minimumTlsVersion = "TLS1_0"
-    #                     allowBlobPublicAccess = $false
-    #                     publicNetworkAccess = "Disabled"
-    #                 }
-    #                 location = "uksouth"
-    #             }
-
-    #             $payload = ConvertTo-Json -InputObject $object -Depth 100
-
-    #             $sta = Get-AzStorageAccount -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "testalzsta9999901"
-
-    #             # Should be disallowed by policy, so exception should be thrown.
-    #             if ($sta -ne $null) {
-    #                 {
-    #                     $httpResponse = Invoke-AzRestMethod `
-    #                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-    #                         -ResourceProviderName "Microsoft.Storage" `
-    #                         -ResourceType "storageAccounts" `
-    #                         -Name "testalzsta9999901" `
-    #                         -ApiVersion "2022-09-01" `
-    #                         -Method "PATCH" `
-    #                         -AsJob `
-    #                         -Payload $payload
-                
-    #                     if ($httpResponse.StatusCode -eq 200) {
-    #                         # Storage Account created
-    #                     }
-    #                     elseif ($httpResponse.StatusCode -eq 202) {
-    #                         # Storage Account provisioning is asynchronous, so wait for it to complete.
-    #                         $asyncOperation = $httpResponse | Wait-AsyncOperation
-    #                         if ($asyncOperation.Status -ne "Succeeded") {
-    #                             throw "Asynchronous operation failed with message: '$($asyncOperation)'"
-    #                         }
-    #                     }
-    #                     # Error response describing why the operation failed.
-    #                     else {
-    #                         throw "Operation failed with message: '$($httpResponse.Content)'"
-    #                     }              
-    #                 } | Should -Throw "*disallowed by policy*"
-    #             }
-    #         }
-    #     }
-    # }
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    Set-AzStorageAccount `
+                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                    -Name "testalzsta9999901" `
+                    -Location "uksouth" `
+                    -SkuName "Standard_LRS" `
+                    -Kind "StorageV2" `
+                    -MinimumTlsVersion "TLS1_0" `
+                    -AllowBlobPublicAccess $false `
+                    -EnableHttpsTrafficOnly $true `
+                    -PublicNetworkAccess "Disabled"   
+                } | Should -Throw "*disallowed by policy*"
+            }
+        }
+    }
 }
