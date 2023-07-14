@@ -158,12 +158,12 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                        -Location "uksouth" `
                        -DisablePublicNetworkAccess
 
-                    New-AzAutomationRunbook `
+                    New-AzAutomationVariable `
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
                           -AutomationAccountName $name `
                           -Name "ContosoVariable001" `
-                          -Type "PowerShell" 
-                          #-Encrypted $False
+                          -Value "somestring" `
+                          -Encrypted $False
                        
                } | Should -Throw "*disallowed by policy*"
             }
