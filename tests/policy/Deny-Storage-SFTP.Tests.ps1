@@ -10,7 +10,7 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-custdom" {
+Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
 
     BeforeAll {
         
@@ -26,14 +26,14 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-StorageAccount-CustomDomain' }
-        New-AzPolicyAssignment -Name "TDeny-STA-custdom" -Scope $mangementGroupScope -PolicyDefinition $definition
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-Storage-SFTP' }
+        New-AzPolicyAssignment -Name "TDeny-STA-sftp" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
-    Context "Test custom domain enabled on Storage Account when created" -Tag "deny-storage-custdom" {
+    Context "Test SFTP enabled on Storage Account when created" -Tag "deny-storage-sftp" {
 
-        It "Should deny non-compliant Storage Account - Custom Domain - both properties set" -Tag "deny-noncompliant-storage" {
+        It "Should deny non-compliant Storage Account - SFTP" -Tag "deny-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -48,33 +48,9 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                        -AllowBlobPublicAccess $false `
                        -EnableHttpsTrafficOnly  $true `
                        -PublicNetworkAccess "Disabled" `
-                       -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
-                       -UseSubDomain $true
+                       -EnableSftp $true
                        
                } | Should -Throw "*disallowed by policy*"
-            }
-        }
-
-        It "Should deny non-compliant Storage Account - Custom Domain - domain name set" -Tag "deny-noncompliant-storage" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
-
-                # Should be disallowed by policy, so exception should be thrown.
-                {
-                    New-AzStorageAccount `
-                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "testalzsta9999901" `
-                       -Location "uksouth" `
-                       -SkuName "Standard_LRS" `
-                       -Kind "StorageV2" `
-                       -MinimumTlsVersion "TLS1_2" `
-                       -AllowBlobPublicAccess $false `
-                       -EnableHttpsTrafficOnly  $true `
-                       -PublicNetworkAccess "Disabled" `
-                       -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
-                       -UseSubDomain $false
-
-                } | Should -Throw "*disallowed by policy*"
             }
         }
 
@@ -99,9 +75,9 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
         }
     }
 
-    Context "Test custom domain enabled on Storage Account when updated" -Tag "deny-storage-custdom" {
+    Context "Test SFTP on Storage Account when updated" -Tag "deny-storage-SFTP" {
 
-        It "Should deny non-compliant Storage Account - Custom Domain - both properties set" -Tag "deny-noncompliant-storage" {
+        It "Should deny non-compliant Storage Account - SFTP" -Tag "deny-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -125,8 +101,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
                         -PublicNetworkAccess "Disabled" `
-                        -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
-                        -UseSubDomain $true
+                        -EnableSftp $true
                         
                 } | Should -Throw "*disallowed by policy*"
             }
