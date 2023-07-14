@@ -219,7 +219,7 @@ Gets the default Azure region, e.g. northeurope.
 $location = Get-ResourceLocationDefault
 #>
 function Get-ResourceLocationDefault {
-    return "northeurope"
+    return "uksouth"
 }
 
 <#
