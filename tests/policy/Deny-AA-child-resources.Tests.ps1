@@ -41,12 +41,35 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     New-AzAutomationAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
                        -Name "ContosoAA001" `
-                       -Location "uksouth"
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
 
                     New-AzAutomationRunbook `
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
                           -AutomationAccountName "ContosoAA001" `
                           -Name "ContosoRunbook001"
+                       
+               } | Should -Throw "*disallowed by policy*"
+            }
+        }
+
+        It "Should deny non-compliant Automation Account - Variable" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                {
+                    New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name "ContosoAA002" `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    New-AzAutomationRunbook `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName "ContosoAA002" `
+                          -Name "ContosoVariable001" `
+                          -Encrypted $False `
+                          -Value "My String"
                        
                } | Should -Throw "*disallowed by policy*"
             }
