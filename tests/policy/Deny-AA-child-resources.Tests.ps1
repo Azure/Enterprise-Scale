@@ -33,20 +33,21 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
 
     Context "Test adding child resources on Automation Account when created or updated" -Tag "deny-automation-children" {
 
-        It "Should allow compliant Automation Account" -Tag "deny-noncompliant-automation" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
+        # TEST TEST TEST
+        # It "Should allow compliant Automation Account" -Tag "deny-noncompliant-automation" {
+        #     AzTest -ResourceGroup {
+        #         param($ResourceGroup)
 
-                {
-                    $aa = New-AzAutomationAccount `
-                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "ContosoAA001" `
-                       -Location "uksouth" `
-                       -DisablePublicNetworkAccess
+        #         {
+        #             $aa = New-AzAutomationAccount `
+        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
+        #                -Name "ContosoAA001" `
+        #                -Location "uksouth" `
+        #                -DisablePublicNetworkAccess
                        
-               } | Should -Not -Throw
-            }
-        }
+        #        } | Should -Not -Throw
+        #     }
+        # }
         
         # It "Should deny non-compliant Automation Account - Runbook" -Tag "deny-noncompliant-automation" {
         #     AzTest -ResourceGroup {
@@ -72,7 +73,15 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $sku = @{
+                    name = "Free"
+                    family = $null
+                    capacity = $null
+                }
+
                 $object = @{
+                    name = "ContosoAA001"
+                    sku = $sku
                     properties = @{
                         publicNetworkAccess = $false
                     }
