@@ -38,7 +38,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                 param($ResourceGroup)
 
                 {
-                    New-AzAutomationAccount `
+                    $aa = New-AzAutomationAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
                        -Name "ContosoAA001" `
                        -Location "uksouth" `
@@ -46,7 +46,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
 
                     New-AzAutomationRunbook `
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                          -AutomationAccountName "ContosoAA001" `
+                          -AutomationAccountName $aa.AutomationAccountName `
                           -Name "ContosoRunbook001"
                        
                } | Should -Throw "*disallowed by policy*"
