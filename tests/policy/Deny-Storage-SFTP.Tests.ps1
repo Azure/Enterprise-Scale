@@ -54,7 +54,7 @@ Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
             }
         }
 
-        It "Should allow compliant Storage Account - Custom Domain" -Tag "allow-compliant-storage" {
+        It "Should allow compliant Storage Account - SFTP" -Tag "allow-compliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
