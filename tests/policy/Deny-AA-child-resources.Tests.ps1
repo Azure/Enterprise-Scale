@@ -110,6 +110,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     }              
 
                     $object = @{
+                        name = "ContosoRunbook001"
                         properties = @{
                             runbookType = $false
                         }
@@ -119,9 +120,8 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     $httpResponse = Invoke-AzRestMethod `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Automation" `
-                        -ResourceType "runbooks" `
-                        -AutomationAccountName $name `
-                        -Name "ContosoRunbook001" `
+                        -ResourceType @('automationAccounts','runbooks') `
+                        -Name @($name,'ContosoRunbook001') `
                         -ApiVersion "2019-06-01" `
                         -Method "PUT" `
                         -Payload $payload
