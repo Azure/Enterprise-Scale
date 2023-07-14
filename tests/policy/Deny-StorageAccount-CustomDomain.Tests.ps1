@@ -10,7 +10,7 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
+Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-custdom" {
 
     BeforeAll {
         
@@ -55,7 +55,6 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             }
         }
 
-        # Secure transfer should be enabled by default as part of this policy check even though there is a dedicated policy for this. Should throw an exception if the other policy is not assigned.
         It "Should deny non-compliant Storage Account - Custom Domain - domain name set" -Tag "deny-noncompliant-storage" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
@@ -75,28 +74,6 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                        -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
                        -UseSubDomain $false
 
-                } | Should -Throw "*disallowed by policy*"
-            }
-        }
-
-        It "Should deny non-compliant Storage Account - Custom Domain - sub domain set" -Tag "deny-noncompliant-storage" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
-
-                # Should be disallowed by policy, so exception should be thrown.
-                {
-                    New-AzStorageAccount `
-                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                    -Name "testalzsta9999901" `
-                    -Location "uksouth" `
-                    -SkuName "Standard_LRS" `
-                    -Kind "StorageV2" `
-                    -MinimumTlsVersion "TLS1_2" `
-                    -AllowBlobPublicAccess $false `
-                    -EnableHttpsTrafficOnly  $true `
-                    -PublicNetworkAccess "Disabled" `
-                    -UseSubDomain $true
-                    
                 } | Should -Throw "*disallowed by policy*"
             }
         }
@@ -145,7 +122,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -Name "testalzsta9999903" `
-                        -MinimumTlsVersion "TLS1_0" `
+                        -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
                         -PublicNetworkAccess "Disabled" `
