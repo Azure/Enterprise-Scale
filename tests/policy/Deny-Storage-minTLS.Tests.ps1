@@ -37,6 +37,9 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 $sku = @{
                     name = "Standard_LRS"
                     tier = "Standard"
@@ -61,7 +64,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Storage" `
                         -ResourceType "storageAccounts" `
-                        -Name "testalzsta9999901" `
+                        -Name $name `
                         -ApiVersion "2022-09-01" `
                         -Method "PUT" `
                         -Payload $payload
@@ -89,11 +92,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 # Should be disallowed by policy, so exception should be thrown.
                 {
                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999901" `
+                        -Name $name `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -109,11 +115,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 # Should be disallowed by policy, so exception should be thrown.
                 {
                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999901" `
+                        -Name $name `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -129,10 +138,13 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 {
                      New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999902" `
+                        -Name $name `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -152,11 +164,14 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 # Should be disallowed by policy, so exception should be thrown.
                 {
                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999903" `
+                        -Name $name `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -167,7 +182,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
 
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999903" `
+                        -Name $name `
                         -MinimumTlsVersion "TLS1_0" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `

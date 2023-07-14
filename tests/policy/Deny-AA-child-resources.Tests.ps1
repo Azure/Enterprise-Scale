@@ -74,25 +74,25 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $sku = @{
-                    name = "Free"
-                }
-
-                $random = GenerateRandomString -Length 15
-                $name = "ALZTest$Random" 
-
-                $object = @{
-                    name = $name
-                    properties = @{
-                        sku = $sku
-                        publicNetworkAccess = $false
-                    }
-                    location = "uksouth"
-                }
-                $payload = ConvertTo-Json -InputObject $object -Depth 100
-
                 # Should be disallowed by policy, so exception should be thrown.
                 {
+                    $sku = @{
+                        name = "Free"
+                    }
+    
+                    $random = GenerateRandomString -Length 15
+                    $name = "ALZTest$Random" 
+    
+                    $object = @{
+                        name = $name
+                        properties = @{
+                            sku = $sku
+                            publicNetworkAccess = $false
+                        }
+                        location = "uksouth"
+                    }
+                    $payload = ConvertTo-Json -InputObject $object -Depth 100
+                    
                     $httpResponse = Invoke-AzRestMethod `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Automation" `

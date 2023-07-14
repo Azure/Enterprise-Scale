@@ -37,10 +37,13 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 {
                     New-AzStorageAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "testalzsta99999021" `
+                       -Name $name `
                        -Location "uksouth" `
                        -SkuName "Standard_LRS" `
                        -Kind "StorageV2" `
@@ -48,7 +51,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                        -AllowBlobPublicAccess $false `
                        -EnableHttpsTrafficOnly  $true `
                        -PublicNetworkAccess "Disabled" `
-                       -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
+                       -CustomDomainName "$name.blob.core.windows.net" `
                        -UseSubDomain $true
                        
                } | Should -Throw "*disallowed by policy*"
@@ -59,11 +62,14 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 # Should be disallowed by policy, so exception should be thrown.
                 {
                     New-AzStorageAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "testalzsta99999021" `
+                       -Name $name `
                        -Location "uksouth" `
                        -SkuName "Standard_LRS" `
                        -Kind "StorageV2" `
@@ -71,7 +77,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                        -AllowBlobPublicAccess $false `
                        -EnableHttpsTrafficOnly  $true `
                        -PublicNetworkAccess "Disabled" `
-                       -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
+                       -CustomDomainName "$name.blob.core.windows.net" `
                        -UseSubDomain $false
 
                 } | Should -Throw "*disallowed by policy*"
@@ -82,10 +88,13 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 {
                      New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta99999022" `
+                        -Name $name `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -105,11 +114,14 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
+
                 # Should be disallowed by policy, so exception should be thrown.
                 {
                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta99999023" `
+                        -Name $name `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -120,12 +132,12 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
 
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta99999023" `
+                        -Name $name `
                         -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
                         -PublicNetworkAccess "Disabled" `
-                        -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
+                        -CustomDomainName "$name.blob.core.windows.net" `
                         -UseSubDomain $true
                         
                 } | Should -Throw "*disallowed by policy*"
