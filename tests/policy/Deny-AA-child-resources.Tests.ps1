@@ -39,6 +39,9 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
+
                 {
                     $aa = New-AzAutomationAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
@@ -50,25 +53,28 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
             }
         }
         
-        # It "Should deny non-compliant Automation Account - Runbook" -Tag "deny-noncompliant-automation" {
-        #     AzTest -ResourceGroup {
-        #         param($ResourceGroup)
+        It "Should deny non-compliant Automation Account - Runbook" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
 
-        #         {
-        #             $aa = New-AzAutomationAccount `
-        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                -Name "ContosoAA001" `
-        #                -Location "uksouth" `
-        #                -DisablePublicNetworkAccess
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
 
-        #             New-AzAutomationRunbook `
-        #                   -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                   -AutomationAccountName $aa.AutomationAccountName `
-        #                   -Name "ContosoRunbook001"
+                {
+                    $aa = New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name $name `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    New-AzAutomationRunbook `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName $aa.AutomationAccountName `
+                          -Name "ContosoRunbook001"
                        
-        #        } | Should -Throw "*disallowed by policy*"
-        #     }
-        # }
+               } | Should -Throw "*disallowed by policy*"
+            }
+        }
 
         It "Should deny non-compliant Automation Account - Runbook - via API" -Tag "deny-noncompliant-automation" {
             AzTest -ResourceGroup {
@@ -137,27 +143,30 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
             }
         }
 
-        # It "Should deny non-compliant Automation Account - Variable" -Tag "deny-noncompliant-automation" {
-        #     AzTest -ResourceGroup {
-        #         param($ResourceGroup)
+        It "Should deny non-compliant Automation Account - Variable" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
 
-        #         {
-        #             New-AzAutomationAccount `
-        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                -Name "ContosoAA002" `
-        #                -Location "uksouth" `
-        #                -DisablePublicNetworkAccess
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
 
-        #             New-AzAutomationRunbook `
-        #                   -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                   -AutomationAccountName "ContosoAA002" `
-        #                   -Name "ContosoVariable001" `
-        #                   -Encrypted $False `
-        #                   -Value "My String"
+                {
+                    New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name $name `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    New-AzAutomationRunbook `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName $name `
+                          -Name "ContosoVariable001" `
+                          -Encrypted $False `
+                          -Value "My String"
                        
-        #        } | Should -Throw "*disallowed by policy*"
-        #     }
-        # }
+               } | Should -Throw "*disallowed by policy*"
+            }
+        }
     }
 
 }
