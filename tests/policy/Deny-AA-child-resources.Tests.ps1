@@ -35,20 +35,20 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
     Context "Test adding child resources on Automation Account when created or updated" -Tag "deny-automation-children" {
 
         # TEST TEST TEST
-        # It "Should allow compliant Automation Account" -Tag "deny-noncompliant-automation" {
-        #     AzTest -ResourceGroup {
-        #         param($ResourceGroup)
+        It "Should allow compliant Automation Account" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
 
-        #         {
-        #             $aa = New-AzAutomationAccount `
-        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                -Name "ContosoAA001" `
-        #                -Location "uksouth" `
-        #                -DisablePublicNetworkAccess
+                {
+                    $aa = New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name "ContosoAA001" `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
                        
-        #        } | Should -Not -Throw
-        #     }
-        # }
+               } | Should -Not -Throw
+            }
+        }
         
         # It "Should deny non-compliant Automation Account - Runbook" -Tag "deny-noncompliant-automation" {
         #     AzTest -ResourceGroup {
@@ -92,7 +92,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                         location = "uksouth"
                     }
                     $payload = ConvertTo-Json -InputObject $object -Depth 100
-                    
+
                     $httpResponse = Invoke-AzRestMethod `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Automation" `
