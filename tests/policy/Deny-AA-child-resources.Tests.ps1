@@ -162,6 +162,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
                           -AutomationAccountName $name `
                           -Name "ContosoVariable001" `
+                          -Type "PowerShell"
                           #-Encrypted $False
                        
                } | Should -Throw "*disallowed by policy*"
