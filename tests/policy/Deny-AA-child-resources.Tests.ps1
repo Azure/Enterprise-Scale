@@ -70,7 +70,8 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     New-AzAutomationRunbook `
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
                           -AutomationAccountName $aa.AutomationAccountName `
-                          -Name "ContosoRunbook001"
+                          -Name "ContosoRunbook001" `
+                          -Type "PowerShell" 
                        
                } | Should -Throw "*disallowed by policy*"
             }
@@ -161,8 +162,8 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
                           -AutomationAccountName $name `
                           -Name "ContosoVariable001" `
-                          -Encrypted $False `
                           -Value "My String"
+                          #-Encrypted $False
                        
                } | Should -Throw "*disallowed by policy*"
             }
