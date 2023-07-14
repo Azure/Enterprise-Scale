@@ -9,6 +9,7 @@ Import-Module -Name Az.Resources
 Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
+Import-Module "$($PSScriptRoot)/../../tests/utils/Generic.Utils.psm1" -Force
 
 Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-children" {
 
@@ -77,17 +78,8 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     name = "Free"
                 }
 
-                $TokenSet = @{
-                    L = [Char[]]'abcdefghijklmnopqrstuvwxyz'
-                    N = [Char[]]'0123456789'
-                }
-            
-                $Lower = Get-Random -Count 10 -InputObject $TokenSet.L
-                $Number = Get-Random -Count 5 -InputObject $TokenSet.N
-                $StringSet = $Lower + $Number
-                $RandomString = (Get-Random -Count 15 -InputObject $StringSet) -join ''
-
-                $name = "ALZTest$RandomString" 
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random" 
 
                 $object = @{
                     name = $name
@@ -128,7 +120,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Automation" `
                         -ResourceType "runbooks" `
-                        -AutomationAccountName "ContosoAA001" `
+                        -AutomationAccountName $name `
                         -Name "ContosoRunbook001" `
                         -ApiVersion "2019-06-01" `
                         -Method "PUT" `
