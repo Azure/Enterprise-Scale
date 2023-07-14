@@ -168,6 +168,74 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                } | Should -Throw "*disallowed by policy*"
             }
         }
+
+        It "Should deny non-compliant Automation Account - Variable - via API" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    $sku = @{
+                        name = "Free"
+                    }
+    
+                    $random = GenerateRandomString -Length 15
+                    $name = "ALZTest$Random" 
+    
+                    $object = @{
+                        name = $name
+                        properties = @{
+                            sku = $sku
+                            publicNetworkAccess = $false
+                        }
+                        location = "uksouth"
+                    }
+                    $payload = ConvertTo-Json -InputObject $object -Depth 100
+
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Automation" `
+                        -ResourceType "automationAccounts" `
+                        -Name $name `
+                        -ApiVersion "2021-06-22" `
+                        -Method "PUT" `
+                        -Payload $payload
+            
+                    if ($httpResponse.StatusCode -eq 200 -or $httpResponse.StatusCode -eq 201) {
+                        # Automation Account created
+                    }
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }              
+
+                    $object = @{
+                        name = "ContosoVariable001"
+                        properties = @{
+                            value = "somevalue"
+                            isEncrypted = $false
+                        }
+                    }
+                    $payload = ConvertTo-Json -InputObject $object -Depth 100
+
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Automation" `
+                        -ResourceType @('automationAccounts','variables') `
+                        -Name @($name,'ContosoVariable001') `
+                        -ApiVersion "2019-06-01" `
+                        -Method "PUT" `
+                        -Payload $payload
+            
+                    if ($httpResponse.StatusCode -eq 200 -or $httpResponse.StatusCode -eq 201) {
+                        # Automation Account - Runbook created
+                    }
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }
+
+                } | Should -Throw "*disallowed by policy*"
+            }
+        }
     }
 
 }
