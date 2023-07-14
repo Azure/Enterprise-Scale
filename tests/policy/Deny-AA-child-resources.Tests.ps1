@@ -75,14 +75,12 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
 
                 $sku = @{
                     name = "Free"
-                    family = $null
-                    capacity = $null
                 }
 
                 $object = @{
                     name = "ContosoAA001"
-                    sku = $sku
                     properties = @{
+                        sku = $sku
                         publicNetworkAccess = $false
                     }
                     location = "uksouth"
