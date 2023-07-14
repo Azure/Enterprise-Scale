@@ -40,7 +40,7 @@ Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
                 {
                     New-AzStorageAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "testalzsta9999901" `
+                       -Name "testalzsta99999011" `
                        -Location "uksouth" `
                        -SkuName "Standard_LRS" `
                        -Kind "StorageV2" `
@@ -61,7 +61,7 @@ Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
                 {
                      New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999902" `
+                        -Name "testalzsta99999012" `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -85,7 +85,7 @@ Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
                 {
                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999903" `
+                        -Name "testalzsta99999013" `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -96,7 +96,7 @@ Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
 
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999903" `
+                        -Name "testalzsta99999013" `
                         -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `

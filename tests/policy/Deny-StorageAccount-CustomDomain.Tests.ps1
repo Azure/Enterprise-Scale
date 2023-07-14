@@ -40,7 +40,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                 {
                     New-AzStorageAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "testalzsta9999901" `
+                       -Name "testalzsta99999021" `
                        -Location "uksouth" `
                        -SkuName "Standard_LRS" `
                        -Kind "StorageV2" `
@@ -63,7 +63,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                 {
                     New-AzStorageAccount `
                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name "testalzsta9999901" `
+                       -Name "testalzsta99999021" `
                        -Location "uksouth" `
                        -SkuName "Standard_LRS" `
                        -Kind "StorageV2" `
@@ -85,7 +85,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                 {
                      New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999902" `
+                        -Name "testalzsta99999022" `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -109,7 +109,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
                 {
                     New-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999903" `
+                        -Name "testalzsta99999023" `
                         -Location "uksouth" `
                         -SkuName "Standard_LRS" `
                         -Kind "StorageV2" `
@@ -120,7 +120,7 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
 
                     Set-AzStorageAccount `
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name "testalzsta9999903" `
+                        -Name "testalzsta99999023" `
                         -MinimumTlsVersion "TLS1_2" `
                         -AllowBlobPublicAccess $false `
                         -EnableHttpsTrafficOnly $true `
