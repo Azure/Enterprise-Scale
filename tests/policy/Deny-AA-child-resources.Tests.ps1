@@ -77,8 +77,20 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     name = "Free"
                 }
 
+                $TokenSet = @{
+                    L = [Char[]]'abcdefghijklmnopqrstuvwxyz'
+                    N = [Char[]]'0123456789'
+                }
+            
+                $Lower = Get-Random -Count 10 -InputObject $TokenSet.L
+                $Number = Get-Random -Count 5 -InputObject $TokenSet.N
+                $StringSet = $Lower + $Number
+                $RandomString = (Get-Random -Count 15 -InputObject $StringSet) -join ''
+
+                $name = "ALZTest$RandomString" 
+
                 $object = @{
-                    name = "ContosoAA001"
+                    name = $name
                     properties = @{
                         sku = $sku
                         publicNetworkAccess = $false
@@ -93,7 +105,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Automation" `
                         -ResourceType "automationAccounts" `
-                        -Name "ContosoAA001" `
+                        -Name $name `
                         -ApiVersion "2021-06-22" `
                         -Method "PUT" `
                         -Payload $payload
