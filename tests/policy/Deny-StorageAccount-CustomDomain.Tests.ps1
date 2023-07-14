@@ -51,7 +51,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                        -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
                        -UseSubDomain $true
                        
-               } | Should -Not -Throw
+               } | Should -Throw "*disallowed by policy*"
             }
         }
 
@@ -74,6 +74,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                        -PublicNetworkAccess "Disabled" `
                        -CustomDomainName "testalzsta9999901.blob.core.windows.net" `
                        -UseSubDomain $false
+
                 } | Should -Throw "*disallowed by policy*"
             }
         }
@@ -95,6 +96,7 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
                     -EnableHttpsTrafficOnly  $true `
                     -PublicNetworkAccess "Disabled" `
                     -UseSubDomain $true
+                    
                 } | Should -Throw "*disallowed by policy*"
             }
         }
