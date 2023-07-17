@@ -60,10 +60,10 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
 
                     $protocolSettings = @(
                         smb = @{
-                            authenticationMethods = @("NTLMv2")
-                            channelEncryption = @("AES-256-GCM")
-                            kerberosTicketEncryption = @("AES-256")
-                            versions = @("SMB3.1.1")
+                            authenticationMethods = "NTLMv2"
+                            channelEncryption = "AES-256-GCM"
+                            kerberosTicketEncryption = "AES-256"
+                            versions = "SMB3.1.1"
                         }
                     )
 
