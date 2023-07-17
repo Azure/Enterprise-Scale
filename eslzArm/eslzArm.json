@@ -2693,6 +2693,33 @@
             }
         },
         {
+            // Assigning Key Vault guardrails initiative to platform management group if condition is true
+            "condition": "[or(equals(parameters('enforceKvGuardrails'), 'Yes'), equals(parameters('enforceKvGuardrails'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').kvGuardrailsPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').kvGuardrailsPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceKvGuardrails'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
             // Assigning policy to deny deployment of vWAN/ER/VPN Gateways to corp management group if condition is true
             "condition": "[or(equals(parameters('denyHybridNetworking'), 'Yes'), equals(parameters('denyHybridNetworking'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
