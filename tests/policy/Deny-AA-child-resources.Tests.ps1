@@ -209,9 +209,9 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     }              
 
                     $object = @{
-                        name = "ContosoVariable001"
+                        name = "ContosoVariable002"
                         properties = @{
-                            value = "somevalue"
+                            value = "some long string"
                             isEncrypted = $false
                         }
                     }
@@ -221,7 +221,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                         -ResourceGroupName $ResourceGroup.ResourceGroupName `
                         -ResourceProviderName "Microsoft.Automation" `
                         -ResourceType @('automationAccounts','variables') `
-                        -Name @($name,'ContosoVariable001') `
+                        -Name @($name,'ContosoVariable002') `
                         -ApiVersion "2019-06-01" `
                         -Method "PUT" `
                         -Payload $payload
@@ -234,6 +234,112 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     }
 
                 } | Should -Throw "*disallowed by policy*"
+            }
+        }
+
+        It "Should deny non-compliant Automation Account - Modules" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
+
+                {
+                    New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name $name `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    New-AzAutomationModule `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName $name `
+                          -ContentLinkUri ""
+                          -Name "ContosoModule001"
+                       
+               } | Should -Throw "*disallowed by policy*"
+            }
+        }
+
+        It "Should deny non-compliant Automation Account - Credential" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
+
+                {
+                    New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name $name `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    $User = "Contoso\LongLiveLilith"
+                    $Password = ConvertTo-SecureString "$random" -AsPlainText -Force
+                    $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User, $Password
+
+                    New-AzAutomationCredential `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName $name `
+                          -Name "ContosoCredential001" `
+                          -Value $Credential
+                       
+               } | Should -Throw "*disallowed by policy*"
+            }
+        }
+
+        It "Should deny non-compliant Automation Account - Connections" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
+
+                {
+                    New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name $name `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    New-AzAutomationConnection `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName $name `
+                          -Name "ContosoConnection001" `
+                          -ConnectionTypeName "Azure" `
+                          -ConnectionFieldValues @{"ApplicationId"="";"TenantId"="";"CertificateThumbprint"="";"SubscriptionId"=""} `
+                          -Description "AzureConnection"
+                       
+               } | Should -Throw "*disallowed by policy*"
+            }
+        }
+
+        It "Should deny non-compliant Automation Account - Certificate" -Tag "deny-noncompliant-automation" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $random = GenerateRandomString -Length 15
+                $name = "ALZTest$Random"
+
+                {
+                    New-AzAutomationAccount `
+                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                       -Name $name `
+                       -Location "uksouth" `
+                       -DisablePublicNetworkAccess
+
+                    $Password = ConvertTo-SecureString "$random" -AsPlainText -Force
+
+                    New-AzAutomationCertificate `
+                          -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                          -AutomationAccountName $name `
+                          -Name "ContosoCertificate001" `
+                          -Path "./cert.pfx" `
+                          -Password $Password `
+                          -Description "AzureConnection"
+                       
+               } | Should -Throw "*disallowed by policy*"
             }
         }
     }
