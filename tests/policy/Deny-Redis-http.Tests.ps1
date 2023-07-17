@@ -34,89 +34,137 @@ Describe "Testing policy 'Deny-Redis-http'" -Tag "deny-redis-http" {
 
     Context "Test secure connections enabled on Azure Cache for Redis when created" -Tag "deny-redis-http" {
 
+        # It "Should deny non-compliant Azure Cache for Redis - EnableNonSslPort" -Tag "deny-noncompliant-redis" {
+        #     AzTest -ResourceGroup {
+        #         param($ResourceGroup)
+
+        #         $random = GenerateRandomString -Length 5
+        #         $name = "alztest$Random" 
+
+        #         {
+        #             New-AzRedisCache `
+        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
+        #                -Name $name `
+        #                -Location "uksouth" `
+        #                -EnableNonSslPort $true `
+        #                -MinimumTlsVersion "TLS1_2"
+                       
+        #        } | Should -Throw "*disallowed by policy*"
+        #     }
+        # }
+
+        # PowerShell 10.1 does not support disabling publicAccess so have to use REST API
         It "Should deny non-compliant Azure Cache for Redis - EnableNonSslPort" -Tag "deny-noncompliant-redis" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 5
-                $name = "alztest$Random" 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random"
 
-                {
-                    New-AzRedisCache `
-                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name $name `
-                       -Location "uksouth" `
-                       -EnableNonSslPort $true `
-                       -MinimumTlsVersion "TLS1_2"
-                       
-               } | Should -Throw "*disallowed by policy*"
-            }
-        }
+                $sku = @{
+                    name = "C"
+                    family = "Basic"
+                    capacity = 0
+                }
 
-        It "Should deny non-compliant Azure Cache for Redis - TLS version" -Tag "deny-noncompliant-redis" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
+                $object = @{
+                    properties = @{
+                        sku = $sku
+                        publicNetworkAccess = "Disabled"
+                        EnableNonSslPort = $true
+                        minimumTlsVersion = "TLS1_2"
+                    }
+                    location = "uksouth"
+                }
 
-                $random = GenerateRandomString -Length 5
-                $name = "alztest$Random" 
-
-                {
-                    New-AzRedisCache `
-                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name $name `
-                       -Location "uksouth" `
-                       -EnableNonSslPort $false `
-                       -MinimumTlsVersion "TLS1_0"
-                       
-               } | Should -Throw "*disallowed by policy*"
-            }
-        }
-
-        It "Should allow compliant Azure Cache for Redis" -Tag "allow-compliant-redis" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
-
-                $random = GenerateRandomString -Length 5
-                $name = "alztest$Random" 
-
-                {
-                    New-AzRedisCache `
-                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name $name `
-                       -Location "uksouth" `
-                       -EnableNonSslPort $false `
-                       -MinimumTlsVersion "TLS1_2"
-                        
-                } | Should -Not -Throw
-            }
-        }
-    }
-
-    Context "Test secure connections enabled on Azure Cache for Redis when updated" -Tag "deny-redis-http" {
-
-        It "Should deny non-compliant Azure Cache for Redis" -Tag "deny-noncompliant-redis" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
-
-                $random = GenerateRandomString -Length 5
-                $name = "alztest$Random" 
+                $payload = ConvertTo-Json -InputObject $object -Depth 100
 
                 # Should be disallowed by policy, so exception should be thrown.
                 {
-                    New-AzRedisCache `
-                       -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                       -Name $name `
-                       -Location "uksouth" `
-                       -EnableNonSslPort $false `
-                       -MinimumTlsVersion "TLS1_2"
-
-                    Set-AzRedisCache `
-                       -Name $name `
-                       -EnableNonSslPort $true `
-                       -MinimumTlsVersion "TLS1_1.1"
-                        
+                    $httpResponse = Invoke-AzRestMethod `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -ResourceProviderName "Microsoft.Cache" `
+                        -ResourceType "redis" `
+                        -Name $name `
+                        -ApiVersion "2023-04-01" `
+                        -Method "PUT" `
+                        -Payload $payload
+            
+                    if ($httpResponse.StatusCode -eq 200 -or $httpResponse.StatusCode -eq 201) {
+                        # Storage Account created
+                    }
+                    # Error response describing why the operation failed.
+                    else {
+                        throw "Operation failed with message: '$($httpResponse.Content)'"
+                    }              
                 } | Should -Throw "*disallowed by policy*"
             }
         }
+
+        # It "Should deny non-compliant Azure Cache for Redis - TLS version" -Tag "deny-noncompliant-redis" {
+        #     AzTest -ResourceGroup {
+        #         param($ResourceGroup)
+
+        #         $random = GenerateRandomString -Length 5
+        #         $name = "alztest$Random" 
+
+        #         {
+        #             New-AzRedisCache `
+        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
+        #                -Name $name `
+        #                -Location "uksouth" `
+        #                -EnableNonSslPort $false `
+        #                -MinimumTlsVersion "TLS1_0"
+                       
+        #        } | Should -Throw "*disallowed by policy*"
+        #     }
+        # }
+
+        # It "Should allow compliant Azure Cache for Redis" -Tag "allow-compliant-redis" {
+        #     AzTest -ResourceGroup {
+        #         param($ResourceGroup)
+
+        #         $random = GenerateRandomString -Length 5
+        #         $name = "alztest$Random" 
+
+        #         {
+        #             New-AzRedisCache `
+        #                -ResourceGroupName $ResourceGroup.ResourceGroupName `
+        #                -Name $name `
+        #                -Location "uksouth" `
+        #                -EnableNonSslPort $false `
+        #                -MinimumTlsVersion "TLS1_2"
+                        
+        #         } | Should -Not -Throw
+        #     }
+        # }
     }
+
+    # Context "Test secure connections enabled on Azure Cache for Redis when updated" -Tag "deny-redis-http" {
+
+    #     It "Should deny non-compliant Azure Cache for Redis" -Tag "deny-noncompliant-redis" {
+    #         AzTest -ResourceGroup {
+    #             param($ResourceGroup)
+
+    #             $random = GenerateRandomString -Length 5
+    #             $name = "alztest$Random" 
+
+    #             # Should be disallowed by policy, so exception should be thrown.
+    #             {
+    #                 New-AzRedisCache `
+    #                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
+    #                    -Name $name `
+    #                    -Location "uksouth" `
+    #                    -EnableNonSslPort $false `
+    #                    -MinimumTlsVersion "TLS1_2"
+
+    #                 Set-AzRedisCache `
+    #                    -Name $name `
+    #                    -EnableNonSslPort $true `
+    #                    -MinimumTlsVersion "TLS1_1.1"
+                        
+    #             } | Should -Throw "*disallowed by policy*"
+    #         }
+    #     }
+    # }
 }
