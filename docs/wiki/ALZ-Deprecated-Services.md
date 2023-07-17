@@ -15,7 +15,7 @@ New Azure Policies are being developed and created by product groups that suppor
 
 Policies being deprecated:
 
-| Deprecated ALZ Policy                | Superseded by built-in policy<br>(includes link to AzAdvertizer)                                                                                               | Justification                                                            |
+| Deprecated ALZ Policy                | Superseded by policy<br>(includes link to AzAdvertizer)                                                                                               | Justification                                                            |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Deploys NSG flow logs and traffic analytics<br>ID: `Deploy-Nsg-FlowLogs`                  | [`e920df7f-9a64-4066-9b58-52684c02a091`](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) | Custom policy replaced by built-in requires less administration overhead |
 | Deploys NSG flow logs and traffic analytics to Log Analytics<br>ID: `Deploy-Nsg-FlowLogs-to-LA`            | [`e920df7f-9a64-4066-9b58-52684c02a091`](https://www.azadvertizer.net/azpolicyadvertizer/e920df7f-9a64-4066-9b58-52684c02a091.html) | Custom policy replaced by built-in requires less administration overhead |
@@ -26,6 +26,7 @@ Policies being deprecated:
 | Deploy SQL Database Transparent Data Encryption<br>ID: [`Deploy SQL Database Transparent Data Encryption`](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-Tde.html) |	`86a912f6-9a06-4e26-b447-11b16ba8659f` | Custom policy replaced by built-in requires less administration overhead |
 | Azure Machine Learning should have disabled public network access<br>ID: [`Deny-MachineLearning-PublicNetworkAccess`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MachineLearning-PublicNetworkAccess.html) | [`438c38d2-3772-465a-a9cc-7a6666a275ce`](https://www.azadvertizer.net/azpolicyadvertizer/438c38d2-3772-465a-a9cc-7a6666a275ce.html) | Custom policy replaced by built-in requires less administration overhead |
 | Public network access should be disabled for MariaDB<br>ID: [`Deny-PublicEndpoint-MariaDB`](https://www.azadvertizer.net/azpolicyadvertizer/Deny-PublicEndpoint-MariaDB.html) | [`fdccbe47-f3e3-4213-ad5d-ea459b2fa077`](https://www.azadvertizer.net/azpolicyadvertizer/fdccbe47-f3e3-4213-ad5d-ea459b2fa077.html) | Custom policy replaced by built-in requires less administration overhead<br>NOTE: US Gov (Fairfax) initiative still points to the deprecated policy as built-in is not yet available. |
+| Deploy SQL Database Vulnerability Assessments<br>ID: [`Deploy-Sql-vulnerabilityAssessments`](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) | [`Deploy-Sql-vulnerabilityAssessments_20230706`](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) | Custom policy replaced by updated custom policy providing bug fix |
 
 ### More Information
 

@@ -1632,26 +1632,6 @@
                             }
                         },
                         {
-                            "name": "enableAzFwDnsProxy",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Enable Azure Firewall as a DNS proxy",
-                            "defaultValue": "No",
-                            "visible": "[equals(steps('connectivity').enableAzFw, 'Yes')]",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will enable Azure Firewall as a DNS Proxy.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            }
-                        },
-                        {
                             "name": "firewallSku",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Select Azure Firewall tier",
@@ -1771,6 +1751,26 @@
                                     {
                                         "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFwMgmt, '/')))]",
                                         "message": "CIDR range not within virtual network CIDR range (subnet mask)."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableAzFwDnsProxy",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Enable Azure Firewall as a DNS proxy",
+                            "defaultValue": "No",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), not(equals(steps('connectivity').firewallSku, 'Basic')))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will enable Azure Firewall as a DNS Proxy.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
                                     }
                                 ]
                             }
@@ -2937,7 +2937,7 @@
                 "expressRouteScaleUnit": "[steps('connectivity').expressRouteScaleUnit]",
                 "enableHub": "[steps('connectivity').enableHub]",
                 "enableAzFw": "[steps('connectivity').enableAzFw]",
-                "enableAzFwDnsProxy": "[steps('connectivity').enableAzFwDnsProxy]",
+                "enableAzFwDnsProxy": "[if(equals(steps('connectivity').firewallSku, 'Basic'), 'No', steps('connectivity').enableAzFwDnsProxy)]",
                 "firewallSku": "[steps('connectivity').firewallSku]",
                 "firewallZones": "[steps('connectivity').firewallZones]",
                 "subnetMaskForAzFw": "[steps('connectivity').subnetMaskForAzFw]",
