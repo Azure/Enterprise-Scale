@@ -41,28 +41,29 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
                 $random = GenerateRandomString -Length 13
                 $name = "alztest$Random" 
 
-                {
-                    New-AzStorageAccount `
-                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                        -Name $name `
-                        -Location "uksouth" `
-                        -SkuName "Standard_LRS" `
-                        -Kind "StorageV2" `
-                        -MinimumTlsVersion "TLS1_2" `
-                        -AllowBlobPublicAccess $false `
-                        -EnableHttpsTrafficOnly  $true `
-                        -PublicNetworkAccess "Disabled"
+                New-AzStorageAccount `
+                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                    -Name $name `
+                    -Location "uksouth" `
+                    -SkuName "Standard_LRS" `
+                    -Kind "StorageV2" `
+                    -MinimumTlsVersion "TLS1_2" `
+                    -AllowBlobPublicAccess $false `
+                    -EnableHttpsTrafficOnly  $true `
+                    -PublicNetworkAccess "Disabled"
 
+                {
                     # "versions": "SMB2.1;SMB3.0;SMB3.1.1",
                     # "authenticationMethods": "NTLMv2;Kerberos",
                     # "kerberosTicketEncryption": "RC4-HMAC;AES-256",
                     # "channelEncryption": "AES-128-CCM;AES-128-GCM;AES-256-GCM"
 
                     $protocolSettings = @(
-                        @{
-                            smb = @{
-                                authenticationMethods = @("NTLMv2")
-                            }
+                        smb = @{
+                            authenticationMethods = @("NTLMv2")
+                            channelEncryption = @("AES-256-GCM")
+                            kerberosTicketEncryption = @("AES-256")
+                            versions = @("SMB3.1.1")
                         }
                     )
 
@@ -90,7 +91,7 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
                     else {
                         throw "Operation failed with message: '$($httpResponse.Content)'"
                     } 
-                    
+
                } | Should -Throw "*disallowed by policy*"
             }
         }
