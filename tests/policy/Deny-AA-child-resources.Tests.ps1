@@ -254,7 +254,7 @@ Describe "Testing policy 'Deny-AA-child-resources'" -Tag "deny-automation-childr
                     New-AzAutomationModule `
                           -ResourceGroupName $ResourceGroup.ResourceGroupName `
                           -AutomationAccountName $name `
-                          -ContentLinkUri ""
+                          -ContentLinkUri "" `
                           -Name "ContosoModule001"
                        
                } | Should -Throw "*disallowed by policy*"
