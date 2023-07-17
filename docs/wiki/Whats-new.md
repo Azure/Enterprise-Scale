@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [July 2023](#july-2023) 
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
   - [April 2023](#april-2023)
@@ -34,6 +35,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### July 2023
+
+#### Policy
+
+- Added additional initiative assignment for [Enforce-Guardrails-KeyVault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html) to the Platform Management Group to improve security coverage. Initially this assignment was only applied to the Landing Zone Management Group.
 
 ### June 2023
 
