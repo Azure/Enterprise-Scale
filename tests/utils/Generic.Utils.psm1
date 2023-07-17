@@ -1,4 +1,13 @@
-
+<#
+.SYNOPSIS
+    Generates a random string of a given length.
+.DESCRIPTION
+    Generates a random string of a given length.
+.PARAMETER Length
+    The length of the random string to generate.
+.EXAMPLE
+    $randomString = GenerateRandomString
+#>
 function GenerateRandomString {
     param (
         [Parameter()]
