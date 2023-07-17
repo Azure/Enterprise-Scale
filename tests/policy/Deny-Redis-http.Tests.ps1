@@ -37,7 +37,7 @@ Describe "Testing policy 'Deny-Redis-http'" -Tag "deny-redis-http" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 13
+                $random = GenerateRandomString -Length 5
                 $name = "alztest$Random" 
 
                 {
@@ -56,7 +56,7 @@ Describe "Testing policy 'Deny-Redis-http'" -Tag "deny-redis-http" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 13
+                $random = GenerateRandomString -Length 5
                 $name = "alztest$Random" 
 
                 {
@@ -75,7 +75,7 @@ Describe "Testing policy 'Deny-Redis-http'" -Tag "deny-redis-http" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 13
+                $random = GenerateRandomString -Length 5
                 $name = "alztest$Random" 
 
                 {
@@ -97,7 +97,7 @@ Describe "Testing policy 'Deny-Redis-http'" -Tag "deny-redis-http" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 13
+                $random = GenerateRandomString -Length 5
                 $name = "alztest$Random" 
 
                 # Should be disallowed by policy, so exception should be thrown.
