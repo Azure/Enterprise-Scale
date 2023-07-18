@@ -11,7 +11,7 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Generic.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth" {
+Describe "Testing policy 'Deny-FileServices-InsecureSmbVersions'" -Tag "deny-files-channel" {
 
     BeforeAll {
         
@@ -27,14 +27,14 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-FileServices-InsecureAuth' }
-        New-AzPolicyAssignment -Name "TDeny-Files-auth" -Scope $mangementGroupScope -PolicyDefinition $definition
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-FileServices-InsecureSmbVersions' }
+        New-AzPolicyAssignment -Name "TDeny-Files-smbver" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
-    Context "Test insercure authentication enabled on Storage Account - File Services when created" -Tag "deny-files-auth" {
+    Context "Test insercure SMB version enabled on Storage Account - File Services when created" -Tag "deny-files-smbver" {
 
-        It "Should deny non-compliant Storage Account - File Services - Insecure Auth" -Tag "deny-noncompliant-files" {
+        It "Should deny non-compliant Storage Account - File Services - Insecure SMB version" -Tag "deny-noncompliant-files" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -60,10 +60,10 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
 
                     $protocolSettings = @{
                         smb = @{
-                            authenticationMethods = "NTLMv2" # Not valid
+                            authenticationMethods = "Kerberos" # Valid
                             channelEncryption = "AES-256-GCM" # Valid
                             kerberosTicketEncryption = "AES-256" # Valid
-                            versions = "SMB3.1.1" #Valid
+                            versions = "SMB2.1" # Invalid
                         }
                     }
 
@@ -96,7 +96,7 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
             }
         }
 
-        It "Should allow compliant Storage Account - File Services - Insecure Auth" -Tag "allow-compliant-files" {
+        It "Should allow compliant Storage Account - File Services - Insecure SMB version" -Tag "allow-compliant-files" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
