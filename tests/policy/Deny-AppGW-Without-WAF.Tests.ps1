@@ -178,7 +178,7 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $PublicIp = New-AzPublicIpAddress -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "PublicIpName01" -Location "uksouth" -AllocationMethod "Static"
                 $FrontEndIpConfig = New-AzApplicationGatewayFrontendIPConfig -Name "FrontEndConfig01" -PublicIPAddress $PublicIp
                 $Listener = New-AzApplicationGatewayHttpListener -Name "ListenerName01"  -Protocol "Http" -FrontendIpConfiguration $FrontEndIpConfig -FrontendPort $FrontEndPort
-                $Rule = New-AzApplicationGatewayRequestRoutingRule -Name "Rule01" -RuleType basic -BackendHttpSettings $PoolSetting -HttpListener $Listener -BackendAddressPool $Pool
+                $Rule = New-AzApplicationGatewayRequestRoutingRule -Name "Rule01" -RuleType basic -BackendHttpSettings $PoolSetting -HttpListener $Listener -BackendAddressPool $Pool -Priority 101
                 $Sku = New-AzApplicationGatewaySku -Name "WAF_v2" -Tier WAF_v2 -Capacity 1
 
                 $Gateway = New-AzApplicationGateway `
