@@ -165,7 +165,8 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $random = GenerateRandomString -Length 13
                 $name = "alztest$Random" 
 
-                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                # Setting up all the requirements for an Application Gateway with WAF enabled
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroup $ResourceGroup -Location "uksouth"
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
                 $VNet = New-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
                 $VNet = Get-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName
@@ -174,7 +175,6 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $Pool = New-AzApplicationGatewayBackendAddressPool -Name "Pool01" -BackendIPAddresses 10.10.10.1, 10.10.10.2, 10.10.10.3
                 $PoolSetting = New-AzApplicationGatewayBackendHttpSetting -Name "PoolSetting01"  -Port 80 -Protocol "Http" -CookieBasedAffinity "Disabled"
                 $FrontEndPort = New-AzApplicationGatewayFrontendPort -Name "FrontEndPort01"  -Port 80
-                # Create a public IP address
                 $PublicIp = New-AzPublicIpAddress -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "PublicIpName01" -Location "uksouth" -AllocationMethod "Static"
                 $FrontEndIpConfig = New-AzApplicationGatewayFrontendIPConfig -Name "FrontEndConfig01" -PublicIPAddress $PublicIp
                 $Listener = New-AzApplicationGatewayHttpListener -Name "ListenerName01"  -Protocol "Http" -FrontendIpConfiguration $FrontEndIpConfig -FrontendPort $FrontEndPort
@@ -182,9 +182,10 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $Sku = New-AzApplicationGatewaySku -Name "WAF_v2" -Tier WAF_v2 -Capacity 1
                 $wafconfig = New-AzApplicationGatewayWebApplicationFirewallConfiguration -Enabled $true -FirewallMode "Detection" -RuleSetType "OWASP" -RuleSetVersion "3.0" -RequestBodyCheck $true -MaxRequestBodySize 10000000 -FileUploadLimit 10000000 -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "WAFConfig01"
 
-                $Gateway = New-AzApplicationGateway `
+                # Deploying the compliant Application Gateway with WAF enabled
+                New-AzApplicationGateway `
                     -Name $name `
-                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                    -ResourceGroup $ResourceGroup `
                     -Location "uksouth" `
                     -BackendAddressPools $Pool `
                     -BackendHttpSettingsCollection $PoolSetting `
@@ -195,11 +196,6 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                     -RequestRoutingRules $Rule `
                     -Sku $Sku `
                     -WebApplicationFirewallConfig $wafconfig
-
-                # New-AzStorageAccount `
-                #     -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                #     -Name $name `
-                #     -Location "uksouth"
 
             } | Should -Not -Throw
         }
