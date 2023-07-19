@@ -166,7 +166,7 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $name = "alztest$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroup $ResourceGroup -Location "uksouth"
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
                 $VNet = New-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
                 $VNet = Get-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName
