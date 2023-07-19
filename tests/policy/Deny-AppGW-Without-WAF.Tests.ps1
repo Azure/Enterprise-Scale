@@ -185,7 +185,7 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 # Deploying the compliant Application Gateway with WAF enabled
                 New-AzApplicationGateway `
                     -Name $name `
-                    -ResourceGroup $ResourceGroup `
+                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
                     -Location "uksouth" `
                     -BackendAddressPools $Pool `
                     -BackendHttpSettingsCollection $PoolSetting `
