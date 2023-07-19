@@ -34,129 +34,48 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
 
     Context "Test WAF enabled on Application Gateway when created" -Tag "deny-appgw-waf" {
 
-        # It "Should deny non-compliant Storage Account - File Services - Insecure Auth" -Tag "deny-noncompliant-files" {
-        #     AzTest -ResourceGroup {
-        #         param($ResourceGroup)
+        It "Should deny non-compliant Application Gateway without WAF enabled" -Tag "allow-appgw-waf" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
 
-        #         $random = GenerateRandomString -Length 13
-        #         $name = "alztest$Random" 
+                $random = GenerateRandomString -Length 13
+                $name = "alztest$Random" 
 
-        #         New-AzStorageAccount `
-        #             -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #             -Name $name `
-        #             -Location "uksouth" `
-        #             -SkuName "Standard_LRS" `
-        #             -Kind "StorageV2" `
-        #             -MinimumTlsVersion "TLS1_2" `
-        #             -AllowBlobPublicAccess $false `
-        #             -EnableHttpsTrafficOnly  $true `
-        #             -PublicNetworkAccess "Disabled"
+                # Setting up all the requirements for an Application Gateway with WAF enabled
+                $rule1 = New-AzNetworkSecurityRuleConfig -Name waf-rule -Description "Allow WAF Ports" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange '65200-65535'
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -SecurityRules $rule1
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
+                $VNet = New-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
+                $VNet = Get-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName
+                $Subnet = Get-AzVirtualNetworkSubnetConfig -Name "Subnet01" -VirtualNetwork $VNet 
+                $GatewayIPconfig = New-AzApplicationGatewayIPConfiguration -Name "GatewayIp01" -Subnet $Subnet
+                $Pool = New-AzApplicationGatewayBackendAddressPool -Name "Pool01" -BackendIPAddresses 10.10.10.1, 10.10.10.2, 10.10.10.3
+                $PoolSetting = New-AzApplicationGatewayBackendHttpSetting -Name "PoolSetting01"  -Port 80 -Protocol "Http" -CookieBasedAffinity "Disabled"
+                $FrontEndPort = New-AzApplicationGatewayFrontendPort -Name "FrontEndPort01"  -Port 80
+                $PublicIp = New-AzPublicIpAddress -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "PublicIpName01" -Location "uksouth" -AllocationMethod "Static" -Sku Standard
+                $FrontEndIpConfig = New-AzApplicationGatewayFrontendIPConfig -Name "FrontEndConfig01" -PublicIPAddress $PublicIp
+                $Listener = New-AzApplicationGatewayHttpListener -Name "ListenerName01"  -Protocol "Http" -FrontendIpConfiguration $FrontEndIpConfig -FrontendPort $FrontEndPort
+                $Rule = New-AzApplicationGatewayRequestRoutingRule -Name "Rule01" -RuleType basic -BackendHttpSettings $PoolSetting -HttpListener $Listener -BackendAddressPool $Pool -Priority 101
+                $Sku = New-AzApplicationGatewaySku -Name Standard_v2 -Tier Standard_v2 -Capacity 1
+                $wafconfig = New-AzApplicationGatewayWebApplicationFirewallConfiguration -Enabled $true -FirewallMode "Detection" -RuleSetType "OWASP" -RuleSetVersion "3.0" -RequestBodyCheck $true -MaxRequestBodySizeInKb 128 -FileUploadLimitInMb 2
 
-        #         {
-        #             # "versions": "SMB2.1;SMB3.0;SMB3.1.1",
-        #             # "authenticationMethods": "NTLMv2;Kerberos",
-        #             # "kerberosTicketEncryption": "RC4-HMAC;AES-256",
-        #             # "channelEncryption": "AES-128-CCM;AES-128-GCM;AES-256-GCM"
+                # Deploying the compliant Application Gateway with WAF enabled
+                New-AzApplicationGateway `
+                    -Name $name `
+                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                    -Location "uksouth" `
+                    -BackendAddressPools $Pool `
+                    -BackendHttpSettingsCollection $PoolSetting `
+                    -FrontendIpConfigurations $FrontEndIpConfig `
+                    -GatewayIpConfigurations $GatewayIpConfig `
+                    -FrontendPorts $FrontEndPort `
+                    -HttpListeners $Listener `
+                    -RequestRoutingRules $Rule `
+                    -Sku $Sku `
+                    -WebApplicationFirewallConfig $wafconfig
 
-        #             $protocolSettings = @{
-        #                 smb = @{
-        #                     authenticationMethods = "NTLMv2" # Not valid
-        #                     channelEncryption = "AES-256-GCM" # Valid
-        #                     kerberosTicketEncryption = "AES-256" # Valid
-        #                     versions = "SMB3.1.1" #Valid
-        #                 }
-        #             }
-
-        #             $object = @{
-        #                 properties = @{
-        #                     protocolSettings = $protocolSettings
-        #                 }
-        #             }
-        #             $payload = ConvertTo-Json -InputObject $object -Depth 100
-    
-        #             # Should be disallowed by policy, so exception should be thrown.
-        #             $httpResponse = Invoke-AzRestMethod `
-        #                 -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                 -ResourceProviderName "Microsoft.Storage" `
-        #                 -ResourceType  @('storageAccounts','fileServices') `
-        #                 -Name @($name, 'default') `
-        #                 -ApiVersion "2022-09-01" `
-        #                 -Method "PUT" `
-        #                 -Payload $payload
-            
-        #             if ($httpResponse.StatusCode -eq 200) {
-        #                 # Storage Account created
-        #             }
-        #             # Error response describing why the operation failed.
-        #             else {
-        #                 throw "Operation failed with message: '$($httpResponse.Content)'"
-        #             } 
-
-        #        } | Should -Throw "*disallowed by policy*"
-        #     }
-        # }
-
-        # It "Should allow compliant Application Gateway with WAF enabled" -Tag "allow-appgw-waf" {
-        #     AzTest -ResourceGroup {
-        #         param($ResourceGroup)
-
-        #         $random = GenerateRandomString -Length 13
-        #         $name = "alztest$Random" 
-
-        #         New-AzStorageAccount `
-        #             -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #             -Name $name `
-        #             -Location "uksouth" `
-        #             -SkuName "Standard_LRS" `
-        #             -Kind "StorageV2" `
-        #             -MinimumTlsVersion "TLS1_2" `
-        #             -AllowBlobPublicAccess $false `
-        #             -EnableHttpsTrafficOnly  $true `
-        #             -PublicNetworkAccess "Disabled"
-
-        #         {
-        #             # "versions": "SMB2.1;SMB3.0;SMB3.1.1",
-        #             # "authenticationMethods": "NTLMv2;Kerberos",
-        #             # "kerberosTicketEncryption": "RC4-HMAC;AES-256",
-        #             # "channelEncryption": "AES-128-CCM;AES-128-GCM;AES-256-GCM"
-
-        #             $protocolSettings = @{
-        #                 smb = @{
-        #                     authenticationMethods = "Kerberos" # Valid
-        #                     channelEncryption = "AES-256-GCM" # Valid
-        #                     kerberosTicketEncryption = "AES-256" # Valid
-        #                     versions = "SMB3.1.1" # Valid
-        #                 }
-        #             }
-
-        #             $object = @{
-        #                 properties = @{
-        #                     protocolSettings = $protocolSettings
-        #                 }
-        #             }
-        #             $payload = ConvertTo-Json -InputObject $object -Depth 100
-    
-        #             # Should be disallowed by policy, so exception should be thrown.
-        #             $httpResponse = Invoke-AzRestMethod `
-        #                 -ResourceGroupName $ResourceGroup.ResourceGroupName `
-        #                 -ResourceProviderName "Microsoft.Storage" `
-        #                 -ResourceType  @('storageAccounts','fileServices') `
-        #                 -Name @($name, 'default') `
-        #                 -ApiVersion "2022-09-01" `
-        #                 -Method "PUT" `
-        #                 -Payload $payload
-            
-        #             if ($httpResponse.StatusCode -eq 200) {
-        #                 # Storage Account created
-        #             }
-        #             # Error response describing why the operation failed.
-        #             else {
-        #                 throw "Operation failed with message: '$($httpResponse.Content)'"
-        #             } 
-
-        #        } | Should -Not -Throw
-        #     }
-        # }
+               } | Should -Throw "*disallowed by policy*"
+            }
 
         It "Should allow compliant Application Gateway with WAF enabled" -Tag "allow-appgw-waf" {
             AzTest -ResourceGroup {
