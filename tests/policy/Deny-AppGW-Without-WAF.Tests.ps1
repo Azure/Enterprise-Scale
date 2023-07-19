@@ -60,22 +60,24 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $wafconfig = New-AzApplicationGatewayWebApplicationFirewallConfiguration -Enabled $true -FirewallMode "Detection" -RuleSetType "OWASP" -RuleSetVersion "3.0" -RequestBodyCheck $true -MaxRequestBodySizeInKb 128 -FileUploadLimitInMb 2
 
                 # Deploying the compliant Application Gateway with WAF enabled
-                New-AzApplicationGateway `
-                    -Name $name `
-                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                    -Location "uksouth" `
-                    -BackendAddressPools $Pool `
-                    -BackendHttpSettingsCollection $PoolSetting `
-                    -FrontendIpConfigurations $FrontEndIpConfig `
-                    -GatewayIpConfigurations $GatewayIpConfig `
-                    -FrontendPorts $FrontEndPort `
-                    -HttpListeners $Listener `
-                    -RequestRoutingRules $Rule `
-                    -Sku $Sku `
-                    -WebApplicationFirewallConfig $wafconfig
+                {
+                    New-AzApplicationGateway `
+                        -Name $name `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -Location "uksouth" `
+                        -BackendAddressPools $Pool `
+                        -BackendHttpSettingsCollection $PoolSetting `
+                        -FrontendIpConfigurations $FrontEndIpConfig `
+                        -GatewayIpConfigurations $GatewayIpConfig `
+                        -FrontendPorts $FrontEndPort `
+                        -HttpListeners $Listener `
+                        -RequestRoutingRules $Rule `
+                        -Sku $Sku `
+                        -WebApplicationFirewallConfig $wafconfig
 
                } | Should -Throw "*disallowed by policy*"
             }
+        }
 
         It "Should allow compliant Application Gateway with WAF enabled" -Tag "allow-appgw-waf" {
             AzTest -ResourceGroup {
@@ -103,21 +105,23 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $wafconfig = New-AzApplicationGatewayWebApplicationFirewallConfiguration -Enabled $true -FirewallMode "Detection" -RuleSetType "OWASP" -RuleSetVersion "3.0" -RequestBodyCheck $true -MaxRequestBodySizeInKb 128 -FileUploadLimitInMb 2
 
                 # Deploying the compliant Application Gateway with WAF enabled
-                New-AzApplicationGateway `
-                    -Name $name `
-                    -ResourceGroupName $ResourceGroup.ResourceGroupName `
-                    -Location "uksouth" `
-                    -BackendAddressPools $Pool `
-                    -BackendHttpSettingsCollection $PoolSetting `
-                    -FrontendIpConfigurations $FrontEndIpConfig `
-                    -GatewayIpConfigurations $GatewayIpConfig `
-                    -FrontendPorts $FrontEndPort `
-                    -HttpListeners $Listener `
-                    -RequestRoutingRules $Rule `
-                    -Sku $Sku `
-                    -WebApplicationFirewallConfig $wafconfig
+                {
+                    New-AzApplicationGateway `
+                        -Name $name `
+                        -ResourceGroupName $ResourceGroup.ResourceGroupName `
+                        -Location "uksouth" `
+                        -BackendAddressPools $Pool `
+                        -BackendHttpSettingsCollection $PoolSetting `
+                        -FrontendIpConfigurations $FrontEndIpConfig `
+                        -GatewayIpConfigurations $GatewayIpConfig `
+                        -FrontendPorts $FrontEndPort `
+                        -HttpListeners $Listener `
+                        -RequestRoutingRules $Rule `
+                        -Sku $Sku `
+                        -WebApplicationFirewallConfig $wafconfig
 
-            } | Should -Not -Throw
+                } | Should -Not -Throw
+            }
         }
     }
 }
