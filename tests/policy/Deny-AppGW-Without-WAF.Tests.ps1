@@ -166,7 +166,8 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $name = "alztest$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                $rule1 = New-AzNetworkSecurityRuleConfig -Name waf-rule -Description "Allow WAF Ports" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange '65200-65535'
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -SecurityRules $rule1
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
                 $VNet = New-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
                 $VNet = Get-AzVirtualNetwork -Name "VNet01" -ResourceGroupName $ResourceGroup.ResourceGroupName
@@ -175,12 +176,12 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 $Pool = New-AzApplicationGatewayBackendAddressPool -Name "Pool01" -BackendIPAddresses 10.10.10.1, 10.10.10.2, 10.10.10.3
                 $PoolSetting = New-AzApplicationGatewayBackendHttpSetting -Name "PoolSetting01"  -Port 80 -Protocol "Http" -CookieBasedAffinity "Disabled"
                 $FrontEndPort = New-AzApplicationGatewayFrontendPort -Name "FrontEndPort01"  -Port 80
-                $PublicIp = New-AzPublicIpAddress -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "PublicIpName01" -Location "uksouth" -AllocationMethod "Static"
+                $PublicIp = New-AzPublicIpAddress -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "PublicIpName01" -Location "uksouth" -AllocationMethod "Static" -Sku Standard
                 $FrontEndIpConfig = New-AzApplicationGatewayFrontendIPConfig -Name "FrontEndConfig01" -PublicIPAddress $PublicIp
                 $Listener = New-AzApplicationGatewayHttpListener -Name "ListenerName01"  -Protocol "Http" -FrontendIpConfiguration $FrontEndIpConfig -FrontendPort $FrontEndPort
                 $Rule = New-AzApplicationGatewayRequestRoutingRule -Name "Rule01" -RuleType basic -BackendHttpSettings $PoolSetting -HttpListener $Listener -BackendAddressPool $Pool -Priority 101
                 $Sku = New-AzApplicationGatewaySku -Name "WAF_v2" -Tier WAF_v2 -Capacity 1
-                $wafconfig = New-AzApplicationGatewayWebApplicationFirewallConfiguration -Enabled $true -FirewallMode "Detection" -RuleSetType "OWASP" -RuleSetVersion "3.0" -RequestBodyCheck $true -MaxRequestBodySize 10000000 -FileUploadLimit 10000000 -ResourceGroupName $ResourceGroup.ResourceGroupName -Name "WAFConfig01"
+                $wafconfig = New-AzApplicationGatewayWebApplicationFirewallConfiguration -Enabled $true -FirewallMode "Detection" -RuleSetType "OWASP" -RuleSetVersion "3.0" -RequestBodyCheck $true -MaxRequestBodySizeInKb 128 -FileUploadLimitInMb 2
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 New-AzApplicationGateway `
