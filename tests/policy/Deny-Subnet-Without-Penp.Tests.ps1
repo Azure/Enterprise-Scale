@@ -42,8 +42,8 @@ Describe "Testing policy 'Deny-Subnet-Without-Penp'" -Tag "deny-subnet-penp" {
                 $name = "vnet-$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                #$NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
                 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
@@ -61,8 +61,8 @@ Describe "Testing policy 'Deny-Subnet-Without-Penp'" -Tag "deny-subnet-penp" {
                 $name = "vnet-$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                #$NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureFirewallSubnet" -AddressPrefix 10.0.1.0/24 #-NetworkSecurityGroup $NSG
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureFirewallSubnet" -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $NSG
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {

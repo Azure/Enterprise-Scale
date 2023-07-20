@@ -61,7 +61,8 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $name = "vnet-$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureBastionSubnet" -AddressPrefix 10.0.1.0/24
+                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureBastionSubnet" -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $NSG
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
@@ -79,13 +80,15 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $name = "vnet-$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                $Route = New-AzRouteConfig -Name "Route07" -AddressPrefix 10.0.0.0/16 -NextHopType "VnetLocal"
+                $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route # This PS command doesn't work in corp landing zone unless you use westeurope or northeurope
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
-                $VNet = New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
+                    $VNet = New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
+
                     Set-AzureSubnetRouteTable -VirtualNetworkName $name -SubnetName "SubNet01" -RouteTableName RouteTable01
 
                 } | Should -Not -Throw
