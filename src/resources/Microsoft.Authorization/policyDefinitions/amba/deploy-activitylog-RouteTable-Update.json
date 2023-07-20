@@ -1,0 +1,260 @@
+{
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "name": "Deploy_activitylog_RouteTable_Update",
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Deploy Activity Log Route Table Update Alert",
+    "description": "Policy to Deploy Activity Log Route Table Update Alert",
+    "metadata": {
+      "version": "1.0.1",
+      "category": "Network",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud"
+      ],
+      "_deployed_by_alz_monitor": "True"
+    },
+    "parameters": {
+      "enabled": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Alert State",
+          "description": "Alert state for the alert"
+        },
+        "allowedValues": [
+          "true",
+          "false"
+        ],
+        "defaultValue": "true"
+      },
+      "alertResourceGroupName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Resource Group Name",
+          "description": "Resource group the alert is placed in"
+        },
+        "defaultValue": "AlzMonitoring-rg"
+      },
+      "alertResourceGroupTags": {
+        "type": "Object",
+        "metadata": {
+          "displayName": "Resource Group Tags",
+          "description": "Tags on the Resource group the alert is placed in"
+        },
+        "defaultValue": {
+          "environment": "test",
+          "_deployed_by_alz_monitor": true
+        }
+      },
+      "alertResourceGroupLocation": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Resource Group Location",
+          "description": "Location of the Resource group the alert is placed in"
+        },
+        "defaultValue": "centralus"
+      },
+      "MonitorDisable": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Tag name to disable monitoring on resource. Set to true if monitoring should be disabled"
+        },
+        "defaultValue": "MonitorDisable"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Network/routeTables"
+          },
+          {
+            "field": "[[concat('tags[', parameters('MonitorDisable'), ']')]",
+            "notEquals": "true"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deployIfNotExists",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+          ],
+          "type": "Microsoft.Insights/activityLogAlerts",
+          "name": "ActivityUDRUpdate",
+          "existenceScope": "resourcegroup",
+          "resourceGroupName": "[[parameters('alertResourceGroupName')]",
+          "deploymentScope": "subscription",
+          "existenceCondition": {
+            "allOf": [
+              {
+                "field": "Microsoft.Insights/ActivityLogAlerts/enabled",
+                "equals": "[[parameters('enabled')]"
+              },
+              {
+                "count": {
+                  "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*]",
+                  "where": {
+                    "anyOf": [
+                      {
+                        "allOf": [
+                          {
+                            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].field",
+                            "equals": "category"
+                          },
+                          {
+                            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].equals",
+                            "equals": "Administrative"
+                          }
+                        ]
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "field": "microsoft.insights/activityLogAlerts/condition.allOf[*].field",
+                            "equals": "operationName"
+                          },
+                          {
+                            "field": "microsoft.insights/activityLogAlerts/condition.allOf[*].equals",
+                            "equals": "Microsoft.Network/routeTables/routes/write"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "equals": 2
+              }
+            ]
+          },
+          "deployment": {
+            "location": "[[deployment().location]",
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "alertResourceGroupName": {
+                    "type": "string"
+                  },
+                  "alertResourceGroupTags": {
+                    "type": "object"
+                  },
+                  "alertResourceGroupLocation": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "string"
+                  }
+                },
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2021-04-01",
+                    "name": "[[parameters('alertResourceGroupName')]",
+                    "location": "[[parameters('alertResourceGroupLocation')]",
+                    "tags": "[[parameters('alertResourceGroupTags')]"
+                  },
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2019-10-01",
+                    "name": "ActivityUDRUpdate",
+                    "resourceGroup": "[[parameters('alertResourceGroupName')]",
+                    "dependsOn": [
+                      "[[concat('Microsoft.Resources/resourceGroups/', parameters('alertResourceGroupName'))]"
+                    ],
+                    "properties": {
+                      "mode": "Incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                          "enabled": {
+                            "type": "string"
+                          },
+                          "alertResourceGroupName": {
+                            "type": "string"
+                          }
+                        },
+                        "variables": {},
+                        "resources": [
+                          {
+                            "type": "microsoft.insights/activityLogAlerts",
+                            "apiVersion": "2020-10-01",
+                            "name": "ActivityUDRUpdate",
+                            "location": "global",
+                            "tags": {
+                              "_deployed_by_alz_monitor": true
+                            },
+                            "properties": {
+                              "description": "Activity Log Route table update",
+                              "enabled": "[[parameters('enabled')]",
+                              "scopes": [
+                                "[[subscription().id]"
+                              ],
+                              "condition": {
+                                "allOf": [
+                                  {
+                                    "field": "category",
+                                    "equals": "Administrative"
+                                  },
+                                  {
+                                    "field": "operationName",
+                                    "equals": "Microsoft.Network/routeTables/routes/write"
+                                  },
+                                  {
+                                    "field": "status",
+                                    "containsAny": [
+                                      "succeeded"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "parameters": {
+                                "enabled": {
+                                  "value": "[[parameters('enabled')]"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "parameters": {
+                        "enabled": {
+                          "value": "[[parameters('enabled')]"
+                        },
+                        "alertResourceGroupName": {
+                          "value": "[[parameters('alertResourceGroupName')]"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "parameters": {
+                "enabled": {
+                  "value": "[[parameters('enabled')]"
+                },
+                "alertResourceGroupName": {
+                  "value": "[[parameters('alertResourceGroupName')]"
+                },
+                "alertResourceGroupTags": {
+                  "value": "[[parameters('alertResourceGroupTags')]"
+                },
+                "alertResourceGroupLocation": {
+                  "value": "[[parameters('alertResourceGroupLocation')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
