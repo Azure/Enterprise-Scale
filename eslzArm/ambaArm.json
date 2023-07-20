@@ -1,0 +1,377 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enterpriseScaleCompanyPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "platformManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the Management Group that will be used to host the platform resources."
+            }
+        },
+        "IdentityManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the Management Group that will be used to host the identity resources."
+            }
+        },
+        "managementManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the Management Group that will be used to host the management resources."
+            }
+        },
+        "connectivityManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the Management Group that will be used to host the connectivity resources."
+            }
+        },
+        "LandingZoneManagementGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the Management Group that will be used to host the landing zone resources."
+            }
+        },
+        "enableAMBAConnectivity": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Assign Connectivity initiative"
+            }
+        },
+        "enableAMBAIdentity": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Assign Identity initiative"
+            }
+        },
+        "enableAMBALandingZone": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Assign Landing zone initiative"
+            }
+        },
+        "enableAMBAManagement": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Assign Management initiative"
+            }
+        },
+        "enableAMBAServiceHealth": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Assign Service health initiative"
+            }
+        },
+        "delayCount": {
+            "type": "int",
+            "defaultValue": 35,
+            "minValue": 1,
+            "maxValue": 60,
+            "metadata": {
+                "description": "Configure the count of empty deployments used to introduce a delay after policy deployment. Used to increase reliability of deployment, but can be reduced when re-deploying to an existing environment."
+            }
+        },
+        "currentDateTimeUtcNow": {
+            "type": "string",
+            "defaultValue": "[utcNow()]",
+            "metadata": {
+                "description": "The current date and time using the utcNow function. Used for deployment name uniqueness"
+            }
+        },
+        "policyAssignmentParametersCommon": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "policyAssignmentParametersConnectivity": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "policyAssignmentParametersIdentity": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "policyAssignmentParametersLandingZone": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "policyAssignmentParametersManagement": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "policyAssignmentParametersServiceHealth": {
+            "type": "object",
+            "defaultValue": {}
+        }
+    },
+    "variables": {
+        // Declaring the policy assignment parameters that will be used for all policy assignments
+        "policyAssignmentParametersConnectivity": "[union(parameters('policyAssignmentParametersCommon'), parameters('policyAssignmentParametersConnectivity'))]",
+        "policyAssignmentParametersIdentity": "[union(parameters('policyAssignmentParametersCommon'), parameters('policyAssignmentParametersIdentity'))]",
+        "policyAssignmentParametersLandingZone": "[union(parameters('policyAssignmentParametersCommon'), parameters('policyAssignmentParametersLandingZone'))]",
+        "policyAssignmentParametersManagement": "[union(parameters('policyAssignmentParametersCommon'), parameters('policyAssignmentParametersManagement'))]",
+        "policyAssignmentParametersServiceHealth": "[union(parameters('policyAssignmentParametersCommon'), parameters('policyAssignmentParametersServiceHealth'))]",
+        // Declaring the prescriptive management group structure that will be used in the scope construction
+        "mgmtGroups": {
+            "eslzRoot": "[parameters('enterpriseScaleCompanyPrefix')]",
+            "platform": "[parameters('platformManagementGroup')]",
+            "management": "[parameters('managementManagementGroup')]",
+            "connectivity": "[parameters('connectivityManagementGroup')]",
+            "identity": "[parameters('identityManagementGroup')]",
+            "lzs": "[parameters('LandingZoneManagementGroup')]"
+        },
+        // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
+        "scopes": {
+            "eslzRootManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').eslzRoot)]",
+            "platformManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').platform)]",
+            "managementManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').management)]",
+            "connectivityManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').connectivity)]",
+            "identityManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').identity)]",
+            "lzsManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').lzs)]"
+        },
+        // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
+        "deploymentUris": {
+            "policyDefinitionsAMBA": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/amba-policies.json')]",
+            "AMBAConnectivityInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/amba/DINE-AMBAConnectivity.json')]",
+            "AMBAIdentityInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/amba/DINE-AMBAIdentity.json')]",
+            "AMBALandingZoneInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/amba/DINE-AMBALandingZone.json')]",
+            "AMBAManagementInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/amba/DINE-AMBAManagement.json')]",
+            "AMBAServiceHealthInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/amba/DINE-AMBAServiceHealth.json')]"
+        },
+        // Declaring deterministic deployment names
+        "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
+        "deploymentNames": {
+            "AMBAPolicyDeploymentName": "[take(concat('amba-Policy', variables('deploymentSuffix')), 64)]",
+            "AMBAConnectivityDeploymentName": "[take(concat('amba-Connectivity', variables('deploymentSuffix')), 64)]",
+            "AMBAIdentityDeploymentName": "[take(concat('amba-Identity', variables('deploymentSuffix')), 64)]",
+            "AMBALandingZoneDeploymentName": "[take(concat('amba-LandingZone', variables('deploymentSuffix')), 64)]",
+            "AMBAManagementDeploymentName": "[take(concat('amba-Management', variables('deploymentSuffix')), 64)]",
+            "AMBAServiceHealthDeploymentName": "[take(concat('amba-ServiceHealth', variables('deploymentSuffix')), 64)]"
+        }
+    },
+    "resources": [
+        /*
+            The following deployments will deploy the required proactive and preventive Azure policies for AMBA policy driven governance
+        */
+        {
+            // Deploying AMBA custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').AMBAPolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').policyDefinitionsAMBA]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
+            // One of Azure's untold stories.....
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat('preparingToLaunch', copyIndex())]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').AMBAPolicyDeploymentName]"
+            ],
+            "copy": {
+                "batchSize": 1,
+                "count": "[parameters('delayCount')]",
+                "mode": "Serial",
+                "name": "policyCompletion"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {
+            // Assigning AMBA Connectivity PolicySet to the connectivity management group if condition is true
+            "condition": "[equals(parameters('enableAMBAConnectivity'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').AMBAConnectivityDeploymentName]",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').AMBAPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').AMBAConnectivityInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyAssignmentParameters": {
+                        "value": "[variables('policyAssignmentParametersConnectivity')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning AMBA Identity PolicySet to the Indentity management group if condition is true
+            "condition": "[equals(parameters('enableAMBAIdentity'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').AMBAIdentityDeploymentName]",
+            "scope": "[variables('scopes').identityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').AMBAPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').AMBAIdentityInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyAssignmentParameters": {
+                        "value": "[variables('policyAssignmentParametersIdentity')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning AMBA LandingZone PolicySet to the LandingZone management group if condition is true
+            "condition": "[equals(parameters('enableAMBALandingZone'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').AMBALandingZoneDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').AMBAPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').AMBALandingZoneInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyAssignmentParameters": {
+                        "value": "[variables('policyAssignmentParametersLandingZone')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning AMBA management PolicySet to the management management group if condition is true
+            "condition": "[equals(parameters('enableAMBAManagement'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').AMBAManagementDeploymentName]",
+            "scope": "[variables('scopes').managementManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').AMBAPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').AMBAManagementInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyAssignmentParameters": {
+                        "value": "[variables('policyAssignmentParametersManagement')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning AMBA service health PolicySet to the service health management group if condition is true
+            "condition": "[equals(parameters('enableAMBAServiceHealth'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').AMBAServiceHealthDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').AMBAPolicyDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').AMBAServiceHealthInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policyAssignmentParameters": {
+                        "value": "[variables('policyAssignmentParametersServiceHealth')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "deployment": {
+            "type": "string",
+            "value": "[concat(deployment().name, ' has successfully deployed.')]"
+        }
+    }
+}
