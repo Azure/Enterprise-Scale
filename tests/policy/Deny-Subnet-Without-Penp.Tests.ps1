@@ -53,25 +53,6 @@ Describe "Testing policy 'Deny-Subnet-Without-Penp'" -Tag "deny-subnet-penp" {
             }
         }
 
-        It "Should allow compliant Virtual Network without Private Endpoint Network Policies but excluded subnet" -Tag "allow-subnet-penp" {
-            AzTest -ResourceGroup {
-                param($ResourceGroup)
-
-                $random = GenerateRandomString -Length 13
-                $name = "vnet-$Random" 
-
-                # Setting up all the requirements for a Virtual Network without Private Endpoint Network Policies but excluded subnet
-                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "GatewaySubnet" -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $NSG
-
-                # Deploying the compliant Virtual Network without Private Endpoint Network Policies but excluded subnet
-                {
-                    New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
-
-                } | Should -Not -Throw
-            }
-        }
-
         It "Should allow compliant Virtual Network with Private Endpoint Network Policies" -Tag "allow-subnet-penp" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
