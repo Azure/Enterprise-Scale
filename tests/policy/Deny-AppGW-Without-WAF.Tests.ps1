@@ -34,7 +34,7 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
 
     Context "Test WAF enabled on Application Gateway when created" -Tag "deny-appgw-waf" {
 
-        It "Should deny non-compliant Application Gateway without WAF enabled" -Tag "allow-appgw-waf" {
+        It "Should deny non-compliant Application Gateway without WAF enabled" -Tag "deny-appgw-waf" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -123,5 +123,9 @@ Describe "Testing policy 'Deny-AppGW-Without-WAF'" -Tag "deny-appgw-waf" {
                 } | Should -Not -Throw
             }
         }
+    }
+
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-AppGw-WAF" -Scope $mangementGroupScope -Confirm:$false
     }
 }
