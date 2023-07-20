@@ -65,7 +65,7 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $rule2 = New-AzNetworkSecurityRuleConfig -Name allowGWinbound-rule -Description "Allow Gateway Manager Inbound" -Access Allow -Protocol Tcp -Direction Inbound -Priority 102 -SourceAddressPrefix GatewayManager -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
                 $rule3 = New-AzNetworkSecurityRuleConfig -Name allowLBinbound-rule -Description "Allow Load Balancer Inbound" -Access Allow -Protocol Tcp -Direction Inbound -Priority 103 -SourceAddressPrefix AzureLoadBalancer -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
                 $rule4 = New-AzNetworkSecurityRuleConfig -Name allowBHinbound-rule -Description "Allow Bastion Host Inbound" -Access Allow -Protocol Any -Direction Inbound -Priority 104 -SourceAddressPrefix VirtualNetwork -SourcePortRange * -DestinationAddressPrefix VirtualNetwork -DestinationPortRange '8080,5701'
-                $rule5 = New-AzNetworkSecurityRuleConfig -Name allowOnbound-rule -Description "Allow Outbound" -Access Allow -Protocol Any -Direction Outbound -Priority 101 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
+                $rule5 = New-AzNetworkSecurityRuleConfig -Name allowOnbound-rule -Description "Allow Outbound" -Access Allow -Protocol * -Direction Outbound -Priority 101 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
 
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -SecurityRules $rule1,$rule2,$rule3,$rule4,$rule5
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureBastionSubnet" -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $NSG
@@ -86,16 +86,16 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $name = "vnet-$Random" 
 
                 # Setting up all the requirements for an Application Gateway with WAF enabled
-                $Route = New-AzRouteConfig -Name "Route07" -AddressPrefix 10.0.0.0/16 -NextHopType "VnetLocal"
+                $Route = New-AzRouteConfig -Name "Route01" -AddressPrefix 10.0.0.0/16 -NextHopType "VnetLocal"
                 $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG -RouteTable $RouteTable
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
                     $VNet = New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 
-                    Set-AzureSubnetRouteTable -VirtualNetworkName $Vnet.Name -SubnetName "SubNet01" -RouteTableName $RouteTable.RouteTableName
+                    #Set-AzureSubnetRouteTable -VirtualNetworkName $Vnet.Name -SubnetName "SubNet01" -RouteTableName $RouteTable.RouteTableName
 
                 } | Should -Not -Throw
             }
