@@ -41,11 +41,11 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Application Gateway with WAF enabled
+                # Setting up all the requirements for an Virtual Network without UDR
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG
                 
-                # Deploying the compliant Application Gateway with WAF enabled
+                # Deploying the compliant Virtual Network without UDR
                 {
                     New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 
@@ -60,7 +60,7 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Application Gateway with WAF enabled
+                # Setting up all the requirements for an Virtual Network without UDR
                 $rule1 = New-AzNetworkSecurityRuleConfig -Name allowhttpsinbound-rule -Description "Allow HTTPS Inbound" -Access Allow -Protocol Tcp -Direction Inbound -Priority 101 -SourceAddressPrefix Internet -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
                 $rule2 = New-AzNetworkSecurityRuleConfig -Name allowGWinbound-rule -Description "Allow Gateway Manager Inbound" -Access Allow -Protocol Tcp -Direction Inbound -Priority 102 -SourceAddressPrefix GatewayManager -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
                 $rule3 = New-AzNetworkSecurityRuleConfig -Name allowLBinbound-rule -Description "Allow Load Balancer Inbound" -Access Allow -Protocol Tcp -Direction Inbound -Priority 103 -SourceAddressPrefix AzureLoadBalancer -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
@@ -71,7 +71,7 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -SecurityRules $rule1,$rule2,$rule3,$rule4,$rule5,$rule6
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureBastionSubnet" -AddressPrefix 10.0.1.0/24 -NetworkSecurityGroup $NSG
 
-                # Deploying the compliant Application Gateway with WAF enabled
+                # Deploying the compliant Virtual Network without UDR
                 {
                     New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 
@@ -86,13 +86,13 @@ Describe "Testing policy 'Deny-Subnet-Without-Udr'" -Tag "deny-subnet-udr" {
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Application Gateway with WAF enabled
+                # Setting up all the requirements for an Virtual Network with UDR
                 $Route = New-AzRouteConfig -Name "Route01" -AddressPrefix 10.0.0.0/16 -NextHopType "VnetLocal"
                 $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG -RouteTable $RouteTable
 
-                # Deploying the compliant Application Gateway with WAF enabled
+                # Deploying the compliant Virtual Network with UDR
                 {
                     $VNet = New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 
