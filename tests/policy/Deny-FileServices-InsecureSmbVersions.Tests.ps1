@@ -158,4 +158,8 @@ Describe "Testing policy 'Deny-FileServices-InsecureSmbVersions'" -Tag "deny-fil
             }
         }
     }
+        
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-Files-smbver" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

@@ -320,4 +320,8 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
             }
         }
     }
+            
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

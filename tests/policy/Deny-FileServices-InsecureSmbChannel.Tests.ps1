@@ -158,4 +158,8 @@ Describe "Testing policy 'Deny-FileServices-InsecureSmbChannel'" -Tag "deny-file
             }
         }
     }
+    
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-Files-channel" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

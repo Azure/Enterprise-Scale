@@ -112,5 +112,9 @@ Describe "Testing policy 'Deny-AppServiceWebApp-http'" -Tag "deny-appservice-web
                 } | Should -Throw "*disallowed by policy*"
             }
         }        
+    }    
+
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-ASWeb-http" -Scope $mangementGroupScope -Confirm:$false
     }
 }

@@ -158,4 +158,8 @@ Describe "Testing policy 'Deny-FileServices-InsecureKerberos'" -Tag "deny-files-
             }
         }
     }
+
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-Files-kerb" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

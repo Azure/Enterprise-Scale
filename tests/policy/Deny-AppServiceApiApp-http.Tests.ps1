@@ -75,4 +75,8 @@ Describe "Testing policy 'Deny-AppServiceApiApp-http'" -Tag "deny-appservice-api
         }
 
     }
+
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-ASAPI-http" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

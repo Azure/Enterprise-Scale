@@ -113,4 +113,8 @@ Describe "Testing policy 'Deny-AppServiceFunctionApp-http'" -Tag "deny-appservic
             }
         }        
     }
+    
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-ASFunc-http" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

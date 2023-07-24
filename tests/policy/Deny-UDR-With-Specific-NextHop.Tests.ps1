@@ -28,7 +28,7 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
         }
 
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-Subnet-Without-Udr' }
-        New-AzPolicyAssignment -Name "TDeny-Subnet-UDR" -Scope $mangementGroupScope -PolicyDefinition $definition
+        New-AzPolicyAssignment -Name "TDeny-Subnet-UDRHop" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
@@ -99,6 +99,6 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
     }
 
     AfterAll {
-        Remove-AzPolicyAssignment -Name "TDeny-Subnet-UDR" -Scope $mangementGroupScope -Confirm:$false
+        Remove-AzPolicyAssignment -Name "TDeny-Subnet-UDRHop" -Scope $mangementGroupScope -Confirm:$false
     }
 }

@@ -158,4 +158,8 @@ Describe "Testing policy 'Deny-FileServices-InsecureAuth'" -Tag "deny-files-auth
             }
         }
     }
+
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-Files-auth" -Scope $mangementGroupScope -Confirm:$false
+    }
 }
