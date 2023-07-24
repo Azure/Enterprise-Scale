@@ -41,7 +41,6 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Virtual Network without UDR
                 $Route = New-AzRouteConfig -Name "Route01" -NextHopType "Internet" -AddressPrefix 0.0.0.0/0
                 $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
@@ -62,7 +61,6 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Virtual Network without UDR
                 $Route = New-AzRouteConfig -Name "Route01" -NextHopType "VirtualNetworkGateway" -AddressPrefix 10.1.0.0/24
                 $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
                 $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
