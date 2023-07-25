@@ -67,9 +67,9 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
                 param($ResourceGroup)
 
                 # Moved the assignment into the test, as we need to dynamically generate the allowedVnets parameter - need the resource group name to do this
-                #$mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
+                $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
 
-                #$definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-VNET-Peering-To-Non-Approved-VNETs' }
+                $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-VNET-Peering-To-Non-Approved-VNETs' }
                 $subscriptionID = $env:SUBSCRIPTION_ID
                 $rgName = $ResourceGroup.ResourceGroupName
                 $allowedVnets = @(
@@ -77,7 +77,8 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
                     "/subscriptions/$subscriptionID/resourceGroups/$rgName/providers/Microsoft.Network/virtualNetworks/ApprovedVnet02"
                     )
                 $parameters = @{'allowedVnets'=($allowedVnets)}
-                Set-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -PolicyParameterObject $parameters
+                #Set-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -PolicyParameterObject $parameters
+                New-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject $parameters
 
                 $NSG1 = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet1 = New-AzVirtualNetworkSubnetConfig -Name "subnet01" -AddressPrefix 10.1.0.0/24 -NetworkSecurityGroup $NSG1
