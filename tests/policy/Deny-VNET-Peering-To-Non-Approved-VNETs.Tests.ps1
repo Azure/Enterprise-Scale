@@ -24,7 +24,7 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
 
             # Set the esCompanyPrefix from the deployment configuration if not specified
             $esCompanyPrefix = $deploymentObject.TemplateParameterObject.enterpriseScaleCompanyPrefix
-            $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
+            
         }
 
         ### Had to move the assignment into the test, as we need to dynamically generate the allowedVnets parameter
@@ -66,10 +66,14 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
                 param($ResourceGroup)
 
                 # Moved the assignment into the test, as we need to dynamically generate the allowedVnets parameter
+                $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
+
                 $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-VNET-Peering-To-Non-Approved-VNETs' }
+                $subscriptionID = $env:SUBSCRIPTION_ID
+                $rgName = $ResourceGroup.ResourceGroupName
                 $allowedVnets = @(
-                    concat("/subscriptions/",$env:SUBSCRIPTION_ID,"/resourceGroups/",$ResourceGroup.ResourceGroupName,"/providers/Microsoft.Network/virtualNetworks/ApprovedVnet01"),
-                    concat("/subscriptions/",$env:SUBSCRIPTION_ID,"/resourceGroups/",$ResourceGroup.ResourceGroupName,"/providers/Microsoft.Network/virtualNetworks/ApprovedVnet02")
+                    "/subscriptions/$subscriptionID/resourceGroups/$rgName/providers/Microsoft.Network/virtualNetworks/ApprovedVnet01",
+                    "/subscriptions/$subscriptionID/resourceGroups/$rgName/providers/Microsoft.Network/virtualNetworks/ApprovedVnet02"
                     )
                 $parameters = @{'allowedVnets'=($allowedVnets)}
                 New-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject $parameters
