@@ -27,7 +27,7 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-Subnet-Without-Udr' }
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-UDR-With-Specific-NextHop' }
         New-AzPolicyAssignment -Name "TDeny-Subnet-UDRHop" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
