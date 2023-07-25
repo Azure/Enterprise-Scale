@@ -4,7 +4,7 @@ param (
     [Parameter()][String]$esCompanyPrefix
 )
 
-Import-Module -Name Az.Storage
+Import-Module -Name Az.Network
 Import-Module -Name Az.Resources
 Import-Module "$($PSScriptRoot)/../../tests/utils/Policy.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
