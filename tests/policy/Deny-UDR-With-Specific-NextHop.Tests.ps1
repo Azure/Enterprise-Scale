@@ -38,17 +38,10 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 13
-                $name = "vnet-$Random" 
-
                 # Deploying the compliant Virtual Network without UDR
                 {
                     $Route = New-AzRouteConfig -Name "Route01" -NextHopType "Internet" -AddressPrefix 0.0.0.0/0
-                    $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
-                    # $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                    # $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG -RouteTable $RouteTable
-
-                    # New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
+                    New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
 
                } | Should -Throw "*disallowed by policy*"
             }
@@ -58,17 +51,10 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                $random = GenerateRandomString -Length 13
-                $name = "vnet-$Random" 
-               
                 # Deploying the compliant Virtual Network without UDR
                 {
                     $Route = New-AzRouteConfig -Name "Route02" -NextHopType "VirtualNetworkGateway" -AddressPrefix 10.1.0.0/24
-                    $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
-                    # $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                    # $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG -RouteTable $RouteTable
-
-                    # New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
+                    New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
 
                } | Should -Throw "*disallowed by policy*"
             }
@@ -81,14 +67,14 @@ Describe "Testing policy 'Deny-UDR-With-Specific-NextHop'" -Tag "deny-subnet-udr
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Virtual Network with UDR
-                $Route = New-AzRouteConfig -Name "Route03" -AddressPrefix 10.0.0.0/16 -NextHopType "VnetLocal"
-                $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
-                $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG -RouteTable $RouteTable
-
                 # Deploying the compliant Virtual Network with UDR
                 {
+                    # Setting up all the requirements for an Virtual Network with UDR
+                    $Route = New-AzRouteConfig -Name "Route03" -AddressPrefix 10.0.0.0/16 -NextHopType "VnetLocal"
+                    $RouteTable = New-AzRouteTable -Name "RouteTable01" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -Route $Route
+                    $NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
+                    $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 -NetworkSecurityGroup $NSG -RouteTable $RouteTable
+
                     New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 
                 } | Should -Not -Throw
