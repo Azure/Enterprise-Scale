@@ -40,9 +40,6 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                # $random = GenerateRandomString -Length 13
-                # $name = "vnet-$Random"
-
                 $NSG1 = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet1 = New-AzVirtualNetworkSubnetConfig -Name "subnet01" -AddressPrefix 10.1.0.0/24 -NetworkSecurityGroup $NSG1
                 $vnet1 = New-AzVirtualNetwork -Name 'myVnet1' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.1.0.0/16 -Subnet $Subnet1
@@ -51,7 +48,6 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
                 $Subnet2 = New-AzVirtualNetworkSubnetConfig -Name "subnet02" -AddressPrefix 10.2.0.0/24 -NetworkSecurityGroup $NSG2
                 $vnet2 = New-AzVirtualNetwork -Name 'myVnet2' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.2.0.0/16 -Subnet $Subnet2
 
-                # Deploying the compliant Virtual Network without UDR
                 {
 
                     # Peer VNet1 to VNet2.
@@ -68,9 +64,6 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
-                # $random = GenerateRandomString -Length 13
-                # $name = "vnet-$Random"
-
                 $NSG1 = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet1 = New-AzVirtualNetworkSubnetConfig -Name "subnet01" -AddressPrefix 10.1.0.0/24 -NetworkSecurityGroup $NSG1
                 $vnet1 = New-AzVirtualNetwork -Name 'ApprovedVnet01' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.1.0.0/16 -Subnet $Subnet1
@@ -79,7 +72,6 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
                 $Subnet2 = New-AzVirtualNetworkSubnetConfig -Name "subnet02" -AddressPrefix 10.2.0.0/24 -NetworkSecurityGroup $NSG2
                 $vnet2 = New-AzVirtualNetwork -Name 'ApprovedVnet02' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.2.0.0/16 -Subnet $Subnet2
 
-                # Deploying the compliant Virtual Network without UDR
                 {
 
                     # Peer VNet1 to VNet2.
@@ -94,6 +86,6 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
     }
 
     AfterAll {
-        Remove-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -Confirm:$false
+       #Remove-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -Confirm:$false
     }
 }

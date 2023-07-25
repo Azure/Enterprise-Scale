@@ -11,7 +11,7 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Generic.Utils.psm1" -Force
 
-Describe "Testing policy 'Deny-VNet-Peering'" -Tag "deny-vnet-peering" {
+Describe "Testing policy 'Deny-VNET-Peer-Cross-Sub'" -Tag "deny-vnet-peering" {
 
     BeforeAll {
         
@@ -27,14 +27,14 @@ Describe "Testing policy 'Deny-VNet-Peering'" -Tag "deny-vnet-peering" {
             $mangementGroupScope = "/providers/Microsoft.Management/managementGroups/$esCompanyPrefix-corp"
         }
 
-        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-VNet-Peering' }
-        New-AzPolicyAssignment -Name "TDeny-Vnet-Peering" -Scope $mangementGroupScope -PolicyDefinition $definition
+        $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-VNET-Peer-Cross-Sub' }
+        New-AzPolicyAssignment -Name "TDeny-Vnet-XPeering" -Scope $mangementGroupScope -PolicyDefinition $definition
 
     }
 
-    Context "Test same subscription peering on Virtual Network when created or updated" -Tag "deny-vnet-peering" {
+    Context "Test cross subscription peering on Virtual Network when created or updated" -Tag "deny-vnet-peering" {
 
-        It "Should deny non-compliant Virtual Network with peering in same subscription" -Tag "deny-vnet-peering" {
+        It "Should deny non-compliant Virtual Network with cross subscription peering" -Tag "deny-vnet-peering" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -42,9 +42,13 @@ Describe "Testing policy 'Deny-VNet-Peering'" -Tag "deny-vnet-peering" {
                 $Subnet1 = New-AzVirtualNetworkSubnetConfig -Name "subnet01" -AddressPrefix 10.1.0.0/24 -NetworkSecurityGroup $NSG1
                 $vnet1 = New-AzVirtualNetwork -Name 'myVnet1' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.1.0.0/16 -Subnet $Subnet1
 
+                Set-AzContext -SubscriptionId $env:SUBSCRIPTION2_ID -TenantId $env:TENANT_ID -Force
+
                 $NSG2 = New-AzNetworkSecurityGroup -Name "nsg2" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet2 = New-AzVirtualNetworkSubnetConfig -Name "subnet02" -AddressPrefix 10.2.0.0/24 -NetworkSecurityGroup $NSG2
                 $vnet2 = New-AzVirtualNetwork -Name 'myVnet2' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.2.0.0/16 -Subnet $Subnet2
+
+                Set-AzContext -SubscriptionId $env:SUBSCRIPTION_ID -TenantId $env:TENANT_ID -Force
 
                 {
 
@@ -61,6 +65,6 @@ Describe "Testing policy 'Deny-VNet-Peering'" -Tag "deny-vnet-peering" {
     }
 
     AfterAll {
-        Remove-AzPolicyAssignment -Name "TDeny-Vnet-Peering" -Scope $mangementGroupScope -Confirm:$false
+        Remove-AzPolicyAssignment -Name "TDeny-Vnet-XPeering" -Scope $mangementGroupScope -Confirm:$false
     }
 }
