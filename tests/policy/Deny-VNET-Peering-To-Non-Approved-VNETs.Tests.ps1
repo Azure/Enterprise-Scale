@@ -68,8 +68,8 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
                 # Moved the assignment into the test, as we need to dynamically generate the allowedVnets parameter
                 $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-VNET-Peering-To-Non-Approved-VNETs' }
                 $allowedVnets = @(
-                    "/subscriptions/$env:SUBSCRIPTION_ID/resourceGroups/$ResourceGroup.ResourceGroupName/providers/Microsoft.Network/virtualNetworks/ApprovedVnet01",
-                    "/subscriptions/$env:SUBSCRIPTION_ID/resourceGroups/$ResourceGroup.ResourceGroupName/providers/Microsoft.Network/virtualNetworks/ApprovedVnet02"
+                    concat("/subscriptions/",$env:SUBSCRIPTION_ID,"/resourceGroups/",$ResourceGroup.ResourceGroupName,"/providers/Microsoft.Network/virtualNetworks/ApprovedVnet01"),
+                    concat("/subscriptions/",$env:SUBSCRIPTION_ID,"/resourceGroups/",$ResourceGroup.ResourceGroupName,"/providers/Microsoft.Network/virtualNetworks/ApprovedVnet02")
                     )
                 $parameters = @{'allowedVnets'=($allowedVnets)}
                 New-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -PolicyDefinition $definition -PolicyParameterObject $parameters
