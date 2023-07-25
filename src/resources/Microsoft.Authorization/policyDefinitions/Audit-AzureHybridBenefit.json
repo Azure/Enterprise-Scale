@@ -1,0 +1,88 @@
+{
+  "name": "Audit-AzureHybridBenefit",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "displayName": "Audit AHUB for eligible VMs",
+    "mode": "All",
+    "description": "Optimize cost by enabling Azure Hybrid Benefit. Leverage this Policy definition as a cost control to reveal Virtual Machines not using AHUB.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Cost Optimization",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Audit",
+          "Disabled"
+        ],
+        "defaultValue": "Audit"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "in": [
+              "Microsoft.Compute/virtualMachines",
+              "Microsoft.Compute/virtualMachineScaleSets"
+            ]
+          },
+          {
+            "equals": "MicrosoftWindowsServer",
+            "field": "Microsoft.Compute/imagePublisher"
+          },
+          {
+            "equals": "WindowsServer",
+            "field": "Microsoft.Compute/imageOffer"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "Microsoft.Compute/imageSKU",
+                "like": "2008-R2-SP1*"
+              },
+              {
+                "field": "Microsoft.Compute/imageSKU",
+                "like": "2012-*"
+              },
+              {
+                "field": "Microsoft.Compute/imageSKU",
+                "like": "2016-*"
+              },
+              {
+                "field": "Microsoft.Compute/imageSKU",
+                "like": "2019-*"
+              },
+              {
+                "field": "Microsoft.Compute/imageSKU",
+                "like": "2022-*"
+              }
+            ]
+          },
+          {
+            "field": "Microsoft.Compute/licenseType",
+            "notEquals": "Windows_Server"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}
