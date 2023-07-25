@@ -43,6 +43,7 @@ Describe "Testing policy 'Deny-VNET-Peer-Cross-Sub'" -Tag "deny-vnet-peering" {
                 $vnet1 = New-AzVirtualNetwork -Name 'myVnet1' -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.1.0.0/16 -Subnet $Subnet1
 
                 Set-AzContext -SubscriptionId $env:SUBSCRIPTION2_ID -TenantId $env:TENANT_ID -Force
+                New-AzResourceGroup -Name $ResourceGroup.ResourceGroupName -Location "uksouth"
 
                 $NSG2 = New-AzNetworkSecurityGroup -Name "nsg2" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet2 = New-AzVirtualNetworkSubnetConfig -Name "subnet02" -AddressPrefix 10.2.0.0/24 -NetworkSecurityGroup $NSG2
