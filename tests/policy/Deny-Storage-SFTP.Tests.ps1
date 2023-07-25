@@ -117,4 +117,8 @@ Describe "Testing policy 'Deny-Storage-SFTP'" -Tag "deny-storage-sftp" {
             }
         }
     }
+        
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-STA-sftp" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

@@ -193,4 +193,8 @@ Describe "Testing policy 'Deny-Storage-minTLS'" -Tag "deny-storage-mintls" {
             }
         }
     }
+    
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-STA-minTLS" -Scope $mangementGroupScope -Confirm:$false
+    }
 }

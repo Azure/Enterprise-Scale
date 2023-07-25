@@ -145,4 +145,8 @@ Describe "Testing policy 'Deny-StorageAccount-CustomDomain'" -Tag "deny-storage-
             }
         }
     }
+        
+    AfterAll {
+        Remove-AzPolicyAssignment -Name "TDeny-STA-custdom" -Scope $mangementGroupScope -Confirm:$false
+    }
 }
