@@ -100,6 +100,6 @@ Describe "Testing policy 'Deny-VNET-Peering-To-Non-Approved-VNETs'" -Tag "deny-v
     }
 
     AfterAll {
-       #Remove-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -Confirm:$false
+       Remove-AzPolicyAssignment -Name "TDeny-Vnet-BadPeering" -Scope $mangementGroupScope -Confirm:$false
     }
 }
