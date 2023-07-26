@@ -44,7 +44,7 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
-                    New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement Disabled -MinimalTlsVersion 'TLS1_2'
+                    New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement Disabled -MinimalTlsVersion 'TLS1_2' -Sku B_Gen4_1
 
                } | Should -Throw "*disallowed by policy*"
             }
@@ -60,7 +60,7 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
-                    New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_1'
+                    New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_1' -Sku B_Gen4_1
 
                } | Should -Throw "*disallowed by policy*"
             }
@@ -76,7 +76,7 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
-                    New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_2'
+                    New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_2' -Sku B_Gen4_1
 
                } | Should -Not -Throw
             }

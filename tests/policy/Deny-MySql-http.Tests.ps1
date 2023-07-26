@@ -44,7 +44,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
-                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement Disabled -MinimalTlsVersion 'TLS1_2'
+                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement Disabled -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_1
 
                } | Should -Throw "*disallowed by policy*"
             }
@@ -60,7 +60,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
-                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_1'
+                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_1' -Sku GP_Gen5_1
 
                } | Should -Throw "*disallowed by policy*"
             }
@@ -76,7 +76,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
 
                 # Deploying the compliant Application Gateway with WAF enabled
                 {
-                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_2'
+                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_1
 
                } | Should -Not -Throw
             }
