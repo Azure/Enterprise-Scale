@@ -55,6 +55,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Updated contribution guide to include a new section to describe how to implement tooltips when adding new policies with default assignments that require updates to the portal reference implementation.
+- Adding text to the ALZ-Policies wiki page to clarify that we do use preview policies as part of initiatives in some default assignments.
 
 ### June 2023
 
