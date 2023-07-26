@@ -211,6 +211,12 @@ When working within the policy files, to read parameters which are set at the to
 
 > **Note:** When testing the policy manually in the portal or another deployment outside of the ALZ Accelerator (Portal), you will need to remove the double escaping, `[[`, and revert to normal ,`[`'
 
+#### Testing
+
+A new requirement as of FY24-Q1 for all new custom policies is that all new policies (with DENY effect at this time) MUST have a Pester test to validate the policy is working as expected. This is to ensure that the policy is working as expected and to prevent any regressions in the future. The Pester test should be located in the [tests/policy] folder in this repo. The Pester test should be named the same as the policy definition, but with a `.Tests.ps1` extension. For example, if the policy definition is `Deny-AppService-PrivateEndpoint.json`, the Pester test should be named `Deny-AppService-PrivateEndpoint.Tests.ps1`.
+
+There are many examples available already. The preferred and recommended approach is to use PowerShell Az as far as possible, however, there are some situations where REST API will be required (e.g., storage accounts or any deployment requiring parameters not available in PowerShell Az modules).
+
 #### Default assignments
 
 When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies).
