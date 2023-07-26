@@ -187,7 +187,7 @@ The policy definition files will be compiled into a `policies.json` file from th
 
 Once the policy work has been completed, a pull request should be submitted to the repository:
 
-![pr-example](media/pr-example.png)
+![pr-example](media/pr-example.png) 
 
 #### Versioning
 
