@@ -30,6 +30,14 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-PostgreSql-http' }
         New-AzPolicyAssignment -Name "TDeny-PgSql-http" -Scope $mangementGroupScope -PolicyDefinition $definition
 
+        # Register the resource provider for PostgreSQL
+        $rp = Get-AzResourceProvider -ListAvailable |
+            Where-Object -Property ProviderNamespace -Like -Value "Microsoft.DBforPostgreSQL"
+
+        if ($rp.RegistrationState -eq "NotRegistered"){
+                Register-AzResourceProvider -ProviderNamespace Microsoft.DBforPostgreSQL 
+            }
+
     }
 
     Context "Test SSL on PostgreSQL database servers when created or updated" -Tag "deny-pgsql-http" {

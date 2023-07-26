@@ -30,6 +30,14 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
         $definition = Get-AzPolicyDefinition | Where-Object { $_.Name -eq 'Deny-MySql-http' }
         New-AzPolicyAssignment -Name "TDeny-MySql-http" -Scope $mangementGroupScope -PolicyDefinition $definition
 
+        # Register the resource provider for MySQL
+        $rp = Get-AzResourceProvider -ListAvailable |
+        Where-Object -Property ProviderNamespace -Like -Value "Microsoft.DBforMySQL"
+
+        if ($rp.RegistrationState -eq "NotRegistered"){
+                Register-AzResourceProvider -ProviderNamespace Microsoft.DBforMySQL 
+            }
+
     }
 
     Context "Test SSL on MySQL database servers when created or updated" -Tag "deny-mysql-http" {
