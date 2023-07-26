@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [July 2023](#july-2023)
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
   - [April 2023](#april-2023)
@@ -35,6 +36,21 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### July 2023
+
+#### Policy
+
+- Added additional initiative assignment for [Enforce-Guardrails-KeyVault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html) to the Platform Management Group to improve security coverage. Initially this assignment was only applied to the Landing Zone Management Group.
+  - Update Portal RI to include the new assignment option for the Key Vault initiative under Platform Management.
+- Added new custom policy to audit Virtual Machines not using Azure Hybrid Benefit (Audit-AzureHybridBenefit)
+- Fixing bug in [Deploy-Sql-vulnerabilityAssessments](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) to achieve compliance if successfully remediated. NOTE: Due to the need to change parameters, this is a breaking change. The original policy will remain in place but will be deprecated and a new policy will be deployed for the fix [Deploy-Sql-vulnerabilityAssessments_20230706](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) - please update assignments accordingly - many thanks @Matt-FFFFFF.
+- Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) not enforcing deny effect when a deployment includes rules defined in network security group properties (i.e., when specifying rules when creating the NSG) - many thanks to @DavidRobson.
+
+#### Tooling
+
+- Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator based on feedback from [#1370](https://github.com/Azure/Enterprise-Scale/issues/1370) by removing the DNS proxy option when selecting the `Basic` SKU
+- Updated Sentinel deployment to use new [simplified pricing tier](https://learn.microsoft.com/azure/sentinel/enroll-simplified-pricing-tier?tabs=azure-resource-manager)
+
 ### June 2023
 
 #### Policy
@@ -42,7 +58,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed default assignment for SQLEncryption (DINE-SQLEncryptionPolicyAssignment) to use the correct policy definition.
 - Added new default assignment for SQLThreatDetection (DINE-SQLThreatPolicyAssignment) to use the previous policy definition from DINE-SQLEncryptionPolicyAssignment.
 - Updated the assignment DINE-LogAnalyticsPolicyAssignment (Deploy-Log-Analytics) to default enforcement mode to "DoNotEnforce". The Log Analytics workspace is deployed directly by the reference implementations, and as a result this policy is no longer required to deploy the Log Analytics workspace. Retaining the assignment for auditing purposes.
-- Added new custom policies for:
+- Added new custom policies for (many thanks @jeetgarg):
   - Storage Accounts with custom domains assigned should be denied - [Deny-StorageAccount-CustomDomain](https://www.azadvertizer.net/azpolicyadvertizer/Deny-StorageAccount-CustomDomain.html)
   - File Services with insecure Kerberos ticket encryption should be denied - [Deny-FileServices-InsecureKerberos](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureKerberos.html)
   - File Services with insecure SMB channel encryption should be denied - [Deny-FileServices-InsecureSMBChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSMBChannel.html)
