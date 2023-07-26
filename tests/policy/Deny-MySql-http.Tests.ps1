@@ -39,7 +39,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
                 param($ResourceGroup)
 
                 $random = GenerateRandomString -Length 13
-                $password = GenerateRandomString -Length 20
+                $password = GenerateRandomString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
                 # Deploying the compliant Application Gateway with WAF enabled
@@ -55,7 +55,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
                 param($ResourceGroup)
 
                 $random = GenerateRandomString -Length 13
-                $password = GenerateRandomString -Length 20
+                $password = GenerateRandomString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
                 # Deploying the compliant Application Gateway with WAF enabled
@@ -71,7 +71,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
                 param($ResourceGroup)
 
                 $random = GenerateRandomString -Length 13
-                $password = GenerateRandomString -Length 20
+                $password = GenerateRandomString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
                 # Deploying the compliant Application Gateway with WAF enabled
