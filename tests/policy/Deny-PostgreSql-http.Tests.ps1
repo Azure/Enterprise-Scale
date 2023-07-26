@@ -47,7 +47,7 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
                 param($ResourceGroup)
 
                 $random = GenerateRandomString -Length 13
-                $password = GenerateRandomString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
+                $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
                 # Deploying the compliant Application Gateway with WAF enabled
@@ -63,7 +63,7 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
                 param($ResourceGroup)
 
                 $random = GenerateRandomString -Length 13
-                $password = GenerateRandomString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
+                $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
                 # Deploying the compliant Application Gateway with WAF enabled
@@ -79,7 +79,7 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
                 param($ResourceGroup)
 
                 $random = GenerateRandomString -Length 13
-                $password = GenerateRandomString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
+                $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
                 # Deploying the compliant Application Gateway with WAF enabled
