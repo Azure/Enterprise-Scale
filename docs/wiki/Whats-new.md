@@ -46,7 +46,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixing bug in [Deploy-Sql-vulnerabilityAssessments](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) to achieve compliance if successfully remediated. NOTE: Due to the need to change parameters, this is a breaking change. The original policy will remain in place but will be deprecated and a new policy will be deployed for the fix [Deploy-Sql-vulnerabilityAssessments_20230706](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) - please update assignments accordingly - many thanks @Matt-FFFFFF.
 - Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) not enforcing deny effect when a deployment includes rules defined in network security group properties (i.e., when specifying rules when creating the NSG) - many thanks to @DavidRobson.
 - QoL updates: adding supersededBy metadata and adding links in the description to deprecated custom policies to point to the superseding policy - aligned with ALZ specific feature updates in [AzAdvertizer](https://www.azadvertizer.net/).
-- Updating custom policies using over permissive roles (Owner, Contributor)
+- Updating custom policies using over permissive roles (Owner, Contributor) to use resource scoped roles (e.g., Storage Account Contributor, Azure SQL Contributor, etc.):
   - Deploy-Storage-sslEnforcement
   - Deploy-SqlMi-minTLS
   - Deploy-SQL-minTLS
