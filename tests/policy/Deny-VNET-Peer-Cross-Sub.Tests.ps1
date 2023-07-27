@@ -11,6 +11,8 @@ Import-Module "$($PSScriptRoot)/../../tests/utils/Rest.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Test.Utils.psm1" -Force
 Import-Module "$($PSScriptRoot)/../../tests/utils/Generic.Utils.psm1" -Force
 
+$global:rgSubscription2
+
 Describe "Testing policy 'Deny-VNET-Peer-Cross-Sub'" -Tag "deny-vnet-peering" {
 
     BeforeAll {
@@ -37,6 +39,8 @@ Describe "Testing policy 'Deny-VNET-Peer-Cross-Sub'" -Tag "deny-vnet-peering" {
         It "Should deny non-compliant Virtual Network with cross subscription peering" -Tag "deny-vnet-peering" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
+
+                $global:rgSubscription2 = $ResourceGroup.ResourceGroupName
 
                 $NSG1 = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
                 $Subnet1 = New-AzVirtualNetworkSubnetConfig -Name "subnet01" -AddressPrefix 10.1.0.0/24 -NetworkSecurityGroup $NSG1
@@ -66,6 +70,10 @@ Describe "Testing policy 'Deny-VNET-Peer-Cross-Sub'" -Tag "deny-vnet-peering" {
     }
 
     AfterAll {
+        Set-AzContext -SubscriptionId $env:SUBSCRIPTION2_ID -TenantId $env:TENANT_ID -Force
+        Get-AzResourceGroup -Name $global:rgSubscription2 | Remove-AzResourceGroup -Force
+        Set-AzContext -SubscriptionId $env:SUBSCRIPTION_ID -TenantId $env:TENANT_ID -Force
+
         Remove-AzPolicyAssignment -Name "TDeny-Vnet-XPeering" -Scope $mangementGroupScope -Confirm:$false
     }
 }
