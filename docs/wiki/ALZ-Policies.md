@@ -4,6 +4,8 @@ Azure Policy and deployIfNotExist enables autonomy in the platform, and reduces 
 
 > Please refer to [Policy Driven Governance](https://learn.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/landing-zone/design-principles#policy-driven-governance) for further information.
 
+> **IMPORTANT NOTE:** ALZ priority is to provide a secure by default, Zero Trust aligned, configuration, and occasionally we will rely on `-preview` policies in our default assignments to meet our core objective. These preview policies are maintained by the Azure product owners and versioning is not in our control, however, we feel they are sufficiently important to be included in our releases. If the inclusion of preview policies is of concern, please review all ALZ default initiative assignments and remove any `-preview` policies that you are not comfortable with.
+
 ## FAQ and Tips
 
    We have added a dedicated [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) based on common issues raised or questions asked by customers and partners.
