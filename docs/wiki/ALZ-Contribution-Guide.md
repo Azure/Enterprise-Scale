@@ -217,7 +217,7 @@ A new requirement as of FY24-Q1 for all new custom policies is that new policies
 
 There are many examples available already in the `/tests/policy` for the current list of DENY policies. The preferred and recommended approach is to use PowerShell Az as far as possible, however, there are some situations where REST API will be required (e.g., Deny-MgmtPorts-From-Internet with complex rules or any deployment requiring parameters not available in PowerShell Az modules). Examples of both methods are also available in the current policy test folder - an example that uses both methods [Deny-FileServices-InsecureAuth.Tests.ps1](/tests/policy/Deny-FileServices-InsecureAuth.Tests.ps1).\
 
-We have also included a sample workflow `.github\workflows\alz-policy-tests.yml` that can be used as a dedicated policy testing workflow in your own environments.
+We have also included a [sample workflow](./ALZ-Policies-Test-Workflow-Sample) that can be used as a dedicated policy testing workflow in your own environments.
 
 To learn more about how we've implemented policy testing, please refer to [azure-policy-testing](https://github.com/fawohlsc/azure-policy-testing).
 

@@ -50,11 +50,10 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
                 $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
-                # Deploying the compliant Application Gateway with WAF enabled
                 {
                     New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement Disabled -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_2
 
-               } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "*disallowed by policy*"
             }
         }
 
@@ -66,12 +65,11 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
                 $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
-                # Deploying the compliant Application Gateway with WAF enabled
                 {
                     New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_1' -Sku GP_Gen5_2
 
-               } | Should -Throw "*disallowed by policy*"
-            }
+                } | Should -Throw "*disallowed by policy*"
+            }  
         }
 
         It "Should allow compliant SSL on PostgreSQL database servers" -Tag "allow-pgsql-http" {
@@ -82,7 +80,6 @@ Describe "Testing policy 'Deny-PostgreSql-http'" -Tag "deny-pgsql-http" {
                 $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
                 $name = "mysql-$Random" 
 
-                # Deploying the compliant Application Gateway with WAF enabled
                 {
                     New-AzPostgreSqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_2
 
