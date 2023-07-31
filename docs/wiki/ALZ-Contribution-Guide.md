@@ -213,9 +213,11 @@ When working within the policy files, to read parameters which are set at the to
 
 #### Testing
 
-A new requirement as of FY24-Q1 for all new custom policies is that all new policies (with DENY effect at this time) MUST have a Pester test to validate the policy is working as expected. This is to ensure that the policy is working as expected and to prevent any regressions in the future. The Pester test should be located in the [tests/policy] folder in this repo. The Pester test should be named the same as the policy definition, but with a `.Tests.ps1` extension. For example, if the policy definition is `Deny-AppService-PrivateEndpoint.json`, the Pester test should be named `Deny-AppService-PrivateEndpoint.Tests.ps1`.
+A new requirement as of FY24-Q1 for all new custom policies is that new policies (with DENY effect at this time) MUST have a Pester test to validate the policy is working as expected. This is to validate that the policy is effective and to prevent any regressions in the future should there be any policy updates. The Pester test should be located in the `/tests/policy` folder in this repo, and should be named the same as the policy definition, but with a `.Tests.ps1` extension. For example, if the policy definition is `Deny-AppService-PrivateEndpoint.json`, the Pester test should be named `Deny-AppService-PrivateEndpoint.Tests.ps1`.
 
-There are many examples available already. The preferred and recommended approach is to use PowerShell Az as far as possible, however, there are some situations where REST API will be required (e.g., storage accounts or any deployment requiring parameters not available in PowerShell Az modules).
+There are many examples available already in the `/tests/policy` for the current list of DENY policies. The preferred and recommended approach is to use PowerShell Az as far as possible, however, there are some situations where REST API will be required (e.g., Deny-MgmtPorts-From-Internet with complex rules or any deployment requiring parameters not available in PowerShell Az modules). Examples of both methods are also available in the current policy test folder.
+
+To learn more about how we've implemented policy testing, please refer to [azure-policy-testing](https://github.com/fawohlsc/azure-policy-testing).
 
 #### Default assignments
 
