@@ -225,6 +225,17 @@ When working with policies that are assigned by default, these are located under
 
 Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/eslzArm.json).
 
+### Portal Reference Implementation
+
+The portal reference implementation is a popular UI driven reference implementation for Azure landing zones, and is maintained as part of this repository. It is a great way to get started with Azure landing zones, and is a great way to learn about the underlying Azure landing zone guidance.
+
+When creating new policies that will be assigned by default by the portal reference architecture you are required to also include appropriate information and options in the portal experience (`eslzArm/eslz-portal.json`). Please do include appropriate selectors in line with the section (management group) that the policy is assigned to, and ensure that tooltips include links to the AzAdvertizer page for the policy or initiative.
+
+Example for the Key Vault initiative (note the tooltip):
+
+![Example of adding tooltip in portal experience](media/alz-contrib-portal1.png)
+
+
 ### Forking the repository and submitting a Pull Request
 
 To start contributing to this repository it is worth reviewing the developer workflow for contribution [which is documented in GitHub](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
