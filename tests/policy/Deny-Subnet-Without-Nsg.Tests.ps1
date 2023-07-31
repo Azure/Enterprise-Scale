@@ -41,9 +41,8 @@ Describe "Testing policy 'Deny-Subnet-Without-Nsg'" -Tag "deny-subnet-nsg" {
                 $random = GenerateRandomString -Length 13
                 $name = "vnet-$Random" 
 
-                # Setting up all the requirements for an Application Gateway with WAF enabled
-                #$NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 #-NetworkSecurityGroup $NSG
+                # Setting up all the requirements for a Virtual Network with no NSG enabled
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "Subnet01" -AddressPrefix 10.0.0.0/24 
                 
                 # Deploying the compliant Virtual Network with NSG enabled
                 {
@@ -61,10 +60,9 @@ Describe "Testing policy 'Deny-Subnet-Without-Nsg'" -Tag "deny-subnet-nsg" {
                 $name = "vnet-$Random" 
 
                 # Setting up all the requirements for an Virtual Network with NSG enabled
-                #$NSG = New-AzNetworkSecurityGroup -Name "nsg1" -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth"
-                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureFirewallSubnet" -AddressPrefix 10.0.1.0/24 #-NetworkSecurityGroup $NSG
+                $Subnet = New-AzVirtualNetworkSubnetConfig -Name "AzureFirewallSubnet" -AddressPrefix 10.0.1.0/24
 
-                # Deploying the compliant Application Gateway with WAF enabled
+                # Deploying the compliant a Virtual Network with no NSG enabled
                 {
                     New-AzVirtualNetwork -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AddressPrefix 10.0.0.0/16 -Subnet $Subnet
 

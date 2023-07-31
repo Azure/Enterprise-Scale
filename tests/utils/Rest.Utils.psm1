@@ -5,7 +5,7 @@ Import-Module -Name Az.Resources
 Await an asynchronous operation against the Azure REST API.
 
 .DESCRIPTION
-Helper method to await an asynchronous operation against the Azure REST API.
+Helper method to await an asynchronous operation against the Azure REST API. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER HttpResponse
 The HTTP response returned from the asynchronous operation.
@@ -99,7 +99,7 @@ function Wait-AsyncOperation {
 Gets HTTP header values from a HTTP response.
 
 .DESCRIPTION
-Helper method to extract HTTP header values from a HTTP response.
+Helper method to extract HTTP header values from a HTTP response. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER HttpResponse
 The HTTP response.

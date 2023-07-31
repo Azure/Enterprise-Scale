@@ -5,7 +5,7 @@ Import-Module -Name Az.Resources
 Cleans up any Azure resources created during the test.
 
 .DESCRIPTION
-Cleans up any Azure resources created during the test. If any clean-up operation fails, the whole test will fail.
+Cleans up any Azure resources created during the test. If any clean-up operation fails, the whole test will fail. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER CleanUp
 The script block specifying the clean-up operations.
@@ -45,7 +45,7 @@ function AzCleanUp {
 Retries the test on transient errors.
 
 .DESCRIPTION
-Retries the script block when a transient errors occurs during test execution.
+Retries the script block when a transient errors occurs during test execution. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER Retry
 The script block specifying the test.
@@ -118,7 +118,7 @@ function AzRetry {
 Wraps a test targeting Azure.
 
 .DESCRIPTION
-Wraps a test targeting Azure. Also retries the test on transient errors.
+Wraps a test targeting Azure. Also retries the test on transient errors. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER Test
 The script block specifying the test.
@@ -181,7 +181,7 @@ function AzTest {
 Gets the innermost exception.
 
 .DESCRIPTION
-Gets the innermost exception or root cause.
+Gets the innermost exception or root cause. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER Exception
 The exception.
@@ -227,7 +227,7 @@ function Get-ResourceLocationDefault {
 Create a dedicated resource group for an automated test case.
 
 .DESCRIPTION
-Create a dedicated resource group for an automated test case. The resource group name will be a GUID to avoid naming collisions.
+Create a dedicated resource group for an automated test case. The resource group name will be a GUID to avoid naming collisions. Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER Location
 The Azure region where the resource group is created, e.g. northeurope. When no location is provided, the default location is retrieved by using Get-ResourceLocationDefault.

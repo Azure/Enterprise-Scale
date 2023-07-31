@@ -5,7 +5,7 @@ Import-Module -Name Az.Resources
 Completes a policy compliance scan.
 
 .DESCRIPTION
-Starts a policy compliance scan and awaits it's completion. In case of a failure, the policy compliance scan is retried (Default: 3 times).
+Starts a policy compliance scan and awaits it's completion. In case of a failure, the policy compliance scan is retried (Default: 3 times). Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER ResourceGroup
 The resource group to be scanned for policy compliance.
@@ -53,7 +53,7 @@ function Complete-PolicyComplianceScan {
 Completes a policy remediation.
 
 .DESCRIPTION
-Starts a remediation for a policy and awaits it's completion. In case of a failure, the policy remediation is retried (Default: 3 times).
+Starts a remediation for a policy and awaits it's completion. In case of a failure, the policy remediation is retried (Default: 3 times). Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER Resource
 The resource to be remediated.
@@ -155,7 +155,7 @@ function Complete-PolicyRemediation {
 Gets the policy compliance state of a resource.
 
 .DESCRIPTION
-Gets the policy compliance state of a resource. In case of a failure, getting the policy compliance state is retried (Default: 30 times) after a few seconds of waiting (Default: 60s).
+Gets the policy compliance state of a resource. In case of a failure, getting the policy compliance state is retried (Default: 30 times) after a few seconds of waiting (Default: 60s). Used as is from https://github.com/fawohlsc/azure-policy-testing.
 
 .PARAMETER Resource
 The resource to get the policy compliance state for. 
