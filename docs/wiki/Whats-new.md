@@ -36,7 +36,7 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### July 2023
+### July 2023 
 
 #### Policy
 
