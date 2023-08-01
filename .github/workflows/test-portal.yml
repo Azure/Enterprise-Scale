@@ -142,28 +142,55 @@ jobs:
           inlineScript: ./src/scripts/Invoke-ActionRunEslzArmDeployment.ps1
           azPSVersion: "latest"
 
+      - name: Install PowerShell modules
+        shell: pwsh
+        run: |
+          Install-Module -Name "Az" -RequiredVersion "10.1.0" -Force -Scope CurrentUser -ErrorAction Stop
+          Update-AzConfig -DisplayBreakingChangeWarning $false
+
       - name: Pester Test for Policies
-        uses: azure/powershell@v1
-        with:
-          inlineScript: |
-            Import-Module Pester -Force
-            $pesterConfiguration = @{
-              Run    = @{
-                Path = "tests/*.tests.ps1" 
-                PassThru  = $true
-              }
-              Output = @{
-                Verbosity = 'Detailed'
-                CIFormat = 'Auto'
-              }
+        shell: pwsh
+        run: |
+          Import-Module Pester -Force
+          $pesterConfiguration = @{
+            Run    = @{
+              Path = "tests/*.tests.ps1" 
+              PassThru  = $true
             }
-            $result = Invoke-Pester -Configuration $pesterConfiguration
-            exit $result.FailedCount
-          azPSVersion: "10.1.0"
+            Output = @{
+              Verbosity = 'Detailed'
+              CIFormat = 'Auto'
+            }
+          }
+          $result = Invoke-Pester -Configuration $pesterConfiguration
+          exit $result.FailedCount
         env:
           SUBSCRIPTION_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION1_ID }}
           SUBSCRIPTION2_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION2_ID }} #Used for policy tests that require a second subscription (e.g. cross subscription peering)
-          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}          
+
+      # - name: Pester Test for Policies
+      #   uses: azure/powershell@v1
+      #   with:
+      #     inlineScript: |
+      #       Import-Module Pester -Force
+      #       $pesterConfiguration = @{
+      #         Run    = @{
+      #           Path = "tests/*.tests.ps1" 
+      #           PassThru  = $true
+      #         }
+      #         Output = @{
+      #           Verbosity = 'Detailed'
+      #           CIFormat = 'Auto'
+      #         }
+      #       }
+      #       $result = Invoke-Pester -Configuration $pesterConfiguration
+      #       exit $result.FailedCount
+      #     azPSVersion: "10.1.0"
+      #   env:
+      #     SUBSCRIPTION_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION1_ID }}
+      #     SUBSCRIPTION2_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION2_ID }} #Used for policy tests that require a second subscription (e.g. cross subscription peering)
+      #     TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Run eslzArm deployment (DESTROY)
         uses: azure/powershell@v1

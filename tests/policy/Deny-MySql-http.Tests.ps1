@@ -48,10 +48,10 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
 
                 $random = GenerateRandomString -Length 13
                 $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
-                $name = "mysql-$Random" 
+                $name = "mysql-$random" 
 
                 {
-                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement Disabled -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_2
+                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Disabled' -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_2
 
                 } | Should -Throw "*disallowed by policy*"
             }
@@ -63,10 +63,10 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
 
                 $random = GenerateRandomString -Length 13
                 $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
-                $name = "mysql-$Random" 
+                $name = "mysql-$random" 
 
                 {
-                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_1' -Sku GP_Gen5_2
+                    New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_0' -Sku GP_Gen5_2
 
                 } | Should -Throw "*disallowed by policy*"
             }
@@ -78,7 +78,7 @@ Describe "Testing policy 'Deny-MySql-http'" -Tag "deny-mysql-http" {
 
                 $random = GenerateRandomString -Length 13
                 $password = GeneratePasswordString -Length 20  | ConvertTo-Securestring -AsPlainText -Force
-                $name = "mysql-$Random" 
+                $name = "mysql-$random" 
 
                 {
                     New-AzMySqlServer -Name $name -ResourceGroupName $ResourceGroup.ResourceGroupName -Location "uksouth" -AdministratorUserName mysql_test -AdministratorLoginPassword $password -SslEnforcement 'Enabled' -MinimalTlsVersion 'TLS1_2' -Sku GP_Gen5_2
