@@ -41,10 +41,9 @@ Describe "Testing policy 'Deny-Private-DNS-Zones'" -Tag "deny-pvt-dns" {
                 {
                     New-AzPrivateDnsZone -Name "alztest.com" -ResourceGroupName $ResourceGroup.ResourceGroupName
 
-               } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "*disallowed by policy*"
             }
         }
-
     }
 
     AfterAll {
