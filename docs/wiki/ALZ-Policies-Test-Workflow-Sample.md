@@ -1,3 +1,6 @@
+# ALZ Policy Testing Workflow Sample
+
+``` YAML
 name: ALZ Tests for Policy
 
 on:
@@ -10,7 +13,6 @@ on:
     branches:
       - main
       - TestingFramework # For testing purposes only update as needed based on branch name
-      - policy-refresh-q1fy24 # For testing purposes only update as needed based on branch name
     paths:
       - ".github/workflows/**"
       - "tests/policy/**"
@@ -78,3 +80,4 @@ jobs:
           SUBSCRIPTION_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION1_ID }}
           SUBSCRIPTION2_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION2_ID }} #Used for policy tests that require a second subscription (e.g. cross subscription peering)
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+```
