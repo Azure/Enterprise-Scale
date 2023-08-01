@@ -36,7 +36,9 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### July 2023 
+### July 2023
+
+Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future. We will be adding tests for custom policies in the future.
 
 #### Policy
 
@@ -52,11 +54,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Deploy-SQL-minTLS
   - Deploy-MySQL-sslEnforcement (using new custom role OssDb-Owners)
   - Deploy-PostgreSQL-sslEnforcement (using new custom role OssDb-Owners)
+- Policy Testing Framework implemented for custom ALZ DENY policies (See Tooling section below).
 
 #### Tooling
 
 - Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator based on feedback from [#1370](https://github.com/Azure/Enterprise-Scale/issues/1370) by removing the DNS proxy option when selecting the `Basic` SKU
 - Updated Sentinel deployment to use new [simplified pricing tier](https://learn.microsoft.com/azure/sentinel/enroll-simplified-pricing-tier?tabs=azure-resource-manager)
+- Established a Policy Testing Framework based on Pester, built on the work done by @fawohlsc in this repo [azure-policy-testing](https://github.com/fawohlsc/azure-policy-testing)
+
+#### Docs
+
+- Updated contribution guide to include a new section to describe how to implement tooltips when adding new policies with default assignments that require updates to the portal reference implementation.
+- Adding text to the ALZ-Policies wiki page to clarify that we do use preview policies as part of initiatives in some default assignments.
 
 #### Docs
 
