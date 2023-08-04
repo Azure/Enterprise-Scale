@@ -36,6 +36,15 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### August 2023
+
+#### Policy
+
+- Added two new policy definitions:
+  - `DenyAction-ActivityLogs`
+  - `DenyAction-DiagnosticLogs`
+  - These two policy definitions prevent Activity Logs and Diagnostic Logs being deleted leveraging Azure Policy DenyAction functionality
+
 ### July 2023
 
 #### Policy
