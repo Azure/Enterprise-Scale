@@ -36,9 +36,20 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### July 2023
+### August 2023
 
 Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future. We will be adding tests for custom policies in the future.
+
+#### Policy
+
+- Updating custom policies using over permissive roles (Owner) to use resource scoped roles (e.g., Storage Account Contributor, Azure SQL Contributor, etc.):
+  - Deploy-Storage-sslEnforcement
+  - Deploy-SqlMi-minTLS
+  - Deploy-SQL-minTLS
+  - Deploy-MySQL-sslEnforcement (using new custom role OssDb-Owners)
+  - Deploy-PostgreSQL-sslEnforcement (using new custom role OssDb-Owners)
+
+### July 2023
 
 #### Policy
 
@@ -48,12 +59,6 @@ Major update in this release: introducing the Policy Testing Framework foundatio
 - Fixing bug in [Deploy-Sql-vulnerabilityAssessments](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) to achieve compliance if successfully remediated. NOTE: Due to the need to change parameters, this is a breaking change. The original policy will remain in place but will be deprecated and a new policy will be deployed for the fix [Deploy-Sql-vulnerabilityAssessments_20230706](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) - please update assignments accordingly - many thanks @Matt-FFFFFF.
 - Bug fix for [Management port access from the Internet should be blocked](https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html) not enforcing deny effect when a deployment includes rules defined in network security group properties (i.e., when specifying rules when creating the NSG) - many thanks to @DavidRobson.
 - QoL updates: adding supersededBy metadata and adding links in the description to deprecated custom policies to point to the superseding policy - aligned with ALZ specific feature updates in [AzAdvertizer](https://www.azadvertizer.net/).
-- Updating custom policies using over permissive roles (Owner, Contributor) to use resource scoped roles (e.g., Storage Account Contributor, Azure SQL Contributor, etc.):
-  - Deploy-Storage-sslEnforcement
-  - Deploy-SqlMi-minTLS
-  - Deploy-SQL-minTLS
-  - Deploy-MySQL-sslEnforcement (using new custom role OssDb-Owners)
-  - Deploy-PostgreSQL-sslEnforcement (using new custom role OssDb-Owners)
 - Policy Testing Framework implemented for custom ALZ DENY policies (See Tooling section below).
 
 #### Tooling
