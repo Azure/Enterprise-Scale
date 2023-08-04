@@ -17,11 +17,14 @@ function Get-PolicyFiles
         [String]$PolicySetDir = "$($env:POLICYSET_DIR)",
 
         [Parameter()]
-        [String]$PRBranch = "$($env:GITHUB_HEAD_REF)"
+        [String]$PRBranch = "$($env:GITHUB_HEAD_REF)",
+
+        [Parameter()]
+        [String]$BaseBranch = "$($env:GITHUB_BASE_REF)"
     )
 
-    $PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $PolicyDir)
-    $PolicySetsFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $PolicySetDir)
+    $PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/$BaseBranch $PRBranch -- $PolicyDir)
+    $PolicySetsFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/$BaseBranch $PRBranch -- $PolicySetDir)
 
     $PolicyAndSetFiles = $PolicyFiles + $PolicySetsFiles
 
