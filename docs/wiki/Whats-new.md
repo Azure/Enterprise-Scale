@@ -46,8 +46,8 @@ Major update in this release: introducing the Policy Testing Framework foundatio
   - Deploy-Storage-sslEnforcement
   - Deploy-SqlMi-minTLS
   - Deploy-SQL-minTLS
-  - Deploy-MySQL-sslEnforcement (using new custom role OssDb-Owners)
-  - Deploy-PostgreSQL-sslEnforcement (using new custom role OssDb-Owners)
+  - Deploy-MySQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
+  - Deploy-PostgreSQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
 
 ### July 2023
 
