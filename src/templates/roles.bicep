@@ -10,7 +10,6 @@ var loadRoleDefinitions = {
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Network-Management.json')
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Security-Operations.json')
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Subscription-Owner.json')
-    loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/OssDb-Owners.json')
   ]
   AzureCloud: []
   AzureChinaCloud: []
