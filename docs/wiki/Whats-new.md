@@ -41,6 +41,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - Updated to the new [Configure Microsoft Defender for Storage to be enabled](https://www.azadvertizer.com/azpolicyadvertizer/cfdc5972-75b3-4418-8ae1-7f5c36839390.html) built-in policy to the `Deploy-MDFC-Config` initiative and assignment.
+  - Read more about the new Microsoft Defender for Storage here: [aka.ms//DefenderForStorage](https://aka.ms//DefenderForStorage).
+  - NOTE: there are additional cost considerations associated with this feature - [more info](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-storage-introduction#malware-scanning-powered-by-microsoft-defender-antivirus).
 
 ### July 2023
 
