@@ -52,7 +52,26 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
                 $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 Write-Warning "$($PolicyFile) - The current metadata version for the policy in the PR branch is : $($PolicyMetadataVersion)"
-                $PolicyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
+                if (!$PreviousPolicyDefinitionsFileVersion.EndsWith("deprecated")) {
+                    $PolicyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
+                }
+            }
+        }
+
+        It "Check deprecated policy contains all required metadata" {
+            $ModifiedAddedFiles | ForEach-Object {
+                $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $PolicyFile = Split-Path $_ -Leaf
+                $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
+                Write-Warning "$($PolicyFile) - These are the policy metadata versions: $($PolicyMetadataVersion)"
+                if ($PolicyMetadataVersion.EndsWith("deprecated")) {
+                    $PolicyMetadataDeprecated = $PolicyJson.properties.metadata.deprecated
+                    $PolicyMetadataDeprecated | Should -BeTrue
+                    $PolicyMetadataSuperseded = $PolicyJson.properties.metadata.supersededBy
+                    $PolicyMetadataSuperseded | Should -Not -BeNullOrEmpty
+                    $PolicyPropertiesDisplayName = $PolicyJson.properties.displayName
+                    $PolicyPropertiesDisplayName | Should -Match "[DEPRECATED]"
+                }
             }
         }
 
