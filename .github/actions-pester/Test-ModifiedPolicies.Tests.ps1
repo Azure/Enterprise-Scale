@@ -108,8 +108,9 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyJson.properties.metadata.alzCloudEnvironments | Should -BeIn $AlzEnvironments
             }
         }
-        
+
         }
+        
         Context "Validate policy parameters" {
             It 'Check for policy parameters have default values' {
                 $ModifiedAddedFiles | ForEach-Object {
