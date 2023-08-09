@@ -68,10 +68,10 @@ Describe 'UnitTest-ModifiedPolicies' {
                     Write-Warning "$($PolicyFile) - Should have the deprecated metadata flag set to true"
                     $PolicyMetadataDeprecated = $PolicyJson.properties.metadata.deprecated
                     $PolicyMetadataDeprecated | Should -BeTrue
-                    Write-Warning "$($PolicyFile) - Should have the a supersededBy metadata value set"
+                    Write-Warning "$($PolicyFile) - Should have the supersededBy metadata value set"
                     $PolicyMetadataSuperseded = $PolicyJson.properties.metadata.supersededBy
                     $PolicyMetadataSuperseded | Should -Not -BeNullOrEmpty
-                    Write-Warning "$($PolicyFile) - Should have the [Deprecated] should be in the display name"
+                    Write-Warning "$($PolicyFile) - [Deprecated] should be in the display name"
                     $PolicyPropertiesDisplayName = $PolicyJson.properties.displayName
                     $PolicyPropertiesDisplayName | Should -Match "[DEPRECATED]"
                 }
@@ -108,6 +108,7 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyJson.properties.metadata.alzCloudEnvironments | Should -BeIn $AlzEnvironments
             }
         }
+        
         }
         Context "Validate policy parameters" {
             It 'Check for policy parameters have default values' {
