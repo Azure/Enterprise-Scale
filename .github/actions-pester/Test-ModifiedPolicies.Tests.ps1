@@ -63,12 +63,15 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $PolicyFile = Split-Path $_ -Leaf
                 $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
-                Write-Warning "$($PolicyFile) - These are the policy metadata versions: $($PolicyMetadataVersion)"
+                Write-Warning "$($PolicyFile) - This is the policy metadata version: $($PolicyMetadataVersion)"
                 if ($PolicyMetadataVersion.EndsWith("deprecated")) {
+                    Write-Warning "$($PolicyFile) - Should have the deprecated metadata flag set to true"
                     $PolicyMetadataDeprecated = $PolicyJson.properties.metadata.deprecated
                     $PolicyMetadataDeprecated | Should -BeTrue
+                    Write-Warning "$($PolicyFile) - Should have the a supersededBy metadata value set"
                     $PolicyMetadataSuperseded = $PolicyJson.properties.metadata.supersededBy
                     $PolicyMetadataSuperseded | Should -Not -BeNullOrEmpty
+                    Write-Warning "$($PolicyFile) - Should have the [Deprecated] should be in the display name"
                     $PolicyPropertiesDisplayName = $PolicyJson.properties.displayName
                     $PolicyPropertiesDisplayName | Should -Match "[DEPRECATED]"
                 }
