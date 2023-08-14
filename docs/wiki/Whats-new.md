@@ -45,6 +45,7 @@ Major update in this release: introducing the Policy Testing Framework foundatio
 - Updating custom policies using over permissive roles (Owner) to use resource scoped roles (e.g., Storage Account Contributor, Azure SQL Contributor, etc.):
   - Deploy-Storage-sslEnforcement
   - Deploy-SqlMi-minTLS
+    - Added evaluationDelay as provisioning takes around 4 hours and policy remediation fails on create due to time outs (as it normally triggers after 10 minutes).
   - Deploy-SQL-minTLS
   - Deploy-MySQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
   - Deploy-PostgreSQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
