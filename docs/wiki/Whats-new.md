@@ -49,6 +49,10 @@ Major update in this release: introducing the Policy Testing Framework foundatio
   - Deploy-SQL-minTLS
   - Deploy-MySQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
   - Deploy-PostgreSQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
+  - Additional policy definitions:
+    - `DenyAction-ActivityLogs`
+    - `DenyAction-DiagnosticLogs`
+    - These two policy definitions prevent Activity Log Settings and Diagnostic Settings being deleted leveraging Azure Policy DenyAction functionality
 
 ### July 2023
 
