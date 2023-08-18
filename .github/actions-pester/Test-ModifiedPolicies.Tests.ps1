@@ -52,7 +52,29 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
                 $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 Write-Warning "$($PolicyFile) - The current metadata version for the policy in the PR branch is : $($PolicyMetadataVersion)"
-                $PolicyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
+                if (!$PreviousPolicyDefinitionsFileVersion.EndsWith("deprecated")) {
+                    $PolicyMetadataVersion | Should -BeGreaterThan $PreviousPolicyDefinitionsFileVersion
+                }
+            }
+        }
+
+        It "Check deprecated policy contains all required metadata" {
+            $ModifiedAddedFiles | ForEach-Object {
+                $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $PolicyFile = Split-Path $_ -Leaf
+                $PolicyMetadataVersion = $PolicyJson.properties.metadata.version
+                Write-Warning "$($PolicyFile) - This is the policy metadata version: $($PolicyMetadataVersion)"
+                if ($PolicyMetadataVersion.EndsWith("deprecated")) {
+                    Write-Warning "$($PolicyFile) - Should have the deprecated metadata flag set to true"
+                    $PolicyMetadataDeprecated = $PolicyJson.properties.metadata.deprecated
+                    $PolicyMetadataDeprecated | Should -BeTrue
+                    Write-Warning "$($PolicyFile) - Should have the supersededBy metadata value set"
+                    $PolicyMetadataSuperseded = $PolicyJson.properties.metadata.supersededBy
+                    $PolicyMetadataSuperseded | Should -Not -BeNullOrEmpty
+                    Write-Warning "$($PolicyFile) - [Deprecated] should be in the display name"
+                    $PolicyPropertiesDisplayName = $PolicyJson.properties.displayName
+                    $PolicyPropertiesDisplayName | Should -Match "[DEPRECATED]"
+                }
             }
         }
 
@@ -86,7 +108,9 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $PolicyJson.properties.metadata.alzCloudEnvironments | Should -BeIn $AlzEnvironments
             }
         }
+
         }
+        
         Context "Validate policy parameters" {
             It 'Check for policy parameters have default values' {
                 $ModifiedAddedFiles | ForEach-Object {
