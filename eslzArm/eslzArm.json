@@ -991,7 +991,8 @@
             "ddosLiteDeploymentName": "[take(concat('alz-DDoSLite', variables('deploymentSuffix')), 64)]",
             "ddosHubLitePolicyDeploymentName": "[take(concat('alz-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZoneRgLiteDeploymentName": "[take(concat('alz-PrivDNSRGLite', variables('deploymentSuffix')), 64)]",
-            "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]"
+            "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]",
+            "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]"
         },
         // Declaring deterministic names for Resource Groups that will be created for platform resources
         "platformRgNames": {
@@ -1252,7 +1253,7 @@
         },
         {
             // Deploying ESLZ monitor custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
-            "condition": "[empty(parameters('singlePlatformSubscriptionId'))]",
+            "condition": "[and(empty(parameters('singlePlatformSubscriptionId')), equals(parameters('enableMonitorBaselines'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').monitorPolicyDeploymentName]",
@@ -1327,10 +1328,10 @@
         },
         {
             // Deploying ESLZ monitor custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
-            "condition": "[not(empty(parameters('singlePlatformSubscriptionId')))]",
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableMonitorBaselines'), 'Yes')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[variables('deploymentNames').monitorPolicyDeploymentName]",
+            "name": "[variables('esLiteDeploymentNames').monitorPolicyLiteDeploymentName]",
             "location": "[deployment().location]",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "dependsOn": [
