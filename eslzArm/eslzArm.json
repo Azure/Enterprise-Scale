@@ -892,11 +892,6 @@
             "diagnosticSettingsforManagementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/diagSettingsMGs/diagSettingsMGs.json')]",
             // references to https://github.com/Azure/azure-monitor-baseline-alerts
             "monitorPolicyDefinitions": "[concat(variables('rootUris').monitorRepo, 'patterns/alz/alzArm.json')]"
-            // "monitorConnectivityPolicyAssignment": "[concat(variables('rootUris').monitorRepo, 'patterns/alz/policyAssignments/DINE-ConnectivityAssignment.json')]",
-            // "monitorIdentityPolicyAssignment": "[concat(variables('rootUris').monitorRepo, 'patterns/alz/policyAssignments/DINE-IdentityAssignment.json')]",
-            // "monitorManagementPolicyAssignment": "[concat(variables('rootUris').monitorRepo, 'patterns/alz/policyAssignments/DINE-ManagementAssignment.json')]",
-            // "monitorLandingZonePolicyAssignment": "[concat(variables('rootUris').monitorRepo, 'patterns/alz/policyAssignments/DINE-LandingZoneAssignment.json')]",
-            // "monitorServiceHealthPolicyAssignment": "[concat(variables('rootUris').monitorRepo, 'patterns/alz/policyAssignments/DINE-ServiceHealthAssignment.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -1257,6 +1252,7 @@
         },
         {
             // Deploying ESLZ monitor custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
+            "condition": "[empty(parameters('singlePlatformSubscriptionId'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').monitorPolicyDeploymentName]",
@@ -1290,6 +1286,81 @@
                     },
                     "connectivityManagementGroup": {
                         "value": "[variables('mgmtGroups').connectivity]"
+                    },
+                    "LandingZoneManagementGroup": {
+                        "value": "[variables('mgmtGroups').lzs]"
+                    },
+                    "enableAMBAConnectivity": {
+                        "value": "[parameters('enableMonitorConnectivity')]"
+                    },
+                    "enableAMBAIdentity": {
+                        "value": "[parameters('enableMonitorIdentity')]"
+                    },
+                    "enableAMBALandingZone": {
+                        "value": "[parameters('enableMonitorLandingZones')]"
+                    },
+                    "enableAMBAManagement": {
+                        "value": "[parameters('enableMonitorManagement')]"
+                    },
+                    "enableAMBAServiceHealth": {
+                        "value": "[parameters('enableMonitorBaselines')]"
+                    },
+                    "policyAssignmentParametersCommon": {
+                        "value": {
+                            "alzMonitorResourceGroupName": {
+                                "value": "[parameters('monitorAlertsResourceGroup')]"
+                            },
+                            "alzMonitorResourceGroupLocation": {
+                                "value": "[deployment().location]"
+                            }
+                        }
+                    },
+                    "policyAssignmentParametersServiceHealth": {
+                        "value": {
+                            "alzMonitorActionGroupEmail": {
+                                "value": "[parameters('emailContactActionGroup')]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            // Deploying ESLZ monitor custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
+            "condition": "[not(empty(parameters('singlePlatformSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').monitorPolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorPolicyDefinitions]"
+                },
+                "parameters": {
+                    "enterpriseScaleCompanyPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "telemetryOptOut": {
+                        "value": "[parameters('telemetryOptOut')]"
+                    },
+                    "platformManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "IdentityManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "managementManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "connectivityManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
                     },
                     "LandingZoneManagementGroup": {
                         "value": "[variables('mgmtGroups').lzs]"
