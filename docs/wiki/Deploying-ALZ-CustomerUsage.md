@@ -28,6 +28,15 @@ The following are the unique ID's (also known as PIDs) used in each of the modul
 | ALZ Accelerator/ESLZ ARM Deployment                                       | 35c42e79-00b3-42eb-a9ac-e542953efb3c |
 | ALZ Accelerator/ESLZ ARM Deployment - Zero Trust Networking - Phase 1 | f09f64b8-5cb3-4b16-900d-6ba1df8a597e |
 
+## External modules telemetry tracking
+
+In addition to the above, there are a number of modules in external repos that are used in the ALZ ARM Template. Telemetry tracking for these modules is eanbled or disabled via the same radio button toggle as described above, i.e. if telemetry tracking is enabled all the different PIDs will be deployed, conversely if it's disabled no PIDs will be deployed. The table below lists the different modules and link to PID documentation for same.
+
+| Module Name                                                                 | PID documentation                                |
+| ------------------------------------------------------------------------- | ------------------------------------ |
+| [Azure Monitor Baseline Alerts for ALZ](https://aka.ms/amba)              | [Telemetry](https://github.com/Azure/azure-monitor-baseline-alerts/blob/main/docs/content/patterns/alz/Telemetry.md#module-pid-value-mapping)|
+
+
 ### What is Zero Trust Network Telemetry
 
 In an aligned effort with the Azure Networking Product Group, we have created an additional telemetry collection point to help us see customer choosing to adopt Zero Trust Networking best practices from ALZ.

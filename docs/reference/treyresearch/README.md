@@ -20,9 +20,10 @@ Please refer to [Enterprise-Scale Landing Zones User Guide](https://github.com/A
 
 If the business requirements change over time, the architecture allows for creating additional subscriptions and placing them into the suitable management group and assigning Azure policies. For more details, see the next steps section at the end of this document.
 
-## Pre-requisites
+## Prerequisites
 
-To deploy this ARM template, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin) on how to grant access before you proceed.
+To deploy this ARM template, there are a number of prerequisites that must be met.
+See [here](../../wiki/Deploying-ALZ-Pre-requisites.md) for more details.
 
 ## Optional pre-requisites
 
