@@ -4,7 +4,7 @@ This section will describe how to deploy an the Azure landing zone portal accele
 
 ## 1. Pre-requisites
 
-There are a number of prerequisites which need to be met before you can provision an Azure landing zones environment via the deployment experience in the Azure portal. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+There are a number of prerequisites which need to be met before you can provision an Azure landing zones environment via the deployment experience in the Azure portal. See the following [instructions](./Deploying-ALZ-Pre-requisites.md) on how to grant access before you proceed.
 
 ### Optional pre-requisites
 
@@ -47,7 +47,7 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 
 ## 6. Baseline alerts and monitoring
 
-On the *Baseline alerts and monitoring* blade, you can configure automated alert configuration for the different scopes in your Azure landing zone implementation. Enabling the different baseline alerts will assign the relevant initiative to the corresponding management group. If you enable the "Deploy Azure Monitor and enable monitoring for your platform and resources" option, you **must** to provide an email address to get email notifications from Azure Monitor for the deployment to proceed.
+On the *Baseline alerts and monitoring* blade, you can configure automated alert configuration for the different scopes in your Azure landing zone implementation. Enabling the different baseline alerts will assign the relevant initiative to the corresponding management group. If you enable the "Deploy one or more Azure Monitor Baseline Alerts" option, you **must** to provide an email address to get email notifications from Azure Monitor for the deployment to proceed.
 
 ![baseline alerts and monitoring](./media/alz-portal-baselinealerts.jpg)
 
