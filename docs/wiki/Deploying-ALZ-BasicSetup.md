@@ -242,7 +242,7 @@ In the top section you can **select** from a set of **recommended Azure policies
 
 In the bottom two sections you can choose to bring in N number of existing subscriptions that will be bootstrapped as landing zones, governed by Azure Policy:
 
-![lzTab-intro](./media/clip_image037-1-singlesubscription.jpg)
+
 
 - **Select the subscriptions you want to move to corp management group:**
   Corp Landing Zones are meant to host workloads that require connectivity to other resources within the corporate network via the Hub in the Platform Subscription.
@@ -251,10 +251,7 @@ For Corp Landing Zones its virtual network can be connected (recommended) to the
 
   In this tutorial, a "Corp" Landing Zone is provisioned using an existing (empty) subscription and connected to the Hub virtual network previously configured. Please note, additional subscriptions can be added.
 
-  Set **Connect corp landing zones to the connectivity hub (optional)** to **Yes**, then **select** an empty subscription (*corp-subscription*) and assign an address space:
-
-  ![lzTab-corpLZs](./media/clip_image037-2-singlesubscription.jpg)
-
+  
 - **Select the subscriptions you want to move to online management group**:
   Online Landing Zones are meant to host workloads that do not require connectivity/hybrid connectivity with the corporate network or that not even require a virtual network.
 
