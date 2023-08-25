@@ -4,7 +4,7 @@ This section will describe how to deploy an the Azure landing zone portal accele
 
 ## 1. Pre-requisites
 
-To provision your Azure landing zones environment with the deployment experience in the Azure portal, your user/service principal must have Owner permission at the Azure Active Directory Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+There are a number of prerequisites which need to be met before you can provision an Azure landing zones environment via the deployment experience in the Azure portal. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
 
 ### Optional pre-requisites
 
@@ -43,6 +43,13 @@ On the *Platform management, security, and governance* blade, you will configure
 Please note that if you enable the "Deploy Azure Security Center and enable security monitoring for your platform and resources" option, you **must** to provide an email address to get email notifications from Azure Security Center.
 
 ![Azure Security Center Email Contact](./media/clip_image014asc.jpg)
+
+
+## 6. Baseline alerts and monitoring
+
+On the *Baseline alerts and monitoring* blade, you can configure automated alert configuration for the different scopes in your Azure landing zone implementation. Enabling the different baseline alerts will assign the relevant initiative to the corresponding management group. If you enable the "Deploy Azure Monitor and enable monitoring for your platform and resources" option, you **must** to provide an email address to get email notifications from Azure Monitor for the deployment to proceed.
+
+![baseline alerts and monitoring](./media/alz-portal-baselinealerts.jpg)
 
 ## 6. Network topology and connectivity
 
