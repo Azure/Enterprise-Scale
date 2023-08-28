@@ -22,7 +22,7 @@ If the business requirements change over time, the architecture allows for creat
 
 ## Pre-requisites
 
-To deploy this ARM template, your user/service principal must have Owner permission at the Microsoft Entra ID Tenant root. See the following [instructions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin) on how to grant access before you proceed.
+To deploy this ARM template, your user/service principal must have Owner permission at the Microsoft Entra Tenant root. See the following [instructions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin) on how to grant access before you proceed.
 
 ## Optional pre-requisites
 

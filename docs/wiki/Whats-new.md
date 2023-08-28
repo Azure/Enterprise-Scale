@@ -36,6 +36,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+## August 2023
+
+#### Other
+
+- Renamed Azure Active Directory to Microsoft Entra ID
+
 ### July 2023
 
 #### Policy
@@ -755,7 +761,7 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 
 #### Docs
 
-- Updated [Enterprise Agreement enrollment and Microsoft Entra ID tenants](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
+- Updated [Enterprise Agreement enrollment and Microsoft Entra tenants](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
   - Added CSP, MCA & other billing offers
   - Added information on how an EA relates to Microsoft Entra ID and ties in with RBAC
 - Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
