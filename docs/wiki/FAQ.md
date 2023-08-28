@@ -169,3 +169,7 @@ We will, when ready, provide Azure landing zones specific migration guidance tha
 ### What if we are not ready to make the switch and migrate, right now?
 
 Another good question. You will need to plan, and complete, the migration to the Azure Monitor Agent before the Log Analytics Agent is retired as [documented here.](https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/)
+
+### Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
+
+Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://aka.ms/amba/alz/wiki) for more details.
