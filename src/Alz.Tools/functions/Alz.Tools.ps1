@@ -691,7 +691,7 @@ function Invoke-RemoveOrphanedRoleAssignment {
             throw $getResponse.Content
         }
 
-        # Get a list of assigned principalId values and lookup against AAD
+        # Get a list of assigned principalId values and lookup against Microsoft Entra ID
         $principalsRequestUri = "https://graph.microsoft.com/v1.0/directoryObjects/microsoft.graph.getByIds"
         $principalsRequestBody = @{
             ids = $roleAssignments.properties.principalId
@@ -699,7 +699,7 @@ function Invoke-RemoveOrphanedRoleAssignment {
         $principalsResponse = Invoke-AzRestMethod -Method "POST" -Uri $principalsRequestUri -Payload $principalsRequestBody -WhatIf:$false
         $principalIds = ($principalsResponse.Content | ConvertFrom-Json).value.id
 
-        # Find all Role Assignments where the principalId is not found in AAD
+        # Find all Role Assignments where the principalId is not found in Microsoft Entra ID
         $orphanedRoleAssignments = $roleAssignments | Where-Object {
             ($_.properties.scope -eq "/subscriptions/$($subId)") -and
             ($_.properties.principalId -notin $principalIds)
