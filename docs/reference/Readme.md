@@ -36,8 +36,8 @@ Networking:
 
 IAM
 
-1) Create Azure AD Group for Subscriptions access
-2) Create Azure AD PIM Entitlement for the scope
+1) Create Microsoft Entra Group for Subscriptions access
+2) Create Microsoft Entra PIM Entitlement for the scope
 
 # File -> New -> Sandbox
 
