@@ -41,7 +41,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
-- Enhanced the Azure Firewall Connectivity experience in the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [655](https://github.com/Azure/Enterprise-Scale/issues/655).
+- Enhanced the Azure Firewall Connectivity experience in the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
 ### July 2023
 
