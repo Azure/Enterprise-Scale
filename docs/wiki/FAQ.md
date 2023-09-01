@@ -125,7 +125,7 @@ Stay tuned to our [What's New page](https://github.com/Azure/Enterprise-Scale/wi
 
 ## What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?
 
-As raised in issue [#1080](https://github.com/Azure/Enterprise-Scale/issues/1080) it is possible for you to deploy the ALZ Portal Accelerator in a AAD Tenant with existing Management Groups. If these existing Management Groups have the same Name/ID (not Display Name) as the ones deployed as part of the ALZ Portal Accelerator these existing Management Groups will be targeted in the deployment and brought into the ALZ hierarchy and deployment. This means that the Management Groups will be:
+As raised in issue [#1080](https://github.com/Azure/Enterprise-Scale/issues/1080) it is possible for you to deploy the ALZ Portal Accelerator in a Microsoft Entra Tenant with existing Management Groups. If these existing Management Groups have the same Name/ID (not Display Name) as the ones deployed as part of the ALZ Portal Accelerator these existing Management Groups will be targeted in the deployment and brought into the ALZ hierarchy and deployment. This means that the Management Groups will be:
 
 - Display Name will be changed to ALZ default for that Management Group
 - Moved into the ALZ Management Group hierarchy

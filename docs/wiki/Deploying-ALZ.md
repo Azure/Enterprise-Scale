@@ -17,7 +17,7 @@ Azure landing zone portal accelerator can bootstrap an entire Azure tenant witho
 
 This requires the following:
 
-*    A user that is Global Admin in the Azure Active Directory
+*    A user that is Global Admin in the Microsoft Entra ID
 
 *   Elevation of privileges of this user which grants him/her the “User Access Administrator” permission at the tenant root scope
 
@@ -27,7 +27,7 @@ This requires the following:
 
 1.1  Sign into the Azure portal as a user being Global Administrator
 
-1.2  Open Azure Active Directory
+1.2  Open Microsoft Entra ID
 
 1.3  Under *Manage*, select *Properties
 
