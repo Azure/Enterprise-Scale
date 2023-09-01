@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [August 2023](#august-2023)
   - [July 2023](#july-2023)
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
@@ -35,6 +36,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### August 2023
+
+#### Tooling
+
+- Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
 ### July 2023
 
