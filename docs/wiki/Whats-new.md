@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2023](#september-2023)
   - [August 2023](#august-2023)
   - [July 2023](#july-2023)
   - [June 2023](#june-2023)
@@ -37,6 +38,11 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### September 2023
+
+#### Policy
+
+ - Added the [Configure Azure Databricks workspace to use private DNS zones](https://www.azadvertizer.com/azpolicyadvertizer/0eddd7f3-3d9b-4927-a07a-806e8ac9486c.html) built-in policy to the 'xxxx' initiative and assignment.
 ### August 2023
 
 #### Other
