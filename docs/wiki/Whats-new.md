@@ -37,21 +37,24 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### August 2023
-
-#### Other
-
-- Renamed Azure Active Directory to Microsoft Entra ID
+### September 2023
 
 #### Policy
 
-- Updated to the new [Configure Microsoft Defender for Storage to be enabled](https://www.azadvertizer.com/azpolicyadvertizer/cfdc5972-75b3-4418-8ae1-7f5c36839390.html) built-in policy to the `Deploy-MDFC-Config` initiative and assignment.
-  - Read more about the new Microsoft Defender for Storage here: [aka.ms//DefenderForStorage](https://aka.ms//DefenderForStorage).
-  - NOTE: there are additional cost considerations associated with this feature - [more info](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-storage-introduction#malware-scanning-powered-by-microsoft-defender-antivirus).
+> **Important:** For existing ALZ deployments, you will need to redeploy the below assignments with least privilege RBAC roles, and review and remove existing service principals `Owner` role assignments. The below list includes the scope that needs to be reviewed. For new deployments, the below assignments will be deployed with least privilege RBAC roles.
 
-### July 2023
+- Remediating default policy/initiative assignments using `Owner` role to be least privilege where possible. Updated assignments:
+  - DINE-ActivityLogPolicyAssignment.json (Management Group: Intermediate Root)
+  - DINE-AksPolicyPolicyAssignment.json (added additional required role)
+  - DINE-ResourceDiagnosticsPolicyAssignment.json (Management Group: Intermediate Root)
+  - DINE-SQLEncryptionPolicyAssignment.json (Management Group: Landing Zone)
+  - DINE-VMBackupPolicyAssignment.json (Management Group: Landing Zone)
+  - DINE-VMMonitoringPolicyAssignment.json (Management Group: Intermediate Root)
+  - DINE-VMSSMonitoringPolicyAssignment.json (Management Group: Intermediate Root)
 
-Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future. We will be adding tests for custom policies in the future.
+## August 2023
+
+Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future and maintain a higher level of quality for our policies. We will be adding additional tests for custom policies in the future.
 
 #### Policy
 
@@ -62,13 +65,13 @@ Major update in this release: introducing the Policy Testing Framework foundatio
   - Deploy-SQL-minTLS
   - Deploy-MySQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
   - Deploy-PostgreSQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
-=======
-## August 2023
+- Updated to the new [Configure Microsoft Defender for Storage to be enabled](https://www.azadvertizer.com/azpolicyadvertizer/cfdc5972-75b3-4418-8ae1-7f5c36839390.html) built-in policy to the `Deploy-MDFC-Config` initiative and assignment.
+  - Read more about the new Microsoft Defender for Storage here: [aka.ms//DefenderForStorage](https://aka.ms//DefenderForStorage).
+  - NOTE: there are additional cost considerations associated with this feature - [more info](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-storage-introduction#malware-scanning-powered-by-microsoft-defender-antivirus).
 
 #### Other
 
 - Renamed Azure Active Directory to Microsoft Entra ID
->>>>>>> main
 
 ### July 2023
 
@@ -87,11 +90,6 @@ Major update in this release: introducing the Policy Testing Framework foundatio
 - Enhanced the Azure Firewall Basic experience in the ALZ Portal Accelerator based on feedback from [#1370](https://github.com/Azure/Enterprise-Scale/issues/1370) by removing the DNS proxy option when selecting the `Basic` SKU
 - Updated Sentinel deployment to use new [simplified pricing tier](https://learn.microsoft.com/azure/sentinel/enroll-simplified-pricing-tier?tabs=azure-resource-manager)
 - Established a Policy Testing Framework based on Pester, built on the work done by @fawohlsc in this repo [azure-policy-testing](https://github.com/fawohlsc/azure-policy-testing)
-
-#### Docs
-
-- Updated contribution guide to include a new section to describe how to implement tooltips when adding new policies with default assignments that require updates to the portal reference implementation.
-- Adding text to the ALZ-Policies wiki page to clarify that we do use preview policies as part of initiatives in some default assignments.
 
 #### Docs
 
