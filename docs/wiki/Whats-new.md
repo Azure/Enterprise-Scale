@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2023](#september-2023)
   - [August 2023](#august-2023)
   - [July 2023](#july-2023)
   - [June 2023](#june-2023)
@@ -52,7 +53,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - DINE-VMMonitoringPolicyAssignment.json (Management Group: Intermediate Root)
   - DINE-VMSSMonitoringPolicyAssignment.json (Management Group: Intermediate Root)
 
-## August 2023
+### August 2023
 
 Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future and maintain a higher level of quality for our policies. We will be adding additional tests for custom policies in the future.
 
