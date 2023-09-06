@@ -44,18 +44,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 > **Important:** For existing ALZ deployments, you will need to redeploy the below assignments with least privilege RBAC roles, and review and remove existing service principals `Owner` role assignments. The below list includes the scope that needs to be reviewed. For new deployments, the below assignments will be deployed with least privilege RBAC roles.
 
+![Where to find RBAC roles to cleanup](media/WN-RBACCleanup.png)
+
 - Remediating default policy/initiative assignments using `Owner` role to be least privilege where possible. Updated assignments:
-  - DINE-ActivityLogPolicyAssignment.json (Management Group: Intermediate Root)
-  - DINE-AksPolicyPolicyAssignment.json (added additional required role)
-  - DINE-ResourceDiagnosticsPolicyAssignment.json (Management Group: Intermediate Root)
-  - DINE-SQLEncryptionPolicyAssignment.json (Management Group: Landing Zone)
-  - DINE-VMBackupPolicyAssignment.json (Management Group: Landing Zone)
-  - DINE-VMMonitoringPolicyAssignment.json (Management Group: Intermediate Root)
-  - DINE-VMSSMonitoringPolicyAssignment.json (Management Group: Intermediate Root)
+  - Deploy-AzActivity-Log (Management Group: Intermediate Root)
+  - Deploy-AKS-Policy (added additional required role)
+  - Deploy-Resource-Diag (Management Group: Intermediate Root)
+  - Deploy-SQL-TDE (Management Group: Landing Zone)
+  - Deploy-VM-Backup (Management Group: Landing Zone)
+  - Deploy-VM-Monitoring (Management Group: Intermediate Root)
+  - Deploy-VMSS-Monitoring (Management Group: Intermediate Root)
 
 ### August 2023
-
-Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future and maintain a higher level of quality for our policies. We will be adding additional tests for custom policies in the future.
 
 #### Policy
 
@@ -75,6 +75,8 @@ Major update in this release: introducing the Policy Testing Framework foundatio
 - Renamed Azure Active Directory to Microsoft Entra ID
 
 ### July 2023
+
+Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future and maintain a higher level of quality for our policies. We will be adding additional tests for custom policies in the future.
 
 #### Policy
 
