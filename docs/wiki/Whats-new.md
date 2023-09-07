@@ -43,6 +43,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Enhanced the Azure Firewall Connectivity experience in the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
+#### Other
+
+- Renamed Azure Active Directory to Microsoft Entra ID
+
 ### July 2023
 
 #### Policy
@@ -242,7 +246,7 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 #### Docs
 
 - Added new question and answer to FAQ for ["Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?"](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
-- Published new CAF docs for Azure landing zones and multiple Azure Active Directory tenants - [aka.ms/ALZ/MultiTenant](https://aka.ms/ALZ/MultiTenant)
+- Published new CAF docs for Azure landing zones and multiple Microsoft Entra tenants - [aka.ms/ALZ/MultiTenant](https://aka.ms/ALZ/MultiTenant)
 
 #### Tooling
 
@@ -750,7 +754,7 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 |         Custom ESLZ Policy Name         |                  Custom ESLZ Policy Display Name                  | Custom Category | Built-In Policy Name/ID | Built-In Policy Display Name | Built-In Category |                                                                                                 Notes                                                                                                 |
 | :----------------------------------------: | :-----------------------------------------------------------------: | :----------------: | :-----------------------: | :----------------------------: | :-----------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 |        Deny-Databricks-NoPublicIp        |              Deny public IPs for Databricks cluster              |    Databricks    |                        |                              |                  |                                       Denies the deployment of workspaces that do not use the noPublicIp feature to host Databricks clusters without public IPs.                                       |
-|           Deny-Databricks-Sku           |                  Deny non-premium Databricks sku                  |    Databricks    |                        |                              |                  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for AAD. |
+|           Deny-Databricks-Sku           |                  Deny non-premium Databricks sku                  |    Databricks    |                        |                              |                  | Enforces the use of Premium Databricks workspaces to make sure appropriate security features are available including Databricks Access Controls, Credential Passthrough and SCIM provisioning for Microsoft Entra ID. |
 |      Deny-Databricks-VirtualNetwork      |         Deny Databricks workspaces without Vnet injection         |    Databricks    |                        |                              |                  |                                                                     Enforces the use of vnet injection for Databricks workspaces.                                                                     |
 | Deny-MachineLearning-PublicNetworkAccess | Azure Machine Learning should have disabled public network access | Machine Learning |                        |                              |                  |                                                                  Denies public network access for Azure Machine Learning workspaces.                                                                  |
 
@@ -762,9 +766,9 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 
 #### Docs
 
-- Updated [Enterprise Agreement enrollment and Azure Active Directory tenants](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
+- Updated [Enterprise Agreement enrollment and Microsoft Entra tenants](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/enterprise-enrollment-and-azure-ad-tenants) CAF doc
   - Added CSP, MCA & other billing offers
-  - Added information on how an EA relates to Azure AD and ties in with RBAC
+  - Added information on how an EA relates to Microsoft Entra ID and ties in with RBAC
 - Lots of updates to the [Terraform Module for Cloud Adoption Framework Enterprise-scale wiki](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki)
 
 #### Tooling
@@ -886,7 +890,7 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 - Updated [pricing section](https://github.com/Azure/Enterprise-Scale/wiki/What-is-Enterprise-Scale#pricing) on "What is Enterprise Scale" wiki page to provide further clarity.
 - Updated [DNS for on-premises and Azure resources](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/dns-for-on-premises-and-azure-resources) - related to issue [#609](https://github.com/Azure/Enterprise-Scale/issues/609)
 - Update [Hub & Spoke](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) guidance related to BGP propagation on UDRs for transit connectivity - to close issue [#618](https://github.com/Azure/Enterprise-Scale/issues/618)
-- Added guidance to [Management group and subscription organization - CAF Docs](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization#configure-subscription-tenant-transfer-restrictions) for [Azure Subscription Policies](https://learn.microsoft.com/azure/cost-management-billing/manage/manage-azure-subscription-policy), which allow you to control Azure Subscription Tenant transfers to/from your AAD Tenant.
+- Added guidance to [Management group and subscription organization - CAF Docs](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization#configure-subscription-tenant-transfer-restrictions) for [Azure Subscription Policies](https://learn.microsoft.com/azure/cost-management-billing/manage/manage-azure-subscription-policy), which allow you to control Azure Subscription Tenant transfers to/from your Microsoft Entra Tenant.
 
 #### Tooling
 
