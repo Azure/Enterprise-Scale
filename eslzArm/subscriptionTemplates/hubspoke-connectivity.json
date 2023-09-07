@@ -68,6 +68,17 @@
                 "description": "Select whether the VPN Gateway should be deployed or not."
             }
         },
+        "vpnGWGen":{
+            "type": "string",
+            "allowedValues": [
+                "Generation1",
+                "Generation2"
+            ],
+            "defaultvalue": "Generation1",
+            "metadata": {
+                "description": "Select whuch generation of VPN Gateway should be deployed"
+            }
+        },
         "enableErGw": {
             "type": "string",
             "allowedValues": [
@@ -161,18 +172,19 @@
         }
     },
     "variables": {
-        "vpngwname": "[concat(parameters('topLevelManagementGroupPrefix'), '-vpngw-', parameters('location'))]",
-        "erGwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ergw-', parameters('location'))]",
-        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location'))]",
-        "azFwPolicyName": "[concat(parameters('topLevelManagementGroupPrefix'), '-azfwpolicy-', parameters('location'))]",
-        "hubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
-        "azVpnGwIpName": "[concat(variables('vpngwname'), '-pip')]",
+        "subname": "[subscription().displayName]",
+        "vpngwname": "[concat('VPNGW-', parameters('topLevelManagementGroupPrefix'), '-', parameters('location'), variables('subname'))]",
+        "erGwName": "[concat('ERGW-', parameters('topLevelManagementGroupPrefix'), '-', parameters('location'), variables('subname'))]",
+        "rgName": "[concat('VNETHUB-', parameters('topLevelManagementGroupPrefix'), '-', parameters('location'), variables('subname'))]",
+        "azFwPolicyName": "[concat('AZFWPOLICY-', parameters('topLevelManagementGroupPrefix'), '-', parameters('location'), variables('subname'))]",
+        "hubName": "[concat('HUB-', parameters('topLevelManagementGroupPrefix'), '-', parameters('location'), variables('subname'))]",
+        "azVpnGwIpName": "[concat('PIP-',variables('vpngwname'))]", //DIT WORDT DUS BIJVOORBEELD: PIP-VPNGW-OGN-WE-CONNECTION-001
         "azVpnGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
-        "azFwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-fw-', parameters('location'))]",
-        "azErGwIpName": "[concat(variables('erGwName'), '-pip')]",
+        "azFwName": "[concat('FW-',parameters('topLevelManagementGroupPrefix'), '-', parameters('location'), variables('subname'))]",
+        "azErGwIpName": "[concat('PIP-', variables('erGwName'))]",
         "azVpnGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
-        "azFwIpName": "[concat(variables('azFwName'), '-pip')]",
-        "azFwMgmtIpName": "[concat(variables('azFwName'), '-mgmtpip')]",
+        "azFwIpName": "[concat('PIP-', variables('azFwName'))]",
+        "azFwMgmtIpName": "[concat('MGMTPIP-', variables('azFwName'))]",
         "azErGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
         "azErGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
         "azFwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/AzureFirewallSubnet')]",
@@ -233,11 +245,15 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[parameters('location')]",
+
+            //NAAM VAN DEPLOYMENT RESOURCE
+
             "name": "[concat('alz-', parameters('location'), '-', substring(uniqueString(parameters('connectivitySubscriptionId')),0,6), '-connectivityHubSub')]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
+                    //WORDT OP SUBSCRIPTIONNIVEAU GEDEPLOYD
                     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {},
@@ -315,7 +331,7 @@
                                             ],
                                             "properties": {
                                                 "gatewayType": "Vpn",
-                                                "vpnGatewayGeneration": "Generation2",
+                                                "vpnGatewayGeneration": "[parameters('vpnGWGen')]",
                                                 "vpnType": "RouteBased",
                                                 "ipConfigurations": [
                                                     {
