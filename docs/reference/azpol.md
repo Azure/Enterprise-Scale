@@ -31,9 +31,9 @@ A custom ESLZ Policy Initiative specifically fo SQL Databases helps implement fo
 
 ### Encrypt SQL data at rest
 
-SQL database and its backups are prone to risks of getting into hands of malicious actors. It's very easy to restore SQL database from either database files or backup. Without proper defence system in place, malicious actors can have access to all the data.
+SQL database and its backups are prone to risks of getting into hands of malicious actors. It's very easy to restore SQL database from either database files or backup. Without proper defense system in place, malicious actors can have access to all the data.
 
-Ensuring that SQL database is encrypted at rest is one of the first steps towards building SQL database defence strategy. Azure SQL database Transparent Data Encryption (TDE) ensures that data is encrypted at rest without needing any application code level change.
+Ensuring that SQL database is encrypted at rest is one of the first steps towards building SQL database defense strategy. Azure SQL database Transparent Data Encryption (TDE) ensures that data is encrypted at rest without needing any application code level change.
 
 A SQL database with TDE enabled makes it hard for malicious actors to get access to data it holds even if its compromised.
 
@@ -161,7 +161,7 @@ Inability to identify and visualize relationship between Azure platform, Azure s
 
 Azure Monitor Logs along with Azure Log Analytics Workspace help enterprises in dealing with critical conditions using Alerts. Combined together, Azure Monitor Logs and Log Analytics Workspace, empower enterprises to visualize and interact with rich set of log information through dashboards, workbooks and Power BI. Enterprises can use Azure Monitor Logs and Log Analytics Workspace together to configure auto-scaling on VMs to automatically adding or removing instances.
 
-A custom ESLZ policy helps in configuring Log Analytics Workspace with Azure Monitor. This policy deploys pre-packaged dashboard reports referred as Azure Monitor Solutions for specific Azure services such as Azure SQL Database or Azure Active Directory. It also configures data sources such as Linux and Windows VM Performance metrics with Azure Monitor.
+A custom ESLZ policy helps in configuring Log Analytics Workspace with Azure Monitor. This policy deploys pre-packaged dashboard reports referred as Azure Monitor Solutions for specific Azure services such as Azure SQL Database or Microsoft Entra ID. It also configures data sources such as Linux and Windows VM Performance metrics with Azure Monitor.
 
 ## Enable Log Storage and Querying
 
