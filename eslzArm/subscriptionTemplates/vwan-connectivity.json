@@ -91,6 +91,31 @@
         "firewallZones": {
             "type": "array",
             "defaultValue": []
+        },
+        "internetTrafficRoutingPolicy": {
+        "type": "bool",
+        "defaultValue": true,
+        "metadata": {
+            "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
+        }
+        },
+        "privateTrafficRoutingPolicy": {
+        "type": "bool",
+        "defaultValue": true,
+        "metadata": {
+            "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
+        }
+        },
+        "RoutingIntent":{
+            "type": "string",
+            "allowedValues":[
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description":
+                    "Enable vWAN Routing Intent"
+            }
         }
     },
     "variables": {
@@ -216,6 +241,30 @@
                                                     }
                                                 }
                                             }
+                                        },
+                                         {
+                                            "condition":"[and(equals(parameters('RoutingIntent'), 'Yes'),equals(parameters('enableAzFw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/virtualHubs/routingIntent",
+                                            "apiVersion": "2023-04-01",
+                                            "name":"[concat(variables('vhubname'),'/','RoutingIntent')]",
+                                             "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]",
+                                                "[resourceId('Microsoft.Network/azureFirewalls',variables('azfwname'))]" 
+                                                ],
+                                                "properties":{
+                                                "routingPolicies": "[                                                     
+                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
+                                                                                equals(parameters('privateTrafficRoutingPolicy'), true())), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', resourceId('Microsoft.Network/azureFirewalls', variables('azFwName'))), 
+                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', resourceId('Microsoft.Network/azureFirewalls', variables('azFwName')))),                                                                                     
+                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
+                                                                                equals(parameters('privateTrafficRoutingPolicy'), false())), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', resourceId('Microsoft.Network/azureFirewalls', variables('azFwName')))), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', resourceId('Microsoft.Network/azureFirewalls', variables('azFwName'))))))]"
+                                                }
                                         },
                                         {
                                             "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
