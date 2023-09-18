@@ -10,7 +10,7 @@ Please refer to [Trey Research reference implementation](https://github.com/Azur
 
 ### Required Permissions
 
-To provision Azure landing zone portal accelerator in your environment, **your user/service principal must have Owner permission at the Azure Active Directory Tenant root**.
+To provision Azure landing zone portal accelerator in your environment, **your user/service principal must have Owner permission at the Microsoft Entra Tenant root**.
 Refer to these [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
 
 ### Subscriptions
