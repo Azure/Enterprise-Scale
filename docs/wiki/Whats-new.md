@@ -56,10 +56,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future. We will be adding tests for custom policies in the future.
 
-#### Other
-
-- Renamed Azure Active Directory to Microsoft Entra ID
-
 #### Policy
 
 - Updating custom policies using over permissive roles (Owner) to use resource scoped roles (e.g., Storage Account Contributor, Azure SQL Contributor, etc.):
@@ -69,10 +65,13 @@ Major update in this release: introducing the Policy Testing Framework foundatio
   - Deploy-SQL-minTLS
   - Deploy-MySQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
   - Deploy-PostgreSQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
-    - Additional policy definitions:
-    - `DenyAction-ActivityLogs`
-    - `DenyAction-DiagnosticLogs`
-    - These two policy definitions prevent Activity Log Settings and Diagnostic Settings being deleted leveraging Azure Policy DenyAction functionality
+=======
+## August 2023
+
+#### Other
+
+- Renamed Azure Active Directory to Microsoft Entra ID
+>>>>>>> main
 
 ### July 2023
 
