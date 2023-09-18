@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [August 2023](#august-2023)
   - [July 2023](#july-2023)
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
@@ -38,6 +39,18 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### August 2023
 
+#### Other
+
+- Renamed Azure Active Directory to Microsoft Entra ID
+
+#### Policy
+
+- Updated to the new [Configure Microsoft Defender for Storage to be enabled](https://www.azadvertizer.com/azpolicyadvertizer/cfdc5972-75b3-4418-8ae1-7f5c36839390.html) built-in policy to the `Deploy-MDFC-Config` initiative and assignment.
+  - Read more about the new Microsoft Defender for Storage here: [aka.ms//DefenderForStorage](https://aka.ms//DefenderForStorage).
+  - NOTE: there are additional cost considerations associated with this feature - [more info](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-storage-introduction#malware-scanning-powered-by-microsoft-defender-antivirus).
+
+### July 2023
+
 Major update in this release: introducing the Policy Testing Framework foundation, along with tests for all assigned infrastructure policies that use the DENY effect. This will allow us to test the policies in a more automated fashion, and will help us to ensure that we don't introduce any regressions in the future. We will be adding tests for custom policies in the future.
 
 #### Other
@@ -53,7 +66,7 @@ Major update in this release: introducing the Policy Testing Framework foundatio
   - Deploy-SQL-minTLS
   - Deploy-MySQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
   - Deploy-PostgreSQL-sslEnforcement (changed from Owner to Contributor role, no built in roles currently available)
-  - Additional policy definitions:
+    - Additional policy definitions:
     - `DenyAction-ActivityLogs`
     - `DenyAction-DiagnosticLogs`
     - These two policy definitions prevent Activity Log Settings and Diagnostic Settings being deleted leveraging Azure Policy DenyAction functionality
