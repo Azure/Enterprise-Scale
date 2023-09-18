@@ -42,6 +42,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Updated to the new [Configure Microsoft Defender for Storage to be enabled](https://www.azadvertizer.com/azpolicyadvertizer/cfdc5972-75b3-4418-8ae1-7f5c36839390.html) built-in policy to the `Deploy-MDFC-Config` initiative and assignment.
+  - Read more about the new Microsoft Defender for Storage here: [aka.ms//DefenderForStorage](https://aka.ms//DefenderForStorage).
+  - NOTE: there are additional cost considerations associated with this feature - [more info](https://learn.microsoft.com/azure/defender-for-cloud/defender-for-storage-introduction#malware-scanning-powered-by-microsoft-defender-antivirus).
+- Added two new definitions with Deny Action feature:
+  - `DenyAction-ActivityLogSettings.json`
+  - `DenyAction-DiagnosticSettings.json`
+
 > **Important:** For existing ALZ deployments, you will need to redeploy the below assignments with least privilege RBAC roles, and review and remove existing service principals `Owner` role assignments. The below list includes the scope that needs to be reviewed. For new deployments, the below assignments will be deployed with least privilege RBAC roles.
 
 ![Where to find RBAC roles to cleanup](media/WN-RBACCleanup.png)
