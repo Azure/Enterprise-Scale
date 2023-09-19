@@ -48,6 +48,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added two new definitions with Deny Action feature:
   - `DenyAction-ActivityLogSettings.json`
   - `DenyAction-DiagnosticSettings.json`
+- Bug fix for missing diagnostic settings category for policy `Deploy-Diagnostics-CosmosDB`
 
 > **Important:** For existing ALZ deployments, you will need to redeploy the below assignments with least privilege RBAC roles, and review and remove existing service principals `Owner` role assignments. The below list includes the scope that needs to be reviewed. For new deployments, the below assignments will be deployed with least privilege RBAC roles.
 
