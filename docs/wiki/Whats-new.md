@@ -48,6 +48,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added two new definitions with Deny Action feature:
   - `DenyAction-ActivityLogSettings.json`
   - `DenyAction-DiagnosticSettings.json`
+- Added the [Configure Azure Databricks workspace to use private DNS zones](https://www.azadvertizer.com/azpolicyadvertizer/0eddd7f3-3d9b-4927-a07a-806e8ac9486c.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 
 > **Important:** For existing ALZ deployments, you will need to redeploy the below assignments with least privilege RBAC roles, and review and remove existing service principals `Owner` role assignments. The below list includes the scope that needs to be reviewed. For new deployments, the below assignments will be deployed with least privilege RBAC roles.
 
