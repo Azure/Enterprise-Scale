@@ -243,30 +243,6 @@
                                                 }
                                             }
                                         },
-                                         {
-                                            "condition":"[and(equals(parameters('enablevWANRoutingIntent'), 'Yes'),equals(parameters('enableAzFw'), 'Yes'))]",
-                                            "type": "Microsoft.Network/virtualHubs/routingIntent",
-                                            "apiVersion": "2023-04-01",
-                                            "name":"[concat(variables('vhubname'),'/','RoutingIntent')]",
-                                             "dependsOn": [
-                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]",
-                                                "[resourceId(variables('routingIntentnexthop'))]"
-                                                ],
-                                                "properties":{
-                                                "routingPolicies": "[                                                     
-                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
-                                                                                equals(parameters('privateTrafficRoutingPolicy'), true())), 
-                                                                                createArray(
-                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', variables('routingIntentnexthop')), 
-                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop'))),                                                                                     
-                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
-                                                                                equals(parameters('privateTrafficRoutingPolicy'), false())), 
-                                                                                createArray(
-                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', variables('routingIntentnexthop'))), 
-                                                                                createArray(
-                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop')))))]"
-                                                }
-                                        },
                                         {
                                             "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
                                             "type": "Microsoft.Network/firewallPolicies",
@@ -309,6 +285,30 @@
                                                     "id": "[variables('azFirewallPolicyId').id]"
                                                 }
                                             }
+                                        },
+                                         {
+                                            "condition":"[and(equals(parameters('enablevWANRoutingIntent'), 'Yes'),equals(parameters('enableAzFw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/virtualHubs/routingIntent",
+                                            "apiVersion": "2023-04-01",
+                                            "name":"[concat(variables('vhubname'),'/','RoutingIntent')]",
+                                             "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]",
+                                                "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables ('rgName'), '/providers/Microsoft.Network/azureFirewalls/', variables ('azFwName'))]"
+                                                ],
+                                                "properties":{
+                                                "routingPolicies": "[                                                     
+                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
+                                                                                equals(parameters('privateTrafficRoutingPolicy'), true())), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', variables('routingIntentnexthop')), 
+                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop'))),                                                                                     
+                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
+                                                                                equals(parameters('privateTrafficRoutingPolicy'), false())), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', variables('routingIntentnexthop'))), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop')))))]"
+                                                }
                                         }
                                     ]
                                 }
