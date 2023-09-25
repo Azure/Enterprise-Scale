@@ -1,6 +1,8 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2023](#september-2023)
+  - [August 2023](#august-2023)
   - [July 2023](#july-2023)
   - [June 2023](#june-2023)
   - [May 2023](#may-2023)
@@ -35,6 +37,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+## September 2023
+
+#### Other
+
+- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023))
 
 ## August 2023
 
