@@ -64,6 +64,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Deploy-VM-Monitoring (Management Group: Intermediate Root)
   - Deploy-VMSS-Monitoring (Management Group: Intermediate Root)
 
+#### Other
+
+- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023))
+
 ### August 2023
 
 #### Policy
