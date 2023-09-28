@@ -61,7 +61,16 @@ The Enterprise-Scale architecture is modular by design and allows customers to s
 | Trey Research | On-premises connectivity with Hub and Spoke for small Enterprises | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fes-lite.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Ftreyresearch%2FarmTemplates%2Fportal-es-lite.json) | [Detailed description](./docs/reference/treyresearch/README.md) |
 | Azure Gov | Reference implementation that can be deployed to Azure gov and includes all options in a converged experience | [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.svg?sanitize=true)](https://portal.azure.us/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Ffairfaxeslz-portal.json) | N/A
 
-> The Bicep version is now available in Public Preview here: [https://github.com/Azure/ALZ-Bicep](https://github.com/Azure/ALZ-Bicep)
+## Deploying Enterprise-Scale Architecture with Infrastructure as Code
+
+To achieve heightened flexibility, control, and automation in deploying the Enterprise-Scale architecture, consider the use of Infrastructure as Code (IaC). This approach not only guarantees a consistent and reproducible deployment of the reference implementations, but also grants the ability to customize configurations to exact specifications. Furthermore, IaC can facilitate a fully automated and controlled change control and approval process, a pivotal requirement for substantial enterprise undertakings. This results in streamlined operations and an overall enhancement of efficiency in your deployment procedures.
+
+Tool/Language | Repository Link | Consumer Guidance
+|:-------------------------|:-------------|:-------------|
+| Bicep | [ALZ-Bicep](https://github.com/Azure/ALZ-Bicep) | [Getting Started](https://github.com/Azure/ALZ-Bicep/wiki/ConsumerGuide) |
+| Terraform | [terraform-azurerm-caf-enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale) | [Getting Started](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Getting-Started)|
+| ARM Templates | [Enterprise-Scale](https://github.com/Azure/Enterprise-Scale) | [Getting Started](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm#enterprise-scale-landing-zones-arm-templates) |
+
 
 ## Contributing
 
