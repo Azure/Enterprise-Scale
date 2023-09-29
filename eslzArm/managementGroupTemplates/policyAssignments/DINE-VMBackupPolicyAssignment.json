@@ -36,9 +36,11 @@
             "Default": "must",
             "DoNotEnforce": "should"
         },
-        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "rbacVMContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+        "rbacBackupContributor": "5e467623-bb1f-42f4-a55d-6e525e11384b",
         "roleAssignmentNames": {
-            "deployVmBackup": "[guid(concat(parameters('toplevelManagementGroupPrefix'), 'identity', variables('policyAssignmentNames').deployVmBackup))]"
+            "roleAssignmentNameBackupContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployVmBackup,'-1'))]",
+            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployVmBackup,'-2'))]"
         }
     },
     "resources": [
@@ -66,16 +68,29 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deployVmBackup]",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameBackupContributor]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').deployVmBackup]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacBackupContributor'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployVmBackup), '2019-09-01', 'Full' ).identity.principalId)]"
             }
-        }        
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployVmBackup]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployVmBackup), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }     
     ],
     "outputs": {}
 }

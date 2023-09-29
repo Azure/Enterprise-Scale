@@ -735,6 +735,15 @@
                 "No"
             ]
         },
+        "enforceKvGuardrailsPlat": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "denyHybridNetworking": {
             "type": "string",
             "defaultValue": "No",
@@ -943,6 +952,7 @@
             "mgmtFromInternetIdentityPolicyDeploymentName": "[take(concat('alz-MgmtPortsIdentity', variables('deploymentSuffix')), 64)]",
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
+            "kvGuardrailsPolicyPlatDeploymentName": "[take(concat('alz-KvGuardrailsPlat', variables('deploymentSuffix')), 64)]",
             "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
             "auditPeDnsZonesPolicyDeploymentName": "[take(concat('alz-AuditPeDnsZones', variables('deploymentSuffix')), 64)]",
             "auditAppGwWafPolicyDeploymentName": "[take(concat('alz-AppGwWaf', variables('deploymentSuffix')), 64)]",
@@ -1052,6 +1062,7 @@
             "privatelink.azurecr.io",
             "privatelink.azure-devices.net",
             "privatelink.azure-devices-provisioning.net",
+            "privatelink.azuredatabricks.net",
             "privatelink.azurehdinsight.net",
             "privatelink.azurehealthcareapis.com",
             "privatelink.azurestaticapps.net",
@@ -2914,6 +2925,33 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enforceKvGuardrails'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Key Vault guardrails initiative to platform management group if condition is true
+            "condition": "[or(equals(parameters('enforceKvGuardrailsPlat'), 'Yes'), equals(parameters('enforceKvGuardrailsPlat'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').kvGuardrailsPolicyPlatDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').kvGuardrailsPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceKvGuardrailsPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }

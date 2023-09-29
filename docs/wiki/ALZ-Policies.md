@@ -4,6 +4,8 @@ Azure Policy and deployIfNotExist enables autonomy in the platform, and reduces 
 
 > Please refer to [Policy Driven Governance](https://learn.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/landing-zone/design-principles#policy-driven-governance) for further information.
 
+> **IMPORTANT NOTE:** ALZ priority is to provide a secure by default, Zero Trust aligned, configuration, and occasionally we will rely on `-preview` policies in our default assignments to meet our core objective. These preview policies are maintained by the Azure product owners and versioning is not in our control, however, we feel they are sufficiently important to be included in our releases. If the inclusion of preview policies is of concern, please review all ALZ default initiative assignments and remove any `-preview` policies that you are not comfortable with.
+
 ## FAQ and Tips
 
    We have added a dedicated [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) based on common issues raised or questions asked by customers and partners.
@@ -103,9 +105,13 @@ This management group contains all the platform child management groups, like ma
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **0**     |
 </td></tr> </table>
+
+| Assignment Name                                                            | Definition Name                                                            | Policy Type                       | Description                                                                                                                                                               | Effect(s) |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| **Enforce recommended guardrails for Azure Key Vault**       | **Enforce recommended guardrails for Azure Key Vault**       | `Policy Definition Set`, **Custom** | This policy initiative enforces minimum guardrails for Azure Key Vault: <ul><li>Key vaults should have soft delete enabled (Deny)<li>Key vaults should have purge protection enabled (Deny)<li>Key Vault secrets should have an expiration date (Audit)<li>Key Vault keys should have an expiration date (Audit)<li>Azure Key Vault should have firewall enabled (Audit)<li>Certificates should have the specified lifetime action triggers (Audit)<li>Keys should have more than the specified number of days before expiration (Audit < 90 days)<li>Secrets should have more than the specified number of days before expiration (Audit < 90 days)</ul>| Audit, Deny |
 
 ### Connectivity
 

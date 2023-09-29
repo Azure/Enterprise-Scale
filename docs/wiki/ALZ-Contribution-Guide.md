@@ -187,7 +187,7 @@ The policy definition files will be compiled into a `policies.json` file from th
 
 Once the policy work has been completed, a pull request should be submitted to the repository:
 
-![pr-example](media/pr-example.png)
+![pr-example](media/pr-example.png) 
 
 #### Versioning
 
@@ -211,11 +211,32 @@ When working within the policy files, to read parameters which are set at the to
 
 > **Note:** When testing the policy manually in the portal or another deployment outside of the ALZ Accelerator (Portal), you will need to remove the double escaping, `[[`, and revert to normal ,`[`'
 
+#### Testing
+
+A new requirement as of FY24-Q1 for all new custom policies is that new policies (with DENY effect at this time) MUST have a Pester test to validate the policy is working as expected. This is to validate that the policy is effective and to prevent any regressions in the future should there be any policy updates. The Pester test should be located in the `/tests/policy` folder in this repo, and should be named the same as the policy definition, but with a `.Tests.ps1` extension. For example, if the policy definition is `Deny-AppService-PrivateEndpoint.json`, the Pester test should be named `Deny-AppService-PrivateEndpoint.Tests.ps1`.
+
+There are many examples available already in the `/tests/policy` for the current list of DENY policies. The preferred and recommended approach is to use PowerShell Az as far as possible, however, there are some situations where REST API will be required (e.g., Deny-MgmtPorts-From-Internet with complex rules or any deployment requiring parameters not available in PowerShell Az modules). Examples of both methods are also available in the current policy test folder - an example that uses both methods [Deny-FileServices-InsecureAuth.Tests.ps1](/tests/policy/Deny-FileServices-InsecureAuth.Tests.ps1).\
+
+We have also included a [sample workflow](./ALZ-Policies-Test-Workflow-Sample) that can be used as a dedicated policy testing workflow in your own environments.
+
+To learn more about how we've implemented policy testing, please refer to [azure-policy-testing](https://github.com/fawohlsc/azure-policy-testing).
+
 #### Default assignments
 
 When working with policies that are assigned by default, these are located under the [eslzArm/managementGroupTemplates/policyAssignments](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/managementGroupTemplates/policyAssignments) folder. References to policy definitions are done through the assignments, so if any amendments are done to default assigned policies, they should be amended here too. A wiki to default assignments can be found [in the wiki](./ALZ-Policies).
 
 Policies in `eslzArm.json` file will also need updating if wanting to assign a new policy that is located. The file for this amendment [in eslzArm/eslzArm.json](https://github.com/Azure/Enterprise-Scale/blob/main/eslzArm/eslzArm.json).
+
+### Portal Reference Implementation
+
+The portal reference implementation is a popular UI driven reference implementation for Azure landing zones, and is maintained as part of this repository. It is a great way to get started with Azure landing zones, and is a great way to learn about the underlying Azure landing zone guidance.
+
+When creating new policies that will be assigned by default by the portal reference architecture you are required to also include appropriate information and options in the portal experience (`eslzArm/eslz-portal.json`). Please do include appropriate selectors in line with the section (management group) that the policy is assigned to, and ensure that tooltips include links to the AzAdvertizer page for the policy or initiative.
+
+Example for the Key Vault initiative (note the tooltip):
+
+![Example of adding tooltip in portal experience](media/alz-contrib-portal1.png)
+
 
 ### Forking the repository and submitting a Pull Request
 
