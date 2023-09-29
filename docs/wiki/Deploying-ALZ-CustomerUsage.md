@@ -27,6 +27,7 @@ The following are the unique ID's (also known as PIDs) used in each of the modul
 | ------------------------------------------------------------------------- | ------------------------------------ |
 | ALZ Accelerator/ESLZ ARM Deployment                                       | 35c42e79-00b3-42eb-a9ac-e542953efb3c |
 | ALZ Accelerator/ESLZ ARM Deployment - Zero Trust Networking - Phase 1 | f09f64b8-5cb3-4b16-900d-6ba1df8a597e |
+| ALZ Accelerator/ESLZ ARM Deployment - Azure Monitor baseline alerts | 5f0e5693-3998-4ae2-8115-ee96e38dac62 |
 
 ## External modules telemetry tracking
 
