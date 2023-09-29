@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [October 2023](#october-2023)
   - [September 2023](#september-2023)
   - [August 2023](#august-2023)
   - [July 2023](#july-2023)
@@ -37,6 +38,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### October 2023
+
+#### Policy
+
+- The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
+
 
 ### September 2023
 
