@@ -40,7 +40,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 ## September 2023
 #### Tooling
 
-- Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that includes Azure Firewall deployment
+- Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that include Azure Firewall deployment
 ## August 2023
 
 #### Other
