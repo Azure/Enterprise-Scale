@@ -26,9 +26,11 @@
             "description": "Use Azure Policy Add-on to manage and report on the compliance state of your Azure Kubernetes Service (AKS) clusters. For more information, see https://aka.ms/akspolicydoc.",
             "displayName": "Deploy Azure Policy Add-on to Azure Kubernetes Service clusters"
         },
-        "rbac": "ed7f3fbd-7b88-4dd4-9017-9adb7ce333f8",
+        "rbacAksContributor": "ed7f3fbd-7b88-4dd4-9017-9adb7ce333f8",
+        "rbacAksPolicyAddon": "18ed5180-3e48-46fd-8541-4ea054d57064",
         "roleAssignmentNames": {
-            "deployAks": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').deployAks))]"
+            "roleAssignmentNameAksContributor": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').deployAks))]",
+            "roleAssignmentNameAksPolicyAddon": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').deployAks,'-PolicyAddon'))]"
         }
     },
     "resources": [
@@ -50,13 +52,26 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deployAks]",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameAksContributor]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').deployAks]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbac'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacAksContributor'))]",
+                "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployAks), '2019-09-01', 'Full' ).identity.principalId]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameAksPolicyAddon]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployAks]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacAksPolicyAddon'))]",
                 "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployAks), '2019-09-01', 'Full' ).identity.principalId]"
             }
         }
