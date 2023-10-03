@@ -63,4 +63,3 @@ The Azure Monitor Baseline Alerts are deployed as part of the Enterprise-Scale d
   - Microsoft.AlertsManagement
   - Microsoft.Insights
 Please see [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider) for details on how to register a resource provider should you need to do so.
-2. For leveraging the log alerts for Virtual Machines, ensure that VM Insights is enabled for the Virtual Machines to be monitored. For more details on VM Insights deployment see [here](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-enable-overview). Please note only the performance collection of the VM insights solution is required for the current alerts to deploy.
