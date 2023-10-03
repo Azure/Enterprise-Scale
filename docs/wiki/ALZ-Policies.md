@@ -90,7 +90,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 
 ### Platform
 
-This management group contains all the platform child management groups, like management, connectivity, and identity. There are currently no policies assigned at this management group
+This management group contains all the platform child management groups, like management, connectivity, and identity.
 
 <table>
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
