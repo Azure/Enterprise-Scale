@@ -172,4 +172,4 @@ Another good question. You will need to plan, and complete, the migration to the
 
 ### Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
 
-Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://aka.ms/amba/alz/wiki) for more details.
+Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz) for more details.
