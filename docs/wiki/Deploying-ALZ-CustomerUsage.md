@@ -35,7 +35,7 @@ In addition to the above, there are a number of modules in external repos that a
 
 | Module Name                                                                 | PID documentation                                |
 | ------------------------------------------------------------------------- | ------------------------------------ |
-| [Azure Monitor Baseline Alerts for ALZ](https://aka.ms/amba)              | [Telemetry](https://github.com/Azure/azure-monitor-baseline-alerts/blob/main/docs/content/patterns/alz/Telemetry.md#module-pid-value-mapping)|
+| [Azure Monitor Baseline Alerts for ALZ](https://aka.ms/amba)              | [Telemetry](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Telemetry)|
 
 
 ### What is Zero Trust Network Telemetry
