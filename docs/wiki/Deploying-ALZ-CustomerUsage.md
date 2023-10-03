@@ -31,7 +31,7 @@ The following are the unique ID's (also known as PIDs) used in each of the modul
 
 ## External modules telemetry tracking
 
-In addition to the above, there are a number of modules in external repos that are used in the ALZ ARM Template. Telemetry tracking for these modules is eanbled or disabled via the same radio button toggle as described above, i.e. if telemetry tracking is enabled all the different PIDs will be deployed, conversely if it's disabled no PIDs will be deployed. The table below lists the different modules and link to PID documentation for same.
+In addition to the above, there are a number of modules in external repos that are used in the ALZ ARM Template. Telemetry tracking for these modules is enabled or disabled via the same radio button toggle as described above, i.e. if telemetry tracking is enabled all the different PIDs will be deployed, conversely if it's disabled no PIDs will be deployed. The table below lists the different modules and link to PID documentation for same.
 
 | Module Name                                                                 | PID documentation                                |
 | ------------------------------------------------------------------------- | ------------------------------------ |
