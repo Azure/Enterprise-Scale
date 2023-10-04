@@ -93,6 +93,10 @@
             "type": "string",
             "defaultValue": ""
         },
+        "enableVpnActiveActive": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "gwAzSku": {
             "type": "string",
             "defaultValue": ""
@@ -123,9 +127,11 @@
         "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location'))]",
         "hubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
         "azVpnGwIpName": "[concat(variables('vpngwname'), '-pip')]",
+        "azVpnGwAAIpName": "[concat(variables('vpngwname'), '-pip-002')]",
         "azVpnGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
         "azErGwIpName": "[concat(variables('erGwName'), '-pip')]",
         "azVpnGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
+        "azVpnGwAAPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwAAIpName'))]",
         "azErGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
         "azErGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke', parameters('location')), 64)]",
@@ -225,7 +231,20 @@
                                             }
                                         },
                                         {
-                                            "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
+                                            "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
+                                            "apiVersion": "2020-05-01",
+                                            "type": "Microsoft.Network/publicIpAddresses",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('azVpnGwAAIpName')]",
+                                            "sku": {
+                                                "name": "[if(equals(parameters('gwRegionalOrAz'), 'Zone'), 'Standard', 'Basic')]"
+                                            },
+                                            "properties": {
+                                                "publicIPAllocationMethod": "[if(equals(parameters('gwRegionalOrAz'), 'Zone'), 'Static', 'Dynamic')]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'No'), not(empty(parameters('subnetMaskForGw'))))]",
                                             "apiVersion": "2020-05-01",
                                             "name": "[variables('vpngwname')]",
                                             "type": "Microsoft.Network/virtualNetworkGateways",
@@ -235,6 +254,7 @@
                                                 "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
                                             ],
                                             "properties": {
+                                                "activeActive": false,
                                                 "gatewayType": "Vpn",
                                                 "vpnGatewayGeneration": "Generation2",
                                                 "vpnType": "RouteBased",
@@ -248,6 +268,70 @@
                                                             },
                                                             "publicIpAddress": {
                                                                 "id": "[variables('azVpnGwPipId')]"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "sku": {
+                                                    "name": "[if(
+                                                                 and(
+                                                                     or(
+                                                                         empty(parameters('gwRegionalSku')), 
+                                                                         empty(parameters('gwAzSku'))), 
+                                                                         not(
+                                                                             empty(parameters('gwRegionalSku')))), 
+                                                                                parameters('gwRegionalSku'), 
+                                                                                parameters('gwAzSku'))]",
+                                                    "tier": "[if(
+                                                                and(
+                                                                    or(
+                                                                        empty(parameters('gwRegionalSku')), 
+                                                                        empty(parameters('gwAzSku'))), 
+                                                                        not(
+                                                                            empty(parameters('gwRegionalSku')))), 
+                                                                                parameters('gwRegionalSku'), 
+                                                                                parameters('gwAzSku'))]"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
+                                            "apiVersion": "2020-05-01",
+                                            "name": "[variables('vpngwname')]",
+                                            "type": "Microsoft.Network/virtualNetworkGateways",
+                                            "location": "[parameters('location')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
+                                                "[concat('Microsoft.Network/publicIPAddresses/', variables('azVpnGwAAIpName'))]",
+                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
+                                            ],
+                                            "properties": {
+                                                "activeActive": true,
+                                                "gatewayType": "Vpn",
+                                                "vpnGatewayGeneration": "Generation2",
+                                                "vpnType": "RouteBased",
+                                                "ipConfigurations": [
+                                                    {
+                                                        "name": "default",
+                                                        "properties": {
+                                                            "privateIPAllocationMethod": "Dynamic",
+                                                            "subnet": {
+                                                                "id": "[variables('azVpnGwSubnetId')]"
+                                                            },
+                                                            "publicIpAddress": {
+                                                                "id": "[variables('azVpnGwPipId')]"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "activeactive",
+                                                        "properties": {
+                                                            "privateIPAllocationMethod": "Dynamic",
+                                                            "subnet": {
+                                                                "id": "[variables('azVpnGwSubnetId')]"
+                                                            },
+                                                            "publicIpAddress": {
+                                                                "id": "[variables('azVpnGwAAPipId')]"
                                                             }
                                                         }
                                                     }
