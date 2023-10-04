@@ -72,9 +72,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Deploy-VM-Monitoring (Management Group: Intermediate Root)
   - Deploy-VMSS-Monitoring (Management Group: Intermediate Root)
 
+#### Tooling
+
+- Enhanced the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
+
 #### Other
 
-- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023))
+- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023)
 
 ### August 2023
 
