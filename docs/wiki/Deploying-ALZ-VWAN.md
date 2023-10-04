@@ -4,7 +4,7 @@ This section will describe how to deploy Azure landing zone portal accelerator w
 
 ## 1. Pre-requisites
 
-To provision your Azure environment with the deployment experience in the Azure portal, your user/service principal must have Owner permission at the Microsoft Entra ID Tenant root. See the following [instructions](./Deploying-Enterprise-Scale-Pre-requisites) on how to grant access before you proceed.
+There are a number of prerequisites which need to be met before you can provision an Azure landing zones environment via the deployment experience in the Azure portal. See the following [instructions](./Deploying-ALZ-Pre-requisites.md) on how to grant access before you proceed.
 
 ### Optional pre-requisites
 
@@ -44,11 +44,17 @@ Please note that if you enable the "Deploy Azure Security Center and enable secu
 
 ![Azure Security Center Email Contact](./media/clip_image014asc.jpg)
 
-## 6. Network topology and connectivity
+## 6. Baseline alerts and monitoring
+
+On the *Baseline alerts and monitoring* blade, you can configure automated alert configuration for the different scopes in your Azure landing zone implementation. Enabling the different baseline alerts will assign the relevant initiative to the corresponding management group. If you enable the "Deploy one or more Azure Monitor Baseline Alerts" option, you **must** provide an email address to get email notifications from Azure Monitor for the deployment to proceed.
+
+![baseline alerts and monitoring](./media/alz-portal-baselinealerts.jpg)
+
+## 7. Network topology and connectivity
 
 On the *Network topology and connectivity* blade, you will configure the core networking platform resources, such as hub virtual network, gateways (VPN and/or ExpressRoute), Azure Firewall, DDoS Network Protection and Azure Private DNS Zones for Azure PaaS services. To deploy and configure these network resources, you must select a network topology. For this scenario:
 
-* Select "Virtual WAN (Microsoft managed)") as the network topology
+* Select "Virtual WAN (Microsoft managed)" as the network topology
 * Provide a dedicated (empty) subscription that will be used to host the requisite networking infrastructure.
 * Provide the address space to be assigned to the vWAN hub
 * Select an Azure region where the first vWAN hub will be created
@@ -63,13 +69,13 @@ Depending on your requirements, you may choose to deploy additional network infr
 
 ![vwan](./media/clip_image078.jpg)
 
-## 7. Identity
+## 8. Identity
 
 On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering.
 
  ![img](./media/clip_image036c.png)
 
-## 8. Landing zone configuration
+## 9. Landing zone configuration
 
 In the top section you can select which policies you want to assign broadly to all of your application landing zones. You also have the ability to set policies to *Audit only* which will assign the policies for Audit.
 
@@ -81,18 +87,18 @@ As part of the policies that you can assign to your landing zones, the Azure lan
 
 ![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
 
-## 9. Decommissioned/Sandbox
+## 10. Decommissioned/Sandbox
 
 You can optionally choose to change whether default policy assignments for Decommissioned and Sandbox management groups are enabled, set to audit only or disabled.
 
 ![Decommissioned and Sandbox options](./media/alz-portal-decommsandbox.jpg)
 
-## 10. Review + create
+## 11. Review + create
 
 *Review + Create* page will validate your permission and configuration before you can click deploy. Once it has been validated successfully, you can click *Create*
 
 ![Graphical user interface, text, application, email  Description automatically generated](./media/clip_image039.jpg)
 
-## 11. Post deployment activities
+## 12. Post deployment activities
 
 Once Azure landing zone portal accelerator is deployed, you can grant your application teams/business units access to their respective landing zones. Whenever there’s a need for a new landing zone, you can place them into their respective management groups (Online or Corp) given the characteristics of assumed workloads and their requirements.

@@ -17,10 +17,10 @@ Please refer to [Enterprise-Scale Landing Zones User Guide](https://github.com/A
 If the business requirements changes over time, such as migration of on-prem applications to Azure that requires hybrid connectivity, the architecture allows you to expand and implement networking without refactoring Azure Design with no disruption to what is already in Azure. The Enterprise-Scale architecture allows to create the Connectivity Subscription and place it into the platform Management Group and assign Azure Policies or/and deploy the target networking topology using either Virtual WAN or Hub and Spoke networking topology.
 For more details, see the *next steps* section at the end of this document.
 
-## Pre-requisites
+## Prerequisites
 
-To deploy this ARM template, your user/service principal must have Owner permission at the Tenant root.
-See the following [instructions](../../EnterpriseScale-Setup-azure.md) on how to grant access before you proceed.
+To deploy this ARM template, there are a number of prerequisites that must be met.
+See [here](../../wiki/Deploying-ALZ-Pre-requisites.md) for more details.
 
 ### Optional pre-requisites
 
