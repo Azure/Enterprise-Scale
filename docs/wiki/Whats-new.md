@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [October 2023](#october-2023)
   - [September 2023](#september-2023)
   - [August 2023](#august-2023)
   - [July 2023](#july-2023)
@@ -38,6 +39,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### October 2023
+
+#### Tooling
+- Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that include Azure Firewall deployment
+- Enhanced the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
+
 ### September 2023
 
 #### Policy
@@ -64,13 +71,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Deploy-VM-Monitoring (Management Group: Intermediate Root)
   - Deploy-VMSS-Monitoring (Management Group: Intermediate Root)
 
-#### Tooling
-
-- Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that include Azure Firewall deployment
-
 #### Other
 
-- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023))
+- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023)
 
 ### August 2023
 

@@ -160,13 +160,15 @@ On the *Network topology and connectivity* blade you will configure your core ne
 
   Set **Deploy VPN Gateway** to **Yes**:
   
-  ![networkTab-topology](./media/clip_image036b-2-singlesubscription.png)
+  ![networkTab-topology](./media/ActiveActive.png)
 
   - **Deploy zone redundant or regional VPN Gateway** and **Deploy zone redundant or regional ExpressRoute Gateway**: Zone-redundant gateways are recommended and enabled by default (as per the capabilities of the Region you are deploying your hub virtual network) as they provide higher resiliency and availability. You might opt for a regional deployment depending on your availability requirements and budget. In this tutorial you will deploy a zone-redundant VPN Gateway:
   
     Select **Zone redundant (recommended)**.
   
     ![networkTab-gwDeploy](./media/clip_image036b-3-singlesubscription.png)
+
+  - **Deploy VPN Gateway in Active/Active mode**:  You can create an Azure VPN gateway in an active-active configuration, where both instances of the gateway VMs establish S2S VPN tunnels to your on-premises VPN device.  In this configuration, each Azure gateway instance has a unique public IP address, and each will establish an IPsec/IKE S2S VPN tunnel to your on-premises VPN device specified in your local network gateway and connection. See [Active-active VPN gateways](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-highlyavailable#active-active-vpn-gateways).
 
   - **Select the VPN Gateway SKU** and **Select the ExpressRoute Gateway VPN**: choose the right SKU based on your requirements (capabilities, throughput and availability). See [VPN Gateway SKUs](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpn-gateway-settings#gwsku) and [ExpressRoute Gateway SKUs](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-about-virtual-network-gateways#gwsku) for further details on the virtual gateway's SKUs you have available in Azure. In this tutorial you will deploy a VpnGw2AZ which provides an aggregated throughput of up to 1 Gbps:
   
