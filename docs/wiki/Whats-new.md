@@ -45,6 +45,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
 
+#### Tooling
+
+- Fixed a bug in the portal accelerator experience when deploying a VPN Gateway and Azure Firewall (Basic SKU) - IP address overlap error.
 
 ### September 2023
 
