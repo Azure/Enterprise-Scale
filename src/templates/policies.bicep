@@ -176,9 +176,9 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json') 
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Windows-DomainJoin.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VWanS2SVPNGW.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkPrivateDnsZones.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DiagnosticSettings.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-ActivityLogSettings.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkDnsZones.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DiagnosticLogs.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-ActivityLogs.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
