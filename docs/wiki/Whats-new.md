@@ -38,6 +38,13 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### October 2023
+
+#### Policy
+
+- Added [this policy definition](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to [this initiative.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
+- Added [this policy definition](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this [this initiative.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
+
 ### September 2023
 
 #### Policy
