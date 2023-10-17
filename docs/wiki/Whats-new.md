@@ -46,6 +46,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
 - Fixed issue with couple of Policy file names to align with the actual name of the policies
 - Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version
+- Add support to deploy ALZ Portal Accelerator into new Italy North region
 
 #### Tooling
 
