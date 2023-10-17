@@ -44,10 +44,14 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
+- Fixed issue with couple of Policy file names to align with the actual name of the policies
+- Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version
 
 #### Tooling
 
 - Fixed a bug in the portal accelerator experience when deploying a VPN Gateway and Azure Firewall (Basic SKU) - IP address overlap error.
+- Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that include Azure Firewall deployment
+- Enhanced the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
 ### September 2023
 
@@ -74,10 +78,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Deploy-VM-Backup (Management Group: Landing Zone)
   - Deploy-VM-Monitoring (Management Group: Intermediate Root)
   - Deploy-VMSS-Monitoring (Management Group: Intermediate Root)
-
-#### Tooling
-
-- Enhanced the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
 #### Other
 
