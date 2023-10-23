@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [October 2023](#october-2023)
   - [September 2023](#september-2023)
   - [August 2023](#august-2023)
   - [July 2023](#july-2023)
@@ -44,6 +45,16 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added [this policy definition](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to [this initiative.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
 - Added [this policy definition](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this [this initiative.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
+- The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
+- Fixed issue with couple of Policy file names to align with the actual name of the policies
+- Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version
+- Add support to deploy ALZ Portal Accelerator into new Italy North region
+
+#### Tooling
+
+- Fixed a bug in the portal accelerator experience when deploying a VPN Gateway and Azure Firewall (Basic SKU) - IP address overlap error.
+- Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that include Azure Firewall deployment. For existing ALZ customers please visit [How to configure Virtual WAN Hub routing intent and routing policies](https://learn.microsoft.com/en-us/azure/virtual-wan/how-to-routing-policies) for details on how to add routing intent to your environment.
+- Enhanced the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
 ### September 2023
 
@@ -73,7 +84,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Other
 
-- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023))
+- [Azure Landing Zone External Community Call - September 2023 - Hosted & Published](https://github.com/Azure/Enterprise-Scale/wiki/Community-Calls#25th-september-2023-25092023)
 
 ### August 2023
 

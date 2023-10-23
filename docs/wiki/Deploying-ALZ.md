@@ -84,6 +84,12 @@ Provide a prefix that will be used to create the management group hierarchy and 
 
 ![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix.JPG)
 
+## Baseline alerts and monitoring
+
+On the *Baseline alerts and monitoring* blade, you can configure automated alert configuration for the different scopes in your Azure landing zone implementation. Enabling the different baseline alerts will assign the relevant initiative to the corresponding management group. If you enable the "Deploy one or more Azure Monitor Baseline Alerts" option, you **must** provide an email address to get email notifications from Azure Monitor for the deployment to proceed.
+
+![baseline alerts and monitoring](./media/alz-portal-baselinealerts.jpg)
+
 ### Platform management, security, and governance
 
 On the *Platform management, security, and governance* blade, you will configure the core components to enable platform monitoring and security. The options you enable will also be enforced using Azure Policy to ensure resources, landing zones, and more are continuously compliant as your deployments scales and grows. To enable this, you must provide a dedicated (empty) subscription that will be used to host the requisite infrastructure.
