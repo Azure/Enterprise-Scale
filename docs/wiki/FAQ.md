@@ -173,3 +173,16 @@ Another good question. You will need to plan, and complete, the migration to the
 ### Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
 
 Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz) for more details.
+
+
+### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+
+There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated. 
+When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds: 
+
+- create an exclusion where you can exclude a specific scope of resources to be excluded from the policy assignment 
+- create a temporary policy exemption where you can exclude a specific scope of resources to be excluded from the policy assignment for the duration of deployment (recommended) 
+
+Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver. 
+If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
+
