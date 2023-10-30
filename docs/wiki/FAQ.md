@@ -220,4 +220,3 @@ When a service is deployed to ALZ, be mindful of default ALZ Policies and unders
 
 Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver. 
 If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
-
