@@ -209,3 +209,15 @@ https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade
 You can browse a specific release of ALZ in GitHub by using the `tags` feature. For example, to browse the 2023-10-17 release of ALZ, you can use the Switch branches/tags dropdown and select the 2023-10-17 tag.
 
 ![GitHub Tags](media/2023-10-30_RepoTags.png)
+
+### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+
+There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated. 
+When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds: 
+
+- create an exclusion where you can exclude a specific scope of resources to be excluded from the policy assignment 
+- create a temporary policy exemption where you can exclude a specific scope of resources to be excluded from the policy assignment for the duration of deployment (recommended) 
+
+Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver. 
+If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
+
