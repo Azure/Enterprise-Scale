@@ -57,6 +57,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Updated the ALZ Wiki FAQ to include a section on why we've enabled GitHub Releases - [read here](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#what-is-the-impact-of-github-releases-and-alz).
+- Updated the ALZ Wiki FAQ to include a section on why some solutions may not deploy in an ALZ governed environment and how to work around it.
 
 ### September 2023
 
