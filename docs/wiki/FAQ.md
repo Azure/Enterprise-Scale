@@ -177,7 +177,7 @@ Great question! As this is maintained in a repository outside of the Azure landi
 
 ### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
 
-There are managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such public network access should be disabled for PaaS services or deny network interfaces having a public IP associated. 
+There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated. 
 When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds: 
 
 - create an exclusion where you can exclude a specific scope of resources to be excluded from the policy assignment 
