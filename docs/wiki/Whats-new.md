@@ -54,6 +54,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added vWAN Hub Routing Intent support to Portal Accelerator for scenarios that include Azure Firewall deployment. For existing ALZ customers please visit [How to configure Virtual WAN Hub routing intent and routing policies](https://learn.microsoft.com/en-us/azure/virtual-wan/how-to-routing-policies) for details on how to add routing intent to your environment.
 - Enhanced the ALZ Portal Accelerator to provide the ability to deploy the Azure VPN Gateway in Active/Active mode as per feedback from [#655](https://github.com/Azure/Enterprise-Scale/issues/655).
 
+#### Docs
+
+- Updated the ALZ Wiki FAQ page to include a section on why we've enabled GitHub Releases - [read here](https://github.com/Azure/Enterprise-Scale/wiki/FAQ#what-is-the-impact-of-github-releases-and-alz).
+
 ### September 2023
 
 #### Policy
