@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
   - [August 2023](#august-2023)
@@ -38,6 +39,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### November 2023
+
+#### Tooling
+
+- Added virtual hub routing preference support to Portal Accelerator for scenarios where you need to influence routing decisions in virtual hub router towards on-premises. For existing ALZ customers please visit [Configure virtual hub routing preference](https://learn.microsoft.com/en-us/azure/virtual-wan/howto-virtual-hub-routing-preference) for details on how to configure virtual hub routing preference settings.
+- Added virtual hub capacity option to Portal Accelerator which provides an option to select the number of routing infrastracture units. Please visit [Virtual hub capacity](https://learn.microsoft.com/en-us/azure/virtual-wan/hub-settings#capacity) for more details on Azure vWAN Virtual Hub Capacity configuration.
 
 ### October 2023
 
