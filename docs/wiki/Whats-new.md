@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
   - [August 2023](#august-2023)
@@ -38,6 +39,11 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### November 2023
+
+#### Docs
+- Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
 
 ### October 2023
 
