@@ -41,7 +41,7 @@ az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az a
 
 #(optional) assign Owner role at Tenant root scope ("/") as a User Access Administrator to service principal (set spn_displayname to your service principal displayname)
 spn_displayname='<ServicePrincipal DisplayName>'
-az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name $spn_displayname --query '[].{objectId:objectId}' -o tsv) --assignee-principal-type ServicePrincipal
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name "$spn_displayname" --query '[].id' -o tsv) --assignee-principal-type ServicePrincipal
 ````
 
 PowerShell
