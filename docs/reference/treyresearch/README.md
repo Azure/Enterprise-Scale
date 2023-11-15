@@ -74,7 +74,7 @@ By default, all recommendations are enabled. You must explicitly disable them if
     - Enforce auditing for Azure SQL
     - Enforce secure access (HTTPS) to storage accounts
 
-  **Note:** You may notice the creation of different *managed identities* after deploying the policies described above. This is because a policy with effect *deployIfNotExists (DINE)* will be enforced when enabling a recommendation. This kind of policy uses managed identities in order to remediate resources that are not compliant. To learn more about what policies are included in ALZ reference implementations, refer to [ALZ Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies).   
+  **Note:** You may notice the creation of different *managed identities* after deploying the policies described above. This is because a policy with effect *deployIfNotExists (DINE) or modify* will be enforced when enabling a recommendation. These kind of policy effects use managed identities in order to remediate resources that are not compliant. To learn more about what policies are included in ALZ reference implementations, refer to [ALZ Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies).   
   
 ![Trey Research](./media/es-lite.png)
 
