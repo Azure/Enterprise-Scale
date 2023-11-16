@@ -50,6 +50,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the ALZ Portal Accelerator for Microsoft Defender for Cloud (MDFC) VM Vulnerability Assessment provider to default to use the PG recommended Microsoft Defender for Endpoint Threat/Vulnerability Management (mdeTVM) provider, instead of the Qualys provider.
 
 #### Docs
+
 - Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
 
 ### October 2023
