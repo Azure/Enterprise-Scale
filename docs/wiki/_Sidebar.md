@@ -8,6 +8,7 @@
   * [Architecture](./ALZ-Architecture)
   * [Policies](./ALZ-Policies)
   * [Policies FAQ & Tips](./ALZ-Policies-FAQ)
+  * [Policies Testing Framework](./ALZ-Policies-Testing)
   * [What is the reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
   * [What if I already have an existing Azure footprint](./What-is-Enterprise-Scale#what-if-i-already-have-an-existing-azure-footprint)

@@ -87,8 +87,6 @@ If you want to extend this methodology to test policies independent of deploying
 
 #### DENY - group of tests to validate scenarios that where the policy effect is applied and deployment should fail.
 
-These tests are used to test the conditions that should trigger the effect, in this case "DENY".
-
 As an example, using Az PowerShell:
 
 ```Powershell
@@ -123,8 +121,6 @@ As an example, using Az PowerShell:
 In this example, we are creating a new Network Security Group (NSG) and adding a rule to allow RDP traffic on port 3389. The policy we're testing is configured to deny traffic on port 3389, so we expect this operation to fail. We use the `Should -Throw` command to validate that the operation failed with the expected error message.
 
 #### ALLOW - group of tests to validate scenarios that are compliant with the policy conditions and should succeed.
-
-These tests are used to test the conditions that should be compliant and not trigger the effect, in this case "DENY".
 
 As an example, using REST API with `Invoke-AzRestMethod`:
 
@@ -208,4 +204,4 @@ In this example, we are creating a new Network Security Group (NSG) and adding a
     Remove-AzPolicyAssignment -Name "TDeny-MgmtPorts-Internet" -Scope $mangementGroupScope -Confirm:$false
 ```
 
-In this example, we are removing the policy assignment after the tests are completed.
+In this example, we are removing the policy assignment after the tests are completed (if you're testing outside of an ALZ deployment, you can also use this to remove the deployed policy).
