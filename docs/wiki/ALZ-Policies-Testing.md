@@ -45,7 +45,7 @@ Write the Pester tests in the test file. The tests should cover the following sc
 - Conditions that should be true when the policy is evaluated, so it is compliant
 - Conditions that should be false when the policy is evaluated, so it is non-compliant
 
-It is key to test all the conditions addressed in the policy. More on this below.
+It is important to test all the conditions evaluated in the policy. More on this below.
 
 ### Where is the testing framework?
 
