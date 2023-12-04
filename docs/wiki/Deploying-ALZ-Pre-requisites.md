@@ -54,3 +54,12 @@ New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
 ```
 
 > Please note: sometimes it can take up to 15 minutes for permission to propagate at tenant root scope. It is highly recommended that you log out and log back in to refresh the token before you proceed with the deployment.*
+
+### Azure Monitor Baseline Alerts prerequisites
+
+The Azure Monitor Baseline Alerts are deployed as part of the Enterprise-Scale deployment, and they require the following:
+
+1. For the policies to work, the following Azure resource providers, normally registered by default, must be registered on all subscriptions in scope:
+  - Microsoft.AlertsManagement
+  - Microsoft.Insights
+Please see [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider) for details on how to register a resource provider should you need to do so.

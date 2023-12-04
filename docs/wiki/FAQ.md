@@ -12,6 +12,7 @@
 - [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
 - [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
 - [Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?](#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
+- [What is the impact of GitHub Releases and ALZ?](#what-is-the-impact-of-github-releases-and-alz)
 
 ---
 
@@ -169,3 +170,53 @@ We will, when ready, provide Azure landing zones specific migration guidance tha
 ### What if we are not ready to make the switch and migrate, right now?
 
 Another good question. You will need to plan, and complete, the migration to the Azure Monitor Agent before the Log Analytics Agent is retired as [documented here.](https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/)
+
+### Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
+
+Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz) for more details.
+
+## What is the impact of GitHub Releases and ALZ?
+
+As you may have noticed, as of end September 2023, Azure Landing Zone has started publishing GitHub Releases after significant changes are merged into the `main` branch. The ALZ team uses the GitHub Releases to publish the latest version of the Azure Landing Zone and Portal Accelerator, enabling the tracking and pinning of release versions to a specific date. This is a common practice for many open source projects and we are excited to be able to provide this capability to our customers and partners.
+
+There are two significant benefits to enabling GitHub Releases:
+
+- **Versioning** - The ALZ team will publish a new release for each significant change that is merged into the `main` branch. This will enable customers and partners to pin their deployments to a specific version of ALZ and the Portal Accelerator, enabling them to control when they upgrade to the latest version. Downstream services (e.g. Bicep, Terraform, deliveries, etc) that rely on ALZ can also pin to a specific version of ALZ, enabling them to control the version they work with and when they upgrade to the next/latest version. This also enables the powerful release compare capability that allows customers and partners to compare the differences between releases.
+- **Release notes** - The ALZ team will publish release notes for each release, providing a summary of the changes that have been made since the previous release. This will enable customers and partners to understand what has changed and what they need to do to upgrade to the latest version.
+
+### What if I always want the latest release of ALZ?
+
+If you always want to deploy the latest release of ALZ, you can use the `main` branch. The `main` branch will always contain the latest release of ALZ and the Portal Accelerator. However, we recommend that you pin to a specific release version, as this will enable you to control when you upgrade to the latest version.
+
+### How does this impact me if I am using the ALZ Portal Accelerator?
+
+If you are using the ALZ Portal Accelerator, you will not notice any changes. The ALZ Portal Accelerator will continue to work as it does today. However, should you wish to deploy a previous release of ALZ using the Portal Accelerator, you can do so using the GitHub Release.
+
+Instead of deploying from the `main` branch:
+
+```URI
+https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json
+```
+
+You may choose to deploy the 2023-10-17 release (note the change from `main` to `2023-10-17` in the URI):
+  
+```URI
+https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2F2023-10-17%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2F2023-10-17%2FeslzArm%2Feslz-portal.json
+```
+
+### How do I browse a specific release of ALZ in GitHub?
+
+You can browse a specific release of ALZ in GitHub by using the `tags` feature. For example, to browse the 2023-10-17 release of ALZ, you can use the Switch branches/tags dropdown and select the 2023-10-17 tag.
+
+![GitHub Tags](media/2023-10-30_RepoTags.png)
+
+### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+
+There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated. 
+When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds: 
+
+- create an exclusion where you can exclude a specific scope of resources to be excluded from the policy assignment 
+- create a temporary policy exemption where you can exclude a specific scope of resources to be excluded from the policy assignment for the duration of deployment (recommended) 
+
+Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver. 
+If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.

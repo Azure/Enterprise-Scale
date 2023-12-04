@@ -67,7 +67,7 @@ This management group is a parent to all the other management groups created wit
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **9**     |
+| `Policy Definition Sets`  | **10**     |
 | `Policy Definitions`      | **2**     |
 </td></tr> </table>
 
@@ -87,10 +87,12 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Deny the Deployment of Classic Resources** | **Not allowed resource types** | `Policy Definition`, **Built-in**     | Denies deployment of classic resource types under the assigned scope                                                                                                                                                                                                                              | Deny                   |
 | **Audit-UnusedResourcesCostOptimization** | **Audit-UnusedResourcesCostOptimization** | `Policy Definition Set`, **Custom**     | Optimize cost by detecting unused but chargeable resources. Leverage this Azure Policy Initiative as a cost control tool to reveal orphaned resources that are contributing cost.                                                                                                                                                                                                                              | Audit                   |
 | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | `Policy Definition`, **Custom**     | Deny virtual machines not using managed disk. It checks the managedDisk property on virtual machine OS Disk fields.                                                                                                                                                                                                                         | Deny                   |
+| **Deploy Azure Monitor Baseline Alerts for Service Health** | **Deploy Azure Monitor Baseline Alerts for Service Health** | `Policy Definition Set`, **Custom**     | Deploys service health alerts, action group and alert processing rule. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Service Health initiative. | DeployIfNotExists                   |
+
 
 ### Platform
 
-This management group contains all the platform child management groups, like management, connectivity, and identity. There are currently no policies assigned at this management group
+This management group contains all the platform child management groups, like management, connectivity, and identity.
 
 <table>
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
@@ -126,7 +128,7 @@ This management group contains a dedicated subscription for connectivity. This s
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **1**     |
 </td></tr> </table>
 
@@ -135,6 +137,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | Assignment Name                                                            | Definition Name                                                            | Policy Type                       | Description                                                                                                                                                               | Effect(s) |
 | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
 | **Virtual networks should be protected by Azure DDoS Network Protection** | **Virtual networks should be protected by Azure DDoS Network Protection** | `Policy Definition`, **Built-in** | Protect your virtual networks against volumetric and protocol attacks with Azure DDoS Network Protection. For more information, visit https://aka.ms/ddosprotectiondocs. | Modify    |
+| **Deploy Azure Monitor Baseline Alerts for Connectivity** | **Deploy Azure Monitor Baseline Alerts for Connectivity** | `Policy Definition Set`, **Custom**     | Deploys alerting for connectivity related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Connectivity initiative. | DeployIfNotExists                   |
 
 ### Management
 
@@ -151,7 +154,7 @@ This management group contains a dedicated subscription for management, monitori
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **1**     |
 </td></tr> </table>
 
@@ -160,6 +163,8 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | Assignment Name          | Definition Name                                                                                | Policy Type                       | Description                                                                                                               | Effect(s)         |
 | ------------------------ | ---------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------- |
 | **Deploy-Log-Analytics** | **Configure Log Analytics workspace and automation account to centralize logs and monitoring** | `Policy Definition`, **Built-in** | Deploy resource group containing Log Analytics workspace and linked automation account to centralize logs and monitoring. | DeployIfNotExists |
+| **Deploy Azure Monitor Baseline Alerts for Management** | **Deploy Azure Monitor Baseline Alerts for Management** | `Policy Definition Set`, **Custom**     | Deploys alerting for management related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Management initiative. | DeployIfNotExists                   |
+
 
 ### Identity
 
@@ -176,7 +181,7 @@ This management group contains a dedicated subscription for identity. This subsc
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **0**     |
+| `Policy Definition Sets`  | **1**     |
 | `Policy Definitions`      | **4**     |
 </td></tr> </table>
 
@@ -188,6 +193,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Management port access from the Internet should be blocked**                                                                  | **Management port access from the Internet should be blocked**                                                                  | `Policy Definition`, **Custom**   | This policy denies any network security rule that allows management port access from Internet (Default port 22, 3389).                                                             | Deny              |
 | **Subnets should have a Network Security Group**                                                                    | **Subnets should have a Network Security Group**                                                                    | `Policy Definition`, **Custom**   | This policy denies the creation of a subnet without a Network Security Group. NSG help to protect traffic across subnet-level.                 | Deny              |
 | **Configure backup on virtual machines without a given tag to a new recovery services vault with a default policy** | **Configure backup on virtual machines without a given tag to a new recovery services vault with a default policy** | `Policy Definition`, **Built-in** | Enforce backup for all virtual machines by deploying a recovery services vault in the same location and resource group as the virtual machine. | DeployIfNotExists |
+| **Deploy Azure Monitor Baseline Alerts for Identity** | **Deploy Azure Monitor Baseline Alerts for Identity** | `Policy Definition Set`, **Custom**     | Deploys alerting for identity related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Identity initiative. | DeployIfNotExists                   |
 
 ### Landing Zones
 
@@ -204,7 +210,7 @@ This is the parent management group for all the landing zone child management gr
   
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **3**     |
+| `Policy Definition Sets`  | **4**     |
 | `Policy Definitions`      | **14**    |
 </td></tr> </table>
 
@@ -229,6 +235,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Kubernetes clusters should not allow container privilege escalation**                                             | **Kubernetes clusters should not allow container privilege escalation**                                             | `Policy Definition`, **Built-in**   | Do not allow containers to run with privilege escalation to root in a Kubernetes cluster. This recommendation is part of CIS 5.2.5 which is intended to improve the security of your Kubernetes environments. This policy is generally available for Kubernetes Service (AKS), and preview for AKS Engine and Azure Arc enabled Kubernetes.                                         | Audit                                            |
 | **Kubernetes clusters should be accessible only over HTTPS**                                                        | **Kubernetes clusters should be accessible only over HTTPS**                                                        | `Policy Definition`, **Built-in**   | Use of HTTPS ensures authentication and protects data in transit from network layer eavesdropping attacks. This capability is currently generally available for Kubernetes Service (AKS), and in preview for AKS Engine and Azure Arc enabled Kubernetes.                                                                                                                           | Deny                                             |
 | **Web Application Firewall (WAF) should be enabled for Application Gateway**                                                        | **Web Application Firewall (WAF) should be enabled for Application Gateway**                                                        | `Policy Definition`, **Built-in**   | Deploy Azure Web Application Firewall (WAF) in front of public facing web applications for additional inspection of incoming traffic. Web Application Firewall (WAF) provides centralized protection of your web applications from common exploits and vulnerabilities such as SQL injections, Cross-Site Scripting, local and remote file executions. You can also restrict access to your web applications by countries, IP address ranges, and other http(s) parameters via custom rules.                                                                                                                           | Audit                                             |
+| **Deploy Azure Monitor Baseline Alerts for Landing Zone** | **Deploy Azure Monitor Baseline Alerts for Landing Zone** | `Policy Definition Set`, **Custom**     | Deploys alerting for landing zone related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
 
 ### Corp
 

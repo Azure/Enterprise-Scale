@@ -20,9 +20,10 @@ Please refer to [Enterprise-Scale Landing Zones User Guide](https://github.com/A
 
 If the business requirements change over time, the architecture allows for creating additional subscriptions and placing them into the suitable management group and assigning Azure policies. For more details, see the next steps section at the end of this document.
 
-## Pre-requisites
+## Prerequisites
 
-To deploy this ARM template, your user/service principal must have Owner permission at the Microsoft Entra Tenant root. See the following [instructions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin) on how to grant access before you proceed.
+To deploy this ARM template, there are a number of prerequisites that must be met.
+See [here](../../wiki/Deploying-ALZ-Pre-requisites.md) for more details.
 
 ## Optional pre-requisites
 
@@ -72,6 +73,8 @@ By default, all recommendations are enabled. You must explicitly disable them if
     - Enforce encryption for Azure SQL
     - Enforce auditing for Azure SQL
     - Enforce secure access (HTTPS) to storage accounts
+
+  **Note:** You may notice the creation of different *managed identities* after deploying the policies described above. This is because a policy with effect *deployIfNotExists (DINE) or modify* will be enforced when enabling a recommendation. These kind of policy effects use managed identities in order to remediate resources that are not compliant. To learn more about what policies are included in ALZ reference implementations, refer to [ALZ Policies](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Policies).   
   
 ![Trey Research](./media/es-lite.png)
 

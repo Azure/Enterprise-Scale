@@ -259,6 +259,62 @@
                 "No"
             ]
         },
+        "enableMonitorBaselines": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for Service Health in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorConnectivity": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select connectivity resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorIdentity": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select identity resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorManagement": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select management resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "enableMonitorLandingZones": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select resources in your environment. If 'No', it will be ignored."
+            }
+        },
+        "monitorAlertsResourceGroup": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 90,
+            "metadata": {
+                "description": "Name of the resource group to be created for monitoring resources in each subscription."
+            }
+        },
+        "emailContactActionGroup": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 36,
+            "metadata": {
+                "description": "Email address for alerting purposes."
+            }
+        },
         "connectivitySubscriptionId": {
             "type": "string",
             "defaultValue": "",
@@ -293,6 +349,14 @@
             ]
         },
         "enableVpnGw": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableVpnActiveActive": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -390,6 +454,42 @@
         "subnetMaskForAzFwMgmt": {
             "type": "string",
             "defaultValue": ""
+        },
+        "enablevWANRoutingIntent":{
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        }, 
+        "internetTrafficRoutingPolicy": {
+        "type": "bool",
+        "defaultValue": false,
+        "metadata": {
+            "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
+        }
+        },
+        "privateTrafficRoutingPolicy": {
+        "type": "bool",
+        "defaultValue": false,
+        "metadata": {
+            "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
+        }
+        },
+        "vWANHubRoutingPreference": {
+            "type": "string",
+            "defaultValue": "ExpressRoute",
+            "metadata": {
+                "description": "vWAN Hub Routing Preference"
+            }            
+        },
+        "vWANHubCapacity": {
+            "type": "string",
+            "defaultValue": "2",
+            "metadata": {
+                "description": "vWAN Hub Capacity"
+            }            
         },
         "identitySubscriptionId": {
             "type": "string",
@@ -775,6 +875,10 @@
             "decommissionedManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').decommissioned)]",
             "sandboxManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').sandboxes)]"
         },
+        // Declaring root uris for external dependency repositories.
+        "rootUris": {
+            "monitorRepo": "https://raw.githubusercontent.com/Azure/azure-monitor-baseline-alerts/2023-11-14/"
+        },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
         "azPrivateDnsPolicyAssignmentMapping": {
             "https://management.azure.com/": "managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonesPolicyAssignment.json",
@@ -837,7 +941,9 @@
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]",
             "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-UnusedResourcesPolicyAssignment.json')]",
             "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]",
-            "diagnosticSettingsforManagementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/diagSettingsMGs/diagSettingsMGs.json')]"
+            "diagnosticSettingsforManagementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/diagSettingsMGs/diagSettingsMGs.json')]",
+            // references to https://github.com/Azure/azure-monitor-baseline-alerts
+            "monitorPolicyDefinitions": "[uri(variables('rootUris').monitorRepo, 'patterns/alz/alzArm.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -849,12 +955,18 @@
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
             "roleDefsDeploymentName": "[take(concat('alz-RoleDefs', variables('deploymentSuffix')), 64)]",
             "policyDeploymentName": "[take(concat('alz-Policy', variables('deploymentSuffix')), 64)]",
+            "monitorPolicyDeploymentName": "[take(concat('alz-MonitorPolicy', variables('deploymentSuffix')), 64)]",
             "ddosRgDeploymentName": "[take(concat('alz-DDoSRg', variables('deploymentSuffix')), 64)]",
             "ddosDeploymentName": "[take(concat('alz-DDoS', variables('deploymentSuffix')), 64)]",
             "ddosHubPolicyDeploymentName": "[take(concat('alz-DDoSHubPolicy', variables('deploymentSuffix')), 64)]",
             "ddosLzPolicyDeploymentName": "[take(concat('alz-DDoSLZPolicy', variables('deploymentSuffix')), 64)]",
             "monitoringDeploymentName": "[take(concat('alz-Monitoring', variables('deploymentSuffix')), 64)]",
             "logAnalyticsPolicyDeploymentName": "[take(concat('alz-LAPolicy', variables('deploymentSuffix')), 64)]",
+            "monitorConnectivityDeploymentName": "[take(concat('alz-ConnectivityMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorIdentityDeploymentName": "[take(concat('alz-IdentityMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorManagementDeploymentName": "[take(concat('alz-ManagementMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorLandingZoneDeploymentName": "[take(concat('alz-LandingZoneMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorServiceHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
             "monitoringSolutionsDeploymentName": "[take(concat('alz-Solutions', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -914,6 +1026,7 @@
             "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]",
             "denyVMUnmanagedDiskPolicyDeploymentName": "[take(concat('alz-NoUnmanagedDiskResource', variables('deploymentSuffix')), 64)]",
             "ztnPhase1PidCuaDeploymentName": "[take(concat('pid-', variables('ztnPhase1CuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]",
+            "ambaPortalPidCuaDeploymentName": "[take(concat('pid-', variables('ambaPortalCuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]",
             "diagnosticSettingsforMGsDeploymentName": "[take(concat('alz-DiagSettingsMGs', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
@@ -932,7 +1045,8 @@
             "ddosLiteDeploymentName": "[take(concat('alz-DDoSLite', variables('deploymentSuffix')), 64)]",
             "ddosHubLitePolicyDeploymentName": "[take(concat('alz-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZoneRgLiteDeploymentName": "[take(concat('alz-PrivDNSRGLite', variables('deploymentSuffix')), 64)]",
-            "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]"
+            "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]",
+            "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]"
         },
         // Declaring deterministic names for Resource Groups that will be created for platform resources
         "platformRgNames": {
@@ -1068,6 +1182,7 @@
             "centralindia": "inc",
             "southindia": "ins",
             "westindia": "inw",
+            "italynorth": "itn",
             "japaneast": "jpe",
             "japanwest": "jpw",
             "jioindiacentral": "jic",
@@ -1120,7 +1235,8 @@
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
         "cuaid": "35c42e79-00b3-42eb-a9ac-e542953efb3c",
-        "ztnPhase1CuaId": "f09f64b8-5cb3-4b16-900d-6ba1df8a597e"
+        "ztnPhase1CuaId": "f09f64b8-5cb3-4b16-900d-6ba1df8a597e",
+        "ambaPortalCuaId": "5f0e5693-3998-4ae2-8115-ee96e38dac62"
     },
     "resources": [
         /*
@@ -1188,6 +1304,161 @@
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying AMBA custom policies. Note: These policies are pulled from AMBA remote repo (https://www.github.com/Azure/azure-monitor-baseline-alerts). See definition of deploymentUris.monitorPolicyDefinitions for more details
+            "condition": "[and(empty(parameters('singlePlatformSubscriptionId')), equals(parameters('enableMonitorBaselines'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').monitorPolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorPolicyDefinitions]"
+                },
+                "parameters": {
+                    "enterpriseScaleCompanyPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "telemetryOptOut": {
+                        "value": "[parameters('telemetryOptOut')]"
+                    },
+                    "platformManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "IdentityManagementGroup": {
+                        "value": "[variables('mgmtGroups').identity]"
+                    },
+                    "managementManagementGroup": {
+                        "value": "[variables('mgmtGroups').management]"
+                    },
+                    "connectivityManagementGroup": {
+                        "value": "[variables('mgmtGroups').connectivity]"
+                    },
+                    "LandingZoneManagementGroup": {
+                        "value": "[variables('mgmtGroups').lzs]"
+                    },
+                    "enableAMBAConnectivity": {
+                        "value": "[parameters('enableMonitorConnectivity')]"
+                    },
+                    "enableAMBAIdentity": {
+                        "value": "[parameters('enableMonitorIdentity')]"
+                    },
+                    "enableAMBALandingZone": {
+                        "value": "[parameters('enableMonitorLandingZones')]"
+                    },
+                    "enableAMBAManagement": {
+                        "value": "[parameters('enableMonitorManagement')]"
+                    },
+                    "enableAMBAServiceHealth": {
+                        "value": "[parameters('enableMonitorBaselines')]"
+                    },
+                    "delayCount": {
+                        "value": "[parameters('delayCount')]"
+                    },
+                    "policyAssignmentParametersCommon": {
+                        "value": {
+                            "alzMonitorResourceGroupName": {
+                                "value": "[parameters('monitorAlertsResourceGroup')]"
+                            },
+                            "alzMonitorResourceGroupLocation": {
+                                "value": "[deployment().location]"
+                            }
+                        }
+                    },
+                    "policyAssignmentParametersServiceHealth": {
+                        "value": {
+                            "alzMonitorActionGroupEmail": {
+                                "value": "[parameters('emailContactActionGroup')]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            /// Deploying AMBA custom policies. Note: These policies are pulled from AMBA remote repo (https://www.github.com/Azure/azure-monitor-baseline-alerts). See definition of deploymentUris.monitorPolicyDefinitions for more details
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableMonitorBaselines'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('esLiteDeploymentNames').monitorPolicyLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').monitorPolicyDefinitions]"
+                },
+                "parameters": {
+                    "enterpriseScaleCompanyPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "telemetryOptOut": {
+                        "value": "[parameters('telemetryOptOut')]"
+                    },
+                    "platformManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "IdentityManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "managementManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "connectivityManagementGroup": {
+                        "value": "[variables('mgmtGroups').platform]"
+                    },
+                    "LandingZoneManagementGroup": {
+                        "value": "[variables('mgmtGroups').lzs]"
+                    },
+                    "enableAMBAConnectivity": {
+                        "value": "[parameters('enableMonitorConnectivity')]"
+                    },
+                    "enableAMBAIdentity": {
+                        "value": "[parameters('enableMonitorIdentity')]"
+                    },
+                    "enableAMBALandingZone": {
+                        "value": "[parameters('enableMonitorLandingZones')]"
+                    },
+                    "enableAMBAManagement": {
+                        "value": "[parameters('enableMonitorManagement')]"
+                    },
+                    "enableAMBAServiceHealth": {
+                        "value": "[parameters('enableMonitorBaselines')]"
+                    },
+                    "delayCount": {
+                        "value": "[parameters('delayCount')]"
+                    },
+                    "policyAssignmentParametersCommon": {
+                        "value": {
+                            "alzMonitorResourceGroupName": {
+                                "value": "[parameters('monitorAlertsResourceGroup')]"
+                            },
+                            "alzMonitorResourceGroupLocation": {
+                                "value": "[deployment().location]"
+                            }
+                        }
+                    },
+                    "policyAssignmentParametersServiceHealth": {
+                        "value": {
+                            "alzMonitorActionGroupEmail": {
+                                "value": "[parameters('emailContactActionGroup')]"
+                            }
+                        }
                     }
                 }
             }
@@ -2004,6 +2275,9 @@
                     "enableAzFwDnsProxy": {
                         "value": "[parameters('enableAzFwDnsProxy')]"
                     },
+                    "enableVpnActiveActive": {
+                        "value": "[parameters('enableVpnActiveActive')]"
+                    },
                     "gwRegionalOrAz": {
                         "value": "[parameters('gwRegionalOrAz')]"
                     },
@@ -2078,6 +2352,9 @@
                     },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "enableVpnActiveActive": {
+                        "value": "[parameters('enableVpnActiveActive')]"
                     },
                     "gwRegionalOrAz": {
                         "value": "[parameters('gwRegionalOrAz')]"
@@ -2162,6 +2439,21 @@
                     },
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
+                    },
+                     "enablevWANRoutingIntent":{
+                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    },
+                    "internetTrafficRoutingPolicy":{
+                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    },
+                    "privateTrafficRoutingPolicy":{
+                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    },
+                    "vWANHubRoutingPreference":{
+                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    },
+                    "vWanHubCapacity":{
+                        "value":"[parameters('vWANHubCapacity')]"
                     }
                 }
             }
@@ -3938,6 +4230,9 @@
                     "enableAzFwDnsProxy": {
                         "value": "[parameters('enableAzFwDnsProxy')]"
                     },
+                    "enableVpnActiveActive": {
+                        "value": "[parameters('enableVpnActiveActive')]"
+                    },
                     "gwRegionalOrAz": {
                         "value": "[parameters('gwRegionalOrAz')]"
                     },
@@ -4013,6 +4308,9 @@
                     },
                     "subnetMaskForGw": {
                         "value": "[parameters('subnetMaskForGw')]"
+                    },
+                    "enableVpnActiveActive": {
+                        "value": "[parameters('enableVpnActiveActive')]"
                     },
                     "gwRegionalOrAz": {
                         "value": "[parameters('gwRegionalOrAz')]"
@@ -4097,6 +4395,21 @@
                     },
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
+                    },
+                    "enablevWANRoutingIntent":{
+                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    },
+                    "internetTrafficRoutingPolicy":{
+                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    },
+                    "privateTrafficRoutingPolicy":{
+                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    },
+                    "vWANHubRoutingPreference":{
+                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    },
+                    "vWanHubCapacity":{
+                        "value":"[parameters('vWANHubCapacity')]"
                     }
                 }
             }
@@ -4219,6 +4532,21 @@
                 "mode": "Incremental",
                 "template": {
                     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), equals(parameters('enableMonitorBaselines'), 'Yes'))]",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').ambaPortalPidCuaDeploymentName]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "resources": []
                 }
