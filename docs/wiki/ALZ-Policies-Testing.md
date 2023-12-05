@@ -8,17 +8,21 @@ This framework is based on the work done by @fawohlsc in this repo [azure-policy
 
 For ALZ, the focus is on testing Azure Policy definitions that have a DENY effect, as these can be very disruptive to organizations if a regression is introduced, and helps us improve the quality of the policies we are developing and deploying to production environments. The framework can be extended to test other policy effects, but this is not the focus of this framework.
 
+> **_NOTE:_** The ALZ team are considering adding support for testing Azure Policy definitions that use other effects like Audit, DeployIfNotExists.
+
 For authoring tests we standardized on using Az PowerShell native commands as much as possible as it is simpler to implement and read, however, there are circumstances where you will need to use REST APIs as not all features are exposed through Az PowerShell. To keep things simple, we have leveraged the `Invoke-AzRestMethod` function that wraps the REST API calls and make it easier to use in the Pester tests.
 
 ### Prerequisites
 
+- An empty (dedicated) Azure subscription
+  - If following the same process as outlined below, you will also need to ensure this subscription is added to the "Corp" management group in the Azure Landing Zone
 - [Pester](https://pester.dev/docs/introduction/installation)
 - [Az PowerShell Module](https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell?view=azps-11.0.0&viewFallbackFrom=azps-6.2.0)
 - [Invoke-AzRestMethod](https://learn.microsoft.com/en-us/powershell/module/az.accounts/invoke-azrestmethod?view=azps-11.0.0)
 
 ### How it works
 
-The ALZ policy testing framework is designed to be used with GitHub Actions, but can be used with any CI/CD pipeline that supports PowerShell. The framework is designed to be used with the following workflow:
+The ALZ policy testing framework is designed to be used with GitHub Actions, but can be used with any CI/CD pipeline that supports PowerShell, or can be run directly on an ad hoc basis. The ALZ policy testing framework is designed to be used with the following workflow:
 
 1. A pull request is created to update a policy definition
 2. The pull request triggers a GitHub Action workflow
@@ -45,7 +49,12 @@ Write the Pester tests in the test file. The tests should cover the following sc
 - Conditions that should be true when the policy is evaluated, so it is compliant
 - Conditions that should be false when the policy is evaluated, so it is non-compliant
 
-It is important to test all the conditions evaluated in the policy. More on this below.
+It is important to test all the conditions evaluated in the policy. For example, if the policy is evaluating the `location` of a resource, you should test the following scenarios:
+
+- Resource is deployed in a location that is compliant with the policy
+- Resource is deployed in a location that is non-compliant with the policy
+
+See the [How to write Pester tests for policies](#how-to-write-pester-tests-for-policies) section for more details on how to write Pester tests for policies.
 
 ### Where is the testing framework?
 
@@ -58,7 +67,12 @@ The testing framework is located in the [ALZ repository](https://aka.ms/alz/repo
 
 For the purposes of this guide, we'll focus on the Policy test for `Deny-MgmtPorts-Internet` policy as it demonstrates using both Az PowerShell and REST API calls in the Pester test. The policy definition file is located in the `policy` folder of the [ALZ repository](https://aka.ms/alz/repo) in the `policy` folder.
 
-The policy tests are designed to run in an empty subscription(s) to ensure that the policy is evaluated in isolation and not impacted by other policies or resources in the subscription. The policy test has 4 major sections (aligned with how Pester works):
+The policy tests are designed to run in an empty subscription(s) to ensure that the policy is evaluated in isolation and not impacted by other policies or resources in the subscription.
+
+> **_NOTE:_** Because we are testing Azure policies in the context of Azure Landing Zone, we are using a dedicated subscription in the "Corp" landing zone that is added under the Corp management group, where we retrieve the deployed policy definition ID and create a new policy assignment to test the policy (because we do not assign all policies by default, and some get assigned to different scopes).
+> You can extend this methodology to test policies outside of Azure Landing Zone by deploying the policy you want to test and assigning it to the scope you want to test (e.g. subscription, resource group, etc.
+
+The policy test has 4 main sections (aligned with how Pester works):
 
 #### BeforeAll: This section is used to setup the environment for the tests.
 
