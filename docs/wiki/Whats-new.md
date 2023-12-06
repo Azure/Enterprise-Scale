@@ -52,6 +52,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Docs
 
 - Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
+- Added a new section to describe ALZ Policy Testing Framework for ALZ custom policies [Policies Testing Framework](./ALZ-Policies-Testing).
 
 ### October 2023
 
