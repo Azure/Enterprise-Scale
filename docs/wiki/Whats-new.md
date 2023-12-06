@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
@@ -12,7 +13,6 @@
   - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
-  - [December 2022](#december-2022)
   - [Previous Updates](#november-2022)
 
 ---
@@ -40,6 +40,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### December 2023
+
+#### Tooling
+
+- Added a new policy/initiative submission form template for GitHub Issues. This will help us to better understand the policy/initiative you are submitting and will help us to review and approve the submission faster. Please use this template when submitting new policies/initiatives to the ALZ GitHub Issues page.
+
 ### November 2023
 
 #### Tooling
@@ -49,6 +55,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a bug in the portal accelerator experience when deploying with single platform subscription and selecting virtual WAN networking topology - Invalid Template error.
 
 #### Docs
+
 - Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
 - Added a new section to describe ALZ Policy Testing Framework for ALZ custom policies [Policies Testing Framework](./ALZ-Policies-Testing).
 
