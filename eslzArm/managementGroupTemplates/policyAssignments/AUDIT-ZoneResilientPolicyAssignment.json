@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "effect": {
+            "type": "string",
+            "allowedValues": [
+                "Deny",
+                "Audit",
+                "Disabled"
+            ],
+            "defaultValue": "Audit"
+        },
+        "allow": {
+            "type": "string",
+            "allowedValues": [
+                "Both",
+                "Redundant",
+                "Aligned"
+            ],
+            "defaultValue": "Both"
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "auditZR": "/providers/Microsoft.Authorization/policySetDefinitions/130fb88f-0fc9-4678-bfe1-31022d71c7d5"
+        },
+        "policyAssignmentNames": {
+            "auditZR": "Audit-ZoneResiliency",
+            "description": "Resources should be Zone Resilient.",
+            "displayName": "Resources should be Zone Resilient"
+        },
+        "nonComplianceMessage": {
+            "message": "Resources {enforcementMode} be Zone Resilient.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').auditZR]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').auditZR]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "effect": {
+                        "value": "[parameters('effect')]"
+                    },
+                    "allow": {
+                        "value": "[parameters('allow')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

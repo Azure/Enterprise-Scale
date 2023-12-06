@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
@@ -12,7 +13,6 @@
   - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
-  - [December 2022](#december-2022)
   - [Previous Updates](#november-2022)
 
 ---
@@ -39,6 +39,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### December 2023
+
+#### Policy
+
+- Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
 
 ### November 2023
 
