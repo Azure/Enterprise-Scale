@@ -99,7 +99,7 @@ This management group contains all the platform child management groups, like ma
 <tr></tr>
 <tr><td>
   
-![image](./media/Platform_v0.1.jpg)
+![image](./media/Platform_v0.1.svg)
   
 </td><td>
   
