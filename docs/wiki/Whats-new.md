@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
@@ -12,7 +13,6 @@
   - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
-  - [December 2022](#december-2022)
   - [Previous Updates](#november-2022)
 
 ---
@@ -40,12 +40,18 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### December 2023
+
+#### Policy
+
+- Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
+
 ### November 2023
 
 #### Tooling
 
 - Added virtual hub routing preference support to Portal Accelerator for scenarios where you need to influence routing decisions in virtual hub router towards on-premises. For existing ALZ customers please visit [Configure virtual hub routing preference](https://learn.microsoft.com/azure/virtual-wan/howto-virtual-hub-routing-preference) for details on how to configure virtual hub routing preference settings.
-- Added virtual hub capacity option to Portal Accelerator which provides an option to select the number of routing infrastracture units. Please visit [Virtual hub capacity](https://learn.microsoft.com/azure/virtual-wan/hub-settings#capacity) for more details on Azure vWAN Virtual Hub Capacity configuration.
+- Added virtual hub capacity option to Portal Accelerator which provides an option to select the number of routing infrastructure units. Please visit [Virtual hub capacity](https://learn.microsoft.com/azure/virtual-wan/hub-settings#capacity) for more details on Azure vWAN Virtual Hub Capacity configuration.
 - Fixed a bug in the portal accelerator experience when deploying with single platform subscription and selecting virtual WAN networking topology - Invalid Template error.
 
 #### Docs
