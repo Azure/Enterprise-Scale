@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
@@ -39,6 +40,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### December 2023
+
+#### Other
+
+- December 6th External Community Call recording and slides published to [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### November 2023
 
