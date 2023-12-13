@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
@@ -40,6 +41,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### December 2023
+
+#### Other
+
+- December 6th External Community Call recording and slides published to [aka.ms/alz/community](https://aka.ms/alz/community)
+
 ### November 2023
 
 #### Tooling
@@ -50,6 +57,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 - Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
+- Added a new section to describe ALZ Policy Testing Framework for ALZ custom policies [Policies Testing Framework](./ALZ-Policies-Testing).
 
 ### October 2023
 
