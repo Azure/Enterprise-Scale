@@ -899,6 +899,7 @@
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
+            "dataCollectionRule": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule.json')]",
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
@@ -965,6 +966,7 @@
             "ddosHubPolicyDeploymentName": "[take(concat('alz-DDoSHubPolicy', variables('deploymentSuffix')), 64)]",
             "ddosLzPolicyDeploymentName": "[take(concat('alz-DDoSLZPolicy', variables('deploymentSuffix')), 64)]",
             "monitoringDeploymentName": "[take(concat('alz-Monitoring', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleDeploymentName": "[take(concat('alz-DataCollectionRule', variables('deploymentSuffix')), 64)]",
             "logAnalyticsPolicyDeploymentName": "[take(concat('alz-LAPolicy', variables('deploymentSuffix')), 64)]",
             "monitorConnectivityDeploymentName": "[take(concat('alz-ConnectivityMonitor', variables('deploymentSuffix')), 64)]",
             "monitorIdentityDeploymentName": "[take(concat('alz-IdentityMonitor', variables('deploymentSuffix')), 64)]",
@@ -1064,6 +1066,7 @@
         // Declaring deterministic names for platform resources that will be created
         "platformResourceNames": {
             "logAnalyticsWorkspace": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-law')]",
+            "dataCollectionRule": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-dcr')]",
             "automationAccount": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-aauto')]",
             "vpnGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vpngw-', parameters('connectivityLocation'))]",
             "erGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ergw-', parameters('connectivityLocation'))]",
@@ -1083,6 +1086,7 @@
         "singleVsDedicatedConnectivitySub": "[if(empty(parameters('connectivitySubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('connectivitySubscriptionId'))]",
         "platformResourceIds": {
             "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', variables('platformResourceNames').logAnalyticsWorkspace)]",
+            "dataCollectionRuleResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRule)]",
             "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
             "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
@@ -1617,6 +1621,36 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+                {
+            // Deploying Data Collection Rule for Log Analytics workspace if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').dataCollectionRuleDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRule]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "userGivenDcrName": {
+                        "value": "testdcrname"
                     }
                 }
             }
@@ -2626,6 +2660,9 @@
                     "logAnalyticsResourceId": {
                         "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
                     },
+                    "dataCollectionResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleResourceId]"
+                    },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
@@ -2655,6 +2692,9 @@
                 "parameters": {
                     "logAnalyticsResourceId": {
                         "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "dataCollectionResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleResourceId]"
                     },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
