@@ -68,7 +68,7 @@ This management group is a parent to all the other management groups created wit
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **11**     |
-| `Policy Definitions`      | **2**     |
+| `Policy Definitions`      | **3**     |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Intermediate Root Management Group**.
@@ -89,6 +89,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | `Policy Definition`, **Built-In**     | Deny virtual machines not using managed disk. It checks the managedDisk property on virtual machine OS Disk fields.                                                                                                                                                                                                                         | Deny                   |
 | **Deploy Azure Monitor Baseline Alerts for Service Health** | **Deploy Azure Monitor Baseline Alerts for Service Health** | `Policy Definition Set`, **Custom**     | Deploys service health alerts, action group and alert processing rule. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Service Health initiative. | DeployIfNotExists                   |
 | **Resources should be Zone Resilient** | **Resources should be Zone Resilient** | `Policy Definition Set`, **Built-in**     | Some resource types can be deployed Zone Redundant (e.g. SQL Databases); some can be deploy Zone Aligned (e.g. Virtual Machines); and some can be deployed either Zone Aligned or Zone Redundant (e.g. Virtual Machine Scale Sets). Being zone aligned does not guarantee resilience, but it is the foundation on which a resilient solution can be built (e.g. three Virtual Machine Scale Sets zone aligned to three different zones in the same region with a load balancer). See https://aka.ms/AZResilience for more info. | Audit                   |
+| **Resource Group and Resource locations should match** | **Resource Group and Resource locations should match** | `Policy Definition`, **Built-in**     | In order to improve resilience and reliability, you need to be aware of where resources are deployed. To aid this awareness, ensure that the location of the resource group matches the location of the resources it contains. | Audit                   |
 
 ### Platform
 

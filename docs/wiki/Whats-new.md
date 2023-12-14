@@ -45,6 +45,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
+- Added new custom policy and default assignment at the Intermediate Root Management Group for "Resource Group and Resource locations should match", which will help customers better manage and identify regionally deployed resources and ultimately support improved resilience.
 
 ### November 2023
 
