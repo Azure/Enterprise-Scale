@@ -47,6 +47,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added selection option for Azure Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of DNS zones.
 
+#### Other
+
+- December 6th External Community Call recording and slides published to [aka.ms/alz/community](https://aka.ms/alz/community)
+
 ### November 2023
 
 #### Tooling
@@ -57,6 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Docs
 - Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
+- Added a new section to describe ALZ Policy Testing Framework for ALZ custom policies [Policies Testing Framework](./ALZ-Policies-Testing).
 
 ### October 2023
 
