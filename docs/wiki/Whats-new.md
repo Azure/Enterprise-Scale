@@ -46,6 +46,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
 
+#### Docs
+
+- Added new section to the ALZ Wiki FAQ to provide guidance around Private DNS Zone/Privatelink issues - [read here](ALZ-Policies-FAQ.md#private-dns-zone-issues).
+
 ### November 2023
 
 #### Tooling
