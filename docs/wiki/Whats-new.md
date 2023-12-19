@@ -42,6 +42,8 @@ This article will be updated as and when changes are made to the above and anyth
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### December 2023
+#### Policy
+- Add diagnostic settings for MySQL flexible servers `Deploy-Diagnostics-MySQLflexible`
 
 #### Other
 
