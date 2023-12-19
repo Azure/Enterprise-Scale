@@ -900,6 +900,7 @@
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
             "dataCollectionRule": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule.json')]",
+            "userAssignedIdentity": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/userAssignedIdentity.json')]",
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
@@ -967,6 +968,7 @@
             "ddosLzPolicyDeploymentName": "[take(concat('alz-DDoSLZPolicy', variables('deploymentSuffix')), 64)]",
             "monitoringDeploymentName": "[take(concat('alz-Monitoring', variables('deploymentSuffix')), 64)]",
             "dataCollectionRuleDeploymentName": "[take(concat('alz-DataCollectionRule', variables('deploymentSuffix')), 64)]",
+            "userAssignedIdentityDeploymentName": "[take(concat('alz-UserAssignedIdentity', variables('deploymentSuffix')), 64)]",
             "logAnalyticsPolicyDeploymentName": "[take(concat('alz-LAPolicy', variables('deploymentSuffix')), 64)]",
             "monitorConnectivityDeploymentName": "[take(concat('alz-ConnectivityMonitor', variables('deploymentSuffix')), 64)]",
             "monitorIdentityDeploymentName": "[take(concat('alz-IdentityMonitor', variables('deploymentSuffix')), 64)]",
@@ -1067,6 +1069,7 @@
         "platformResourceNames": {
             "logAnalyticsWorkspace": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-law')]",
             "dataCollectionRule": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vmi-dcr')]",
+            "userAssignedIdentity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-id')]",
             "automationAccount": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-aauto')]",
             "vpnGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vpngw-', parameters('connectivityLocation'))]",
             "erGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ergw-', parameters('connectivityLocation'))]",
@@ -1087,6 +1090,7 @@
         "platformResourceIds": {
             "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', variables('platformResourceNames').logAnalyticsWorkspace)]",
             "dataCollectionRuleResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRule)]",
+            "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]",
             "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
             "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
@@ -1625,7 +1629,7 @@
                 }
             }
         },
-                {
+        {
             // Deploying Data Collection Rule for Log Analytics workspace if condition is true
             "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
@@ -1651,6 +1655,36 @@
                     },
                     "userGivenDcrName": {
                         "value": "[variables('platformResourceNames').dataCollectionRule]"
+                    }
+                }
+            }
+        },
+                {
+            // Deploying user assigned identity to management subscription if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').userAssignedIdentityDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').userAssignedIdentity]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "location": {
+                        "value": "[deployment().location]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     }
                 }
             }
@@ -2649,7 +2683,8 @@
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').userAssignedIdentityDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2666,6 +2701,12 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "userAssignedManagedIdentityName":{
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     }
                 }
             }
@@ -2680,7 +2721,8 @@
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').userAssignedIdentityDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2697,6 +2739,12 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmssMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "userAssignedManagedIdentityName":{
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     }
                 }
             }
