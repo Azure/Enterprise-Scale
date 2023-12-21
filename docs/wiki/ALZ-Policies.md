@@ -86,7 +86,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Deploy Diagnostic Settings for Activity Log to Log Analytics workspace** | **Configure Azure Activity logs to stream to specified Log Analytics workspace** | `Policy Definition`, **Built-in**     | Deploys the diagnostic settings for Azure Activity to stream subscriptions audit logs to a Log Analytics workspace to monitor subscription-level events                                                                                                                                                                                                                              | DeployIfNotExists                   |
 | **Deny the Deployment of Classic Resources** | **Not allowed resource types** | `Policy Definition`, **Built-in**     | Denies deployment of classic resource types under the assigned scope                                                                                                                                                                                                                              | Deny                   |
 | **Audit-UnusedResourcesCostOptimization** | **Audit-UnusedResourcesCostOptimization** | `Policy Definition Set`, **Custom**     | Optimize cost by detecting unused but chargeable resources. Leverage this Azure Policy Initiative as a cost control tool to reveal orphaned resources that are contributing cost.                                                                                                                                                                                                                              | Audit                   |
-| **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | `Policy Definition`, **Custom**     | Deny virtual machines not using managed disk. It checks the managedDisk property on virtual machine OS Disk fields.                                                                                                                                                                                                                         | Deny                   |
+| **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | `Policy Definition`, **Built-In**     | Deny virtual machines not using managed disk. It checks the managedDisk property on virtual machine OS Disk fields.                                                                                                                                                                                                                         | Deny                   |
 | **Deploy Azure Monitor Baseline Alerts for Service Health** | **Deploy Azure Monitor Baseline Alerts for Service Health** | `Policy Definition Set`, **Custom**     | Deploys service health alerts, action group and alert processing rule. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Service Health initiative. | DeployIfNotExists                   |
 
 
@@ -99,7 +99,7 @@ This management group contains all the platform child management groups, like ma
 <tr></tr>
 <tr><td>
   
-![image](./media/Platform_v0.1.jpg)
+![image](./media/Platform_v0.1.svg)
   
 </td><td>
   
