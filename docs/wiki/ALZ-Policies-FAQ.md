@@ -37,7 +37,7 @@ Known services causing issues include:
 - VM Guest Configuration ([additional configuration required](https://learn.microsoft.com/en-us/azure/governance/machine-configuration/overview#communicate-over-private-link-in-azure)) - [GitHub Issue](https://github.com/Azure/Enterprise-Scale/issues/1466)
 - Power BI ([more info](https://learn.microsoft.com/en-us/power-bi/enterprise/service-security-private-links)) - [GitHub Issue](https://github.com/Azure/Enterprise-Scale/issues/1441)
 
-If you encounter problems with the Private DNS Zones deployed by ALZ, first verify their necessity. If the services do not require Private Link, we recommend either disconnecting or deleting the private DNS zone from the hub or virtual network for those services. Alternatively, you can follow the specific guidance provided for correctly configuring the resource.
+If you encounter problems with DNS resolution for PaaS services that have Private DNS Zones deployed by ALZ, first verify their necessity. If the services do not require Private Link, or you do not intend to use Private Link for the service, we recommend either disconnecting/unlinking or deleting the private DNS zone from the hub or virtual network for those services. Alternatively, you can follow the specific guidance provided for correctly configuring the resource.
 
 ## Tips & Recommendations
 
