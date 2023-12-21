@@ -13,7 +13,6 @@
   - [March 2023](#march-2023)
   - [February 2023](#february-2023)
   - [January 2023](#january-2023)
-  - [December 2022](#december-2022)
   - [Previous Updates](#november-2022)
 
 ---
@@ -46,6 +45,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Added selection option for Azure Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of DNS zones.
+- Added a new policy/initiative submission form template for GitHub Issues. This will help us to better understand the policy/initiative you are submitting and will help us to review and approve the submission faster. Please use this template when submitting new policies/initiatives to the ALZ GitHub Issues page.
 
 #### Other
 
@@ -60,6 +60,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a bug in the portal accelerator experience when deploying with single platform subscription and selecting virtual WAN networking topology - Invalid Template error.
 
 #### Docs
+
 - Fixed in ALZ Azure Setup the bash command to assign at root scope _Owner_ role to a Service Principal.
 - Added a new section to describe ALZ Policy Testing Framework for ALZ custom policies [Policies Testing Framework](./ALZ-Policies-Testing).
 
