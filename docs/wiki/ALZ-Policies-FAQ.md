@@ -4,7 +4,7 @@
 
 There is a lot of change happening for policies in Azure, and by extension ALZ, and we have a number of common issues being raised by our customers and partners. This page is intended to address those issues.
 
-### Diagnostic Settings v2 (May 2023)
+### Diagnostic Settings v2 (December 2023)
 
 There are several issues raised around Diagnostic Settings, and we acknowledge that this is a complex area that is causing a lot of pain.
 
@@ -13,6 +13,8 @@ At this time, the owners of Azure features/services are reworking their policies
 Check back here for updates, and be sure to bookmark [What's New](https://aka.ms/alz/whatsnew) to see the latest updates to ALZ.
 
 To view the current list of GitHub issues related to diagnostic settings, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area:%20Diagnostic%20Settings).
+
+> **UPDATE** New built-in Diagnostic Settings policies and initiatives will be landing in early CY2024. As a heads-up we will begin deprecating all our custom diagnostic settings policies, and changing our default assignment to leverage the associated built-in initiative for Log Analytics (as the target) - additional options will include targeting Event Hubs or Storage accounts.
 
 ### Azure Monitor Agent (May 2023)
 
