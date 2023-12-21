@@ -46,6 +46,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added a new policy/initiative submission form template for GitHub Issues. This will help us to better understand the policy/initiative you are submitting and will help us to review and approve the submission faster. Please use this template when submitting new policies/initiatives to the ALZ GitHub Issues page.
 
+#### Other
+
+- December 6th External Community Call recording and slides published to [aka.ms/alz/community](https://aka.ms/alz/community)
+
 ### November 2023
 
 #### Tooling
