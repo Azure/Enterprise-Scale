@@ -179,7 +179,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkDnsZones.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DiagnosticLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-ActivityLogs.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-ResourceRGLocation.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
