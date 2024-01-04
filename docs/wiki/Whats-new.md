@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [January 2024](#january-2024)
   - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
