@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [January 2024](#january-2024)
   - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
@@ -39,6 +40,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### January 2024
+
+#### Policy
+
+- Fixed a typo in the Private DNS Zones initiative for the policy definition IDs for Databrics (corrected to Databricks). While not a breaking change, it is recommended to redeploy the initiative to ensure the correct policy definition IDs are used if you are using Private DNS Zones for Databricks - specifically if you have configured any exclusions or overrides for the Databricks policy definitions, as these rely on the policy definition ID (which has been updated). You will need to recreate the exclusions or overrides for Databricks if you choose not to redeploy the initiative.
 
 ### December 2023
 
