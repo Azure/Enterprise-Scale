@@ -459,41 +459,41 @@
             "type": "string",
             "defaultValue": ""
         },
-        "enablevWANRoutingIntent":{
+        "enablevWANRoutingIntent": {
             "type": "string",
             "allowedValues": [
                 "Yes",
                 "No"
             ],
             "defaultValue": "No"
-        }, 
+        },
         "internetTrafficRoutingPolicy": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-            "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
-        }
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
+            }
         },
         "privateTrafficRoutingPolicy": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-            "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
-        }
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
+            }
         },
         "vWANHubRoutingPreference": {
             "type": "string",
             "defaultValue": "ExpressRoute",
             "metadata": {
                 "description": "vWAN Hub Routing Preference"
-            }            
+            }
         },
         "vWANHubCapacity": {
             "type": "string",
             "defaultValue": "2",
             "metadata": {
                 "description": "vWAN Hub Capacity"
-            }            
+            }
         },
         "identitySubscriptionId": {
             "type": "string",
@@ -877,6 +877,15 @@
                 "count": "[length(items(variables('mgmtGroups')))]",
                 "input": "[items(variables('mgmtGroups'))[copyIndex('mgmtGroupsArray')].value]"
             }
+        ],
+        "subscriptionIds": [
+            "[parameters('singlePlatformSubscriptionId')]",
+            "[parameters('managementSubscriptionId')]",
+            "[parameters('connectivitySubscriptionId')]",
+            "[parameters('identitySubscriptionId')]",
+            "[parameters('corpConnectedLzSubscriptionId')]",
+            "[parameters('corpLzSubscriptionId')]",
+            "[parameters('onlineLzSubscriptionId')]"
         ],
         // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
         "scopes": {
@@ -1675,17 +1684,21 @@
                 }
             }
         },
-                {
+        {
             // Deploying user assigned identity to management subscription if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('subscriptionIds'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').userAssignedIdentityDeploymentName]",
+            "name": "[take(concat(variables('subscriptionIds')[copyIndex()], variables('deploymentNames').userAssignedIdentityDeploymentName), 64)]",
             "location": "[deployment().location]",
-            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
             ],
+            "copy": {
+                "name": "userAssignedIdentity",
+                "count": "[length(variables('subscriptionIds'))]"
+            },
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -2530,20 +2543,20 @@
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
                     },
-                     "enablevWANRoutingIntent":{
-                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
                     },
-                    "internetTrafficRoutingPolicy":{
-                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
                     },
-                    "privateTrafficRoutingPolicy":{
-                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
                     },
-                    "vWANHubRoutingPreference":{
-                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
                     },
-                    "vWanHubCapacity":{
-                        "value":"[parameters('vWANHubCapacity')]"
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
                     }
                 }
             }
@@ -2721,7 +2734,7 @@
                     "userAssignedManagedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
                     },
-                    "userAssignedManagedIdentityName":{
+                    "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     }
                 }
@@ -2759,7 +2772,7 @@
                     "userAssignedManagedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
                     },
-                    "userAssignedManagedIdentityName":{
+                    "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     }
                 }
@@ -2825,10 +2838,10 @@
                     "userAssignedManagedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
                     },
-                    "userAssignedManagedIdentityName":{
+                    "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     },
-                    "location":{
+                    "location": {
                         "value": "[deployment().location]"
                     }
                 }
@@ -4573,20 +4586,20 @@
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
                     },
-                    "enablevWANRoutingIntent":{
-                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
                     },
-                    "internetTrafficRoutingPolicy":{
-                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
                     },
-                    "privateTrafficRoutingPolicy":{
-                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
                     },
-                    "vWANHubRoutingPreference":{
-                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
                     },
-                    "vWanHubCapacity":{
-                        "value":"[parameters('vWANHubCapacity')]"
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
                     }
                 }
             }
