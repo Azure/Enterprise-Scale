@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [January 2024](#january-2024)
   - [December 2023](#december-2023)
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
@@ -40,11 +41,16 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### January 2024
+
+#### Tooling
+
+- Added drop down selection option for Azure Private Link Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of Private Link Private DNS zones.
+
 ### December 2023
 
 #### Tooling
 
-- Added selection option for Azure Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of DNS zones.
 - Added a new policy/initiative submission form template for GitHub Issues. This will help us to better understand the policy/initiative you are submitting and will help us to review and approve the submission faster. Please use this template when submitting new policies/initiatives to the ALZ GitHub Issues page.
 
 #### Other
