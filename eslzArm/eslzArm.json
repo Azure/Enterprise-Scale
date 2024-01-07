@@ -348,6 +348,10 @@
                 "No"
             ]
         },
+        "privateDnsZonesToDeploy": {
+            "type": "array",
+            "defaultValue": []
+        },
         "enableVpnGw": {
             "type": "string",
             "defaultValue": "No",
@@ -455,41 +459,41 @@
             "type": "string",
             "defaultValue": ""
         },
-        "enablevWANRoutingIntent":{
+        "enablevWANRoutingIntent": {
             "type": "string",
             "allowedValues": [
                 "Yes",
                 "No"
             ],
             "defaultValue": "No"
-        }, 
+        },
         "internetTrafficRoutingPolicy": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-            "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
-        }
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
+            }
         },
         "privateTrafficRoutingPolicy": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-            "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
-        }
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
+            }
         },
         "vWANHubRoutingPreference": {
             "type": "string",
             "defaultValue": "ExpressRoute",
             "metadata": {
                 "description": "vWAN Hub Routing Preference"
-            }            
+            }
         },
         "vWANHubCapacity": {
             "type": "string",
             "defaultValue": "2",
             "metadata": {
                 "description": "vWAN Hub Capacity"
-            }            
+            }
         },
         "identitySubscriptionId": {
             "type": "string",
@@ -1091,75 +1095,7 @@
             "ddosForConnectivity": "[take(guid(concat(parameters('enterpriseScaleCompanyPrefix'), 'ddos')), 10)]",
             "backupForIdentity": "[take(guid(concat(parameters('enterpriseScaleCompanyPrefix'), 'idbackup')), 10)]"
         },
-        "privateDnsZones": [
-            "[format('privatelink.{0}.azmk8s.io', toLower(parameters('connectivityLocation')))]",
-            "[format('privatelink.{0}.batch.azure.com', toLower(parameters('connectivityLocation')))]",
-            "[format('privatelink.{0}.kusto.windows.net', toLower(parameters('connectivityLocation')))]",
-            "privatelink.adf.azure.com",
-            "privatelink.afs.azure.net",
-            "privatelink.agentsvc.azure-automation.net",
-            "privatelink.analysis.windows.net",
-            "privatelink.api.azureml.ms",
-            "privatelink.azconfig.io",
-            "privatelink.azure-api.net",
-            "privatelink.azure-automation.net",
-            "privatelink.azurecr.io",
-            "privatelink.azure-devices.net",
-            "privatelink.azure-devices-provisioning.net",
-            "privatelink.azuredatabricks.net",
-            "privatelink.azurehdinsight.net",
-            "privatelink.azurehealthcareapis.com",
-            "privatelink.azurestaticapps.net",
-            "privatelink.azuresynapse.net",
-            "privatelink.azurewebsites.net",
-            "privatelink.batch.azure.com",
-            "privatelink.blob.core.windows.net",
-            "privatelink.cassandra.cosmos.azure.com",
-            "privatelink.cognitiveservices.azure.com",
-            "privatelink.database.windows.net",
-            "privatelink.datafactory.azure.net",
-            "privatelink.dev.azuresynapse.net",
-            "privatelink.dfs.core.windows.net",
-            "privatelink.dicom.azurehealthcareapis.com",
-            "privatelink.digitaltwins.azure.net",
-            "privatelink.directline.botframework.com",
-            "privatelink.documents.azure.com",
-            "privatelink.eventgrid.azure.net",
-            "privatelink.file.core.windows.net",
-            "privatelink.gremlin.cosmos.azure.com",
-            "privatelink.guestconfiguration.azure.com",
-            "privatelink.his.arc.azure.com",
-            "privatelink.kubernetesconfiguration.azure.com",
-            "privatelink.managedhsm.azure.net",
-            "privatelink.mariadb.database.azure.com",
-            "privatelink.media.azure.net",
-            "privatelink.mongo.cosmos.azure.com",
-            "privatelink.monitor.azure.com",
-            "privatelink.mysql.database.azure.com",
-            "privatelink.notebooks.azure.net",
-            "privatelink.ods.opinsights.azure.com",
-            "privatelink.oms.opinsights.azure.com",
-            "privatelink.pbidedicated.windows.net",
-            "privatelink.postgres.database.azure.com",
-            "privatelink.prod.migration.windowsazure.com",
-            "privatelink.purview.azure.com",
-            "privatelink.purviewstudio.azure.com",
-            "privatelink.queue.core.windows.net",
-            "privatelink.redis.cache.windows.net",
-            "privatelink.redisenterprise.cache.azure.net",
-            "privatelink.search.windows.net",
-            "privatelink.service.signalr.net",
-            "privatelink.servicebus.windows.net",
-            "privatelink.siterecovery.windowsazure.com",
-            "privatelink.sql.azuresynapse.net",
-            "privatelink.table.core.windows.net",
-            "privatelink.table.cosmos.azure.com",
-            "privatelink.tip1.powerquery.microsoft.com",
-            "privatelink.token.botframework.com",
-            "privatelink.vaultcore.azure.net",
-            "privatelink.web.core.windows.net",
-            "privatelink.webpubsub.azure.com"
-        ],
+        "privateDnsZones": "[array(parameters('privateDnsZonesToDeploy'))]",
         "azBackupGeoCodes": {
             "australiacentral": "acl",
             "australiacentral2": "acl2",
@@ -1230,7 +1166,8 @@
             "germanycentral": "gec",
             "germanynortheast": "gne"
         },
-        "privateDnsZonesMerge": "[if(contains(variables('azBackupGeoCodes'), parameters('connectivityLocation')), union(variables('privateDnsZones'), createArray(format('privatelink.{0}.backup.windowsazure.com', variables('azBackupGeoCodes')[toLower(parameters('connectivityLocation'))]))), variables('privateDnsZones'))]",
+        "privateDnsZonesMerge": "[if(and(contains(variables('azBackupGeoCodes'), parameters('connectivityLocation')), contains(variables('privateDnsZones'), 'privatelink.regionGeoShortCode.backup.windowsazure.com')), union(createArray(replace(variables('privateDnsZones')[0], '.regionGeoShortCode.', concat('.', variables('azBackupGeoCodes')[toLower(parameters('connectivityLocation'))], '.'))), variables('privateDnsZones')), variables('privateDnsZones'))]",
+        "privateDnsZonesMergedWithBackupPlaceholderRemoved": "[filter(variables('privateDnsZonesMerge'), lambda('i', not(equals(lambdaVariables('i'), 'privatelink.regionGeoShortCode.backup.windowsazure.com'))))]",
         "roleDefinitions": {
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
@@ -2440,20 +2377,20 @@
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
                     },
-                     "enablevWANRoutingIntent":{
-                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
                     },
-                    "internetTrafficRoutingPolicy":{
-                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
                     },
-                    "privateTrafficRoutingPolicy":{
-                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
                     },
-                    "vWANHubRoutingPreference":{
-                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
                     },
-                    "vWanHubCapacity":{
-                        "value":"[parameters('vWANHubCapacity')]"
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
                     }
                 }
             }
@@ -2511,7 +2448,7 @@
             ],
             "copy": {
                 "name": "dnsZones",
-                "count": "[length(variables('privateDnsZonesMerge'))]"
+                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -2521,7 +2458,7 @@
                 },
                 "parameters": {
                     "privateDnsZoneName": {
-                        "value": "[concat(variables('privateDnsZonesMerge')[copyIndex()])]"
+                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
                     },
                     "connectivityHubResourceId": {
                         "value": "[variables('platformResourceIds').vNetHubResourceId]"
@@ -3068,7 +3005,7 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "privateLinkDnsZones": {
-                        "value": "[variables('privateDnsZonesMerge')]"
+                        "value": "[variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')]"
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('auditPeDnsZones'), 'Yes'), 'Default', 'DoNotEnforce')]"
@@ -4106,7 +4043,7 @@
             ],
             "copy": {
                 "name": "dnsZonesLite",
-                "count": "[length(variables('privateDnsZonesMerge'))]"
+                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -4116,7 +4053,7 @@
                 },
                 "parameters": {
                     "privateDnsZoneName": {
-                        "value": "[concat(variables('privateDnsZonesMerge')[copyIndex()])]"
+                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
                     },
                     "connectivityHubResourceId": {
                         "value": "[variables('platformResourceIds').vNetHubResourceId]"
@@ -4396,20 +4333,20 @@
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
                     },
-                    "enablevWANRoutingIntent":{
-                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
                     },
-                    "internetTrafficRoutingPolicy":{
-                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
                     },
-                    "privateTrafficRoutingPolicy":{
-                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
                     },
-                    "vWANHubRoutingPreference":{
-                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
                     },
-                    "vWanHubCapacity":{
-                        "value":"[parameters('vWANHubCapacity')]"
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
                     }
                 }
             }
