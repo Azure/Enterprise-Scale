@@ -871,13 +871,6 @@
             "decommissioned": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'decommissioned')]",
             "sandboxes": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'sandboxes')]"
         },
-        "copy": [
-            {
-                "name": "mgmtGroupsArray",
-                "count": "[length(items(variables('mgmtGroups')))]",
-                "input": "[items(variables('mgmtGroups'))[copyIndex('mgmtGroupsArray')].value]"
-            }
-        ],
         "subscriptionIds": {
             "type": "array",
             "value": [
@@ -890,6 +883,18 @@
                 //"[parameters('onlineLzSubscriptionId')]"
             ]
         },
+        "copy": [
+            {
+                "name": "mgmtGroupsArray",
+                "count": "[length(items(variables('mgmtGroups')))]",
+                "input": "[items(variables('mgmtGroups'))[copyIndex('mgmtGroupsArray')].value]"
+            },
+            {
+                "name": "subscriptionIdsArray",
+                "count": "[length(items(variables('subscriptionIds')))]",
+                "input": "[items(variables('subscriptionIds'))[copyIndex('subscriptionIdsArray')].value]"
+            }
+        ],
         // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
         "scopes": {
             "eslzRootManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').eslzRoot)]",
@@ -1692,15 +1697,15 @@
             "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(variables('subscriptionIds'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[take(concat(variables('subscriptionIds')[copyIndex()], variables('deploymentNames').userAssignedIdentityDeploymentName), 64)]",
+            "name": "[take(concat(variables('subscriptionIdsArray')[copyIndex()], variables('deploymentNames').userAssignedIdentityDeploymentName), 64)]",
             "location": "[deployment().location]",
-            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
+            "subscriptionId": "[variables('subscriptionIdsArray')[copyIndex()]]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
             ],
             "copy": {
                 "name": "userAssignedIdentity",
-                "count": "[length(variables('subscriptionIds'))]"
+                "count": "[length(variables('subscriptionIdsArray'))]"
             },
             "properties": {
                 "mode": "Incremental",
