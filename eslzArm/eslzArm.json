@@ -871,26 +871,26 @@
             "decommissioned": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'decommissioned')]",
             "sandboxes": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'sandboxes')]"
         },
-        "subscriptionIds": {
+        "subscriptionIds": [
                 //"[parameters('singlePlatformSubscriptionId')]",
-                "management": "[parameters('managementSubscriptionId')]",
-                "platform": "[parameters('connectivitySubscriptionId')]",
-                "identity": "[parameters('identitySubscriptionId')]"
+                "[parameters('managementSubscriptionId')]",
+                "[parameters('connectivitySubscriptionId')]",
+                "[parameters('identitySubscriptionId')]"
                 //"[parameters('corpConnectedLzSubscriptionId')]",
                 //"[parameters('corpLzSubscriptionId')]",
                 //"[parameters('onlineLzSubscriptionId')]"
-        },
+            ],
         "copy": [
             {
                 "name": "mgmtGroupsArray",
                 "count": "[length(items(variables('mgmtGroups')))]",
                 "input": "[items(variables('mgmtGroups'))[copyIndex('mgmtGroupsArray')].value]"
-            },
-            {
+            }
+            /*{
                 "name": "subscriptionIdsArray",
                 "count": "[length(items(variables('subscriptionIds')))]",
                 "input": "[items(variables('subscriptionIds'))[copyIndex('subscriptionIdsArray')].value]"
-            }
+            }*/
         ],
         // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
         "scopes": {
@@ -1105,7 +1105,7 @@
             "erGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ergw-', parameters('connectivityLocation'))]",
             "ddosName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos-', parameters('connectivityLocation'))]",
             "azFwPolicyName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azfwpolicy-', parameters('connectivityLocation'))]",
-            "azFwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', parameters('connectivityLocation'))]",
+            "azFwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', paraprivateDnsZonesmeters('connectivityLocation'))]",
             "azErGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-erpip-', parameters('connectivityLocation'))]",
             "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocation'))]",
             "vwanName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vwan-', parameters('connectivityLocation'))]",
@@ -1697,14 +1697,14 @@
             //"name": "[take(concat(variables('subscriptionIdsArray')[copyIndex()], variables('deploymentNames').userAssignedIdentityDeploymentName), 64)]",
             "name": "[concat(variables('deploymentNames').userAssignedIdentityDeploymentName, copyIndex())]",
             "location": "[deployment().location]",
-            "subscriptionId": "[variables('subscriptionIdsArray')[copyIndex()]]",
+            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
             "resourceGroup": "[variables('platformRgNames').mgmtRg]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
             ],
             "copy": {
                 "name": "userAssignedIdentity",
-                "count": "[length(variables('subscriptionIdsArray'))]"
+                "count": "[length(variables('subscriptionIds'))]"
             },
             "properties": {
                 "mode": "Incremental",
