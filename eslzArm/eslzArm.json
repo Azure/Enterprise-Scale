@@ -348,9 +348,9 @@
                 "No"
             ]
         },
-        "privateDnsZonesToDeploy":{
+        "privateDnsZonesToDeploy": {
             "type": "array",
-                "defaultValue": []
+            "defaultValue": []
         },
         "enableVpnGw": {
             "type": "string",
@@ -459,41 +459,41 @@
             "type": "string",
             "defaultValue": ""
         },
-        "enablevWANRoutingIntent":{
+        "enablevWANRoutingIntent": {
             "type": "string",
             "allowedValues": [
                 "Yes",
                 "No"
             ],
             "defaultValue": "No"
-        }, 
+        },
         "internetTrafficRoutingPolicy": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-            "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
-        }
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
+            }
         },
         "privateTrafficRoutingPolicy": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-            "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
-        }
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
+            }
         },
         "vWANHubRoutingPreference": {
             "type": "string",
             "defaultValue": "ExpressRoute",
             "metadata": {
                 "description": "vWAN Hub Routing Preference"
-            }            
+            }
         },
         "vWANHubCapacity": {
             "type": "string",
             "defaultValue": "2",
             "metadata": {
                 "description": "vWAN Hub Capacity"
-            }            
+            }
         },
         "identitySubscriptionId": {
             "type": "string",
@@ -859,13 +859,28 @@
             "decommissioned": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'decommissioned')]",
             "sandboxes": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'sandboxes')]"
         },
+        "mgmtGroupsLite": {
+            "eslzRoot": "[parameters('enterpriseScaleCompanyPrefix')]",
+            "platform": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'platform')]",
+            "lzs": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'landingzones')]",
+            "corp": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'corp')]",
+            "online": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'online')]",
+            "decommissioned": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'decommissioned')]",
+            "sandboxes": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-', 'sandboxes')]"
+        },
         "copy": [
             {
                 "name": "mgmtGroupsArray",
                 "count": "[length(items(variables('mgmtGroups')))]",
                 "input": "[items(variables('mgmtGroups'))[copyIndex('mgmtGroupsArray')].value]"
+            },
+            {
+                "name": "mgmtGroupsESLiteArray",
+                "count": "[length(items(variables('mgmtGroupsLite')))]",
+                "input": "[items(variables('mgmtGroupsLite'))[copyIndex('mgmtGroupsESLiteArray')].value]"
             }
         ],
+        
         // Declaring scopes that will be used for optional deployments, such as platform components (monitoring, networking, identity), policy assignments, subscription placement etc.
         "scopes": {
             "eslzRootManagementGroup": "[tenantResourceId('Microsoft.Management/managementGroups/', variables('mgmtGroups').eslzRoot)]",
@@ -1166,7 +1181,8 @@
             "germanycentral": "gec",
             "germanynortheast": "gne"
         },
-        "privateDnsZonesMerge": "[if(contains(variables('azBackupGeoCodes'), parameters('connectivityLocation')), union(variables('privateDnsZones'), createArray(format('privatelink.{0}.backup.windowsazure.com', variables('azBackupGeoCodes')[toLower(parameters('connectivityLocation'))]))), variables('privateDnsZones'))]",
+        "privateDnsZonesMerge": "[if(and(contains(variables('azBackupGeoCodes'), parameters('connectivityLocation')), contains(variables('privateDnsZones'), 'privatelink.regionGeoShortCode.backup.windowsazure.com')), union(createArray(replace(variables('privateDnsZones')[0], '.regionGeoShortCode.', concat('.', variables('azBackupGeoCodes')[toLower(parameters('connectivityLocation'))], '.'))), variables('privateDnsZones')), variables('privateDnsZones'))]",
+        "privateDnsZonesMergedWithBackupPlaceholderRemoved": "[filter(variables('privateDnsZonesMerge'), lambda('i', not(equals(lambdaVariables('i'), 'privatelink.regionGeoShortCode.backup.windowsazure.com'))))]",
         "roleDefinitions": {
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
@@ -1653,7 +1669,7 @@
         },
         {
             // Deploying Diagnostic Settings to management groups if Log Analytics was deployed via a loop
-            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "condition": "[and(empty(parameters('singlePlatformSubscriptionId')), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[take(concat(variables('mgmtGroupsArray')[copyIndex()], variables('deploymentNames').diagnosticSettingsforMGsDeploymentName), 64)]",
@@ -1668,6 +1684,37 @@
             "copy": {
                 "name": "mgDiagSettings",
                 "count": "[length(variables('mgmtGroupsArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').diagnosticSettingsforManagementGroups]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying Diagnostic Settings to ESLite management groups if Log Analytics was deployed via a loop
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), empty(parameters('managementSubscriptionId')), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[take(concat(variables('mgmtGroupsESLiteArray')[copyIndex()], variables('deploymentNames').diagnosticSettingsforMGsDeploymentName), 64)]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', variables('mgmtGroupsESLiteArray')[copyIndex()])]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "copy": {
+                "name": "mgDiagSettings",
+                "count": "[length(variables('mgmtGroupsESLiteArray'))]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -2376,20 +2423,20 @@
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
                     },
-                     "enablevWANRoutingIntent":{
-                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
                     },
-                    "internetTrafficRoutingPolicy":{
-                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
                     },
-                    "privateTrafficRoutingPolicy":{
-                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
                     },
-                    "vWANHubRoutingPreference":{
-                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
                     },
-                    "vWanHubCapacity":{
-                        "value":"[parameters('vWANHubCapacity')]"
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
                     }
                 }
             }
@@ -2447,7 +2494,7 @@
             ],
             "copy": {
                 "name": "dnsZones",
-                "count": "[length(variables('privateDnsZonesMerge'))]"
+                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -2457,7 +2504,7 @@
                 },
                 "parameters": {
                     "privateDnsZoneName": {
-                        "value": "[concat(variables('privateDnsZonesMerge')[copyIndex()])]"
+                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
                     },
                     "connectivityHubResourceId": {
                         "value": "[variables('platformResourceIds').vNetHubResourceId]"
@@ -3004,7 +3051,7 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "privateLinkDnsZones": {
-                        "value": "[variables('privateDnsZonesMerge')]"
+                        "value": "[variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')]"
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('auditPeDnsZones'), 'Yes'), 'Default', 'DoNotEnforce')]"
@@ -4042,7 +4089,7 @@
             ],
             "copy": {
                 "name": "dnsZonesLite",
-                "count": "[length(variables('privateDnsZonesMerge'))]"
+                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
             },
             "properties": {
                 "mode": "Incremental",
@@ -4052,7 +4099,7 @@
                 },
                 "parameters": {
                     "privateDnsZoneName": {
-                        "value": "[concat(variables('privateDnsZonesMerge')[copyIndex()])]"
+                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
                     },
                     "connectivityHubResourceId": {
                         "value": "[variables('platformResourceIds').vNetHubResourceId]"
@@ -4332,20 +4379,20 @@
                     "vpnGateWayScaleUnit": {
                         "value": "[parameters('vpnGateWayScaleUnit')]"
                     },
-                    "enablevWANRoutingIntent":{
-                        "value":"[parameters('enablevWANRoutingIntent')]"
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
                     },
-                    "internetTrafficRoutingPolicy":{
-                        "value":"[parameters('internetTrafficRoutingPolicy')]"
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
                     },
-                    "privateTrafficRoutingPolicy":{
-                        "value":"[parameters('privateTrafficRoutingPolicy')]"
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
                     },
-                    "vWANHubRoutingPreference":{
-                        "value":"[parameters('vWANHubRoutingPreference')]"
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
                     },
-                    "vWanHubCapacity":{
-                        "value":"[parameters('vWANHubCapacity')]"
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
                     }
                 }
             }
