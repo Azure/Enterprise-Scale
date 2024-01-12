@@ -47,6 +47,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Fixed a typo in the Private DNS Zones initiative for the policy definition IDs for Databrics (corrected to Databricks). While not a breaking change, it is recommended to redeploy the initiative to ensure the correct policy definition IDs are used if you are using Private DNS Zones for Databricks - specifically if you have configured any exclusions or overrides for the Databricks policy definitions, as these rely on the policy definition ID (which has been updated). You will need to recreate the exclusions or overrides for Databricks if you choose not to redeploy the initiative.
 
+#### Tooling
+
+- Bug fix for Portal Accelerator, removing region restrictions for VPN Gateways when deploying regional (not AZ).
+- Bug fix for Portal Accelerator deployment when deploying using a single platform subscription. Previously, a single tenant deployment would have three failed deployments for diagnostic settings which were looking for non-existent management groups (Management, Identity and Connectivity). This has been fixed and the deployment will now succeed.
+- Added drop down selection option for Azure Private Link Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of Private Link Private DNS zones.
+
 ### December 2023
 
 #### Policy
@@ -56,9 +62,17 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
 - Added new default assignment at the Intermediate Root Management Group for [Resource Group and Resource locations should match](https://www.azadvertizer.net/azpolicyadvertizer/0a914e76-4921-4c19-b460-a2d36003525a.html), which will help customers better manage and identify regionally deployed resources and ultimately support improved resilience.
 
+#### Tooling
+
+- Added a new policy/initiative submission form template for GitHub Issues. This will help us to better understand the policy/initiative you are submitting and will help us to review and approve the submission faster. Please use this template when submitting new policies/initiatives to the ALZ GitHub Issues page.
+
 #### Docs
 
 - Added new section to the ALZ Wiki FAQ to provide guidance around Private DNS Zone/Privatelink issues - [read here](ALZ-Policies-FAQ.md#private-dns-zone-issues).
+
+#### Other
+
+- December 6th External Community Call recording and slides published to [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### November 2023
 
