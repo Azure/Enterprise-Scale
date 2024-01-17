@@ -19,11 +19,8 @@ function RunPester
     }
     }
     $result = Invoke-Pester -Configuration $pesterConfiguration
-    Write-Warning $result.FailedCount
     #exit $result.FailedCount
 }
-
-$resultCount = 0
 
 $ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
 if ($null -ne $ModifiedFiles)
@@ -46,9 +43,6 @@ else
 }
 
 $ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
-
-# $PRBranch = "$($env:GITHUB_HEAD_REF)"
-# $ModifiedAddedFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
 
 $ModifiedAddedFiles | ForEach-Object {
 
