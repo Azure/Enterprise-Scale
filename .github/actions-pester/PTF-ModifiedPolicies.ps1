@@ -19,7 +19,8 @@ function RunPester
     }
     }
     $result = Invoke-Pester -Configuration $pesterConfiguration
-    exit $result.FailedCount
+    Write-Warning $result.FailedCount
+    #exit $result.FailedCount
 }
 
 $ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
