@@ -44,8 +44,9 @@ function RunPester
 
 # $ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
 
-#$ModifiedAddedFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
-$ModifiedAddedFiles = Get-Item "$($env:POLICY_DIR)/*.json"
+$PRBranch = "$($env:GITHUB_HEAD_REF)"
+$ModifiedAddedFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
+#$ModifiedAddedFiles = Get-Item "$($env:POLICY_DIR)/*.json"
 
 $ModifiedAddedFiles | ForEach-Object {
 
