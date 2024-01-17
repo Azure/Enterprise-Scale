@@ -42,14 +42,15 @@ Describe 'Policy Testing Framework' {
 
                     $testPath = "tests/" + $PolicyFileClean + ".Tests.ps1"
                     
-                    if ($testPath -eq $null)
-                    {
-                        Write-Warning "There are no tests for $PolicyFileClean"
-                    }
-                    else
+                    if (Test-Path $testPath)
                     {
                         Write-Warning "Running pester tests on $PolicyFileClean"
                         Invoke-Pester -Script $testPath -PassThru
+                        
+                    }
+                    else
+                    {
+                        Write-Warning "There are no tests for $PolicyFileClean"
                     }
                 }
             }

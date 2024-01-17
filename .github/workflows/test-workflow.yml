@@ -1,5 +1,5 @@
 ---
-name: Test Workflow - PTF
+name: Policy Testing Framework
 
 ##########################################
 # Start the job on push for all branches #
@@ -25,6 +25,8 @@ env:
   GITHUB_PR_ID: ${{ github.event.pull_request.id }}
   TEMP_SUBSCRIPTIONS_JSON_PATH: "./src/data/subscriptions.json"
   TEMP_DEPLOYMENT_OBJECT_PATH: "./src/data/eslzArm.test.deployment.json"
+  POLICY_DIR: "src/resources/Microsoft.Authorization/policyDefinitions"
+  POLICYSET_DIR: "src/resources/Microsoft.Authorization/policySetDefinitions"
 
 permissions:
   contents: read
@@ -38,8 +40,8 @@ concurrency:
 # Set the Job #
 ###############
 jobs:
-  test-portal:
-    name: Test Policy Testing Framework
+  test-policy:
+    name: Running Policy Testing Framework
     runs-on: ubuntu-latest
     environment: csu-rw
     if: |
@@ -66,16 +68,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-
-      - name: Show env
-        run: env | sort
-
-      - name: List available pwsh modules
-        uses: azure/powershell@v1
-        with:
-          inlineScript: Get-Module -ListAvailable
-          azPSVersion: "latest"
 
       - name: Azure login (OIDC)
         uses: azure/login@v1
@@ -104,21 +98,11 @@ jobs:
           Update-AzConfig -DisplayBreakingChangeWarning $false
 
       - name: Pester Test for Policies
-        shell: pwsh
-        run: |
-          Import-Module Pester -Force
-          $pesterConfiguration = @{
-            Run    = @{
-              Container = New-PesterContainer -Path "./.github/actions-pester/PTF-ModifiedPolicies.Tests.ps1"
-              PassThru  = $true
-            }
-            Output = @{
-              Verbosity = 'Detailed'
-              CIFormat = 'Auto'
-            }
-          }
-          $result = Invoke-Pester -Configuration $pesterConfiguration
-          exit $result.FailedCount
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./.github/actions-pester/PTF-ModifiedPolicies.ps1
+          azPSVersion: "latest"
         env:
           SUBSCRIPTION_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION1_ID }}
           SUBSCRIPTION2_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION2_ID }} #Used for policy tests that require a second subscription (e.g. cross subscription peering)
