@@ -106,21 +106,12 @@ jobs:
           Update-AzConfig -DisplayBreakingChangeWarning $false
 
       - name: Pester Test for Policies
-        shell: pwsh
-        run: |
-          Import-Module Pester -Force
-          $pesterConfiguration = @{
-            Run    = @{
-              Container = New-PesterContainer -Path "./.github/actions-pester/PTF-ModifiedPolicies.Tests.ps1"
-              PassThru  = $true
-            }
-            Output = @{
-              Verbosity = 'Detailed'
-              CIFormat = 'Auto'
-            }
-          }
-          $result = Invoke-Pester -Configuration $pesterConfiguration
-          exit $result.FailedCount
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./.githb/actions-pester/PTF-ModifiedPolicies.ps1
+            Get-Content -Path $env:TEMP_SUBSCRIPTIONS_JSON_PATH | jq
+          azPSVersion: "latest"
         env:
           SUBSCRIPTION_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION1_ID }}
           SUBSCRIPTION2_ID: ${{ secrets.AZURE_POLICY_SUBSCRIPTION2_ID }} #Used for policy tests that require a second subscription (e.g. cross subscription peering)
