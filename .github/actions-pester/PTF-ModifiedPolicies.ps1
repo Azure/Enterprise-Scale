@@ -58,7 +58,7 @@ $PolicyFiles | ForEach-Object {
     if (Test-Path $testPath)
     {
         Write-Warning "Running pester tests on $PolicyFileClean"
-        #RunPester($testPath)
+        RunPester($testPath)
     }
     else
     {
