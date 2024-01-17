@@ -54,7 +54,7 @@ $PolicyFiles | ForEach-Object {
     $PolicyFile = Split-Path $_ -Leaf
     $PolicyFileClean = $PolicyFile -replace ".json", ""
 
-    $testPath = "tests/$($PolicyFileClean).Tests.ps1"
+    $testPath = "tests/policy/$($PolicyFileClean).Tests.ps1"
 
     Write-Warning $testPath
     
