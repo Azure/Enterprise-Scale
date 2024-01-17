@@ -44,11 +44,10 @@ function RunPester
 
 # $ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
 
-#$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
-$PolicyFiles = Get-Item "$($env:POLICY_DIR)/*.json"
+#$ModifiedAddedFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
+$ModifiedAddedFiles = Get-Item "$($env:POLICY_DIR)/*.json"
 
-
-$PolicyFiles | ForEach-Object {
+$ModifiedAddedFiles | ForEach-Object {
 
     $PolicyFile = Split-Path $_ -Leaf
     $PolicyFileClean = $PolicyFile -replace ".json", ""
