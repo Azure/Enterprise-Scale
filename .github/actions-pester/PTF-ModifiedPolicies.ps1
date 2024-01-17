@@ -45,7 +45,7 @@ function RunPester
 # $ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
 
 $policydirectory = $env:POLICY_DIR
-$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
+$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only -- $policydirectory)
 
 $PolicyFiles | ForEach-Object {
 
