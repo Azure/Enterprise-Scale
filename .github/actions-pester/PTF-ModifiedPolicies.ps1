@@ -22,29 +22,32 @@ function RunPester
     exit $result.FailedCount
 }
 
-$ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
-if ($null -ne $ModifiedFiles)
-{
-    Write-Warning "These are the modified policies: $($ModifiedFiles)"
-}
-else
-{
-    Write-Warning "There are no modified policies"
-}
+# $ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
+# if ($null -ne $ModifiedFiles)
+# {
+#     Write-Warning "These are the modified policies: $($ModifiedFiles)"
+# }
+# else
+# {
+#     Write-Warning "There are no modified policies"
+# }
 
-$AddedFiles = @(Get-PolicyFiles -DiffFilter "A")
-if ($null -ne $AddedFiles)
-{
-    Write-Warning "These are the added policies: $($AddedFiles)"
-}
-else
-{
-    Write-Warning "There are no added policies"
-}
+# $AddedFiles = @(Get-PolicyFiles -DiffFilter "A")
+# if ($null -ne $AddedFiles)
+# {
+#     Write-Warning "These are the added policies: $($AddedFiles)"
+# }
+# else
+# {
+#     Write-Warning "There are no added policies"
+# }
 
-$ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
+# $ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
 
-$ModifiedAddedFiles | ForEach-Object {
+$policydirectory = $env:POLICY_DIR
+$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
+
+$PolicyFiles | ForEach-Object {
 
     $PolicyFile = Split-Path $_ -Leaf
     $PolicyFileClean = $PolicyFile -replace ".json", ""
