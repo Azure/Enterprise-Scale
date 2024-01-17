@@ -3,7 +3,6 @@ Import-Module Pester -Force
 
 function RunPester
 {
-    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter()]
         [String]$PolicyTest
