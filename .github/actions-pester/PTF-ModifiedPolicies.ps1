@@ -55,6 +55,8 @@ $PolicyFiles | ForEach-Object {
     $PolicyFileClean = $PolicyFile -replace ".json", ""
 
     $testPath = "tests/$($PolicyFileClean).Tests.ps1"
+
+    Write-Warning $testPath
     
     if (Test-Path $testPath)
     {
