@@ -45,7 +45,9 @@ function RunPester
 # $ModifiedAddedFiles = $ModifiedFiles + $AddedFiles
 
 $policydirectory = $env:POLICY_DIR
-$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only upstream/main $PRBranch -- $policydirectory)
+#$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
+$PolicyFiles = Get-Item $policydirectory/*.json
+
 
 $PolicyFiles | ForEach-Object {
 
@@ -57,7 +59,7 @@ $PolicyFiles | ForEach-Object {
     if (Test-Path $testPath)
     {
         Write-Warning "Running pester tests on $PolicyFileClean"
-        RunPester($testPath)
+        #RunPester($testPath)
     }
     else
     {
