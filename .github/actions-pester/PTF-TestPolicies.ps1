@@ -23,7 +23,7 @@ function RunPester
 }
 
 $ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
-if ($ModifiedFiles -ne $null)
+if ([String]::IsNullOrEmpty($ModifiedFiles))
 {
     Write-Warning "These are the modified policies: $($ModifiedFiles)"
 }
@@ -33,7 +33,7 @@ else
 }
 
 $AddedFiles = @(Get-PolicyFiles -DiffFilter "A")
-if ($AddedFiles -ne $null)
+if ([String]::IsNullOrEmpty($AddedFiles))
 {
     Write-Warning "These are the added policies: $($AddedFiles)"
 }
