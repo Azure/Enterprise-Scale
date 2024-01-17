@@ -25,6 +25,7 @@ Enterprise Scale/Azure Landing Zones is updated regularly. This page is where yo
 - Improvements to existing guidance and artifacts
 - Azure Policy changes
 - Bug fixes
+  - Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 - Tooling updates:
   - [ALZ-Bicep Modules](https://github.com/Azure/ALZ-Bicep)
     - [Releases](https://github.com/Azure/ALZ-Bicep/releases)
