@@ -23,6 +23,8 @@ function RunPester
     #exit $result.FailedCount
 }
 
+$resultCount = 0
+
 $ModifiedFiles = @(Get-PolicyFiles -DiffFilter "M")
 if ($null -ne $ModifiedFiles)
 {
