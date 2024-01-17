@@ -29,7 +29,7 @@ Describe 'Policy Testing Framework' {
         
         It 'Run pester tests on changed policies' {
 
-            If ($ModifiedAddedFiles -eq $null)
+            if ($ModifiedAddedFiles -eq $null)
             {
                 Write-Warning "There are no modified or added policies"
             }
@@ -41,10 +41,16 @@ Describe 'Policy Testing Framework' {
                     $PolicyFileClean = $PolicyFile -replace ".json", ""
 
                     $testPath = "tests/" + $PolicyFileClean + ".Tests.ps1"
-
-                    Write-Warning "Running pester tests on $PolicyFileClean"
                     
-                    Invoke-Pester -Script $testPath -PassThru
+                    if ($testPath -eq $null)
+                    {
+                        Write-Warning "There are no tests for $PolicyFileClean"
+                    }
+                    else
+                    {
+                        Write-Warning "Running pester tests on $PolicyFileClean"
+                        Invoke-Pester -Script $testPath -PassThru
+                    }
                 }
             }
         }
