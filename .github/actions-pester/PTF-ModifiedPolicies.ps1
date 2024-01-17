@@ -46,7 +46,7 @@ function RunPester
 
 $policydirectory = $env:POLICY_DIR
 #$PolicyFiles = @(git diff --diff-filter=$DiffFilter --name-only origin/main $PRBranch -- $policydirectory)
-$PolicyFiles = Get-Item $policydirectory/*.json
+$PolicyFiles = Get-Item "$($policydirectory)/*.json"
 
 
 $PolicyFiles | ForEach-Object {
@@ -54,7 +54,7 @@ $PolicyFiles | ForEach-Object {
     $PolicyFile = Split-Path $_ -Leaf
     $PolicyFileClean = $PolicyFile -replace ".json", ""
 
-    $testPath = "tests/" + $PolicyFileClean + ".Tests.ps1"
+    $testPath = "tests/$($PolicyFileClean).Tests.ps1"
     
     if (Test-Path $testPath)
     {
