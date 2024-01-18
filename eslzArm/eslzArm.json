@@ -970,7 +970,9 @@
             "diagnosticSettingsforManagementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/diagSettingsMGs/diagSettingsMGs.json')]",
             // references to https://github.com/Azure/azure-monitor-baseline-alerts
             "monitorPolicyDefinitions": "[uri(variables('rootUris').monitorRepo, 'patterns/alz/alzArm.json')]",
-            "userAssignedIdentityPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-UserAssignedIdentityVMInsightsAssignment.json')]"
+            "userAssignedIdentityPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-UserAssignedIdentityVMInsightsAssignment.json')]",
+            "azureUpdateManagerVMPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-AUM-VMCheckUpdatesPolicyAssignment.json')]",
+            "azureUpdateManagerVMHybridPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-AUM-VMHybridCheckUpdatesPolicyAssignment.json.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -1059,7 +1061,11 @@
             "diagnosticSettingsforMGsDeploymentName": "[take(concat('alz-DiagSettingsMGs', variables('deploymentSuffix')), 64)]",
             "userAssignedIdentityRgDeploymentName": "[take(concat('alz-UserAssignedIdentityRg', variables('deploymentSuffix')), 60)]",
             "userAssignedIdentityDeploymentName": "[take(concat('alz-UserAssignedIdentity', variables('deploymentSuffix')), 60)]",
-            "userAssignedIdentityPolicyDeploymentName": "[take(concat('alz-UserAssignedIdentityPolicy', variables('deploymentSuffix')), 64)]"
+            "userAssignedIdentityPolicyDeploymentName": "[take(concat('alz-UserAssignedIdentityPolicy', variables('deploymentSuffix')), 64)]",
+            "azureUpdateManagerVMWindowsPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVM-Windows', variables('deploymentSuffix')), 64)]",
+            "azureUpdateManagerVMLinuxPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVM-Linux', variables('deploymentSuffix')), 64)]",
+            "azureUpdateManagerVMHybridWindowsPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVMHybrid-Windows', variables('deploymentSuffix')), 64)]",
+            "azureUpdateManagerVMHybridLinuxPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVMHybrid-Linux', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -2917,6 +2923,150 @@
                     },
                     "location": {
                         "value": "[deployment().location]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azureUpdateManagerVMWindowsPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azureUpdateManagerVMPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "assessmentMode": {
+                        "value": "AutomaticByPlatform"
+                    },
+                    "osType": {
+                        "value": "Windows"
+                    },
+                    "locations": {
+                        "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azureUpdateManagerVMLinuxPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azureUpdateManagerVMPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "assessmentMode": {
+                        "value": "AutomaticByPlatform"
+                    },
+                    "osType": {
+                        "value": "Linux"
+                    },
+                    "locations": {
+                        "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azureUpdateManagerVMHybridWindowsPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azureUpdateManagerVMHybridPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "assessmentMode": {
+                        "value": "AutomaticByPlatform"
+                    },
+                    "osType": {
+                        "value": "Windows"
+                    },
+                    "locations": {
+                        "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azureUpdateManagerVMHybridLinuxPolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azureUpdateManagerVMHybridPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "Default"
+                    },
+                    "assessmentMode": {
+                        "value": "AutomaticByPlatform"
+                    },
+                    "osType": {
+                        "value": "Linux"
+                    },
+                    "locations": {
+                        "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
                     }
                 }
             }
