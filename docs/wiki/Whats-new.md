@@ -49,6 +49,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Bug fix for Portal Accelerator, removing region restrictions for VPN Gateways when deploying regional (not AZ).
 - Bug fix for Portal Accelerator deployment when deploying using a single platform subscription. Previously, a single tenant deployment would have three failed deployments for diagnostic settings which were looking for non-existent management groups (Management, Identity and Connectivity). This has been fixed and the deployment will now succeed.
 - Added drop down selection option for Azure Private Link Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of Private Link Private DNS zones.
+- Updated ALZ policy testing framework on pull request to only test new or changed policies, drastically speeding up the testing process.
 
 ### December 2023
 
