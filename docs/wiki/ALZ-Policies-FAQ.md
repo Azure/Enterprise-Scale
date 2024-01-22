@@ -18,6 +18,17 @@ To view the current list of GitHub issues related to diagnostic settings, please
 
 Similarly, as Microsoft Monitor Agent (MMA) is on a deprecation path, Azure Monitor Agent (AMA) is the recommended replacement and there are a number of requests to support AMA specific policies. AMA is currently in preview, and we are working with the product group to ensure that the policies are updated as soon as possible. Some policies are ready, however, the initiative to activate all components is still being worked on.
 
+### Azure Database for MariaDB (Jan 2024)
+
+Azure Database for MariaDB is being deprecated, with the retirement process beginning on January 19, 2024. Due to retirement Azure is phasing out MariaDB policies, aligning with a strategic shift to Azure Database for MySQL - Flexible Server. This includes deprecating Azure Landing Zone (ALZ) custom policies 'Diagnostic Settings (Deploy)' and 'Public Endpoint (Deny)' for MariaDB. These policies are becoming redundant with MariaDB's phase-out:
+
+1. Diagnostic Settings (Deploy) for MariaDB
+2. Public Endpoint (Deny) for MariaDB
+
+**Action for Users:** Users are encouraged to migrate to Azure Database for MySQL - Flexible Server. This migration will involve updating or replacing existing MariaDB-related policies with ones suitable for the MySQL Flexible Server environment.
+
+For more information on Azure Database for MariaDB, its retirement, and the migration process, visit [What's happening to Azure Database for MariaDB?](https://learn.microsoft.com/en-us/azure/mariadb/whats-happening-to-mariadb).
+
 ### Sovereign Clouds (US Gov and China)
 
 Numerous GitHub issues related to sovereign clouds are currently within our scope, and our team is actively endeavoring to resolve these concerns.
