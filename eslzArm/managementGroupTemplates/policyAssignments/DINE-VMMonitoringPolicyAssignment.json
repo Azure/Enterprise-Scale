@@ -9,10 +9,43 @@
                 "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
             }
         },
-        "logAnalyticsResourceId": {
+        "dataCollectionRuleResourceId": {
             "type": "string",
             "metadata": {
-                "description": "Provide the resourceId to the central Log Analytics workspace"
+                "description": "Provide the resourceId to the Data collection rule"
+            }
+        },
+        "bringYourOwnUserAssignedManagedIdentity": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Provide your own user assigned managed identity to be used for the policy assignment"
+            }
+        },
+        "userAssignedManagedIdentityResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resource group name where the user assigned managed identity is located"
+            }
+        },
+        "userAssignedManagedIdentityName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the user assigned managed identity"
+            }
+        },
+        "enableProcessesAndDependencies": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Enable processes and dependencies for the VMs"
+            }
+        },
+        "scopeToSupportedImages":{
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Scope the policy assignment to supported images"
             }
         },
         "enforcementMode": {
@@ -30,7 +63,7 @@
     },
     "variables": {
         "policyDefinitions": {
-            "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/55f3eceb-5573-4f18-9695-226972c6d74a"
+            "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6"
         },
         "policyAssignmentNames": {
             "vmMonitoring": "Deploy-VM-Monitoring",
@@ -42,9 +75,15 @@
             "Default": "must",
             "DoNotEnforce": "should"
         },
+        "rbacVMContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
         "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+        "rbacManagedIdentityOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
         "roleAssignmentNames": {
-            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring))]"
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring))]",
+            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-2'))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-3'))]",
+            "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-4'))]"
         }
     },
     "resources": [
@@ -67,15 +106,30 @@
                     }
                 ],
                 "parameters": {
-                    "logAnalytics_1": {
-                        "value": "[parameters('logAnalyticsResourceId')]"
+                    "dcrResourceId": {
+                        "value": "[parameters('dataCollectionRuleResourceId')]"
+                    },
+                    "bringYourOwnUserAssignedManagedIdentity": {
+                        "value": "[parameters('bringYourOwnUserAssignedManagedIdentity')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedManagedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[parameters('userAssignedManagedIdentityName')]"
+                    },
+                    "enableProcessesAndDependencies": {
+                        "value": "[parameters('enableProcessesAndDependencies')]"
+                    },
+                    "scopeToSupportedImages": {
+                        "value": "[parameters('scopeToSupportedImages')]"
                     }
                 }
             }
         },
         {
             "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2019-04-01-preview",
+            "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').vmMonitoring]"
@@ -83,6 +137,45 @@
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameManagedIdentityOperator]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
