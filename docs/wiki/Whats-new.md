@@ -44,6 +44,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### January 2024
 
+#### Policy
+
+- We are deprecating MariaDB custom policies. For more information: [ALZ Policies FAQ](./ALZ-Policies-FAQ) 
+
 #### Tooling
 
 - Bug fix for Portal Accelerator, removing region restrictions for VPN Gateways when deploying regional (not AZ).
