@@ -47,6 +47,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - We are deprecating MariaDB custom policies. For more information: [ALZ Policies FAQ](./ALZ-Policies-FAQ) 
+- Fixed a typo in the Private DNS Zones initiative for the policy definition IDs for Databrics (corrected to Databricks). While not a breaking change, it is recommended to redeploy the initiative to ensure the correct policy definition IDs are used if you are using Private DNS Zones for Databricks - specifically if you have configured any exclusions or overrides for the Databricks policy definitions, as these rely on the policy definition ID (which has been updated). You will need to recreate the exclusions or overrides for Databricks if you choose not to redeploy the initiative.
 
 #### Tooling
 
@@ -56,9 +57,20 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### December 2023
 
+#### Policy
+
+> **IMPORTANT** We've updated the ALZ Policy FAQ with important information about the new Diagnostic Settings v2 policies and initiatives that are will be landing soon. Please read the [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) for more information.
+
+- Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
+- Added new default assignment at the Intermediate Root Management Group for [Resource Group and Resource locations should match](https://www.azadvertizer.net/azpolicyadvertizer/0a914e76-4921-4c19-b460-a2d36003525a.html), which will help customers better manage and identify regionally deployed resources and ultimately support improved resilience.
+
 #### Tooling
 
 - Added a new policy/initiative submission form template for GitHub Issues. This will help us to better understand the policy/initiative you are submitting and will help us to review and approve the submission faster. Please use this template when submitting new policies/initiatives to the ALZ GitHub Issues page.
+
+#### Docs
+
+- Added new section to the ALZ Wiki FAQ to provide guidance around Private DNS Zone/Privatelink issues - [read here](ALZ-Policies-FAQ.md#private-dns-zone-issues).
 
 #### Other
 
@@ -69,8 +81,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Added virtual hub routing preference support to Portal Accelerator for scenarios where you need to influence routing decisions in virtual hub router towards on-premises. For existing ALZ customers please visit [Configure virtual hub routing preference](https://learn.microsoft.com/azure/virtual-wan/howto-virtual-hub-routing-preference) for details on how to configure virtual hub routing preference settings.
-- Added virtual hub capacity option to Portal Accelerator which provides an option to select the number of routing infrastracture units. Please visit [Virtual hub capacity](https://learn.microsoft.com/azure/virtual-wan/hub-settings#capacity) for more details on Azure vWAN Virtual Hub Capacity configuration.
+- Added virtual hub capacity option to Portal Accelerator which provides an option to select the number of routing infrastructure units. Please visit [Virtual hub capacity](https://learn.microsoft.com/azure/virtual-wan/hub-settings#capacity) for more details on Azure vWAN Virtual Hub Capacity configuration.
 - Fixed a bug in the portal accelerator experience when deploying with single platform subscription and selecting virtual WAN networking topology - Invalid Template error.
+- Updated the ALZ Portal Accelerator and default assignments for Microsoft Defender for Cloud (MDFC) VM Vulnerability Assessment provider to default to use the PG recommended Microsoft Defender for Endpoint Threat/Vulnerability Management (mdeTVM) provider, instead of the Qualys provider.
 
 #### Docs
 
@@ -81,6 +94,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Added ['Container Apps environment should disable public network access'](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to ['Deny-PublicPaaSEndpoints'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
+- Added ['Container Apps should only be accessible over HTTPS'](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this ['Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
 - Fixed issue with couple of Policy file names to align with the actual name of the policies
 - Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version

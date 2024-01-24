@@ -140,7 +140,7 @@
         },
         "vulnerabilityAssessmentProvider": {
             "type": "string",
-            "defaultValue": "default",
+            "defaultValue": "mdeTvm",
             "allowedValues": [
                 "default",
                 "mdeTvm"
@@ -959,6 +959,8 @@
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]",
             "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-UnusedResourcesPolicyAssignment.json')]",
+            "zoneResilientPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-ZoneResilientPolicyAssignment.json')]",
+            "resourceRgLocationPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-ResourceRGLocationPolicyAssignment.json')]",
             "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]",
             "diagnosticSettingsforManagementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/diagSettingsMGs/diagSettingsMGs.json')]",
             // references to https://github.com/Azure/azure-monitor-baseline-alerts
@@ -1043,6 +1045,8 @@
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]",
             "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]",
+            "zoneResilientDeploymentName": "[take(concat('alz-ZoneResilient', variables('deploymentSuffix')), 64)]",
+            "resourceRgLocationDeploymentName": "[take(concat('alz-ResourceRGLoc', variables('deploymentSuffix')), 64)]",
             "denyVMUnmanagedDiskPolicyDeploymentName": "[take(concat('alz-NoUnmanagedDiskResource', variables('deploymentSuffix')), 64)]",
             "ztnPhase1PidCuaDeploymentName": "[take(concat('pid-', variables('ztnPhase1CuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]",
             "ambaPortalPidCuaDeploymentName": "[take(concat('pid-', variables('ambaPortalCuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]",
@@ -1834,6 +1838,54 @@
                 }
             }
         },
+        {
+            // Assigning Zone Resilient policy initiative to intermediate root management group
+            "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').zoneResilientDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').zoneResilientPolicyInitiative]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        }, 
+        {
+            // Assigning Audit resource location matches resource group location policy to intermediate root management group
+            "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').resourceRgLocationDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceRgLocationPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "Default"
+                    }
+                }
+            }
+        },        
         {
             // Assigning Azure Security Center configuration policy initiative to intermediate root management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableAsc'), 'Yes'), equals(environment().resourceManager, 'https://management.azure.com/'))]",

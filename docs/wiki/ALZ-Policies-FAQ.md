@@ -4,7 +4,7 @@
 
 There is a lot of change happening for policies in Azure, and by extension ALZ, and we have a number of common issues being raised by our customers and partners. This page is intended to address those issues.
 
-### Diagnostic Settings v2 (May 2023)
+### Diagnostic Settings v2 (December 2023)
 
 There are several issues raised around Diagnostic Settings, and we acknowledge that this is a complex area that is causing a lot of pain.
 
@@ -13,6 +13,8 @@ At this time, the owners of Azure features/services are reworking their policies
 Check back here for updates, and be sure to bookmark [What's New](https://aka.ms/alz/whatsnew) to see the latest updates to ALZ.
 
 To view the current list of GitHub issues related to diagnostic settings, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area:%20Diagnostic%20Settings).
+
+> **UPDATE** New built-in Diagnostic Settings policies and initiatives will be landing in early CY2024. As a heads-up we will begin deprecating all our custom diagnostic settings policies, and changing our default assignment to leverage the associated built-in initiative for Log Analytics (as the target) - additional options will include targeting Event Hubs or Storage accounts.
 
 ### Azure Monitor Agent (May 2023)
 
@@ -38,6 +40,17 @@ Regrettably, due to stringent security requirements inherent in sovereign cloud 
 Given our constraints in conducting direct tests, we are dependent on the invaluable support of the broader community to assist us in identifying potential issues and offering constructive feedback. We intend to respond to issues pertaining to sovereign clouds on an "as soon as possible" basis, deploying our best efforts. However, due to the aforementioned limitations, we are unable to offer precise timelines for issue resolution.
 
 To view the current list of GitHub issues related to sovereign clouds, please see [this link](https://github.com/Azure/Enterprise-Scale/labels/Area%3A%20Sovereign).
+
+### Private DNS Zone Issues
+
+There are a number of issues raised related to private DNS zones not functioning correctly, and in some cases this is due to specific services requiring additional configuration to function correctly.
+
+Known services causing issues include:
+
+- VM Guest Configuration ([additional configuration required](https://learn.microsoft.com/en-us/azure/governance/machine-configuration/overview#communicate-over-private-link-in-azure)) - [GitHub Issue](https://github.com/Azure/Enterprise-Scale/issues/1466)
+- Power BI ([more info](https://learn.microsoft.com/en-us/power-bi/enterprise/service-security-private-links)) - [GitHub Issue](https://github.com/Azure/Enterprise-Scale/issues/1441)
+
+If you encounter problems with DNS resolution for PaaS services that have Private DNS Zones deployed by ALZ, first verify their necessity. If the services do not require Private Link, or you do not intend to use Private Link for the service, we recommend either disconnecting/unlinking or deleting the private DNS zone from the hub or virtual network for those services. Alternatively, you can follow the specific guidance provided for correctly configuring the resource.
 
 ## Tips & Recommendations
 
