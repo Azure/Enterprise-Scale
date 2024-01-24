@@ -1,7 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [Policy Refresh Q2 FY24](#policy-refresh-q2-fy24)
+  - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
   - [December 2023](#december-2023)
   - [November 2023](#november-2023)
