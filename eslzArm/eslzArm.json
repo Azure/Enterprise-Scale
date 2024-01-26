@@ -261,7 +261,6 @@
                 "No"
             ]
         },
-
         "enableMonitorBaselines": {
             "type": "string",
             "defaultValue": "",
@@ -976,7 +975,8 @@
             "dataCollectionRuleChangeTracking": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-CT.json')]",
             "ChangeTrackingVmPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMPolicyAssignment.json')]",
             "ChangeTrackingVmArcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMArcPolicyAssignment.json')]",
-            "ChangeTrackingVmssPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMSSPolicyAssignment.json')]"
+            "ChangeTrackingVmssPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMSSPolicyAssignment.json')]",
+            "MDFCDefenderSqlAma": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDFCDefenderSQLAMAPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -1073,7 +1073,8 @@
             "dataCollectionRuleChangeTrackingDeploymentName": "[take(concat('alz-DataCollectionRuleChangeTracking', variables('deploymentSuffix')), 64)]",
             "ChangeTrackingVmDeploymentName": "[take(concat('alz-ChangeTracking-VM', variables('deploymentSuffix')), 64)]",
             "ChangeTrackingVmArcDeploymentName": "[take(concat('alz-ChangeTracking-VMArc', variables('deploymentSuffix')), 64)]",
-            "ChangeTrackingVmssDeploymentName": "[take(concat('alz-ChangeTracking-VMSS', variables('deploymentSuffix')), 64)]"
+            "ChangeTrackingVmssDeploymentName": "[take(concat('alz-ChangeTracking-VMSS', variables('deploymentSuffix')), 64)]",
+            "MDFCDefenderSqlAmaDeploymentName": "[take(concat('alz-MDFCDefenderSqlAma', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1108,6 +1109,7 @@
             "logAnalyticsWorkspace": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-law')]",
             "dataCollectionRule": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vmi-dcr')]",
             "dataCollectionRuleChangeTracking": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ct-dcr')]",
+            "dataCollectionRuleMdfcDefenderSql": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-mdfc-sql-dcr')]",
             "userAssignedIdentity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-id')]",
             "automationAccount": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-aauto')]",
             "vpnGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vpngw-', parameters('connectivityLocation'))]",
@@ -3214,6 +3216,56 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning MDFC Defender for SQL AMA initiative to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').MDFCDefenderSqlAmaDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').MDFCDefenderSqlAma]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "dcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
+                    },
+                    "dcrResourceGroup": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+
+                    },
+                    "userWorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "identityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "ResourceGroupLocation": {
+                        "value": "[deployment().location]"
                     }
                 }
             }
