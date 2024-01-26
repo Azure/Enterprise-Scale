@@ -181,7 +181,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-ActivityLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-UserAssignedManagedIdentity-VMInsights.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DCR-Association.json')
-    //loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DefenderSQL-DCR.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DefenderSQL-DCR.json')
     //loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-AMA.json')
     //loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL-DCR.json')
     //loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL.json')
