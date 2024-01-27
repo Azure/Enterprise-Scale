@@ -184,7 +184,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DefenderSQL-DCR.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-AMA.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL-DCR.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL.json')
+    //loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
