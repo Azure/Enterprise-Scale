@@ -2794,12 +2794,12 @@
             }
         },
         {
-            // Assigning Azure Monitor for VMs policy initiative to intermediate root management group if condition is true
+            // Assigning Azure Monitor for VMs policy initiative to platform management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azVmMonitorPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -2832,12 +2832,50 @@
             }
         },
         {
-            // Assigning Azure Monitor for VMSS policy initiative to intermediate root management group if condition is true
+            // Assigning Azure Monitor for VMs policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Monitor for VMSS policy initiative to platform management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -2870,12 +2908,50 @@
             }
         },
         {
-            // Assigning Azure Monitor for Hyrbid VMs policy initiative to intermediate root management group if condition is true
+            // Assigning Azure Monitor for VMSS policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmssMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Monitor for Arc-enabled VMs policy initiative to landing management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azVmHybridMonitorPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -3005,12 +3081,50 @@
             }
         },
         {
-            // Assigning ChangeTracking for VMs policy initiative to intermediate root management group if condition is true
+            // Assigning ChangeTracking for VMs policy initiative to platform  management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').ChangeTrackingVmDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ChangeTrackingVmPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleChangeTrackingResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning ChangeTracking for VMs policy initiative to landing zone  management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ChangeTrackingVmDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
