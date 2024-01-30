@@ -2827,6 +2827,9 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -2865,6 +2868,9 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
                     }
                 }
             }
@@ -2903,6 +2909,9 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -2941,6 +2950,43 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Monitor for Arc-enabled VMs policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmHybridMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmHybridMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -2972,17 +3018,20 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning User Managed Identity policy to intermediate root management group if condition is true
+            // Assigning User Managed Identity policy to landing zone management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').userAssignedIdentityPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -3246,6 +3295,40 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+                {
+            // Assigning ChangeTracking for Hyrbid VMs policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ChangeTrackingVmArcDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ChangeTrackingVmArcPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleChangeTrackingResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
