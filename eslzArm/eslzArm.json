@@ -1065,7 +1065,10 @@
             "ddosHubLitePolicyDeploymentName": "[take(concat('alz-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZoneRgLiteDeploymentName": "[take(concat('alz-PrivDNSRGLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]",
-            "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]"
+            "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleVmInsightsLiteDeploymentName": "[take(concat('alz-DataCollectionRuleVmInsightsLite', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleChangeTrackingLiteDeploymentName": "[take(concat('alz-DataCollectionRuleChangeTrackingLite', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleMdfcDefenderSQLLiteDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQLLite', variables('deploymentSuffix')), 64)]"
         },
         // Declaring deterministic names for Resource Groups that will be created for platform resources
         "platformRgNames": {
@@ -1646,7 +1649,7 @@
         },
         {
             // Deploying Data Collection Rule for Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName]",
@@ -1676,7 +1679,7 @@
         },
         {
             // Deploying Data Collection Rule for Change Tracking if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName]",
@@ -1706,7 +1709,7 @@
         },
         {
             // Deploying Data Collection Rule for Mdfc Defender for SQL if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').dataCollectionRuleMdfcDefenderSQLDeploymentName]",
@@ -1808,7 +1811,7 @@
         },
         {
             // Deploying Sentinel to Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
@@ -3273,7 +3276,7 @@
                 }
             }
         },
-                {
+        {
             // Assigning ChangeTracking for Hyrbid VMs policy initiative to platform management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
@@ -3444,7 +3447,7 @@
                     }
                 }
             }
-        },        
+        },
         {
             // Assigning Azure Backup policy to landing zones management group if condition is true
             "condition": "[or(equals(parameters('enableVmBackup'), 'Yes'), equals(parameters('enableVmBackup'), 'Audit'))]",
@@ -4667,71 +4670,11 @@
             }
         },
         /*
-            Note: ES Lite only: the following deployments will deploy Log Analytics solutions to the platform subscription
-        */
-        /*
-        {
-            // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
-            "location": "[deployment().location]",
-            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]",
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').monitoringSolutions]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
-                    },
-                    "workspaceRegion": {
-                        "value": "[deployment().location]"
-                    },
-                    "enableSecuritySolution": {
-                        "value": "[parameters('enableSecuritySolution')]"
-                    },
-                    "enableAgentHealth": {
-                        "value": "[parameters('enableAgentHealth')]"
-                    },
-                    "enableChangeTracking": {
-                        "value": "[parameters('enableChangeTracking')]"
-                    },
-                    "enableUpdateMgmt": {
-                        "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableVmInsights": {
-                        "value": "[parameters('enableVmInsights')]"
-                    },
-                    "enableSqlAssessment": {
-                        "value": "[parameters('enableSqlAssessment')]"
-                    },
-                    "enableSqlAdvancedThreatProtection": {
-                        "value": "[parameters('enableSqlAdvancedThreatProtection')]"
-                    },
-                    "enableSqlVulnerabilityAssessment": {
-                        "value": "[parameters('enableSqlVulnerabilityAssessment')]"
-                    }
-                }
-            }
-        },
-        */
-        /*
             Note: ES Lite only: the following deployments will deploy Sentinel to the platform subscription
         */
         {
             // Deploying Sentinel to the Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
@@ -5235,6 +5178,105 @@
                     },
                     "vWanHubCapacity": {
                         "value": "[parameters('vWANHubCapacity')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys Data Collection Rule for Log Analytics workspace
+        */
+        {
+            // Deploying Data Collection Rule for Log Analytics workspace if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').dataCollectionRuleVmInsightsLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleVmInsights]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "userGivenDcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleVmInsights]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys Data Collection Rule for Change Tracking
+        */
+        {
+            // Deploying Data Collection Rule for Change Tracking if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').dataCollectionRuleChangeTrackingLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleChangeTracking]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "dataCollectionRuleName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleChangeTracking]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys Data Collection Rule for Defender for SQL
+        */
+        {
+            // Deploying Data Collection Rule for Mdfc Defender for SQL if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').dataCollectionRuleMdfcDefenderSQLLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleMdfcDefenderSQL]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "userGivenDcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
                     }
                 }
             }
