@@ -25,7 +25,6 @@ Enterprise Scale/Azure Landing Zones is updated regularly. This page is where yo
 - Improvements to existing guidance and artifacts
 - Azure Policy changes
 - Bug fixes
-  - Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 - Tooling updates:
   - [ALZ-Bicep Modules](https://github.com/Azure/ALZ-Bicep)
     - [Releases](https://github.com/Azure/ALZ-Bicep/releases)
@@ -54,6 +53,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Bug fix for Portal Accelerator, removing region restrictions for VPN Gateways when deploying regional (not AZ).
 - Bug fix for Portal Accelerator deployment when deploying using a single platform subscription. Previously, a single tenant deployment would have three failed deployments for diagnostic settings which were looking for non-existent management groups (Management, Identity and Connectivity). This has been fixed and the deployment will now succeed.
 - Added drop down selection option for Azure Private Link Private DNS Zones as part of portal based ALZ deployment experience where you can select to deploy or not to deploy a subset of Private Link Private DNS zones.
+
+#### Documentation
+
+- Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 
 ### December 2023
 
