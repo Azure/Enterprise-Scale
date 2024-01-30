@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
   - [December 2023](#december-2023)
   - [November 2023](#november-2023)
@@ -9,12 +10,7 @@
   - [August 2023](#august-2023)
   - [July 2023](#july-2023)
   - [June 2023](#june-2023)
-  - [May 2023](#may-2023)
-  - [April 2023](#april-2023)
-  - [March 2023](#march-2023)
-  - [February 2023](#february-2023)
-  - [January 2023](#january-2023)
-  - [Previous Updates](#november-2022)
+  - [Previous Updates](#may-2023)
 
 ---
 
@@ -41,12 +37,27 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### January 2024
+### 🔃 Policy Refresh Q2 FY24
+
+Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some very important initiatives that we feel had to make it into this refresh.
 
 #### Policy
 
+> **IMPORTANT** We've updated the ALZ Policy FAQ with important information about the new Diagnostic Settings v2 policies and initiatives that are will be landing soon. Please read the [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) for more information.
+
+- Added built-in policy to Deploy-MDFC-Config initiative and default assignment to [Setup subscriptions to transition to an alternative vulnerability assessment solution](https://www.azadvertizer.net/azpolicyadvertizer/766e621d-ba95-4e43-a6f2-e945db3d7888.html). This policy will enable the Microsoft Defender for Endpoint Threat Vulnerability solution on all virtual machines in all subscriptions, which is free to all Azure subscribers. This is implemented as the Qualys based solution is retiring on 1 May, 2024. For more information, please see the [Microsoft Defender for Cloud documentation](https://docs.microsoft.com/en-us/azure/defender-for-cloud/how-to-transition-to-built-in).
+  - VM vulnerability scanning will be enabled by default at subscription level as there is no cost and it is best practice.
+
+> **IMPORTANT** Take special note of additional steps required to offboard the legacy Qualys solution from your environment.
+
+- 🎉 Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
+- Added new default assignment at the Intermediate Root Management Group for [Resource Group and Resource locations should match](https://www.azadvertizer.net/azpolicyadvertizer/0a914e76-4921-4c19-b460-a2d36003525a.html), which will help customers better manage and identify regionally deployed resources and ultimately support improved resilience.
 - We are deprecating MariaDB custom policies. For more information: [ALZ Policies FAQ](./ALZ-Policies-FAQ) 
 - Fixed a typo in the Private DNS Zones initiative for the policy definition IDs for Databrics (corrected to Databricks). While not a breaking change, it is recommended to redeploy the initiative to ensure the correct policy definition IDs are used if you are using Private DNS Zones for Databricks - specifically if you have configured any exclusions or overrides for the Databricks policy definitions, as these rely on the policy definition ID (which has been updated). You will need to recreate the exclusions or overrides for Databricks if you choose not to redeploy the initiative.
+- Added ['Container Apps environment should disable public network access'](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to ['Deny-PublicPaaSEndpoints'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
+- Added ['Container Apps should only be accessible over HTTPS'](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this ['Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
+
+### January 2024
 
 #### Tooling
 
@@ -59,13 +70,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 
 ### December 2023
-
-#### Policy
-
-> **IMPORTANT** We've updated the ALZ Policy FAQ with important information about the new Diagnostic Settings v2 policies and initiatives that are will be landing soon. Please read the [ALZ Policy FAQ and Tips](./ALZ-Policies-FAQ) for more information.
-
-- Added new initiative default assignment at the Intermediate Root Management Group for [Resources should be Zone Resilient](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/130fb88f-0fc9-4678-bfe1-31022d71c7d5.html) in Audit mode.
-- Added new default assignment at the Intermediate Root Management Group for [Resource Group and Resource locations should match](https://www.azadvertizer.net/azpolicyadvertizer/0a914e76-4921-4c19-b460-a2d36003525a.html), which will help customers better manage and identify regionally deployed resources and ultimately support improved resilience.
 
 #### Tooling
 
@@ -97,8 +101,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
-- Added ['Container Apps environment should disable public network access'](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to ['Deny-PublicPaaSEndpoints'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
-- Added ['Container Apps should only be accessible over HTTPS'](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this ['Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
 - Fixed issue with couple of Policy file names to align with the actual name of the policies
 - Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version
