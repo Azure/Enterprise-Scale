@@ -37,6 +37,9 @@
   * [Policies included in Azure landing zones reference implementations](./ALZ-Policies)
   * [Migrate Azure landing zones custom policies to Azure built-in policies](./Migrate-ALZ-Policies-to-Built%E2%80%90in)
   * [Updating Azure landing zones custom policies to latest](./Update-ALZ-Custom-Policies-to-Latest)
+* MMA Deprecation Guidance
+  * [Azure Monitor Agent Update](./ALZ-AMA-Update.md)
+  * [AMA FAQ](./ALZ-AMA-FAQ.md)
 * [Contributing](./ALZ-Contribution-Guide)
   * [Reporting Bugs](./ALZ-Contribution-Guide#reporting-bugs)
   * [Feature Requests](./ALZ-Contribution-Guide#feature-requests)
