@@ -34,20 +34,6 @@
                 "description": "Provide the name of the user assigned managed identity"
             }
         },
-        "enableProcessesAndDependencies": {
-            "type": "bool",
-            "defaultValue": true,
-            "metadata": {
-                "description": "Enable processes and dependencies for the VMs"
-            }
-        },
-        "scopeToSupportedImages":{
-            "type": "bool",
-            "defaultValue": false,
-            "metadata": {
-                "description": "Scope the policy assignment to supported images"
-            }
-        },
         "enforcementMode": {
             "type": "string",
             "allowedValues": [
@@ -60,6 +46,79 @@
             "type": "string",
             "defaultValue": "{enforcementMode}"
         },
+        "effect": {
+            "type": "string",
+            "metadata": {
+                "description": "Enable or disable the policy assignment"
+            },
+            "defaultValue": "DeployIfNotExists",
+            "allowedValues": [
+                "DeployIfNotExists",
+                "Disabled"
+            ]
+        },
+        "listOfApplicableLocations": {
+            "type": "array",
+            "metadata": {
+                "displayName": "Applicable Locations",
+                "description": "The list of locations where the policy should be applied.",
+                "strongType": "location"
+            },
+            "allowedValues": [
+                "australiasoutheast",
+                "australiaeast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus2euap",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "norwayeast",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "uaenorth",
+                "uksouth",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ],
+            "defaultValue": [
+                "australiasoutheast",
+                "australiaeast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus2euap",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "norwayeast",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "uaenorth",
+                "uksouth",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ]
+        },
         "scope": {
             "type": "String",
             "metadata": {
@@ -70,15 +129,15 @@
     },
     "variables": {
         "policyDefinitions": {
-            "vmMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6"
+            "vmssChangeTracking": "/providers/Microsoft.Authorization/policySetDefinitions/c4a70814-96be-461c-889f-2b27429120dc"
         },
         "policyAssignmentNames": {
-            "vmMonitoring": "Deploy-VM-Monitoring",
-            "description": "Enable Azure Monitor for the virtual machines (VMs) in the specified scope (management group, subscription or resource group). Takes Log Analytics workspace as parameter.",
-            "displayName": "Enable Azure Monitor for VMs"
+            "vmssChangeTracking": "Deploy-VMSS-ChangeTrack",
+            "description": "Enable ChangeTracking and Inventory for virtual machine scale sets. Takes Data Collection Rule ID as parameter and asks for an option to input applicable locations and user-assigned identity for Azure Monitor Agent.",
+            "displayName": "Enable ChangeTracking and Inventory for virtual machine scale sets"
         },
         "nonComplianceMessage": {
-            "message": "Azure Monitor {enforcementMode} be enabled for Virtual Machines.",
+            "message": "Change Tracking {enforcementMode} be enabled for Virtual Machines Scales Sets.",
             "Default": "must",
             "DoNotEnforce": "should"
         },
@@ -87,17 +146,17 @@
         "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
         "rbacManagedIdentityOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
         "roleAssignmentNames": {
-            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,parameters('scope')))]",
-            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-2',parameters('scope')))]",
-            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-3',parameters('scope')))]",
-            "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-4',parameters('scope')))]"
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-1',parameters('scope')))]",
+            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-2',parameters('scope')))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-3',parameters('scope')))]",
+            "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-4',parameters('scope')))]"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
-            "name": "[variables('policyAssignmentNames').vmMonitoring]",
+            "name": "[variables('policyAssignmentNames').vmssChangeTracking]",
             "location": "[deployment().location]",
             "identity": {
                 "type": "SystemAssigned"
@@ -105,7 +164,7 @@
             "properties": {
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
-                "policyDefinitionId": "[variables('policyDefinitions').vmMonitoring]",
+                "policyDefinitionId": "[variables('policyDefinitions').vmssChangeTracking]",
                 "enforcementMode": "[parameters('enforcementMode')]",
                 "nonComplianceMessages": [
                     {
@@ -125,11 +184,11 @@
                     "userAssignedManagedIdentityName": {
                         "value": "[parameters('userAssignedManagedIdentityName')]"
                     },
-                    "enableProcessesAndDependencies": {
-                        "value": "[parameters('enableProcessesAndDependencies')]"
+                    "listOfApplicableLocations": {
+                        "value": "[parameters('listOfApplicableLocations')]"
                     },
-                    "scopeToSupportedImages": {
-                        "value": "[parameters('scopeToSupportedImages')]"
+                    "effect": {
+                        "value": "[parameters('effect')]"
                     }
                 }
             }
@@ -139,12 +198,12 @@
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
-                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
         {
@@ -152,12 +211,12 @@
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
-                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
         {
@@ -165,12 +224,12 @@
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
-                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
         {
@@ -178,15 +237,14 @@
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameManagedIdentityOperator]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
-                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
     ],
     "outputs": {}
 }
-     
