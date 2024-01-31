@@ -48,15 +48,6 @@
                 "description": "Provide the subscription id of an existing, empty subscription you want to dedicate for management. If you don't want to bring a subscription, leave this parameter empty as is."
             }
         },
-        /*
-        "enableAgentHealth": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ]
-        },
         "enableChangeTracking": {
             "type": "string",
             "defaultValue": "No",
@@ -81,31 +72,6 @@
             ],
             "defaultValue": "Yes"
         },
-        "enableSqlAssessment": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
-        },
-        "enableSqlVulnerabilityAssessment": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
-        },
-        "enableSqlAdvancedThreatProtection": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes"
-        },
-        */
         "enableAsc": {
             "type": "string",
             "defaultValue": "No",
@@ -857,10 +823,10 @@
         },
         "userAssignedIdentityResourceGroup": {
             "type": "string",
-            "defaultValue": "rg-uami",
+            "defaultValue": "rg-ama-prod-001",
             "maxLength": 90,
             "metadata": {
-                "description": "Name of the resource group to be created for the User Assigned Managed Idebtity in each subscription."
+                "description": "Name of the resource group to be created for the User Assigned Managed Identity in each subscription."
             }
         }
     },
@@ -918,7 +884,7 @@
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
-            "dataCollectionRule": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule.json')]",
+            "dataCollectionRuleVmInsights": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-VmInsights.json')]",
             "userAssignedIdentity": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/userAssignedIdentity.json')]",
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
@@ -971,12 +937,13 @@
             // references to https://github.com/Azure/azure-monitor-baseline-alerts
             "monitorPolicyDefinitions": "[uri(variables('rootUris').monitorRepo, 'patterns/alz/alzArm.json')]",
             "userAssignedIdentityPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-UserAssignedIdentityVMInsightsAssignment.json')]",
-            "azureUpdateManagerVMPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-AUM-VMCheckUpdatesPolicyAssignment.json')]",
-            "azureUpdateManagerVMHybridPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-AUM-VMHybridCheckUpdatesPolicyAssignment.json.json')]",
+            "azureUpdateManagerPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-AUM-CheckUpdatesPolicyAssignment.json')]",
             "dataCollectionRuleChangeTracking": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-CT.json')]",
             "ChangeTrackingVmPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMPolicyAssignment.json')]",
             "ChangeTrackingVmArcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMArcPolicyAssignment.json')]",
-            "ChangeTrackingVmssPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMSSPolicyAssignment.json')]"
+            "ChangeTrackingVmssPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMSSPolicyAssignment.json')]",
+            "MDFCDefenderSqlAma": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDFCDefenderSQLAMAPolicyAssignment.json')]",
+            "dataCollectionRuleMdfcDefenderSQL": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-DefenderSQL.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -994,7 +961,7 @@
             "ddosHubPolicyDeploymentName": "[take(concat('alz-DDoSHubPolicy', variables('deploymentSuffix')), 64)]",
             "ddosLzPolicyDeploymentName": "[take(concat('alz-DDoSLZPolicy', variables('deploymentSuffix')), 64)]",
             "monitoringDeploymentName": "[take(concat('alz-Monitoring', variables('deploymentSuffix')), 64)]",
-            "dataCollectionRuleDeploymentName": "[take(concat('alz-DataCollectionRule', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleVmInsightsDeploymentName": "[take(concat('alz-DataCollectionRuleVmInsights', variables('deploymentSuffix')), 64)]",
             "logAnalyticsPolicyDeploymentName": "[take(concat('alz-LAPolicy', variables('deploymentSuffix')), 64)]",
             "monitorConnectivityDeploymentName": "[take(concat('alz-ConnectivityMonitor', variables('deploymentSuffix')), 64)]",
             "monitorIdentityDeploymentName": "[take(concat('alz-IdentityMonitor', variables('deploymentSuffix')), 64)]",
@@ -1066,14 +1033,13 @@
             "userAssignedIdentityRgDeploymentName": "[take(concat('alz-UserAssignedIdentityRg', variables('deploymentSuffix')), 60)]",
             "userAssignedIdentityDeploymentName": "[take(concat('alz-UserAssignedIdentity', variables('deploymentSuffix')), 60)]",
             "userAssignedIdentityPolicyDeploymentName": "[take(concat('alz-UserAssignedIdentityPolicy', variables('deploymentSuffix')), 64)]",
-            "azureUpdateManagerVMWindowsPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVM-Windows', variables('deploymentSuffix')), 64)]",
-            "azureUpdateManagerVMLinuxPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVM-Linux', variables('deploymentSuffix')), 64)]",
-            "azureUpdateManagerVMHybridWindowsPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVMHybrid-Windows', variables('deploymentSuffix')), 64)]",
-            "azureUpdateManagerVMHybridLinuxPolicyDeploymentName": "[take(concat('alz-AzureUpdateManagerVMHybrid-Linux', variables('deploymentSuffix')), 64)]",
+            "azureUpdateManagerPolicyDeploymentName": "[take(concat('alz-AzureUpdateManager', variables('deploymentSuffix')), 64)]",
             "dataCollectionRuleChangeTrackingDeploymentName": "[take(concat('alz-DataCollectionRuleChangeTracking', variables('deploymentSuffix')), 64)]",
             "ChangeTrackingVmDeploymentName": "[take(concat('alz-ChangeTracking-VM', variables('deploymentSuffix')), 64)]",
             "ChangeTrackingVmArcDeploymentName": "[take(concat('alz-ChangeTracking-VMArc', variables('deploymentSuffix')), 64)]",
-            "ChangeTrackingVmssDeploymentName": "[take(concat('alz-ChangeTracking-VMSS', variables('deploymentSuffix')), 64)]"
+            "ChangeTrackingVmssDeploymentName": "[take(concat('alz-ChangeTracking-VMSS', variables('deploymentSuffix')), 64)]",
+            "MDFCDefenderSqlAmaDeploymentName": "[take(concat('alz-MDFCDefenderSqlAma', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleMdfcDefenderSQLDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQL', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -1092,7 +1058,10 @@
             "ddosHubLitePolicyDeploymentName": "[take(concat('alz-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZoneRgLiteDeploymentName": "[take(concat('alz-PrivDNSRGLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]",
-            "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]"
+            "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleVmInsightsLiteDeploymentName": "[take(concat('alz-DataCollectionRuleVmInsightsLite', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleChangeTrackingLiteDeploymentName": "[take(concat('alz-DataCollectionRuleChangeTrackingLite', variables('deploymentSuffix')), 64)]",
+            "dataCollectionRuleMdfcDefenderSQLLiteDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQLLite', variables('deploymentSuffix')), 64)]"
         },
         // Declaring deterministic names for Resource Groups that will be created for platform resources
         "platformRgNames": {
@@ -1106,9 +1075,10 @@
         // Declaring deterministic names for platform resources that will be created
         "platformResourceNames": {
             "logAnalyticsWorkspace": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-law')]",
-            "dataCollectionRule": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vmi-dcr')]",
-            "dataCollectionRuleChangeTracking": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ct-dcr')]",
-            "userAssignedIdentity": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-id')]",
+            "dataCollectionRuleVmInsights": "[concat('dcr-vminsights-prod-', parameters('connectivityLocation'), '-001')]",
+            "dataCollectionRuleChangeTracking": "[concat('dcr-changetracking-prod-', parameters('connectivityLocation'), '-001')]",
+            "dataCollectionRuleMdfcDefenderSql": "[concat('dcr-defendersql-prod-', parameters('connectivityLocation'), '-001')]",
+            "userAssignedIdentity": "[concat('id-ama-prod-', parameters('connectivityLocation'), '-001')]",
             "automationAccount": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-aauto')]",
             "vpnGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vpngw-', parameters('connectivityLocation'))]",
             "erGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ergw-', parameters('connectivityLocation'))]",
@@ -1128,9 +1098,9 @@
         "singleVsDedicatedConnectivitySub": "[if(empty(parameters('connectivitySubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('connectivitySubscriptionId'))]",
         "platformResourceIds": {
             "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', variables('platformResourceNames').logAnalyticsWorkspace)]",
-            "dataCollectionRuleResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRule)]",
+            "dataCollectionRuleVmInsightsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRuleVmInsights)]",
             "dataCollectionRuleChangeTrackingResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRuleChangeTracking)]",
-            //"userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]",
+            "dataCollectionRuleMdfcDefenderSQLResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql)]",
             "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
             "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
@@ -1672,10 +1642,10 @@
         },
         {
             // Deploying Data Collection Rule for Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').dataCollectionRuleDeploymentName]",
+            "name": "[variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName]",
             "location": "[deployment().location]",
             "subscriptionId": "[parameters('managementSubscriptionId')]",
             "dependsOn": [
@@ -1685,7 +1655,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').dataCollectionRule]"
+                    "uri": "[variables('deploymentUris').dataCollectionRuleVmInsights]"
                 },
                 "parameters": {
                     "WorkspaceResourceId": {
@@ -1695,14 +1665,14 @@
                         "value": "[deployment().location]"
                     },
                     "userGivenDcrName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRule]"
+                        "value": "[variables('platformResourceNames').dataCollectionRuleVmInsights]"
                     }
                 }
             }
         },
         {
             // Deploying Data Collection Rule for Change Tracking if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName]",
@@ -1726,6 +1696,36 @@
                     },
                     "dataCollectionRuleName": {
                         "value": "[variables('platformResourceNames').dataCollectionRuleChangeTracking]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying Data Collection Rule for Mdfc Defender for SQL if condition is true
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'DeployIfNotExists'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').dataCollectionRuleMdfcDefenderSQLDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleMdfcDefenderSQL]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "userGivenDcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
                     }
                 }
             }
@@ -1772,11 +1772,9 @@
             "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(variables('subscriptionIds'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            //"name": "[take(concat(variables('subscriptionIdsArray')[copyIndex()], variables('deploymentNames').userAssignedIdentityDeploymentName), 64)]",
             "name": "[concat(variables('deploymentNames').userAssignedIdentityDeploymentName, copyIndex())]",
             "location": "[deployment().location]",
             "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
-            //"resourceGroup": "[parameters('userAssignedIdentityResourceGroup')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "userAssignedIdentityRg"
@@ -1804,10 +1802,9 @@
                 }
             }
         },
-        /*
         {
-            // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
+            // Deploying Sentinel to Log Analytics workspace if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
@@ -1835,27 +1832,6 @@
                     },
                     "enableSecuritySolution": {
                         "value": "[parameters('enableSecuritySolution')]"
-                    },
-                    "enableAgentHealth": {
-                        "value": "[parameters('enableAgentHealth')]"
-                    },
-                    "enableChangeTracking": {
-                        "value": "[parameters('enableChangeTracking')]"
-                    },
-                    "enableUpdateMgmt": {
-                        "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableVmInsights": {
-                        "value": "[parameters('enableVmInsights')]"
-                    },
-                    "enableSqlAssessment": {
-                        "value": "[parameters('enableSqlAssessment')]"
-                    },
-                    "enableSqlAdvancedThreatProtection": {
-                        "value": "[parameters('enableSqlAdvancedThreatProtection')]"
-                    },
-                    "enableSqlVulnerabilityAssessment": {
-                        "value": "[parameters('enableSqlVulnerabilityAssessment')]"
                     }
                 }
             }
@@ -2823,16 +2799,16 @@
             }
         },
         {
-            // Assigning Azure Monitor for VMs policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning Azure Monitor for VMs policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')), equals(parameters('enableVmInsights'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').azVmMonitorPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
                 "userAssignedIdentity"
             ],
             "properties": {
@@ -2843,7 +2819,7 @@
                 },
                 "parameters": {
                     "dataCollectionRuleResourceId": {
-                        "value": "[variables('platformResourceIds').dataCollectionRuleResourceId]"
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
                     },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
@@ -2856,21 +2832,65 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning Azure Monitor for VMSS policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning Azure Monitor for VMs policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')), equals(parameters('enableVmInsights'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "name": "[variables('deploymentNames').azVmMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Monitor for VMSS policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmssMonitoring'), 'Audit')), equals(parameters('enableVmInsights'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
                 "userAssignedIdentity"
             ],
             "properties": {
@@ -2881,7 +2901,7 @@
                 },
                 "parameters": {
                     "dataCollectionRuleResourceId": {
-                        "value": "[variables('platformResourceIds').dataCollectionRuleResourceId]"
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
                     },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
@@ -2894,21 +2914,65 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning Azure Monitor for Hyrbid VMs policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning Azure Monitor for VMSS policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmssMonitoring'), 'Audit')), equals(parameters('enableVmInsights'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').azVmHybridMonitorPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "name": "[variables('deploymentNames').azVmssMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmssMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Monitor for Arc-enabled VMs policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmHybridMonitoring'), 'Audit')), equals(parameters('enableVmInsights'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').azVmHybridMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2918,28 +2982,65 @@
                 },
                 "parameters": {
                     "dataCollectionRuleResourceId": {
-                        "value": "[variables('platformResourceIds').dataCollectionRuleResourceId]"
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
                     },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning User Managed Identity policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning Azure Monitor for Arc-enabled VMs policy initiative to landing management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmHybridMonitoring'), 'Audit')), equals(parameters('enableVmInsights'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').userAssignedIdentityPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "name": "[variables('deploymentNames').azVmHybridMonitorPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azVmHybridMonitorPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleVmInsightsResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning User Managed Identity policy to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmInsights'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'DeployIfNotExists')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').userAssignedIdentityPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
                 "userAssignedIdentity"
             ],
             "properties": {
@@ -2968,12 +3069,12 @@
             }
         },
         {
-            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning Azure Update Manager policy to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableUpdateMgmt'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').azureUpdateManagerVMWindowsPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "name": "[variables('deploymentNames').azureUpdateManagerPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "policyCompletion"
@@ -2982,7 +3083,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').azureUpdateManagerVMPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').azureUpdateManagerPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
@@ -2994,22 +3095,22 @@
                     "assessmentMode": {
                         "value": "AutomaticByPlatform"
                     },
-                    "osType": {
-                        "value": "Windows"
-                    },
                     "locations": {
                         "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning Azure Update Manager policy to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableUpdateMgmt'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').azureUpdateManagerVMLinuxPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "name": "[variables('deploymentNames').azureUpdateManagerPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "policyCompletion"
@@ -3018,7 +3119,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').azureUpdateManagerVMPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').azureUpdateManagerPolicyAssignment]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
@@ -3030,94 +3131,22 @@
                     "assessmentMode": {
                         "value": "AutomaticByPlatform"
                     },
-                    "osType": {
-                        "value": "Linux"
-                    },
                     "locations": {
                         "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').azureUpdateManagerVMHybridWindowsPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').azureUpdateManagerVMHybridPolicyAssignment]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "Default"
-                    },
-                    "assessmentMode": {
-                        "value": "AutomaticByPlatform"
-                    },
-                    "osType": {
-                        "value": "Windows"
-                    },
-                    "locations": {
-                        "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
-                    }
-                }
-            }
-        },
-        {
-            // Assigning Azure Update Manager policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').azureUpdateManagerVMHybridLinuxPolicyDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').azureUpdateManagerVMHybridPolicyAssignment]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "Default"
-                    },
-                    "assessmentMode": {
-                        "value": "AutomaticByPlatform"
-                    },
-                    "osType": {
-                        "value": "Linux"
-                    },
-                    "locations": {
-                        "value": [ "asia", "asiapacific", "australia", "australiacentral", "australiacentral2", "australiaeast", "australiasoutheast", "brazil", "brazilsouth", "brazilsoutheast", "brazilus", "canada", "canadacentral", "canadaeast", "centralindia", "centralus", "centralusstage", "eastasia", "eastasiastage", "eastus", "eastusstage", "eastus2", "eastus2stage", "europe", "france", "francecentral", "francesouth", "germany", "germanynorth", "germanywestcentral", "global", "india", "israelcentral", "italynorth", "japan", "japaneast", "japanwest", "jioindiacentral", "jioindiawest", "korea", "koreacentral", "koreasouth", "northcentralus", "northcentralusstage", "northeurope", "norway", "norwayeast", "norwaywest", "polandcentral", "qatarcentral", "singapore", "southafrica", "southafricanorth", "southafricawest", "southcentralus", "southcentralusstage", "southindia", "southeastasia", "southeastasiastage", "sweden", "swedencentral", "switzerland", "switzerlandnorth", "switzerlandwest", "uaecentral", "uaenorth", "uksouth", "ukwest", "uae", "uk", "unitedstates", "unitedstateseuap", "westcentralus", "westeurope", "westindia", "westus", "westusstage", "westus2", "westus2stage", "westus3" ]
-                    }
-                }
-            }
-        },
-        {
-            // Assigning ChangeTracking for VMs policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning ChangeTracking for VMs policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').ChangeTrackingVmDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -3145,17 +3174,61 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning ChangeTracking for VMSS policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmssMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning ChangeTracking for VMs policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ChangeTrackingVmDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ChangeTrackingVmPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleChangeTrackingResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning ChangeTracking for VMSS policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').ChangeTrackingVmssDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -3183,17 +3256,61 @@
                     },
                     "userAssignedManagedIdentityName": {
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
         },
         {
-            // Assigning ChangeTracking for Hyrbid VMs policy initiative to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmHybridMonitoring'), 'Yes'), equals(parameters('enableVmMonitoring'), 'Audit')))]",
+            // Assigning ChangeTracking for VMSS policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ChangeTrackingVmssDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ChangeTrackingVmssPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleChangeTrackingResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "userAssignedManagedIdentityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning ChangeTracking for Hyrbid VMs policy initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').ChangeTrackingVmArcDeploymentName]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
@@ -3214,6 +3331,147 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning ChangeTracking for Hyrbid VMs policy initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ChangeTrackingVmArcDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleChangeTrackingDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ChangeTrackingVmArcPolicyAssignment]"
+                },
+                "parameters": {
+                    "dataCollectionRuleResourceId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleChangeTrackingResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmHybridMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning MDFC Defender for SQL AMA initiative to platform management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'DeployIfNotExists'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').MDFCDefenderSqlAmaDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').MDFCDefenderSqlAma]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "dcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
+                    },
+                    "dcrResourceGroup": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "dcrId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleMdfcDefenderSqlResourceId]"
+                    },
+                    "userWorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "identityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning MDFC Defender for SQL AMA initiative to landing zone management group if condition is true
+            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'DeployIfNotExists'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').MDFCDefenderSqlAmaDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "userAssignedIdentity"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').MDFCDefenderSqlAma]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[deployment().location]"
+                    },
+                    "dcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
+                    },
+                    "dcrResourceGroup": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
+                    },
+                    "dcrId": {
+                        "value": "[variables('platformResourceIds').dataCollectionRuleMdfcDefenderSqlResourceId]"
+                    },
+                    "userWorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "identityResourceGroup": {
+                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
                     }
                 }
             }
@@ -4440,12 +4698,12 @@
             }
         },
         /*
-            Note: ES Lite only: the following deployments will deploy Log Analytics solutions to the platform subscription
+            Note: ES Lite only: the following deployments will deploy Sentinel to the platform subscription
         */
         /*
         {
-            // Deploying Log Analytics solutions to Log Analytics workspace if condition is true
-            "condition": "[and(and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes')),  equals(parameters('enableLogAnalytics'), 'Yes'), or(or(or(or(or(or(equals(parameters('enableSecuritySolution'), 'Yes'), equals(parameters('enableAgentHealth'), 'Yes')), equals(parameters('enableChangeTracking'), 'Yes')), equals(parameters('enableUpdateMgmt'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes')), equals(parameters('enableSqlAssessment'), 'Yes')), equals(parameters('enableSqlAdvancedThreatProtection'), 'Yes')), equals(parameters('enableSqlVulnerabilityAssessment'), 'Yes')))]",
+            // Deploying Sentinel to the Log Analytics workspace if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
@@ -4473,27 +4731,6 @@
                     },
                     "enableSecuritySolution": {
                         "value": "[parameters('enableSecuritySolution')]"
-                    },
-                    "enableAgentHealth": {
-                        "value": "[parameters('enableAgentHealth')]"
-                    },
-                    "enableChangeTracking": {
-                        "value": "[parameters('enableChangeTracking')]"
-                    },
-                    "enableUpdateMgmt": {
-                        "value": "[parameters('enableUpdateMgmt')]"
-                    },
-                    "enableVmInsights": {
-                        "value": "[parameters('enableVmInsights')]"
-                    },
-                    "enableSqlAssessment": {
-                        "value": "[parameters('enableSqlAssessment')]"
-                    },
-                    "enableSqlAdvancedThreatProtection": {
-                        "value": "[parameters('enableSqlAdvancedThreatProtection')]"
-                    },
-                    "enableSqlVulnerabilityAssessment": {
-                        "value": "[parameters('enableSqlVulnerabilityAssessment')]"
                     }
                 }
             }
@@ -5008,6 +5245,105 @@
                     },
                     "vWanHubCapacity": {
                         "value": "[parameters('vWANHubCapacity')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys Data Collection Rule for Log Analytics workspace
+        */
+        {
+            // Deploying Data Collection Rule for Log Analytics workspace if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').dataCollectionRuleVmInsightsLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleVmInsights]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "userGivenDcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleVmInsights]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys Data Collection Rule for Change Tracking
+        */
+        {
+            // Deploying Data Collection Rule for Change Tracking if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableChangeTracking'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').dataCollectionRuleChangeTrackingLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleChangeTracking]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "dataCollectionRuleName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleChangeTracking]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: deploys Data Collection Rule for Defender for SQL
+        */
+        {
+            // Deploying Data Collection Rule for Mdfc Defender for SQL if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'DeployIfNotExists'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLiteDeploymentNames').dataCollectionRuleMdfcDefenderSQLLiteDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').dataCollectionRuleMdfcDefenderSQL]"
+                },
+                "parameters": {
+                    "WorkspaceResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "WorkspaceLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "userGivenDcrName": {
+                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
                     }
                 }
             }

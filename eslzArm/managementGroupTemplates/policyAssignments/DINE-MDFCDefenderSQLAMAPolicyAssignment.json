@@ -1,0 +1,252 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "effect": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Effect",
+                "description": "Enable or disable the execution of the policy"
+            },
+            "allowedValues": [
+                "DeployIfNotExists",
+                "Disabled"
+            ],
+            "defaultValue": "DeployIfNotExists"
+        },
+        "workspaceRegion": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Workspace region",
+                "description": "Region of the Log Analytics workspace destination for the Data Collection Rule.",
+                "strongType": "location"
+            }
+        },
+        "dcrName": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Data Collection Rule Name",
+                "description": "Name of the Data Collection Rule."
+            }
+        },
+        "dcrResourceGroup": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Data Collection Rule Resource Group",
+                "description": "Resource Group of the Data Collection Rule."
+            }
+        },
+        "dcrId": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Data Collection Rule Id",
+                "description": "Id of the Data Collection Rule."
+            }
+        },
+        "userWorkspaceResourceId": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Workspace Resource Id",
+                "description": "Workspace resource Id of the Log Analytics workspace destination for the Data Collection Rule.",
+                "strongType": "omsWorkspace"
+            }
+        },
+        "enableCollectionOfSqlQueriesForSecurityResearch": {
+            "type": "Bool",
+            "metadata": {
+                "displayName": "Enable collection of SQL queries for security research",
+                "description": "Enable or disable the collection of SQL queries for security research."
+            },
+            "allowedValues": [
+                true,
+                false
+            ],
+            "defaultValue": false
+        },
+        "identityResourceGroup": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Identity Resource Group",
+                "description": "The name of the resource group created by the policy."
+            },
+            "defaultValue": ""
+        },
+        "userAssignedIdentityName": {
+            "type": "String",
+            "metadata": {
+                "displayName": "User Assigned Managed Identity Name",
+                "description": "The name of the user assigned managed identity."
+            },
+            "defaultValue": ""
+        },
+        "scope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Scope",
+                "description": "Scope of the policy assignment"
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployazureDefenderSQL": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-DefenderSQL-AMA')]"
+        },
+        "policyAssignmentNames": {
+            "azureDefenderSQL": "Deploy-MDFC-DefenSQL-AMA",
+            "description": "Microsoft Defender for SQL collects events from the agents and uses them to provide security alerts and tailored hardening tasks (recommendations). Creates a resource group and a Data Collection Rule in the same region as the user-defined Log Analytics workspace.",
+            "displayName": "Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace"
+        },
+        "nonComplianceMessage": {
+            "message": "Microsoft Defender for SQL {enforcementMode} be deployed.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacVMContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+        "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+        "rbacManagedIdentityOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "roleAssignmentNames": {
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,parameters('scope')))]",
+            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-2',parameters('scope')))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-3',parameters('scope')))]",
+            "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-4',parameters('scope')))]",
+            "roleAssignmentNameContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-5',parameters('scope')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').azureDefenderSQL]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployazureDefenderSQL]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "effect": {
+                        "value": "[parameters('effect')]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[parameters('workspaceRegion')]"
+                    },
+                    "dcrName": {
+                        "value": "[parameters('dcrName')]"
+                    },
+                    "dcrResourceGroup": {
+                        "value": "[parameters('dcrResourceGroup')]"
+                    },
+                    "dcrId": {
+                        "value": "[parameters('dcrId')]"
+                    },
+                    "userWorkspaceResourceId": {
+                        "value": "[parameters('userWorkspaceResourceId')]"
+                    },
+                    "enableCollectionOfSqlQueriesForSecurityResearch": {
+                        "value": "[parameters('enableCollectionOfSqlQueriesForSecurityResearch')]"
+                    },
+                    "identityResourceGroup": {
+                        "value": "[parameters('identityResourceGroup')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('userAssignedIdentityName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureDefenderSQL]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureDefenderSQL]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureDefenderSQL]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameManagedIdentityOperator]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureDefenderSQL]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+                {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureDefenderSQL]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
