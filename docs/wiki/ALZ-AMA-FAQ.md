@@ -12,7 +12,7 @@
 
 ## What to do if you have a need for a feature that is not in AMA, not GA, and not available in an alternative solution?
 
-The ALZ team will assess solutions for parity ongoing. Please review the AMA parity Gaps table [here](<insert-link>) for the lastest updates and guidance.
+The ALZ team will assess solutions for parity ongoing. Please review the AMA parity Gaps table [here](./ALZ-AMA-Update#table-ama-parity-status) for the latest updates and guidance.
 
 If you have any additional questions or concerns, please do not hesitate to raise a support ticket for further assistance.
 

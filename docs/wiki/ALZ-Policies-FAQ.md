@@ -5,7 +5,6 @@
 There is a lot of change happening for policies in Azure, and by extension ALZ, and we have a number of common issues being raised by our customers and partners. This page is intended to address those issues.
 
 ### Diagnostic Settings v2 (December 2023)
-### Diagnostic Settings v2 (December 2023)
 
 There are several issues raised around Diagnostic Settings, and we acknowledge that this is a complex area that is causing a lot of pain.
 
