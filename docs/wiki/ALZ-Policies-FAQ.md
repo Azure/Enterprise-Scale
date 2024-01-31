@@ -16,9 +16,11 @@ To view the current list of GitHub issues related to diagnostic settings, please
 
 > **UPDATE** New built-in Diagnostic Settings policies and initiatives will be landing in early CY2024. As a heads-up we will begin deprecating all our custom diagnostic settings policies, and changing our default assignment to leverage the associated built-in initiative for Log Analytics (as the target) - additional options will include targeting Event Hubs or Storage accounts.
 
-### Azure Monitor Agent (May 2023)
+### Microsoft Monitoring Agent (MMA) Deprecation and Azure Monitor Agent (AMA) (January 2024)
 
-Similarly, as Microsoft Monitor Agent (MMA) is on a deprecation path, Azure Monitor Agent (AMA) is the recommended replacement and there are a number of requests to support AMA specific policies. AMA is currently in preview, and we are working with the product group to ensure that the policies are updated as soon as possible. Some policies are ready, however, the initiative to activate all components is still being worked on.
+Similarly, as Microsoft Monitor Agent (MMA) is on a deprecation path (August 2024), Azure Monitor Agent (AMA) is the recommended replacement and there are a number of requests to support AMA specific policies (NOTE: Some features are going agentless thus not requiring an agent, see [Fixme] link for AMA table) . AMA is currently in preview, and we are working with the product group to ensure that the policies are updated as soon as possible. Some policies are ready, however, the initiative to activate all components is still being worked on.
+
+**Update January 2024** We have been working on the removal of MMA from ALZ and the first step in the overall removal process is to update the ALZ Portal reference implementation (greenfield deployments) which has now been updated. Our next step is to work on the deployment to Terraform and Bicep reference implementations which requires significant investment to minimise impact to existing customers and providing clear guidance for the transition. For more details please see [Fixme] add link to AMA new guidance Arjen is doing 
 
 ### Azure Database for MariaDB (Jan 2024)
 
