@@ -19,6 +19,7 @@
   * [What happens when you deploy Enterprise-Scale?](./How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
 * Deploying Enterprise-Scale
   * [Pre-requisites](./Deploying-ALZ-Pre-requisites)
+  * [ALZ Resource Providers Guidance](./ALZ-Resource-Provider-Recommendations)
   * [Configure Microsoft Entra permissions](./ALZ-Setup-aad-permissions)
   * [Configure Azure permissions](./ALZ-Setup-azure)
   * [Deploy landing zones](./ALZ-Deploy-landing-zones)
