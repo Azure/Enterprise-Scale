@@ -4,17 +4,17 @@
 
 ## What are Resource Providers in Azure?
 
-An Azure resource provider is a set of REST operations that enable functionality for a specific Azure service. For example, the Key Vault service consists of a resource provider named **Microsoft.KeyVault**. The resource provider defines [REST operations](https://learn.microsoft.com/en-us/rest/api/keyvault/) for managing vaults, secrets, keys, and certificates.
+An Azure resource provider is a set of REST operations that enable functionality for a specific Azure service. For example, the Key Vault service consists of a resource provider named **Microsoft.KeyVault**. The resource provider defines [REST operations](https://learn.microsoft.com/rest/api/keyvault/) for managing vaults, secrets, keys, and certificates.
 
-To deploy a resource in Azure, you must ensure your Azure subscription is registered for the resource provider that is associated with that resource. Registration configures your subscription to work with the resource provider. You can view a list of all resource providers in Azure by service [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers#registration). Learn how to view all your resource providers in the portal [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#view-resource-provider).
+To deploy a resource in Azure, you must ensure your Azure subscription is registered for the resource provider that is associated with that resource. Registration configures your subscription to work with the resource provider. You can view a list of all resource providers in Azure by service [here](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers#registration). Learn how to view all your resource providers in the portal [here](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-providers-and-types#view-resource-provider).
 
 ## Default Resource Providers
 
-Some resource providers are turned on by Azure by default on all subscriptions during time of subscription creation and are not possible to unregister.  Some examples are Microsoft.SerialConsole, Microsoft.Authorization, and Microsoft.Consumption. You can view a list of providers turned on by default by service [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers#registration).  Resource providers marked with **- registered by default** in the tables are automatically registered for your subscription, and you do not need to worry about them.
+Some resource providers are turned on by Azure by default on all subscriptions during time of subscription creation and are not possible to unregister.  Some examples are Microsoft.SerialConsole, Microsoft.Authorization, and Microsoft.Consumption. You can view a list of providers turned on by default by service [here](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers#registration).  Resource providers marked with **- registered by default** in the tables are automatically registered for your subscription, and you do not need to worry about them.
 
 ## Resource Providers for Enterprise-Scale ALZ Deployment (Empty Subscriptions)
 
-To successfully deploy an Enterprise-Scale with a predefined [template](https://aka.ms/caf/ready/accelerator), along with ensuring other [prerequisites](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-Pre-requisites) are complete, ensure these Resource Providers are [registered](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types) in ALL subscriptions associated with your new Landing Zone:
+To successfully deploy an Enterprise-Scale with a predefined [template](https://aka.ms/caf/ready/accelerator), along with ensuring other [prerequisites](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-Pre-requisites) are complete, ensure these Resource Providers are [registered](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-providers-and-types) in ALL subscriptions associated with your new Landing Zone:
 
 * microsoft.insights
 * Microsoft.AlertsManagement
