@@ -39,6 +39,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### February 2024
+
+#### Tooling
+
+- Disabled a Policy in the Microsoft Defender for SQL initiative. As it is not required at this stage. See [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more details.
+
 ### AMA Update for the Portal Accelerator
 
 The Azure Monitor Agent (AMA) is the new way to collect and send data to Azure Monitor. The Log Analytics agent, or the Microsoft Monitoring Agent (MMA), will no longer be supported after August 2024. To adapt to this change, the ALZ Portal Accelerator has been updated to use AMA instead of MMA.
