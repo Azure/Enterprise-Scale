@@ -103,6 +103,14 @@
                 "displayName": "Scope",
                 "description": "Scope of the policy assignment"
             }
+        },
+        "platformScope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Platform Scope",
+                "description": "Scope of the reader role assignment"
+            },
+            "defaultValue": "[parameters('scope')]"
         }
     },
     "variables": {
@@ -124,12 +132,14 @@
         "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
         "rbacManagedIdentityOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
         "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "rbacReader": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
         "roleAssignmentNames": {
             "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,parameters('scope')))]",
             "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-2',parameters('scope')))]",
             "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-3',parameters('scope')))]",
             "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-4',parameters('scope')))]",
-            "roleAssignmentNameContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-5',parameters('scope')))]"
+            "roleAssignmentNameContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-5',parameters('scope')))]",
+            "roleAssignmentNameReader": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureDefenderSQL,'-6',parameters('scope')))]"
         }
     },
     "resources": [
@@ -234,7 +244,7 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-                {
+        {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameContributor]",
@@ -244,6 +254,21 @@
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameReader]",
+            "scope": "[parameters('platformScope')]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureDefenderSQL]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacReader'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureDefenderSQL), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }

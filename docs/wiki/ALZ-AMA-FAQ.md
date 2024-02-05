@@ -41,3 +41,7 @@ It's important to highlight that while MMA deprecation is in August 2024, this d
 - Sentinel: Is only deployed through ALZ, which is still achieved by deploying the Solution. We don't deploy additional configurations. Consult [AMA migration for Microsoft Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/ama-migrate) for more information.
 - Change Tracking: Aside from the solution being deployed in Log Analytics, we deploy the new components like DCRs and policies to enable Change Tracking through AMA.
 
+## Why is a Policy disbled in the "Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace" initiative?
+
+The Microsoft Defender for SQL are custom policies based on the built-in policies. These are made custom to add additional flexibility for resource naming and placement, as well as excluding certain resources from being deployed through Policy. The disabled policy didn’t add any additional value at this moment as the configurations it deploys are handled in the ARM template. 
+
