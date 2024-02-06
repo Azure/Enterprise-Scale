@@ -44,6 +44,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Disabled a Policy in the Microsoft Defender for SQL initiative. As it is not required at this stage. See [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more details.
+- Bug fix for Portal Accelerator. userAssignedIdentityResourceGroup has been added as output for the Portal UI, this fixes deploying the Resource Group with a custom name.
 
 ### AMA Update for the Portal Accelerator
 
