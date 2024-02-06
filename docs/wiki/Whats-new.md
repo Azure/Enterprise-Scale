@@ -44,6 +44,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Disabled a Policy in the Microsoft Defender for SQL initiative. As it is not required at this stage. See [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more details.
+- Changed enforcementMode of the assignment of Policy "Deploy-UserAssignedManagedIdentity-VMInsights" to Default. This is to ensure that a Resource Group and a User Assigned Managed Identity are created on new subscriptions (subscriptions that are added after the initial deployment).
 
 ### AMA Update for the Portal Accelerator
 
