@@ -12,6 +12,7 @@
 - [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
 - [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
 - [Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?](#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
+- [What is the impact of GitHub Releases and ALZ?](#what-is-the-impact-of-github-releases-and-alz)
 
 ---
 
@@ -72,8 +73,8 @@ The following implementation options are available when you use infrastructure-a
 
 - The [Azure landing zone accelerator](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-accelerator) portal-based experience can integrate and bootstrap a CI/CD pipeline using GitHub with [AzOps](https://github.com/Azure/AzOps) as documented at [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale).
 - The [Enterprise-scale Do-It-Yourself (DIY) ARM templates](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm#enterprise-scale-landing-zones-arm-templates) method
-- The [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale#terraform-module-for-cloud-adoption-framework-enterprise-scale)
-- The [Azure Landing Zone (formerly Enterprise-scale) Bicep Modules - Public Preview](https://github.com/Azure/ALZ-Bicep)
+- The [ALZ Terraform module](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale#terraform-module-for-cloud-adoption-framework-enterprise-scale)
+- The [ALZ Bicep modules](https://github.com/Azure/ALZ-Bicep)
 
 ## If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?
 
@@ -105,7 +106,7 @@ To see a demo of Terraform being used, check out this YouTube video on the Micro
 
 ## The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?
 
-In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://learn.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property. 
+In larger environments that uses a range of different Azure services and associated features it can be common for you to hit the [500 maximum columns in a table limit](https://learn.microsoft.com/azure/azure-monitor/service-limits#log-analytics-workspaces). When this occurs data is not lost however, it is instead stored in a column called `AdditionalFields` as a dynamic property.
 
 However, some customers may not want this as it can make it more difficult and complex to query the data when the 500 column limit is breached and data is stored in the `AdditionalFields` column.
 
@@ -119,7 +120,7 @@ To overcome this issue the Azure Monitor team has created a new collection type 
 
 As of today only a limited number of services support the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) which are listed [here.](https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics#azure-diagnostics-mode-or-resource-specific-mode)
 
-We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution. 
+We are working closely with the relevant Azure engineering teams to ensure the services add support for the [**Resource-specific** collection mode](https://learn.microsoft.com/azure/azure-monitor/essentials/resource-logs#resource-specific) and also create/update the [built-in Azure Policies](https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings?tabs=CMD#built-in-policy-definitions-for-azure-monitor) so we can then utilise them as part of our solution.
 
 Stay tuned to our [What's New page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) where we will be announcing when we migrate services to the new collection type. Also watch [Azure Updates](https://azure.microsoft.com/updates/) for announcements from service teams for adding support to their services for this collection type.
 
@@ -156,15 +157,7 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
 
 ## Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?
 
-Great question! Don't worry we are aware of this required migration and change to Azure landing zones with the Log Analytics Agent (Microsoft Monitoring Agent - MMA) being retired in August 2024 as detailed here: [Migrate to Azure Monitor Agent from Log Analytics agent](https://learn.microsoft.com/azure/azure-monitor/agents/azure-monitor-agent-migration).
-
-We are working hard internally with the Azure Monitor Product Group (PG) to ensure everything that Azure landing zones requires and gets from the Log Analytics Agent (Microsoft Monitoring Agent - MMA) approach today is covered and has a path for migration to the Azure Monitor Agent (AMA) approach. This has been underway for sometime and continues to progress.
-
-The AMA agent brings a number of new concepts, resources and changes to existing integrations with other services, such as Microsoft Defender for Cloud, that all require validation by each of the associated PGs as well as the Azure landing zone team, prior to migrating to AMA from MMA.
-
-We will, when ready, provide Azure landing zones specific migration guidance that supports existing and to be created PG documentation. We will also make the relevant changes to each of the implementation options (Portal, Bicep, Terraform) to support the migration, especially for greenfield scenarios.
-
-> We have an existing GitHub Issue ([#1055](https://github.com/Azure/Enterprise-Scale/issues/1055)) opened for this feature request. Please feel free to give it a 👍 or add a comment.
+**Update January 2024** We have been working on the removal of MMA from ALZ and the first step in the overall removal process is to update the ALZ Portal reference implementation (greenfield deployments) which has now been updated. Our next step is to work on the deployment to Terraform and Bicep reference implementations which requires significant investment to minimise impact to existing customers and providing clear guidance for the transition. For more details please see [Azure Monitor Agent Update](./ALZ-AMA-Update.md).
 
 ### What if we are not ready to make the switch and migrate, right now?
 
@@ -173,3 +166,49 @@ Another good question. You will need to plan, and complete, the migration to the
 ### Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
 
 Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz) for more details.
+
+## What is the impact of GitHub Releases and ALZ?
+
+As you may have noticed, as of end September 2023, Azure Landing Zone has started publishing GitHub Releases after significant changes are merged into the `main` branch. The ALZ team uses the GitHub Releases to publish the latest version of the Azure Landing Zone and Portal Accelerator, enabling the tracking and pinning of release versions to a specific date. This is a common practice for many open source projects and we are excited to be able to provide this capability to our customers and partners.
+
+There are two significant benefits to enabling GitHub Releases:
+
+- **Versioning** - The ALZ team will publish a new release for each significant change that is merged into the `main` branch. This will enable customers and partners to pin their deployments to a specific version of ALZ and the Portal Accelerator, enabling them to control when they upgrade to the latest version. Downstream services (e.g. Bicep, Terraform, deliveries, etc) that rely on ALZ can also pin to a specific version of ALZ, enabling them to control the version they work with and when they upgrade to the next/latest version. This also enables the powerful release compare capability that allows customers and partners to compare the differences between releases.
+- **Release notes** - The ALZ team will publish release notes for each release, providing a summary of the changes that have been made since the previous release. This will enable customers and partners to understand what has changed and what they need to do to upgrade to the latest version.
+
+### What if I always want the latest release of ALZ?
+
+If you always want to deploy the latest release of ALZ, you can use the `main` branch. The `main` branch will always contain the latest release of ALZ and the Portal Accelerator. However, we recommend that you pin to a specific release version, as this will enable you to control when you upgrade to the latest version.
+
+### How does this impact me if I am using the ALZ Portal Accelerator?
+
+If you are using the ALZ Portal Accelerator, you will not notice any changes. The ALZ Portal Accelerator will continue to work as it does today. However, should you wish to deploy a previous release of ALZ using the Portal Accelerator, you can do so using the GitHub Release.
+
+Instead of deploying from the `main` branch:
+
+```URI
+https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2FeslzArm%2Feslz-portal.json
+```
+
+You may choose to deploy the 2023-10-17 release (note the change from `main` to `2023-10-17` in the URI):
+
+```URI
+https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2F2023-10-17%2FeslzArm%2FeslzArm.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2F2023-10-17%2FeslzArm%2Feslz-portal.json
+```
+
+### How do I browse a specific release of ALZ in GitHub?
+
+You can browse a specific release of ALZ in GitHub by using the `tags` feature. For example, to browse the 2023-10-17 release of ALZ, you can use the Switch branches/tags dropdown and select the 2023-10-17 tag.
+
+![GitHub Tags](media/2023-10-30_RepoTags.png)
+
+### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+
+There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated.
+When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds:
+
+- create an exclusion where you can exclude a specific scope of resources to be excluded from the policy assignment
+- create a temporary policy exemption where you can exclude a specific scope of resources to be excluded from the policy assignment for the duration of deployment (recommended)
+
+Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver.
+If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
