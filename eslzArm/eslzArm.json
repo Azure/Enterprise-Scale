@@ -1209,7 +1209,8 @@
         },
         "privateDnsZonesMerge": "[if(and(contains(variables('azBackupGeoCodes'), parameters('connectivityLocation')), contains(variables('privateDnsZones'), 'privatelink.regionGeoShortCode.backup.windowsazure.com')), union(createArray(replace(variables('privateDnsZones')[0], '.regionGeoShortCode.', concat('.', variables('azBackupGeoCodes')[toLower(parameters('connectivityLocation'))], '.'))), variables('privateDnsZones')), variables('privateDnsZones'))]",
         "privateDnsZonesMergedWithBackupPlaceholderRemoved": "[filter(variables('privateDnsZonesMerge'), lambda('i', not(equals(lambdaVariables('i'), 'privatelink.regionGeoShortCode.backup.windowsazure.com'))))]",
-        "subscriptionIds": "[union(parameters('onlineLzSubscriptionId'), parameters('corpLzSubscriptionId'), parameters('corpConnectedLzSubscriptionId').subs, if(empty(parameters('singlePlatformSubscriptionId')), createArray(parameters('managementSubscriptionId'), parameters('connectivitySubscriptionId'), parameters('identitySubscriptionId')), createArray(parameters('singlePlatformSubscriptionId'))))]",
+        "corpConnectedLzSubscriptionIds": "[parameters('corpConnectedLzSubscriptionId').subs]",
+        "subscriptionIds": "[union(parameters('onlineLzSubscriptionId'), parameters('corpLzSubscriptionId'), variables('corpConnectedLzSubscriptionIds'), if(empty(parameters('singlePlatformSubscriptionId')), createArray(parameters('managementSubscriptionId'), parameters('connectivitySubscriptionId'), parameters('identitySubscriptionId')), createArray(parameters('singlePlatformSubscriptionId'))))]",
         "roleDefinitions": {
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
@@ -1692,7 +1693,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('deploymentNames').userAssignedIdentityRgDeploymentName, copyIndex())]",
-            "subscriptionId": "[string(variables('subscriptionIds')[copyIndex()])]",
+            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
@@ -1730,7 +1731,7 @@
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('deploymentNames').userAssignedIdentityDeploymentName, copyIndex())]",
             "location": "[deployment().location]",
-            "subscriptionId": "[string(variables('subscriptionIds')[copyIndex()])]",
+            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "userAssignedIdentityRg"
