@@ -76,6 +76,17 @@
                                 "method": "GET",
                                 "path": "locations?api-version=2019-11-01"
                             }
+                        },
+                        {
+                            "name": "getRegulatoryCompliancePolicies",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "POST",
+                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+                                "body": {
+                                    "query": "policyresources | where type == 'microsoft.authorization/policysetdefinitions' | extend metadataCategory=tostring(properties.metadata.category) | extend displayName=tostring(properties.displayName) | extend description=tostring(properties.description) | where properties.metadata.category =~ 'Regulatory Compliance' | project id, name, displayName, description, metadataCategory | project label=displayName, description, value=id | order by label asc"
+                                }
+                            }
                         }
                     ]
                 },
@@ -3862,6 +3873,29 @@
                                 }
                             ],
                             "visible": "[equals(steps('basics').cloudEnvironment.selection, 'AzureCloud')]"
+                        }
+                    ]
+                },
+                {
+                    "name": "regulatory",
+                    "label": "Regulatory Compliance",
+                    "elements": [
+                        {
+                            "name": "selector",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Regulatory Compliance Policies",
+                            "defaultValue": "[parse('[]')]",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter Regulatory Compliance Policy Initiatives...",
+                            "multiLine": true,
+                            "visible": true,
+                            "constraints": {
+                                "allowedValues": "[steps('basics').getRegulatoryCompliancePolicies.data]",
+                                "required": true
+                            }
                         }
                     ]
                 }
