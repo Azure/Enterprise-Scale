@@ -1,0 +1,154 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "StorageAccounts",
+            "properties": {
+                "pricingTier": "Standard",
+                "subPlan": "DefenderForStorageV2",
+                "extensions": [
+                    {
+                        "name": "OnUploadMalwareScanning",
+                        "isEnabled": "True",
+                        "additionalExtensionProperties": {
+                            "CapGBPerMonthPerStorageAccount": "5000"
+                        }
+                    },
+                    {
+                        "name": "SensitiveDataDiscovery",
+                        "isEnabled": "True"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "VirtualMachines",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'StorageAccounts')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard",
+                "subPlan": "P2",
+                "resourcesCoverageStatus": "FullyCovered"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "SqlServers",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'VirtualMachines')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "AppServices",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'SqlServers')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "SqlServerVirtualMachines",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'AppServices')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "Containers",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'SqlServerVirtualMachines')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "KeyVaults",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'Containers')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "Arm",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'KeyVaults')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "OpenSourceRelationalDatabases",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'Arm')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "CosmosDbs",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'OpenSourceRelationalDatabases')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "CloudPosture",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'CosmosDbs')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        },
+                {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2024-01-01",
+            "name": "Api",
+            "dependsOn": [
+                "[resourceId('Microsoft.Security/pricings', 'CloudPosture')]"
+            ],
+            "properties": {
+                "pricingTier": "Standard"
+            }
+        }
+    ],
+    "outputs": {}
+}
