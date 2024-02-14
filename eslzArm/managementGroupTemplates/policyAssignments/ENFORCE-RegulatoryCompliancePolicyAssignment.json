@@ -1,0 +1,81 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "policySetDefinitionId": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID of the Policy Initative (Set Definition)"
+            }
+        },
+        "policySetDefinitionDisplayName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Display Name for the Policy Initative (Set Definition)"
+            }
+        },
+        "policySetDefinitionDescription": {
+            "type": "string",
+            "metadata": {
+                "description": "The Description for the Policy Initative (Set Definition)"
+            }
+        },
+        "policyAssignmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name for the Policy Assignment"
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        }
+    },
+    "variables": {
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "roleAssignmentNames": {
+            "deployRoles": "[guid(concat(parameters('topLevelManagementGroupPrefix'), parameters('policyAssignmentName')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[parameters('policyAssignmentName')]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[parameters('policySetDefinitionDescription')]",
+                "displayName": "[parameters('policySetDefinitionDisplayName')]",
+                "policyDefinitionId": "[parameters('policySetDefinitionId')]",
+                "enforcementMode": "[parameters('enforcementMode')]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployRoles]",
+            "dependsOn": [
+                "[parameters('policyAssignmentName')]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', parameters('policyAssignmentName')), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
