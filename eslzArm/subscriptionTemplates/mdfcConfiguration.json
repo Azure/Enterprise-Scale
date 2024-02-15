@@ -604,30 +604,6 @@
             }
         },
         {
-            "type": "Microsoft.Security/automations",
-            "apiVersion": "2024-01-01",
-            "name": "ExportToWorkspace",
-            "location": "[parameters('resourceGroupLocation')]",
-            "resourceGroup": "[parameters('resourceGroupName')]",
-            "properties": {
-                "description": "Export Microsoft Defender for Cloud data to Log Analytics workspace",
-                "isEnabled": true,
-                "scopes": [
-                    {
-                        "description": "[replace(variables('scopeDescription'),'{0}', subscription().subscriptionId)]",
-                        "scopePath": "[subscription().id]"
-                    }
-                ],
-                "sources": "[variables('sources')]",
-                "actions": [
-                    {
-                        "actionType": "Workspace",
-                        "workspaceResourceId": "[parameters('logAnalyticsResourceId')]"
-                    }
-                ]
-            }
-        },
-        {
             "type": "Microsoft.Security/securityContacts",
             "apiVersion": "2020-01-01-preview",
             "name": "default",
@@ -645,6 +621,81 @@
                     "minimalSeverity": "Medium"
                 }
             }
+        },
+        {
+            "name": "[parameters('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('resourceGroupLocation')]"
+
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[concat('nestedAutomationDeployment', '_', newGuid())]",
+            "resourceGroup": "[parameters('resourceGroupName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('resourceGroupName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "tags": {},
+                            "apiVersion": "2019-01-01-preview",
+                            "location": "[parameters('resourceGroupLocation')]",
+                            "name": "ExportToWorkspace",
+                            "type": "Microsoft.Security/automations",
+                            "dependsOn": [],
+                            "properties": {
+                                "description": "Export Microsoft Defender for Cloud data to Log Analytics workspace via policy",
+                                "isEnabled": true,
+                                "scopes": [
+                                    {
+                                    "description": "[replace(variables('scopeDescription'),'{0}', subscription().subscriptionId)]",
+                                    "scopePath": "[subscription().id]"
+                                    }
+                                ],
+                                "sources": "[variables('sources')]",
+                                "actions": [
+                                    {
+                                        "actionType": "Workspace",
+                                        "workspaceResourceId": "[parameters('logAnalyticsResourceId')]"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        // {
+        //     "type": "Microsoft.Security/automations",
+        //     "apiVersion": "2024-01-01",
+        //     "name": "ExportToWorkspace",
+        //     "location": "[parameters('resourceGroupLocation')]",
+        //     "properties": {
+        //         "description": "Export Microsoft Defender for Cloud data to Log Analytics workspace",
+        //         "isEnabled": true,
+        //         "scopes": [
+        //             {
+        //                 "description": "[replace(variables('scopeDescription'),'{0}', subscription().subscriptionId)]",
+        //                 "scopePath": "[subscription().id]"
+        //             }
+        //         ],
+        //         "sources": "[variables('sources')]",
+        //         "actions": [
+        //             {
+        //                 "actionType": "Workspace",
+        //                 "workspaceResourceId": "[parameters('logAnalyticsResourceId')]"
+        //             }
+        //         ]
+        //     }
         }
     ],
     "outputs": {}
