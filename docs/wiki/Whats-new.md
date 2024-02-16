@@ -43,6 +43,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
 - Disabled a Policy in the Microsoft Defender for SQL initiative. As it is not required at this stage. See [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more details.
 - Changed enforcementMode of the assignment of Policy "Deploy-UserAssignedManagedIdentity-VMInsights" to Default. This is to ensure that a Resource Group and a User Assigned Managed Identity are created on new subscriptions (subscriptions that are added after the initial deployment).
 - Bug fix for Portal Accelerator. userAssignedIdentityResourceGroup has been added as output for the Portal UI, this fixes deploying the Resource Group with a custom name.
