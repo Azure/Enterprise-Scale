@@ -52,6 +52,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Bug fix for Portal Accelerator. userAssignedIdentityResourceGroup has been added as output for the Portal UI, this fixes deploying the Resource Group with a custom name.
 - Bug fix for Portal Accelerator. `subscriptionIds` now uses lambda function to obtain the subscription IDs from `corpConnectedLzSubscriptionId`. This fixes the Invalid Template error when selecting a corp connected landing zone deployment.
 - Bug fix for Portal Accelerator. `connectivitySubscriptionId` is now skipped when no networking components are deployed. This fixes an InvalidTemplateDeployment error deploying the Resource Group for UAMI.
+- From Portal Accelerator: removed the options to select VM vulnerability assessment provider and to select Defender for Cloud for DNS. These are now default to the recommended settings.
 
 ### AMA Update for the Portal Accelerator
 
