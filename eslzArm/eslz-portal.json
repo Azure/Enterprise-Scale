@@ -890,6 +890,26 @@
                             }
                         },
                         {
+                            "name": "enableServiceHealth",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Service Health Alerts",
+                            "defaultValue": "Yes (highly recommended)",
+                            "toolTip": "If 'Yes' is selected Azure Monitor Baseline Alerts - Service Health alerts will be enabled on subscriptions in scope. Note that choosing Yes will import all Monitor baseline alerts into your environment, and assign the Deploy Azure Monitor Service Health policy initiative to your designated intermediate root. For more information on what is included in the Service Health initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (highly recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
                             "name": "enableMonitorBaselines",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy one or more Azure Monitor Baseline Alerts",
@@ -908,32 +928,6 @@
                                 ]
                             },
                             "visible": true
-                        },
-                        {
-                            "name": "monitorAlertsResourceGroup",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Resource group for baseline alerts",
-                            "toolTip": "Resource group for activity log alerts and action groups. Will be created in all subscriptions in scope for the policy",
-                            "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                            "defaultValue": "rg-amba-monitoring-001",
-                            "constraints": {
-                                "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
-                                "validationMessage": "Please provide a valid resource group name"
-                            }
-                        },
-                        {
-                            "name": "emailContactActionGroup",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Email contact for action group notifications",
-                            "toolTip": "Email address to get email notifications from alerts",
-                            "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                            "defaultValue": "",
-                            "constraints": {
-                                "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                                "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
-                                "validationMessage": "Please provide a valid email address"
-                            }
                         },
                         {
                             "name": "enableMonitorConnectivity",
@@ -1014,6 +1008,50 @@
                                 ]
                             },
                             "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]"
+                        },
+                        {
+                            "name": "esAmbaAgSubSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Action Group configuration",
+                            "elements": [
+                                {
+                                    "name": "esAMBAAgInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Configure the action groups for notifications...",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
+                                        "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "monitorAlertsResourceGroup",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Resource group for baseline alerts",
+                                    "toolTip": "Resource group for activity log alerts and action groups. Will be created in all subscriptions in scope for the policy",
+                                    "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
+                                    "defaultValue": "rg-amba-monitoring-001",
+                                    "constraints": {
+                                        "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
+                                        "validationMessage": "Please provide a valid resource group name"
+                                    }
+                                },
+                                {
+                                    "name": "emailContactActionGroup",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Email contact for action group notifications",
+                                    "toolTip": "Email address to get email notifications from alerts",
+                                    "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
+                                    "defaultValue": "",
+                                    "constraints": {
+                                        "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
+                                        "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                                        "validationMessage": "Please provide a valid email address"
+                                    }
+                                }
+                            ],
+                            "visible": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]"
                         }
                     ]
                 },
