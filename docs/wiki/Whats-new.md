@@ -43,8 +43,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
-- Remove Defender for Cloud for DNS, as this is now deprecated and included in Defender for Servers. This is a breaking change, and you will need to remove the existing assignment and then redeploy the updated initiative.
-- Initiative [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) has been updated to remove this assignment, and is also a breaking change.
+- **Breaking Change** Removed Defender for Cloud for DNS, as this is now deprecated and is now included in Defender for Servers. This is a breaking change, and you will need to remove the existing initiative assignment [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) and redeploy the updated initiative.
 
 #### Tooling
 
