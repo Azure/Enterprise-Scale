@@ -41,6 +41,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### February 2024
 
+#### Policy
+
+- Remove Defender for Cloud for DNS, as this is now deprecated and included in Defender for Servers. This is a breaking change, and you will need to remove the existing assignment and then redeploy the updated initiative.
+- Initiative [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) has been updated to remove this assignment, and is also a breaking change.
+
 #### Tooling
 
 - Disabled a Policy in the Microsoft Defender for SQL initiative. As it is not required at this stage. See [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more details.
