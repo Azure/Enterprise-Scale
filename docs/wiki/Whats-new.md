@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [March 2024](#march-2024)
   - [AMA Update for the Portal Accelerator](#AMA-Update-for-the-Portal-Accelerator)
   - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
@@ -38,6 +39,22 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### March 2024
+
+#### Policy
+
+- Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Virtual Desktop hostpool resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/9427df23-0f42-4e1e-bf99-a6133d841c4a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Virtual Desktop workspace resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/34804460-d88b-4922-a7ca-537165e060ed.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Device Update for IoT Hub accounts to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/a222b93a-e6c2-4c01-817f-21e092455b2a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Arc Private Link Scopes to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/55c4db33-97b0-437b-8469-c4f4498f5df9.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Deploy - Configure IoT Central to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/d627d7c6-ded5-481a-8f2e-7e16b1e6faf6.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Recovery Services vaults to use private DNS zones for backup](https://www.azadvertizer.net/azpolicyadvertizer/af783da1-4ad1-42be-800d-d19c70038820.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+
 
 ### February 2024
 
