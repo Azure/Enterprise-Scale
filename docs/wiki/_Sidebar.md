@@ -19,6 +19,7 @@
   * [What happens when you deploy Enterprise-Scale?](./How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
 * Deploying Enterprise-Scale
   * [Pre-requisites](./Deploying-ALZ-Pre-requisites)
+  * [ALZ Resource Providers Guidance](./ALZ-Resource-Provider-Recommendations)
   * [Configure Microsoft Entra permissions](./ALZ-Setup-aad-permissions)
   * [Configure Azure permissions](./ALZ-Setup-azure)
   * [Deploy landing zones](./ALZ-Deploy-landing-zones)
@@ -37,6 +38,9 @@
   * [Policies included in Azure landing zones reference implementations](./ALZ-Policies)
   * [Migrate Azure landing zones custom policies to Azure built-in policies](./Migrate-ALZ-Policies-to-Built%E2%80%90in)
   * [Updating Azure landing zones custom policies to latest](./Update-ALZ-Custom-Policies-to-Latest)
+* MMA Deprecation Guidance
+  * [Azure Monitor Agent Update](./ALZ-AMA-Update)
+  * [AMA FAQ](./ALZ-AMA-FAQ)
 * [Contributing](./ALZ-Contribution-Guide)
   * [Reporting Bugs](./ALZ-Contribution-Guide#reporting-bugs)
   * [Feature Requests](./ALZ-Contribution-Guide#feature-requests)
