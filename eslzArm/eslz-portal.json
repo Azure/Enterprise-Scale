@@ -4072,9 +4072,53 @@
                             }
                         },
                         {
+                            "name": "regPolicyParamAusGovIsmRestricted",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Australian Government ISM PROTECTED - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamAusGovIsmRestrictedNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of Australian Government ISM PROTECTED that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParAusGovIsmRestrictedVmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2"
+                                },
+                                {
+                                    "name": "regCompPolParAusGovIsmRestrictedResourceTypes",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "List of resource types that should have diagnostic logging enabled",
+                                    "defaultValue": "All Resource Types",
+                                    "toolTip": "You can select either all or none here in this portal experience, if you wish to be more granular please chose either option and then once deployed via the ALZ portal accelerator you can edit the assignment via the Policy area of the Azure Portal.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "All Resource Types",
+                                                "value": "all"
+                                            },
+                                            {
+                                                "label": "None",
+                                                "value": "none"
+                                            }
+                                        ],
+                                        "required": true
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/27272c0b-c225-4cc3-b8b0-f2534b093077'), true, false)]"
+                        },
+                        {
                             "name": "regPolicyParamNewZelandIsmRestricted",
                             "type": "Microsoft.Common.Section",
-                            "label": "New Zealand ISM Restricted - Required Policy Initative Parameters", 
+                            "label": "New Zealand ISM Restricted - Required Policy Initative Parameters",
                             "elements": [
                                 {
                                     "name": "regCompliancePolicyParamNewZelandIsmRestrictedNeededWarn",
@@ -4086,13 +4130,13 @@
                                     }
                                 },
                                 {
-                                    "name": "regCompliancePolicyParamNewZelandIsmRestrictedParamVmAdminsInclude",
+                                    "name": "regCompPolParNZIsmRestrictedVmAdminsInclude",
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "List of users that must be included in Windows VM Administrators group",
                                     "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2"
                                 },
                                 {
-                                    "name": "regCompliancePolicyParamNewZelandIsmRestrictedParamVmAdminsExclude",
+                                    "name": "regCompPolParNZIsmRestrictedVmAdminsExclude",
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "List of users that must be excluded in Windows VM Administrators group",
                                     "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2"
@@ -4210,7 +4254,11 @@
                 "enableDecommissioned": "[steps('decommissionedSandboxZones').decommSection.enableDecommissioned]",
                 "enableSandbox": "[steps('decommissionedSandboxZones').sandboxSection.enableSandbox]",
                 "userAssignedIdentityResourceGroup": "[steps('management').userAssignedIdentityResourceGroup]",
-                "regulatoryComplianceInitativesToAssign": "[steps('regulatory').regComplianceSelectorFull]"
+                "regulatoryComplianceInitativesToAssign": "[steps('regulatory').regComplianceSelectorFull]",
+                "regCompPolParNZIsmRestrictedVmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamNewZelandIsmRestricted.regCompPolParNZIsmRestrictedVmAdminsInclude, '')]",
+                "regCompPolParNZIsmRestrictedVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamNewZelandIsmRestricted.regCompPolParNZIsmRestrictedVmAdminsExclude, '')]",
+                "regCompPolParAusGovIsmRestrictedVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamAusGovIsmRestricted.regCompPolParAusGovIsmRestrictedVmAdminsExclude, '')]",
+                "regCompPolParAusGovIsmRestrictedResourceTypes": "[steps('regulatory').regPolicyParamAusGovIsmRestricted.regCompPolParAusGovIsmRestrictedResourceTypes]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"
