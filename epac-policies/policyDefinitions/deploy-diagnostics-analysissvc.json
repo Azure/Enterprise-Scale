@@ -1,0 +1,152 @@
+{
+    "name": "analysissvc-logging",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "properties": {
+        "policyType": "Custom",
+        "mode": "Indexed",
+        "displayName": "Deploy Diagnostic Settings for Analysis Services to Storage",
+        "description": "Deploys the diagnostic settings for Analysis Services to stream to a Storage Account when any Analysis Services, which is missing this diagnostic setting, is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Monitoring",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "storageAccountId": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Storage Account ID",
+                    "description": "The resource ID of the storage account to which you would like to send Diagnostic Logs."
+                }
+            },
+            "effect": {
+                "type": "String",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "Disabled"
+                ],
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "profileName": {
+                "type": "String",
+                "defaultValue": "setbypolicy",
+                "metadata": {
+                    "displayName": "Profile name",
+                    "description": "The diagnostic settings profile name"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "field": "type",
+                "equals": "Microsoft.AnalysisServices/servers"
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "name": "[parameters('profileName')]",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+                                "matchInsensitively": "[parameters('storageAccountId')]"
+                            }
+                        ]
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "Incremental",
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "resourceName": {
+                                        "type": "String"
+                                    },
+                                    "storageAccountId": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "String"
+                                    },
+                                    "profileName": {
+                                        "type": "String"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.AnalysisServices/servers/providers/diagnosticSettings",
+                                        "apiVersion": "2017-05-01-preview",
+                                        "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+                                        "location": "[parameters('location')]",
+                                        "dependsOn": [],
+                                        "properties": {
+                                            "storageAccountId": "[parameters('storageAccountId')]",
+                                            "metrics": [
+                                                {
+                                                    "category": "AllMetrics",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    },
+                                                    "timeGrain": null
+                                                }
+                                            ],
+                                            "logs": [
+                                                {
+                                                    "category": "Engine",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "Service",
+                                                    "enabled": true
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            },
+                            "parameters": {
+                                "storageAccountId": {
+                                    "value": "[parameters('storageAccountId')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "resourceName": {
+                                    "value": "[field('name')]"
+                                },
+                                "profileName": {
+                                    "value": "[parameters('profileName')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

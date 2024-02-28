@@ -1,0 +1,151 @@
+{
+    "name": "appgwcontainer-logging",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "properties": {
+        "policyType": "Custom",
+        "mode": "Indexed",
+        "displayName": "Deploy Diagnostic Settings for Application Gateway for Containers to Storage",
+        "description": "Deploys the diagnostic settings for Application Gateway for Containers to stream to a Storage Account. The Policy will set the diagnostic with all metrics and category enabled",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Monitoring",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "defaultValue": "DeployIfNotExists",
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "Disabled"
+                ],
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "storageAccountId": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Storage Account ID",
+                    "description": "The resource ID of the storage account to which you would like to send Diagnostic Logs."
+                }
+            },
+            "profileName": {
+                "type": "String",
+                "defaultValue": "setbypolicy",
+                "metadata": {
+                    "displayName": "Profile name",
+                    "description": "The diagnostic settings profile name"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "field": "type",
+                "equals": "Microsoft.ServiceNetworking/TrafficControllers"
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "name": "[parameters('profileName')]",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+                                "matchInsensitively": "[parameters('storageAccountId')]"
+                            }
+                        ]
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "Incremental",
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "resourceName": {
+                                        "type": "String"
+                                    },
+                                    "location": {
+                                        "type": "String"
+                                    },
+                                    "profileName": {
+                                        "type": "String"
+                                    },
+                                    "storageAccountId": {
+                                        "type": "String"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.ServiceNetworking/TrafficControllers/providers/diagnosticSettings",
+                                        "apiVersion": "2017-05-01-preview",
+                                        "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+                                        "location": "[parameters('location')]",
+                                        "dependsOn": [],
+                                        "properties": {
+                                            "storageAccountId": "[parameters('storageAccountId')]",
+                                            "metrics": [
+                                                {
+                                                    "category": "AllMetrics",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                }
+                                            ],
+                                            "logs": [
+                                                {
+                                                    "category": "TrafficControllerAccessLog",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            },
+                            "parameters": {
+                                "storageAccountId": {
+                                    "value": "[parameters('storageAccountId')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "resourceName": {
+                                    "value": "[field('name')]"
+                                },
+                                "profileName": {
+                                    "value": "[parameters('profileName')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

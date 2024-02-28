@@ -1,0 +1,148 @@
+{
+    "name": "sparkpool-logging",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "properties": {
+        "displayName": "Deploy Diagnostic Settings for Synapse Spark Pool to Storage",
+        "description": "Deploys the diagnostic settings for Synapse Spark Pools to stream to a Storage Account when any Synapse Spark Pools, which is missing this diagnostic setting, is created or updated. The policy will set the diagnostic with all metrics and category enabled.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Synapse"
+        },
+        "mode": "Indexed",
+        "parameters": {
+            "storageAccountId": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Storage Account ID",
+                    "description": "The resource ID of the storage account to which you would like to send Diagnostic Logs."
+                }
+            },
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "DeployIfNotExists, AuditIfNotExists or Disabled the execution of the Policy"
+                },
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "AuditIfNotExists",
+                    "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+            },
+            "profileName": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Profile name",
+                    "description": "The diagnostic settings profile name"
+                },
+                "defaultValue": "setbypolicy"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "field": "type",
+                "equals": "Microsoft.Synapse/workspaces/bigDataPools"
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "name": "[parameters('profileName')]",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+                                "matchInsensitively": "[parameters('storageAccountId')]"
+                            }
+                        ]
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "resourceName": {
+                                        "type": "string"
+                                    },
+                                    "storageAccountId": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "profileName": {
+                                        "type": "String"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Synapse/workspaces/bigDataPools/providers/diagnosticSettings",
+                                        "apiVersion": "2021-05-01-preview",
+                                        "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/setbypolicy')]",
+                                        "location": "[parameters('location')]",
+                                        "dependsOn": [],
+                                        "properties": {
+                                            "storageAccountId": "[parameters('storageAccountId')]",
+                                            "metrics": [
+                                                {
+                                                    "category": "AllMetrics",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "days": 0,
+                                                        "enabled": false
+                                                    },
+                                                    "timeGrain": null
+                                                }
+                                            ],
+                                            "logs": [
+                                                {
+                                                    "categoryGroup": "allLogs",
+                                                    "enabled": "true"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "outputs": {
+                                    "policy": {
+                                        "type": "string",
+                                        "value": "[concat('Diagnostic setting ', parameters('profileName'), ' for type Synapse Spark Pool (Microsoft.Synapse/workspaces/bigDataPools), resourceName ', parameters('resourceName'), ' to Storage Account ', parameters('storageAccountId'),' configured')]"
+                                    }
+                                }
+                            },
+                            "parameters": {
+                                "storageAccountId": {
+                                    "value": "[parameters('storageAccountId')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "resourceName": {
+                                    "value": "[field('fullName')]"
+                                },
+                                "profileName": {
+                                    "value": "[parameters('profileName')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

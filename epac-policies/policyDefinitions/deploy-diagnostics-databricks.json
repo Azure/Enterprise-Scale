@@ -1,0 +1,370 @@
+{
+    "name": "databricks-logging",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "properties": {
+        "policyType": "Custom",
+        "mode": "Indexed",
+        "displayName": "Deploy Diagnostic Settings for Azure Databricks service to Storage",
+        "description": "Deploys the diagnostic settings for Azure Databricks service. The Policy will set the diagnostic with all logs enabled.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Monitoring",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "storageAccountId": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Storage Account ID",
+                    "description": "The resource ID of the storage account to which you would like to send Diagnostic Logs."
+                }
+            },
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+            },
+            "profileName": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Profile name",
+                    "description": "The diagnostic settings profile name"
+                },
+                "defaultValue": "setbypolicy_storage"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "field": "type",
+                "equals": "Microsoft.Databricks/workspaces"
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "name": "[parameters('profileName')]",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                "equals": "true"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+                                "matchInsensitively": "[parameters('storageAccountId')]"
+                            }
+                        ]
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "Incremental",
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "resourceName": {
+                                        "type": "String"
+                                    },
+                                    "storageAccountId": {
+                                        "type": "String"
+                                    },
+                                    "location": {
+                                        "type": "String"
+                                    },
+                                    "profileName": {
+                                        "type": "String"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Databricks/workspaces/providers/diagnosticSettings",
+                                        "apiVersion": "2017-05-01-preview",
+                                        "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+                                        "location": "[parameters('location')]",
+                                        "dependsOn": [],
+                                        "properties": {
+                                            "storageAccountId": "[parameters('storageAccountId')]",
+                                            "logs": [
+                                                {
+                                                    "category": "dbfs",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "clusters",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "accounts",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "jobs",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "notebook",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "ssh",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "workspace",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "secrets",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "sqlPermissions",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "instancePools",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "sqlanalytics",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "genie",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "globalInitScripts",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "iamRole",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "mlflowExperiment",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "featureStore",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "RemoteHistoryService",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "mlflowAcledArtifact",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "databrickssql",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "deltaPipelines",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "modelRegistry",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "repos",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "unityCatalog",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "gitCredentials",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "webTerminal",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "serverlessRealTimeInference",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "clusterLibraries",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "partnerHub",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "clamAVScan",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                },
+                                                {
+                                                    "category": "capsule8Dataplane",
+                                                    "categoryGroup": null,
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            },
+                            "parameters": {
+                                "storageAccountId": {
+                                    "value": "[parameters('storageAccountId')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "resourceName": {
+                                    "value": "[field('name')]"
+                                },
+                                "profileName": {
+                                    "value": "[parameters('profileName')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
