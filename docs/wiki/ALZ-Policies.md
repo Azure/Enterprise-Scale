@@ -18,7 +18,7 @@ We work with - and learn from our customers and partners to ensure that we evolv
 
 There are around 114 custom Azure Policy Definitions included and around 12 Custom Azure Policy Initiatives included as part of the Azure Landing Zones implementation that add on to those already built-in within each Azure customers tenant.
 
-All custom Azure Policy Definitions and Initiatives are the same across all 3 implementation options for Azure landing zones; [Terraform Module](https://aka.ms/alz/tf), [Bicep Modules](https://aka.ms/alz/bicep), [Azure landing zone portal accelerator](https://aka.ms/alz#azure-landing-zone-accelerator).
+For Azure landing zones, the custom Azure Policy Definitions and Initiatives are consistent across the three implementation options, unless otherwise noted; [Terraform Module](https://aka.ms/alz/tf), [Bicep Modules](https://aka.ms/alz/bicep), [Azure landing zone portal accelerator](https://aka.ms/alz#azure-landing-zone-accelerator).
 
 This is because the single source of truth is the [`Enterprise-Scale` repo](https://github.com/Azure/Enterprise-Scale) that both the Terraform and Bicep implementation options pull from to build their `lib` folders respectively.
 
