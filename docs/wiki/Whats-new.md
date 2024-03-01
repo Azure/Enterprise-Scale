@@ -1,7 +1,9 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [AMA Update for the Portal Accelerator](#AMA-Update-for-the-Portal-Accelerator)
+  - [March 2024](#march-2024)
+  - [February 2024](#february-2024)
+  - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
   - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
   - [December 2023](#december-2023)
@@ -55,7 +57,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Bug fix for Portal Accelerator. `subscriptionIds` now uses lambda function to obtain the subscription IDs from `corpConnectedLzSubscriptionId`. This fixes the Invalid Template error when selecting a corp connected landing zone deployment.
 - Bug fix for Portal Accelerator. `connectivitySubscriptionId` is now skipped when no networking components are deployed. This fixes an InvalidTemplateDeployment error deploying the Resource Group for UAMI.
 
-#### AMA Update for the Portal Accelerator
+### AMA Update for the Portal Accelerator
 
 The Azure Monitor Agent (AMA) is the new way to collect and send data to Azure Monitor. The Log Analytics agent, or the Microsoft Monitoring Agent (MMA), will no longer be supported after August 2024. To adapt to this change, the ALZ Portal Accelerator has been updated to use AMA instead of MMA.
 
@@ -65,7 +67,7 @@ We are happy to announce that we have added a new section in the documentation f
 
 > **IMPORTANT** We've added an ALZ AMA FAQ with important information about key changes in AMA. Please read the [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more information.
 
-#### 🔃 Policy Refresh Q2 FY24
+### 🔃 Policy Refresh Q2 FY24
 
 Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some very important initiatives that we feel had to make it into this refresh.
 
