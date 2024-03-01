@@ -202,7 +202,7 @@ You can browse a specific release of ALZ in GitHub by using the `tags` feature. 
 
 ![GitHub Tags](media/2023-10-30_RepoTags.png)
 
-### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+### Why some managed services will potentially fail to deploy to ALZ and how to work around this issue?
 
 There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated.
 When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds:
@@ -212,3 +212,7 @@ When a service is deployed to ALZ, be mindful of default ALZ Policies and unders
 
 Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver.
 If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
+
+### When can I deploy ALZ to new Azure Regions?
+
+As new Azure regions come online, they are rolled out in a phased approach and whilst the region may be available for use, not all features may be available during the early period. For Azure landing zones this means that you may experience unexpected deployment failures where certain components are not available. As ALZ provides different options and selections no 2 deployments may be the same and therefore deployment outcomes can differ. Should you experience an issue deploying ALZ to a new region please raise a support ticket for review.
