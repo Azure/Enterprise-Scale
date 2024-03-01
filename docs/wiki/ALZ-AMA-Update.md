@@ -60,26 +60,29 @@ The migration from MMA to AMA has been a mayor project across multiple teams wit
     - dcr-vminsights-prod-<region>-001
 
 ## New Custom Policy Definitions
-- Configure periodic checking for missing system updates on azure virtual machines and Arc-enabled virtual machines.
-    - Windows: /providers/Microsoft.Authorization/policyDefinitions/59efceea-0c96-497e-a4a1-4eb2290dac15
-    - Linux: /providers/Microsoft.Authorization/policyDefinitions/59efceea-0c96-497e-a4a1-4eb2290dac15
-    - Windows: /providers/Microsoft.Authorization/policyDefinitions/bfea026e-043f-4ff4-9d1b-bf301ca7ff46
-    - Linux: /providers/Microsoft.Authorization/policyDefinitions/bfea026e-043f-4ff4-9d1b-bf301ca7ff46
-- Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace
-    - Configure Arc-enabled SQL Servers with Data Collection Rule Association to Microsoft Defender for SQL user-defined DCR
-    - Configure Arc-enabled SQL Servers to automatically install Microsoft Defender for SQL and DCR with a user-defined LA workspace
-    - Configure SQL Virtual Machines to automatically install Azure Monitor Agent
-    - Configure SQL Virtual Machines to automatically install Microsoft Defender for SQL and DCR with a user-defined LA workspace
-    - Configure SQL Virtual Machines to automatically install Microsoft Defender for SQL
-- Deploy User Assigned Managed Identity for VM Insights
+| Parent Policy Initiative | Policy Definition |
+|---|---|
+| [Configure periodic checking for missing system updates on azure virtual machines and Arc-enabled virtual machines](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-AUM-CheckUpdates.html) |
+| | Windows: [/providers/Microsoft.Authorization/policyDefinitions/59efceea-0c96-497e-a4a1-4eb2290dac15](https://www.azadvertizer.net/azpolicyadvertizer/59efceea-0c96-497e-a4a1-4eb2290dac15.html) <br> Linux: [/providers/Microsoft.Authorization/policyDefinitions/59efceea-0c96-497e-a4a1-4eb2290dac15](https://www.azadvertizer.net/azpolicyadvertizer/59efceea-0c96-497e-a4a1-4eb2290dac15.html) |
+| | Windows: [/providers/Microsoft.Authorization/policyDefinitions/bfea026e-043f-4ff4-9d1b-bf301ca7ff46](https://www.azadvertizer.net/azpolicyadvertizer/bfea026e-043f-4ff4-9d1b-bf301ca7ff46.html) <br> Linux: [/providers/Microsoft.Authorization/policyDefinitions/bfea026e-043f-4ff4-9d1b-bf301ca7ff46](https://www.azadvertizer.net/azpolicyadvertizer/bfea026e-043f-4ff4-9d1b-bf301ca7ff46.html) | 
+| [Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-DefenderSQL-AMA.html) |
+| | [Configure Arc-enabled SQL Servers with Data Collection Rule Association to Microsoft Defender for SQL user-defined DCR](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-MDFC-Arc-SQL-DCR-Association.html) |
+| | [Configure Arc-enabled SQL Servers to automatically install Microsoft Defender for SQL and DCR with a user-defined LA workspace](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-MDFC-Arc-Sql-DefenderSQL-DCR.html)| 
+| | [Configure SQL Virtual Machines to automatically install Azure Monitor Agent](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-MDFC-SQL-AMA.html) |
+| | [Configure SQL Virtual Machines to automatically install Microsoft Defender for SQL and DCR with a user-defined LA workspace](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-MDFC-SQL-DefenderSQL-DCR.html) | 
+| | [Configure SQL Virtual Machines to automatically install Microsoft Defender for SQL](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-MDFC-SQL-DefenderSQL.html) | 
+| | [Deploy User Assigned Managed Identity for VM Insights](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-UserAssignedManagedIdentity-VMInsights.html)| 
 
 ## New Policy Assignments
-- Enable Azure Monitor for VMSS with Azure Monitoring Agent(AMA) 
-- Enable Azure Monitor for VMs with Azure Monitoring Agent(AMA) 
-- Enable Azure Monitor for Hybrid VMs with AMA 
-- Configure periodic checking for missing system updates on azure virtual machines and Arc-enabled virtual machines.
-- Deploy User Assigned Managed Identity for VM Insights
-- Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace
-- Enable Change Tracking and Inventory for Arc-enabled virtual machines
-- Enable Change Tracking and Inventory for virtual machines
-- Enable ChangeTracking and Inventory for virtual machine scale sets
+
+| Policy Definition / Policy Initiative (Set Definition) | Name |
+|---|---|
+| Policy Initiative | [Enable Azure Monitor for VMSS with Azure Monitoring Agent(AMA)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/f5bf694c-cca7-4033-b883-3a23327d5485.html) |
+| Policy Initiative | [Enable Azure Monitor for VMs with Azure Monitoring Agent(AMA)](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/924bfe3a-762f-40e7-86dd-5c8b95eb09e6.html) |
+| Policy Initiative | [Enable Azure Monitor for Hybrid VMs with AMA](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/2b00397d-c309-49c4-aa5a-f0b2c5bc6321.html) |
+| Policy Initiative (Custom) | [Configure periodic checking for missing system updates on azure virtual machines and Arc-enabled virtual machines](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-AUM-CheckUpdates.html) |
+| Policy Initiative (Custom) | [Deploy User Assigned Managed Identity for VM Insights](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-UserAssignedManagedIdentity-VMInsights.html) |
+| Policy Initiative (Custom) | [Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-DefenderSQL-AMA.html) |
+| Policy Initiative | [Enable Change Tracking and Inventory for Arc-enabled virtual machines](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/53448c70-089b-4f52-8f38-89196d7f2de1.html)  |
+| Policy Initiative | [Enable Change Tracking and Inventory for virtual machines](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/92a36f05-ebc9-4bba-9128-b47ad2ea3354.html) |
+| Policy Initiative | [Enable ChangeTracking and Inventory for virtual machine scale sets](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/c4a70814-96be-461c-889f-2b27429120dc.html) | 
