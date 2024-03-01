@@ -1,18 +1,31 @@
 ## In this Section
 
+- [In this Section](#in-this-section)
+- [Enterprise-scale FAQ](#enterprise-scale-faq)
 - [How long does enterprise-scale architecture take to deploy?](#how-long-does-enterprise-scale-architecture-take-to-deploy)
-- [Why are there custom policy definitions as part of enterprise-scale architecture?](#why-are-there-custom-policy-definitions-as-part-of-enterprise-scale-reference-implementation)
-- [Where can I see the policy definitions used by enterprise-scale landing zones reference implementation?](#where-can-i-see-the-policy-definitions-used-by-the-enterprise-scale-landing-zones-reference-implementation)
-- [Why does enterprise-scale architecture require permission at tenant root '/' scope?](#why-does-the-enterprise-scale-reference-implementation-require-permission-at-tenant-root--scope)
-- [The Azure landing zone accelerator portal-based deployment doesn't display all subscriptions in the drop-down lists?](#the-enterprise-scale-also-known-as-the-azure-landing-zone-accelerator-portal-based-deployment-doesnt-display-all-subscriptions-in-the-drop-down-lists)
+- [Why are there custom policy definitions as part of enterprise-scale reference implementation?](#why-are-there-custom-policy-definitions-as-part-of-enterprise-scale-reference-implementation)
+- [Where can I see the policy definitions used by the enterprise-scale landing zones reference implementation?](#where-can-i-see-the-policy-definitions-used-by-the-enterprise-scale-landing-zones-reference-implementation)
+- [Why does the enterprise-scale reference implementation require permission at tenant root '/' scope?](#why-does-the-enterprise-scale-reference-implementation-require-permission-at-tenant-root--scope)
+- [The enterprise-scale (also known as the Azure landing zone accelerator) portal-based deployment doesn't display all subscriptions in the drop-down lists?](#the-enterprise-scale-also-known-as-the-azure-landing-zone-accelerator-portal-based-deployment-doesnt-display-all-subscriptions-in-the-drop-down-lists)
 - [Can we use and customize the ARM templates for enterprise-scale architecture and check them into our repository and deploy it from there?](#can-we-use-and-customize-the-arm-templates-for-enterprise-scale-architecture-and-check-them-into-our-repository-and-deploy-it-from-there)
 - [What if we can't deploy by using the Azure landing zone accelerator portal-based experience, but can deploy via infrastructure-as-code?](#what-if-we-cant-deploy-by-using-the-azure-landing-zone-accelerator-portal-based-experience-but-can-deploy-via-infrastructure-as-code)
 - [If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?](#if-we-already-deployed-enterprise-scale-architecture-without-using-infrastructure-as-code-do-we-have-to-delete-everything-and-start-again-to-use-infrastructure-as-code)
+  - [ARM Templates](#arm-templates)
+  - [Bicep](#bicep)
+  - [Terraform](#terraform)
 - [The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?](#the-azurediagnostics-table-in-my-log-analytics-workspace-has-hit-the-500-column-limit-what-should-i-do)
+  - [Next steps](#next-steps)
 - [What happens if I have existing Management Groups that have the same Name/IDs as ones that will be deployed in the ALZ Portal Accelerator?](#what-happens-if-i-have-existing-management-groups-that-have-the-same-nameids-as-ones-that-will-be-deployed-in-the-alz-portal-accelerator)
 - [What are the ALZ Portal Accelerator Management Group Name/IDs that are created?](#what-are-the-alz-portal-accelerator-management-group-nameids-that-are-created)
 - [Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?](#why-hasnt-azure-landing-zones-migrated-to-the-azure-monitor-agent-yet)
+  - [What if we are not ready to make the switch and migrate, right now?](#what-if-we-are-not-ready-to-make-the-switch-and-migrate-right-now)
+  - [Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?](#where-do-i-find-more-information-about-the-azure-monitor-baseline-alerts-initiative-included-in-the-azure-landing-zones-portal-accelerator)
 - [What is the impact of GitHub Releases and ALZ?](#what-is-the-impact-of-github-releases-and-alz)
+  - [What if I always want the latest release of ALZ?](#what-if-i-always-want-the-latest-release-of-alz)
+  - [How does this impact me if I am using the ALZ Portal Accelerator?](#how-does-this-impact-me-if-i-am-using-the-alz-portal-accelerator)
+  - [How do I browse a specific release of ALZ in GitHub?](#how-do-i-browse-a-specific-release-of-alz-in-github)
+  - [Why some managed services will potentially fail to deploy to ALZ and how to work around this issue?](#why-some-managed-services-will-potentially-fail-to-deploy-to-alz-and-how-to-work-around-this-issue)
+  - [When can I deploy ALZ and new Azure Regions?](#when-can-i-deploy-alz-and-new-azure-regions)
 
 ---
 
@@ -202,7 +215,7 @@ You can browse a specific release of ALZ in GitHub by using the `tags` feature. 
 
 ![GitHub Tags](media/2023-10-30_RepoTags.png)
 
-### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+### Why some managed services will potentially fail to deploy to ALZ and how to work around this issue?
 
 There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated.
 When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds:
@@ -212,3 +225,7 @@ When a service is deployed to ALZ, be mindful of default ALZ Policies and unders
 
 Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver.
 If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
+
+### When can I deploy ALZ and new Azure Regions?
+
+As new Azure regions come online, they are rolled out in a phased approach and whilst the region may be available for use, not all features may be available during the early period. For Azure landing zones this means that you may experience unexpected deployment failures where certain components are not available. As ALZ provides different options and selections no 2 deployments may be the same and therefore deployment outcomes can differ. Should you experience an issue deploying ALZ to a new region please raise a support ticket for review.
