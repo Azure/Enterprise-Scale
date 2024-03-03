@@ -47,6 +47,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
 
+#### Tooling
+
+- Add new Regulatory Compliance Policy Assignment flexibility feature
+
 ### February 2024
 
 #### Tooling
