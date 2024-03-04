@@ -50,6 +50,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Add new Regulatory Compliance Policy Assignment flexibility feature
+- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
 
 ### February 2024
 

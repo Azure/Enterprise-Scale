@@ -1088,7 +1088,8 @@
             "ChangeTrackingVmArcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMArcPolicyAssignment.json')]",
             "ChangeTrackingVmssPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ChangeTrackingVMSSPolicyAssignment.json')]",
             "MDFCDefenderSqlAma": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDFCDefenderSQLAMAPolicyAssignment.json')]",
-            "dataCollectionRuleMdfcDefenderSQL": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-DefenderSQL.json')]"
+            "dataCollectionRuleMdfcDefenderSQL": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-DefenderSQL.json')]",
+            "MDFCSubscriptionEnablement": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/mdfcConfiguration.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -1187,7 +1188,8 @@
             "ChangeTrackingVmArcDeploymentName": "[take(concat('alz-ChangeTracking-VMArc', variables('deploymentSuffix')), 64)]",
             "ChangeTrackingVmssDeploymentName": "[take(concat('alz-ChangeTracking-VMSS', variables('deploymentSuffix')), 64)]",
             "MDFCDefenderSqlAmaDeploymentName": "[take(concat('alz-MDFCDefenderSqlAma', variables('deploymentSuffix')), 64)]",
-            "dataCollectionRuleMdfcDefenderSQLDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQL', variables('deploymentSuffix')), 64)]"
+            "dataCollectionRuleMdfcDefenderSQLDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQL', variables('deploymentSuffix')), 64)]",
+            "MDFCSubscriptionEnableDeploymentName": "[take(concat('alz-MDFCSubEnable', variables('deploymentSuffix')), 62)]"
         },
         "esLiteDeploymentNames": {
             "mgmtGroupLiteDeploymentName": "[take(concat('alz-MgsLite', variables('deploymentSuffix')), 64)]",
@@ -2315,6 +2317,85 @@
                 "parameters": {
                     "enforcementMode": {
                         "value": "Default"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Microsoft Defender for Cloud configurations to subscriptions if condition is true (not policy)
+            "condition": "[and(equals(parameters('enableAsc'), 'Yes'), not(empty(variables('subscriptionIds'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').MDFCSubscriptionEnableDeploymentName, copyIndex())]",
+            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",
+                "onlineLzs",
+                "corpLzs",
+                "corpConnectedMoveLzs"
+            ],
+            "copy": {
+                "name": "MDFCSubscriptionEnable",
+                "count": "[length(variables('subscriptionIds'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').MDFCSubscriptionEnablement]"
+                },
+                "parameters": {
+                    "logAnalyticsResourceId": {
+                        "value": "[variables('platformResourceIds').logAnalyticsResourceId]"
+                    },
+                    "resourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "resourceGroupName": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-asc-export')]"
+                    },
+                    "emailContactAsc": {
+                        "value": "[parameters('emailContactAsc')]"
+                    },
+                    "enableAscForServers": {
+                        "value": "[parameters('enableAscForServers')]"
+                    },
+                    "enableAscForSql": {
+                        "value": "[parameters('enableAscForSql')]"
+                    },
+                    "enableAscForAppServices": {
+                        "value": "[parameters('enableAscForAppServices')]"
+                    },
+                    "enableAscForStorage": {
+                        "value": "[parameters('enableAscForStorage')]"
+                    },
+                    "enableAscForContainers": {
+                        "value": "[parameters('enableAscForContainers')]"
+                    },
+                    "enableAscForKeyVault": {
+                        "value": "[parameters('enableAscForKeyVault')]"
+                    },
+                    "enableAscForSqlOnVm": {
+                        "value": "[parameters('enableAscForSqlOnVm')]"
+                    },
+                    "enableAscForArm": {
+                        "value": "[parameters('enableAscForArm')]"
+                    },
+                    "enableAscForApis": {
+                        "value": "[parameters('enableAscForApis')]"
+                    },
+                    "enableAscForCspm": {
+                        "value": "[parameters('enableAscForCspm')]"
+                    },
+                    "enableAscForOssDb": {
+                        "value": "[parameters('enableAscForOssDb')]"
+                    },
+                    "enableAscForCosmosDbs": {
+                        "value": "[parameters('enableAscForCosmosDbs')]"
                     }
                 }
             }
