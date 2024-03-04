@@ -1,8 +1,9 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [March 2024](#march-2024)
   - [February 2024](#february-2024)
-  - [AMA Update for the Portal Accelerator](#AMA-Update-for-the-Portal-Accelerator)
+  - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
   - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
   - [December 2023](#december-2023)
@@ -40,11 +41,21 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### March 2024
+
+#### Documentation
+
+- Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+
+#### Tooling
+
+- Add new Regulatory Compliance Policy Assignment flexibility feature
+- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
+
 ### February 2024
 
 #### Tooling
 
-- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
 - Disabled a Policy in the Microsoft Defender for SQL initiative. As it is not required at this stage. See [ALZ AMA FAQ](./ALZ-AMA-FAQ) for more details.
 - Changed enforcementMode of the assignment of Policy "Deploy-UserAssignedManagedIdentity-VMInsights" to Default. This is to ensure that a Resource Group and a User Assigned Managed Identity are created on new subscriptions (subscriptions that are added after the initial deployment).
 - Bug fix for Portal Accelerator. userAssignedIdentityResourceGroup has been added as output for the Portal UI, this fixes deploying the Resource Group with a custom name.
