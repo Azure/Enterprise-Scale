@@ -76,6 +76,17 @@
                                 "method": "GET",
                                 "path": "locations?api-version=2019-11-01"
                             }
+                        },
+                        {
+                            "name": "getRegulatoryCompliancePolicies",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "POST",
+                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+                                "body": {
+                                    "query": "policyresources | where type == 'microsoft.authorization/policysetdefinitions' | extend metadataCategory=tostring(properties.metadata.category) | extend metadataDeprecated=tostring(properties.metadata.deprecated) | extend displayName=tostring(properties.displayName) | extend description=tostring(properties.description) | where properties.metadata.category =~ 'Regulatory Compliance' | where metadataDeprecated != 'true' |  extend valueOutput=pack('displayName', displayName, 'id', id, 'description', description) | project id, name, displayName, description, metadataCategory, valueOutput | project label=displayName, description, value=valueOutput | order by label asc"
+                                }
+                            }
                         }
                     ]
                 },
@@ -2306,10 +2317,20 @@
                             }
                         },
                         {
+                            "name": "esFWAZNote",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[if(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan')), and(equals(steps('connectivity').enableAzFw,'Yes'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation)), false)]",
+                            "options": {
+                                "text": "ALZ enables Availability Zones for all services that it deploys by default for maximum resiliency in regions where Availability Zones are supported, including for Azure Firewall. Review the selected Availability Zones meet your architectural requirements and that you understand the added costs for inbound and outbound data transfers associated with Avaialability Zones, before proceeding. Click on this box to learn more about the Availability Zones and Azure Firewall.",
+                                "uri": "https://learn.microsoft.com/en-us/azure/firewall/features#built-in-high-availability",
+                                "style": "Info"
+                            }
+                        },
+                        {
                             "name": "firewallZones",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Select Availability Zones for the Azure Firewall",
-                            "defaultValue": "None",
+                            "defaultValue": [{"value": "1"}, {"value": "2"}, {"value": "3"}],
                             "multiselect": true,
                             "selectAll": true,
                             "filter": true,
@@ -3899,6 +3920,1504 @@
                             "visible": "[equals(steps('basics').cloudEnvironment.selection, 'AzureCloud')]"
                         }
                     ]
+                },
+                {
+                    "name": "regulatory",
+                    "label": "Regulatory Compliance",
+                    "elements": [
+                        {
+                            "name": "regComplianceText",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "You can optionally select one, or more, Regulatory Compliance built-in Policy Initiatives (Set Definitions) to assign to the Intermediate Root Management Group of your Azure Landing Zones hierarchy (e.g. Contoso).",
+                                "link": {
+                                    "label": "See available initiatives and control mappings...",
+                                    "uri": "https://learn.microsoft.com/azure/azure-resource-manager/management/security-controls-policy"
+                                }
+                            }
+                        },
+                        {
+                            "name": "regComplianceInfoMcsb",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text": "The Microsoft Cloud Security Benchmark (MCSB) is already assigned in to the Intermediate Root Management Group of your Azure Landing Zones hierarchy (e.g. Contoso). Click on this box to see the controls mapped for this initiative and also find in the TOC other Regulatory Compliance built-in Policy Initiatives (Set Definitions)",
+                                "uri": "https://learn.microsoft.com/azure/governance/policy/samples/azure-security-benchmark",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "regComplianceInfoAlzPolicyAssignments",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text": "Azure Landing Zones makes a number of default Azure Policy Assignments that help bootstrap your environment to be able to host workloads in Application Landing Zones (Azure Subscriptions). Click on this box to see the default ALZ Policy Assignments",
+                                "uri": "https://aka.ms/alz/policies",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "regComplianceSelectorCheck",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Do you wish to assign additional Regulatory Compliance Policy Initiatives to your Azure Landing Zones Management Groups hierarchy?",
+                            "defaultValue": "No",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "regComplianceAlzMgDiagram",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('regulatory').regComplianceSelectorCheck, 'Yes')]",
+                            "options": {
+                                "icon": "None",
+                                "text": "<b>Azure Landing Zones Management Group Hierarchy</b><img src='https://learn.microsoft.com/en-gb/azure/cloud-adoption-framework/ready/landing-zone/design-area/media/sub-organization.png'>"
+                            }
+                        },
+                        {
+                            "name": "regComplianceWarnLite",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(equals(steps('core').platformSubscription, 'Single'), equals(steps('regulatory').regComplianceSelectorCheck, 'Yes'))]",
+                            "options": {
+                                "text": "You have selected a single platform Management Group and Subscripiton instead of a dedicated Subscriptions and Management Groups for the platform services. Please do not select the management, identity or connectivity Management Groups in the drop downs below as this will cause the deployment to fail.",
+                                "uri": "https://aka.ms/alz",
+                                "style": "Warning"
+                            }
+                        },
+                        {
+                            "name": "regComplianceWarnParams",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('regulatory').regComplianceSelectorCheck, 'Yes')]",
+                            "options": {
+                                "text": "Some Regulatory Compliance Policy Initiatives require specific parameter values to be set. Once you have selected the policies to assign and to which Management Group, please scroll down to provide any required parameter values. If you do not know the values for any of the required parameters requested below please leave them empty or enter a placeholder value and complete the ALZ deployment. You can then enter the Policy area in the Azure Portal once complete and edit the assignment parameter values at a later stage when you know the values. (click on this box to be taken to the Azure Policy Docs)",
+                                "uri": "https://learn.microsoft.com/azure/governance/policy/assign-policy-portal",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "regComplianceSelectorFull",
+                            "type": "Microsoft.Common.EditableGrid",
+                            "ariaLabel": "Assign regulatory compliance policies to the Management Group of your choice in Azure Landing Zones hierarchy",
+                            "label": "Assign regulatory compliance policies to the Management Group of your choice in Azure Landing Zones hierarchy",
+                            "visible": "[equals(steps('regulatory').regComplianceSelectorCheck, 'Yes')]",
+                            "constraints": {
+                                "width": "Full",
+                                "rows": {
+                                    "count": {
+                                        "min": 1,
+                                        "max": 20
+                                    }
+                                },
+                                "columns": [
+                                    {
+                                        "id": "mg",
+                                        "header": "Management Group To Assign To",
+                                        "width": "1fr",
+                                        "element": {
+                                            "name": "regComplianceSelectorManagementGroups",
+                                            "type": "Microsoft.Common.DropDown",
+                                            "label": "Management Groups",
+                                            "defaultValue": "[parse('[]')]",
+                                            "toolTip": "",
+                                            "multiselect": false,
+                                            "selectAll": false,
+                                            "filter": true,
+                                            "filterPlaceholder": "Filter items ...",
+                                            "multiLine": true,
+                                            "constraints": {
+                                                "allowedValues": [
+                                                    {
+                                                        "label": "Intermeditate Root Management Group",
+                                                        "description": "e.g. Contoso",
+                                                        "value": "contoso"
+                                                    },
+                                                    {
+                                                        "label": "Platform Management Group",
+                                                        "description": "e.g. Contoso -> Platform",
+                                                        "value": "contoso-platform"
+                                                    },
+                                                    {
+                                                        "label": "Management Management Group",
+                                                        "description": "e.g. Contoso -> Platform -> Management",
+                                                        "value": "contoso-management"
+                                                    },
+                                                    {
+                                                        "label": "Identity Management Group",
+                                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                                        "value": "contoso-identity"
+                                                    },
+                                                    {
+                                                        "label": "Connectivity Management Group",
+                                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                                        "value": "contoso-connectivity"
+                                                    },
+                                                    {
+                                                        "label": "Landing Zones Management Group",
+                                                        "description": "e.g. Contoso -> Landing Zones",
+                                                        "value": "contoso-landingzones"
+                                                    },
+                                                    {
+                                                        "label": "Corp Management Group",
+                                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                                        "value": "contoso-corp"
+                                                    },
+                                                    {
+                                                        "label": "Online Management Group",
+                                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                                        "value": "contoso-online"
+                                                    },
+                                                    {
+                                                        "label": "Decommissioned Management Group",
+                                                        "description": "e.g. Contoso -> Decommissioned",
+                                                        "value": "contoso-decommissioned"
+                                                    },
+                                                    {
+                                                        "label": "Sandbox Management Group",
+                                                        "description": "e.g. Contoso -> Sandbox",
+                                                        "value": "contoso-sandboxes"
+                                                    }
+                                                ],
+                                                "required": false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "id": "policy",
+                                        "header": "Regulatory Compliance Policy Initative",
+                                        "width": "1fr",
+                                        "element": {
+                                            "name": "regComplianceSelectorPolicies",
+                                            "type": "Microsoft.Common.DropDown",
+                                            "label": "Regulatory Compliance Policies",
+                                            "defaultValue": "[parse('[]')]",
+                                            "toolTip": "",
+                                            "multiselect": false,
+                                            "selectAll": false,
+                                            "filter": true,
+                                            "filterPlaceholder": "Filter Regulatory Compliance Policy Initiatives...",
+                                            "multiLine": true,
+                                            "visible": true,
+                                            "constraints": {
+                                                "allowedValues": "[steps('basics').getRegulatoryCompliancePolicies.data]",
+                                                "required": false
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "regPolicyParamAusGovIsmRestricted",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Australian Government ISM PROTECTED - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamAusGovIsmRestrictedNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of Australian Government ISM PROTECTED that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParAusGovIsmRestrictedVmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParAusGovIsmRestrictedResourceTypes",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "List of resource types that should have diagnostic logging enabled",
+                                    "defaultValue": "All Resource Types",
+                                    "toolTip": "You can select either all or none here in this portal experience, if you wish to be more granular please chose either option and then once deployed via the ALZ portal accelerator you can edit the assignment via the Policy area of the Azure Portal.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "All Resource Types",
+                                                "value": "all"
+                                            },
+                                            {
+                                                "label": "None",
+                                                "value": "none"
+                                            }
+                                        ],
+                                        "required": true
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/27272c0b-c225-4cc3-b8b0-f2534b093077'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamMPAA",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Motion Picture Association of America (MPAA) - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamMPAANeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of Motion Picture Association of America (MPAA) that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParMPAACertificateThumb",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Certificate thumbprints that should exist under the Trusted Root",
+                                    "toolTip": "A semicolon-separated list of certificate thumbprints that should exist under the Trusted Root certificate store (Cert:\\LocalMachine\\Root). e.g. THUMBPRINT1;THUMBPRINT2;THUMBPRINT3",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParMPAAApplicationName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Application names to be installed on VMs",
+                                    "toolTip": "A semicolon-separated list of the names of the applications that should be installed. e.g. 'python; powershell; Microsoft SQL Server 2014 (64-bit); Microsoft Visual Studio Code' or 'Microsoft SQL Server 2014*' (to match any application starting with 'Microsoft SQL Server 2014')'",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParMPAAStoragePrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Storage Account Prefix for Regional Storage Account to deploy diagnostic settings for Network Security Groups",
+                                    "toolTip": "This prefix will be combined with the network security group location to form the created storage account name.",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParMPAAResGroupPrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Resource Group Name for Storage Account to deploy diagnostic settings for Network Security Groups",
+                                    "toolTip": "The resource group that the storage account will be created in.",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParMPAARBatchMetricName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Metric name on which alert rules should be configured in Batch accounts",
+                                    "toolTip": "The metric name that an alert rule must be enabled on",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/92646f03-e39d-47a9-9e24-58d60ef49af8'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamSovBaseGlobal",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Sovereignty Baseline - Global Policies - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamSovBaseGlobalNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of Sovereignty Baseline - Global Policies that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParSovBaseGlobalRegions",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "The list of Azure Regions that are approved for usage",
+                                    "defaultValue": [
+                                        {
+                                            "label": "eastus",
+                                            "value": "eastus"
+                                        },
+                                        {
+                                            "label": "eastus2",
+                                            "value": "eastus2"
+                                        },
+                                        {
+                                            "label": "southcentralus",
+                                            "value": "southcentralus"
+                                        },
+                                        {
+                                            "label": "westus2",
+                                            "value": "westus2"
+                                        },
+                                        {
+                                            "label": "westus3",
+                                            "value": "westus3"
+                                        },
+                                        {
+                                            "label": "australiaeast",
+                                            "value": "australiaeast"
+                                        },
+                                        {
+                                            "label": "southeastasia",
+                                            "value": "southeastasia"
+                                        },
+                                        {
+                                            "label": "northeurope",
+                                            "value": "northeurope"
+                                        },
+                                        {
+                                            "label": "swedencentral",
+                                            "value": "swedencentral"
+                                        },
+                                        {
+                                            "label": "uksouth",
+                                            "value": "uksouth"
+                                        },
+                                        {
+                                            "label": "westeurope",
+                                            "value": "westeurope"
+                                        },
+                                        {
+                                            "label": "centralus",
+                                            "value": "centralus"
+                                        },
+                                        {
+                                            "label": "southafricanorth",
+                                            "value": "southafricanorth"
+                                        },
+                                        {
+                                            "label": "centralindia",
+                                            "value": "centralindia"
+                                        },
+                                        {
+                                            "label": "eastasia",
+                                            "value": "eastasia"
+                                        },
+                                        {
+                                            "label": "japaneast",
+                                            "value": "japaneast"
+                                        },
+                                        {
+                                            "label": "koreacentral",
+                                            "value": "koreacentral"
+                                        },
+                                        {
+                                            "label": "canadacentral",
+                                            "value": "canadacentral"
+                                        },
+                                        {
+                                            "label": "francecentral",
+                                            "value": "francecentral"
+                                        },
+                                        {
+                                            "label": "germanywestcentral",
+                                            "value": "germanywestcentral"
+                                        },
+                                        {
+                                            "label": "italynorth",
+                                            "value": "italynorth"
+                                        },
+                                        {
+                                            "label": "norwayeast",
+                                            "value": "norwayeast"
+                                        },
+                                        {
+                                            "label": "polandcentral",
+                                            "value": "polandcentral"
+                                        },
+                                        {
+                                            "label": "switzerlandnorth",
+                                            "value": "switzerlandnorth"
+                                        },
+                                        {
+                                            "label": "uaenorth",
+                                            "value": "uaenorth"
+                                        },
+                                        {
+                                            "label": "brazilsouth",
+                                            "value": "brazilsouth"
+                                        },
+                                        {
+                                            "label": "centraluseuap",
+                                            "value": "centraluseuap"
+                                        },
+                                        {
+                                            "label": "israelcentral",
+                                            "value": "israelcentral"
+                                        },
+                                        {
+                                            "label": "qatarcentral",
+                                            "value": "qatarcentral"
+                                        },
+                                        {
+                                            "label": "northcentralus",
+                                            "value": "northcentralus"
+                                        },
+                                        {
+                                            "label": "westus",
+                                            "value": "westus"
+                                        },
+                                        {
+                                            "label": "japanwest",
+                                            "value": "japanwest"
+                                        },
+                                        {
+                                            "label": "eastus2euap",
+                                            "value": "eastus2euap"
+                                        },
+                                        {
+                                            "label": "westcentralus",
+                                            "value": "westcentralus"
+                                        },
+                                        {
+                                            "label": "southafricawest",
+                                            "value": "southafricawest"
+                                        },
+                                        {
+                                            "label": "australiacentral",
+                                            "value": "australiacentral"
+                                        },
+                                        {
+                                            "label": "australiacentral2",
+                                            "value": "australiacentral2"
+                                        },
+                                        {
+                                            "label": "australiasoutheast",
+                                            "value": "australiasoutheast"
+                                        },
+                                        {
+                                            "label": "koreasouth",
+                                            "value": "koreasouth"
+                                        },
+                                        {
+                                            "label": "southindia",
+                                            "value": "southindia"
+                                        },
+                                        {
+                                            "label": "westindia",
+                                            "value": "westindia"
+                                        },
+                                        {
+                                            "label": "canadaeast",
+                                            "value": "canadaeast"
+                                        },
+                                        {
+                                            "label": "francesouth",
+                                            "value": "francesouth"
+                                        },
+                                        {
+                                            "label": "germanynorth",
+                                            "value": "germanynorth"
+                                        },
+                                        {
+                                            "label": "norwaywest",
+                                            "value": "norwaywest"
+                                        },
+                                        {
+                                            "label": "switzerlandwest",
+                                            "value": "switzerlandwest"
+                                        },
+                                        {
+                                            "label": "ukwest",
+                                            "value": "ukwest"
+                                        },
+                                        {
+                                            "label": "uaecentral",
+                                            "value": "uaecentral"
+                                        },
+                                        {
+                                            "label": "brazilsoutheast",
+                                            "value": "brazilsoutheast"
+                                        }
+                                    ],
+                                    "toolTip": "Any non-global resources attempted to be deployed outsize of this region will be restricted.",
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter Azure Regions...",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "eastus",
+                                                "value": "eastus"
+                                            },
+                                            {
+                                                "label": "eastus2",
+                                                "value": "eastus2"
+                                            },
+                                            {
+                                                "label": "southcentralus",
+                                                "value": "southcentralus"
+                                            },
+                                            {
+                                                "label": "westus2",
+                                                "value": "westus2"
+                                            },
+                                            {
+                                                "label": "westus3",
+                                                "value": "westus3"
+                                            },
+                                            {
+                                                "label": "australiaeast",
+                                                "value": "australiaeast"
+                                            },
+                                            {
+                                                "label": "southeastasia",
+                                                "value": "southeastasia"
+                                            },
+                                            {
+                                                "label": "northeurope",
+                                                "value": "northeurope"
+                                            },
+                                            {
+                                                "label": "swedencentral",
+                                                "value": "swedencentral"
+                                            },
+                                            {
+                                                "label": "uksouth",
+                                                "value": "uksouth"
+                                            },
+                                            {
+                                                "label": "westeurope",
+                                                "value": "westeurope"
+                                            },
+                                            {
+                                                "label": "centralus",
+                                                "value": "centralus"
+                                            },
+                                            {
+                                                "label": "southafricanorth",
+                                                "value": "southafricanorth"
+                                            },
+                                            {
+                                                "label": "centralindia",
+                                                "value": "centralindia"
+                                            },
+                                            {
+                                                "label": "eastasia",
+                                                "value": "eastasia"
+                                            },
+                                            {
+                                                "label": "japaneast",
+                                                "value": "japaneast"
+                                            },
+                                            {
+                                                "label": "koreacentral",
+                                                "value": "koreacentral"
+                                            },
+                                            {
+                                                "label": "canadacentral",
+                                                "value": "canadacentral"
+                                            },
+                                            {
+                                                "label": "francecentral",
+                                                "value": "francecentral"
+                                            },
+                                            {
+                                                "label": "germanywestcentral",
+                                                "value": "germanywestcentral"
+                                            },
+                                            {
+                                                "label": "italynorth",
+                                                "value": "italynorth"
+                                            },
+                                            {
+                                                "label": "norwayeast",
+                                                "value": "norwayeast"
+                                            },
+                                            {
+                                                "label": "polandcentral",
+                                                "value": "polandcentral"
+                                            },
+                                            {
+                                                "label": "switzerlandnorth",
+                                                "value": "switzerlandnorth"
+                                            },
+                                            {
+                                                "label": "uaenorth",
+                                                "value": "uaenorth"
+                                            },
+                                            {
+                                                "label": "brazilsouth",
+                                                "value": "brazilsouth"
+                                            },
+                                            {
+                                                "label": "centraluseuap",
+                                                "value": "centraluseuap"
+                                            },
+                                            {
+                                                "label": "israelcentral",
+                                                "value": "israelcentral"
+                                            },
+                                            {
+                                                "label": "qatarcentral",
+                                                "value": "qatarcentral"
+                                            },
+                                            {
+                                                "label": "northcentralus",
+                                                "value": "northcentralus"
+                                            },
+                                            {
+                                                "label": "westus",
+                                                "value": "westus"
+                                            },
+                                            {
+                                                "label": "japanwest",
+                                                "value": "japanwest"
+                                            },
+                                            {
+                                                "label": "eastus2euap",
+                                                "value": "eastus2euap"
+                                            },
+                                            {
+                                                "label": "westcentralus",
+                                                "value": "westcentralus"
+                                            },
+                                            {
+                                                "label": "southafricawest",
+                                                "value": "southafricawest"
+                                            },
+                                            {
+                                                "label": "australiacentral",
+                                                "value": "australiacentral"
+                                            },
+                                            {
+                                                "label": "australiacentral2",
+                                                "value": "australiacentral2"
+                                            },
+                                            {
+                                                "label": "australiasoutheast",
+                                                "value": "australiasoutheast"
+                                            },
+                                            {
+                                                "label": "koreasouth",
+                                                "value": "koreasouth"
+                                            },
+                                            {
+                                                "label": "southindia",
+                                                "value": "southindia"
+                                            },
+                                            {
+                                                "label": "westindia",
+                                                "value": "westindia"
+                                            },
+                                            {
+                                                "label": "canadaeast",
+                                                "value": "canadaeast"
+                                            },
+                                            {
+                                                "label": "francesouth",
+                                                "value": "francesouth"
+                                            },
+                                            {
+                                                "label": "germanynorth",
+                                                "value": "germanynorth"
+                                            },
+                                            {
+                                                "label": "norwaywest",
+                                                "value": "norwaywest"
+                                            },
+                                            {
+                                                "label": "switzerlandwest",
+                                                "value": "switzerlandwest"
+                                            },
+                                            {
+                                                "label": "ukwest",
+                                                "value": "ukwest"
+                                            },
+                                            {
+                                                "label": "uaecentral",
+                                                "value": "uaecentral"
+                                            },
+                                            {
+                                                "label": "brazilsoutheast",
+                                                "value": "brazilsoutheast"
+                                            }
+                                        ],
+                                        "required": true
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/c1cbff38-87c0-4b9f-9f70-035c7a3b5523'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamSovBaseConf",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Sovereignty Baseline - Confidential Policies - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamSovBaseConfNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of Sovereignty Baseline - Confidential Policies that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParSovBaseConfRegions",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "The list of Azure Regions that are approved for usage",
+                                    "defaultValue": [
+                                        {
+                                            "label": "eastus",
+                                            "value": "eastus"
+                                        },
+                                        {
+                                            "label": "eastus2",
+                                            "value": "eastus2"
+                                        },
+                                        {
+                                            "label": "southcentralus",
+                                            "value": "southcentralus"
+                                        },
+                                        {
+                                            "label": "westus2",
+                                            "value": "westus2"
+                                        },
+                                        {
+                                            "label": "westus3",
+                                            "value": "westus3"
+                                        },
+                                        {
+                                            "label": "australiaeast",
+                                            "value": "australiaeast"
+                                        },
+                                        {
+                                            "label": "southeastasia",
+                                            "value": "southeastasia"
+                                        },
+                                        {
+                                            "label": "northeurope",
+                                            "value": "northeurope"
+                                        },
+                                        {
+                                            "label": "swedencentral",
+                                            "value": "swedencentral"
+                                        },
+                                        {
+                                            "label": "uksouth",
+                                            "value": "uksouth"
+                                        },
+                                        {
+                                            "label": "westeurope",
+                                            "value": "westeurope"
+                                        },
+                                        {
+                                            "label": "centralus",
+                                            "value": "centralus"
+                                        },
+                                        {
+                                            "label": "southafricanorth",
+                                            "value": "southafricanorth"
+                                        },
+                                        {
+                                            "label": "centralindia",
+                                            "value": "centralindia"
+                                        },
+                                        {
+                                            "label": "eastasia",
+                                            "value": "eastasia"
+                                        },
+                                        {
+                                            "label": "japaneast",
+                                            "value": "japaneast"
+                                        },
+                                        {
+                                            "label": "koreacentral",
+                                            "value": "koreacentral"
+                                        },
+                                        {
+                                            "label": "canadacentral",
+                                            "value": "canadacentral"
+                                        },
+                                        {
+                                            "label": "francecentral",
+                                            "value": "francecentral"
+                                        },
+                                        {
+                                            "label": "germanywestcentral",
+                                            "value": "germanywestcentral"
+                                        },
+                                        {
+                                            "label": "italynorth",
+                                            "value": "italynorth"
+                                        },
+                                        {
+                                            "label": "norwayeast",
+                                            "value": "norwayeast"
+                                        },
+                                        {
+                                            "label": "polandcentral",
+                                            "value": "polandcentral"
+                                        },
+                                        {
+                                            "label": "switzerlandnorth",
+                                            "value": "switzerlandnorth"
+                                        },
+                                        {
+                                            "label": "uaenorth",
+                                            "value": "uaenorth"
+                                        },
+                                        {
+                                            "label": "brazilsouth",
+                                            "value": "brazilsouth"
+                                        },
+                                        {
+                                            "label": "centraluseuap",
+                                            "value": "centraluseuap"
+                                        },
+                                        {
+                                            "label": "israelcentral",
+                                            "value": "israelcentral"
+                                        },
+                                        {
+                                            "label": "qatarcentral",
+                                            "value": "qatarcentral"
+                                        },
+                                        {
+                                            "label": "northcentralus",
+                                            "value": "northcentralus"
+                                        },
+                                        {
+                                            "label": "westus",
+                                            "value": "westus"
+                                        },
+                                        {
+                                            "label": "japanwest",
+                                            "value": "japanwest"
+                                        },
+                                        {
+                                            "label": "eastus2euap",
+                                            "value": "eastus2euap"
+                                        },
+                                        {
+                                            "label": "westcentralus",
+                                            "value": "westcentralus"
+                                        },
+                                        {
+                                            "label": "southafricawest",
+                                            "value": "southafricawest"
+                                        },
+                                        {
+                                            "label": "australiacentral",
+                                            "value": "australiacentral"
+                                        },
+                                        {
+                                            "label": "australiacentral2",
+                                            "value": "australiacentral2"
+                                        },
+                                        {
+                                            "label": "australiasoutheast",
+                                            "value": "australiasoutheast"
+                                        },
+                                        {
+                                            "label": "koreasouth",
+                                            "value": "koreasouth"
+                                        },
+                                        {
+                                            "label": "southindia",
+                                            "value": "southindia"
+                                        },
+                                        {
+                                            "label": "westindia",
+                                            "value": "westindia"
+                                        },
+                                        {
+                                            "label": "canadaeast",
+                                            "value": "canadaeast"
+                                        },
+                                        {
+                                            "label": "francesouth",
+                                            "value": "francesouth"
+                                        },
+                                        {
+                                            "label": "germanynorth",
+                                            "value": "germanynorth"
+                                        },
+                                        {
+                                            "label": "norwaywest",
+                                            "value": "norwaywest"
+                                        },
+                                        {
+                                            "label": "switzerlandwest",
+                                            "value": "switzerlandwest"
+                                        },
+                                        {
+                                            "label": "ukwest",
+                                            "value": "ukwest"
+                                        },
+                                        {
+                                            "label": "uaecentral",
+                                            "value": "uaecentral"
+                                        },
+                                        {
+                                            "label": "brazilsoutheast",
+                                            "value": "brazilsoutheast"
+                                        }
+                                    ],
+                                    "toolTip": "Any non-global resources attempted to be deployed outsize of this region will be restricted.",
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter Azure Regions...",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "eastus",
+                                                "value": "eastus"
+                                            },
+                                            {
+                                                "label": "eastus2",
+                                                "value": "eastus2"
+                                            },
+                                            {
+                                                "label": "southcentralus",
+                                                "value": "southcentralus"
+                                            },
+                                            {
+                                                "label": "westus2",
+                                                "value": "westus2"
+                                            },
+                                            {
+                                                "label": "westus3",
+                                                "value": "westus3"
+                                            },
+                                            {
+                                                "label": "australiaeast",
+                                                "value": "australiaeast"
+                                            },
+                                            {
+                                                "label": "southeastasia",
+                                                "value": "southeastasia"
+                                            },
+                                            {
+                                                "label": "northeurope",
+                                                "value": "northeurope"
+                                            },
+                                            {
+                                                "label": "swedencentral",
+                                                "value": "swedencentral"
+                                            },
+                                            {
+                                                "label": "uksouth",
+                                                "value": "uksouth"
+                                            },
+                                            {
+                                                "label": "westeurope",
+                                                "value": "westeurope"
+                                            },
+                                            {
+                                                "label": "centralus",
+                                                "value": "centralus"
+                                            },
+                                            {
+                                                "label": "southafricanorth",
+                                                "value": "southafricanorth"
+                                            },
+                                            {
+                                                "label": "centralindia",
+                                                "value": "centralindia"
+                                            },
+                                            {
+                                                "label": "eastasia",
+                                                "value": "eastasia"
+                                            },
+                                            {
+                                                "label": "japaneast",
+                                                "value": "japaneast"
+                                            },
+                                            {
+                                                "label": "koreacentral",
+                                                "value": "koreacentral"
+                                            },
+                                            {
+                                                "label": "canadacentral",
+                                                "value": "canadacentral"
+                                            },
+                                            {
+                                                "label": "francecentral",
+                                                "value": "francecentral"
+                                            },
+                                            {
+                                                "label": "germanywestcentral",
+                                                "value": "germanywestcentral"
+                                            },
+                                            {
+                                                "label": "italynorth",
+                                                "value": "italynorth"
+                                            },
+                                            {
+                                                "label": "norwayeast",
+                                                "value": "norwayeast"
+                                            },
+                                            {
+                                                "label": "polandcentral",
+                                                "value": "polandcentral"
+                                            },
+                                            {
+                                                "label": "switzerlandnorth",
+                                                "value": "switzerlandnorth"
+                                            },
+                                            {
+                                                "label": "uaenorth",
+                                                "value": "uaenorth"
+                                            },
+                                            {
+                                                "label": "brazilsouth",
+                                                "value": "brazilsouth"
+                                            },
+                                            {
+                                                "label": "centraluseuap",
+                                                "value": "centraluseuap"
+                                            },
+                                            {
+                                                "label": "israelcentral",
+                                                "value": "israelcentral"
+                                            },
+                                            {
+                                                "label": "qatarcentral",
+                                                "value": "qatarcentral"
+                                            },
+                                            {
+                                                "label": "northcentralus",
+                                                "value": "northcentralus"
+                                            },
+                                            {
+                                                "label": "westus",
+                                                "value": "westus"
+                                            },
+                                            {
+                                                "label": "japanwest",
+                                                "value": "japanwest"
+                                            },
+                                            {
+                                                "label": "eastus2euap",
+                                                "value": "eastus2euap"
+                                            },
+                                            {
+                                                "label": "westcentralus",
+                                                "value": "westcentralus"
+                                            },
+                                            {
+                                                "label": "southafricawest",
+                                                "value": "southafricawest"
+                                            },
+                                            {
+                                                "label": "australiacentral",
+                                                "value": "australiacentral"
+                                            },
+                                            {
+                                                "label": "australiacentral2",
+                                                "value": "australiacentral2"
+                                            },
+                                            {
+                                                "label": "australiasoutheast",
+                                                "value": "australiasoutheast"
+                                            },
+                                            {
+                                                "label": "koreasouth",
+                                                "value": "koreasouth"
+                                            },
+                                            {
+                                                "label": "southindia",
+                                                "value": "southindia"
+                                            },
+                                            {
+                                                "label": "westindia",
+                                                "value": "westindia"
+                                            },
+                                            {
+                                                "label": "canadaeast",
+                                                "value": "canadaeast"
+                                            },
+                                            {
+                                                "label": "francesouth",
+                                                "value": "francesouth"
+                                            },
+                                            {
+                                                "label": "germanynorth",
+                                                "value": "germanynorth"
+                                            },
+                                            {
+                                                "label": "norwaywest",
+                                                "value": "norwaywest"
+                                            },
+                                            {
+                                                "label": "switzerlandwest",
+                                                "value": "switzerlandwest"
+                                            },
+                                            {
+                                                "label": "ukwest",
+                                                "value": "ukwest"
+                                            },
+                                            {
+                                                "label": "uaecentral",
+                                                "value": "uaecentral"
+                                            },
+                                            {
+                                                "label": "brazilsoutheast",
+                                                "value": "brazilsoutheast"
+                                            }
+                                        ],
+                                        "required": true
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/03de05a4-c324-4ccd-882f-a814ea8ab9ea'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamSwift2020",
+                            "type": "Microsoft.Common.Section",
+                            "label": "SWIFT CSP-CSCF v2020 - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamParamSwift2020NeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of SWIFT CSP-CSCF v2020 that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParSwift2020VmAdminsInclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be included in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParSwift2020DomainFqdn",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Domain Name (FQDN)",
+                                    "toolTip": "The fully qualified domain name (FQDN) that the Windows VMs should be joined to",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/3e0c67fc-8c7c-406c-89bd-6b6bdc986a22'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamCanadaFedPbmm",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Canada Federal PBMM - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamCanadaFedPbmmNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of Canada Federal PBMM that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParCanadaFedPbmmVmAdminsInclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be included in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParCanadaFedPbmmVmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/4c4a5f27-de81-430b-b4e5-9cbd50595a87'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamCisV2",
+                            "type": "Microsoft.Common.Section",
+                            "label": "CIS Microsoft Azure Foundations Benchmark v2.0.0 - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamCisV2NeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of CIS Microsoft Azure Foundations Benchmark v2.0.0 that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParCisV2KeyVaultKeysRotateDays",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "The maximum number of days before Keys in a Key Vault should be rotated.",
+                                    "toolTip": "Keys should have a rotation policy ensuring that their rotation is scheduled within the specified number of days after creation.",
+                                    "constraints": {
+                                        "required": false
+                                    },
+                                    "defaultValue": 90
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/06f19060-9e68-4070-92ca-f15cc126059e'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamCmmcL3",
+                            "type": "Microsoft.Common.Section",
+                            "label": "CMMC Level 3 - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyCmmcL3NeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of CMMC Level 3 that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParCmmcL3VmAdminsInclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be included in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParCmmcL3VmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/b5629c75-5c77-4422-87b9-2509e680f8de'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamHitrustHipaa",
+                            "type": "Microsoft.Common.Section",
+                            "label": "HITRUST/HIPAA - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamHitrustHipaaNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of HITRUST/HIPAA that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParHitrustHipaaCertificateThumb",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Certificate thumbprints that should exist under the Trusted Root",
+                                    "toolTip": "A semicolon-separated list of certificate thumbprints that should exist under the Trusted Root certificate store (Cert:\\LocalMachine\\Root). e.g. THUMBPRINT1;THUMBPRINT2;THUMBPRINT3",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParHitrustHipaaApplicationName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Application names to be installed on VMs",
+                                    "toolTip": "A semicolon-separated list of the names of the applications that should be installed. e.g. 'python; powershell; Microsoft SQL Server 2014 (64-bit); Microsoft Visual Studio Code' or 'Microsoft SQL Server 2014*' (to match any application starting with 'Microsoft SQL Server 2014')'",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParHitrustHipaaStoragePrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Storage Account Prefix for Regional Storage Account to deploy diagnostic settings for Network Security Groups",
+                                    "toolTip": "This prefix will be combined with the network security group location to form the created storage account name.",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParHitrustHipaaResGroupPrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Resource Group Name for Storage Account to deploy diagnostic settings for Network Security Groups",
+                                    "toolTip": "The resource group that the storage account will be created in.",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/a169a624-5599-4385-a696-c8d643089fab'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamIrs1075Sep2016",
+                            "type": "Microsoft.Common.Section",
+                            "label": "IRS1075 September 2016 - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyIrs1075Sep2016NeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of IRS1075 September 2016 that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParIrs1075Sep2016VmAdminsInclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be included in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParIrs1075Sep2016VmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/105e0327-6175-4eb2-9af4-1fba43bdb39d'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamNistSp800171R2",
+                            "type": "Microsoft.Common.Section",
+                            "label": "NIST SP 800-171 Rev. 2 - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyNistSp800171R2NeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of NIST SP 800-171 Rev. 2 that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParNistSp800171R2VmAdminsInclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be included in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParNistSp800171R2VmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/03055927-78bd-4236-86c0-f36125a10dc9'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamNewZelandIsmRestricted",
+                            "type": "Microsoft.Common.Section",
+                            "label": "New Zealand ISM Restricted - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicyParamNewZelandIsmRestrictedNeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of New Zeland ISM Restricted that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParNZIsmRestrictedVmAdminsInclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be included in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be included in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParNZIsmRestrictedVmAdminsExclude",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "List of users that must be excluded in Windows VM Administrators group",
+                                    "toolTip": "A semicolon-separated list of users that should be excluded in the Administrators local group; Ex: Administrator; myUser1; myUser2",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/d1a462af-7e6d-4901-98ac-61570b4ed22a'), true, false)]"
+                        },
+                        {
+                            "name": "regPolicyParamSoc2Type2",
+                            "type": "Microsoft.Common.Section",
+                            "label": "SOC 2 Type 2 - Required Policy Initative Parameters",
+                            "elements": [
+                                {
+                                    "name": "regCompliancePolicySoc2Type2NeededWarn",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "true",
+                                    "options": {
+                                        "text": "You have selected the Regulatory Policy Initaitve of SOC 2 Type 2 that requires values for specific parameter values to be set. Please ensure you set the values for the required parameters for the policy in the below section.",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "regCompPolParSoc2Type2AllowedRegistries",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "AKS + Arc K8s - Allowed registry or registries regex",
+                                    "toolTip": "The RegEx rule used to match allowed container image field in a Kubernetes cluster. For example, to allow any Azure Container Registry image by matching partial path: ^[^\\/]+\\.azurecr\\.io\\/.+$ and for multiple registries: ^([^\\/]+\\.azurecr\\.io|registry\\.io)\\/.+$",
+                                    "constraints": {
+                                        "required": false
+                                    },
+                                    "defaultValue": "^[^\\/]+\\.azurecr\\.io\\/.+$"
+                                },
+                                {
+                                    "name": "regCompPolParSoc2Type2MaxCpuUnits",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "AKS + Arc K8s - Max allowed CPU units",
+                                    "toolTip": "The maximum CPU units allowed for a container. E.g. 200m. For more information, please refer <a href=\"https://aka.ms/k8s-policy-pod-limits\">https://aka.ms/k8s-policy-pod-limits</a> ",
+                                    "constraints": {
+                                        "required": false
+                                    },
+                                    "defaultValue": "200m"
+                                },
+                                {
+                                    "name": "regCompPolParSoc2Type2MaxMemoryBytes",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "AKS + Arc K8s - Max allowed memory bytes",
+                                    "toolTip": "The maximum memory bytes allowed for a container. E.g. 1Gi. For more information, please refer <a href=\"https://aka.ms/k8s-policy-pod-limits\">https://aka.ms/k8s-policy-pod-limits</a> ",
+                                    "constraints": {
+                                        "required": false
+                                    },
+                                    "defaultValue": "1Gi"
+                                }
+                            ],
+                            "visible": "[if(contains(map(steps('regulatory').regComplianceSelectorFull, (item) => item.policy.id), '/providers/Microsoft.Authorization/policySetDefinitions/4054785f-702b-4a98-9215-009cbd58b141'), true, false)]"
+                        }
+                    ]
                 }
             ]
         },
@@ -4007,7 +5526,37 @@
                 "enforceAcsb": "[steps('landingZones').lzSection.enforceAcsb]",
                 "enableDecommissioned": "[steps('decommissionedSandboxZones').decommSection.enableDecommissioned]",
                 "enableSandbox": "[steps('decommissionedSandboxZones').sandboxSection.enableSandbox]",
-                "userAssignedIdentityResourceGroup": "[steps('management').userAssignedIdentityResourceGroup]"
+                "userAssignedIdentityResourceGroup": "[steps('management').userAssignedIdentityResourceGroup]",
+                "regulatoryComplianceInitativesToAssign": "[steps('regulatory').regComplianceSelectorFull]",
+                "regCompPolParAusGovIsmRestrictedVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamAusGovIsmRestricted.regCompPolParAusGovIsmRestrictedVmAdminsExclude, '')]",
+                "regCompPolParAusGovIsmRestrictedResourceTypes": "[steps('regulatory').regPolicyParamAusGovIsmRestricted.regCompPolParAusGovIsmRestrictedResourceTypes]",
+                "regCompPolParMPAACertificateThumb": "[coalesce(steps('regulatory').regPolicyParamMPAA.regCompPolParMPAACertificateThumb, '')]",
+                "regCompPolParMPAAApplicationName": "[coalesce(steps('regulatory').regPolicyParamMPAA.regCompPolParMPAAApplicationName, '')]",
+                "regCompPolParMPAAStoragePrefix": "[coalesce(steps('regulatory').regPolicyParamMPAA.regCompPolParMPAAStoragePrefix, '')]",
+                "regCompPolParMPAAResGroupPrefix": "[coalesce(steps('regulatory').regPolicyParamMPAA.regCompPolParMPAAResGroupPrefix, '')]",
+                "regCompPolParMPAARBatchMetricName": "[coalesce(steps('regulatory').regPolicyParamMPAA.regCompPolParMPAARBatchMetricName, '')]",
+                "regCompPolParSovBaseGlobalRegions": "[steps('regulatory').regPolicyParamSovBaseGlobal.regCompPolParSovBaseGlobalRegions]",
+                "regCompPolParSovBaseConfRegions": "[steps('regulatory').regPolicyParamSovBaseConf.regCompPolParSovBaseConfRegions]",
+                "regCompPolParSwift2020VmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamSwift2020.regCompPolParSwift2020VmAdminsInclude, '')]",
+                "regCompPolParSwift2020DomainFqdn": "[coalesce(steps('regulatory').regPolicyParamSwift2020.regCompPolParSwift2020DomainFqdn, '')]",
+                "regCompPolParCanadaFedPbmmVmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamCanadaFedPbmm.regCompPolParCanadaFedPbmmVmAdminsInclude, '')]",
+                "regCompPolParCanadaFedPbmmVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamCanadaFedPbmm.regCompPolParCanadaFedPbmmVmAdminsExclude, '')]",
+                "regCompPolParCisV2KeyVaultKeysRotateDays": "[coalesce(steps('regulatory').regPolicyParamCisV2.regCompPolParCisV2KeyVaultKeysRotateDays, 90)]",
+                "regCompPolParCmmcL3VmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamCmmcL3.regCompPolParCmmcL3VmAdminsInclude, '')]",
+                "regCompPolParCmmcL3VmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamCmmcL3.regCompPolParCmmcL3VmAdminsExclude, '')]",
+                "regCompPolParHitrustHipaaCertificateThumb": "[coalesce(steps('regulatory').regPolicyParamHitrustHipaa.regCompPolParHitrustHipaaCertificateThumb, '')]",
+                "regCompPolParHitrustHipaaApplicationName": "[coalesce(steps('regulatory').regPolicyParamHitrustHipaa.regCompPolParHitrustHipaaApplicationName, '')]",
+                "regCompPolParHitrustHipaaStoragePrefix": "[coalesce(steps('regulatory').regPolicyParamHitrustHipaa.regCompPolParHitrustHipaaStoragePrefix, '')]",
+                "regCompPolParHitrustHipaaResGroupPrefix": "[coalesce(steps('regulatory').regPolicyParamHitrustHipaa.regCompPolParHitrustHipaaResGroupPrefix, '')]",
+                "regCompPolParIrs1075Sep2016VmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamIrs1075Sep2016.regCompPolParIrs1075Sep2016VmAdminsInclude, '')]",
+                "regCompPolParIrs1075Sep2016VmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamIrs1075Sep2016.regCompPolParIrs1075Sep2016VmAdminsExclude, '')]",
+                "regCompPolParNistSp800171R2VmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamNistSp800171R2.regCompPolParNistSp800171R2VmAdminsInclude, '')]",
+                "regCompPolParNistSp800171R2VmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamNistSp800171R2.regCompPolParNistSp800171R2VmAdminsExclude, '')]",
+                "regCompPolParNZIsmRestrictedVmAdminsInclude": "[coalesce(steps('regulatory').regPolicyParamNewZelandIsmRestricted.regCompPolParNZIsmRestrictedVmAdminsInclude, '')]",
+                "regCompPolParNZIsmRestrictedVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamNewZelandIsmRestricted.regCompPolParNZIsmRestrictedVmAdminsExclude, '')]",
+                "regCompPolParSoc2Type2AllowedRegistries": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2AllowedRegistries, '')]",
+                "regCompPolParSoc2Type2MaxCpuUnits": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2MaxCpuUnits, '')]",
+                "regCompPolParSoc2Type2MaxMemoryBytes": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2MaxMemoryBytes, '')]"
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"

@@ -2,6 +2,9 @@
 
 - [Updates](#updates)
   - [March 2024](#march-2024)
+  - [February 2024](#february-2024)
+  - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
+  - [March 2024](#march-2024)
   - [AMA Update for the Portal Accelerator](#AMA-Update-for-the-Portal-Accelerator)
   - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
@@ -41,6 +44,15 @@ This article will be updated as and when changes are made to the above and anyth
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2024
+
+#### Documentation
+
+- Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+
+#### Tooling
+
+- Add new Regulatory Compliance Policy Assignment flexibility feature
+- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
 
 #### Policy
 
