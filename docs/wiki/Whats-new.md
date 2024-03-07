@@ -41,19 +41,9 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### March 2024
+### Policy Refresh FY23Q3
 
-#### Documentation
-
-- Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
-
-#### Tooling
-
-- Add new Regulatory Compliance Policy Assignment flexibility feature
-- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
-
-#### Policy
-
+- Updated `Audit-PrivateLinkDnsZones` display name to inlcude the fact it can be `audit` or `deny`
 - Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Virtual Desktop hostpool resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/9427df23-0f42-4e1e-bf99-a6133d841c4a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
@@ -65,6 +55,16 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 
+### March 2024
+
+#### Documentation
+
+- Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+
+#### Tooling
+
+- Add new Regulatory Compliance Policy Assignment flexibility feature
+- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
 
 ### February 2024
 
