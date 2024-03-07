@@ -41,6 +41,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### Policy Refresh FY23Q3
+
+- Updated `Audit-PrivateLinkDnsZones` display name to inlcude the fact it can be `audit` or `deny`
+
 ### March 2024
 
 #### Documentation
