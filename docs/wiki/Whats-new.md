@@ -51,7 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Add new Regulatory Compliance Policy Assignment flexibility feature
 - Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
-- Resolved an issue that prevented the policy remediation from working properly for VM Insights and Change Tracking policies. The root cause was the insufficient access granted to the Managed Identity that performs the remediation task. To solve the problem, we granted the Policy Assignments in the Landing Zone Management the permission to read the Platform Management Group.
+- Resolved an issue that prevented the policy remediation from working properly for VM Insights, Change Tracking, Azure Update Manager policies. The root cause was a too restrictive access configuration for the Managed Identity that performs the remediation tasks.
 
 ### February 2024
 
