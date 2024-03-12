@@ -54,6 +54,13 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added the [Configure Recovery Services vaults to use private DNS zones for backup](https://www.azadvertizer.net/azpolicyadvertizer/af783da1-4ad1-42be-800d-d19c70038820.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added new initiative and default assignment for [Enforce-Backup](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html) in Audit mode:
+  - Added the [[Preview]: Immutability must be enabled for backup vaults](https://www.azadvertizer.net/azpolicyadvertizer/2514263b-bc0d-4b06-ac3e-f262c0979018.html) built-in policy
+  - Added the [[Preview]: Immutability must be enabled for Recovery Services vaults](https://www.azadvertizer.net/azpolicyadvertizer/d6f6f560-14b7-49a4-9fc8-d2c3a9807868.html) built-in policy
+  - Added the [[Preview]: Soft delete should be enabled for Backup Vaults](https://www.azadvertizer.net/azpolicyadvertizer/9798d31d-6028-4dee-8643-46102185c016.html) built-in policy
+  - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Backup Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c58e083e-7982-4e24-afdc-be14d312389e.html) built-in policy
+  - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Recovery Services Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c7031eab-0fc0-4cd9-acd0-4497bd66d91a.html) built-in policy
+- Added [[Preview]: Azure Recovery Services vaults should disable public network access](https://www.azadvertizer.net/azpolicyadvertizer/9ebbbba3-4d65-4da9-bb67-b22cfaaff090.html) built-in policy to the "Deny-PublicPaaSEndpoints" initiative and assignment.
 
 ### March 2024
 
