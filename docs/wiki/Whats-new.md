@@ -43,7 +43,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### 🔃 Policy Refresh Q3 FY24
 
-- Updated `Audit-PrivateLinkDnsZones` display name to inlcude the fact it can be `audit` or `deny`
+- Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
 - Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Virtual Desktop hostpool resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/9427df23-0f42-4e1e-bf99-a6133d841c4a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
