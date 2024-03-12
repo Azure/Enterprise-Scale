@@ -1,0 +1,117 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "userAssignedManagedIdentityResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resource group name where the user assigned managed identity is located"
+            }
+        },
+        "userAssignedManagedIdentityName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the name of the user assigned managed identity"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "northeurope",
+            "metadata": {
+                "description": "Provide the location for the resources created as part of Enterprise-scale."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "vmMonitoring": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/Deploy-UserAssignedManagedIdentity-VMInsights')]"
+        },
+        "policyAssignmentNames": {
+            "vmMonitoring": "Deploy-UAMI-VMInsights",
+            "description": "Deploy User Assigned Managed Identity for VM Insights",
+            "displayName": "Deploy User Assigned Managed Identity for VM Insights"
+        },
+        "nonComplianceMessage": {
+            "message": "User Assigned Identity {enforcementMode} be created for VM Insights.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "roleAssignmentNames": {
+            "roleAssignmentNameContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').vmMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').vmMonitoring]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "identityResourceGroup": {
+                        "value": "[parameters('userAssignedManagedIdentityResourceGroup')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('userAssignedManagedIdentityName')]"
+                    },
+                    "builtInIdentityResourceGroupLocation": {
+                        "value": "[parameters('location')]"
+                    },
+                    "bringYourOwnUserAssignedManagedIdentity": {
+                        "value": true
+                    },
+                    "effect": {
+                        "value": "DeployIfNotExists"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
+     
