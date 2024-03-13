@@ -60,11 +60,28 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Documentation
 
 - Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+- Updated [community call wiki page](https://aka.ms/alz/community) with links for March 2024 recording and slides.
 
 #### Tooling
 
 - Add new Regulatory Compliance Policy Assignment flexibility feature
 - Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
+- Resolved an issue that prevented the policy remediation from working properly for VM Insights, Change Tracking, Azure Update Manager policies. The root cause was a too restrictive access configuration for the Managed Identity that performs the remediation tasks.
+  - **New deployments will now:**
+    - Add an additional role assignment for VMInsights Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
+    - Add an additional role assignment for ChangeTracking Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
+    - Add an additional role assignment to Azure Update Manger Policies, granting Managed Identity Operator at the same scope as the assignment.
+  - **To update an existing deployment:**
+    - For each of the VMInsights and ChangeTracking Initiative assignments:
+      - **Only required for the Initiatives assigned to Landing Zones Management group scope**
+      - Go to the Initiative assignment, go to the Managed Identity tab and copy the Principal ID
+      - Go to Management Groups, select the Platform Management group and go to Access control (IAM)
+      - Add a new role assignment and assign the Reader role the Principal ID that was copied in the first step.
+    - For each of the Azure Update Manger Initiative assignments:
+      - **Applies to the Initiatives assigned to both the Landing Zones and the Platform Management group scopes**
+      - Go to the Initiative assignment, go to the Managed Identity tab and copy the Principal ID
+      - Go to Management Groups, select the same management group as the assignment you copied the Principal ID from and go to Access control (IAM)
+      - Add a new role assignment and assign the Managed Identity Operator role the Principal ID that was copied in the first step.
 
 ### February 2024
 
