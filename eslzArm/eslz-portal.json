@@ -2755,9 +2755,1726 @@
                                     }
                                 ]
                             }
-                        }
+                        },
+                        {
+                            "name": "multiPlatformConnectivitySub",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[not(equals(steps('core').platformSubscription, 'Single'))]",
+                            "options": {
+                                "text": "To enable network topology and connectivity, you must allocate a dedicated connectivity Subscription. Please note, this Subscription will be moved to the connectivity Management Group, and ARM will deploy the first hub virtual network for either a hub and spoke or Virtual WAN  network topology. Additional networking platform resources such as gateways or Azure Firewall can be deployed. We recommend using a new dedicated Subscription with no existing resources.",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "singlePlatformConnectivitySub",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('core').platformSubscription, 'Single')]",
+                            "options": {
+                                "text": "To enable network topology and connectivity, you can select the preferred networking topology, and deploy this into the dedicated platform subscription. Additional networking platform resources such as gateways or Azure Firewall can also be deployed.",
+                                "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "enableHubSecondary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy networking topology",
+                            "defaultValue": "No",
+                            "toolTip": "Select the preferred network topology. If third-party NVA is a requirement, you must deploy this into the connectivity subscription post the deployment.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Hub and spoke with Azure Firewall",
+                                        "value": "vhub"
+                                    },
+                                    {
+                                        "label": "Hub and spoke with your own third-party NVA",
+                                        "value": "nva"
+                                    },
+                                    {
+                                        "label": "Virtual WAN (Microsoft managed)",
+                                        "value": "vwan"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "esNwSubSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Connectivity subscription",
+                            "elements": [
+                                {
+                                    "name": "esNwSubUniqueWarning",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Ensure you select a subscription that is dedicated/unique for Connectivity. Selecting the same Subscription here for Management or Identity will result in a deployment failure. If you want to use a single Subscription for all platform resources, select 'Single' on the 'Azure Core Setup' blade.",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "esNwSub",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Connectivity subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": true
+                                    }
+                                }
+                            ],
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('core').platformSubscription, 'Single')))]"
+                        },
+                        {
+                            "name": "esAddressHubVWAN",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Address space (required for vWAN hub)",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/23)",
+                            "defaultValue": "10.100.0.0/23",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(1[0-9]|2[0-4]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [10,24]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "esAddressHubHS",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Address space (required for hub virtual network)",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/16)",
+                            "defaultValue": "10.100.0.0/16",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'vwan')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(1[0-9]|2[0-4]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [10,24]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "connectivityLocation",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Region for the first networking hub",
+                            "filter": true,
+                            "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
+                            "defaultValue": "[steps('basics').resourceScope.location.displayName]",
+                            "constraints": {
+                                "allowedValues": "[map(steps('basics').getLocations.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
+                                "required": true
+                            },
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]"
+                        },
+                        {
+                            "name": "esNwZtnNote",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')))]",
+                            "options": {
+                                "text": "ALZ defaults are aligned to Zero Trust Networking principles. Click on this box to learn more about the Zero Trust Networking principles and how to apply them.",
+                                "uri": "https://learn.microsoft.com/security/zero-trust/deploy/networks",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "enableDdoS",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Enable DDoS Network Protection",
+                            "defaultValue": "Yes (recommended)",
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Network Protection will be enabled.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enablePrivateDnsZones",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Create Private DNS Zones for Azure PaaS services",
+                            "defaultValue": "Yes (recommended)",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will create Private DNS Zones for Azure PaaS services based on your selection below",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "privateDnsZones",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Private DNS Zones to create",
+                            "multiselect": true,
+                            "selectAll": true,
+                            "filter": true,
+                            "multiLine": true,
+                            "defaultValue": [
+                                {
+                                    "value": "privatelink.regionGeoShortCode.backup.windowsazure.com"
+                                },
+                                {
+                                    "value": "[format('privatelink.{0}.azmk8s.io', toLower(steps('connectivity').connectivityLocation))]"
+                                },
+                                {
+                                    "value": "[format('privatelink.{0}.batch.azure.com', toLower(steps('connectivity').connectivityLocation))]"
+                                },
+                                {
+                                    "value": "[format('privatelink.{0}.kusto.windows.net', toLower(steps('connectivity').connectivityLocation))]"
+                                },
+                                {
+                                    "value": "privatelink.adf.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.afs.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.agentsvc.azure-automation.net"
+                                },
+                                {
+                                    "value": "privatelink.analysis.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.api.azureml.ms"
+                                },
+                                {
+                                    "value": "privatelink.azconfig.io"
+                                },
+                                {
+                                    "value": "privatelink.azure-api.net"
+                                },
+                                {
+                                    "value": "privatelink.azure-automation.net"
+                                },
+                                {
+                                    "value": "privatelink.azurecr.io"
+                                },
+                                {
+                                    "value": "privatelink.azure-devices.net"
+                                },
+                                {
+                                    "value": "privatelink.azure-devices-provisioning.net"
+                                },
+                                {
+                                    "value": "privatelink.azuredatabricks.net"
+                                },
+                                {
+                                    "value": "privatelink.azurehdinsight.net"
+                                },
+                                {
+                                    "value": "privatelink.azurehealthcareapis.com"
+                                },
+                                {
+                                    "value": "privatelink.azurestaticapps.net"
+                                },
+                                {
+                                    "value": "privatelink.azuresynapse.net"
+                                },
+                                {
+                                    "value": "privatelink.azurewebsites.net"
+                                },
+                                {
+                                    "value": "privatelink.batch.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.blob.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.cassandra.cosmos.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.cognitiveservices.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.database.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.datafactory.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.dev.azuresynapse.net"
+                                },
+                                {
+                                    "value": "privatelink.dfs.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.dicom.azurehealthcareapis.com"
+                                },
+                                {
+                                    "value": "privatelink.digitaltwins.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.directline.botframework.com"
+                                },
+                                {
+                                    "value": "privatelink.documents.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.eventgrid.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.file.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.gremlin.cosmos.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.guestconfiguration.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.his.arc.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.kubernetesconfiguration.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.managedhsm.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.mariadb.database.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.media.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.mongo.cosmos.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.monitor.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.mysql.database.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.notebooks.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.ods.opinsights.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.oms.opinsights.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.pbidedicated.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.postgres.database.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.prod.migration.windowsazure.com"
+                                },
+                                {
+                                    "value": "privatelink.purview.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.purviewstudio.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.queue.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.redis.cache.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.redisenterprise.cache.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.search.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.service.signalr.net"
+                                },
+                                {
+                                    "value": "privatelink.servicebus.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.siterecovery.windowsazure.com"
+                                },
+                                {
+                                    "value": "privatelink.sql.azuresynapse.net"
+                                },
+                                {
+                                    "value": "privatelink.table.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.table.cosmos.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.tip1.powerquery.microsoft.com"
+                                },
+                                {
+                                    "value": "privatelink.token.botframework.com"
+                                },
+                                {
+                                    "value": "privatelink.vaultcore.azure.net"
+                                },
+                                {
+                                    "value": "privatelink.web.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.webpubsub.azure.com"
+                                }
+                            ],
+                            "visible": "[and(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enablePrivateDnsZones,'No')))]",
+                            "toolTip": "Select each Private DNS Zone to create which will offer DNS integration with Azure PaaS services where you enable private endpoints.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "privatelink.regionGeoShortCode.backup.windowsazure.com",
+                                        "value": "privatelink.regionGeoShortCode.backup.windowsazure.com",
+                                        "description": "This Private DNS Zone contains an Azure Region's geo short code (e.g. 'uksouth' is 'uks' - list available <a href=\"https://learn.microsoft.com/azure/backup/backup-azure-private-endpoints-configure-manage#when-using-custom-dns-server-or-host-files\">here</a>) that is based on the region selected above for your hub."
+                                    },
+                                    {
+                                        "label": "privatelink.region.azmk8s.io",
+                                        "value": "[format('privatelink.{0}.azmk8s.io', toLower(steps('connectivity').connectivityLocation))]",
+                                        "description": "This Private DNS Zone contains the Azure Region's short name (e.g. 'uksouth') that is based on the region selected above for your hub."
+                                    },
+                                    {
+                                        "label": "privatelink.region.batch.azure.com",
+                                        "value": "[format('privatelink.{0}.batch.azure.com', toLower(steps('connectivity').connectivityLocation))]",
+                                        "description": "This Private DNS Zone contains the Azure Region's short name (e.g. 'uksouth') that is based on the region selected above for your hub."
+                                    },
+                                    {
+                                        "label": "privatelink.region.kusto.windows.net",
+                                        "value": "[format('privatelink.{0}.kusto.windows.net', toLower(steps('connectivity').connectivityLocation))]",
+                                        "description": "This Private DNS Zone contains the Azure Region's short name (e.g. 'uksouth') that is based on the region selected above for your hub."
+                                    },
+                                    {
+                                        "label": "privatelink.adf.azure.com",
+                                        "value": "privatelink.adf.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.afs.azure.net",
+                                        "value": "privatelink.afs.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.agentsvc.azure-automation.net",
+                                        "value": "privatelink.agentsvc.azure-automation.net"
+                                    },
+                                    {
+                                        "label": "privatelink.analysis.windows.net",
+                                        "value": "privatelink.analysis.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.api.azureml.ms",
+                                        "value": "privatelink.api.azureml.ms"
+                                    },
+                                    {
+                                        "label": "privatelink.azconfig.io",
+                                        "value": "privatelink.azconfig.io"
+                                    },
+                                    {
+                                        "label": "privatelink.azure-api.net",
+                                        "value": "privatelink.azure-api.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azure-automation.net",
+                                        "value": "privatelink.azure-automation.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azurecr.io",
+                                        "value": "privatelink.azurecr.io"
+                                    },
+                                    {
+                                        "label": "privatelink.azure-devices.net",
+                                        "value": "privatelink.azure-devices.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azure-devices-provisioning.net",
+                                        "value": "privatelink.azure-devices-provisioning.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azuredatabricks.net",
+                                        "value": "privatelink.azuredatabricks.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azurehdinsight.net",
+                                        "value": "privatelink.azurehdinsight.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azurehealthcareapis.com",
+                                        "value": "privatelink.azurehealthcareapis.com"
+                                    },
+                                    {
+                                        "label": "privatelink.azurestaticapps.net",
+                                        "value": "privatelink.azurestaticapps.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azuresynapse.net",
+                                        "value": "privatelink.azuresynapse.net"
+                                    },
+                                    {
+                                        "label": "privatelink.azurewebsites.net",
+                                        "value": "privatelink.azurewebsites.net"
+                                    },
+                                    {
+                                        "label": "privatelink.batch.azure.com",
+                                        "value": "privatelink.batch.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.blob.core.windows.net",
+                                        "value": "privatelink.blob.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.cassandra.cosmos.azure.com",
+                                        "value": "privatelink.cassandra.cosmos.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.cognitiveservices.azure.com",
+                                        "value": "privatelink.cognitiveservices.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.database.windows.net",
+                                        "value": "privatelink.database.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.datafactory.azure.net",
+                                        "value": "privatelink.datafactory.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.dev.azuresynapse.net",
+                                        "value": "privatelink.dev.azuresynapse.net"
+                                    },
+                                    {
+                                        "label": "privatelink.dfs.core.windows.net",
+                                        "value": "privatelink.dfs.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.dicom.azurehealthcareapis.com",
+                                        "value": "privatelink.dicom.azurehealthcareapis.com"
+                                    },
+                                    {
+                                        "label": "privatelink.digitaltwins.azure.net",
+                                        "value": "privatelink.digitaltwins.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.directline.botframework.com",
+                                        "value": "privatelink.directline.botframework.com"
+                                    },
+                                    {
+                                        "label": "privatelink.documents.azure.com",
+                                        "value": "privatelink.documents.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.eventgrid.azure.net",
+                                        "value": "privatelink.eventgrid.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.file.core.windows.net",
+                                        "value": "privatelink.file.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.gremlin.cosmos.azure.com",
+                                        "value": "privatelink.gremlin.cosmos.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.guestconfiguration.azure.com",
+                                        "value": "privatelink.guestconfiguration.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.his.arc.azure.com",
+                                        "value": "privatelink.his.arc.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.kubernetesconfiguration.azure.com",
+                                        "value": "privatelink.kubernetesconfiguration.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.managedhsm.azure.net",
+                                        "value": "privatelink.managedhsm.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.mariadb.database.azure.com",
+                                        "value": "privatelink.mariadb.database.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.media.azure.net",
+                                        "value": "privatelink.media.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.mongo.cosmos.azure.com",
+                                        "value": "privatelink.mongo.cosmos.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.monitor.azure.com",
+                                        "value": "privatelink.monitor.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.mysql.database.azure.com",
+                                        "value": "privatelink.mysql.database.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.notebooks.azure.net",
+                                        "value": "privatelink.notebooks.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.ods.opinsights.azure.com",
+                                        "value": "privatelink.ods.opinsights.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.oms.opinsights.azure.com",
+                                        "value": "privatelink.oms.opinsights.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.pbidedicated.windows.net",
+                                        "value": "privatelink.pbidedicated.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.postgres.database.azure.com",
+                                        "value": "privatelink.postgres.database.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.prod.migration.windowsazure.com",
+                                        "value": "privatelink.prod.migration.windowsazure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.purview.azure.com",
+                                        "value": "privatelink.purview.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.purviewstudio.azure.com",
+                                        "value": "privatelink.purviewstudio.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.queue.core.windows.net",
+                                        "value": "privatelink.queue.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.redis.cache.windows.net",
+                                        "value": "privatelink.redis.cache.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.redisenterprise.cache.azure.net",
+                                        "value": "privatelink.redisenterprise.cache.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.search.windows.net",
+                                        "value": "privatelink.search.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.service.signalr.net",
+                                        "value": "privatelink.service.signalr.net"
+                                    },
+                                    {
+                                        "label": "privatelink.servicebus.windows.net",
+                                        "value": "privatelink.servicebus.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.siterecovery.windowsazure.com",
+                                        "value": "privatelink.siterecovery.windowsazure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.sql.azuresynapse.net",
+                                        "value": "privatelink.sql.azuresynapse.net"
+                                    },
+                                    {
+                                        "label": "privatelink.table.core.windows.net",
+                                        "value": "privatelink.table.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.table.cosmos.azure.com",
+                                        "value": "privatelink.table.cosmos.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.tip1.powerquery.microsoft.com",
+                                        "value": "privatelink.tip1.powerquery.microsoft.com"
+                                    },
+                                    {
+                                        "label": "privatelink.token.botframework.com",
+                                        "value": "privatelink.token.botframework.com"
+                                    },
+                                    {
+                                        "label": "privatelink.vaultcore.azure.net",
+                                        "value": "privatelink.vaultcore.azure.net"
+                                    },
+                                    {
+                                        "label": "privatelink.web.core.windows.net",
+                                        "value": "privatelink.web.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.webpubsub.azure.com",
+                                        "value": "privatelink.webpubsub.azure.com"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableVpnGw",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy VPN Gateway",
+                            "defaultValue": "No",
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy VPN gateway",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "gwRegionalOrAz",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy zone redundant or regional VPN Gateway",
+                            "defaultValue": "Zone redundant (recommended)",
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw,'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'),contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Virtual Gateway to the selected region and availability zones.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Zone redundant (recommended)",
+                                        "value": "Zone"
+                                    },
+                                    {
+                                        "label": "Regional",
+                                        "value": "Regional"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableVpnActiveActive",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy VPN Gateway in Active/Active mode",
+                            "defaultValue": "No",
+                            "visible": "[and(equals(steps('connectivity').enableVpnGw,'Yes'), not(equals(steps('connectivity').enableHub, 'vwan')), equals(steps('connectivity').enableVpnGw,'Yes'))]",
+                            "toolTip": "Deploy the VPN gateway in Active/Active mode",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "esGwNoAzSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the VPN Gateway SKU",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'), not(contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation)))]",
+                            "toolTip": "Select the required SKU for the VPN gateway.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "VpnGw2",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 500 IKEv2/OpenVPN connections, aggregate throughput is 1.25 Gbps",
+                                        "value": "VpnGw2"
+                                    },
+                                    {
+                                        "label": "VpnGw3",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 1000 IKEv2/OpenVPN connections, aggregate throughput is 2.5 Gbps",
+                                        "value": "VpnGw3"
+                                    },
+                                    {
+                                        "label": "VpnGw4",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 5000 IKEv2/OpenVPN connections, aggregate throughput is 5 Gbps",
+                                        "value": "VpnGw4"
+                                    },
+                                    {
+                                        "label": "VpnGw5",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 10000 IKEv2/OpenVPN connections, aggregate throughput is 10 Gbps",
+                                        "value": "VpnGw5"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "gwAzSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the VPN Gateway SKU",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'), equals(steps('connectivity').gwRegionalOrAz, 'Zone') ,contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation))]",
+                            "toolTip": "Select the required SKU for the VPN gateway.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "VpnGw2AZ",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 500 IKEv2/OpenVPN connections, aggregate throughput is 1.25 Gbps",
+                                        "value": "VpnGw2AZ"
+                                    },
+                                    {
+                                        "label": "VpnGw3AZ",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 1000 IKEv2/OpenVPN connections, aggregate throughput is 2.5 Gbps",
+                                        "value": "VpnGw3AZ"
+                                    },
+                                    {
+                                        "label": "VpnGw4AZ",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 5000 IKEv2/OpenVPN connections, aggregate throughput is 5 Gbps",
+                                        "value": "VpnGw4AZ"
+                                    },
+                                    {
+                                        "label": "VpnGw5AZ",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 10000 IKEv2/OpenVPN connections, aggregate throughput is 10 Gbps",
+                                        "value": "VpnGw5AZ"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "gwRegionalSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the VPN Gateway SKU",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(and(equals(steps('connectivity').enableVpnGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableVpnGw,'Yes'), equals(steps('connectivity').gwRegionalOrAz, 'Regional'))]",
+                            "toolTip": "Select the required SKU for the VPN gateway.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "VpnGw2",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 500 IKEv2/OpenVPN connections, aggregate throughput is 1.25 Gbps",
+                                        "value": "VpnGw2"
+                                    },
+                                    {
+                                        "label": "VpnGw3",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 1000 IKEv2/OpenVPN connections, aggregate throughput is 2.5 Gbps",
+                                        "value": "VpnGw3"
+                                    },
+                                    {
+                                        "label": "VpnGw4",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 5000 IKEv2/OpenVPN connections, aggregate throughput is 5 Gbps",
+                                        "value": "VpnGw4"
+                                    },
+                                    {
+                                        "label": "VpnGw5",
+                                        "description": "Supports BGP, max 30 S2S/VNet-VNet tunnels, max 128 P2S SSTP connections, max 10000 IKEv2/OpenVPN connections, aggregate throughput is 10 Gbps",
+                                        "value": "VpnGw5"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "vpnGateWayScaleUnit",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the VPN Gateway scale unit",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(equals(steps('connectivity').enableVpnGw, 'Yes'), equals(steps('connectivity').enableHub, 'vwan'))]",
+                            "toolTip": "Select the VPN Gateway scale unit",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "1 scale unit",
+                                        "description": "Supports 500 Mbps x2",
+                                        "value": "1"
+                                    },
+                                    {
+                                        "label": "2 scale units",
+                                        "description": "Supports 1 Gbps x 2",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "3 scale units",
+                                        "description": "Supports 1.5 Gbps x 2",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "label": "4 scale units",
+                                        "description": "Supports 2 Gbps x 2",
+                                        "value": "4"
+                                    },
+                                    {
+                                        "label": "5 scale units",
+                                        "description": "Supports 2.5 Gbps x 2",
+                                        "value": "5"
+                                    },
+                                    {
+                                        "label": "6 scale units",
+                                        "description": "Supports 3 Gbps x 2",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "label": "7 scale units",
+                                        "description": "Supports 3.5 Gbps x 2",
+                                        "value": "7"
+                                    },
+                                    {
+                                        "label": "8 scale units",
+                                        "description": "Supports 4 Gbps x 2",
+                                        "value": "8"
+                                    },
+                                    {
+                                        "label": "9 scale units",
+                                        "description": "Supports 4.5 Gbps x 2",
+                                        "value": "9"
+                                    },
+                                    {
+                                        "label": "10 scale units",
+                                        "description": "Supports 5 Gbps x 2",
+                                        "value": "10"
+                                    },
+                                    {
+                                        "label": "11 scale units",
+                                        "description": "Supports 5.5 Gbps x 2",
+                                        "value": "11"
+                                    },
+                                    {
+                                        "label": "12 scale units",
+                                        "description": "Supports 6 Gbps x 2",
+                                        "value": "12"
+                                    },
+                                    {
+                                        "label": "13 scale units",
+                                        "description": "Supports 6.5 Gbps x 2",
+                                        "value": "13"
+                                    },
+                                    {
+                                        "label": "14 scale units",
+                                        "description": "Supports 7 Gbps x 2",
+                                        "value": "14"
+                                    },
+                                    {
+                                        "label": "15 scale units",
+                                        "description": "Supports 7.5 Gbps x 2",
+                                        "value": "15"
+                                    },
+                                    {
+                                        "label": "16 scale units",
+                                        "description": "Supports 8 Gbps x 2",
+                                        "value": "16"
+                                    },
+                                    {
+                                        "label": "17 scale units",
+                                        "description": "Supports 8.5 Gbps x 2",
+                                        "value": "17"
+                                    },
+                                    {
+                                        "label": "18 scale units",
+                                        "description": "Supports 9 Gbps x 2",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "label": "19 scale units",
+                                        "description": "Supports 9.5 Gbps x 2",
+                                        "value": "19"
+                                    },
+                                    {
+                                        "label": "20 scale units",
+                                        "description": "Supports 10 Gbps x 2",
+                                        "value": "20"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForGw",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for VPN/ExpressRoute Gateways",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.1.0/24)",
+                            "defaultValue": "10.100.1.0/24",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'vwan')), or(equals(steps('connectivity').enableErGw, 'Yes'),equals(steps('connectivity').enableVpnGw, 'Yes')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-7]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,27]."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 1))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (first octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 2))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (second octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 3))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (third octet)."
+                                    },
+                                    {
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForGw, '/')))]",
+                                        "message": "CIDR range not within virtual network CIDR range (subnet mask)."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableErGw",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy ExpressRoute Gateway",
+                            "defaultValue": "No",
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route gateway",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "erRegionalOrAz",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy zone redundant or regional ExpressRoute Gateway",
+                            "defaultValue": "Zone redundant (recommended)",
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))),equals(steps('connectivity').enableErGw,'Yes'),contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route Gateway to the selected region and availability zones.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Zone redundant (recommended)",
+                                        "value": "Zone"
+                                    },
+                                    {
+                                        "label": "Regional",
+                                        "value": "Regional"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "erAzSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the ExpressRoute Gateway SKU",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))),equals(steps('connectivity').enableErGw,'Yes'), equals(steps('connectivity').erRegionalOrAz, 'Zone'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation))]",
+                            "toolTip": "Select the required SKU for the Express Route gateway.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "ErGw1AZ",
+                                        "description": "Megabits per second 1000, packets per second 100,000, connections per second 7000, max number of cicuit connections is 4",
+                                        "value": "ErGw1AZ"
+                                    },
+                                    {
+                                        "label": "ErGw2AZ",
+                                        "description": "Megabits per second 2000, packets per second 250,000, connections per second 14000, max number of cicuit connections is 8",
+                                        "value": "ErGw2AZ"
+                                    },
+                                    {
+                                        "label": "ErGw3AZ",
+                                        "description": "Megabits per second 10,000, packets per second 1,000,000, connections per second 28,000, max number of cicuit connections is 16",
+                                        "value": "ErGw3AZ"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "erRegionalSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the ExpressRoute Gateway SKU",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))), equals(steps('connectivity').enableErGw,'Yes'), equals(steps('connectivity').erRegionalOrAz, 'Regional'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation))]",
+                            "toolTip": "Select the required SKU for the Express Route gateway.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Standard",
+                                        "description": "Megabits per second 1000, packets per second 100,000, connections per second 7000, max number of cicuit connections is 4",
+                                        "value": "Standard"
+                                    },
+                                    {
+                                        "label": "HighPerformance",
+                                        "description": "Megabits per second 2000, packets per second 250,000, connections per second 14000, max number of cicuit connections is 8",
+                                        "value": "HighPerformance"
+                                    },
+                                    {
+                                        "label": "UltraPerformance",
+                                        "description": "Megabits per second 10,000, packets per second 1,000,000, connections per second 28,000, max number of cicuit connections is 16",
+                                        "value": "UltraPerformance"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "esErNoAzSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the ExpressRoute Gateway SKU",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(and(equals(steps('connectivity').enableErGw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan'))),equals(steps('connectivity').enableErGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('connectivity').connectivityLocation)))]",
+                            "toolTip": "Select the required SKU for the Express Route gateway.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Standard",
+                                        "description": "Megabits per second 1000, packets per second 100,000, connections per second 7000, max number of cicuit connections is 4",
+                                        "value": "Standard"
+                                    },
+                                    {
+                                        "label": "HighPerformance",
+                                        "description": "Megabits per second 2000, packets per second 250,000, connections per second 14000, max number of cicuit connections is 8",
+                                        "value": "HighPerformance"
+                                    },
+                                    {
+                                        "label": "UltraPerformance",
+                                        "description": "Megabits per second 10,000, packets per second 1,000,000, connections per second 28,000, max number of cicuit connections is 16",
+                                        "value": "UltraPerformance"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "expressRouteScaleUnit",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select the ExpressRoute Gateway scale unit",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(equals(steps('connectivity').enableErGw, 'Yes'), equals(steps('connectivity').enableHub, 'vwan'))]",
+                            "toolTip": "Select the ExpressRoute Gateway scale unit",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "1 scale unit",
+                                        "description": "Supports 2 Gbps",
+                                        "value": "1"
+                                    },
+                                    {
+                                        "label": "2 scale units",
+                                        "description": "Supports 4 Gbps",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "3 scale units",
+                                        "description": "Supports 6 Gbps",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "label": "4 scale units",
+                                        "description": "Supports 8 Gbps",
+                                        "value": "4"
+                                    },
+                                    {
+                                        "label": "5 scale units",
+                                        "description": "Supports 10 Gbps",
+                                        "value": "5"
+                                    },
+                                    {
+                                        "label": "6 scale units",
+                                        "description": "Supports 12 Gbps",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "label": "7 scale units",
+                                        "description": "Supports 14 Gbps",
+                                        "value": "7"
+                                    },
+                                    {
+                                        "label": "8 scale units",
+                                        "description": "Supports 16 Gbps",
+                                        "value": "8"
+                                    },
+                                    {
+                                        "label": "9 scale units",
+                                        "description": "Supports 18 Gbps",
+                                        "value": "9"
+                                    },
+                                    {
+                                        "label": "10 scale units",
+                                        "description": "Supports 20 Gbps",
+                                        "value": "10"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableAzFw",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Azure Firewall",
+                            "defaultValue": "Yes (recommended)",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "firewallSku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Azure Firewall tier",
+                            "defaultValue": "Premium",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[equals(steps('connectivity').enableAzFw, 'Yes')]",
+                            "toolTip": "Select Azure Firewall tier",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Basic",
+                                        "description": "Basic Azure Firewall",
+                                        "value": "Basic"
+                                    },
+                                    {
+                                        "label": "Standard",
+                                        "description": "Standard Azure Firewall",
+                                        "value": "Standard"
+                                    },
+                                    {
+                                        "label": "Premium",
+                                        "description": "Premium Azure Firewall adds support for TLS inspection, IDPS, URL filtering and web categories.",
+                                        "value": "Premium"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "esFWAZNote",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[if(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan')), and(equals(steps('connectivity').enableAzFw,'Yes'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation)), false)]",
+                            "options": {
+                                "text": "ALZ enables Availability Zones for all services that it deploys by default for maximum resiliency in regions where Availability Zones are supported, including for Azure Firewall. Review the selected Availability Zones meet your architectural requirements and that you understand the added costs for inbound and outbound data transfers associated with Avaialability Zones, before proceeding. Click on this box to learn more about the Availability Zones and Azure Firewall.",
+                                "uri": "https://learn.microsoft.com/en-us/azure/firewall/features#built-in-high-availability",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "firewallZones",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Availability Zones for the Azure Firewall",
+                            "defaultValue": [{"value": "1"}, {"value": "2"}, {"value": "3"}],
+                            "multiselect": true,
+                            "selectAll": true,
+                            "filter": true,
+                            "visible": "[if(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan')), and(equals(steps('connectivity').enableAzFw,'Yes'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation)), false)]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall to the selected region and availability zones.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Zone 1",
+                                        "value": "1"
+                                    },
+                                    {
+                                        "label": "Zone 2",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "Zone 3",
+                                        "value": "3"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForAzFw",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for Azure Firewall",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/24)",
+                            "defaultValue": "10.100.0.0/24",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (first octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (second octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (third octet)."
+                                    },
+                                    {
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFw, '/')))]",
+                                        "message": "CIDR range not within virtual network CIDR range (subnet mask)."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForAzFwMgmt",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for Azure Firewall Mgmt (Optional Only for Basic SKU)",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/26)",
+                            "defaultValue": "10.100.2.0/24",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), equals(steps('connectivity').firewallSku, 'Basic'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (first octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (second octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (third octet)."
+                                    },
+                                    {
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFwMgmt, '/')))]",
+                                        "message": "CIDR range not within virtual network CIDR range (subnet mask)."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableAzFwDnsProxy",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Enable Azure Firewall as a DNS proxy",
+                            "defaultValue": "No",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), not(equals(steps('connectivity').firewallSku, 'Basic')))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will enable Azure Firewall as a DNS Proxy.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enablevWANRoutingIntent",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Enable vWAN Routing Intent",
+                            "defaultValue": "No",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')), equals(steps('connectivity').enableAzFw, 'Yes'))]",
+                            "toolTip": "Enable vWan Routing Intent and set Azure Firewall as the next hop either for Internet Traffic, Private Traffic or both",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "vWANRoutingIntentforInternetTraffic",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Select Yes if you want to enable routing intent policy to apply on Internet Traffic",
+                            "defaultValue": "No",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')), equals(steps('connectivity').enableAzFw, 'Yes'),equals(steps('connectivity').enablevWANRoutingIntent, 'Yes'))]",
+                            "toolTip": "Enable vWAN Routing Intent for Internet Traffic",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "vWANRoutingIntentforPrivateTraffic",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Select Yes if you want to enable routing intent policy to apply on Private Traffic",
+                            "defaultValue": "No",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')), equals(steps('connectivity').enableAzFw, 'Yes'),equals(steps('connectivity').enablevWANRoutingIntent, 'Yes'))]",
+                            "toolTip": "Enable vWAN Routing Intent for Private Traffic",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "vWANHubRoutingPreference",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Hub Routing Preference",
+                            "defaultValue": "ExpressRoute (default)",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')))]",
+                            "toolTip": "Preference used in selecting best path when the virtual hub learns multiple paths to the same destination route-prefix.<a href=\"https://learn.microsoft.com/azure/virtual-wan/about-virtual-hub-routing-preference\">Virtual hub routing preference</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "ExpressRoute (default)",
+                                        "description": "ExpressRoute is the preferred path. (default)",
+                                        "value": "ExpressRoute"
+                                    },
+                                    {
+                                        "label": "VPN",
+                                        "description": "VPN is the preferred path",
+                                        "value": "VpnGateway"
+                                    },
+                                    {
+                                        "label": "AS Path",
+                                        "description": "AS Path is the preferred path",
+                                        "value": "ASPath"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "vWANHubCapacity",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Virtual Hub Capacity",
+                            "defaultValue": "",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enableHub, 'vhub')))]",
+                            "toolTip": "Routing infrastructure units determine the minimum throughput of the Virtual WAN hub router and the number of Virtual Machines that can be deployed in Virtual Networks connected to the Virtual WAN hub. Two routing infrastructure units are included at no extra cost with a deployment of a hub.<a href=\"https://learn.microsoft.com/azure/virtual-wan/hub-settings#capacity\">Virtual Hub Capacity</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "2",
+                                        "description": "2 Routing Infrastructure Units, 3 Gbps Aggregate Throughput, Supports 2000 VMs",
+                                        "value": "2"
+                                    },
+                                    {
+                                        "label": "3",
+                                        "description": "3 Routing Infrastructure Units, 3 Gbps Aggregate Throughput, Supports 3000 VMs",
+                                        "value": "3"
+                                    },
+                                    {
+                                        "label": "4",
+                                        "description": "4 Routing Infrastructure Units, 4 Gbps Aggregate Throughput, Supports 4000 VMs",
+                                        "value": "4"
+                                    },
+                                    {
+                                        "label": "5",
+                                        "description": "5 Routing Infrastructure Units, 5 Gbps Aggregate Throughput, Supports 5000 VMs",
+                                        "value": "5"
+                                    },
+                                    {
+                                        "label": "6",
+                                        "description": "6 Routing Infrastructure Units, 6 Gbps Aggregate Throughput, Supports 6000 VMs",
+                                        "value": "6"
+                                    },
+                                    {
+                                        "label": "7",
+                                        "description": "7 Routing Infrastructure Units, 7 Gbps Aggregate Throughput, Supports 7000 VMs",
+                                        "value": "7"
+                                    },
+                                    {
+                                        "label": "8",
+                                        "description": "8 Routing Infrastructure Units, 8 Gbps Aggregate Throughput, Supports 8000 VMs",
+                                        "value": "8"
+                                    },
+                                    {
+                                        "label": "9",
+                                        "description": "9 Routing Infrastructure Units, 9 Gbps Aggregate Throughput, Supports 9000 VMs",
+                                        "value": "9"
+                                    },
+                                    {
+                                        "label": "10",
+                                        "description": "10 Routing Infrastructure Units, 10 Gbps Aggregate Throughput, Supports 10000 VMs",
+                                        "value": "10"
+                                    },
+                                    {
+                                        "label": "11",
+                                        "description": "11 Routing Infrastructure Units, 11 Gbps Aggregate Throughput, Supports 11000 VMs",
+                                        "value": "11"
+                                    },
+                                    {
+                                        "label": "12",
+                                        "description": "12 Routing Infrastructure Units, 12 Gbps Aggregate Throughput, Supports 12000 VMs",
+                                        "value": "12"
+                                    },
+                                    {
+                                        "label": "13",
+                                        "description": "13 Routing Infrastructure Units, 13 Gbps Aggregate Throughput, Supports 13000 VMs",
+                                        "value": "13"
+                                    },
+                                    {
+                                        "label": "14",
+                                        "description": "14 Routing Infrastructure Units, 14 Gbps Aggregate Throughput, Supports 14000 VMs",
+                                        "value": "14"
+                                    },
+                                    {
+                                        "label": "15",
+                                        "description": "15 Routing Infrastructure Units, 15 Gbps Aggregate Throughput, Supports 15000 VMs",
+                                        "value": "15"
+                                    },
+                                    {
+                                        "label": "16",
+                                        "description": "16 Routing Infrastructure Units, 16 Gbps Aggregate Throughput, Supports 16000 VMs",
+                                        "value": "16"
+                                    },
+                                    {
+                                        "label": "17",
+                                        "description": "17 Routing Infrastructure Units, 17 Gbps Aggregate Throughput, Supports 17000 VMs",
+                                        "value": "17"
+                                    },
+                                    {
+                                        "label": "18",
+                                        "description": "18 Routing Infrastructure Units, 18 Gbps Aggregate Throughput, Supports 18000 VMs",
+                                        "value": "18"
+                                    },
+                                    {
+                                        "label": "19",
+                                        "description": "19 Routing Infrastructure Units, 19 Gbps Aggregate Throughput, Supports 19000 VMs",
+                                        "value": "19"
+                                    },
+                                    {
+                                        "label": "20",
+                                        "description": "20 Routing Infrastructure Units, 20 Gbps Aggregate Throughput, Supports 20000 VMs",
+                                        "value": "20"
+                                    },
+                                    {
+                                        "label": "21",
+                                        "description": "21 Routing Infrastructure Units, 21 Gbps Aggregate Throughput, Supports 21000 VMs",
+                                        "value": "21"
+                                    },
+                                    {
+                                        "label": "22",
+                                        "description": "22 Routing Infrastructure Units, 22 Gbps Aggregate Throughput, Supports 22000 VMs",
+                                        "value": "22"
+                                    },
+                                    {
+                                        "label": "23",
+                                        "description": "23 Routing Infrastructure Units, 23 Gbps Aggregate Throughput, Supports 23000 VMs",
+                                        "value": "23"
+                                    },
+                                    {
+                                        "label": "24",
+                                        "description": "24 Routing Infrastructure Units, 24 Gbps Aggregate Throughput, Supports 24000 VMs",
+                                        "value": "24"
+                                    },
+                                    {
+                                        "label": "25",
+                                        "description": "25 Routing Infrastructure Units, 25 Gbps Aggregate Throughput, Supports 25000 VMs",
+                                        "value": "25"
+                                    },
+                                    {
+                                        "label": "26",
+                                        "description": "26 Routing Infrastructure Units, 26 Gbps Aggregate Throughput, Supports 26000 VMs",
+                                        "value": "26"
+                                    },
+                                    {
+                                        "label": "27",
+                                        "description": "27 Routing Infrastructure Units, 27 Gbps Aggregate Throughput, Supports 27000 VMs",
+                                        "value": "27"
+                                    },
+                                    {
+                                        "label": "28",
+                                        "description": "28 Routing Infrastructure Units, 28 Gbps Aggregate Throughput, Supports 28000 VMs",
+                                        "value": "28"
+                                    },
+                                    {
+                                        "label": "29",
+                                        "description": "29 Routing Infrastructure Units, 29 Gbps Aggregate Throughput, Supports 29000 VMs",
+                                        "value": "29"
+                                    },
+                                    {
+                                        "label": "30",
+                                        "description": "30 Routing Infrastructure Units, 30 Gbps Aggregate Throughput, Supports 30000 VMs",
+                                        "value": "30"
+                                    },
+                                    {
+                                        "label": "31",
+                                        "description": "31 Routing Infrastructure Units, 31 Gbps Aggregate Throughput, Supports 31000 VMs",
+                                        "value": "31"
+                                    },
+                                    {
+                                        "label": "32",
+                                        "description": "32 Routing Infrastructure Units, 32 Gbps Aggregate Throughput, Supports 32000 VMs",
+                                        "value": "32"
+                                    },
+                                    {
+                                        "label": "33",
+                                        "description": "33 Routing Infrastructure Units, 33 Gbps Aggregate Throughput, Supports 33000 VMs",
+                                        "value": "33"
+                                    },
+                                    {
+                                        "label": "34",
+                                        "description": "34 Routing Infrastructure Units, 34 Gbps Aggregate Throughput, Supports 34000 VMs",
+                                        "value": "34"
+                                    },
+                                    {
+                                        "label": "35",
+                                        "description": "35 Routing Infrastructure Units, 35 Gbps Aggregate Throughput, Supports 35000 VMs",
+                                        "value": "35"
+                                    },
+                                    {
+                                        "label": "36",
+                                        "description": "36 Routing Infrastructure Units, 36 Gbps Aggregate Throughput, Supports 36000 VMs",
+                                        "value": "36"
+                                    },
+                                    {
+                                        "label": "37",
+                                        "description": "37 Routing Infrastructure Units, 37 Gbps Aggregate Throughput, Supports 37000 VMs",
+                                        "value": "37"
+                                    },
+                                    {
+                                        "label": "38",
+                                        "description": "38 Routing Infrastructure Units, 38 Gbps Aggregate Throughput, Supports 38000 VMs",
+                                        "value": "38"
+                                    },
+                                    {
+                                        "label": "39",
+                                        "description": "39 Routing Infrastructure Units, 39 Gbps Aggregate Throughput, Supports 39000 VMs",
+                                        "value": "39"
+                                    },
+                                    {
+                                        "label": "40",
+                                        "description": "40 Routing Infrastructure Units, 40 Gbps Aggregate Throughput, Supports 40000 VMs",
+                                        "value": "40"
+                                    },
+                                    {
+                                        "label": "41",
+                                        "description": "41 Routing Infrastructure Units, 41 Gbps Aggregate Throughput, Supports 41000 VMs",
+                                        "value": "41"
+                                    },
+                                    {
+                                        "label": "42",
+                                        "description": "42 Routing Infrastructure Units, 42 Gbps Aggregate Throughput, Supports 42000 VMs",
+                                        "value": "42"
+                                    },
+                                    {
+                                        "label": "43",
+                                        "description": "43 Routing Infrastructure Units, 43 Gbps Aggregate Throughput, Supports 43000 VMs",
+                                        "value": "43"
+                                    },
+                                    {
+                                        "label": "44",
+                                        "description": "44 Routing Infrastructure Units, 44 Gbps Aggregate Throughput, Supports 44000 VMs",
+                                        "value": "44"
+                                    },
+                                    {
+                                        "label": "45",
+                                        "description": "45 Routing Infrastructure Units, 45 Gbps Aggregate Throughput, Supports 45000 VMs",
+                                        "value": "45"
+                                    },
+                                    {
+                                        "label": "46",
+                                        "description": "46 Routing Infrastructure Units, 46 Gbps Aggregate Throughput, Supports 46000 VMs",
+                                        "value": "46"
+                                    },
+                                    {
+                                        "label": "47",
+                                        "description": "47 Routing Infrastructure Units, 47 Gbps Aggregate Throughput, Supports 47000 VMs",
+                                        "value": "47"
+                                    },
+                                    {
+                                        "label": "48",
+                                        "description": "48 Routing Infrastructure Units, 48 Gbps Aggregate Throughput, Supports 48000 VMs",
+                                        "value": "48"
+                                    },
+                                    {
+                                        "label": "49",
+                                        "description": "49 Routing Infrastructure Units, 49 Gbps Aggregate Throughput, Supports 49000 VMs",
+                                        "value": "49"
+                                    },
+                                    {
+                                        "label": "50",
+                                        "description": "50 Routing Infrastructure Units, 50 Gbps Aggregate Throughput, Supports 50000 VMs",
+                                        "value": "50"
+                                    }
                     ]
                 },
+                
                 {
                     "name": "identity",
                     "label": "Identity",

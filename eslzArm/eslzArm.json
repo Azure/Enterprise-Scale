@@ -464,6 +464,169 @@
                 "description": "vWAN Hub Capacity"
             }
         },
+        "addressPrefixSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "connectivityLocationSecondary": {
+            "type": "string",
+            "defaultValue": "[deployment().location]"
+        },
+        "enablePrivateDnsZonesSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "privateDnsZonesToDeploySecondary": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "enableVpnGwSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableVpnActiveActiveSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "gwRegionalOrAzSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwRegionalSkuSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "gwAzSkuSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "vpnGateWayScaleUnitSecondary": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "subnetMaskForGwSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableErGwSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "erAzSkuSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erRegionalSkuSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "erRegionalOrAzSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "expressRouteScaleUnitSecondary": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "enableHubSecondary": {
+            "type": "string",
+            "allowedValues": [
+                "vhub",
+                "vwan",
+                "nva",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableAzFwSecondary": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "enableAzFwDnsProxySecondary": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "firewallSkuSecondary": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Standard"
+        },
+        "firewallZonesSecondary": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "subnetMaskForAzFwSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subnetMaskForAzFwMgmtSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enablevWANRoutingIntentSecondary": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "internetTrafficRoutingPolicySecondary": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Internet Traffic"
+            }
+        },
+        "privateTrafficRoutingPolicySecondary": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable vWAN Routing Intent and Policy for Private Traffic"
+            }
+        },
+        "vWANHubRoutingPreferenceSecondary": {
+            "type": "string",
+            "defaultValue": "ExpressRoute",
+            "metadata": {
+                "description": "vWAN Hub Routing Preference"
+            }
+        },
+        "vWANHubCapacitySecondary": {
+            "type": "string",
+            "defaultValue": "2",
+            "metadata": {
+                "description": "vWAN Hub Capacity"
+            }
+        },
         "identitySubscriptionId": {
             "type": "string",
             "defaultValue": "",
@@ -1125,7 +1288,10 @@
             "ascGovPolicyDeploymentName": "[take(concat('alz-Gov-ASC', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubDeploymentName": "[take(concat('alz-HubSpoke', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubDeploymentName": "[take(concat('alz-VWanHub', variables('deploymentSuffix')), 64)]",
+            "vnetConnectivityHb2DeploymentName": "[take(concat('alz-HubSpoke', variables('deploymentSuffix')), 64)]",
+            "vwanConnectivityHb2DeploymentName": "[take(concat('alz-VWanHub', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubDeploymentName": "[take(concat('alz-NVAHub', variables('deploymentSuffix')), 64)]",
+            "nvaConnectivityHb2DeploymentName": "[take(concat('alz-NVAHub', variables('deploymentSuffix')), 64)]",
             "azVmMonitorPolicyDeploymentName": "[take(concat('alz-AzVmMonitor', variables('deploymentSuffix')), 64)]",
             "azVmssMonitorPolicyDeploymentName": "[take(concat('alz-AzVmssMonitor', variables('deploymentSuffix')), 64)]",
             "azVmHybridMonitorPolicyDeploymentName": "[take(concat('alz-AzVmHybridMonitor', variables('deploymentSuffix')), 64)]",
@@ -3078,6 +3244,366 @@
                 }
             }
         },
+               /*
+            The following optional deployment will configure virtual network hub into the connectivity subscription for a secondary region
+        */
+       
+        /* {
+            // Assigning DDoS Policy to enforce DDoS on virtual networks if condition evaluates to true XXREVISIT
+            "condition": "[and(or(equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableDdoS'), 'Audit')), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').ddosHubPolicyDeploymentName]",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').ddosPolicyAssignment]"
+                },
+                "parameters": {
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[variables('deterministicRoleAssignmentGuids').ddosForConnectivity]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableDdoS'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        }, */
+        {
+            // Creating the virtual network hub (hub and spoke) in a secondary region
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHubSecondary'), 'vhub'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').vnetConnectivityHb2DeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vnetConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHubSecondary')]"
+                    },
+                    "enableAzFw": {
+                        "value": "[parameters('enableAzFwSecondary')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefixSecondary')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGwSecondary')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGwSecondary')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoSSecondary')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "subnetMaskForAzFw": {
+                        "value": "[parameters('subnetMaskForAzFwSecondary')]"
+                    },
+                    "subnetMaskForAzFwMgmt": {
+                        "value": "[parameters('subnetMaskForAzFwMgmtSecondary')]"
+                    },
+                    "subnetMaskForGw": {
+                        "value": "[parameters('subnetMaskForGwSecondary')]"
+                    },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSkuSecondary')]"
+                    },
+                    "firewallZones": {
+                        "value": "[parameters('firewallZonesSecondary')]"
+                    },
+                    "enableAzFwDnsProxy": {
+                        "value": "[parameters('enableAzFwDnsProxySecondary')]"
+                    },
+                    "enableVpnActiveActive": {
+                        "value": "[parameters('enableVpnActiveActiveSecondary')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAzSecondary')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSkuSecondary')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSkuSecondary')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAzSecondary')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSkuSecondary')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSkuSecondary')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the virtual network hub (with NVA) in a secondary region
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHubSecondary'), 'nva'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').nvaConnectivityHb2DeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').nvaConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "ddosPlanResourceId": {
+                        "value": "[variables('platformResourceIds').ddosProtectionResourceId]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHubSecondary')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefixSecondary')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGwSecondary')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGwSecondary')]"
+                    },
+                    "enableDdoS": {
+                        "value": "[parameters('enableDdoS')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "subnetMaskForGw": {
+                        "value": "[parameters('subnetMaskForGwSecondary')]"
+                    },
+                    "enableVpnActiveActive": {
+                        "value": "[parameters('enableVpnActiveActiveSecondary')]"
+                    },
+                    "gwRegionalOrAz": {
+                        "value": "[parameters('gwRegionalOrAzSecondary')]"
+                    },
+                    "gwAzSku": {
+                        "value": "[parameters('gwAzSkuSecondary')]"
+                    },
+                    "gwRegionalSku": {
+                        "value": "[parameters('gwRegionalSkuSecondary')]"
+                    },
+                    "erRegionalOrAz": {
+                        "value": "[parameters('erRegionalOrAzSecondary')]"
+                    },
+                    "erAzSku": {
+                        "value": "[parameters('erAzSkuSecondary')]"
+                    },
+                    "erRegionalSku": {
+                        "value": "[parameters('erRegionalSkuSecondary')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the VWAN network hub (Microsoft managed) in a secondary region TO BE ADDRESSED
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vwan'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').vwanConnectivityHubDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanConnectivityHub]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enableHub": {
+                        "value": "[parameters('enableHub')]"
+                    },
+                    "enableAzFw": {
+                        "value": "[parameters('enableAzFw')]"
+                    },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSku')]"
+                    },
+                    "firewallZones": {
+                        "value": "[parameters('firewallZones')]"
+                    },
+                    "enableAzFwDnsProxy": {
+                        "value": "[parameters('enableAzFwDnsProxy')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "enableVpnGw": {
+                        "value": "[parameters('enableVpnGw')]"
+                    },
+                    "enableErGw": {
+                        "value": "[parameters('enableErGw')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "expressRouteScaleUnit": {
+                        "value": "[parameters('expressRouteScaleUnit')]"
+                    },
+                    "vpnGateWayScaleUnit": {
+                        "value": "[parameters('vpnGateWayScaleUnit')]"
+                    },
+                    "enablevWANRoutingIntent": {
+                        "value": "[parameters('enablevWANRoutingIntent')]"
+                    },
+                    "internetTrafficRoutingPolicy": {
+                        "value": "[parameters('internetTrafficRoutingPolicy')]"
+                    },
+                    "privateTrafficRoutingPolicy": {
+                        "value": "[parameters('privateTrafficRoutingPolicy')]"
+                    },
+                    "vWANHubRoutingPreference": {
+                        "value": "[parameters('vWANHubRoutingPreference')]"
+                    },
+                    "vWanHubCapacity": {
+                        "value": "[parameters('vWANHubCapacity')]"
+                    }
+                }
+            }
+        },
+/*         {
+            // Creating resource group for Private DNS Zones for a secondary region
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').privateDnsZoneRgDeploymentName]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHb2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHb2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHb2DeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').privateDnsRg]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    }
+                }
+            }
+        }, */
+/*         {
+            // Creating Private DNS Zones into the connectivity subscription for a secondary region
+            "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').privateDnsZonesDeploymentName, copyIndex())]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRgDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
+            ],
+            "copy": {
+                "name": "dnsZones",
+                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZones]"
+                },
+                "parameters": {
+                    "privateDnsZoneName": {
+                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
+                    },
+                    "connectivityHubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    }
+                }
+            }
+        }, */
         /*
             The following deployments will deploy and configure the Azure policy governance for the landing zones
         */
