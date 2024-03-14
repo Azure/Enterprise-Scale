@@ -2787,8 +2787,7 @@
                         {
                             "name": "secondaryRegionNetworkInfo",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[and(not(equals(steps('connectivity').enableHubSecondary, 'No')), not(equals(steps('connectivity').enableHubSecondary, null)))]"
-                            ,
+                            "visible": "[not(equals(steps('connectivity').enableHubSecondary, 'No'))]"                            ,
                             "options": {
                                 "text": "Your second region's networking resources will be deployed in the same subscription as the first region's.",
                                 "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology",
@@ -2796,12 +2795,25 @@
                             }
                         },
                         {
+                            "name": "connectivityLocationSecondary",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Region fto extend networking",
+                            "filter": true,
+                            "toolTip": "Select the target region for your second connectivity deployment (requires you to provide a subscriptionId for connectivity)",
+                            "defaultValue": "[steps('basics').resourceScope.location.displayName]",
+                            "constraints": {
+                                "allowedValues": "[map(steps('basics').getLocations.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
+                                "required": true
+                            },
+                            "visible": "[not(equals(steps('connectivity').enableHubSecondary, 'No'))]"
+                        },
+                        {
                             "name": "esAddressHubVWANSecondary",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Address space (required for vWAN hub)",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.0.0/23)",
                             "defaultValue": "10.200.0.0/23",
-                            "visible": "[and(equals(steps('connectivity').enableHubSecondary, 'vwan'), equals(steps('connectivity').enableHub, 'vwan'))]",
+                            "visible": "[and(not(equals(steps('connectivity').enableHubSecondary, 'No')), not(equals(steps('connectivity').enableHubSecondary, 'nva')), not(equals(steps('connectivity').enableHubSecondary, 'vhub')))]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -2828,19 +2840,6 @@
                                     }
                                 ]
                             }
-                        },
-                        {
-                            "name": "connectivityLocationSecondary",
-                            "type": "Microsoft.Common.DropDown",
-                            "label": "Region for the second networking hub",
-                            "filter": true,
-                            "toolTip": "Select the target region for you connectivity deployment (requires you to provide a subscriptionId for connectivity)",
-                            "defaultValue": "[steps('basics').resourceScope.location.displayName]",
-                            "constraints": {
-                                "allowedValues": "[map(steps('basics').getLocations.value,(item) => parse(concat('{\"label\":\"',item.displayName,'\",\"value\":\"',item.name,'\"}')))]",
-                                "required": true
-                            },
-                            "visible": "[not(equals(steps('connectivity').enableHubSecondary, 'No'))]"
                         },
                         {
                             "name": "esNwZtnNote",
@@ -3668,19 +3667,19 @@
                                         "message": "Invalid CIDR range. The address prefix must be in the range [20,27]."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 1))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 1))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (first octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 2))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 2))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (second octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 3))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForGw, '/')), '.'), 3))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (third octet)."
                                     },
                                     {
-                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForGw, '/')))]",
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), last(split(steps('connectivity').subnetMaskForGw, '/')))]",
                                         "message": "CIDR range not within virtual network CIDR range (subnet mask)."
                                     }
                                 ]
@@ -3988,19 +3987,19 @@
                                         "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (first octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (second octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (third octet)."
                                     },
                                     {
-                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFw, '/')))]",
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), last(split(steps('connectivity').subnetMaskForAzFwSecondary, '/')))]",
                                         "message": "CIDR range not within virtual network CIDR range (subnet mask)."
                                     }
                                 ]
@@ -4021,19 +4020,19 @@
                                         "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFwSecondary, '/')), '.'), 1))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (first octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFwSecondary, '/')), '.'), 2))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (second octet)."
                                     },
                                     {
-                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHSSecondary, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFwSecondary, '/')), '.'), 3))), true)]",
                                         "message": "CIDR range not within virtual network CIDR range (third octet)."
                                     },
                                     {
-                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), last(split(steps('connectivity').subnetMaskForAzFwMgmt, '/')))]",
+                                        "isValid": "[lessOrEquals(last(split(steps('connectivity').esAddressHubHSSecondary, '/')), last(split(steps('connectivity').subnetMaskForAzFwMgmt, '/')))]",
                                         "message": "CIDR range not within virtual network CIDR range (subnet mask)."
                                     }
                                 ]
