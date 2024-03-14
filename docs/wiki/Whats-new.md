@@ -46,6 +46,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Documentation
 
 - Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+- Updated [community call wiki page](https://aka.ms/alz/community) with links for March 2024 recording and slides.
 
 #### Tooling
 
