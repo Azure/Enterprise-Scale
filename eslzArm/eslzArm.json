@@ -1371,14 +1371,16 @@
             "vnetConnectivityHubLiteDeploymentName": "[take(concat('alz-VnetHubLite', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubLiteDeploymentName": "[take(concat('alz-VWanHubLite', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubLiteDeploymentName": "[take(concat('alz-NVAHubLite', variables('deploymentSuffix')), 64)]",
-            "vnetConnectivityHub2LiteDeploymentName": "[take(concat('alz-VnetHubLite2', variables('deploymentSuffix')), 64)]",
-            //"vwanConnectivityHub2LiteDeploymentName": "[take(concat('alz-VWanHubLite2', variables('deploymentSuffix')), 64)]",
-            "nvaConnectivityHub2LiteDeploymentName": "[take(concat('alz-NVAHubLite2', variables('deploymentSuffix')), 64)]",
+            "vnetConnectivityHubLite2DeploymentName": "[take(concat('alz-VnetHubLite2', variables('deploymentSuffix')), 64)]",
+            //"vwanConnectivityHubLite2DeploymentName": "[take(concat('alz-VWanHubLite2', variables('deploymentSuffix')), 64)]",
+            "nvaConnectivityHubLite2DeploymentName": "[take(concat('alz-NVAHubLite2', variables('deploymentSuffix')), 64)]",
             "ddosRgLiteDeploymentName": "[take(concat('alz-DDoSRgLite', variables('deploymentSuffix')), 64)]",
             "ddosLiteDeploymentName": "[take(concat('alz-DDoSLite', variables('deploymentSuffix')), 64)]",
             "ddosHubLitePolicyDeploymentName": "[take(concat('alz-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZoneRgLiteDeploymentName": "[take(concat('alz-PrivDNSRGLite', variables('deploymentSuffix')), 64)]",
             "privateDnsZonesLiteDeploymentName": "[take(concat('alz-PrivDNSLite', variables('deploymentSuffix')), 35)]",
+            "privateDnsZoneRgLite2DeploymentName": "[take(concat('alz-PrivDNSRGLite2', variables('deploymentSuffix')), 64)]",
+            "privateDnsZonesLite2DeploymentName": "[take(concat('alz-PrivDNSLite2', variables('deploymentSuffix')), 35)]",
             "monitorPolicyLiteDeploymentName": "[take(concat('alz-MonitorPolicyLite', variables('deploymentSuffix')), 64)]",
             "dataCollectionRuleVmInsightsLiteDeploymentName": "[take(concat('alz-DataCollectionRuleVmInsightsLite', variables('deploymentSuffix')), 64)]",
             "dataCollectionRuleChangeTrackingLiteDeploymentName": "[take(concat('alz-DataCollectionRuleChangeTrackingLite', variables('deploymentSuffix')), 64)]",
@@ -1390,6 +1392,7 @@
             "connectivityRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]",
             "ddosRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos')]",
             "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]",
+            "privateDnsRg2": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns-02')]",
             "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
             "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]"
         },
@@ -3544,7 +3547,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').privateDnsRg]"
+                        "value": "[variables('platformRgNames').privateDnsRg2]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocationSecondary')]"
@@ -3559,7 +3562,7 @@
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('deploymentNames').privateDnsZones2DeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRg2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
@@ -5762,6 +5765,44 @@
                 }
             }
         },
+                /*
+            Note: ES Lite only: deploy RG for Private DNS zones to platform subscription in a secondary region
+        */
+        {
+            // Creating resource group for Private DNS Zones for a secondary region
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('esLitedeploymentNames').privateDnsZoneRgLite2DeploymentName]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
+        //        "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').privateDnsRg2]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    }
+                }
+            }
+        },
         /*
             Note: ES Lite only: deploy private DNS zones
         */
@@ -5780,9 +5821,9 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHub2LiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
  //               "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHub2LiteDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
             ],
             "copy": {
                 "name": "dnsZonesLite",
@@ -5810,21 +5851,24 @@
                 }
             }
         },
+                /*
+            Note: ES Lite only: deploy private DNS zones in a secondary region
+        */
         {
             // Creating Private DNS Zones into the connectivity subscription for a secondary region
             "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLiteDeploymentName, copyIndex())]",
+            "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLite2DeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHub2LiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
  //               "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHub2LiteDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
             ],
             "copy": {
                 "name": "dnsZonesLite",
@@ -5842,6 +5886,7 @@
                     },
                     "connectivityHubResourceId": {
                         "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
+                    }
                 }
             }
         },
@@ -6144,7 +6189,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[variables('scopes').platformManagementGroup]",
-            "name": "[variables('esLitedeploymentNames').vnetConnectivityHub2LiteDeploymentName]",
+            "name": "[variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
@@ -6241,7 +6286,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[variables('scopes').platformManagementGroup]",
-            "name": "[variables('esLitedeploymentNames').nvaConnectivityHub2LiteDeploymentName]",
+            "name": "[variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
