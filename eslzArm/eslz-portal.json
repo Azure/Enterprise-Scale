@@ -327,9 +327,34 @@
                                         ]
                                     },
                                     "visible": true
+                                },
+                                {
+                                    "name": "enforceBackupPlat",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enforce Backup and Recovery recommended guardrails",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Azure Recovery Services policies are enabled.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html\">Enforce enhanced recovery and backup policies</a>.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
                                 }
                             ]
                         },
+                        
                         {
                             "name": "multiPlatformMgmtSub",
                             "type": "Microsoft.Common.InfoBox",
@@ -423,7 +448,7 @@
                                     "visible": true,
                                     "constraints": {
                                         "allowedValues": "[steps('basics').getSubscriptions.data]",
-                                        "required": false
+                                        "required": true
                                     }
                                 }
                             ],
@@ -1163,7 +1188,7 @@
                             "label": "Enable DDoS Network Protection",
                             "defaultValue": "Yes (recommended)",
                             "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
-                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Network Protection will be enabled.",
+                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Network Protection will be enabled on the connectivity virtual network. Please note that DDoS Network Protection does incur additional costs that need to be considered, for more information: <a href=\"https://azure.microsoft.com/en-us/pricing/details/ddos-protection/#pricing\">DDoS Network Protection pricing</a>.",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -2301,7 +2326,7 @@
                             "type": "Microsoft.Common.InfoBox",
                             "visible": "[if(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan')), and(equals(steps('connectivity').enableAzFw,'Yes'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation)), false)]",
                             "options": {
-                                "text": "ALZ enables Availability Zones for all services that it deploys by default for maximum resiliency in regions where Availability Zones are supported, including for Azure Firewall. Review the selected Availability Zones meet your architectural requirements and that you understand the added costs for inbound and outbound data transfers associated with Avaialability Zones, before proceeding. Click on this box to learn more about the Availability Zones and Azure Firewall.",
+                                "text": "ALZ enables Availability Zones for all services that it deploys by default for maximum resiliency in regions where Availability Zones are supported, including for Azure Firewall. Review the selected Availability Zones meet your architectural requirements and that you understand the added costs for inbound and outbound data transfers associated with Availability Zones, before proceeding. Click on this box to learn more about the Availability Zones and Azure Firewall.",
                                 "uri": "https://learn.microsoft.com/en-us/azure/firewall/features#built-in-high-availability",
                                 "style": "Info"
                             }
@@ -3463,6 +3488,30 @@
                                     "label": "Enforce Key Vault recommended guardrails",
                                     "defaultValue": "Yes (recommended)",
                                     "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Key Vault policies are enabled.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html\">Enforce recommended guardrails for Azure Key Vault.</a>.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enforceBackup",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enforce Backup and Recovery recommended guardrails",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Azure Recovery Services policies are enabled.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html\">Enforce enhanced recovery and backup policies</a>.",
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -5409,6 +5458,7 @@
                 "denyVMUnmanagedDisk": "[steps('core').denyVMUnmanagedDisk]",
                 "telemetryOptOut": "[steps('core').cuaSection.telemetryOptOut]",
                 "enforceKvGuardrailsPlat": "[steps('management').esPlatformMgmtGroup.enforceKvGuardrailsPlat]",
+                "enforceBackupPlat": "[steps('management').esPlatformMgmtGroup.enforceBackupPlat]",
                 "enableLogAnalytics": "[steps('management').enableLogAnalytics]",
                 "enableChangeTracking": "[steps('management').enableChangeTracking]",
                 "enableUpdateMgmt": "[steps('management').enableUpdateMgmt]",
@@ -5498,6 +5548,7 @@
                 "enableSqlAudit": "[steps('landingZones').lzSection.enableSqlAudit]",
                 "enableStorageHttps": "[steps('landingZones').lzSection.enableStorageHttps]",
                 "enforceKvGuardrails": "[steps('landingZones').lzSection.enforceKvGuardrails]",
+                "enforceBackup": "[steps('landingZones').lzSection.enforceBackup]",
                 "denyHybridNetworking": "[steps('landingZones').corpSection.denyHybridNetworking]",
                 "auditPeDnsZones": "[steps('landingZones').corpSection.auditPeDnsZones]",
                 "auditAppGwWaf": "[steps('landingZones').lzSection.auditAppGwWaf]",

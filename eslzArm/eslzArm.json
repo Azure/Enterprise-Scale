@@ -748,7 +748,25 @@
                 "No"
             ]
         },
+        "enforceBackup": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "enforceKvGuardrailsPlat": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "enforceBackupPlat": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -1041,6 +1059,7 @@
             "mgmtFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-MgmtPortsFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
             "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsKeyVaultPolicyAssignment.json')]",
+            "backupPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-BackupPolicyAssignment.json')]",
             "denyHybridNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-HybridNetworkingPolicyAssignment.json')]",
             "auditPeDnsZonesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-PeDnsZonesPolicyAssignment.json')]",
             "auditAppGwWafPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AppGwWafPolicyAssignment.json')]",
@@ -1059,6 +1078,7 @@
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
             "govMdfcPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/gov/fairfaxDINE-MDFCConfigPolicyAssignment.json')]",
             "costOptimizationPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-UnusedResourcesPolicyAssignment.json')]",
+            "trustedLaunchPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-TrustedLaunchPolicyAssignment.json')]",
             "zoneResilientPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-ZoneResilientPolicyAssignment.json')]",
             "resourceRgLocationPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-ResourceRGLocationPolicyAssignment.json')]",
             "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]",
@@ -1130,6 +1150,8 @@
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyPlatDeploymentName": "[take(concat('alz-KvGuardrailsPlat', variables('deploymentSuffix')), 64)]",
+            "backupPolicyDeploymentName": "[take(concat('alz-Backup', variables('deploymentSuffix')), 64)]",
+            "backupPlatPolicyDeploymentName": "[take(concat('alz-BackupPlat', variables('deploymentSuffix')), 64)]",
             "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
             "auditPeDnsZonesPolicyDeploymentName": "[take(concat('alz-AuditPeDnsZones', variables('deploymentSuffix')), 64)]",
             "auditAppGwWafPolicyDeploymentName": "[take(concat('alz-AppGwWaf', variables('deploymentSuffix')), 64)]",
@@ -1157,6 +1179,7 @@
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]",
             "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]",
+            "trustedLaunchDeploymentName": "[take(concat('alz-TrustedLaunch', variables('deploymentSuffix')), 64)]",
             "zoneResilientDeploymentName": "[take(concat('alz-ZoneResilient', variables('deploymentSuffix')), 64)]",
             "resourceRgLocationDeploymentName": "[take(concat('alz-ResourceRGLoc', variables('deploymentSuffix')), 64)]",
             "denyVMUnmanagedDiskPolicyDeploymentName": "[take(concat('alz-NoUnmanagedDiskResource', variables('deploymentSuffix')), 64)]",
@@ -2258,6 +2281,30 @@
             }
         },
         {
+            // Assigning Trusted Launch policy initiative to intermediate root management group
+            "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').trustedLaunchDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').trustedLaunchPolicyInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
             // Assigning Zone Resilient policy initiative to intermediate root management group
             "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
@@ -3201,6 +3248,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3283,6 +3333,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3351,6 +3404,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3543,6 +3599,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3625,6 +3684,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3693,6 +3755,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -4163,6 +4228,60 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enforceKvGuardrailsPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Recovery Services - Backup and Site Recovery - guardrails initiative to landing zones management group if condition is true
+            "condition": "[or(equals(parameters('enforceBackup'), 'Yes'), equals(parameters('enforceBackup'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').backupPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').backupPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceBackup'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Recovery Services - Backup and Site Recovery - guardrails initiative to platform management group if condition is true
+            "condition": "[or(equals(parameters('enforceBackupPlat'), 'Yes'), equals(parameters('enforceBackupPlat'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').backupPlatPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').backupPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceBackupPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }

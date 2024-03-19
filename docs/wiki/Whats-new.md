@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh Q3 FY24](#-policy-refresh-q3-fy24)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
   - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
@@ -41,9 +42,9 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### Policy Refresh FY23Q3
+### 🔃 Policy Refresh Q3 FY24
 
-- Updated `Audit-PrivateLinkDnsZones` display name to inlcude the fact it can be `audit` or `deny`
+- Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
 - Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Virtual Desktop hostpool resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/9427df23-0f42-4e1e-bf99-a6133d841c4a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
@@ -55,17 +56,45 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Removed Defender for Cloud for DNS, as this is now deprecated and is included in Defender for Servers. Deprecated [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) initiative, and superseded with [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to minimize breaking change impact on existing deployments.
+- Added new initiative and default assignment for [Enforce-Backup](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html) scoped to the Landing Zones and Platform management groups in Audit mode:
+  - Added the [[Preview]: Immutability must be enabled for backup vaults](https://www.azadvertizer.net/azpolicyadvertizer/2514263b-bc0d-4b06-ac3e-f262c0979018.html) built-in policy
+  - Added the [[Preview]: Immutability must be enabled for Recovery Services vaults](https://www.azadvertizer.net/azpolicyadvertizer/d6f6f560-14b7-49a4-9fc8-d2c3a9807868.html) built-in policy
+  - Added the [[Preview]: Soft delete should be enabled for Backup Vaults](https://www.azadvertizer.net/azpolicyadvertizer/9798d31d-6028-4dee-8643-46102185c016.html) built-in policy
+  - Added the [[Preview]: Soft delete should be enabled for Recovery Services Vaults](https://www.azadvertizer.net/azpolicyadvertizer/31b8092a-36b8-434b-9af7-5ec844364148.html) built-in policy
+  - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Backup Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c58e083e-7982-4e24-afdc-be14d312389e.html) built-in policy
+  - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Recovery Services Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c7031eab-0fc0-4cd9-acd0-4497bd66d91a.html) built-in policy
+- Added [[Preview]: Azure Recovery Services vaults should disable public network access](https://www.azadvertizer.net/azpolicyadvertizer/9ebbbba3-4d65-4da9-bb67-b22cfaaff090.html) built-in policy to the "Deny-PublicPaaSEndpoints" initiative and assignment.
+- Added new initiative and assignment to enable auditing for Trust Launch capable virtual machines which includes the following built-in policies:
+  - [Disks and OS image should support TrustedLaunch](https://www.azadvertizer.net/azpolicyadvertizer/b03bb370-5249-4ea4-9fce-2552e87e45fa.html)
+  - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
 
 ### March 2024
 
 #### Documentation
 
 - Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+- Updated [community call wiki page](https://aka.ms/alz/community) with links for March 2024 recording and slides.
 
 #### Tooling
 
 - Add new Regulatory Compliance Policy Assignment flexibility feature
 - Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
+- Resolved an issue that prevented the policy remediation from working properly for VM Insights, Change Tracking, Azure Update Manager policies. The root cause was a too restrictive access configuration for the Managed Identity that performs the remediation tasks.
+  - **New deployments will now:**
+    - Add an additional role assignment for VMInsights Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
+    - Add an additional role assignment for ChangeTracking Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
+    - Add an additional role assignment to Azure Update Manger Policies, granting Managed Identity Operator at the same scope as the assignment.
+  - **To update an existing deployment:**
+    - For each of the VMInsights and ChangeTracking Initiative assignments:
+      - **Only required for the Initiatives assigned to Landing Zones Management group scope**
+      - Go to the Initiative assignment, go to the Managed Identity tab and copy the Principal ID
+      - Go to Management Groups, select the Platform Management group and go to Access control (IAM)
+      - Add a new role assignment and assign the Reader role the Principal ID that was copied in the first step.
+    - For each of the Azure Update Manger Initiative assignments:
+      - **Applies to the Initiatives assigned to both the Landing Zones and the Platform Management group scopes**
+      - Go to the Initiative assignment, go to the Managed Identity tab and copy the Principal ID
+      - Go to Management Groups, select the same management group as the assignment you copied the Principal ID from and go to Access control (IAM)
+      - Add a new role assignment and assign the Managed Identity Operator role the Principal ID that was copied in the first step.
 
 ### February 2024
 
@@ -155,6 +184,8 @@ Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some
 
 #### Policy
 
+- Added ['Container Apps environment should disable public network access'](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to ['Deny-PublicPaaSEndpoints'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
+- Added ['Container Apps should only be accessible over HTTPS'](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this ['Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
 - Fixed issue with couple of Policy file names to align with the actual name of the policies
 - Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version
