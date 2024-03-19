@@ -764,7 +764,25 @@
                 "No"
             ]
         },
+        "enforceBackup": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
         "enforceKvGuardrailsPlat": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "Audit",
+                "No"
+            ]
+        },
+        "enforceBackupPlat": {
             "type": "string",
             "defaultValue": "No",
             "allowedValues": [
@@ -1057,6 +1075,7 @@
             "mgmtFromInternetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-MgmtPortsFromInternetPolicyAssignment.json')]",
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
             "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsKeyVaultPolicyAssignment.json')]",
+            "backupPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-BackupPolicyAssignment.json')]",
             "denyHybridNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-HybridNetworkingPolicyAssignment.json')]",
             "auditPeDnsZonesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-PeDnsZonesPolicyAssignment.json')]",
             "auditAppGwWafPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AppGwWafPolicyAssignment.json')]",
@@ -1147,6 +1166,8 @@
             "storageHttpsPolicyDeploymentName": "[take(concat('alz-StorageHttps', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyDeploymentName": "[take(concat('alz-KvGuardrails', variables('deploymentSuffix')), 64)]",
             "kvGuardrailsPolicyPlatDeploymentName": "[take(concat('alz-KvGuardrailsPlat', variables('deploymentSuffix')), 64)]",
+            "backupPolicyDeploymentName": "[take(concat('alz-Backup', variables('deploymentSuffix')), 64)]",
+            "backupPlatPolicyDeploymentName": "[take(concat('alz-BackupPlat', variables('deploymentSuffix')), 64)]",
             "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
             "auditPeDnsZonesPolicyDeploymentName": "[take(concat('alz-AuditPeDnsZones', variables('deploymentSuffix')), 64)]",
             "auditAppGwWafPolicyDeploymentName": "[take(concat('alz-AppGwWaf', variables('deploymentSuffix')), 64)]",
@@ -4232,6 +4253,60 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enforceKvGuardrailsPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Recovery Services - Backup and Site Recovery - guardrails initiative to landing zones management group if condition is true
+            "condition": "[or(equals(parameters('enforceBackup'), 'Yes'), equals(parameters('enforceBackup'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').backupPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').backupPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceBackup'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Azure Recovery Services - Backup and Site Recovery - guardrails initiative to platform management group if condition is true
+            "condition": "[or(equals(parameters('enforceBackupPlat'), 'Yes'), equals(parameters('enforceBackupPlat'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').backupPlatPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').backupPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enforceBackupPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     }
                 }
             }
