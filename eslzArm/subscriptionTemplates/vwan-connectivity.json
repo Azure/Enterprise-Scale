@@ -334,7 +334,136 @@
                                                                                 createArray(
                                                                                     createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop')))))]"
                                                 }
+                                        },
+                                        //Begin Secondary vhub Deployment
+                                        {
+                                            "condition": "[and(equals(parameters('enableHub'), 'vwan'), not(empty(parameters('addressPrefix'))))]",
+                                            "type": "Microsoft.Network/virtualHubs",
+                                            "apiVersion": "2023-04-01",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('vhubname')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualWans/', variables('vWanName'))]"
+                                            ],
+                                            "properties": {
+                                                "virtualWan": {
+                                                    "id": "[variables('vwanresourceid')]"
+                                                },
+                                                "addressPrefix": "[parameters('addressPrefix')]",
+                                                "sku": "[variables('vhubsku')]",
+                                                "hubRoutingPreference": "[parameters('vWANHubRoutingPreference')]",
+                                                "virtualRouterAutoScaleConfiguration": {
+                                                        "minCapacity": "[int(parameters('vWANHubCapacity'))]"
+                                                        }
+                                                }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableHub'), 'vwan'), equals(parameters('enableVpnGw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/vpnGateways",
+                                            "apiVersion": "2020-05-01",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('vpngwname')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]"
+                                            ],
+                                            "properties": {
+                                                "virtualHub": {
+                                                    "id": "[variables('vwanhub')]"
+                                                },
+                                                "bgpSettings": {
+                                                    "asn": "[variables('vpnbgpasn')]"
+                                                },
+                                                "vpnGatewayScaleUnit": "[int(parameters('vpnGateWayScaleUnit'))]"
+                                            }
+                                        },
+                                        {
+                                            "condition": "[and(equals(parameters('enableHub'), 'vwan'), equals(parameters('enableErGw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/expressRouteGateways",
+                                            "apiVersion": "2020-05-01",
+                                            "location": "[parameters('location')]",
+                                            "name": "[variables('ergwname')]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/', variables('vhubname'))]"
+                                            ],
+                                            "properties": {
+                                                "virtualHub": {
+                                                    "id": "[variables('vwanhub')]"
+                                                },
+                                                "autoScaleConfiguration": {
+                                                    "bounds": {
+                                                        "min": "[int(parameters('expressRouteScaleUnit'))]"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
+                                            "type": "Microsoft.Network/firewallPolicies",
+                                            "apiVersion": "2020-11-01",
+                                            "name": "[variables('azFwPolicyName')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "dnsSettings": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('azFirewallDnsSettings'), json('null'))]",
+                                                "sku": {
+                                                    "tier": "[parameters('firewallSku')]"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "condition": "[equals(parameters('enableAzFw'), 'Yes')]",
+                                            "apiVersion": "2020-05-01",
+                                            "type": "Microsoft.Network/azureFirewalls",
+                                            "name": "[variables('azfwname')]",
+                                            "location": "[parameters('location')]",
+                                            "zones": "[if(not(empty(parameters('firewallZones'))), parameters('firewallZones'), json('null'))]",
+                                            "dependsOn": [
+                                                "[concat('Microsoft.Network/firewallPolicies/', variables('azFwPolicyName'))]",
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]"
+                                            ],
+                                            "properties": {
+                                                "sku": {
+                                                    "Name": "AZFW_Hub",
+                                                    "Tier": "[parameters('firewallSku')]"
+                                                },
+                                                "hubIPAddresses": {
+                                                    "publicIPs": {
+                                                        "addresses": "[json('[]')]",
+                                                        "count": 1
+                                                    }
+                                                },
+                                                "virtualHub": {
+                                                    "id": "[variables('vwanhub')]"
+                                                },
+                                                "firewallPolicy": {
+                                                    "id": "[variables('azFirewallPolicyId').id]"
+                                                }
+                                            }
+                                        },
+                                         {
+                                            "condition":"[and(equals(parameters('enablevWANRoutingIntent'), 'Yes'),equals(parameters('enableAzFw'), 'Yes'))]",
+                                            "type": "Microsoft.Network/virtualHubs/routingIntent",
+                                            "apiVersion": "2023-04-01",
+                                            "name":"[concat(variables('vhubname'),'/','RoutingIntent')]",
+                                             "dependsOn": [
+                                                "[concat('Microsoft.Network/virtualHubs/',variables('vhubname'))]",
+                                                "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables ('rgName'), '/providers/Microsoft.Network/azureFirewalls/', variables ('azFwName'))]"
+                                                ],
+                                                "properties":{
+                                                "routingPolicies": "[                                                     
+                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
+                                                                                equals(parameters('privateTrafficRoutingPolicy'), true())), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', variables('routingIntentnexthop')), 
+                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop'))),                                                                                     
+                                                                        if(and(equals(parameters('internetTrafficRoutingPolicy'), true()), 
+                                                                                equals(parameters('privateTrafficRoutingPolicy'), false())), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PublicTraffic', 'destinations', createArray('Internet'), 'nextHop', variables('routingIntentnexthop'))), 
+                                                                                createArray(
+                                                                                    createObject('name', 'PrivateTraffic', 'destinations', createArray('PrivateTraffic'), 'nextHop', variables('routingIntentnexthop')))))]"
+                                                }
                                         }
+
                                     ]
                                 }
                             }
