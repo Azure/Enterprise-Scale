@@ -54,6 +54,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added the [Configure Recovery Services vaults to use private DNS zones for backup](https://www.azadvertizer.net/azpolicyadvertizer/af783da1-4ad1-42be-800d-d19c70038820.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Removed Defender for Cloud for DNS, as this is now deprecated and is included in Defender for Servers. Deprecated [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) initiative, and superseded with [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to minimize breaking change impact on existing deployments.
 
 ### March 2024
 
@@ -67,10 +68,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
 
 ### February 2024
-
-#### Policy
-
-- **Breaking Change** Removed Defender for Cloud for DNS, as this is now deprecated and is now included in Defender for Servers. This is a breaking change, and you will need to remove the existing initiative assignment [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) and redeploy the updated initiative.
 
 #### Tooling
 
