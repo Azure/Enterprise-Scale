@@ -59,6 +59,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Added the [[Preview]: Immutability must be enabled for backup vaults](https://www.azadvertizer.net/azpolicyadvertizer/2514263b-bc0d-4b06-ac3e-f262c0979018.html) built-in policy
   - Added the [[Preview]: Immutability must be enabled for Recovery Services vaults](https://www.azadvertizer.net/azpolicyadvertizer/d6f6f560-14b7-49a4-9fc8-d2c3a9807868.html) built-in policy
   - Added the [[Preview]: Soft delete should be enabled for Backup Vaults](https://www.azadvertizer.net/azpolicyadvertizer/9798d31d-6028-4dee-8643-46102185c016.html) built-in policy
+  - Added the [[Preview]: Soft delete should be enabled for Recovery Services Vaults](https://www.azadvertizer.net/azpolicyadvertizer/31b8092a-36b8-434b-9af7-5ec844364148.html) built-in policy
   - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Backup Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c58e083e-7982-4e24-afdc-be14d312389e.html) built-in policy
   - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Recovery Services Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c7031eab-0fc0-4cd9-acd0-4497bd66d91a.html) built-in policy
 - Added [[Preview]: Azure Recovery Services vaults should disable public network access](https://www.azadvertizer.net/azpolicyadvertizer/9ebbbba3-4d65-4da9-bb67-b22cfaaff090.html) built-in policy to the "Deny-PublicPaaSEndpoints" initiative and assignment.
