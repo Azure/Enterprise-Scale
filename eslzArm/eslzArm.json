@@ -675,6 +675,10 @@
             "type": "string",
             "defaultValue": ""
         },
+        "identityAddressPrefixSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "corpConnectedLzSubscriptionId": {
             "type": "array",
             "defaultValue": [],
@@ -1338,7 +1342,9 @@
             "privateDnsZones2DeploymentName": "[take(concat('alz-PrivDNSZones2', variables('deploymentSuffix')), 35)]",
             "dnsZoneRoleAssignmentDeploymentName": "[take(concat('alz-DNSZoneRole', variables('deploymentSuffix')), 64)]",
             "identityPeeringDeploymentName": "[take(concat('alz-IDPeering', variables('deploymentSuffix')), 64)]",
+            "identityPeering2DeploymentName": "[take(concat('alz-IDPeering2', variables('deploymentSuffix')), 64)]",
             "identityVwanPeeringDeploymentName": "[take(concat('alz-IDVwanPeering', variables('deploymentSuffix')), 64)]",
+            "identityVwanPeering2DeploymentName": "[take(concat('alz-IDVwanPeering2', variables('deploymentSuffix')), 64)]",
             "mdEndpointsDeploymentName": "[take(concat('alz-MDEndpoints', variables('deploymentSuffix')), 64)]",
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
@@ -1400,6 +1406,7 @@
             "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]",
             "privateDnsRg2": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns-02')]",
             "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
+            "identityVnetRgSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocationSecondary'))]",
             "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]"
         },
         // Declaring deterministic names for platform resources that will be created
@@ -1421,7 +1428,7 @@
             "vwanName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vwan-', parameters('connectivityLocation'))]",
             "azVpnGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-gwpip-', parameters('connectivityLocation'))]",
             "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('connectivityLocation'))]",
-            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
+            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocationSecondary'))]",
             "lzVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]"
         },
         // Declaring deterministic resourceId's for platform resources that will be created
@@ -1437,6 +1444,7 @@
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
             "vNetHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubNameSecondary)]",
             "vWanHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubName)]",
+            "vWanHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubNameSecondary)]",
             "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
             "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]"
         },
@@ -5148,7 +5156,7 @@
             }
         },
         {
-            // Peer vnet in identity subscription to connectivity hub if vhub or nva contidion is true
+            // Peer vnet in identity subscription to connectivity hub if vhub or nva condition is true
             "condition": "[and(or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), not(empty(parameters('identityAddressPrefix'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
@@ -5195,7 +5203,54 @@
             }
         },
         {
-            // Peer vnet in identity subscription to connectivity hub if vwan contidion is true
+            // Peer vnet in identity subscription to connectivity hub in a secondary region if vhub or nva condition is true
+            "condition": "[and(or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')), not(empty(parameters('identityAddressPrefix'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').identityPeering2DeploymentName]",
+            "subscriptionId": "[parameters('identitySubscriptionId')]",
+            "location": "[parameters('connectivityLocationSecondary]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVnetPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').identityVnetRgSecondary]"
+                    },
+                    "vNetName": {
+                        "value": "[take(concat(variables('platformResourceNames').identityVnetSecondary, '-', uniqueString(parameters('identitySubscriptionId'))), 64)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('identityAddressPrefixSecondary')]"
+                    },
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[if(equals(parameters('enableAzFwDnsProxySecondary'), 'Yes'), variables('platformResourceIds').azFirewallResourceIdSecondary, '')]"
+                    }
+                }
+            }
+        },
+        {
+            // Peer vnet in identity subscription to connectivity hub if vwan condition is true
             "condition": "[and(equals(parameters('enableHub'), 'vwan'), not(empty(parameters('identityAddressPrefix'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
@@ -5237,6 +5292,53 @@
                     },
                     "azureFirewallResourceId": {
                         "value": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('platformResourceIds').azFirewallResourceId, '')]"
+                    }
+                }
+            }
+        },
+        {
+            // Peer vnet in identity subscription to connectivity hub if vwan condition is true
+            "condition": "[and(equals(parameters('enableHubSecondary'), 'vwan'), not(empty(parameters('identityAddressPrefixSecondary'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('deploymentNames').identityVwanPeering2DeploymentName]",
+            "subscriptionId": "[parameters('identitySubscriptionId')]",
+            "location": "[parameters('connectivityLocationSecondary')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivity2HubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpVwanPeering]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').identityVnetRgSecondary]"
+                    },
+                    "vNetName": {
+                        "value": "[take(concat(variables('platformResourceNames').identityVnetSecondary, '-', uniqueString(parameters('identitySubscriptionId'))), 64)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "vNetCidrRange": {
+                        "value": "[parameters('identityAddressPrefixSecondary')]"
+                    },
+                    "vWanHubResourceId": {
+                        "value": "[variables('platformResourceIds').vWanHubResourceIdSecondary]"
+                    },
+                    "azureFirewallResourceId": {
+                        "value": "[if(equals(parameters('enableAzFwDnsProxySecondary'), 'Yes'), variables('platformResourceIds').azFirewallResourceIdSecondary, '')]"
                     }
                 }
             }
@@ -5764,7 +5866,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
-        //        "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLite2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
             ],
             "properties": {
