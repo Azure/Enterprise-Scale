@@ -3502,6 +3502,58 @@
                 }
             }
         },
+        {
+            // Peering the primary hub and the secondary hub (when nva or vhub is selected)
+            "condition": "[and(or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('esLitedeploymentNames').hubPeeringDeploymentName]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "location": "[parameters('connectivityLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLite2DeploymentName)]",
+                "corpConnectedMoveLzs"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').hubVnetPeering]"
+                },
+                "parameters": {
+                    "hubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                    },
+                    "hubResourceIdSecondary": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
+                    },
+                    "hubLocation": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "hubLocationSecondary": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "hubRgName": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
+                    },
+                    "hubRgNameSecondary": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"                    }
+                }
+            }
+        },
          {
             // Creating resource group for Private DNS Zones for a secondary region
             "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
