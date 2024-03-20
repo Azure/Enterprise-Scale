@@ -185,6 +185,12 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-AMA.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL-DCR.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-APIM-TLS.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppGw-Without-Tls.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppService-without-BYOC.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AzFw-Without-Policy.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-NetworkAcls.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-Resource-Kinds.json') // FSI specific policy
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
