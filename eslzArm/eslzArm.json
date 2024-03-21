@@ -3283,8 +3283,8 @@
             }
         },
         {
-            // Creating Private DNS Zones into the connectivity subscription and connecting them to the primary region only
-            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), or(equals(parameters('enableHubSecondary'), 'No'), and(equals(parameters('enableHubSecondary'), 'Yes'), equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'))), not(empty(parameters('connectivitySubscriptionId'))))]",
+            // Creating Private DNS Zones into the connectivity subscription and linking them to a secondary location if provided.
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('deploymentNames').privateDnsZonesDeploymentName, copyIndex())]",
@@ -3318,30 +3318,66 @@
                         "value": "[variables('platformResourceIds').vNetHubResourceId]"
                     },
                     "connectivityHubResourceIdSecondary": {
-                        "value": "placeholder"
+                        "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
                     },
                     "enablePrivateDnsZonesSecondary": {
                         "value": "[parameters('enablePrivateDnsZonesSecondary')]"
+                    },
+                    "enableHubSecondary": {
+                        "value": "[parameters('enableHubSecondary')]"
                     }
                 }
                 }
             },
             {
-                // Creating Private DNS Zones into the connectivity subscription and connecting them to the primary and secondary region
-                "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), equals(parameters('enablePrivateDnsZonesSecondary'), 'No'),  not(equals(parameters('enableHubSecondary'), 'No')), not(empty(parameters('connectivitySubscriptionId'))))]",
+                // Creating resource group for Private DNS Zones for a secondary region
+                "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
                 "type": "Microsoft.Resources/deployments",
                 "apiVersion": "2020-10-01",
-                "name": "[concat(variables('deploymentNames').privateDnsZonesDeploymentName, copyIndex())]",
+                "name": "[variables('deploymentNames').privateDnsZoneRg2DeploymentName]",
                 "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-                "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+                "location": "[deployment().location]",
                 "dependsOn": [
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRgDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
+                ],
+                "properties": {
+                    "mode": "Incremental",
+                    "templateLink": {
+                        "contentVersion": "1.0.0.0",
+                        "uri": "[variables('deploymentUris').resourceGroup]"
+                    },
+                    "parameters": {
+                        "rgName": {
+                            "value": "[variables('platformRgNames').privateDnsRg2]"
+                        },
+                        "location": {
+                            "value": "[parameters('connectivityLocationSecondary')]"
+                        }
+                    }
+                }
+            },
+             {
+                // Creating Private DNS Zones into the connectivity subscription for a secondary region
+                "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+                "type": "Microsoft.Resources/deployments",
+                "apiVersion": "2020-10-01",
+                "name": "[concat(variables('deploymentNames').privateDnsZones2DeploymentName, copyIndex())]",
+                "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+                "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRg2DeploymentName)]",
                     "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                     "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
                     "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
+                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
                     "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
                 ],
                 "copy": {
@@ -3359,18 +3395,21 @@
                             "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
                         },
                         "connectivityHubResourceId": {
-                            "value": "[variables('platformResourceIds').vNetHubResourceId]"
+                            "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
                         },
                         "connectivityHubResourceIdSecondary": {
-                            "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
+                            "value": "placeholder"
                         },
                         "enablePrivateDnsZonesSecondary": {
                             "value": "[parameters('enablePrivateDnsZonesSecondary')]"
+                        },
+                        "enableHubSecondary": {
+                            "value": "No"
                         }
                     }
-                    }
-                },
-               /*
+                }
+            },
+        /*
             The following optional deployment will configure virtual network hub into the connectivity subscription for a secondary region
         */
        
@@ -3598,83 +3637,6 @@
                     },
                     "hubRgNameSecondary": {
                         "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"                    }
-                }
-            }
-        },
-         {
-            // Creating resource group for Private DNS Zones for a secondary region
-            "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').privateDnsZoneRg2DeploymentName]",
-            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').resourceGroup]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[variables('platformRgNames').privateDnsRg2]"
-                    },
-                    "location": {
-                        "value": "[parameters('connectivityLocationSecondary')]"
-                    }
-                }
-            }
-        },
-         {
-            // Creating Private DNS Zones into the connectivity subscription for a secondary region
-            "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('deploymentNames').privateDnsZones2DeploymentName, copyIndex())]",
-            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRg2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
-            ],
-            "copy": {
-                "name": "dnsZones",
-                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
-            },
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').privateDnsZones]"
-                },
-                "parameters": {
-                    "privateDnsZoneName": {
-                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
-                    },
-                    "connectivityHubResourceId": {
-                        "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
-                    },
-                    "connectivityHubResourceIdSecondary": {
-                        "value": "placeholder"
-                    },
-                    "enablePrivateDnsZonesSecondary": {
-                        "value": "[parameters('enablePrivateDnsZonesSecondary')]"
-                    }
                 }
             }
         },
@@ -5987,7 +5949,7 @@
             Note: ES Lite only: deploy private DNS zones for primary region
         */
         {
-            // Creating Private DNS Zones into the connectivity subscription for only a primary region, and peering them to the secondary if provided.
+            // Creating Private DNS Zones into the connectivity subscription for only a primary region, and linking them to the secondary if provided.
             "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
