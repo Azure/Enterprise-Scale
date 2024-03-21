@@ -58,7 +58,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - Add an additional role assignment for ChangeTracking Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
     - Add an additional role assignment to Azure Update Manger Policies, granting Managed Identity Operator at the same scope as the assignment.
   - **To update an existing deployment:**
-    - This script [Set-RBACAmaPolicyAssignment.ps1](https://github.com/Azure/Enterprise-Scale/blob/main/src/scripts/Set-RBACAmaPolicyAssignment.ps1) will update the required role assignments. The `enterpriseScaleCompanyPrefix` is required for running the script and should contain the intermediate root management group name.
+    - This script [Set-RBACAmaPolicyAssignment.ps1](https://github.com/Azure/Enterprise-Scale/blob/main/src/scripts/Set-RBACAmaPolicyAssignment.ps1) will update the required role assignments. The `enterpriseScaleCompanyPrefix` parameter is required for running the script and should contain the intermediate root management group name.
 
       ```powershell
       .\Set-RBACAmaPolicyAssignment.ps1 -enterpriseScaleCompanyPrefix contoso
