@@ -8,6 +8,8 @@
 #
 
 [CmdletBinding(SupportsShouldProcess)]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'enterpriseScaleCompanyPrefix',
+    Justification = 'False positive as rule does not know that Where-Object operates within the same scope')]
 param(
     # the pseudo managemnt group to start from
     [Parameter(Mandatory = $True,
