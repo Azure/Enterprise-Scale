@@ -5987,58 +5987,11 @@
             Note: ES Lite only: deploy private DNS zones for primary region
         */
         {
-            // Creating Private DNS Zones into the connectivity subscription for only a primary region
-            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), or(equals(parameters('enableHubSecondary'), 'No'), and(equals(parameters('enableHubSecondary'), 'Yes'), equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            // Creating Private DNS Zones into the connectivity subscription for only a primary region, and peering them to the secondary if provided.
+            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLiteDeploymentName, copyIndex())]",
-            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
-            ],
-            "copy": {
-                "name": "dnsZonesLite",
-                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
-            },
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').privateDnsZones]"
-                },
-                "parameters": {
-                    "privateDnsZoneName": {
-                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
-                    },
-                    "connectivityHubResourceId": {
-                        "value": "[variables('platformResourceIds').vNetHubResourceId]"
-                    },
-                    "connectivityHubResourceIdSecondary": {
-                        "value": "placeholder"
-                    },
-                    "enablePrivateDnsZonesSecondary": {
-                        "value": "[parameters('enablePrivateDnsZonesSecondary')]"
-                    }
-                }
-            }
-        },
-        /*
-            Note: ES Lite only: deploy private DNS zones for both a primary and secondary region
-        */
-        {
-            // Creating Private DNS Zones into the connectivity subscription for both a primary and secondary region
-            "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), equals(parameters('enablePrivateDnsZonesSecondary'), 'No'),  not(equals(parameters('enableHubSecondary'), 'No')), not(empty(parameters('singlePlatformSubscriptionId'))))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLite1DeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
             "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
             "dependsOn": [
@@ -6077,7 +6030,7 @@
                 }
             }
         },
-                /*
+        /*
             Note: ES Lite only: deploy private DNS zones in a secondary region
         */
         {
