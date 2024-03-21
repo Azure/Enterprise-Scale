@@ -1,0 +1,141 @@
+{
+    "name": "cc5bb581-9852-4035-94c6-5b28d7591889",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "properties": {
+        "displayName": "Deploy Diagnostic Settings for Subscription to Storage Account",
+        "description": "Deploys the diagnostic settings for a Subscription to stream to a Storage account when any Subscription which is missing this diagnostic settings is created or updated.",
+        "metadata": {
+            "category": "Monitoring",
+            "version": "1.0.0"
+        },
+        "mode": "All",
+        "parameters": {
+            "profileName": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Profile name",
+                    "description": "The diagnostic settings profile name"
+                },
+                "defaultValue": "setbypolicy_Diagnostics2Storage"
+            },
+            "storageAccountId": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Storage Account resource ID",
+                    "description": "Select Storage account from dropdown list. If this account is outside of the scope of the assignment you must manually grant 'Contributor' permissions (or similar) to the policy assignment's principal ID.",
+                    "strongType": "Microsoft.Storage/storageAccounts"
+                }
+            },
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "DeployIfNotExists, AuditIfNotExists or Disabled the execution of the Policy"
+                },
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "AuditIfNotExists",
+                    "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "field": "type",
+                "equals": "Microsoft.Resources/subscriptions"
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "microsoft.insights/diagnosticSettings",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+                                "equals": "[parameters('storageAccountId')]"
+                            }
+                        ]
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+                        "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "profileName": {
+                                        "type": "string"
+                                    },
+                                    "storageAccountId": {
+                                        "type": "string"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "microsoft.insights/diagnosticSettings",
+                                        "apiVersion": "2017-05-01-preview",
+                                        "name": "[parameters('profileName')]",
+                                        "properties": {
+                                            "storageAccountId": "[parameters('storageAccountId')]",
+                                            "logs": [
+                                                {
+                                                    "category": "Administrative",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "Security",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "ServiceHealth",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "Alert",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "Recommendation",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "Policy",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "Autoscale",
+                                                    "enabled": true
+                                                },
+                                                {
+                                                    "category": "ResourceHealth",
+                                                    "enabled": true
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            },
+                            "parameters": {
+                                "storageAccountId": {
+                                    "value": "[parameters('storageAccountId')]"
+                                },
+                                "profileName": {
+                                    "value": "[parameters('profileName')]"
+                                }
+                            }
+                        },
+                        "location": "eastus"
+                    },
+                    "deploymentScope": "subscription"
+                }
+            }
+        }
+    }
+}

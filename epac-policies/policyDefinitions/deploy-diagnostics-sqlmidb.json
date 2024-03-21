@@ -1,0 +1,158 @@
+{
+    "name": "f7ead865-723e-410c-8e43-e245f0fbac04",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "properties": {
+        "displayName": "Deploy SQL Managed Instance Database Diagnostic Setting - Storage Account",
+        "description": "This policy automatically deploys and enable diagnostic settings for a SQL MI Database to a Storage Account",
+        "metadata": {
+            "category": "Monitoring",
+            "version": "1.0.0"
+        },
+        "mode": "all",
+        "parameters": {
+            "storageAccountId": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Storage Account ID",
+                    "description": "The resource ID of the storage account to which you would like to send Diagnostic Logs."
+                }
+            },
+            "retentionDays": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Number of days to retain logs",
+                    "description": "Retention policy ranges from 1 to 365 days. If you do not want to apply any retention policy and retain data forever, set retention (days) to 0."
+                }
+            },
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "DeployIfNotExists, AuditIfNotExists or Disabled the execution of the Policy"
+                },
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "AuditIfNotExists",
+                    "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "field": "type",
+                "equals": "Microsoft.Sql/managedInstances/databases"
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                    ],
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                "equals": "True"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                                "equals": "True"
+                            },
+                            {
+                                "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+                                "matchInsensitively": "[parameters('storageAccountId')]"
+                            }
+                        ]
+                    },
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "resourceName": {
+                                        "type": "string"
+                                    },
+                                    "storageAccountId": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "retentionDays": {
+                                        "type": "string"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Sql/managedInstances/databases/providers/diagnosticSettings",
+                                        "apiVersion": "2017-05-01-preview",
+                                        "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/setByPolicy')]",
+                                        "location": "[parameters('location')]",
+                                        "dependsOn": [],
+                                        "properties": {
+                                            "storageAccountId": "[parameters('storageAccountId')]",
+                                            "logs": [
+                                                {
+                                                    "category": "SQLInsights",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true,
+                                                        "days": "[parameters('retentionDays')]"
+                                                    }
+                                                },
+                                                {
+                                                    "category": "QueryStoreRuntimeStatistics",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true,
+                                                        "days": "[parameters('retentionDays')]"
+                                                    }
+                                                },
+                                                {
+                                                    "category": "QueryStoreWaitStatistics",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true,
+                                                        "days": "[parameters('retentionDays')]"
+                                                    }
+                                                },
+                                                {
+                                                    "category": "Errors",
+                                                    "enabled": true,
+                                                    "retentionPolicy": {
+                                                        "enabled": true,
+                                                        "days": "[parameters('retentionDays')]"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            },
+                            "parameters": {
+                                "storageAccountId": {
+                                    "value": "[parameters('storageAccountId')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "resourceName": {
+                                    "value": "[field('fullname')]"
+                                },
+                                "retentionDays": {
+                                    "value": "[parameters('retentionDays')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
