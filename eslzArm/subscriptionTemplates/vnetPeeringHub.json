@@ -1,0 +1,113 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hubResourceId": {
+      "type": "string",
+      "metadata": {
+          "description": "Provide the resourceId for the primary hub."
+      }        
+    },
+    "hubResourceIdSecondary": {
+      "type": "string",
+      "metadata": {
+          "description": "Provide the resourceId for the secondary hub."
+      }        
+    },
+    "hubLocation": {
+      "type": "string",
+      "metadata": {
+          "description": "Provide the location for the primary hub."
+      }        
+    },
+    "hubLocationSecondary": {
+      "type": "string",
+      "metadata": {
+          "description": "Provide the location for the secondary hub."
+      }        
+    },
+    "hubRgName": {
+      "type": "string",
+      "metadata": {
+          "description": "Provide the name of the RG of the primary hub."
+      }
+    },
+    "hubRgNameSecondary": {
+      "type": "string",
+      "metadata": {
+          "description": "Provide the name of the RG of the Secondary hub."
+      }
+    }
+  },
+  "variables": {
+    "hubName": "[last(split(parameters('hubResourceId'), '/'))]",
+    "hubNameSecondary": "[last(split(parameters('hubResourceIdSecondary'), '/'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[concat('alz-vnet-', parameters('hubLocation'), '-', substring(uniqueString(subscription().id),0,6))]",
+      "resourceGroup": "[parameters('hubRgName')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2020-07-01",
+              "name": "[concat(variables('hubName'), '/peerTo', variables('hubNameSecondary'))]",
+              "properties": {
+                "remoteVirtualNetwork": {
+                  "id": "[parameters('hubResourceIdSecondary')]"
+                },
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false
+              }
+            }
+          ],
+          "outputs": {}
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[concat('alz-vnet-', parameters('hubLocationSecondary'), '-', substring(uniqueString(subscription().id),0,6))]",
+      "resourceGroup": "[parameters('hubRgNameSecondary')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2020-07-01",
+              "name": "[concat(variables('hubNameSecondary'), '/peerTo', variables('hubName'))]",
+              "properties": {
+                "remoteVirtualNetwork": {
+                  "id": "[parameters('hubResourceId')]"
+                },
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false
+              }
+            }
+          ],
+          "outputs": {}
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
