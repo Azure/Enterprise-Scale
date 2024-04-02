@@ -262,6 +262,8 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-AppServices.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Automation.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-CognitiveServices.json') // FSI specific initiative
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
