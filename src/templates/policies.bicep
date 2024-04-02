@@ -192,6 +192,23 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-NetworkAcls.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-Resource-Kinds.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-RestrictOutboundNetworkAccess.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-EH-MINTLS.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-EH-Premium-CMK.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-LogicApp-Public-Network.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-LogicApps-Without-Https.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Service-Endpoints.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-ContainerDeleteRetentionPolicy.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-CopyScope.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-CorsRules.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-LocalUser.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-NetworkAclsBypass.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-NetworkAclsVirtualNetworkRules.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-ResourceAccessRulesResourceId.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-ResourceAccessRulesTenantId.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-ServicesEncryption.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-LogicApp-TLS.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Modify-NSG.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Modify-UDR.json') // FSI specific policy
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
