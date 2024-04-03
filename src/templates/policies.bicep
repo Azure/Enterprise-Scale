@@ -250,56 +250,56 @@ var loadPolicyDefinitions = {
 // We use loadTextContent instead of loadJsonContent  as this allows us to perform string replacement operations against the imported templates.
 var loadPolicySetDefinitions = {
   All: [
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-UnusedResourcesCostOptimization.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-TrustedLaunch.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240415.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/DenyAction-DeleteProtection.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault_20240415.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-AppServices.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Automation.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-CognitiveServices.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Compute.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerApps.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerInstance.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerRegistry.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-CosmosDb.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-DataExplorer.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-DataFactory.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventGrid.json') // FSI specific initiative
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventHub.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-UnusedResourcesCostOptimization.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-TrustedLaunch.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240415.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/DenyAction-DeleteProtection.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates.json')
+    // //loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault_20240415.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-AppServices.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Automation.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-CognitiveServices.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Compute.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerApps.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerInstance.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerRegistry.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-CosmosDb.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-DataExplorer.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-DataFactory.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventGrid.json') // FSI specific initiative
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventHub.json') // FSI specific initiative
   ]
   AzureCloud: [
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints_20240415.json') // FSI policies added
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK_20240415.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ACSB.json') // Unable to validate if Guest Configuration is working in other clouds
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-DefenderSQL-AMA.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Backup.json') // Unable to validate if all Azure Site Recovery features are working in other clouds
+    // //loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints_20240415.json') // FSI policies added
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    // //loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK_20240415.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ACSB.json') // Unable to validate if Guest Configuration is working in other clouds
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-DefenderSQL-AMA.json')
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Backup.json') // Unable to validate if all Azure Site Recovery features are working in other clouds
   ]
   AzureChinaCloud: [
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureChinaCloud.json') // Due to missing built-in Policy Definitions ()
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.AzureChinaCloud.json') // Due to missing "Deploy-Diagnostics-AVDScalingPlans" custom Policy Definition
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (44433aa3-7ec2-4002-93ea-65c65ff0310a, 50ea7265-7d8c-429e-9a7d-ca1f410191c3, b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d, 74c30959-af11-47b3-9ed2-a26e03f427a3, 1f725891-01c0-420a-9059-4fa46cb770b7, 2370a3c1-4a25-4283-a91a-c9c1a145fb2f, b7021b2b-08fd-4dc0-9de7-3c6ece09faf9, b99b73e7-074b-4089-9395-b7236f094491)
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.AzureChinaCloud.json') // Due to missing built-in Policy Definitions ()
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (051cba44-2429-45b9-9649-46cec11c7119), and replacement custom Policy Definitions ("Deploy-MySQLCMKEffect", "Deploy-PostgreSQLCMKEffect")
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureChinaCloud.json') // Due to missing built-in Policy Definitions ()
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.AzureChinaCloud.json') // Due to missing "Deploy-Diagnostics-AVDScalingPlans" custom Policy Definition
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (44433aa3-7ec2-4002-93ea-65c65ff0310a, 50ea7265-7d8c-429e-9a7d-ca1f410191c3, b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d, 74c30959-af11-47b3-9ed2-a26e03f427a3, 1f725891-01c0-420a-9059-4fa46cb770b7, 2370a3c1-4a25-4283-a91a-c9c1a145fb2f, b7021b2b-08fd-4dc0-9de7-3c6ece09faf9, b99b73e7-074b-4089-9395-b7236f094491)
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.AzureChinaCloud.json') // Due to missing built-in Policy Definitions ()
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (051cba44-2429-45b9-9649-46cec11c7119), and replacement custom Policy Definitions ("Deploy-MySQLCMKEffect", "Deploy-PostgreSQLCMKEffect")
   ]
   AzureUSGovernment: [
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (5e1de0e3-42cb-4ebc-a86d-61d0c619ca48, c9299215-ae47-4f50-9c54-8a392f68a052)
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.AzureUSGovernment.json') // Due to missing "Deploy-Diagnostics-AVDScalingPlans" custom Policy Definition
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (44433aa3-7ec2-4002-93ea-65c65ff0310a, 50ea7265-7d8c-429e-9a7d-ca1f410191c3, b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d, 1f725891-01c0-420a-9059-4fa46cb770b7)
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (0b026355-49cb-467b-8ac4-f777874e175a)
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (83cef61d-dbd1-4b20-a4fc-5fbc7da10833, 18adea5e-f416-4d0f-8aa8-d24321e3e274, 051cba44-2429-45b9-9649-46cec11c7119)
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (5e1de0e3-42cb-4ebc-a86d-61d0c619ca48, c9299215-ae47-4f50-9c54-8a392f68a052)
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.AzureUSGovernment.json') // Due to missing "Deploy-Diagnostics-AVDScalingPlans" custom Policy Definition
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (44433aa3-7ec2-4002-93ea-65c65ff0310a, 50ea7265-7d8c-429e-9a7d-ca1f410191c3, b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d, 1f725891-01c0-420a-9059-4fa46cb770b7)
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (0b026355-49cb-467b-8ac4-f777874e175a)
+    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (83cef61d-dbd1-4b20-a4fc-5fbc7da10833, 18adea5e-f416-4d0f-8aa8-d24321e3e274, 051cba44-2429-45b9-9649-46cec11c7119)
   ]
 }
 
