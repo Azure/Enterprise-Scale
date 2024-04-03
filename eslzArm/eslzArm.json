@@ -1039,6 +1039,7 @@
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
             "roleDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleDefinitions/customRoleDefinitions.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
+            "initiativeDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/initiatives.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
@@ -1121,6 +1122,7 @@
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
             "roleDefsDeploymentName": "[take(concat('alz-RoleDefs', variables('deploymentSuffix')), 64)]",
             "policyDeploymentName": "[take(concat('alz-Policy', variables('deploymentSuffix')), 64)]",
+            "initiativeDeploymentName": "[take(concat('alz-PolicySet', variables('deploymentSuffix')), 64)]",
             "monitorPolicyDeploymentName": "[take(concat('alz-MonitorPolicy', variables('deploymentSuffix')), 64)]",
             "ddosRgDeploymentName": "[take(concat('alz-DDoSRg', variables('deploymentSuffix')), 64)]",
             "ddosDeploymentName": "[take(concat('alz-DDoS', variables('deploymentSuffix')), 64)]",
@@ -1414,7 +1416,7 @@
             The following deployments will deploy the required proactive and preventive Azure policies for ESLZ policy driven governance
         */
         {
-            // Deploying ESLZ custom policies. Note: all policies should eventually be moved to built-in policies and codebase will be reduced
+            // Deploying ESLZ custom policies.
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').policyDeploymentName]",
@@ -1429,6 +1431,31 @@
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
                     "uri": "[variables('deploymentUris').policyDefinitions]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying ESLZ custom initiatives.
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('deploymentNames').initiativeDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').initiativeDefinitions]"
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {

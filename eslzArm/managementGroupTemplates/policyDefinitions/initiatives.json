@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.26.54.24096",
-      "templateHash": "14604493105064270198"
+      "templateHash": "10177800249235422447"
     }
   },
   "parameters": {
@@ -36,26 +36,6 @@
   "variables": {
     "copy": [
       {
-        "name": "processPolicyDefinitionsAll",
-        "count": "[length(variables('loadPolicyDefinitions').All)]",
-        "input": "[replace(replace(variables('loadPolicyDefinitions').All[copyIndex('processPolicyDefinitionsAll')], variables('templateVars').defaultDeploymentLocation, variables('deploymentLocation')), variables('templateVars').localizedDeploymentLocation, variables('deploymentLocation'))]"
-      },
-      {
-        "name": "processPolicyDefinitionsAzureCloud",
-        "count": "[length(variables('loadPolicyDefinitions').AzureCloud)]",
-        "input": "[replace(replace(variables('loadPolicyDefinitions').AzureCloud[copyIndex('processPolicyDefinitionsAzureCloud')], variables('templateVars').defaultDeploymentLocation, variables('deploymentLocation')), variables('templateVars').localizedDeploymentLocation, variables('deploymentLocation'))]"
-      },
-      {
-        "name": "processPolicyDefinitionsAzureChinaCloud",
-        "count": "[length(variables('loadPolicyDefinitions').AzureChinaCloud)]",
-        "input": "[replace(replace(variables('loadPolicyDefinitions').AzureChinaCloud[copyIndex('processPolicyDefinitionsAzureChinaCloud')], variables('templateVars').defaultDeploymentLocation, variables('deploymentLocation')), variables('templateVars').localizedDeploymentLocation, variables('deploymentLocation'))]"
-      },
-      {
-        "name": "processPolicyDefinitionsAzureUSGovernment",
-        "count": "[length(variables('loadPolicyDefinitions').AzureUSGovernment)]",
-        "input": "[replace(replace(variables('loadPolicyDefinitions').AzureUSGovernment[copyIndex('processPolicyDefinitionsAzureUSGovernment')], variables('templateVars').defaultDeploymentLocation, variables('deploymentLocation')), variables('templateVars').localizedDeploymentLocation, variables('deploymentLocation'))]"
-      },
-      {
         "name": "processPolicySetDefinitionsAll",
         "count": "[length(variables('loadPolicySetDefinitions').All)]",
         "input": "[replace(variables('loadPolicySetDefinitions').All[copyIndex('processPolicySetDefinitionsAll')], variables('templateVars').scope, parameters('scope'))]"
@@ -74,26 +54,6 @@
         "name": "processPolicySetDefinitionsAzureUSGovernment",
         "count": "[length(variables('loadPolicySetDefinitions').AzureUSGovernment)]",
         "input": "[replace(variables('loadPolicySetDefinitions').AzureUSGovernment[copyIndex('processPolicySetDefinitionsAzureUSGovernment')], variables('templateVars').scope, parameters('scope'))]"
-      },
-      {
-        "name": "policyDefinitionsAll",
-        "count": "[length(variables('processPolicyDefinitionsAll'))]",
-        "input": "[json(variables('processPolicyDefinitionsAll')[copyIndex('policyDefinitionsAll')])]"
-      },
-      {
-        "name": "policyDefinitionsAzureCloud",
-        "count": "[length(variables('processPolicyDefinitionsAzureCloud'))]",
-        "input": "[json(variables('processPolicyDefinitionsAzureCloud')[copyIndex('policyDefinitionsAzureCloud')])]"
-      },
-      {
-        "name": "policyDefinitionsAzureChinaCloud",
-        "count": "[length(variables('processPolicyDefinitionsAzureChinaCloud'))]",
-        "input": "[json(variables('processPolicyDefinitionsAzureChinaCloud')[copyIndex('policyDefinitionsAzureChinaCloud')])]"
-      },
-      {
-        "name": "policyDefinitionsAzureUSGovernment",
-        "count": "[length(variables('processPolicyDefinitionsAzureUSGovernment'))]",
-        "input": "[json(variables('processPolicyDefinitionsAzureUSGovernment')[copyIndex('policyDefinitionsAzureUSGovernment')])]"
       },
       {
         "name": "policySetDefinitionsAll",
@@ -168,18 +128,6 @@
       "defaultDeploymentLocation": "\"location\": \"northeurope\"",
       "localizedDeploymentLocation": "[format('\"location\": \"{0}\"', variables('defaultDeploymentLocationByCloudType')[variables('cloudEnv')])]"
     },
-    "targetDeploymentLocationByCloudType": {
-      "AzureCloud": "[coalesce(parameters('location'), 'northeurope')]",
-      "AzureChinaCloud": "[coalesce(parameters('location'), 'chinaeast2')]",
-      "AzureUSGovernment": "[coalesce(parameters('location'), 'usgovvirginia')]"
-    },
-    "deploymentLocation": "[format('\"location\": \"{0}\"', variables('targetDeploymentLocationByCloudType')[variables('cloudEnv')])]",
-    "loadPolicyDefinitions": {
-      "All": [],
-      "AzureCloud": [],
-      "AzureChinaCloud": [],
-      "AzureUSGovernment": []
-    },
     "loadPolicySetDefinitions": {
       "All": [
         "[variables('$fxv#0')]",
@@ -231,40 +179,15 @@
         "[variables('$fxv#40')]"
       ]
     },
-    "policyDefinitionsByCloudType": {
-      "All": "[variables('policyDefinitionsAll')]",
-      "AzureCloud": "[variables('policyDefinitionsAzureCloud')]",
-      "AzureChinaCloud": "[variables('policyDefinitionsAzureChinaCloud')]",
-      "AzureUSGovernment": "[variables('policyDefinitionsAzureUSGovernment')]"
-    },
     "policySetDefinitionsByCloudType": {
       "All": "[variables('policySetDefinitionsAll')]",
       "AzureCloud": "[variables('policySetDefinitionsAzureCloud')]",
       "AzureChinaCloud": "[variables('policySetDefinitionsAzureChinaCloud')]",
       "AzureUSGovernment": "[variables('policySetDefinitionsAzureUSGovernment')]"
     },
-    "policyDefinitions": "[concat(variables('policyDefinitionsByCloudType').All, variables('policyDefinitionsByCloudType')[variables('cloudEnv')])]",
     "policySetDefinitions": "[concat(variables('policySetDefinitionsByCloudType').All, variables('policySetDefinitionsByCloudType')[variables('cloudEnv')])]"
   },
   "resources": [
-    {
-      "copy": {
-        "name": "PolicyDefinitions",
-        "count": "[length(variables('policyDefinitions'))]"
-      },
-      "type": "Microsoft.Authorization/policyDefinitions",
-      "apiVersion": "2020-09-01",
-      "name": "[variables('policyDefinitions')[copyIndex()].name]",
-      "properties": {
-        "description": "[variables('policyDefinitions')[copyIndex()].properties.description]",
-        "displayName": "[variables('policyDefinitions')[copyIndex()].properties.displayName]",
-        "metadata": "[variables('policyDefinitions')[copyIndex()].properties.metadata]",
-        "mode": "[variables('policyDefinitions')[copyIndex()].properties.mode]",
-        "parameters": "[variables('policyDefinitions')[copyIndex()].properties.parameters]",
-        "policyType": "[variables('policyDefinitions')[copyIndex()].properties.policyType]",
-        "policyRule": "[variables('policyDefinitions')[copyIndex()].properties.policyRule]"
-      }
-    },
     {
       "copy": {
         "name": "PolicySetDefinitions",
@@ -281,20 +204,10 @@
         "policyType": "[variables('policySetDefinitions')[copyIndex()].properties.policyType]",
         "policyDefinitions": "[variables('policySetDefinitions')[copyIndex()].properties.policyDefinitions]",
         "policyDefinitionGroups": "[variables('policySetDefinitions')[copyIndex()].properties.policyDefinitionGroups]"
-      },
-      "dependsOn": [
-        "PolicyDefinitions"
-      ]
+      }
     }
   ],
   "outputs": {
-    "policyDefinitionNames": {
-      "type": "array",
-      "copy": {
-        "count": "[length(variables('policyDefinitions'))]",
-        "input": "[variables('policyDefinitions')[copyIndex()].name]"
-      }
-    },
     "policySetDefinitionNames": {
       "type": "array",
       "copy": {
