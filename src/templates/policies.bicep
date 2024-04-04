@@ -241,7 +241,6 @@ var policyDefinitionsByCloudType = {
   AzureUSGovernment: policyDefinitionsAzureUSGovernment
 }
 
-
 // The following var is used to extract the Policy Definitions into a single list for deployment
 // This will contain all policy definitions classified as available for All cloud environments, and those for the current cloud environment
 var policyDefinitions = concat(policyDefinitionsByCloudType.All, policyDefinitionsByCloudType[cloudEnv])
