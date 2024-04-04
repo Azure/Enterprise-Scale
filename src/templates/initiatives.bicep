@@ -52,6 +52,12 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-DataFactory.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventGrid.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventHub.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Kubernetes.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MachineLearning.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MySQL.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-OpenAI.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-PostgreSQL.json') // FSI specific initiative
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
