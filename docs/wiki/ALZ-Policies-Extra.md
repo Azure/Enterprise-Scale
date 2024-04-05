@@ -1,13 +1,23 @@
 # ALZ Policies - Extra
 
-This section contains additional policies that are not covered in the main ALZ Policies document, and provides additional guidance on how to handle certain situations.
+This section contains additional policies that are not covered in the core ALZ Policies documentation, and provides guidance on how to handle certain situations.
 
-## Table of Contents
+## 1. ALZ Core
 
-- [1. Policy on the Use of the ALZ Logo](#1-policy-on-the-use-of-the-alz-logo)
-- [2. Policy on the Use of the ALZ Name](#2-policy-on-the-use-of-the-alz-name)
-  - [2.1. Use of the ALZ Name in Domain Names](#21-use-of-the-alz-name-in-domain-names)
-  - [2.2. Use of the ALZ Name in Social Media Handles](#22-use-of-the-alz-name-in-social-media-handles)
-  - [2.3. Use of the ALZ Name in Email Addresses](#23-use-of-the-alz-name-in-email-addresses)
+The Azure Landing Zone provides several additional policies and initiatives that are not assigned by default. These policies and initiatives are not necessary for all organizations and need additional considerations before being implemented.
 
-## 1. Policy on the Use of the ALZ Logo
+## 2. ALZ Provided Policies for specific scenarios
+
+ALZ provides policies that can be used for specific scenarios that may not be obvious.
+
+| Policy | Description | Recommended |
+|------------|-------------|-------------|
+
+
+## 2. ALZ and Regulated Industries
+
+The Azure Landing Zone is designed to be a flexible and scalable solution that can be used by organizations in a variety of industries. However, organizations in regulated industries may need to take additional steps to ensure compliance with industry-specific regulations. To support the additional requirements of these industries, we're providing the following additional initiatives that significantly enhance the security and compliance posture of the Azure Landing Zone:
+
+| Initiative | Description | Recommended Industry |
+|------------|-------------|-------------|
+| Enforce-Guardrails-APIM | Enforce secure-by-default API Management for regulated industries | FSI |
