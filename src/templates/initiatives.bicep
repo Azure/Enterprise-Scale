@@ -52,6 +52,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-DataFactory.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventGrid.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-EventHub.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault-Sup.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Kubernetes.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MachineLearning.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MySQL.json') // FSI specific initiative
@@ -62,6 +63,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-SQL.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Storage.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Synapse.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-VirtualDesktop.json') // FSI specific initiative
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
