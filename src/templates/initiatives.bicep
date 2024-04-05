@@ -5,6 +5,9 @@ targetScope = 'managementGroup'
 @maxLength(10)
 param topLevelManagementGroupPrefix string = 'alz'
 
+@description('Optionally set the deployment location for policies with Deploy If Not Exists effect. DEFAULT VALUE = "deployment().location"')
+param location string = deployment().location
+
 @description('Optionally set the scope for custom Policy Definitions used in Policy Set Definitions (Initiatives). Must be one of \'/\', \'/subscriptions/id\' or \'/providers/Microsoft.Management/managementGroups/id\'. DEFAULT VALUE = \'/providers/Microsoft.Management/managementGroups/\${topLevelManagementGroupPrefix}\'')
 param scope string = tenantResourceId('Microsoft.Management/managementGroups', topLevelManagementGroupPrefix)
 
