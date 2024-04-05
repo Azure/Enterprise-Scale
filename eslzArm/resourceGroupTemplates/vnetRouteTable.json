@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix" : {
+            "type": "string"
+        },
+        "hubRgName": {
+            "type": "string"
+        },
+        "hubResourceId": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "cidrRange": {
+            "type": "string"
+        },
+        "targetFWSubnetCidr": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "routeTableName": "[concat(parameters('topLevelManagementGroupPrefix'), '-rt-hub-', parameters('location'))]",
+        "nextHopIP": "[first(split(cidrsubnet(parameters('targetFWSubnetCidr'), 32, 4), '/'))]"
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2020-07-01",
+            "name": "[variables('routeTableName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "routes": [
+                    {
+                        "name": "hubRoute",
+                        "properties": {
+                            "addressPrefix": "[parameters('cidrRange')]",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[variables('nextHopIP')]"
+                        }
+                    }
+                ],
+                "subnets": [
+                    {
+                        "id": "[concat(parameters('hubResourceId'), '/subnets/', parameters('subnetName'))]"
+                    }
+                ]
+            }
+        }
+    ]
+}
+
