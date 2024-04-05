@@ -1238,6 +1238,7 @@
             "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
             "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
             "hubVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringHub.json')]",
+            "hubVnetRouting": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/vnetRouteTable.json')]",
             "privateDnsZones": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/privateDnsZones.json')]",
             "roleAssignments": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleAssignments/roleAssignment.json')]",
             "classicResourcesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-ClassicResourceTypesPolicyAssignment.json')]",
@@ -6610,6 +6611,51 @@
                     },
                     "hubRgNameSecondary": {
                         "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"                    }
+                }
+            }
+        },
+                        /*
+            Note: ES Lite only: deploys route tables to forward traffic between hubs
+        */
+        {
+            // Creating routing from first region to second region
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('esLitedeploymentNames').vnetConnectivityRouteTableDeploymentName, copyIndex())]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').connectivityRg]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').hubPeeringDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').hubVnetRouting]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "connectivityHubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
+                    },
+                    "subnetName": {
+                        "value": "AzureFirewallSubnet"
+                    },
+                    "cidrRange": {
+                        "value": "[parameters('addressPrefixSecondary')]"
+                    },
+                    "targetFWSubnetCidr": {
+                        "value": "[parameters('subnetMaskForAzFwSecondary')]"
+                    },
+                    "hubLocation": {
+                        "value": "[parameters('connectivityLocation')]"
+                    }
                 }
             }
         },

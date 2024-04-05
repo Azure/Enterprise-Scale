@@ -5,10 +5,7 @@
         "topLevelManagementGroupPrefix" : {
             "type": "string"
         },
-        "hubRgName": {
-            "type": "string"
-        },
-        "hubResourceId": {
+        "connectivityHubResourceId": {
             "type": "string"
         },
         "subnetName": {
@@ -20,12 +17,17 @@
         "targetFWSubnetCidr": {
             "type": "string"
         },
-        "location": {
+        "sourceFWSubnetCidr": {
+            "type": "string"
+        },
+        "hubLocation": {
             "type": "string"
         }
     },
     "variables": {
-        "routeTableName": "[concat(parameters('topLevelManagementGroupPrefix'), '-rt-hub-', parameters('location'))]",
+        "routeTableName": "[concat(parameters('topLevelManagementGroupPrefix'), '-rt-hub-', parameters('hubLocation'))]",
+        "vNetName": "[last(split(parameters('connectivityHubResourceId'), '/'))]",
+
         "nextHopIP": "[first(split(cidrsubnet(parameters('targetFWSubnetCidr'), 32, 4), '/'))]"
         },
     "resources": [
@@ -33,7 +35,7 @@
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2020-07-01",
             "name": "[variables('routeTableName')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('hubLocation')]",
             "properties": {
                 "routes": [
                     {
@@ -44,13 +46,24 @@
                             "nextHopIpAddress": "[variables('nextHopIP')]"
                         }
                     }
-                ],
-                "subnets": [
-                    {
-                        "id": "[concat(parameters('hubResourceId'), '/subnets/', parameters('subnetName'))]"
-                    }
                 ]
+                
             }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-07-01",
+            "name": "[concat(variables('vNetName'), '/', parameters('subnetName'))]",
+            "properties": {
+                "addressPrefix": "[parameters('sourceFWSubnetCidr')]",
+                "routeTable": {
+                    "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                }
+                
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+            ]
         }
     ]
 }
