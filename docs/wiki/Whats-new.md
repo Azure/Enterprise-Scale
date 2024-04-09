@@ -1,7 +1,9 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [AMA Update for the Portal Accelerator](#AMA-Update-for-the-Portal-Accelerator)
+  - [March 2024](#march-2024)
+  - [February 2024](#february-2024)
+  - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
   - [🔃 Policy Refresh Q2 FY24](#-policy-refresh-q2-fy24)
   - [January 2024](#january-2024)
   - [December 2023](#december-2023)
@@ -38,6 +40,29 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### March 2024
+
+#### Documentation
+
+- Added new AMA Policies and Initiatives to [ALZ Policies](./ALZ-Policies) documentation.
+- Updated [community call wiki page](https://aka.ms/alz/community) with links for March 2024 recording and slides.
+
+#### Tooling
+
+- Add new Regulatory Compliance Policy Assignment flexibility feature
+- Added ARM template to enable Microsoft Defender for Cloud as part of the deployment. Policies will still remediate additional subscriptions added to ALZ after deployment.
+- Resolved an issue that prevented the policy remediation from working properly for VM Insights, Change Tracking, Azure Update Manager policies. The root cause was a too restrictive access configuration for the Managed Identity that performs the remediation tasks.
+  - **New deployments will now:**
+    - Add an additional role assignment for VMInsights Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
+    - Add an additional role assignment for ChangeTracking Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
+    - Add an additional role assignment to Azure Update Manger Policies, granting Managed Identity Operator at the same scope as the assignment.
+  - **To update an existing deployment:**
+    - This script [Set-RBACAmaPolicyAssignment.ps1](https://github.com/Azure/Enterprise-Scale/blob/main/src/scripts/Set-RBACAmaPolicyAssignment.ps1) will update the required role assignments. The `enterpriseScaleCompanyPrefix` parameter is required for running the script and should contain the intermediate root management group name.
+
+      ```powershell
+      .\Set-RBACAmaPolicyAssignment.ps1 -enterpriseScaleCompanyPrefix contoso
+      ```
 
 ### February 2024
 
