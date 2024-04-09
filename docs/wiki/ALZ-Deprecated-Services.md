@@ -1,4 +1,4 @@
-# Azure Landing Zones Deprecated Policies and Services
+# Azure Landing Zones Deprecated Notices
 
 ## In this section
 
@@ -7,7 +7,7 @@
 
 ## Overview
 
-As policies and services are further developed by Microsoft, one or more Azure Landing Zone (ALZ) components may be superseded and need to be deprecated.
+As policies and services are further developed by Microsoft, one or more Azure Landing Zone (ALZ) components may be superseded and need to be deprecated. This article provides details as to those items and supporting documentation to help you remain up to date.
 
 ## Deprecated policies
 
@@ -39,4 +39,4 @@ Policies being deprecated:
 - Removed `ActivityLog` Solution as an option to be deployed into the Log Analytics Workspace, as this has been superseded by the Activity Log Insights Workbook, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights)
 - Removed `Service Map` solution as an option to be deployed, as this has been superseded by VM Insights, as documented [here.](https://learn.microsoft.com/azure/azure-monitor/essentials/activity-log-insights) Guidance on migrating and removing the Service Map solution can be found [here.](https://learn.microsoft.com/en-us/azure/azure-monitor/vm/vminsights-migrate-from-service-map)
 
-- Due to Microsoft Monitor Agent (MMA) planned for deprecation (August 2024) we have started to remove MMA from our reference implementations starting with the ALZ Portal (https://aka.ms/alz/portal) and following this will start to remove MMA from Bicep and Terraform before the planned deprecation date. Please see [Fixme] link for more details.
+- Due to Microsoft Monitor Agent (MMA) planned for deprecation (August 2024) we have started to remove MMA from our reference implementations starting with the ALZ Portal (https://aka.ms/alz/portal) and following this will start to remove MMA from Bicep and Terraform before the planned deprecation date. Please see [MMA Deprecation Guidance](/docs/wiki/ALZ-AMA-Update.md) for more details.
