@@ -3009,7 +3009,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments',variables('deploymentNames').azFwBasePolicyDeploymentName]"
+                "[resourceId('Microsoft.Resources/deployments',variables('deploymentNames').azFwBasePolicyDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -3484,7 +3484,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments',variables('deploymentNames').azFwBasePolicyDeploymentName]"
+                "[resourceId('Microsoft.Resources/deployments',variables('deploymentNames').azFwBasePolicyDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6229,6 +6229,50 @@
                 }
             }
         },
+          /*
+            Note: ES Lite only: deploys azure firewall base policy
+        */
+        {
+            // Creating the Azure Firewall base policy if needed
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vhub'))]", //Fix
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').azFirewallBasePolicy]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "firewallSku": {
+                        "value": "[parameters('firewallSku')]"
+                    },
+                    "enableAzFwDnsProxy": {
+                        "value": "[parameters('enableAzFwDnsProxy')]"
+                    }                    
+                }
+            }
+        },
         /*
             Note: ES Lite only: deploys hub and spoke
         */
@@ -6245,7 +6289,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments',variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6557,7 +6601,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments',variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName]"
             ],
             "location": "[deployment().location]",
             "properties": {
