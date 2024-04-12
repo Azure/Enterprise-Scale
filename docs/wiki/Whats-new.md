@@ -41,6 +41,25 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### April 2024
+
+#### Documentation
+
+- Added new instructions for deploying hub and spoke network topology in [multiple regions](./Deploying-ALZ-HubAndSpoke#deploying-networking-resources-in-an-additional-region).
+- Added new instructions for deploying additional vWAN hubs in [multiple regions](./Deploying-ALZ-HubAndSpoke#deploying-networking-resources-in-an-additional-region).
+
+#### Tooling
+
+- Added functionality to deploy platform resources into multiple regions.  
+  - **New deployments will now:**
+    - Allow for the deployment of hub virtual networks into a secondary region.  Hub virtual networks will be peered together.
+    - Allow for the deployment of a virtual WAN hub into a secondary region.
+    - Allow for the deployment of Private DNS Zones for multiple regions.
+    - Allow for Private DNS zones in the primary region to be linked to the secondary region.
+    - Allow for the deployment of VPN Gateways and ExpressRoute Gateways in both regions.
+    - Allow for the deployment of Azure Firewall in both regions.  Azure Firewall subnets will have a route table to forward traffic intended for the other hub to the Firewall in the other region.
+    - Allow for the deployment of Identity virtual networks in both regions, peered to the appropriate hub.
+
 ### March 2024
 
 #### Documentation
