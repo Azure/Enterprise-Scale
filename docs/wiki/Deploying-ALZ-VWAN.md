@@ -87,6 +87,28 @@ As part of the policies that you can assign to your landing zones, the Azure lan
 
 ![Graphical user interface, application  Description automatically generated](./media/clip_image037.jpg)
 
+### Deploying networking resources in an additional region
+
+You may also deploy an additional virtual hub in an additional region, to prepare for multi-region operations.
+
+To do so, select "Additional virtual WAN hub" in the Extend your network into a second region option.
+
+![img](./media/clip_image080.png)
+
+You will need to specify the additional region to deploy to, and then you will be given the option to repeat many of the decisions above.  For best results, use similar inputs to make sure that your regional deployments can both support the same architecture.  However, if you want to forgo deploying a gateway or firewall in the second region, you can select the appropriate options.
+
+![img](./media/clip_image084.png)
+
+One area where the deployment may differ between regions is with private DNS zones.
+
+![img](./media/clip_image082.png)
+
+If you choose to deploy zones for both regions, you will receive two sets of the DNS zones.  This allows for private endpoints in different regions to be associated to the same resource.
+
+However, if you choose to deploy zones only for the primary region, then you will only have one set of private DNS zones.  Only one host name per resource will be able to be used, preventing you from having multiple private endpoints for a service.
+
+See [Private Link and DNS integration at scale](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) to help determine the right architecture for you.
+
 ## 10. Decommissioned/Sandbox
 
 You can optionally choose to change whether default policy assignments for Decommissioned and Sandbox management groups are enabled, set to audit only or disabled.

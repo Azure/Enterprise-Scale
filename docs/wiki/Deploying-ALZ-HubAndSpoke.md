@@ -78,7 +78,7 @@ Depending on your requirements, you may choose to deploy additional network infr
 
 You may also deploy your Azure landing zone networking resources to an additional region, to allow you to prepare for multi-region operations.
 
-To do so, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA" in the Extend your network into a second region option..  For this example, we will select the "Hub and spoke with Azure Firewall".
+To do so, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA" in the Extend your network into a second region option.  For this example, we will select the "Hub and spoke with Azure Firewall".
 
 ![img](./media/clip_image080.png)
 
@@ -92,7 +92,7 @@ One area where the deployment may differ between regions is with private DNS zon
 
 ![img](./media/clip_image082.png)
 
-If you choose to deploy zones for both regions, you will receive two sets of the DNS zones, each one linked to the appropriate region.  Each one will resolve to different zones, leading to a split brained approach that allows for private endpoints in different regions to be associated to the same resource.
+If you choose to deploy zones for both regions, you will receive two sets of the DNS zones, each one linked to the appropriate region's hub.  Each hub will resolve to a different DNS zone, allowing for private endpoints in different regions to be associated to the same resource.
 
 However, if you choose to deploy zones only for the primary region, then the private DNS zones will be linked to both hub virtual networks.  Only one host name per resource will be able to be used, preventing you from having multiple private endpoints for a service.
 
