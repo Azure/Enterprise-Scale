@@ -84,7 +84,7 @@ To do so, select either "Hub and spoke with Azure Firewall" or "Hub and spoke wi
 
 You will need to specify the additional region to deploy to, and then you will be given the option to repeat many of the decisions above.  For best results, use similar inputs to make sure that your regional deployments can both support the same architecture.  However, if you want to forgo deploying a gateway or firewall in the second region, you can select the appropriate options.
 
-Once deployed, your regional hubs will be peered together and have routing tables assigned to the firewall subnets to handle routing to each other.  You can add routes to this route table later, as you add spoke networks.
+Once deployed, your regional hubs will be peered together and have routing tables assigned to the firewall subnets to handle routing to each other.  You can add routes to this route table later, as you add spoke networks.  If you have deployed DDoS protection in the primary region, it will be applied to the secondary region as well.
 
 ![img](./media/clip_image081.png)
 
@@ -102,6 +102,10 @@ See [Private Link and DNS integration at scale](https://learn.microsoft.com/azur
 On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering.
 
  ![img](./media/clip_image036c.png)
+
+In addition, if you wish to deploy an additional virtual network in a secondary region, if you are deploying network resources in the secondary region.
+
+![img](./media/clip_image085.png)
 
 ## 9. Landing zone configuration
 

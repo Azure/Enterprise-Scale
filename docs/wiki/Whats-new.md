@@ -52,7 +52,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Added functionality to deploy platform resources into multiple regions.  
   - **New deployments will now:**
-    - Allow for the deployment of hub virtual networks into a secondary region.  Hub virtual networks will be peered together.
+    - Allow for the deployment of hub virtual networks into a secondary region.  Hub virtual networks will be peered together, and if DDoS protection is enabled, it will be applied to the secondary region.
     - Allow for the deployment of a virtual WAN hub into a secondary region.
     - Allow for the deployment of Private DNS Zones for multiple regions.
     - Allow for Private DNS zones in the primary region to be linked to the secondary region.
