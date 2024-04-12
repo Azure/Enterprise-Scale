@@ -74,9 +74,32 @@ Depending on your requirements, you may choose to deploy additional network infr
 
  ![img](./media/clip_image036b.png)
 
+### Deploying networking resources in an additional region
+
+You may also deploy your Azure landing zone networking resources to an additional region, to allow you to prepare for multi-region operations.
+
+To do so, select either "Hub and spoke with Azure Firewall" or "Hub and spoke with your own third-party NVA" in the Extend your network into a second region option..  For this example, we will select the "Hub and spoke with Azure Firewall".
+
+![img](./media/clip_image080.png)
+
+You will need to specify the additional region to deploy to, and then you will be given the option to repeat many of the decisions above.  For best results, use similar inputs to make sure that your regional deployments can both support the same architecture.  However, if you want to forgo deploying a gateway or firewall in the second region, you can select the appropriate options.
+
+Once deployed, your regional hubs will be peered together and have routing tables assigned to the firewall subnets to handle routing to each other.  You can add routes to this route table later, as you add spoke networks.
+
+![img](./media/clip_image081.png)
+
+One area where the deployment may differ between regions is with private DNS zones.
+
+![img](./media/clip_image082.png)
+
+If you choose to deploy zones for both regions, you will receive two sets of the DNS zones, each one linked to the appropriate region.  Each one will resolve to different zones, leading to a split brained approach that allows for private endpoints in different regions to be associated to the same resource.
+
+However, if you choose to deploy zones only for the primary region, then the private DNS zones will be linked to both hub virtual networks.  Only one host name per resource will be able to be used, preventing you from having multiple private endpoints for a service.
+
+See [Private Link and DNS integration at scale](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) to help determine the right architecture for you.
 
 ## 8. Identity
-On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering. 
+On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering.
 
  ![img](./media/clip_image036c.png)
 
