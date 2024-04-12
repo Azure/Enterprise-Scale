@@ -1191,7 +1191,6 @@
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
-            "azFirewallBasePolicy": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/azFw-basepolicy.json')]",
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
             "dataCollectionRuleVmInsights": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-VmInsights.json')]",
@@ -1269,7 +1268,6 @@
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
             "hubPeeringDeploymentName": "[take(concat('alz-HubPeering', variables('deploymentSuffix')), 60)]",
             "hubPeering2DeploymentName": "[take(concat('alz-HubPeering2', variables('deploymentSuffix')), 60)]",
-            "azFwBasePolicyDeploymentName": "[take(concat('alz-FwBasePolicy', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
             "identitySubscriptionPlacement": "[take(concat('alz-IdentitySub', variables('deploymentSuffix')), 64)]",
             "roleDefsDeploymentName": "[take(concat('alz-RoleDefs', variables('deploymentSuffix')), 64)]",
@@ -1387,7 +1385,6 @@
             "vnetConnectivityHubLite2DeploymentName": "[take(concat('alz-VnetHubLite2', variables('deploymentSuffix')), 64)]",
             "hubPeeringDeploymentName": "[take(concat('alz-HubPeering', variables('deploymentSuffix')), 60)]",
             "hubPeering2DeploymentName": "[take(concat('alz-HubPeering2', variables('deploymentSuffix')), 60)]",
-            "azFwBasePolicyDeploymentName": "[take(concat('alz-FwBasePolicy', variables('deploymentSuffix')), 60)]",
             "vnetConnectivityRouteTableDeploymentName": "[take(concat('alz-HubRoute', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityRouteTable2DeploymentName": "[take(concat('alz-HubRoute2', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubLite2DeploymentName": "[take(concat('alz-NVAHubLite2', variables('deploymentSuffix')), 64)]",
@@ -1415,7 +1412,6 @@
             "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
             "identityVnetRgSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocationSecondary'))]",
             "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
-            "azFwBasePolicyRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwBasePolicy-', parameters('connectivityLocation'))]"
         },
         // Declaring deterministic names for platform resources that will be created
         "platformResourceNames": {
@@ -1434,7 +1430,6 @@
             "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocation'))]",
             "hubNameSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocationSecondary'))]",
             "vwanName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vwan-', parameters('connectivityLocation'))]",
-            "azFwBasePolicyName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azfwpolicy-base-', parameters('connectivityLocation'))]",
             "azVpnGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-gwpip-', parameters('connectivityLocation'))]",
             "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('connectivityLocation'))]",
             "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
@@ -1452,7 +1447,6 @@
             "automationResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Automation/automationAccounts/', variables('platformResourceNames').automationAccount)]",
             "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
-            "azFwBasePolicyId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').azFwBasePolicyRg, '/providers/Microsoft.Network/firewallPolicies/', variables('platformResourceNames').azFwBasePolicyName)]",
             "vNetHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubNameSecondary)]",
             "vWanHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubName)]",
             "vWanHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubNameSecondary)]",
@@ -2953,47 +2947,6 @@
                 }
             }
         },
-       /* //FIX {
-            // Creating the Azure Firewall base policy if needed
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vhub'))]", //Fix
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "scope": "[variables('scopes').connectivityManagementGroup]",
-            "name": "[variables('deploymentNames').azFwBasePolicyDeploymentName]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]"
-            ],
-            "location": "[deployment().location]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').azFirewallBasePolicy]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "location": {
-                        "value": "[parameters('connectivityLocation')]"
-                    },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
-                    },
-                    "firewallSku": {
-                        "value": "[parameters('firewallSku')]"
-                    },
-                    "enableAzFwDnsProxy": {
-                        "value": "[parameters('enableAzFwDnsProxy')]"
-                    }                    
-                }
-            }
-        }, */
         {
             // Creating the virtual network hub (hub and spoke)
             "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vhub'))]",
@@ -3009,7 +2962,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
-                //FIX"[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').azFwBasePolicyDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -3066,12 +3018,6 @@
                     },
                     "enableAzFwDnsProxy": {
                         "value": "[parameters('enableAzFwDnsProxy')]"
-                    },
-                    "azFwBasePolicyId": {
-                        "value" : "[variables('platformResourceIds').azFwBasePolicyId]"
-                    },
-                    "enableAzFwSecondary": {
-                        "value": "[parameters('enableAzFwSecondary')]"
                     },
                     "enableVpnActiveActive": {
                         "value": "[parameters('enableVpnActiveActive')]"
@@ -3484,7 +3430,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
-                //FIX"[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').azFwBasePolicyDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -3541,12 +3486,6 @@
                     },
                     "enableAzFwDnsProxy": {
                         "value": "[parameters('enableAzFwDnsProxySecondary')]"
-                    },
-                    "azFwBasePolicyId": {
-                        "value" : "[variables('platformResourceIds').azFwBasePolicyId]"
-                    },
-                    "enableAzFwSecondary": {
-                        "value": "[parameters('enableAzFwSecondary')]"
                     },
                     "enableVpnActiveActive": {
                         "value": "[parameters('enableVpnActiveActiveSecondary')]"
@@ -6227,50 +6166,6 @@
                 }
             }
         },
-          /*
-            Note: ES Lite only: deploys azure firewall base policy
-        */
-        /* //FIX{
-            // Creating the Azure Firewall base policy if needed
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vhub'))]", //Fix, not deploying
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "scope": "[variables('scopes').connectivityManagementGroup]",
-            "name": "[variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]"
-            ],
-            "location": "[deployment().location]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').azFirewallBasePolicy]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "location": {
-                        "value": "[parameters('connectivityLocation')]"
-                    },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
-                    },
-                    "firewallSku": {
-                        "value": "[parameters('firewallSku')]"
-                    },
-                    "enableAzFwDnsProxy": {
-                        "value": "[parameters('enableAzFwDnsProxy')]"
-                    }                    
-                }
-            }
-        }, */
         /*
             Note: ES Lite only: deploys hub and spoke
         */
@@ -6287,7 +6182,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]"
-                //FIX"[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6344,12 +6238,6 @@
                     },
                     "enableAzFwDnsProxy": {
                         "value": "[parameters('enableAzFwDnsProxy')]"
-                    },
-                    "azFwBasePolicyId": {
-                        "value" : "[variables('platformResourceIds').azFwBasePolicyId]"
-                    },
-                    "enableAzFwSecondary": {
-                        "value": "[parameters('enableAzFwSecondary')]"
                     },
                     "enableVpnActiveActive": {
                         "value": "[parameters('enableVpnActiveActive')]"
@@ -6599,7 +6487,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosHubLitePolicyDeploymentName)]"
-                //FIX"[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').azFwBasePolicyDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6656,12 +6543,6 @@
                     },
                     "enableAzFwDnsProxy": {
                         "value": "[parameters('enableAzFwDnsProxySecondary')]"
-                    },
-                    "azFwBasePolicyId": {
-                        "value" : "[variables('platformResourceIds').azFwBasePolicyId]"
-                    },
-                    "enableAzFwSecondary": {
-                        "value": "[parameters('enableAzFwSecondary')]"
                     },
                     "enableVpnActiveActive": {
                         "value": "[parameters('enableVpnActiveActiveSecondary')]"
