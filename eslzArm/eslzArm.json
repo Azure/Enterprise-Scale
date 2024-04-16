@@ -851,6 +851,13 @@
                 "description": "Name of the resource group to be created for the User Assigned Managed Identity in each subscription."
             }
         },
+        "regulatedIndustryInitiativesToAssign": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of objects containing selected Regulated Industry initiatives to assign to specified Management Groups"
+            }
+        },
         "regulatoryComplianceInitativesToAssign": {
             "type": "array",
             "defaultValue": [],
@@ -1052,6 +1059,7 @@
             "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
             "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsSolutions.json')]",
             "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
+            "regulatedIndustryInitiatives": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-RegulatedIndustryPolicyAssignment.json')]",
             "regulatoryComplianceInitaitves": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-RegulatoryCompliancePolicyAssignment.json')]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
             "activityDiagnosticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ActivityLogPolicyAssignment.json')]",
@@ -1138,6 +1146,7 @@
             "monitorServiceHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
             "monitoringSolutionsDeploymentName": "[take(concat('alz-Solutions', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
+            "regulatedIndustryInitiativesToAssignDeploymentName": "[take(concat('alz-RegInd-', deployment().location, '-', uniqueString(parameters('currentDateTimeUtcNow')), '-'), 64)]",
             "regulatoryComplianceInitativesToAssignDeploymentName": "[take(concat('alz-RegComp-', deployment().location, '-', uniqueString(parameters('currentDateTimeUtcNow')), '-'), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
             "activityDiagnosticsPolicyDeploymentName": "[take(concat('alz-ActivityDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -2095,6 +2104,60 @@
                     "uri": "[variables('deploymentUris').asbPolicyInitiative]"
                 },
                 "parameters": {}
+            }
+        },
+        {
+            // Assigning Regulated Industry initiatives if condition is true
+            "condition": "[not(empty(parameters('regulatedIndustryInitiativesToAssign')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[take(concat(variables('deploymentNames').regulatedIndustryInitiativesToAssignDeploymentName, if(contains(parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].mg, '-'), split(parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].mg, '-')[1], parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].mg), '-', uniqueString(parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].mg, parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].policy.id)), 64)]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', replace(parameters('regulatoryComplianceInitativesToAssign')[copyIndex()].mg, 'contoso', parameters('enterpriseScaleCompanyPrefix')))]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "corpConnectedMoveLzs"
+            ],
+            "copy": {
+                "name": "regCompAssignments",
+                "count": "[length(parameters('regulatedIndustryInitiativesToAssign'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').regulatedIndustryInitiatives]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "policySetDefinitionId": {
+                        "value": "[parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].policy.id]"
+                    },
+                    "policySetDefinitionDisplayName": {
+                        "value": "[parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].policy.displayName]"
+                    },
+                    "policySetDefinitionDescription": {
+                        "value": "[parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].policy.description]"
+                    },
+                    "policyAssignmentName": {
+                        "value": "[take(concat('Enforce-RegInd-',uniqueString(replace(parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].mg, 'contoso', parameters('enterpriseScaleCompanyPrefix')), parameters('regulatedIndustryInitiativesToAssign')[copyIndex()].policy.id)), 24)]"
+                    }
+                }
             }
         },
         {
