@@ -22,6 +22,10 @@
         }
     },
     "variables": {
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "roleAssignmentNames": {
+            "deployRoles": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').enforceGuardrailsAPIM))]"
+        },
         "policyDefinitions": {
             "enforceGuardrailsAPIM": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM')]"
         },
@@ -51,6 +55,19 @@
                         "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
                     }
                 ]
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployRoles]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').enforceGuardrailsAPIM)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').enforceGuardrailsAPIM), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
     ],
