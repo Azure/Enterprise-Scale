@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh Q3 FY24](#-policy-refresh-q3-fy24)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
   - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
@@ -40,6 +41,31 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### 🔃 Policy Refresh Q3 FY24
+
+- Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
+- Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Virtual Desktop hostpool resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/9427df23-0f42-4e1e-bf99-a6133d841c4a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Virtual Desktop workspace resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/34804460-d88b-4922-a7ca-537165e060ed.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Device Update for IoT Hub accounts to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/a222b93a-e6c2-4c01-817f-21e092455b2a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Azure Arc Private Link Scopes to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/55c4db33-97b0-437b-8469-c4f4498f5df9.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Deploy - Configure IoT Central to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/d627d7c6-ded5-481a-8f2e-7e16b1e6faf6.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure Recovery Services vaults to use private DNS zones for backup](https://www.azadvertizer.net/azpolicyadvertizer/af783da1-4ad1-42be-800d-d19c70038820.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Added new initiative and default assignment for [Enforce-Backup](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html) scoped to the Landing Zones and Platform management groups in Audit mode:
+  - Added the [[Preview]: Immutability must be enabled for backup vaults](https://www.azadvertizer.net/azpolicyadvertizer/2514263b-bc0d-4b06-ac3e-f262c0979018.html) built-in policy
+  - Added the [[Preview]: Immutability must be enabled for Recovery Services vaults](https://www.azadvertizer.net/azpolicyadvertizer/d6f6f560-14b7-49a4-9fc8-d2c3a9807868.html) built-in policy
+  - Added the [[Preview]: Soft delete should be enabled for Backup Vaults](https://www.azadvertizer.net/azpolicyadvertizer/9798d31d-6028-4dee-8643-46102185c016.html) built-in policy
+  - Added the [[Preview]: Soft delete should be enabled for Recovery Services Vaults](https://www.azadvertizer.net/azpolicyadvertizer/31b8092a-36b8-434b-9af7-5ec844364148.html) built-in policy
+  - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Backup Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c58e083e-7982-4e24-afdc-be14d312389e.html) built-in policy
+  - Added the [[Preview]: Multi-User Authorization (MUA) must be enabled for Recovery Services Vaults.](https://www.azadvertizer.net/azpolicyadvertizer/c7031eab-0fc0-4cd9-acd0-4497bd66d91a.html) built-in policy
+- Added [[Preview]: Azure Recovery Services vaults should disable public network access](https://www.azadvertizer.net/azpolicyadvertizer/9ebbbba3-4d65-4da9-bb67-b22cfaaff090.html) built-in policy to the "Deny-PublicPaaSEndpoints" initiative and assignment.
+- Added new initiative and assignment to enable auditing for Trust Launch capable virtual machines which includes the following built-in policies:
+  - [Disks and OS image should support TrustedLaunch](https://www.azadvertizer.net/azpolicyadvertizer/b03bb370-5249-4ea4-9fce-2552e87e45fa.html)
+  - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
 
 ### March 2024
 
@@ -118,6 +144,7 @@ Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some
 - Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 - Added wiki document for recommended Resource Providers to register for Subscriptions in ALZ [ALZ Azure Resource Provider Recommendations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Resource-Provider-Recommendations)
 
+
 ### December 2023
 
 #### Tooling
@@ -150,6 +177,8 @@ Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some
 
 #### Policy
 
+- Added ['Container Apps environment should disable public network access'](https://www.azadvertizer.net/azpolicyadvertizer/d074ddf8-01a5-4b5e-a2b8-964aed452c0a.html) to ['Deny-PublicPaaSEndpoints'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaaSEndpoints.html)
+- Added ['Container Apps should only be accessible over HTTPS'](https://www.azadvertizer.net/azpolicyadvertizer/0e80e269-43a4-4ae9-b5bc-178126b8a5cb.html) to this ['Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit'.](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html)
 - The portal accelerator experience has been updated to include deployment of Azure Monitor baseline alerts. Details on the policies deployed can be found [here](https://aka.ms/amba/alz).
 - Fixed issue with couple of Policy file names to align with the actual name of the policies
 - Bug fix for [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) version
