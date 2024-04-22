@@ -4,6 +4,14 @@
 
 There is a lot of change happening for policies in Azure, and by extension ALZ, and we have a number of common issues being raised by our customers and partners. This page is intended to address those issues.
 
+### ALZ Policies and Initiatives and the escape character
+
+We've had a number of issues and pull requests submitted specifically around the extra bracket `[` that is present in all policies and initiatives in this repo.
+
+> NOTE: The policies and initiatives in this repo are NOT intended to be deployed directly in Azure. You cannot copy the definition and deploy the policy directly without editing first. If you want to deploy a specific policy you must first remove the additional leading `[` character from the policy or initiative definition.
+
+The reason for this is that the policies and initiatives in this repo are intended to be used as part of the ALZ deployment process, and are used to generate the ARM templates that are deployed to Azure. The leading `[` character is required to support the generation of the ARM templates.
+
 ### Diagnostic Settings v2 (December 2023)
 
 There are several issues raised around Diagnostic Settings, and we acknowledge that this is a complex area that is causing a lot of pain.
