@@ -44,9 +44,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### 🔃 Policy Refresh Q3 FY24
 
+We've missed Q3 timelines completely, but for good reason. We've held back this cycle of Policy Refresh in order to address some key initiatives that we feel are critical to the success of our customers. This is the single largest update to the ALZ Policy since the inception of the project. We're excited to share these updates with you, and we're confident that they will provide significant value to your deployments and the compliance of your Azure Landing Zones.
+
 - 📌Major Update: New "Workload Specific Compliance" section added to ALZ Portal accelerator. This will allow you to apply compliance policies to specific workloads, such as SQL, Storage, and more. These additional compliance controls are frequently required by highly regulated industries like financial services, healthcare, etc. Note: they are not assigned by default, you are required to select the workload and management group scope to apply assignments. For more information review [ALZ Policy - Extra](./ALZ-Policies-Extra)
 This release includes:
-  - 25 new custom initiatives added for various workloads
+  - 25 new custom initiatives added to support key Azure workloads/services
   - Significantly enhanced [Deny-PublicPaasEndpoints](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaasEndpoints.html) to cover additional services (no public access)
   - Significantly enhanced [Enforce-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) to cover additional services (TLS and SSL)
   - Significantly enhanced [Enforce-EncryptionCMK](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptionCMK.html) to cover additional services (customer managed keys)
