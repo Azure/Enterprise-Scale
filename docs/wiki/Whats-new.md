@@ -66,6 +66,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new initiative and assignment to enable auditing for Trust Launch capable virtual machines which includes the following built-in policies:
   - [Disks and OS image should support TrustedLaunch](https://www.azadvertizer.net/azpolicyadvertizer/b03bb370-5249-4ea4-9fce-2552e87e45fa.html)
   - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
+  - Added new custom policy "Deploy-Private DNS zone ID-PaaS-PE" this policy will DINE-configure private DNS zone group to override the DNS resolution for PaaS services private endpoint, added services which supports private DNS but doesn't have built in policy exist.
+  - Added new custom policy "Deploy-Private DNS zone-PaaS-PE-Generic" this policy will DINE-configure private DNS zone group to override the DNS resolution for PaaS services private endpoint, it is generic for the services which supports private DNS but doesn't have built in policy exist and also for the new services which supports private DNS in future
 
 ### March 2024
 
