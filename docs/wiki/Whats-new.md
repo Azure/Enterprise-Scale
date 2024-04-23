@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [April 2024](#april-2024)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
   - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
@@ -40,6 +41,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### April 2024
+
+#### Tooling
+
+- Add additional, optional, telemetry to help the ALZ team identify styles of deployments.
 
 ### March 2024
 
