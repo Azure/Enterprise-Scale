@@ -851,6 +851,21 @@
                 "description": "Name of the resource group to be created for the User Assigned Managed Identity in each subscription."
             }
         },
+        "enableWsCMKInitiatives": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "No"
+        },
+        "wsCMKSelectorMG": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of management groups to assign the Workload Specific Compliance initiative for API Management."
+            }
+        },
         "enableWsAPIMInitiatives": {
             "type": "string",
             "allowedValues": [
@@ -1487,6 +1502,7 @@
             "dataCollectionRuleMdfcDefenderSQL": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-DefenderSQL.json')]",
             "MDFCSubscriptionEnablement": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/mdfcConfiguration.json')]",
             // Workload Specific Compliance Initiatives
+            "wsCMKPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-EncryptionCMKPolicyAssignment.json')]",
             "wsAPIMPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsAPIMPolicyAssignment.json')]",
             "wsAppServicesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsAppServicesPolicyAssignment.json')]",
             "wsAutomationPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsAutomationPolicyAssignment.json')]",
@@ -1617,6 +1633,7 @@
             "dataCollectionRuleMdfcDefenderSQLDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQL', variables('deploymentSuffix')), 64)]",
             "MDFCSubscriptionEnableDeploymentName": "[take(concat('alz-MDFCSubEnable', variables('deploymentSuffix')), 62)]",
             // Workload Specific Compliance Initiatives
+            "wsCMKDeploymentName": "[take(concat('alz-wsCMK', variables('deploymentSuffix')), 35)]",
             "wsAPIMDeploymentName": "[take(concat('alz-wsAPIM', variables('deploymentSuffix')), 35)]",
             "wsAppServicesDeploymentName": "[take(concat('alz-wsAppService', variables('deploymentSuffix')), 35)]",
             "wsAutomationDeploymentName": "[take(concat('alz-wsAutomation', variables('deploymentSuffix')), 35)]",
@@ -2522,6 +2539,53 @@
                     "uri": "[variables('deploymentUris').asbPolicyInitiative]"
                 },
                 "parameters": {}
+            }
+        },
+        {
+            // Assigning Workload Specific Customer Managed Keys Initiaitve to selected management groups if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableWsCMKInitiatives'), 'Yes'), not(empty(parameters('wsCMKSelectorMG'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[take(concat(variables('deploymentNames').wsCMKDeploymentName, '-', replace(parameters('wsCMKSelectorMG')[copyIndex()], 'contoso', parameters('enterpriseScaleCompanyPrefix'))), 64)]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', replace(parameters('wsCMKSelectorMG')[copyIndex()], 'contoso', parameters('enterpriseScaleCompanyPrefix')))]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "policyCompletion",
+                "corpConnectedMoveLzs"
+            ],
+            "copy": {
+                "name": "wsCMKmg",
+                "count": "[length(parameters('wsCMKSelectorMG'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').wsCMKPolicyAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "assignmentIndex": {
+                        "value": "[copyIndex()]"
+                    }
+                }
             }
         },
         {
