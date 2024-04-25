@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [April 2024](#april-2024)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
   - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
@@ -59,6 +60,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - Allow for the deployment of VPN Gateways and ExpressRoute Gateways in both regions.
     - Allow for the deployment of Azure Firewall in both regions.  Azure Firewall subnets will have a route table to forward traffic intended for the other hub to the Firewall in the other region.
     - Allow for the deployment of Identity virtual networks in both regions, peered to the appropriate hub.
+#### Tooling
+
+- Add additional, optional, telemetry to help the ALZ team identify styles of deployments.
 
 ### March 2024
 
