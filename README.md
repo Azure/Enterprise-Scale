@@ -57,6 +57,10 @@ The Azure Landing Zones (Enterprise-Scale Architecture) is modular by design and
 
 You can find all of the implementation options for Azure Landing Zones here: [aka.ms/alz/aac](https://aka.ms/alz/aac#platform)
 
+## Azure Landing Zones Roadmap
+
+The Azure Landing Zones (Enterprise-Scale) architecture is a living architecture that will continue to evolve alongside the Azure platform. The roadmap for the Azure Landing Zones (Enterprise-Scale) architecture is driven by customer feedback and the evolution of the Azure platform. You can find the roadmap for the Azure Landing Zones (Enterprise-Scale) architecture here: [Azure Landing Zones Roadmap](https://aka.ms/alz/roadmap)
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
