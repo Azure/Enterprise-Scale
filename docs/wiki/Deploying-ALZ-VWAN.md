@@ -71,7 +71,7 @@ Depending on your requirements, you may choose to deploy additional network infr
 
 ### Deploying networking resources in an additional region
 
-You may also deploy an additional virtual hub in an additional region, to prepare for multi-region operations.
+In this blade, you will also configure a secondary region for networking platform resource.  This secondary platform network deployment prepares you you to take advantage of capacity in multiple regions, and for recovery or multi-region high availability.
 
 To do so, select "Additional virtual WAN hub" in the Extend your network into a second region option.
 
@@ -97,7 +97,7 @@ On the *Identity* blade you can specify if you want to assign recommended polici
 
  ![img](./media/clip_image036c.png)
 
-In addition, if you wish to deploy an additional virtual network in a secondary region, if you are deploying network resources in the secondary region.
+In addition, if you are deploying an additional set of network resources in an additional region, you also have the option to deploy an additional Identity virtual network in that region.  It will be peered to the hub in your secondary region.
 
 ![img](./media/clip_image085.png)
 
