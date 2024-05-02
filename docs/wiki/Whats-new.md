@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [May 2024](#may-2024)
   - [April 2024](#april-2024)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
@@ -41,6 +42,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### May 2024
+
+#### Documentation
+
+- Archived the readme content in the eslzArm folder as it is no longer relevant. Please refer to the [ALZ Wiki](https://aka.ms/alz/wiki) for the latest information on how to deploy Enterprise-Scale Landing Zones. To view the content that was previously here, refer to the [archive](https://github.com/Azure/Enterprise-Scale/blob/45d5c2bd8c1a9e19b1a46a3a0dabb311e5320b64/eslzArm/README.md).
 
 ### April 2024
 
