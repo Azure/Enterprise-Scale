@@ -53,6 +53,7 @@ This release includes:
   - Significantly enhanced [Enforce-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) to cover additional services (TLS and SSL)
   - Significantly enhanced [Enforce-EncryptionCMK](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptionCMK.html) to cover additional services (customer managed keys)
   - 24 new custom policies added for various workloads where no equivalent built-in policy is available (included in the new initiatives) - please note some policies only support the "Audit" effect, and should be overridden as needed.
+- Updated [Audit-PublicIpAddresses-UnusedResourcesCostOptimization](https://www.azadvertizer.net/azpolicyadvertizer/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.html) to check for `static` public IP addresses that are not associated with any resources (instead of `not basic`).
 - Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
 - Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
