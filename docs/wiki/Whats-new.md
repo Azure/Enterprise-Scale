@@ -2,6 +2,8 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh Q3 FY24](#-policy-refresh-q3-fy24)
+  - [May 2024](#may-2024)
+  - [April 2024](#april-2024)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
   - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
@@ -67,6 +69,17 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new initiative and assignment to enable auditing for Trust Launch capable virtual machines which includes the following built-in policies:
   - [Disks and OS image should support TrustedLaunch](https://www.azadvertizer.net/azpolicyadvertizer/b03bb370-5249-4ea4-9fce-2552e87e45fa.html)
   - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
+### May 2024
+
+#### Documentation
+
+- Archived the readme content in the eslzArm folder as it is no longer relevant. Please refer to the [ALZ Wiki](https://aka.ms/alz/wiki) for the latest information on how to deploy Enterprise-Scale Landing Zones. To view the content that was previously here, refer to the [archive](https://github.com/Azure/Enterprise-Scale/blob/45d5c2bd8c1a9e19b1a46a3a0dabb311e5320b64/eslzArm/README.md).
+
+### April 2024
+
+#### Tooling
+
+- Add additional, optional, telemetry to help the ALZ team identify styles of deployments.
 
 ### March 2024
 
@@ -85,16 +98,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
     - Add an additional role assignment for ChangeTracking Policies that are assigned at Landing Zone management group scope, granting the Managed Identity the Reader role on the Platform management group.
     - Add an additional role assignment to Azure Update Manger Policies, granting Managed Identity Operator at the same scope as the assignment.
   - **To update an existing deployment:**
-    - For each of the VMInsights and ChangeTracking Initiative assignments:
-      - **Only required for the Initiatives assigned to Landing Zones Management group scope**
-      - Go to the Initiative assignment, go to the Managed Identity tab and copy the Principal ID
-      - Go to Management Groups, select the Platform Management group and go to Access control (IAM)
-      - Add a new role assignment and assign the Reader role the Principal ID that was copied in the first step.
-    - For each of the Azure Update Manger Initiative assignments:
-      - **Applies to the Initiatives assigned to both the Landing Zones and the Platform Management group scopes**
-      - Go to the Initiative assignment, go to the Managed Identity tab and copy the Principal ID
-      - Go to Management Groups, select the same management group as the assignment you copied the Principal ID from and go to Access control (IAM)
-      - Add a new role assignment and assign the Managed Identity Operator role the Principal ID that was copied in the first step.
+    - This script [Set-RBACAmaPolicyAssignment.ps1](https://github.com/Azure/Enterprise-Scale/blob/main/src/scripts/Set-RBACAmaPolicyAssignment.ps1) will update the required role assignments. The `enterpriseScaleCompanyPrefix` parameter is required for running the script and should contain the intermediate root management group name.
+
+      ```powershell
+      .\Set-RBACAmaPolicyAssignment.ps1 -enterpriseScaleCompanyPrefix contoso
+      ```
 
 ### February 2024
 
