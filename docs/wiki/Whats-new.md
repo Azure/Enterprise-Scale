@@ -2,6 +2,8 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh Q3 FY24](#-policy-refresh-q3-fy24)
+  - [May 2024](#may-2024)
+  - [April 2024](#april-2024)
   - [March 2024](#march-2024)
   - [February 2024](#february-2024)
   - [AMA Update for the Portal Accelerator](#ama-update-for-the-portal-accelerator)
@@ -54,6 +56,7 @@ This release includes:
   - Significantly enhanced [Enforce-EncryptionCMK](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptionCMK.html) to cover additional services (customer managed keys)
   - 24 new custom policies added for various workloads where no equivalent built-in policy is available (included in the new initiatives) - please note some policies only support the "Audit" effect, and should be overridden as needed.
 - Updated [Audit-PublicIpAddresses-UnusedResourcesCostOptimization](https://www.azadvertizer.net/azpolicyadvertizer/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.html) to check for `static` public IP addresses that are not associated with any resources (instead of `not basic`).
+- Fixed the bug with [Configure Azure Machine Learning workspace to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/ee40564d-486e-4f68-a5ca-7a621edae0fb.html) policy where `secondPrivateDnsZoneId` parameter was missing which was leaving AML private endpoints incomplete. 
 - Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
 - Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure Azure Managed Grafana workspaces to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/4c8537f8-cd1b-49ec-b704-18e82a42fd58.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
@@ -78,6 +81,17 @@ This release includes:
   - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
 - Updated [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) for Defender for APIs, which now requires a sub plan be specified. We're defaulting to sub plan "P1", and have confirmed that costs will only be incurred once an API has expressly been onboarded to Defender for APIs. Please thoroughly review Defender for API plans as they related to your environment and adjust the sub plan as needed.
 - Deprecated custom policy [Storage Account set to minimum TLS and Secure transfer should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Storage-minTLS.html) and replaced with two built-in policies [Secure transfer to storage accounts should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/404c3081-a854-4457-ae30-26a93ef643f9.html) and [Storage accounts should have the specified minimum TLS version](https://www.azadvertizer.net/azpolicyadvertizer/fe83a0eb-a853-422d-aac2-1bffd182c5d0.html).
+### May 2024
+
+#### Documentation
+
+- Archived the readme content in the eslzArm folder as it is no longer relevant. Please refer to the [ALZ Wiki](https://aka.ms/alz/wiki) for the latest information on how to deploy Enterprise-Scale Landing Zones. To view the content that was previously here, refer to the [archive](https://github.com/Azure/Enterprise-Scale/blob/45d5c2bd8c1a9e19b1a46a3a0dabb311e5320b64/eslzArm/README.md).
+
+### April 2024
+
+#### Tooling
+
+- Add additional, optional, telemetry to help the ALZ team identify styles of deployments.
 
 ### March 2024
 
