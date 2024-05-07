@@ -1,7 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [🔃 Policy Refresh Q3 FY24](#-policy-refresh-q3-fy24)
+  - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
   - [May 2024](#may-2024)
   - [April 2024](#april-2024)
   - [March 2024](#march-2024)
@@ -44,7 +44,7 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### 🔃 Policy Refresh Q3 FY24
+### 🔃 Policy Refresh H2 FY24
 
 We've missed Q3 timelines completely, but for good reason. We've held back this cycle of Policy Refresh in order to address some key initiatives that we feel are critical to the success of our customers. This is the single largest update to the ALZ Policy since the inception of the project. We're excited to share these updates with you, and we're confident that they will provide significant value to your deployments and the compliance of your Azure Landing Zones.
 
@@ -83,6 +83,7 @@ This release includes:
   - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
 - Updated [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) for Defender for APIs, which now requires a sub plan be specified. We're defaulting to sub plan "P1", and have confirmed that costs will only be incurred once an API has expressly been onboarded to Defender for APIs. Please thoroughly review Defender for API plans as they related to your environment and adjust the sub plan as needed.
 - Deprecated custom policy [Storage Account set to minimum TLS and Secure transfer should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Storage-minTLS.html) and replaced with two built-in policies [Secure transfer to storage accounts should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/404c3081-a854-4457-ae30-26a93ef643f9.html) and [Storage accounts should have the specified minimum TLS version](https://www.azadvertizer.net/azpolicyadvertizer/fe83a0eb-a853-422d-aac2-1bffd182c5d0.html).
+  - Added new custom policy "Deploy-Private-DNS-Generic" this policy will DINE-configure private DNS zone group to override the DNS resolution for PaaS services private endpoint, it is generic for the services which supports private DNS but doesn't have built in policy exist and also for the new services which supports private DNS in future
 ### May 2024
 
 #### Documentation
