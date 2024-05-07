@@ -68,6 +68,8 @@ This release includes:
 - Added the [Configure Recovery Services vaults to use private DNS zones for backup](https://www.azadvertizer.net/azpolicyadvertizer/af783da1-4ad1-42be-800d-d19c70038820.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table groupID](https://www.azadvertizer.net/azpolicyadvertizer/028bbd88-e9b5-461f-9424-a1b63a7bee1a.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
 - Added the [Configure a private DNS Zone ID for table_secondary groupID](https://www.azadvertizer.net/azpolicyadvertizer/c1d634a5-f73d-4cdd-889f-2cc7006eb47f.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
+- Removed Defender for Cloud for DNS, as this is now deprecated and is included in Defender for Servers. Deprecated [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) initiative, and superseded with [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to minimize breaking change impact on existing deployments.
+- Removed Defender for Cloud for APIs, as this is now deprecated due to plan changes for this service. Deprecated [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) initiative, and superseded with [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to minimize breaking change impact on existing deployments.
 - Added new initiative and default assignment for [Enforce-Backup](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html) scoped to the Landing Zones and Platform management groups in Audit mode:
   - Added the [[Preview]: Immutability must be enabled for backup vaults](https://www.azadvertizer.net/azpolicyadvertizer/2514263b-bc0d-4b06-ac3e-f262c0979018.html) built-in policy
   - Added the [[Preview]: Immutability must be enabled for Recovery Services vaults](https://www.azadvertizer.net/azpolicyadvertizer/d6f6f560-14b7-49a4-9fc8-d2c3a9807868.html) built-in policy
@@ -125,6 +127,7 @@ This release includes:
 - Bug fix for Portal Accelerator. userAssignedIdentityResourceGroup has been added as output for the Portal UI, this fixes deploying the Resource Group with a custom name.
 - Bug fix for Portal Accelerator. `subscriptionIds` now uses lambda function to obtain the subscription IDs from `corpConnectedLzSubscriptionId`. This fixes the Invalid Template error when selecting a corp connected landing zone deployment.
 - Bug fix for Portal Accelerator. `connectivitySubscriptionId` is now skipped when no networking components are deployed. This fixes an InvalidTemplateDeployment error deploying the Resource Group for UAMI.
+- From Portal Accelerator: removed the options to select VM vulnerability assessment provider and to select Defender for Cloud for DNS. These are now default to the recommended settings.
 
 ### AMA Update for the Portal Accelerator
 
