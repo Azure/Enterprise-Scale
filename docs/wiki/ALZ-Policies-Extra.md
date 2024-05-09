@@ -55,7 +55,11 @@ ALZ provides additional policies that are not assigned by default but that can b
 
 ## 2. ALZ, Workload Specific Compliance and Regulated Industries
 
-The Azure Landing Zone is designed to be a flexible and scalable solution that can be used by organizations in a variety of industries. However, organizations in regulated industries may need to take additional steps to ensure compliance with industry-specific regulations. To support the additional requirements of these industries, we're providing the following additional initiatives that enhance the security and compliance posture of the Azure Landing Zone:
+The Azure Landing Zone is designed to be a flexible and scalable solution that can be used by organizations in a variety of industries. However, organizations in regulated industries (FSI, Healthcare, etc.) may need to take additional steps to ensure compliance with industry-specific regulations. These regulations often commonly have a consistent set of controls to cover, like CMK, lockding down public endpoints, TLS version enforcement, logging etc.
+
+To support the additional control requirements of these industries, we're providing the following additional initiatives that enhance the security and compliance posture of the Azure Landing Zone:
+
+> **Please Note:** These are meant to help customers across all regulated industries (FSI, Healthcare, etc.) and not be aligned to specific regulatory controls, as there are already policy initatives available for these via [Azure Policy](https://learn.microsoft.com/azure/azure-resource-manager/management/security-controls-policy) & [Microsoft Defender for Cloud](https://learn.microsoft.com/azure/defender-for-cloud/regulatory-compliance-dashboard)
 
 | Initiative ID | Name | Description | # of Policies |
 |------------|-------------|-------------|-------------|
