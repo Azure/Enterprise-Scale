@@ -16,43 +16,43 @@ ALZ provides additional policies that are not assigned by default but that can b
 | Deny-Databricks-NoPublicIp | Deny public IPs for Databricks cluster | |
 | Deny-Databricks-Sku | Deny non-premium Databricks sku | |
 | Deny-Databricks-VirtualNetwork | Deny Databricks workspaces without Vnet injection | |
-| deny-fileservices-insecureauth | File Services with insecure authentication methods should be denied | |
-| deny-fileservices-insecurekerberos | File Services with insecure Kerberos ticket encryption should be denied | |
-| deny-fileservices-insecuresmbchannel | File Services with insecure SMB channel encryption should be denied | |
-| deny-fileservices-insecuresmbversions | File Services with insecure SMB versions should be denied | |
-| deny-machinelearning-aks | Deny AKS cluster creation in Azure Machine Learning | |
-| deny-machinelearning-compute-subnetid | Enforce subnet connectivity for Azure Machine Learning compute clusters and compute instances | |
-| deny-machinelearning-compute-vmsize | Limit allowed vm sizes for Azure Machine Learning compute clusters and compute instances | |
-| deny-machinelearning-computecluster-remoteloginportpublicaccess | Deny public access of Azure Machine Learning clusters via SSH | |
-| deny-machinelearning-computecluster-scale | Enforce scale settings for Azure Machine Learning compute clusters | |
-| deny-machinelearning-hbiworkspace | Enforces high business impact Azure Machine Learning Workspaces | |
-| deny-machinelearning-publicaccesswhenbehindvnet | Deny public access behind vnet to Azure Machine Learning workspace | |
-| deny-machinelearning-publicnetworkaccess | [Deprecated] Azure Machine Learning should have disabled public network access | Deprecated |
-| deny-private-dns-zones | Deny the creation of private DNS | |
-| deny-publicendpoint-mariadb | [Deprecated] Public network access should be disabled for MariaDB | Deprecated |
-| deny-publicip | [Deprecated] Deny the creation of public IP | Deprecated |
-| deny-rdp-from-internet | [Deprecated] RDP access from the Internet should be blocked | Deprecated, replaced by Deny-MgmtPorts-From-Internet |
-| deny-storage-sftp | Storage Accounts with SFTP enabled should be denied | |
-| deny-storageaccount-customdomain | Storage Accounts with custom domains assigned should be denied | |
-| deny-subnet-without-penp | Subnets without Private Endpoint Network Policies enabled should be denied | |
-| deny-subnet-without-udr | Subnets should have a User Defined Route | |
-| deny-udr-with-specific-nexthop | User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied | |
-| deny-vnet-peering | Deny vNet peering | |
-| deny-vnet-peering-to-non-approved-vnets | Deny vNet peering to non-approved vNets | |
-| deploy-budget | Deploy a default budget on all subscriptions under the assigned scope | |
-| deploy-custom-route-table | Deploy a route table with specific user defined routes | |
-| deploy-ddosprotection | Deploy an Azure DDoS Network Protection | |
-| deploy-firewallpolicy | Deploy Azure Firewall Manager policy in the subscription | |
-| deploy-nsg-flowlogs | [Deprecated] Deploys NSG flow logs and traffic analytics | Deprecated |
-| deploy-nsg-flowlogs-to-la | [Deprecated] Deploys NSG flow logs and traffic analytics to Log Analytics | Deprecated |
-| deploy-sql-tde | [Deprecated] Deploy SQL Database Transparent Data Encryption | Deprecated |
-| deploy-sql-vulnerabilityassessments_20230706 | Deploy SQL Database Vulnerability Assessments | |
-| deploy-vnet-hubspoke | Deploy Virtual Network with peering to the hub | |
-| deploy-windows-domainjoin | Deploy Windows Domain Join Extension with keyvault configuration | |
+| Deny-FileServices-InsecureAuth | File Services with insecure authentication methods should be denied | |
+| Deny-FileServices-InsecureKerberos | File Services with insecure Kerberos ticket encryption should be denied | |
+| Deny-FileServices-InsecureSmbChannel | File Services with insecure SMB channel encryption should be denied | |
+| Deny-FileServices-InsecureSmbVersions | File Services with insecure SMB versions should be denied | |
+| Deny-MachineLearning-Aks | Deny AKS cluster creation in Azure Machine Learning | |
+| Deny-Machinelearning-Compute-Subnetid | Enforce subnet connectivity for Azure Machine Learning compute clusters and compute instances | |
+| Deny-MachineLearning-Compute-Vmsize | Limit allowed vm sizes for Azure Machine Learning compute clusters and compute instances | |
+| Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess | Deny public access of Azure Machine Learning clusters via SSH | |
+| Deny-MachineLearning-ComputeCluster-Scale | Enforce scale settings for Azure Machine Learning compute clusters | |
+| Deny-MachineLearning-HbiWorkspace | Enforces high business impact Azure Machine Learning Workspaces | |
+| Deny-MachineLearning-PublicAccessWhenBehindVnet | Deny public access behind vnet to Azure Machine Learning workspace | |
+| Deny-MachineLearning-PublicNetworkAccess | [Deprecated] Azure Machine Learning should have disabled public network access | Deprecated |
+| Deny-Private-Dns-Zones | Deny the creation of private DNS | |
+| Deny-PublicEndpoint-Mariadb | [Deprecated] Public network access should be disabled for MariaDB | Deprecated |
+| Deny-PublicIp | [Deprecated] Deny the creation of public IP | Deprecated |
+| Deny-Rdp-From-Internet | [Deprecated] RDP access from the Internet should be blocked | Deprecated, replaced by Deny-MgmtPorts-From-Internet |
+| Deny-Storage-Sftp | Storage Accounts with SFTP enabled should be denied | |
+| Deny-StorageAccount-CustomDomain | Storage Accounts with custom domains assigned should be denied | |
+| Deny-Subnet-Without-Penp | Subnets without Private Endpoint Network Policies enabled should be denied | |
+| Deny-Subnet-Without-Udr | Subnets should have a User Defined Route | |
+| Deny-Udr-With-Specific-Nexthop | User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied | |
+| Deny-Vnet-Peering | Deny vNet peering | |
+| Deny-Vnet-Peering-To-Non-Approved-Vnets | Deny vNet peering to non-approved vNets | |
+| Deploy-Budget | Deploy a default budget on all subscriptions under the assigned scope | |
+| Deploy-Custom-Route-Table | Deploy a route table with specific user defined routes | |
+| Deploy-DdosProtection | Deploy an Azure DDoS Network Protection | |
+| Deploy-FirewallPolicy | Deploy Azure Firewall Manager policy in the subscription | |
+| Deploy-Nsg-Flowlogs | [Deprecated] Deploys NSG flow logs and traffic analytics | Deprecated |
+| Deploy-Nsg-Flowlogs-To-La | [Deprecated] Deploys NSG flow logs and traffic analytics to Log Analytics | Deprecated |
+| Deploy-Sql-Tde | [Deprecated] Deploy SQL Database Transparent Data Encryption | Deprecated |
+| Deploy-Sql-VulnerabilityAssessments_20230706 | Deploy SQL Database Vulnerability Assessments | |
+| Deploy-Vnet-Hubspoke | Deploy Virtual Network with peering to the hub | |
+| Deploy-Windows-DomainJoin | Deploy Windows Domain Join Extension with keyvault configuration | |
 
 ## 2. ALZ, Workload Specific Compliance and Regulated Industries
 
-The Azure Landing Zone is designed to be a flexible and scalable solution that can be used by organizations in a variety of industries. However, organizations in regulated industries (FSI, Healthcare, etc.) may need to take additional steps to ensure compliance with industry-specific regulations. These regulations often commonly have a consistent set of controls to cover, like CMK, lockding down public endpoints, TLS version enforcement, logging etc.
+The Azure Landing Zone is designed to be a flexible and scalable solution that can be used by organizations in a variety of industries. However, organizations in regulated industries (FSI, Healthcare, etc.) may need to take additional steps to ensure compliance with industry-specific regulations. These regulations often commonly have a consistent set of controls to cover, like CMK, locking down public endpoints, TLS version enforcement, logging etc.
 
 To support the additional control requirements of these industries, we're providing the following additional initiatives that enhance the security and compliance posture of the Azure Landing Zone:
 
