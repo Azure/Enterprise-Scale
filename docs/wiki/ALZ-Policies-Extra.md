@@ -56,7 +56,7 @@ The Azure Landing Zone is designed to be a flexible and scalable solution that c
 
 To support the additional control requirements of these industries, we're providing the following additional initiatives that enhance the security and compliance posture of the Azure Landing Zone:
 
-> **Please Note:** These are meant to help customers across all regulated industries (FSI, Healthcare, etc.) and not be aligned to specific regulatory controls, as there are already policy initatives available for these via [Azure Policy](https://learn.microsoft.com/azure/azure-resource-manager/management/security-controls-policy) & [Microsoft Defender for Cloud](https://learn.microsoft.com/azure/defender-for-cloud/regulatory-compliance-dashboard)
+> **Please Note:** These are meant to help customers across all regulated industries (FSI, Healthcare, etc.) and not be aligned to specific regulatory controls, as there are already policy initiatives available for these via [Azure Policy](https://learn.microsoft.com/azure/azure-resource-manager/management/security-controls-policy) & [Microsoft Defender for Cloud](https://learn.microsoft.com/azure/defender-for-cloud/regulatory-compliance-dashboard)
 
 | Initiative ID | Name | Description | # of Policies |
 |------------|-------------|-------------|-------------|
