@@ -26,7 +26,7 @@ ALZ provides additional policies that are not assigned by default but that can b
 | Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess | Deny public access of Azure Machine Learning clusters via SSH | |
 | Deny-MachineLearning-ComputeCluster-Scale | Enforce scale settings for Azure Machine Learning compute clusters | |
 | Deny-MachineLearning-HbiWorkspace | Enforces high business impact Azure Machine Learning Workspaces | |
-| Deny-MachineLearning-PublicAccessWhenBehindVnet | Deny public access behind vnet to Azure Machine Learning workspace | |
+| Deny-MachineLearning-PublicAccessWhenBehindVnet | Deny public access behind Vnet to Azure Machine Learning workspace | |
 | Deny-MachineLearning-PublicNetworkAccess | [Deprecated] Azure Machine Learning should have disabled public network access | Deprecated |
 | Deny-Private-Dns-Zones | Deny the creation of private DNS | |
 | Deny-PublicEndpoint-Mariadb | [Deprecated] Public network access should be disabled for MariaDB | Deprecated |
@@ -48,7 +48,7 @@ ALZ provides additional policies that are not assigned by default but that can b
 | Deploy-Sql-Tde | [Deprecated] Deploy SQL Database Transparent Data Encryption | Deprecated |
 | Deploy-Sql-VulnerabilityAssessments_20230706 | Deploy SQL Database Vulnerability Assessments | |
 | Deploy-Vnet-Hubspoke | Deploy Virtual Network with peering to the hub | |
-| Deploy-Windows-DomainJoin | Deploy Windows Domain Join Extension with keyvault configuration | |
+| Deploy-Windows-DomainJoin | Deploy Windows Domain Join Extension with Key Vault configuration | |
 
 ## 2. ALZ, Workload Specific Compliance and Regulated Industries
 
