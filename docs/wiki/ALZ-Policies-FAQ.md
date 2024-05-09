@@ -8,7 +8,7 @@ There is a lot of change happening for policies in Azure, and by extension ALZ, 
 
 We've had a number of issues and pull requests submitted specifically around the extra bracket `[` that is present in all policies and initiatives in this repo.
 
-> NOTE: The policies and initiatives in this repo are NOT intended to be deployed directly in Azure. You cannot copy the definition and deploy the policy directly without editing first. If you want to deploy a specific policy you must first remove the additional leading `[` character from the policy or initiative definition.
+> NOTE: The policies and initiatives in this repo are NOT intended to be deployed directly in Azure. You cannot copy the definition and deploy the policy directly without editing first. If you want to deploy a specific policy you must first remove the additional leading `[` character from the policy or initiative definition. Alternatively, to deploy a specific policy directly in Azure Policy, please use AzAdvertizer to lookup the policy and use the `copy definition` button to copy a clean version of the policy ready for use (this will remove all the extra `[`).
 
 The reason for this is that the policies and initiatives in this repo are intended to be used as part of the ALZ deployment process, and are used to generate the ARM templates that are deployed to Azure. The leading `[` character is required to support the generation of the ARM templates.
 
