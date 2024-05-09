@@ -1,6 +1,6 @@
 # ALZ Policies - Extra
 
-This section describes additional policies that are not assigned by default or covered in the core ALZ Policies documentation, and provides guidance on how to handle certain situations.
+This document describes additional ALZ custom policy definitions and initiatives that are not assigned by default in ALZ, but are provided as they may assist some consumers of ALZ in specific scenarios where they can assign these additional policies to help them meet their objectives. We also provide guidance on how to handle certain situations as some of the policies require additional considerations prior to assigning.
 
 ## 1. ALZ Core
 
