@@ -2,9 +2,6 @@
 
 This document describes additional ALZ custom policy definitions and initiatives that are not assigned by default in ALZ, but are provided as they may assist some consumers of ALZ in specific scenarios where they can assign these additional policies to help them meet their objectives. We also provide guidance on how to handle certain situations as some of the policies require additional considerations prior to assigning.
 
-## 1. ALZ Core
-
-The Azure Landing Zone provides several additional policies and initiatives that are not assigned by default. These policies and initiatives are not necessary for all organizations and need additional considerations before being implemented.
 
 ## Additional ALZ Custom Policies that are provided but not assigned by default
 
