@@ -42,8 +42,6 @@ ALZ provides additional policies that are not assigned by default but that can b
 | deny-udr-with-specific-nexthop | User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied | |
 | deny-vnet-peering | Deny vNet peering | |
 | deny-vnet-peering-to-non-approved-vnets | Deny vNet peering to non-approved vNets | |
-| deploy_vm_availablememory_alert | Deploy VM Available Memory Alert | |
-| deploy_vm_heartbeat_alert_rg | Deploy VM HeartBeat Alert | |
 | deploy-budget | Deploy a default budget on all subscriptions under the assigned scope | |
 | deploy-custom-route-table | Deploy a route table with specific user defined routes | |
 | deploy-ddosprotection | Deploy an Azure DDoS Network Protection | |
