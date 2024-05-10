@@ -4119,44 +4119,52 @@
                             },
                             "visible": "[and(equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                         },
-                        {
-                            "name": "esIdentityConnectivitySecondary",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Create virtual network and connect to the connectivity hub in your secondary region (optional)?",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
+                        { 
+                            "name": "esIdentitySecondarySubSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Secondary Region Identity",
+                            "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
+                            "elements":[
+                                {
+                                    "name": "esIdentityConnectivitySecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Create virtual network and connect to the connectivity hub in your secondary region (optional)?",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected for corp landing zones, ARM will connect the subscriptions to the hub virtual network via VNet peering.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
                                     },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": "[and(equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
-                        },
-                        {
-                            "name": "identityAddressPrefixSecondary",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Virtual network address space",
-                            "placeholder": "",
-                            "defaultValue": "10.210.0.0/24",
-                            "toolTip": "The secondary virtual network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)",
-                            "constraints": {
-                                "required": true,
-                                "validations": [
-                                    {
-                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(1[0-9]|2[0-9]))$",
-                                        "message": "Invalid CIDR range. The address prefix must be in the range [10,29]."
-                                    }
-                                ]
-                            },
-                            "visible": "[and(equals(steps('identity').esIdentityConnectivitySecondary, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
-                        }
+                                    "visible": "[and(equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
+                                },
+                                {
+                                    "name": "identityAddressPrefixSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Virtual network address space",
+                                    "placeholder": "",
+                                    "defaultValue": "10.210.0.0/24",
+                                    "toolTip": "The secondary virtual network's address space, specified as one address prefixes in CIDR notation (e.g. 192.168.1.0/24)",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(1[0-9]|2[0-9]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [10,29]."
+                                            }
+                                        ]
+                                    },
+                                    "visible": "[and(equals(steps('identity').esIdentitySecondarySubSection.esIdentityConnectivitySecondary, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
+                                }
+                            ]
+                            }                      
                     ]
                 },
                 {
@@ -6674,7 +6682,7 @@
                 "denyPipForIdentity": "[steps('identity').denyPipForIdentity]",
                 "enableVmBackupForIdentity": "[steps('identity').enableVmBackupForIdentity]",
                 "identityAddressPrefix": "[steps('identity').identityAddressPrefix]",
-                "identityAddressPrefixSecondary": "[steps('identity').identityAddressPrefixSecondary]",
+                "identityAddressPrefixSecondary": "[steps('identity').esIdentitySecondarySubSection.identityAddressPrefixSecondary]",
                 "corpConnectedLzSubscriptionId": "[if(or(not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').corpSection.lzConnectedSubs,'')]",
                 "corpLzSubscriptionId": "[if(or(not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').corpSection.esCorpLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').corpSection.esCorpLzSub,'')]",
                 "onlineLzSubscriptionId": "[if(or(not(contains(steps('landingZones').onlineSection.esOnlineLzSub,steps('management').esMgmtSubSection.esMgmtSub)),not(contains(steps('landingZones').onlineSection.esOnlineLzSub,steps('connectivity').esNwSubSection.esNwSub))),steps('landingZones').onlineSection.esOnlineLzSub,'')]",
