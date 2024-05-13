@@ -1196,6 +1196,11 @@
             "MDFCDefenderSqlAmaDeploymentName": "[take(concat('alz-MDFCDefenderSqlAma', variables('deploymentSuffix')), 64)]",
             "dataCollectionRuleMdfcDefenderSQLDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQL', variables('deploymentSuffix')), 64)]",
             "MDFCSubscriptionEnableDeploymentName": "[take(concat('alz-MDFCSubEnable', variables('deploymentSuffix')), 62)]",
+            "pidCuaDeploymentNameSinglePlatformSub": "[take(concat('pid-', variables('cuaidSinglePlatformSub'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
+            "pidCuaDeploymentNameMultiPlatformSubs": "[take(concat('pid-', variables('cuaidMultiPlatformSubs'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
+            "pidCuaDeploymentNameNetworkingNone": "[take(concat('pid-', variables('cuaidNetworkingNone'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
+            "pidCuaDeploymentNameNetworkingHubSpoke": "[take(concat('pid-', variables('cuaidNetworkingHubSpoke'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
+            "pidCuaDeploymentNameNetworkingVirtualWan": "[take(concat('pid-', variables('cuaidNetworkingVirtualWan'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "denyResourceDeletionPolicyDeploymentName": "[take(concat('alz-DenyResourceDeletion', variables('deploymentSuffix')), 64)]"
         },
         "esLiteDeploymentNames": {
@@ -1348,6 +1353,11 @@
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
         "cuaid": "35c42e79-00b3-42eb-a9ac-e542953efb3c",
+        "cuaidSinglePlatformSub": "b35a8452-8a67-49f9-b1a9-1aee3c1a13c2",
+        "cuaidMultiPlatformSubs": "725aea60-cfaa-4a0c-9fe7-71b07f53803d",
+        "cuaidNetworkingNone": "35c1ce02-165f-43b2-8d3a-fc68a04b802a",
+        "cuaidNetworkingHubSpoke": "f7fcc714-0c0d-4011-87bf-319810bbb03d",
+        "cuaidNetworkingVirtualWan": "0263335d-f570-470c-8389-aa6c916e5008",
         "ztnPhase1CuaId": "f09f64b8-5cb3-4b16-900d-6ba1df8a597e",
         "ambaPortalCuaId": "5f0e5693-3998-4ae2-8115-ee96e38dac62"
     },
@@ -3257,6 +3267,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3339,6 +3352,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3407,6 +3423,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3599,6 +3618,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3681,6 +3703,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -3749,6 +3774,9 @@
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
+                    },
+                    "platformScope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
                     }
                 }
             }
@@ -5787,7 +5815,7 @@
         },
         {
             "condition": "[equals(parameters('telemetryOptOut'), 'No')]",
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2022-09-01",
             "name": "[variables('deploymentNames').pidCuaDeploymentName]",
             "location": "[deployment().location]",
             "type": "Microsoft.Resources/deployments",
@@ -5801,8 +5829,83 @@
             }
         },
         {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').pidCuaDeploymentNameSinglePlatformSub]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), empty(parameters('singlePlatformSubscriptionId')))]",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').pidCuaDeploymentNameMultiPlatformSubs]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), equals(parameters('enableHub'), 'No'))]",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').pidCuaDeploymentNameNetworkingNone]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')))]",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').pidCuaDeploymentNameNetworkingHubSpoke]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), equals(parameters('enableHub'), 'vwan'))]",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').pidCuaDeploymentNameNetworkingVirtualWan]",
+            "location": "[deployment().location]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
             "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), equals(parameters('enableDdoS'), 'Yes'), equals(parameters('enableAzFw'), 'Yes'), equals(parameters('firewallSku'), 'Premium'), equals(parameters('denySubnetWithoutNsg'), 'Yes'), equals(parameters('denySubnetWithoutNsgForIdentity'), 'Yes'), equals(parameters('enableStorageHttps'), 'Yes'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'vwan')), or(not(empty(parameters('connectivitySubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))))]",
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2022-09-01",
             "name": "[variables('deploymentNames').ztnPhase1PidCuaDeploymentName]",
             "subscriptionId": "[coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))]",
             "location": "[deployment().location]",
@@ -5818,7 +5921,7 @@
         },
         {
             "condition": "[and(equals(parameters('telemetryOptOut'), 'No'), equals(parameters('enableMonitorBaselines'), 'Yes'))]",
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2022-09-01",
             "name": "[variables('deploymentNames').ambaPortalPidCuaDeploymentName]",
             "location": "[deployment().location]",
             "type": "Microsoft.Resources/deployments",
