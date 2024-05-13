@@ -1,0 +1,74 @@
+{
+    "name": "Deny-Storage-ContainerDeleteRetentionPolicy",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Storage Accounts should use a container delete retention policy",
+        "description": "Enforce container delete retention policies larger than seven days for storage account. Enable this for increased data loss protection.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Storage",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "minContainerDeleteRetentionInDays": {
+                "type": "Integer",
+                "metadata": {
+                    "displayName": "Minimum Container Delete Retention in Days",
+                    "description": "Specifies the minimum number of days for the container delete retention policy"
+                },
+                "defaultValue": 7
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts/blobServices"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "field": "Microsoft.Storage/storageAccounts/blobServices/containerDeleteRetentionPolicy.enabled",
+                                "exists": false
+                            },
+                            {
+                                "field": "Microsoft.Storage/storageAccounts/blobServices/containerDeleteRetentionPolicy.enabled",
+                                "notEquals": true
+                            },
+                            {
+                                "field": "Microsoft.Storage/storageAccounts/blobServices/containerDeleteRetentionPolicy.days",
+                                "less": "[[parameters('minContainerDeleteRetentionInDays')]"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

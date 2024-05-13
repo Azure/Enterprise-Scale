@@ -1,0 +1,102 @@
+{
+    "name": "Deny-Storage-CorsRules",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Storage Accounts should restrict CORS rules",
+        "description": "Deny CORS rules for storage account for increased data exfiltration protection and endpoint protection.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Storage",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "anyOf": [
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Storage/storageAccounts/blobServices"
+                            },
+                            {
+                                "count": {
+                                    "field": "Microsoft.Storage/storageAccounts/blobServices/cors.corsRules[*]"
+                                },
+                                "greater": 0
+                            }
+                        ]
+                    },
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Storage/storageAccounts/fileServices"
+                            },
+                            {
+                                "count": {
+                                    "field": "Microsoft.Storage/storageAccounts/fileServices/cors.corsRules[*]"
+                                },
+                                "greater": 0
+                            }
+                        ]
+                    },
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Storage/storageAccounts/tableServices"
+                            },
+                            {
+                                "count": {
+                                    "field": "Microsoft.Storage/storageAccounts/tableServices/cors.corsRules[*]"
+                                },
+                                "greater": 0
+                            }
+                        ]
+                    },
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Storage/storageAccounts/queueServices"
+                            },
+                            {
+                                "count": {
+                                    "field": "Microsoft.Storage/storageAccounts/queueServices/cors.corsRules[*]"
+                                },
+                                "greater": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

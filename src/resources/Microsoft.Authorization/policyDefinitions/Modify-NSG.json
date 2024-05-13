@@ -1,0 +1,129 @@
+{
+    "name": "Modify-NSG",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Enforce specific configuration of Network Security Groups (NSG)",
+        "description": "This policy enforces the configuration of Network Security Groups (NSG).",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Network",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Modify",
+                    "Disabled"
+                ],
+                "defaultValue": "Modify",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "nsgRuleName": {
+                "type": "string",
+                "defaultValue": "DenyAnyInternetOutbound"
+            },
+            "nsgRulePriority": {
+                "type": "integer",
+                "defaultValue": 1000
+            },
+            "nsgRuleDirection": {
+                "type": "string",
+                "allowedValues": [
+                    "Inbound",
+                    "Outbound"
+                ],
+                "defaultValue": "Outbound"
+            },
+            "nsgRuleAccess": {
+                "type": "string",
+                "allowedValues": [
+                    "Allow",
+                    "Deny"
+                ],
+                "defaultValue": "Deny"
+            },
+            "nsgRuleProtocol": {
+                "type": "string",
+                "defaultValue": "*"
+            },
+            "nsgRuleSourceAddressPrefix": {
+                "type": "string",
+                "defaultValue": "*"
+            },
+            "nsgRuleSourcePortRange": {
+                "type": "string",
+                "defaultValue": "*"
+            },
+            "nsgRuleDestinationAddressPrefix": {
+                "type": "string",
+                "defaultValue": "Internet"
+            },
+            "nsgRuleDestinationPortRange": {
+                "type": "string",
+                "defaultValue": "*"
+            },
+            "nsgRuleDescription": {
+                "type": "string",
+                "defaultValue": "Deny any outbound traffic to the Internet"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/networkSecurityGroups"
+                    },
+                    {
+                        "count": {
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*]"
+                        },
+                        "equals": 0
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                    ],
+                    "conflictEffect": "audit",
+                    "operations": [
+                        {
+                            "operation": "add",
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*]",
+                            "value": {
+                                "name": "[[parameters('nsgRuleName')]",
+                                "properties": {
+                                    "description": "[[parameters('nsgRuleDescription')]",
+                                    "protocol": "[[parameters('nsgRuleProtocol')]",
+                                    "sourcePortRange": "[[parameters('nsgRuleSourcePortRange')]",
+                                    "destinationPortRange": "[[parameters('nsgRuleDestinationPortRange')]",
+                                    "sourceAddressPrefix": "[[parameters('nsgRuleSourceAddressPrefix')]",
+                                    "destinationAddressPrefix": "[[parameters('nsgRuleDestinationAddressPrefix')]",
+                                    "access": "[[parameters('nsgRuleAccess')]",
+                                    "priority": "[[parameters('nsgRulePriority')]",
+                                    "direction": "[[parameters('nsgRuleDirection')]"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [🔃 Policy Refresh Q3 FY24](#-policy-refresh-q3-fy24)
+  - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
   - [May 2024](#may-2024)
   - [April 2024](#april-2024)
   - [March 2024](#march-2024)
@@ -44,8 +44,18 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-### 🔃 Policy Refresh Q3 FY24
+### 🔃 Policy Refresh H2 FY24
 
+We've missed Q3 timelines completely, but for good reason. We've held back this cycle of Policy Refresh in order to address some key initiatives that we feel are critical to the success of our customers. This is the single largest update to the ALZ Policy since the inception of the project. We're excited to share these updates with you, and we're confident that they will provide significant value to your deployments and the compliance of your Azure Landing Zones.
+
+- 📌Major Update: New "Workload Specific Compliance" section added to ALZ Portal accelerator. This will allow you to apply compliance policies to specific workloads, such as SQL, Storage, and more. These additional compliance controls are frequently required by highly regulated industries like financial services, healthcare, etc. Note: they are not assigned by default, you are required to select the workload and management group scope to apply assignments. For more information review [ALZ Policy - Extra](./ALZ-Policies-Extra)
+This release includes:
+  - 25 new custom initiatives added to support key Azure workloads/services
+  - Significantly enhanced [Deny-PublicPaasEndpoints](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deny-PublicPaasEndpoints.html) to cover additional services (no public access)
+  - Significantly enhanced [Enforce-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) to cover additional services (TLS and SSL)
+  - Significantly enhanced [Enforce-EncryptionCMK](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptionCMK.html) to cover additional services (customer managed keys)
+  - 24 new custom policies added for various workloads where no equivalent built-in policy is available (included in the new initiatives) - please note some policies only support the "Audit" effect, and should be overridden as needed.
+- Updated [Audit-PublicIpAddresses-UnusedResourcesCostOptimization](https://www.azadvertizer.net/azpolicyadvertizer/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.html) to check for `static` public IP addresses that are not associated with any resources (instead of `not basic`).
 - Fixed the bug with [Configure Azure Machine Learning workspace to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/ee40564d-486e-4f68-a5ca-7a621edae0fb.html) policy where `secondPrivateDnsZoneId` parameter was missing which was leaving AML private endpoints incomplete. 
 - Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
 - Added the [Configure BotService resources to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/6a4e6f44-f2af-4082-9702-033c9e88b9f8.html) built-in policy to the "Deploy-Private-DNS-Zones" initiative and assignment.
@@ -71,7 +81,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added new initiative and assignment to enable auditing for Trust Launch capable virtual machines which includes the following built-in policies:
   - [Disks and OS image should support TrustedLaunch](https://www.azadvertizer.net/azpolicyadvertizer/b03bb370-5249-4ea4-9fce-2552e87e45fa.html)
   - [Virtual Machine should have TrustedLaunch enabled](https://www.azadvertizer.net/azpolicyadvertizer/c95b54ad-0614-4633-ab29-104b01235cbf.html)
-  - Added new custom policy "Deploy-Private-DNS-Generic" this policy will DINE-configure private DNS zone group to override the DNS resolution for PaaS services private endpoint, it is generic for the services which supports private DNS but doesn't have built in policy exist and also for the new services which supports private DNS in future
+- Updated ARM deployment for Defender for APIs, which now requires a sub plan be specified. We're defaulting to sub plan "P1", and have confirmed that costs will only be incurred once an API has expressly been onboarded to Defender for APIs. Please thoroughly review Defender for API plans as they related to your environment and adjust the sub plan as needed.
+- Deprecated custom policy [Storage Account set to minimum TLS and Secure transfer should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Storage-minTLS.html) and replaced with two built-in policies [Secure transfer to storage accounts should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/404c3081-a854-4457-ae30-26a93ef643f9.html) and [Storage accounts should have the specified minimum TLS version](https://www.azadvertizer.net/azpolicyadvertizer/fe83a0eb-a853-422d-aac2-1bffd182c5d0.html).
+- Added new custom policy "Deploy-Private-DNS-Generic" this policy will DINE-configure private DNS zone groups to override the DNS resolution for PaaS services private endpoint. It is generic to enable private DNS zones for the services which supports private DNS but don't have built-in policies available and also for the new services which support private DNS in future.
+- Deprecated [Deploy-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-EncryptTransit.html) initiative and superseded with [Deploy-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-EncryptTransit_20240509.html) to minimize breaking change impact on existing deployments.
+
 ### May 2024
 
 #### Documentation
