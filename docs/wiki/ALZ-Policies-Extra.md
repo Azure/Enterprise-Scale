@@ -10,7 +10,7 @@ ALZ provides several additional policies that are not assigned by default but th
 
 | Policy | Description | Notes |
 |------------|-------------|-------------|
-| Deny-Appgw-without-Waf | Application Gateway should be deployed with WAF enabled | Use to ensure Application Gateways are deployed with Web Application Firewall enabled |
+| Deny-Appgw-Without-Waf | Application Gateway should be deployed with WAF enabled | Use to ensure Application Gateways are deployed with Web Application Firewall enabled |
 | Deny-Private-Dns-Zones | Deny the creation of private DNS | For organizations that centralize core networking functions, use this policy to prevent the creation of additional Private DNS Zones under specific scopes |
 | Deny-Subnet-Without-Udr | Subnets should have a User Defined Route | Should you require all network traffic be directed to an appliance for inspection, you can use this policy to ensure UDR is associated with a subnet |
 | Deny-Udr-With-Specific-Nexthop | User Defined Routes with 'Next Hop Type' set to 'Internet' or 'VirtualNetworkGateway' should be denied | Refining `Deny-Subnet-Without-Udr` you can ensure non-compliant UDRs are denied (e.g., bypassing a firewall) |
