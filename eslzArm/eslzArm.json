@@ -824,14 +824,6 @@
                 "description": "The current date and time using the utcNow function. Used for deployment name uniqueness"
             }
         },
-        "userAssignedIdentityResourceGroup": {
-            "type": "string",
-            "defaultValue": "rg-ama-prod-001",
-            "maxLength": 90,
-            "metadata": {
-                "description": "Name of the resource group to be created for the User Assigned Managed Identity in each subscription."
-            }
-        },
         "regulatoryComplianceInitativesToAssign": {
             "type": "array",
             "defaultValue": [],
@@ -1185,7 +1177,6 @@
             "ztnPhase1PidCuaDeploymentName": "[take(concat('pid-', variables('ztnPhase1CuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]",
             "ambaPortalPidCuaDeploymentName": "[take(concat('pid-', variables('ambaPortalCuaId'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'), coalesce(parameters('connectivitySubscriptionId'), parameters('singlePlatformSubscriptionId'))), '-ztnp1'), 64)]",
             "diagnosticSettingsforMGsDeploymentName": "[take(concat('alz-DiagSettingsMGs', variables('deploymentSuffix')), 64)]",
-            "userAssignedIdentityRgDeploymentName": "[take(concat('alz-UserAssignedIdentityRg', variables('deploymentSuffix')), 60)]",
             "userAssignedIdentityDeploymentName": "[take(concat('alz-UserAssignedIdentity', variables('deploymentSuffix')), 60)]",
             "userAssignedIdentityPolicyDeploymentName": "[take(concat('alz-UserAssignedIdentityPolicy', variables('deploymentSuffix')), 64)]",
             "azureUpdateManagerPolicyDeploymentName": "[take(concat('alz-AzureUpdateManager', variables('deploymentSuffix')), 64)]",
@@ -1268,7 +1259,8 @@
             "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
             "vWanHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubName)]",
             "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
-            "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]"
+            "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]",
+            "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
         "deterministicRoleAssignmentGuids": {
@@ -1831,58 +1823,16 @@
             }
         },
         {
-            // Creating resource group for user assigned identity
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(variables('subscriptionIds'))))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[concat(variables('deploymentNames').userAssignedIdentityRgDeploymentName, copyIndex())]",
-            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",
-                "onlineLzs",
-                "corpLzs",
-                "corpConnectedMoveLzs"
-            ],
-            "copy": {
-                "name": "userAssignedIdentityRg",
-                "count": "[length(variables('subscriptionIds'))]"
-            },
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').resourceGroup]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "location": {
-                        "value": "[deployment().location]"
-                    }
-                }
-            }
-        },
-        {
             // Deploying user assigned identity if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(variables('subscriptionIds'))))]",
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[concat(variables('deploymentNames').userAssignedIdentityDeploymentName, copyIndex())]",
+            "name": "[variables('deploymentNames').userAssignedIdentityDeploymentName]",
             "location": "[deployment().location]",
-            "subscriptionId": "[variables('subscriptionIds')[copyIndex()]]",
+            "subscriptionId": "[parameters('managementSubscriptionId')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "userAssignedIdentityRg"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]"
             ],
-            "copy": {
-                "name": "userAssignedIdentity",
-                "count": "[length(variables('subscriptionIds'))]"
-            },
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -1897,7 +1847,7 @@
                         "value": "[variables('platformResourceNames').userAssignedIdentity]"
                     },
                     "userAssignedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
+                        "value": "[variables('platformRgNames').mgmtRg]"
                     }
                 }
             }
@@ -3218,11 +3168,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').platformManagementGroup]"
@@ -3259,11 +3206,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
@@ -3303,11 +3247,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').platformManagementGroup]"
@@ -3344,11 +3285,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
@@ -3456,11 +3394,8 @@
                     "enforcementMode": {
                         "value": "Default"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "location": {
                         "value": "[deployment().location]"
@@ -3569,11 +3504,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').platformManagementGroup]"
@@ -3610,11 +3542,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
@@ -3654,11 +3583,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').platformManagementGroup]"
@@ -3695,11 +3621,8 @@
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enableVmMonitoring'), 'Yes'), 'Default', 'DoNotEnforce')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedIdentityResourceGroup')]"
-                    },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
                     },
                     "scope": {
                         "value": "[variables('scopes').lzsManagementGroup]"
@@ -5105,6 +5028,39 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    }
+                }
+            }
+        },
+        /*
+            Note: ES Lite only: the following deployment will create Log Analytics to the platform subscription
+        */
+        {
+            // Deploying user assigned identity if condition is true
+            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').userAssignedIdentityDeploymentName]",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').userAssignedIdentity]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[deployment().location]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "userAssignedIdentityResourceGroup": {
+                        "value": "[variables('platformRgNames').mgmtRg]"
                     }
                 }
             }
