@@ -197,7 +197,7 @@ Policy versioning follows the same protocol as built-in policies. More informati
 
 For policy deprecation, the process is documented in the [Azure Landing Zones - Deprecating Policies](./ALZ-Deprecated-Services) page.
 
-If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertiser](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
+If a policy is part of an initiative, references to policies that are being deprecated should be removed. Policy initiatives are located in the [policySetDefinitions](https://github.com/Azure/Enterprise-Scale/blob/main/src/resources/Microsoft.Authorization/policySetDefinitions/) folder. To find out if a policy is part of an initiative it is recommended to look up the policy definition in [AzAdvertizer](http://azadvertizer.com/) and check for association with initiatives. When identified, go into the necessary initiative and remove references to the definition. Locate the policy definition in the parameters of the initiative and remove reference:
 
 ![Example policy def in initiative](media/example-def-in-init.png)
 
@@ -231,7 +231,7 @@ Policies in `eslzArm.json` file will also need updating if wanting to assign a n
 
 The portal reference implementation is a popular UI driven reference implementation for Azure landing zones, and is maintained as part of this repository. It is a great way to get started with Azure landing zones, and is a great way to learn about the underlying Azure landing zone guidance.
 
-When creating new policies that will be assigned by default by the portal reference architecture you are required to also include appropriate information and options in the portal experience (`eslzArm/eslz-portal.json`). Please do include appropriate selectors in line with the section (management group) that the policy is assigned to, and ensure that tooltips include links to the AzAdvertizer page for the policy or initiative.
+When creating new policies that will be assigned by default by the portal reference architecture you are required to also include appropriate information and options in the portal experience (`eslzArm/eslz-portal.json`). Please do include appropriate selectors in line with the section (management group) that the policy is assigned to, and ensure that tooltips include links to the [AzAdvertizer](http://azadvertizer.com/) page for the policy or initiative.
 
 Example for the Key Vault initiative (note the tooltip):
 
