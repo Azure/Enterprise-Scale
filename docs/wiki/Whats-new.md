@@ -88,6 +88,7 @@ This release includes:
 - Deprecated custom policy [Storage Account set to minimum TLS and Secure transfer should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Storage-minTLS.html) and replaced with two built-in policies [Secure transfer to storage accounts should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/404c3081-a854-4457-ae30-26a93ef643f9.html) and [Storage accounts should have the specified minimum TLS version](https://www.azadvertizer.net/azpolicyadvertizer/fe83a0eb-a853-422d-aac2-1bffd182c5d0.html).
 - Added new custom policy "Deploy-Private-DNS-Generic" this policy will DINE-configure private DNS zone groups to override the DNS resolution for PaaS services private endpoint. It is generic to enable private DNS zones for the services which supports private DNS but don't have built-in policies available and also for the new services which support private DNS in future.
 - Deprecated [Deploy-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-EncryptTransit.html) initiative and superseded with [Deploy-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-EncryptTransit_20240509.html) to minimize breaking change impact on existing deployments.
+- Fixed the assignment for [Configure periodic checking for missing system updates on azure virtual machines](https://www.azadvertizer.net/azpolicyadvertizer/59efceea-0c96-497e-a4a1-4eb2290dac15.html) to use the correct RBAC role.
 
 ### May 2024
 

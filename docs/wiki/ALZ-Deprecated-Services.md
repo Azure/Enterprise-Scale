@@ -2,8 +2,12 @@
 
 ## In this section
 
-- [Deprecated Policies](#deprecated-policies)
-- [Deprecated Services](#deprecated-services)
+- [Azure Landing Zones Deprecated Notices](#azure-landing-zones-deprecated-notices)
+  - [In this section](#in-this-section)
+  - [Overview](#overview)
+  - [Deprecated policies](#deprecated-policies)
+    - [More Information](#more-information)
+  - [Deprecated services](#deprecated-services)
 
 ## Overview
 
@@ -30,6 +34,8 @@ Policies being deprecated:
 | Deploy SQL Database Vulnerability Assessments<br>ID: [`Deploy-Sql-vulnerabilityAssessments`](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments.html) | [`Deploy-Sql-vulnerabilityAssessments_20230706`](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Sql-vulnerabilityAssessments_20230706.html) | Custom policy replaced by updated custom policy providing bug fix |
 | Deploy Microsoft Defender for Cloud configuration<br>ID: [`Deploy-MDFC-Config`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html) | [`Deploy-MDFC-Config_20240319`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) | Custom initiative replaced by updated custom initiative due to breaking changes |
 | Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit<br>ID: [`Enforce-EncryptTransit`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) | [`Enforce-EncryptTransit_20240509`](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) | Custom initiative replaced by updated custom initiative due to breaking changes |
+
+>IMPORTANT: note that we have deprecated ALL ALZ custom Diagnostic Setting features as part of Azure Landing Zones, which includes the initiatives and all 53 policies. These are being deprecated in favor of using (and assigning) the built-in initiative [Enable allLogs category group resource logging for supported resources to Log Analytics](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/0884adba-2312-4468-abeb-5422caed1038.html)
 
 ### More Information
 
