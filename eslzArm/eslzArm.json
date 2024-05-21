@@ -2211,8 +2211,8 @@
             }
         },
         {
-            // Deploying Data Collection Rule for Log Analytics workspace if condition is true
-            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            // Deploying Data Collection Rule for VMInsights if condition is true
+            "condition": "[and(not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName]",
@@ -5085,41 +5085,6 @@
             }
         },
         {
-            // Assigning User Managed Identity policy to landing zone management group if condition is true
-            "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), or(equals(parameters('enableVmInsights'), 'Yes'), equals(parameters('enableAscForSqlOnVm'), 'DeployIfNotExists')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').userAssignedIdentityPolicyDeploymentName]",
-            "scope": "[variables('scopes').lzsManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').dataCollectionRuleVmInsightsDeploymentName)]",
-                "userAssignedIdentity"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').userAssignedIdentityPolicyAssignment]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "enforcementMode": {
-                        "value": "Default"
-                    },
-                    "userAssignedIdentityResourceId": {
-                        "value": "[variables('platformResourceIds').userAssignedIdentityResourceId]"
-                    },
-                    "location": {
-                        "value": "[deployment().location]"
-                    }
-                }
-            }
-        },
-        {
             // Assigning Azure Update Manager policy to platform management group if condition is true
             "condition": "[and(or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableUpdateMgmt'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
@@ -7349,11 +7314,11 @@
             }
         },
         /*
-            Note: ES Lite only: deploys Data Collection Rule for Log Analytics workspace
+            Note: ES Lite only: deploys Data Collection Rule for VM Insights
         */
         {
-            // Deploying Data Collection Rule for Log Analytics workspace if condition is true
-            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            // Deploying Data Collection Rule for VM Insights if condition is true
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableVmInsights'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('esLiteDeploymentNames').dataCollectionRuleVmInsightsLiteDeploymentName]",
