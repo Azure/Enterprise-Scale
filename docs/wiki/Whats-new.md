@@ -55,6 +55,10 @@ This release includes:
   - Significantly enhanced [Enforce-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html) to cover additional services (TLS and SSL)
   - Significantly enhanced [Enforce-EncryptionCMK](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptionCMK.html) to cover additional services (customer managed keys)
   - 24 new custom policies added for various workloads where no equivalent built-in policy is available (included in the new initiatives) - please note some policies only support the "Audit" effect, and should be overridden as needed.
+- 🎉Diagnostic Settings v2 have arrived covering 140 Azure services and greatly simplifying implementation and management.
+  - Updated the diagnostic settings assignment to use the new built-in initiative [Enable allLogs category group resource logging for supported resources to Log Analytics](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/0884adba-2312-4468-abeb-5422caed1038.html)
+  - Deprecating the ALZ custom diagnostic settings policies (53) and initiative (1)
+  - NOTE: going forward if you have issues with Diagnostic Settings, please open an Azure support ticket
 - Updated [Audit-PublicIpAddresses-UnusedResourcesCostOptimization](https://www.azadvertizer.net/azpolicyadvertizer/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.html) to check for `static` public IP addresses that are not associated with any resources (instead of `not basic`).
 - Fixed the bug with [Configure Azure Machine Learning workspace to use private DNS zones](https://www.azadvertizer.net/azpolicyadvertizer/ee40564d-486e-4f68-a5ca-7a621edae0fb.html) policy where `secondPrivateDnsZoneId` parameter was missing which was leaving AML private endpoints incomplete. 
 - Updated `Audit-PrivateLinkDnsZones` display name to include the fact it can be `audit` or `deny`
@@ -85,6 +89,7 @@ This release includes:
 - Deprecated custom policy [Storage Account set to minimum TLS and Secure transfer should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Storage-minTLS.html) and replaced with two built-in policies [Secure transfer to storage accounts should be enabled](https://www.azadvertizer.net/azpolicyadvertizer/404c3081-a854-4457-ae30-26a93ef643f9.html) and [Storage accounts should have the specified minimum TLS version](https://www.azadvertizer.net/azpolicyadvertizer/fe83a0eb-a853-422d-aac2-1bffd182c5d0.html).
 - Added new custom policy "Deploy-Private-DNS-Generic" this policy will DINE-configure private DNS zone groups to override the DNS resolution for PaaS services private endpoint. It is generic to enable private DNS zones for the services which supports private DNS but don't have built-in policies available and also for the new services which support private DNS in future.
 - Deprecated [Deploy-EncryptTransit](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-EncryptTransit.html) initiative and superseded with [Deploy-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-EncryptTransit_20240509.html) to minimize breaking change impact on existing deployments.
+- Fixed the assignment for [Configure periodic checking for missing system updates on azure virtual machines](https://www.azadvertizer.net/azpolicyadvertizer/59efceea-0c96-497e-a4a1-4eb2290dac15.html) to use the correct RBAC role.
 - Added new initiative for Microsoft Defender for Endpoints [Configure multiple Microsoft Defender for Endpoint integration settings with Microsoft Defender for Cloud](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/77b391e3-2d5d-40c3-83bf-65c846b3c6a3.html).
 
 ### May 2024
