@@ -23,28 +23,28 @@
     },
     "variables": {
         "policyDefinitions": {
-            "deployEncryptionInTransit": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240509')]"
+            "deployMDEndpoints": "/providers/Microsoft.Authorization/policySetDefinitions/77b391e3-2d5d-40c3-83bf-65c846b3c6a3"
         },
         "policyAssignmentNames": {
-            "deployEncryptionInTransit": "Enforce-TLS-SSL-H224",
-            "description": "Choose either Deploy if not exist and append in combination with audit or Select Deny in the Policy effect. Deny polices shift left. Deploy if not exist and append enforce but can be changed, and because missing existence condition require then the combination of Audit.",
-            "displayName": "Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit"
+            "azureSecurityMDE": "Deploy-MDEndpointsAMA",
+            "description": "Configure the multiple Microsoft Defender for Endpoint integration settings with Microsoft Defender for Cloud (WDATP, WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW, WDATP_UNIFIED_SOLUTION etc.). See: https://learn.microsoft.com/azure/defender-for-cloud/integration-defender-for-endpoint for more information.",
+            "displayName": "Configure multiple Microsoft Defender for Endpoint integration settings with Microsoft Defender for Cloud"
         },
         "nonComplianceMessage": {
-            "message": "TLS and SSL {enforcementMode} be enabled for on resources without encryption in transit.",
+            "message": "Microsoft Defender for Endpoint {enforcementMode} be deployed.",
             "Default": "must",
             "DoNotEnforce": "should"
         },
-        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "rbacSecurityAdmin": "fb1c8493-542b-48eb-b624-b4c8fea62acd",
         "roleAssignmentNames": {
-            "deployEncryptionInTransit": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').deployEncryptionInTransit))]"
+            "deployMDEndpoints": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureSecurityMDE))]"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
-            "name": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
+            "name": "[variables('policyAssignmentNames').azureSecurityMDE]",
             "location": "[deployment().location]",
             "identity": {
                 "type": "SystemAssigned"
@@ -52,7 +52,7 @@
             "properties": {
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
-                "policyDefinitionId": "[variables('policyDefinitions').deployEncryptionInTransit]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployMDEndpoints]",
                 "enforcementMode": "[parameters('enforcementMode')]",
                 "nonComplianceMessages": [
                     {
@@ -65,14 +65,14 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deployEncryptionInTransit]",
+            "name": "[variables('roleAssignmentNames').deployMDEndpoints]",
             "dependsOn": [
-                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployEncryptionInTransit)]"
+                "[variables('policyAssignmentNames').azureSecurityMDE]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
-                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployEncryptionInTransit), '2019-09-01', 'Full' ).identity.principalId)]"
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacSecurityAdmin'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurityMDE), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
     ],
