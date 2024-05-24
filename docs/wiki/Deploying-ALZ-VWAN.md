@@ -34,6 +34,10 @@ Provide a prefix that will be used to create the management group hierarchy and 
 
 ![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix.JPG)
 
+Next, select if you wish to **Deploy in a secondary region**.  If this is left as *Yes*, then you will receive additional inputs later in the process to deploy resources in a secondary region.
+
+![ALZ-Secondary-Region](./media/ALZ-secondaryregion-multisubscription.jpg)
+
 ## 5. Platform management, security, and governance
 
 On the *Platform management, security, and governance* blade, you will configure the core components to enable platform monitoring and security. The options you enable will also be enforced using Azure Policy to ensure resources, landing zones, and more are continuously compliant as your deployments scales and grows. To enable this, you must provide a dedicated (empty) subscription that will be used to host the requisite infrastructure.
@@ -71,25 +75,13 @@ Depending on your requirements, you may choose to deploy additional network infr
 
 ### Deploying networking resources in an additional region
 
-In this blade, you will also configure a secondary region for networking platform resource.  This secondary platform network deployment prepares you you to take advantage of capacity in multiple regions, and for recovery or multi-region high availability.
+If you selected **Deploy in a secondary region** in the Core steps, you will also configure a secondary region for networking platform resource in this blade.  This secondary platform network deployment prepares you you to take advantage of capacity in multiple regions, and for recovery or multi-region high availability.
 
-To do so, select "Additional virtual WAN hub" in the Extend your network into a second region option.
+The deployment will deploy an additional virtual hub in the secondary region that you specify.
 
-![img](./media/clip_image080.png)
-
-You will need to specify the additional region to deploy to, and then you will be given the option to repeat many of the decisions above.  For best results, use similar inputs to make sure that your regional deployments can both support the same architecture.  However, if you want to forgo deploying a gateway or firewall in the second region, you can select the appropriate options.
+You will need to provide the configuration for the virtual hub, same as the primary region.
 
 ![img](./media/clip_image084.png)
-
-One area where the deployment may differ between regions is with private DNS zones.
-
-![img](./media/clip_image082.png)
-
-If you choose to deploy zones for both regions, you will receive two sets of the DNS zones.  This allows for private endpoints in different regions to be associated to the same resource.
-
-However, if you choose to deploy zones only for the primary region, then you will only have one set of private DNS zones.  Only one host name per resource will be able to be used, preventing you from having multiple private endpoints for a service.
-
-See [Private Link and DNS integration at scale](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) to help determine the right architecture for you.
 
 ## 8. Identity
 
@@ -97,7 +89,7 @@ On the *Identity* blade you can specify if you want to assign recommended polici
 
  ![img](./media/clip_image036c.png)
 
-In addition, if you are deploying an additional set of network resources in an additional region, you also have the option to deploy an additional Identity virtual network in that region.  It will be peered to the hub in your secondary region.
+In addition, you selected **Deploy in a secondary region** and deployed a network topology,  you also have the option to deploy an additional Identity virtual network in that region.  It will be connected to the hub in your secondary region.
 
 ![img](./media/clip_image085.png)
 
