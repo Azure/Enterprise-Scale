@@ -1,7 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [AMA Updates](#ama-updates)
+  - [🆕 AMA Updates](#-ama-updates)
   - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
   - [May 2024](#may-2024)
   - [April 2024](#april-2024)
