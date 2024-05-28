@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "effect": {
+            "type": "string",
+            "allowedValues": [
+                "DenyAction",
+                "Disabled"
+            ],
+            "defaultValue": "DenyAction"
+        },
+        "listOfResourceTypesDisallowedForDeletion": {
+            "type": "Array",
+            "metadata": {
+                "displayName": "Resource types that cannot be deleted",
+                "description": "The list of resource types that cannot be deleted."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "denyActionResourceDeletion": "/providers/Microsoft.Authorization/policyDefinitions/78460a36-508a-49a4-b2b2-2f5ec564f4bb"
+        },
+        "policyAssignmentNames": {
+            "denyActionResourceDeletion": "DenyAction-Resource-Del",
+            "description": "This policy enables you to specify the resource types that your organization can protect from accidentals deletion by blocking delete calls using deny action effect.",
+            "displayName": "Do not allow deletion of resource types"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').denyActionResourceDeletion]",
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').denyActionResourceDeletion]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "parameters": {
+                    "effect": {
+                        "value": "[parameters('effect')]"
+                    },
+                    "listOfResourceTypesDisallowedForDeletion": {
+                        "value": "[parameters('listOfResourceTypesDisallowedForDeletion')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
