@@ -119,6 +119,13 @@ This release includes:
 - Fixed the assignment for [Configure periodic checking for missing system updates on azure virtual machines](https://www.azadvertizer.net/azpolicyadvertizer/59efceea-0c96-497e-a4a1-4eb2290dac15.html) to use the correct RBAC role.
 - Added new initiative for Microsoft Defender for Endpoints [Configure multiple Microsoft Defender for Endpoint integration settings with Microsoft Defender for Cloud](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/77b391e3-2d5d-40c3-83bf-65c846b3c6a3.html).
 
+Special Note: some "assigned by default" initiative assignments have changed, will need to be deleted, and have the new version assigned instead:
+
+| Initiative | Display Name | Original Assignment Name | New Assignment Name |
+| --- | --- | --- | --- |
+| Deploy-MDFC-Deploy | Deploy Microsoft Defender for Cloud configuration | Deploy-MDFC-Deploy | Deploy-MDFC-Config-H224 |
+| Deploy-EncryptTransit | Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit | Enforce-TLS-SSL | Enforce-TLS-SSL-H224 |
+
 ### May 2024
 
 #### Documentation
