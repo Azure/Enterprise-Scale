@@ -66,10 +66,10 @@ Key updates include:
 - Custom [User Assigned Managed Identity policy](https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policyDefinitions/Deploy-UserAssignedManagedIdentity-VMInsights.json) has been deprecated. UAMI for AMA is now centrally deployed therefore this policy is no longer required.
 - When utilizing Portal, ARM, or Bicep, it is necessary to manually remove policy assignments corresponding to deprecated policies. To proceed with the deletion of the assignment, please refer to the Display Name or Assignment Name provided below.
 
-  | Assignment Name          | Display Name                                                                                                                 |
-  | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-  | Deploy-MDFC-DefenSQL-AMA | Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace |
-  | Deploy-UAMI-VMInsights   | Deploy User Assigned Managed Identity for VM Insights                                                                        |
+  | Assignment Name          | Display Name                                                                                                                 | Scope of Assignment                                         |
+  | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+  | Deploy-MDFC-DefenSQL-AMA | Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace | Platform Management Group<br>Landing Zones Management Group |
+  | Deploy-UAMI-VMInsights   | Deploy User Assigned Managed Identity for VM Insights                                                                        | Landing Zones Management Group                              |
 
 ### 🔃 Policy Refresh H2 FY24
 
