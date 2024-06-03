@@ -327,9 +327,34 @@
                                         ]
                                     },
                                     "visible": true
+                                },
+                                {
+                                    "name": "enforceBackupPlat",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enforce Backup and Recovery recommended guardrails",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Azure Recovery Services policies are enabled.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html\">Enforce enhanced recovery and backup policies</a>.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
                                 }
                             ]
                         },
+                        
                         {
                             "name": "multiPlatformMgmtSub",
                             "type": "Microsoft.Common.InfoBox",
@@ -423,7 +448,7 @@
                                     "visible": true,
                                     "constraints": {
                                         "allowedValues": "[steps('basics').getSubscriptions.data]",
-                                        "required": false
+                                        "required": true
                                     }
                                 }
                             ],
@@ -439,19 +464,6 @@
                                     "label": "Learn more",
                                     "uri": "https://docs.microsoft.com/azure/azure-monitor/insights/solutions"
                                 }
-                            }
-                        },
-                        {
-                            "name": "userAssignedIdentityResourceGroup",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Resource group for the User Assigned Managed Identity for AMA",
-                            "toolTip": "Resource group for the User Assigned Managed Identity for Azure Monitor Agent. Will be created in all subscriptions in scope for the policy",
-                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]",
-                            "defaultValue": "rg-ama-prod-001",
-                            "constraints": {
-                                "required": "[equals(steps('management').enableLogAnalytics,'Yes')]",
-                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
-                                "validationMessage": "Please provide a valid resource group name"
                             }
                         },
                         {
@@ -595,26 +607,6 @@
                                     {
                                         "label": "No",
                                         "value": "Disabled"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "name": "vulnerabilityAssessmentProvider",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Choose the Microsoft Defender for Cloud for servers vulnerability assessments provider",
-                            "defaultValue": "Microsoft Defender vulnerability management (recommended)",
-                            "toolTip": "Choose the preferred vulnerability assessment provider for Microsoft Defender for Cloud for servers vulnerability assessments.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config.html\">Deploy Microsoft Defender for Cloud configuration</a>.",
-                            "visible": "[and(equals(steps('management').enableAsc,'Yes'), equals(steps('management').enableAscForServersVulnerabilityAssessments,'DeployIfNotExists'))]",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Microsoft Defender for Cloud integrated Qualys scanner",
-                                        "value": "default"
-                                    },
-                                    {
-                                        "label": "Microsoft Defender vulnerability management (recommended)",
-                                        "value": "mdeTvm"
                                     }
                                 ]
                             }
@@ -1183,7 +1175,7 @@
                             "label": "Enable DDoS Network Protection",
                             "defaultValue": "Yes (recommended)",
                             "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
-                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Network Protection will be enabled.",
+                            "toolTip": "If 'Yes' is selected when also adding a connectivity subscription, DDoS Network Protection will be enabled on the connectivity virtual network. Please note that DDoS Network Protection does incur additional costs that need to be considered, for more information: <a href=\"https://azure.microsoft.com/en-us/pricing/details/ddos-protection/#pricing\">DDoS Network Protection pricing</a>.",
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -1281,6 +1273,9 @@
                                     "value": "privatelink.azurehealthcareapis.com"
                                 },
                                 {
+                                    "value": "privatelink.azureiotcentral.com"
+                                },
+                                {
                                     "value": "privatelink.azurestaticapps.net"
                                 },
                                 {
@@ -1326,10 +1321,16 @@
                                     "value": "privatelink.documents.azure.com"
                                 },
                                 {
+                                    "value": "privatelink.dp.kubernetesconfiguration.azure.com"
+                                },
+                                {
                                     "value": "privatelink.eventgrid.azure.net"
                                 },
                                 {
                                     "value": "privatelink.file.core.windows.net"
+                                },
+                                {
+                                    "value": "privatelink.grafana.azure.com"
                                 },
                                 {
                                     "value": "privatelink.gremlin.cosmos.azure.com"
@@ -1429,6 +1430,12 @@
                                 },
                                 {
                                     "value": "privatelink.webpubsub.azure.com"
+                                },
+                                {
+                                    "value": "privatelink.wvd.microsoft.com"
+                                },
+                                {
+                                    "value" : "privatelink-global.wvd.microsoft.com"
                                 }
                             ],
                             "visible": "[and(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enablePrivateDnsZones,'No')))]",
@@ -1512,6 +1519,10 @@
                                         "value": "privatelink.azurehealthcareapis.com"
                                     },
                                     {
+                                        "label": "privatelink.azureiotcentral.com",
+                                        "value": "privatelink.azureiotcentral.com"
+                                    },
+                                    {
                                         "label": "privatelink.azurestaticapps.net",
                                         "value": "privatelink.azurestaticapps.net"
                                     },
@@ -1572,12 +1583,20 @@
                                         "value": "privatelink.documents.azure.com"
                                     },
                                     {
+                                        "label": "privatelink.dp.kubernetesconfiguration.azure.com",
+                                        "value": "privatelink.dp.kubernetesconfiguration.azure.com"
+                                    },
+                                    {
                                         "label": "privatelink.eventgrid.azure.net",
                                         "value": "privatelink.eventgrid.azure.net"
                                     },
                                     {
                                         "label": "privatelink.file.core.windows.net",
                                         "value": "privatelink.file.core.windows.net"
+                                    },
+                                    {
+                                        "label": "privatelink.grafana.azure.com",
+                                        "value": "privatelink.grafana.azure.com"
                                     },
                                     {
                                         "label": "privatelink.gremlin.cosmos.azure.com",
@@ -1710,6 +1729,14 @@
                                     {
                                         "label": "privatelink.webpubsub.azure.com",
                                         "value": "privatelink.webpubsub.azure.com"
+                                    },
+                                    {
+                                        "label": "privatelink.wvd.microsoft.com",
+                                        "value": "privatelink.wvd.microsoft.com"
+                                    },
+                                    {
+                                        "label": "privatelink-global.wvd.microsoft.com",
+                                        "value": "privatelink-global.wvd.microsoft.com"
                                     }
                                 ]
                             }
@@ -2286,7 +2313,7 @@
                             "type": "Microsoft.Common.InfoBox",
                             "visible": "[if(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'vwan')), and(equals(steps('connectivity').enableAzFw,'Yes'), contains(split('brazilsouth,canadacentral,centralus,eastus,eastus2,southcentralus,westus2,westus3,francecentral,germanywestcentral,northeurope,norwayeast,uksouth,westeurope,swedencentral,switzerlandnorth,qatarcentral,uaenorth,southafricanorth,australiaeast,centralindia,japaneast,koreacentral,southeastasia,eastasia,italynorth', ','), steps('connectivity').connectivityLocation)), false)]",
                             "options": {
-                                "text": "ALZ enables Availability Zones for all services that it deploys by default for maximum resiliency in regions where Availability Zones are supported, including for Azure Firewall. Review the selected Availability Zones meet your architectural requirements and that you understand the added costs for inbound and outbound data transfers associated with Avaialability Zones, before proceeding. Click on this box to learn more about the Availability Zones and Azure Firewall.",
+                                "text": "ALZ enables Availability Zones for all services that it deploys by default for maximum resiliency in regions where Availability Zones are supported, including for Azure Firewall. Review the selected Availability Zones meet your architectural requirements and that you understand the added costs for inbound and outbound data transfers associated with Availability Zones, before proceeding. Click on this box to learn more about the Availability Zones and Azure Firewall.",
                                 "uri": "https://learn.microsoft.com/en-us/azure/firewall/features#built-in-high-availability",
                                 "style": "Info"
                             }
@@ -3064,7 +3091,7 @@
                                     "label": "Ensure encryption in transit is enabled for PaaS services",
                                     "defaultValue": "Yes (recommended)",
                                     "visible": true,
-                                    "toolTip": "If 'Yes' is selected then Azure Policy will ensure PaaS resources uses TLS and SSL.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit.html\">Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit</a>.",
+                                    "toolTip": "If 'Yes' is selected then Azure Policy will ensure PaaS resources uses TLS and SSL.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html\">Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit</a>.",
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -3467,6 +3494,30 @@
                                     "visible": true
                                 },
                                 {
+                                    "name": "enforceBackup",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enforce Backup and Recovery recommended guardrails",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected, Azure Policy Initiative will be assigned to ensure recommended Azure Recovery Services policies are enabled.<br>Uses the custom initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Backup.html\">Enforce enhanced recovery and backup policies</a>.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "Audit only",
+                                                "value": "Audit"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
                                     "name": "auditAppGwWaf",
                                     "type": "Microsoft.Common.OptionsGroup",
                                     "label": "Audit WAF enabled on Application Gateways",
@@ -3778,6 +3829,2334 @@
                                 }
                             ],
                             "visible": "[equals(steps('basics').cloudEnvironment.selection, 'AzureCloud')]"
+                        }
+                    ]
+                },
+                {
+                    "name": "workloadspecific",
+                    "label": "Workload Specific Compliance",
+                    "elements": [
+                        {
+                            "name": "wsText",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "For customers in highly regulated industries like healthcare, financial services, public sector, etc. you can optionally select one, or more, Workload Specific Compliance Policy Initiatives (Set Definitions) to assign to the selected Management Groups of your Azure Landing Zones hierarchy (e.g. Contoso).",
+                                "link": {
+                                    "label": "Learn More",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "wsInfoCheck",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": true,
+                            "options": {
+                                "text": "Please carefully review each of the initiatives and the controls they enforce to ensure they align with your organization's compliance requirements. You can hover over the workload name to show the tooltip, which includes a link to the initiative definition.",
+                                "uri": "https://aka.ms/alz/policies",
+                                "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "wsText2",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Please select workload and scope to apply initiatives to for each:",
+                                "link": {
+                                    "label": "",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "enableWsCMKInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Customer Managed Keys",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected management groups to apply Customer Managed Keys initiative to. This applies to all services that support CMK if enabled. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsCMKSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scope to assign Customer Managed Keys initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsCMKInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsAPIMInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "API Management",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for API Management. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-APIM.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsAPIMSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scope to assign API Management initiatives to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsAPIMInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsAppServicesInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "App Services",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-AppServices.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsAppServicesSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign App Services initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsAppServicesInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsAutomationInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Automation Accounts",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Automation.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsAutomationSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign Automation Accounts initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsAutomationInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsCognitiveServicesInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Cognitive Services",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-CognitiveServices.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsCognitiveServicesSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign Cognitive Services initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsCognitiveServicesInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsComputeInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Compute",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Compute.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsComputeSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign Compute initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsComputeInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsContainerAppsInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Container Apps",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-ContainerApps.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsContainerAppsSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign Container Apps initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsContainerAppsInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsContainerInstanceInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Container Instance",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-ContainerInstance.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsContainerInstanceSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign Container Instance initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsContainerInstanceInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsContainerRegistryInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Container Registry",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-ContainerRegistry.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsContainerRegistrySelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign Container Registry initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsContainerRegistryInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsCosmosDbInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Cosmos DB",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-CosmosDb.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsCosmosDbSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Cosmos DB initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsCosmosDbInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsDataExplorerInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Data Explorer",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-DataExplorer.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsDataExplorerSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Data Explorer initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsDataExplorerInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsDataFactoryInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Data Factory",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-DataFactory.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsDataFactorySelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Data Factory initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsDataFactoryInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsEventGridInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Event Grid",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-EventGrid.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsEventGridSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Event Grid initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsEventGridInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsEventHubInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Event Hub",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-EventHub.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsEventHubSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Event Hub initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsEventHubInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsKeyVaultSupInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Key Vault - Supplementry",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault-Sup.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsKeyVaultSupSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Key Vault - Supplementry initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsKeyVaultSupInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsKubernetesInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Kubernetes",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsKubernetesSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Kubernetes initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsKubernetesInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsMachineLearningInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Machine Learning",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-MachineLearning.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsMachineLearningSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Machine Learning initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsMachineLearningInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsMySQLInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "MySQL",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-MySQL.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsMySQLSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the MySQL initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsMySQLInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsNetworkInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Network and Networking services",
+                            "defaultValue": "No",
+                            "visible": "[equals(steps('connectivity').enableDdoS, 'Yes')]",
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsNetworkSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Network and Networking services initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsNetworkInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsOpenAIInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Open AI",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-OpenAI.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsOpenAISelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Open AI initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsOpenAIInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsPostgreSQLInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "PostgreSQL",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-PostgreSQL.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsPostgreSQLSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the PostgreSQL initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsPostgreSQLInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsServiceBusInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Service Bus",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-ServiceBus.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsServiceBusSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Service Bus initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsServiceBusInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsSQLInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "SQL",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-SQL.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsSQLSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the SQL initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsSQLInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsStorageInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Storage",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Storage.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsStorageSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Storage initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsStorageInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsSynapseInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Synapse",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Synapse.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsSynapseSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Synapse initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsSynapseInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "enableWsVirtualDesktopInitiatives",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Virtual Desktop",
+                            "defaultValue": "No",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-VirtualDesktop.html\">here</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "wsVirtualDesktopSelectorMG",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Select Management Group scopes to assign the Virtual Desktop initiative to:",
+                            "toolTip": "",
+                            "multiselect": true,
+                            "selectAll": false,
+                            "filter": true,
+                            "filterPlaceholder": "Filter items ...",
+                            "multiLine": true,
+                            "visible": "[equals(steps('workloadspecific').enableWsVirtualDesktopInitiatives, 'Yes')]",
+                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Intermeditate Root Management Group",
+                                        "description": "e.g. Contoso",
+                                        "value": "contoso"
+                                    },
+                                    {
+                                        "label": "Platform Management Group",
+                                        "description": "e.g. Contoso -> Platform",
+                                        "value": "contoso-platform"
+                                    },
+                                    {
+                                        "label": "Management Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Management",
+                                        "value": "contoso-management"
+                                    },
+                                    {
+                                        "label": "Identity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Identity",
+                                        "value": "contoso-identity"
+                                    },
+                                    {
+                                        "label": "Connectivity Management Group",
+                                        "description": "e.g. Contoso -> Platform -> Connectivity",
+                                        "value": "contoso-connectivity"
+                                    },
+                                    {
+                                        "label": "Landing Zones Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones",
+                                        "value": "contoso-landingzones"
+                                    },
+                                    {
+                                        "label": "Corp Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Corp",
+                                        "value": "contoso-corp"
+                                    },
+                                    {
+                                        "label": "Online Management Group",
+                                        "description": "e.g. Contoso -> Landing Zones -> Online",
+                                        "value": "contoso-online"
+                                    },
+                                    {
+                                        "label": "Decommissioned Management Group",
+                                        "description": "e.g. Contoso -> Decommissioned",
+                                        "value": "contoso-decommissioned"
+                                    },
+                                    {
+                                        "label": "Sandbox Management Group",
+                                        "description": "e.g. Contoso -> Sandbox",
+                                        "value": "contoso-sandboxes"
+                                    }
+                                ],
+                                "required": true
+                            }
                         }
                     ]
                 },
@@ -5394,6 +7773,7 @@
                 "denyVMUnmanagedDisk": "[steps('core').denyVMUnmanagedDisk]",
                 "telemetryOptOut": "[steps('core').cuaSection.telemetryOptOut]",
                 "enforceKvGuardrailsPlat": "[steps('management').esPlatformMgmtGroup.enforceKvGuardrailsPlat]",
+                "enforceBackupPlat": "[steps('management').esPlatformMgmtGroup.enforceBackupPlat]",
                 "enableLogAnalytics": "[steps('management').enableLogAnalytics]",
                 "enableChangeTracking": "[steps('management').enableChangeTracking]",
                 "enableUpdateMgmt": "[steps('management').enableUpdateMgmt]",
@@ -5404,7 +7784,6 @@
                 "emailContactAsc": "[steps('management').emailContactAsc]",
                 "enableAscForServers": "[steps('management').enableAscForServers]",
                 "enableAscForServersVulnerabilityAssessments": "[steps('management').enableAscForServersVulnerabilityAssessments]",
-                "vulnerabilityAssessmentProvider": "[steps('management').vulnerabilityAssessmentProvider]",
                 "enableAscForOssDb": "[steps('management').enableAscForOssDb]",
                 "enableAscForCosmosDbs": "[steps('management').enableAscForCosmosDbs]",
                 "enableAscForAppServices": "[steps('management').enableAscForAppServices]",
@@ -5415,7 +7794,6 @@
                 "enableAscForArm": "[steps('management').enableAscForArm]",
                 "enableAscForApis": "[steps('management').enableAscForApis]",
                 "enableAscForCspm": "[steps('management').enableAscForCspm]",
-                "enableAscForDns": "[steps('management').enableAscForDns]",
                 "enableAscForContainers": "[steps('management').enableAscForContainers]",
                 "enableMDEndpoints": "[steps('management').enableMDEndpoints]",
                 "enableMonitorBaselines": "[steps('monitor').enableMonitorBaselines]",
@@ -5485,13 +7863,63 @@
                 "enableSqlAudit": "[steps('landingZones').lzSection.enableSqlAudit]",
                 "enableStorageHttps": "[steps('landingZones').lzSection.enableStorageHttps]",
                 "enforceKvGuardrails": "[steps('landingZones').lzSection.enforceKvGuardrails]",
+                "enforceBackup": "[steps('landingZones').lzSection.enforceBackup]",
                 "denyHybridNetworking": "[steps('landingZones').corpSection.denyHybridNetworking]",
                 "auditPeDnsZones": "[steps('landingZones').corpSection.auditPeDnsZones]",
                 "auditAppGwWaf": "[steps('landingZones').lzSection.auditAppGwWaf]",
                 "enforceAcsb": "[steps('landingZones').lzSection.enforceAcsb]",
                 "enableDecommissioned": "[steps('decommissionedSandboxZones').decommSection.enableDecommissioned]",
                 "enableSandbox": "[steps('decommissionedSandboxZones').sandboxSection.enableSandbox]",
-                "userAssignedIdentityResourceGroup": "[steps('management').userAssignedIdentityResourceGroup]",
+                "enableWsCMKInitiatives": "[steps('workloadspecific').enableWsCMKInitiatives]",
+                "wsCMKSelectorMG": "[steps('workloadspecific').wsCMKSelectorMG]",
+                "enableWsAPIMInitiatives": "[steps('workloadspecific').enableWsAPIMInitiatives]",
+                "wsAPIMSelectorMG": "[steps('workloadspecific').wsAPIMSelectorMG]",
+                "enableWsAppServicesInitiatives": "[steps('workloadspecific').enableWsAppServicesInitiatives]",
+                "wsAppServicesSelectorMG": "[steps('workloadspecific').wsAppServicesSelectorMG]",
+                "enableWsAutomationInitiatives": "[steps('workloadspecific').enableWsAutomationInitiatives]",
+                "wsAutomationSelectorMG": "[steps('workloadspecific').wsAutomationSelectorMG]",
+                "enableWsCognitiveServicesInitiatives": "[steps('workloadspecific').enableWsCognitiveServicesInitiatives]",
+                "wsCognitiveServicesSelectorMG": "[steps('workloadspecific').wsCognitiveServicesSelectorMG]",
+                "enableWsComputeInitiatives": "[steps('workloadspecific').enableWsComputeInitiatives]",
+                "wsComputeSelectorMG": "[steps('workloadspecific').wsComputeSelectorMG]",
+                "enableWsContainerAppsInitiatives": "[steps('workloadspecific').enableWsContainerAppsInitiatives]",
+                "wsContainerAppsSelectorMG": "[steps('workloadspecific').wsContainerAppsSelectorMG]",
+                "enableWsContainerInstanceInitiatives": "[steps('workloadspecific').enableWsContainerInstanceInitiatives]",
+                "wsContainerInstanceSelectorMG": "[steps('workloadspecific').wsContainerInstanceSelectorMG]",
+                "enableWsContainerRegistryInitiatives": "[steps('workloadspecific').enableWsContainerRegistryInitiatives]",
+                "wsContainerRegistrySelectorMG": "[steps('workloadspecific').wsContainerRegistrySelectorMG]",
+                "enableWsCosmosDbInitiatives": "[steps('workloadspecific').enableWsCosmosDbInitiatives]",
+                "wsCosmosDbSelectorMG": "[steps('workloadspecific').wsCosmosDbSelectorMG]",
+                "enableWsDataExplorerInitiatives": "[steps('workloadspecific').enableWsDataExplorerInitiatives]",
+                "wsDataExplorerSelectorMG": "[steps('workloadspecific').wsDataExplorerSelectorMG]",
+                "enableWsDataFactoryInitiatives": "[steps('workloadspecific').enableWsDataFactoryInitiatives]",
+                "wsDataFactorySelectorMG": "[steps('workloadspecific').wsDataFactorySelectorMG]",
+                "enableWsEventGridInitiatives": "[steps('workloadspecific').enableWsEventGridInitiatives]",
+                "wsEventGridSelectorMG": "[steps('workloadspecific').wsEventGridSelectorMG]",
+                "enableWsEventHubInitiatives": "[steps('workloadspecific').enableWsEventHubInitiatives]",
+                "wsEventHubSelectorMG": "[steps('workloadspecific').wsEventHubSelectorMG]",
+                "enableWsKeyVaultSupInitiatives": "[steps('workloadspecific').enableWsKeyVaultSupInitiatives]",
+                "wsKeyVaultSupSelectorMG": "[steps('workloadspecific').wsKeyVaultSupSelectorMG]",
+                "enableWsKubernetesInitiatives": "[steps('workloadspecific').enableWsKubernetesInitiatives]",
+                "wsKubernetesSelectorMG": "[steps('workloadspecific').wsKubernetesSelectorMG]",
+                "enableWsMachineLearningInitiatives": "[steps('workloadspecific').enableWsMachineLearningInitiatives]",
+                "wsMachineLearningSelectorMG": "[steps('workloadspecific').wsMachineLearningSelectorMG]",
+                "enableWsNetworkInitiatives": "[steps('workloadspecific').enableWsNetworkInitiatives]",
+                "wsNetworkSelectorMG": "[steps('workloadspecific').wsNetworkSelectorMG]",
+                "enableWsOpenAIInitiatives": "[steps('workloadspecific').enableWsOpenAIInitiatives]",
+                "wsOpenAISelectorMG": "[steps('workloadspecific').wsOpenAISelectorMG]",
+                "enableWsPostgreSQLInitiatives": "[steps('workloadspecific').enableWsPostgreSQLInitiatives]",
+                "wsPostgreSQLSelectorMG": "[steps('workloadspecific').wsPostgreSQLSelectorMG]",
+                "enableWsServiceBusInitiatives": "[steps('workloadspecific').enableWsServiceBusInitiatives]",
+                "wsServiceBusSelectorMG": "[steps('workloadspecific').wsServiceBusSelectorMG]",
+                "enableWsSQLInitiatives": "[steps('workloadspecific').enableWsSQLInitiatives]",
+                "wsSQLSelectorMG": "[steps('workloadspecific').wsSQLSelectorMG]",
+                "enableWsStorageInitiatives": "[steps('workloadspecific').enableWsStorageInitiatives]",
+                "wsStorageSelectorMG": "[steps('workloadspecific').wsStorageSelectorMG]",
+                "enableWsSynapseInitiatives": "[steps('workloadspecific').enableWsSynapseInitiatives]",
+                "wsSynapseSelectorMG": "[steps('workloadspecific').wsSynapseSelectorMG]",
+                "enableWsVirtualDesktopInitiatives": "[steps('workloadspecific').enableWsVirtualDesktopInitiatives]",
+                "wsVirtualDesktopSelectorMG": "[steps('workloadspecific').wsVirtualDesktopSelectorMG]",
                 "regulatoryComplianceInitativesToAssign": "[steps('regulatory').regComplianceSelectorFull]",
                 "regCompPolParAusGovIsmRestrictedVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamAusGovIsmRestricted.regCompPolParAusGovIsmRestrictedVmAdminsExclude, '')]",
                 "regCompPolParAusGovIsmRestrictedResourceTypes": "[steps('regulatory').regPolicyParamAusGovIsmRestricted.regCompPolParAusGovIsmRestrictedResourceTypes]",

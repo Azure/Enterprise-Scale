@@ -1,0 +1,78 @@
+{
+    "name": "Deny-AppGw-Without-Tls",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Application Gateway should be deployed with predefined Microsoft policy that is using TLS version 1.2",
+        "description": "This policy enables you to restrict that Application Gateways is always deployed with predefined Microsoft policy that is using TLS version 1.2",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Network",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "predefinedPolicyName": {
+                "type": "array",
+                "metadata": {
+                    "displayName": "Predefined policy name",
+                    "description": "Predefined policy name"
+                },
+                "defaultValue": [
+                    "AppGwSslPolicy20220101",
+                    "AppGwSslPolicy20170401S",
+                    "AppGwSslPolicy20220101S"
+                ]
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/applicationGateways"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "field": "Microsoft.Network/applicationGateways/sslPolicy.policyType",
+                                "notEquals": "Predefined"
+                            },
+                            {
+                                "field": "Microsoft.Network/applicationGateways/sslPolicy.policyType",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "Microsoft.Network/applicationGateways/sslPolicy.policyName",
+                                "notIn": "[[parameters('predefinedPolicyName')]"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

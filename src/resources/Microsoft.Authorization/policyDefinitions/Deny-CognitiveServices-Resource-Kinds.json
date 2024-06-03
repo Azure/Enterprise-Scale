@@ -1,0 +1,95 @@
+{
+    "name": "Deny-CognitiveServices-Resource-Kinds",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Only explicit kinds for Cognitive Services should be allowed",
+        "description": "Azure Cognitive Services should only create explicit allowed kinds.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Cognitive Services",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "allowedKinds": {
+                "type": "array",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Select the allowed resource kinds to be used with Cognitive Services"
+                },
+                "allowedValues": [
+                    "AnomalyDetector",
+                    "ComputerVision",
+                    "CognitiveServices",
+                    "ContentModerator",
+                    "CustomVision.Training",
+                    "CustomVision.Prediction",
+                    "Face",
+                    "FormRecognizer",
+                    "ImmersiveReader",
+                    "LUIS",
+                    "Personalizer",
+                    "SpeechServices",
+                    "TextAnalytics",
+                    "TextTranslation",
+                    "OpenAI"
+                ],
+                "defaultValue": [
+                    "AnomalyDetector",
+                    "ComputerVision",
+                    "CognitiveServices",
+                    "ContentModerator",
+                    "CustomVision.Training",
+                    "CustomVision.Prediction",
+                    "Face",
+                    "FormRecognizer",
+                    "ImmersiveReader",
+                    "LUIS",
+                    "Personalizer",
+                    "SpeechServices",
+                    "TextAnalytics",
+                    "TextTranslation",
+                    "OpenAI"
+                ]
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.CognitiveServices/accounts"
+                    },
+                    {
+                        "field": "kind",
+                        "notIn": "[[parameters('allowedKinds')]"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}
