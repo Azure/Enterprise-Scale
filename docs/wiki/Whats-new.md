@@ -64,6 +64,12 @@ Key updates include:
     - [[Preview]: Enable ChangeTracking and Inventory for virtual machine scale sets](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/c4a70814-96be-461c-889f-2b27429120dc.html)
 - Custom [Defender for SQL initiative](https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-DefenderSQL-AMA.json) has been deprecated and is replaced by [Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/de01d381-bae9-4670-8870-786f89f49e26.html)
 - Custom [User Assigned Managed Identity policy](https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policyDefinitions/Deploy-UserAssignedManagedIdentity-VMInsights.json) has been deprecated. UAMI for AMA is now centrally deployed therefore this policy is no longer required.
+- When utilizing Portal, ARM, or Bicep, it is necessary to manually remove policy assignments corresponding to deprecated policies. To proceed with the deletion of the assignment, please refer to the Display Name or Assignment Name provided below.
+
+  | Assignment Name          | Display Name                                                                                                                 |
+  | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+  | Deploy-MDFC-DefenSQL-AMA | Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace |
+  | Deploy-UAMI-VMInsights   | Deploy User Assigned Managed Identity for VM Insights                                                                        |
 
 ### 🔃 Policy Refresh H2 FY24
 
