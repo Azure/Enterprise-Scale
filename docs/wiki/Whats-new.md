@@ -125,6 +125,7 @@ Special Note: some "assigned by default" initiative assignments have changed, wi
 | --- | --- | --- | --- |
 | Deploy-MDFC-Deploy | Deploy Microsoft Defender for Cloud configuration | Deploy-MDFC-Deploy | Deploy-MDFC-Config-H224 |
 | Deploy-EncryptTransit | Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit | Enforce-TLS-SSL | Enforce-TLS-SSL-H224 |
+| Deploy-Diagnostics-LogAnalytics | Deploy Diagnostic Settings to Azure Services | Deploy-Resource-Diag | Deploy-Diag-Logs |
 
 ### May 2024
 
