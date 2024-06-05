@@ -1509,7 +1509,7 @@
             "wsStoragePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsStoragePolicyAssignment.json')]",
             "wsSynapsePolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsSynapsePolicyAssignment.json')]",
             "wsVirtualDesktopPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsVirtualDesktopPolicyAssignment.json')]",
-            "denyResourceDeletionPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENYACTION-ResourceDeletionPolicyAssignment.json')]"
+            "denyActionDeleteUAMIAMAPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENYACTION-DeleteResourcesPolicyAssignment.json')]"
         },
         // Declaring deterministic deployment names
         "deploymentSuffix": "[concat('-', deployment().location, '-', guid(parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow')))]",
@@ -1618,7 +1618,7 @@
             "pidCuaDeploymentNameNetworkingNone": "[take(concat('pid-', variables('cuaidNetworkingNone'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "pidCuaDeploymentNameNetworkingHubSpoke": "[take(concat('pid-', variables('cuaidNetworkingHubSpoke'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "pidCuaDeploymentNameNetworkingVirtualWan": "[take(concat('pid-', variables('cuaidNetworkingVirtualWan'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
-            "denyResourceDeletionPolicyDeploymentName": "[take(concat('alz-DenyResourceDeletion', variables('deploymentSuffix')), 64)]",
+            "denyActionDeleteUAMIAMAPolicyDeploymentName": "[take(concat('alz-DenyActionDeleteUAMI', variables('deploymentSuffix')), 64)]",
             // Workload Specific Compliance Initiatives
             "wsCMKDeploymentName": "[take(concat('alz-wsCMK', variables('deploymentSuffix')), 35)]",
             "wsAPIMDeploymentName": "[take(concat('alz-wsAPIM', variables('deploymentSuffix')), 35)]",
@@ -4374,7 +4374,7 @@
             "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').denyResourceDeletionPolicyDeploymentName]",
+            "name": "[variables('deploymentNames').denyActionDeleteUAMIAMAPolicyDeploymentName]",
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -4384,11 +4384,17 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').denyResourceDeletionPolicyAssignment]"
+                    "uri": "[variables('deploymentUris').denyActionDeleteUAMIAMAPolicyAssignment]"
                 },
                 "parameters": {
-                    "listOfResourceTypesDisallowedForDeletion": {
-                        "value": "[parameters('listOfResourceTypesDisallowedForDeletion')]"
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "resourceName": {
+                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                    },
+                    "resourceType": {
+                        "value": "Microsoft.ManagedIdentity/userAssignedIdentities"
                     }
                 }
             }
