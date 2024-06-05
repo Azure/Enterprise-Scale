@@ -45,6 +45,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### June 2024
+
+#### Tooling
+
+- Added new custom Policy that provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA. Assigned at the Platform Management it blocks delete calls using deny action effect.
+
 ### 🆕 AMA Updates
 
 The ALZ Portal Accelerator has been enhanced with the latest AMA updates, ensuring a seamless and efficient management experience. 🚀
