@@ -7,8 +7,6 @@
 * [What is Enterprise-Scale](./What-is-Enterprise-Scale)
   * [Architecture](./ALZ-Architecture)
   * [Policies](./ALZ-Policies)
-  * [Policies FAQ & Tips](./ALZ-Policies-FAQ)
-  * [Policies Testing Framework](./ALZ-Policies-Testing)
   * [What is the reference implementation?](./What-is-Enterprise-Scale#what-is-enterprise-scale-reference-implementation)
   * [Pricing](./What-is-Enterprise-Scale#pricing)
   * [What if I already have an existing Azure footprint](./What-is-Enterprise-Scale#what-if-i-already-have-an-existing-azure-footprint)
@@ -19,6 +17,7 @@
   * [What happens when you deploy Enterprise-Scale?](./How-Enterprise-Scale-Works#what-happens-when-you-deploy-enterprise-scale)
 * Deploying Enterprise-Scale
   * [Pre-requisites](./Deploying-ALZ-Pre-requisites)
+  * [ALZ Resource Providers Guidance](./ALZ-Resource-Provider-Recommendations)
   * [Configure Microsoft Entra permissions](./ALZ-Setup-aad-permissions)
   * [Configure Azure permissions](./ALZ-Setup-azure)
   * [Deploy landing zones](./ALZ-Deploy-landing-zones)
@@ -35,8 +34,14 @@
 * [Azure Landing Zones Deprecated Services](./ALZ-Deprecated-Services)
 * Azure Landing Zone (ALZ) Policies
   * [Policies included in Azure landing zones reference implementations](./ALZ-Policies)
+  * [Policies included but not assigned by default and Workload Specific Compliance initiatives](./ALZ-Policies-Extra)
+  * [Policies FAQ & Tips](./ALZ-Policies-FAQ)
+  * [Policies Testing Framework](./ALZ-Policies-Testing)
   * [Migrate Azure landing zones custom policies to Azure built-in policies](./Migrate-ALZ-Policies-to-Built%E2%80%90in)
   * [Updating Azure landing zones custom policies to latest](./Update-ALZ-Custom-Policies-to-Latest)
+* MMA Deprecation Guidance
+  * [Azure Monitor Agent Update](./ALZ-AMA-Update)
+  * [AMA FAQ](./ALZ-AMA-FAQ)
 * [Contributing](./ALZ-Contribution-Guide)
   * [Reporting Bugs](./ALZ-Contribution-Guide#reporting-bugs)
   * [Feature Requests](./ALZ-Contribution-Guide#feature-requests)

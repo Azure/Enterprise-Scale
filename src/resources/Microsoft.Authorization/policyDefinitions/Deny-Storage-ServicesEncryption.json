@@ -1,0 +1,102 @@
+{
+    "name": "Deny-Storage-ServicesEncryption",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Encryption for storage services should be enforced for Storage Accounts",
+        "description": "Azure Storage accounts should enforce encryption for all storage services. Enforce this for increased encryption scope.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Storage",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.blob.enabled",
+                                        "exists": "false"
+                                    },
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.blob.enabled",
+                                        "notEquals": true
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.file.enabled",
+                                        "exists": "false"
+                                    },
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.file.enabled",
+                                        "notEquals": true
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.queue.keyType",
+                                        "exists": "false"
+                                    },
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.queue.keyType",
+                                        "notEquals": "Account"
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.table.keyType",
+                                        "exists": "false"
+                                    },
+                                    {
+                                        "field": "Microsoft.Storage/storageAccounts/encryption.services.table.keyType",
+                                        "notEquals": "Account"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

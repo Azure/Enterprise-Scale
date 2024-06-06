@@ -1,0 +1,66 @@
+{
+    "name": "Deny-LogicApp-Public-Network",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Logic apps should disable public network access",
+        "description": "Disabling public network access improves security by ensuring that the Logic App is not exposed on the public internet. Creating private endpoints can limit exposure of a Logic App. Learn more at: https://aka.ms/app-service-private-endpoint.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Logic Apps",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Web/sites"
+                    },
+                    {
+                        "field": "kind",
+                        "contains": "workflowapp"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "field": "Microsoft.Web/sites/publicNetworkAccess",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "Microsoft.Web/sites/publicNetworkAccess",
+                                "notEquals": "Disabled"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

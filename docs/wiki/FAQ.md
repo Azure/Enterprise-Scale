@@ -157,15 +157,7 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
 
 ## Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?
 
-Great question! Don't worry we are aware of this required migration and change to Azure landing zones with the Log Analytics Agent (Microsoft Monitoring Agent - MMA) being retired in August 2024 as detailed here: [Migrate to Azure Monitor Agent from Log Analytics agent](https://learn.microsoft.com/azure/azure-monitor/agents/azure-monitor-agent-migration).
-
-We are working hard internally with the Azure Monitor Product Group (PG) to ensure everything that Azure landing zones requires and gets from the Log Analytics Agent (Microsoft Monitoring Agent - MMA) approach today is covered and has a path for migration to the Azure Monitor Agent (AMA) approach. This has been underway for sometime and continues to progress.
-
-The AMA agent brings a number of new concepts, resources and changes to existing integrations with other services, such as Microsoft Defender for Cloud, that all require validation by each of the associated PGs as well as the Azure landing zone team, prior to migrating to AMA from MMA.
-
-We will, when ready, provide Azure landing zones specific migration guidance that supports existing and to be created PG documentation. We will also make the relevant changes to each of the implementation options (Portal, Bicep, Terraform) to support the migration, especially for greenfield scenarios.
-
-> We have an existing GitHub Issue ([#1055](https://github.com/Azure/Enterprise-Scale/issues/1055)) opened for this feature request. Please feel free to give it a 👍 or add a comment.
+**Update January 2024** We have been working on the removal of MMA from ALZ and the first step in the overall removal process is to update the ALZ Portal reference implementation (greenfield deployments) which has now been updated. Our next step is to work on the deployment to Terraform and Bicep reference implementations which requires significant investment to minimise impact to existing customers and providing clear guidance for the transition. For more details please see [Azure Monitor Agent Update](./ALZ-AMA-Update.md).
 
 ### What if we are not ready to make the switch and migrate, right now?
 
@@ -210,7 +202,7 @@ You can browse a specific release of ALZ in GitHub by using the `tags` feature. 
 
 ![GitHub Tags](media/2023-10-30_RepoTags.png)
 
-### Why some managed services will  potentially fail to deploy to ALZ and how to work around this issue?
+### Why some managed services will potentially fail to deploy to ALZ and how to work around this issue?
 
 There may be circumstances in which deploying services into ALZ are blocked by policy, as an example, managed services that can potentially fail to deploy to ALZ due to being blocked by enforced policies, such as public network access should be disabled for PaaS services or deny network interfaces having a public IP associated.
 When a service is deployed to ALZ, be mindful of default ALZ Policies and understand which policy is being violated. If the service such a Service Fabric Managed Cluster fails due to security reasons, you can follow several workarounds:
@@ -220,3 +212,7 @@ When a service is deployed to ALZ, be mindful of default ALZ Policies and unders
 
 Azure Policy exemptions are used to exempt a resource hierarchy or an individual resource from evaluation of a definition. Resources that are exempt count toward overall compliance but can't be evaluated or have a temporary waiver.
 If you want to monitor a resource that is non-compliant by design, you may use an exemption. If you do not want to monitor a resource by a default policy, you may use an exception.
+
+### When can I deploy ALZ to new Azure Regions?
+
+As new Azure regions come online, they are rolled out in a phased approach and whilst the region may be available for use, not all features may be available during the early period. For Azure landing zones this means that you may experience unexpected deployment failures where certain components may not be available. As ALZ provides different options and selections no 2 deployments may be the same and therefore deployment outcomes can differ. Should you experience an issue deploying ALZ to a new region please raise a support ticket for review.

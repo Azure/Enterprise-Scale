@@ -1,0 +1,56 @@
+{
+    "name": "Deny-Storage-NetworkAclsVirtualNetworkRules",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Virtual network rules should be restricted for Storage Accounts",
+        "description": "Azure Storage accounts should restrict the virtual network service-level network ACLs. Enforce this for increased data exfiltration protection.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Storage",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts"
+                    },
+                    {
+                        "count": {
+                            "field": "Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*]"
+                        },
+                        "greater": 0
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

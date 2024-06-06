@@ -1,0 +1,72 @@
+{
+  "name": "DenyAction-DeleteResources",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "Do not allow deletion of specified resource and resource type",
+    "description": "This policy enables you to specify the resource and resource type that your organization can protect from accidentals deletion by blocking delete calls using the deny action effect.",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "General",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "alzCloudEnvironments": [
+          "AzureCloud",
+          "AzureChinaCloud",
+          "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "resourceName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Resource Name",
+          "description": "Provide the name of the resource that you want to protect from accidental deletion."
+        }
+      },
+      "resourceType": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Resource Type",
+          "description": "Provide the resource type that you want to protect from accidental deletion."
+        }
+      },
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "DenyAction",
+          "Disabled"
+        ],
+        "defaultValue": "DenyAction"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "[[parameters('resourceType')]"
+          },
+          {
+            "field": "name",
+            "like": "[[parameters('resourceName')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]",
+        "details": {
+          "actionNames": [
+            "delete"
+          ]
+        }
+      }
+    }
+  }
+}
