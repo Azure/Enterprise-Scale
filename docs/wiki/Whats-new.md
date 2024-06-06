@@ -47,9 +47,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### June 2024
 
-#### Tooling
+#### Policy
 
-- Added new custom Policy that provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA. Assigned at the Platform Management it blocks delete calls using deny action effect.
+- Added new custom policy [Do not allow deletion of specified resource and resource type](https://www.azadvertizer.net/azpolicyadvertizer/DenyAction-DeleteResources.html) that provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA. Assigned at the Platform Management Group, it blocks delete calls using the deny action effect.
 
 ### 🆕 AMA Updates
 
