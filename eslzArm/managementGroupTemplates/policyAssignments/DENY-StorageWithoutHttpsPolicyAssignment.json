@@ -9,6 +9,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -19,18 +23,28 @@
             "storageHttps": "Deny-Storage-http",
             "description": "Audit requirement of Secure transfer in your storage account. Secure transfer is an option that forces your storage account to accept requests only from secure connections (HTTPS). Use of HTTPS ensures authentication between the server and the service and protects data in transit from network layer attacks such as man-in-the-middle, eavesdropping, and session-hijacking",
             "displayName": "Secure transfer to storage accounts should be enabled"
+        },
+        "nonComplianceMessage": {
+            "message": "Secure transfer to storage accounts {enforcementMode} be enabled.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').storageHttps]",
             "properties": {
                 "description": "[variables('policyAssignmentNames').description]",
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').storageHttps]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "effect": {
                         "value": "Deny"

@@ -1,0 +1,792 @@
+{
+    "name": "Enforce-Guardrails-KeyVault",
+    "type": "Microsoft.Authorization/policySetDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "displayName": "Enforce recommended guardrails for Azure Key Vault",
+        "description": "Enforce recommended guardrails for Azure Key Vault.",
+        "metadata": {
+            "version": "2.0.0",
+            "category": "Key Vault",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effectKvSoftDelete": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny"
+            },
+            "effectKvPurgeProtection": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny"
+            },
+            "effectKvSecretsExpire": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "effectKvKeysExpire": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "effectKvFirewallEnabled": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "effectKvCertLifetime": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "maximumCertLifePercentageLife": {
+                "type": "Integer",
+                "metadata": {
+                    "displayName": "The maximum lifetime percentage",
+                    "description": "Enter the percentage of lifetime of the certificate when you want to trigger the policy action. For example, to trigger a policy action at 80% of the certificate's valid life, enter '80'."
+                },
+                "defaultValue": 80
+            },
+            "minimumCertLifeDaysBeforeExpiry": {
+                "type": "Integer",
+                "metadata": {
+                    "displayName": "The minimum days before expiry",
+                    "description": "Enter the days before expiration of the certificate when you want to trigger the policy action. For example, to trigger a policy action 90 days before the certificate's expiration, enter '90'."
+                },
+                "defaultValue": 90
+            },
+            "effectKvKeysLifetime": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "minimumKeysLifeDaysBeforeExpiry": {
+                "type": "Integer",
+                "metadata": {
+                    "displayName": "The minimum days before expiry",
+                    "description": "Enter the days before expiration of the certificate when you want to trigger the policy action. For example, to trigger a policy action 90 days before the certificate's expiration, enter '90'."
+                },
+                "defaultValue": 90
+            },
+            "effectKvSecretsLifetime": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "minimumSecretsLifeDaysBeforeExpiry": {
+                "type": "Integer",
+                "metadata": {
+                    "displayName": "The minimum days before expiry",
+                    "description": "Enter the days before expiration of the certificate when you want to trigger the policy action. For example, to trigger a policy action 90 days before the certificate's expiration, enter '90'."
+                },
+                "defaultValue": 90
+            },
+            "keyVaultCheckMinimumRSACertificateSize": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ]
+            },
+            "keyVaultMinimumRSACertificateSizeValue": {
+                "type": "integer",
+                "defaultValue": 2048,
+                "allowedValues": [
+                    2048,
+                    3072,
+                    4096
+                ]
+            },
+            "keyVaultManagedHsmCheckMinimumRSAKeySize": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultManagedHsmMinimumRSAKeySizeValue": {
+                "type": "integer",
+                "defaultValue": 2048,
+                "allowedValues": [
+                    2048,
+                    3072,
+                    4096
+                ]
+            },
+            "keyVaultCheckMinimumRSAKeySize": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultMinimumRSAKeySizeValue": {
+                "type": "integer",
+                "defaultValue": 2048,
+                "allowedValues": [
+                    2048,
+                    3072,
+                    4096
+                ]
+            },
+            "keyVaultArmRbac": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultHmsPurgeProtection": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultCertificatesPeriod": {
+                "type": "string",
+                "defaultValue": "Disabled",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultCertValidPeriod": {
+                "type": "integer",
+                "defaultValue": 12
+            },
+            "keyVaultHmsKeysExpiration": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keysValidPeriod": {
+                "type": "string",
+                "defaultValue": "Disabled",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keysValidityInDays": {
+                "type": "integer",
+                "defaultValue": 90
+            },
+            "secretsValidPeriod": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "secretsValidityInDays": {
+                "type": "integer",
+                "defaultValue": 90
+            },
+            "keyVaultCertKeyTypes": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ]
+            },
+            "keyVaultEllipticCurve": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ]
+            },
+            "keyVaultCryptographicType": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keysActive": {
+                "type": "string",
+                "defaultValue": "Disabled",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keysActiveInDays": {
+                "type": "integer",
+                "defaultValue": 90
+            },
+            "keysCurveNames": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "secretsActiveInDays": {
+                "type": "integer",
+                "defaultValue": 90
+            },
+            "secretsActive": {
+                "type": "string",
+                "defaultValue": "Disabled",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultSecretContentType": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultNonIntegratedCa": {
+                "type": "string",
+                "defaultValue": "Disabled",
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ]
+            },
+            "keyVaultNonIntegratedCaValue": {
+                "type": "string",
+                "defaultValue": "",
+                "metadata": {
+                    "displayName": "The common name of the certificate authority",
+                    "description": "The common name (CN) of the Certificate Authority (CA) provider. For example, for an issuer CN = Contoso, OU = .., DC = .., you can specify Contoso"
+                }
+            },
+            "keyVaultIntegratedCa": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ]
+            },
+            "keyVaultIntegratedCaValue": {
+                "type": "array",
+                "defaultValue": [
+                    "DigiCert",
+                    "GlobalSign"
+                ]
+            },
+            "keyVaultHsmMinimumDaysBeforeExpiration": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultHsmMinimumDaysBeforeExpirationValue": {
+                "type": "integer",
+                "defaultValue": 90
+            },
+            "keyVaultHmsCurveNames": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ]
+            },
+            "keyVaultHmsCurveNamesValue": {
+                "type": "array",
+                "defaultValue": [
+                    "P-256",
+                    "P-256K",
+                    "P-384",
+                    "P-521"
+                ]
+            },
+            "keyVaultCertificateNotExpireWithinSpecifiedNumberOfDays": {
+                "type": "string",
+                "defaultValue": "Deny",
+                "allowedValues": [
+                    "audit",
+                    "Audit",
+                    "deny",
+                    "Deny",
+                    "disabled",
+                    "Disabled"
+                ]
+            },
+            "keyVaultCertificateNotExpireWithinSpecifiedNumberOfDaysValue": {
+                "type": "integer",
+                "defaultValue": 90
+            }
+        },
+        "policyDefinitions": [
+            {
+                "policyDefinitionReferenceId": "KvSoftDelete",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1e66c121-a66a-4b1f-9b83-0fd99bf0fc2d",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvSoftDelete')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvPurgeProtection",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0b60c0b2-2dc2-4e1c-b5c9-abbed971de53",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvPurgeProtection')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvSecretsExpire",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/98728c90-32c7-4049-8429-847dc0f4fe37",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvSecretsExpire')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvKeysExpire",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/152b15f7-8e1f-4c1f-ab71-8c010ba5dbc0",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvKeysExpire')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvFirewallEnabled",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/55615ac9-af46-4a59-874e-391cc3dfb490",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvFirewallEnabled')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvCertLifetime",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/12ef42cb-9903-4e39-9c26-422d29570417",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvCertLifetime')]"
+                    },
+                    "maximumPercentageLife": {
+                        "value": "[[parameters('maximumCertLifePercentageLife')]"
+                    },
+                    "minimumDaysBeforeExpiry": {
+                        "value": "[[parameters('minimumCertLifeDaysBeforeExpiry')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvKeysLifetime",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/5ff38825-c5d8-47c5-b70e-069a21955146",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvKeysLifetime')]"
+                    },
+                    "minimumDaysBeforeExpiration": {
+                        "value": "[[parameters('minimumKeysLifeDaysBeforeExpiry')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionReferenceId": "KvSecretsLifetime",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b0eb591a-5e70-4534-a8bf-04b9c489584a",
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('effectKvSecretsLifetime')]"
+                    },
+                    "minimumDaysBeforeExpiration": {
+                        "value": "[[parameters('minimumSecretsLifeDaysBeforeExpiry')]"
+                    }
+                },
+                "groupNames": []
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cee51871-e572-4576-855c-047c820360f0",
+                "policyDefinitionReferenceId": "Deny-KV-RSA-Keys-without-MinCertSize",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultCheckMinimumRSACertificateSize')]"
+                    },
+                    "minimumRSAKeySize": {
+                        "value": "[[parameters('keyVaultMinimumRSACertificateSizeValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/86810a98-8e91-4a44-8386-ec66d0de5d57",
+                "policyDefinitionReferenceId": "Deny-keyVaultManagedHsm-RSA-Keys-without-MinKeySize",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultManagedHsmCheckMinimumRSAKeySize')]"
+                    },
+                    "minimumRSAKeySize": {
+                        "value": "[[parameters('keyVaultManagedHsmMinimumRSAKeySizeValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/82067dbb-e53b-4e06-b631-546d197452d9",
+                "policyDefinitionReferenceId": "Deny-KV-RSA-Keys-without-MinKeySize",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultCheckMinimumRSAKeySize')]"
+                    },
+                    "minimumRSAKeySize": {
+                        "value": "[[parameters('keyVaultMinimumRSAKeySizeValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/12d4fa5e-1f9f-4c21-97a9-b99b3c6611b5",
+                "policyDefinitionReferenceId": "Deny-KV-without-ArmRbac",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultArmRbac')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c39ba22d-4428-4149-b981-70acb31fc383",
+                "policyDefinitionReferenceId": "Deny-KV-Hms-PurgeProtection",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultHmsPurgeProtection')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0a075868-4c26-42ef-914c-5bc007359560",
+                "policyDefinitionReferenceId": "Deny-KV-Cert-Period",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultCertificatesPeriod')]"
+                    },
+                    "maximumValidityInMonths": {
+                        "value": "[[parameters('keyVaultCertValidPeriod')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1d478a74-21ba-4b9f-9d8f-8e6fced0eec5",
+                "policyDefinitionReferenceId": "Deny-KV-Hms-Key-Expire",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultHmsKeysExpiration')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/49a22571-d204-4c91-a7b6-09b1a586fbc9",
+                "policyDefinitionReferenceId": "Deny-KV-Keys-Expire",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keysValidPeriod')]"
+                    },
+                    "maximumValidityInDays": {
+                        "value": "[[parameters('keysValidityInDays')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/342e8053-e12e-4c44-be01-c3c2f318400f",
+                "policyDefinitionReferenceId": "Deny-KV-Secrets-ValidityDays",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('secretsValidPeriod')]"
+                    },
+                    "maximumValidityInDays": {
+                        "value": "[[parameters('secretsValidityInDays')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1151cede-290b-4ba0-8b38-0ad145ac888f",
+                "policyDefinitionReferenceId": "Deny-KV-Key-Types",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultCertKeyTypes')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bd78111f-4953-4367-9fd5-7e08808b54bf",
+                "policyDefinitionReferenceId": "Deny-KV-Elliptic-Curve",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultEllipticCurve')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/75c4f823-d65c-4f29-a733-01d0077fdbcb",
+                "policyDefinitionReferenceId": "Deny-KV-Cryptographic-Type",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultCryptographicType')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c26e4b24-cf98-4c67-b48b-5a25c4c69eb9",
+                "policyDefinitionReferenceId": "Deny-KV-Key-Active",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keysActive')]"
+                    },
+                    "maximumValidityInDays": {
+                        "value": "[[parameters('keysActiveInDays')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ff25f3c8-b739-4538-9d07-3d6d25cfb255",
+                "policyDefinitionReferenceId": "Deny-KV-Curve-Names",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keysCurveNames')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e8d99835-8a06-45ae-a8e0-87a91941ccfe",
+                "policyDefinitionReferenceId": "Deny-KV-Secret-ActiveDays",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('secretsActive')]"
+                    },
+                    "maximumValidityInDays": {
+                        "value": "[[parameters('secretsActiveInDays')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/75262d3e-ba4a-4f43-85f8-9f72c090e5e3",
+                "policyDefinitionReferenceId": "Deny-Kv-Secret-Content-Type",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultSecretContentType')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a22f4a40-01d3-4c7d-8071-da157eeff341",
+                "policyDefinitionReferenceId": "Deny-Kv-Non-Integrated-Ca",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultNonIntegratedCa')]"
+                    },
+                    "caCommonName": {
+                        "value": "[[parameters('keyVaultNonIntegratedCaValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/8e826246-c976-48f6-b03e-619bb92b3d82",
+                "policyDefinitionReferenceId": "Deny-Kv-Integrated-Ca",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultIntegratedCa')]"
+                    },
+                    "allowedCAs": {
+                        "value": "[[parameters('keyVaultIntegratedCaValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ad27588c-0198-4c84-81ef-08efd0274653",
+                "policyDefinitionReferenceId": "Deny-Kv-Hsm-MinimumDays-Before-Expiration",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultHsmMinimumDaysBeforeExpiration')]"
+                    },
+                    "minimumDaysBeforeExpiration": {
+                        "value": "[[parameters('keyVaultHsmMinimumDaysBeforeExpirationValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e58fd0c1-feac-4d12-92db-0a7e9421f53e",
+                "policyDefinitionReferenceId": "Deny-Kv-Hsm-Curve-Names",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultHmsCurveNames')]"
+                    },
+                    "allowedECNames": {
+                        "value": "[[parameters('keyVaultHmsCurveNamesValue')]"
+                    }
+                }
+            },
+            {
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f772fb64-8e40-40ad-87bc-7706e1949427",
+                "policyDefinitionReferenceId": "Deny-Kv-Cert-Expiration-Within-Specific-Number-Days",
+                "groupNames": [],
+                "parameters": {
+                    "effect": {
+                        "value": "[[parameters('keyVaultCertificateNotExpireWithinSpecifiedNumberOfDays')]"
+                    },
+                    "daysToExpire": {
+                        "value": "[[parameters('keyVaultCertificateNotExpireWithinSpecifiedNumberOfDaysValue')]"
+                    }
+                }
+            }
+        ],
+        "policyDefinitionGroups": null
+    }
+}

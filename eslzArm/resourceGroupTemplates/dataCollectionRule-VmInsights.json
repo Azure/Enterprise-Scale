@@ -1,0 +1,108 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "WorkspaceResourceId": {
+            "type": "String",
+            "metadata": {
+                "description": "Workspace Resource ID."
+            }
+        },
+        "WorkspaceLocation": {
+            "type": "String",
+            "metadata": {
+                "description": "Workspace Location."
+            }
+        },
+        "userGivenDcrName": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Name of the Data Collection Rule(DCR)",
+                "description": "This is the name of the Data Collection Rule(DCR) for VM Insights."
+            },
+            "defaultValue": "dcr-vminsights-prod"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('userGivenDcrName')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Insights/dataCollectionRules",
+                            "apiVersion": "2021-04-01",
+                            "name": "[parameters('userGivenDcrName')]",
+                            "location": "[parameters('WorkspaceLocation')]",
+                            "properties": {
+                                "description": "Data collection rule for VM Insights.",
+                                "dataSources": {
+                                    "performanceCounters": [
+                                        {
+                                            "name": "VMInsightsPerfCounters",
+                                            "streams": [
+                                                "Microsoft-InsightsMetrics"
+                                            ],
+                                            "scheduledTransferPeriod": "PT1M",
+                                            "samplingFrequencyInSeconds": 60,
+                                            "counterSpecifiers": [
+                                                "\\VmInsights\\DetailedMetrics"
+                                            ]
+                                        }
+                                    ],
+                                    "extensions": [
+                                        {
+                                            "streams": [
+                                                "Microsoft-ServiceMap"
+                                            ],
+                                            "extensionName": "DependencyAgent",
+                                            "extensionSettings": {},
+                                            "name": "DependencyAgentDataSource"
+                                        }
+                                    ]
+                                },
+                                "destinations": {
+                                    "logAnalytics": [
+                                        {
+                                            "workspaceResourceId": "[parameters('WorkspaceResourceId')]",
+                                            "name": "VMInsightsPerf-Logs-Dest"
+                                        }
+                                    ]
+                                },
+                                "dataFlows": [
+                                    {
+                                        "streams": [
+                                            "Microsoft-InsightsMetrics"
+                                        ],
+                                        "destinations": [
+                                            "VMInsightsPerf-Logs-Dest"
+                                        ]
+                                    },
+                                    {
+                                        "streams": [
+                                            "Microsoft-ServiceMap"
+                                        ],
+                                        "destinations": [
+                                            "VMInsightsPerf-Logs-Dest"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[split(parameters('WorkspaceResourceId'),'/')[2]]",
+            "resourceGroup": "[split(parameters('WorkspaceResourceId'),'/')[4]]"
+        }
+    ],
+    "outputs": {}
+}

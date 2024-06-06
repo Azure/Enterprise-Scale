@@ -71,6 +71,10 @@ function ProcessObjectByResourceType {
             }
             "microsoft.authorization/policysetdefinitions" {
                 $outputObject = [PolicySetDefinition]::new($ResourceObject)
+                # Workaround for policySetDefinitions that only have a single policyDefinition. PowerShell tires to convert to an object in that scenario.
+                if($outputObject.properties.policyDefinitions.GetType().ToString() -eq "PolicySetDefinitionPropertiesPolicyDefinitions") {
+                    $outputObject.properties.policyDefinitions = @($outputObject.properties.policyDefinitions)
+                }
             }
             "microsoft.authorization/roleassignments" {
                 $outputObject = [RoleAssignment]::new($ResourceObject)
@@ -691,7 +695,7 @@ function Invoke-RemoveOrphanedRoleAssignment {
             throw $getResponse.Content
         }
 
-        # Get a list of assigned principalId values and lookup against AAD
+        # Get a list of assigned principalId values and lookup against Microsoft Entra ID
         $principalsRequestUri = "https://graph.microsoft.com/v1.0/directoryObjects/microsoft.graph.getByIds"
         $principalsRequestBody = @{
             ids = $roleAssignments.properties.principalId
@@ -699,7 +703,7 @@ function Invoke-RemoveOrphanedRoleAssignment {
         $principalsResponse = Invoke-AzRestMethod -Method "POST" -Uri $principalsRequestUri -Payload $principalsRequestBody -WhatIf:$false
         $principalIds = ($principalsResponse.Content | ConvertFrom-Json).value.id
 
-        # Find all Role Assignments where the principalId is not found in AAD
+        # Find all Role Assignments where the principalId is not found in Microsoft Entra ID
         $orphanedRoleAssignments = $roleAssignments | Where-Object {
             ($_.properties.scope -eq "/subscriptions/$($subId)") -and
             ($_.properties.principalId -notin $principalIds)

@@ -1,0 +1,148 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "dataCollectionRuleResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the Data collection rule"
+            }
+        },
+        "enableProcessesAndDependencies": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Enable processes and dependencies for the VMs"
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "scope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Scope",
+                "description": "Scope of the policy assignment"
+            }
+        },
+        "platformScope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Platform Scope",
+                "description": "Scope of the reader role assignment"
+            },
+            "defaultValue": "[parameters('scope')]"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "vmHybridMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/2b00397d-c309-49c4-aa5a-f0b2c5bc6321"
+        },
+        "policyAssignmentNames": {
+            "vmHybridMonitoring": "Deploy-vmHybr-Monitoring",
+            "description": "Enable Azure Monitor for Hybrid Virtual Machines in the specified scope (Management group, Subscription or resource group).",
+            "displayName": "Enable Azure Monitor for Hybrid Virtual Machines"
+        },
+        "nonComplianceMessage": {
+            "message": "Azure Monitor {enforcementMode} be enabled for Hybrid Virtual Machines.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+        "rbacReader": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+        "roleAssignmentNames": {
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmHybridMonitoring,'-1',parameters('scope')))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmHybridMonitoring,'-2',parameters('scope')))]",
+            "roleAssignmentNameReader": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmHybridMonitoring,'-3',parameters('scope')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').vmHybridMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').vmHybridMonitoring]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "dcrResourceId": {
+                        "value": "[parameters('dataCollectionRuleResourceId')]"
+                    },
+                    "enableProcessesAndDependencies": {
+                        "value": "[parameters('enableProcessesAndDependencies')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmHybridMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmHybridMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmHybridMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmHybridMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameReader]",
+            "scope": "[parameters('platformScope')]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmHybridMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacReader'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmHybridMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

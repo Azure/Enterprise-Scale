@@ -1,0 +1,62 @@
+{
+    "name": "Deny-AppService-without-BYOC",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "App Service certificates must be stored in Key Vault",
+        "description": "App Service (including Logic apps and Function apps) must use certificates stored in Key Vault",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "App Service",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Web/certificates"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "field": "Microsoft.Web/certificates/keyVaultId",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "Microsoft.Web/certificates/keyVaultSecretName",
+                                "exists": "false"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

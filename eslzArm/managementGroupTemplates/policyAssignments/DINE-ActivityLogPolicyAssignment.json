@@ -21,6 +21,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -32,15 +36,22 @@
             "description": "Deploys the diagnostic settings for Azure Activity to stream subscriptions audit logs to a Log Analytics workspace to monitor subscription-level events",
             "displayName": "Configure Azure Activity logs to stream to specified Log Analytics workspace"
         },
-        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+        "nonComplianceMessage": {
+            "message": "Azure Activity logs {enforcementMode} be configured to stream to specified Log Analytics workspace.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+        "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
         "roleAssignmentNames": {
-            "deployAzureActivityLog": "[guid(concat(parameters('topLevelManagementGroupPrefix'),variables('policyAssignmentNames').azureActivityLog))]"
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureActivityLog,'-1'))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureActivityLog,'-2'))]"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').azureActivityLog]",
             "location": "[deployment().location]",
             "identity": {
@@ -51,6 +62,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployAzureActivityLog]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "logAnalytics": {
                         "value": "[parameters('logAnalyticsResourceId')]"
@@ -64,13 +80,26 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deployAzureActivityLog]",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').azureActivityLog]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureActivityLog), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').azureActivityLog]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureActivityLog), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }

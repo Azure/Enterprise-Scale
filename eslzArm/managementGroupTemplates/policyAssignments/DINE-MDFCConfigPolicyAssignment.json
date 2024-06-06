@@ -16,6 +16,10 @@
             ],
             "defaultValue": "Default"
         },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
         "logAnalyticsResourceId": {
             "type": "string",
             "metadata": {
@@ -29,6 +33,14 @@
             }
         },
         "enableAscForServers": {
+            "type": "string",
+            "allowedValues": [
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"            
+        },
+        "enableAscForServersVulnerabilityAssessments": {
             "type": "string",
             "allowedValues": [
                 "Disabled",
@@ -92,14 +104,6 @@
             ],
             "defaultValue": "Disabled"            
         },
-        "enableAscForDns": {
-            "type": "string",
-            "allowedValues": [
-                "Disabled",
-                "DeployIfNotExists"
-            ],
-            "defaultValue": "Disabled"            
-        },
         "enableAscForOssDb": {
             "type": "string",  
             "allowedValues": [
@@ -115,16 +119,29 @@
                 "DeployIfNotExists"
             ],
             "defaultValue": "Disabled"
+        },
+        "enableAscForCspm": {
+            "type": "string",  
+            "allowedValues": [
+                "Disabled",
+                "DeployIfNotExists"
+            ],
+            "defaultValue": "Disabled"
         }
     },
     "variables": {
         "policyDefinitions": {
-            "deployAzureSecurity": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config')]"
+            "deployAzureSecurity": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config_20240319')]"
         },
         "policyAssignmentNames": {
-            "azureSecurity": "Deploy-MDFC-Config",
+            "azureSecurity": "Deploy-MDFC-Config-H224",
             "description": "Deploy Microsoft Defender for Cloud and Security Contacts",
             "displayName": "Deploy Microsoft Defender for Cloud configuration"
+        },
+        "nonComplianceMessage": {
+            "message": "Microsoft Defender for Cloud and Security Contacts {enforcementMode} be deployed.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
@@ -134,7 +151,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').azureSecurity]",
             "location": "[deployment().location]",
             "identity": {
@@ -145,6 +162,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployAzureSecurity]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "emailSecurityContact": {
                         "value": "[parameters('emailContactAsc')]"
@@ -160,6 +182,9 @@
                     },
                     "enableAscForServers": {
                         "value": "[parameters('enableAscForServers')]"
+                    },
+                    "enableAscForServersVulnerabilityAssessments": {
+                        "value": "[parameters('enableAscForServersVulnerabilityAssessments')]"
                     },
                     "enableAscForSql": {
                         "value": "[parameters('enableAscForSql')]"
@@ -182,14 +207,14 @@
                     "enableAscForArm": {
                         "value": "[parameters('enableAscForArm')]"
                     },
-                    "enableAscForDns": {
-                        "value": "[parameters('enableAscForDns')]"
-                    },
                     "enableAscForOssDb": {
                         "value": "[parameters('enableAscForOssDb')]"
                     },
                     "enableAscForCosmosDbs": {
                         "value": "[parameters('enableAscForCosmosDbs')]"
+                    },
+                    "enableAscForCspm": {
+                        "value": "[parameters('enableAscForCspm')]"
                     }
                 }
             }

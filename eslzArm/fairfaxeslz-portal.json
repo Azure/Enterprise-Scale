@@ -108,6 +108,30 @@
                                 }
                             ],
                             "visible": "[equals(steps('lzSettings').subOrgsOption, 'Single')]"
+                        },
+                        {
+                            "name": "denyClassicResources",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Prevent the deployment of classic resources",
+                            "defaultValue": "Yes (recommended)",
+                            "visible": true,
+                            "toolTip": "If 'Yes' is selected then Azure Policy will prevent deployment of classic resources.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "Audit only",
+                                        "value": "Audit"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
                         }
                     ]
                 },
@@ -273,26 +297,6 @@
                             "name": "esVmInsights",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy VM Insights solution",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": "[equals(steps('esGoalState').esLogAnalytics,'Yes')]"
-                        },
-                        {
-                            "name": "esServiceMap",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Deploy Service Map solution",
                             "defaultValue": "Yes (recommended)",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for management, ARM will deploy resources and enable them for continous compliance",
                             "constraints": {
@@ -557,162 +561,6 @@
                     ]
                 },
                 {
-                    "name": "lzDevOps",
-                    "label": "Platform DevOps and automation",
-                    "subLabel": {},
-                    "bladeTitle": "lz Dev Ops",
-                    "elements": [
-                        {
-                            "name": "info",
-                            "type": "Microsoft.Common.InfoBox",
-                            "visible": "[or(not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)), not(empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]",
-                            "options": {
-                                "text": "Azure Landing Zones provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines.",
-                                "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
-                                "style": "Info"
-                            }
-                        },
-                        {
-                            "name": "correction",
-                            "type": "Microsoft.Common.InfoBox",
-                            "visible": "[and(equals(steps('esGoalState').esLogAnalytics, 'No'), not(equals(steps('lzSettings').subOrgsOption, 'Single')))]",
-                            "options": {
-                                "text": "Azure Landing Zones provides an integrated CICD pipeline via AzOps that can be used with either GitHub Actions or Azure DevOps pipelines, but requires a dedicated subscription for platform management in the previous step. Please add a subscription or continue without setting up the CICD integration.",
-                                "uri": "https://github.com/azure/azops-accelerator/wiki/introduction",
-                                "style": "Warning"
-                            }
-                        },
-                        {
-                            "name": "cicdOption",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Deploy integrated CICD pipeline?",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ],
-                                "required": true
-                            },
-                            "visible": "[or(not(empty(steps('esGoalState').esMgmtSubSection.esMgmtSub)), not(empty(steps('lzSettings').esSingleSubSection.esSingleSub)))]"
-                        },
-                        {
-                            "name": "Instructions",
-                            "type": "Microsoft.Common.TextBlock",
-                            "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]",
-                            "options": {
-                                "text": "Provide the credentials to initialize the repository with the ARM templates for Azure Landing Zones.",
-                                "link": {
-                                    "label": "Learn more",
-                                    "uri": "https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization"
-                                }
-                            }
-                        },
-                        {
-                            "name": "optionsGroup1",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Select CICD option",
-                            "defaultValue": "GitHub Actions",
-                            "toolTip": "Azure Landing Zones will provide options for both GitHub Actions and Azure DevOps pipelines. For now, only GitHub Actions is available",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "GitHub Actions",
-                                        "value": "actions"
-                                    }
-                                ],
-                                "required": true
-                            },
-                            "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]"
-                        },
-                        {
-                            "name": "esGit",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "GitHub organization or username",
-                            "toolTip": "Provide Git org/username.",
-                            "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]",
-                            "defaultValue": "",
-                            "constraints": {
-                                "required": true,
-                                "regex": "^[a-z0-9A-Z-]{1,39}$",
-                                "validationMessage": "The GitHub org/username must be 1-39 characters."
-                            }
-                        },
-                        {
-                            "name": "esGitRepoName",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "New GitHub repository name",
-                            "toolTip": "Provide a name for the new repository that will be created",
-                            "defaultValue": "",
-                            "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]",
-                            "placeholder": "",
-                            "constraints": {
-                                "required": true,
-                                "regex": "^[a-z0-9A-Z-]{1,100}$",
-                                "validationMessage": "The repository name must be 1-100 characters."
-                            }
-                        },
-                        {
-                            "name": "esPaToken",
-                            "type": "Microsoft.Common.PasswordBox",
-                            "label": {
-                                "password": "GitHub personal access token",
-                                "confirmPassword": "Confirm PA Token"
-                            },
-                            "toolTip": "Provide the personal access token to access your GitHub account or organization. For more information see this link: https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token",
-                            "constraints": {
-                                "required": true,
-                                "validationMessage": "Password must be at least 8 characters long, contain only numbers and letters"
-                            },
-                            "options": {
-                                "hideConfirmation": true
-                            },
-                            "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]"
-                        },
-                        {
-                            "name": "spnSection",
-                            "type": "Microsoft.Common.Section",
-                            "label": "",
-                            "elements": [
-                                {
-                                    "name": "esServicePrincipal",
-                                    "type": "Microsoft.Common.ServicePrincipalSelector",
-                                    "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]",
-                                    "label": {
-                                        "password": "Password",
-                                        "certificateThumbprint": "Certificate thumbprint",
-                                        "authenticationType": "Authentication Type",
-                                        "sectionHeader": "Service Principal"
-                                    },
-                                    "toolTip": {
-                                        "password": "Provide the application secret as it will be used to authenticate with Azure AD",
-                                        "certificateThumbprint": "Certificate thumbprint",
-                                        "authenticationType": "Authentication Type"
-                                    },
-                                    "defaultValue": {
-                                        "principalId": "",
-                                        "name": ""
-                                    },
-                                    "constraints": {
-                                        "required": true
-                                    },
-                                    "options": {
-                                        "hideCertificate": true
-                                    }
-                                }
-                            ],
-                            "visible": "[equals(steps('lzDevOps').cicdOption,'Yes')]"
-                        }
-                    ]
-                },
-                {
                     "name": "esConnectivityGoalState",
                     "label": "Network topology and connectivity",
                     "subLabel": {
@@ -910,7 +758,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy zone redundant or regional VPN Gateway",
                             "defaultValue": "Zone redundant (recommended)",
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Virtual Gateway to the selected region and availability zones.",
                             "constraints": {
                                 "allowedValues": [
@@ -934,7 +782,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation)))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation)))]",
                             "toolTip": "Select the required SKU for the VPN gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -970,7 +818,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), equals(steps('esConnectivityGoalState').esGwRegionalOrAz, 'Zone') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), equals(steps('esConnectivityGoalState').esGwRegionalOrAz, 'Zone') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation))]",
                             "toolTip": "Select the required SKU for the VPN gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1006,7 +854,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), equals(steps('esConnectivityGoalState').esGwRegionalOrAz, 'Regional') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esVpnGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esVpnGw,'Yes'), equals(steps('esConnectivityGoalState').esGwRegionalOrAz, 'Regional') ,contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation))]",
                             "toolTip": "Select the required SKU for the VPN gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1207,7 +1055,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy zone redundant or regional ExpressRoute Gateway",
                             "defaultValue": "Zone redundant (recommended)",
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))),equals(steps('esConnectivityGoalState').esErGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))),equals(steps('esConnectivityGoalState').esErGw,'Yes'),contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Express Route Gateway to the selected region and availability zones.",
                             "constraints": {
                                 "allowedValues": [
@@ -1231,7 +1079,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))),equals(steps('esConnectivityGoalState').esErGw,'Yes'), equals(steps('esConnectivityGoalState').esErRegionalOrAz, 'Zone'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))),equals(steps('esConnectivityGoalState').esErGw,'Yes'), equals(steps('esConnectivityGoalState').esErRegionalOrAz, 'Zone'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation))]",
                             "toolTip": "Select the required SKU for the Express Route gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1262,7 +1110,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esErGw,'Yes'), equals(steps('esConnectivityGoalState').esErRegionalOrAz, 'Regional'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))), equals(steps('esConnectivityGoalState').esErGw,'Yes'), equals(steps('esConnectivityGoalState').esErRegionalOrAz, 'Regional'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation))]",
                             "toolTip": "Select the required SKU for the Express Route gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1293,7 +1141,7 @@
                             "selectAll": false,
                             "filter": false,
                             "multiLine": true,
-                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))),equals(steps('esConnectivityGoalState').esErGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation)))]",
+                            "visible": "[and(and(equals(steps('esConnectivityGoalState').esErGw, 'Yes'), not(equals(steps('esConnectivityGoalState').esHub, 'vwan'))),equals(steps('esConnectivityGoalState').esErGw,'Yes'), not(contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation)))]",
                             "toolTip": "Select the required SKU for the Express Route gateway.",
                             "constraints": {
                                 "allowedValues": [
@@ -1455,7 +1303,7 @@
                             "multiselect": true,
                             "selectAll": true,
                             "filter": true,
-                            "visible": "[if(or(equals(steps('esConnectivityGoalState').esHub, 'vhub'), equals(steps('esConnectivityGoalState').esHub, 'vwan')), and(equals(steps('esConnectivityGoalState').esAzFw,'Yes'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast', ','), steps('esConnectivityGoalState').esNwLocation)), false)]",
+                            "visible": "[if(or(equals(steps('esConnectivityGoalState').esHub, 'vhub'), equals(steps('esConnectivityGoalState').esHub, 'vwan')), and(equals(steps('esConnectivityGoalState').esAzFw,'Yes'), contains(split('canadacentral,centralus,eastus,eastus2,southcentralus,westus2,francecentral,germanywestcentral,northeurope,westeurope,uksouth,southafricanorth,japaneast,southeastasia,australiaeast,italynorth', ','), steps('esConnectivityGoalState').esNwLocation)), false)]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Firewall to the selected region and availability zones.",
                             "constraints": {
                                 "allowedValues": [
@@ -2338,7 +2186,6 @@
                 "enableChangeTracking": "[steps('esGoalState').esChangeTracking]",
                 "enableUpdateMgmt": "[steps('esGoalState').esUpdateMgmt]",
                 "enableVmInsights": "[steps('esGoalState').esVmInsights]",
-                "enableServiceMap": "[steps('esGoalState').esServiceMap]",
                 "enableSqlAssessment": "[steps('esGoalState').esSqlAssessment]",
                 "enableSqlVulnerabilityAssessment": "[steps('esGoalState').esSqlVulnerabilityAssessment]",
                 "enableSqlAdvancedThreatProtection": "[steps('esGoalState').esSqlAdvancedThreatProtection]",
@@ -2366,14 +2213,6 @@
                 "vpnOrErZones": "[steps('esConnectivityGoalState').esGwRegionalOrAz]",
                 "firewallSku": "[steps('esConnectivityGoalState').esAzFwSku]",
                 "firewallZones": "[steps('esConnectivityGoalState').esFwAz]",
-                "paToken": "[steps('lzDevOps').esPaToken]",
-                "principalId": "[steps('lzDevOps').spnSection.esServicePrincipal.objectId]",
-                "principalSecret": "[steps('lzDevOps').spnSection.esServicePrincipal.password]",
-                "gitHubUserNameOrOrg": "[steps('lzDevOps').esGit]",
-                "appId": "[steps('lzDevOps').spnSection.esServicePrincipal.appId]",
-                "enableAzOps": "[steps('lzDevOps').cicdOption]",
-                "subscriptionId": "[steps('esGoalState').esMgmtSubSection.esMgmtSub.subscriptionId]",
-                "repositoryName": "[steps('lzDevOps').esGitRepoName]",
                 "gwRegionalOrAz": "[steps('esConnectivityGoalState').esGwRegionalOrAz]",
                 "gwAzSku": "[steps('esConnectivityGoalState').esGwAzSku]",
                 "gwRegionalSku": "[if(empty(steps('esConnectivityGoalState').esGwRegionalSku), steps('esConnectivityGoalState').esGwNoAzSku, steps('esConnectivityGoalState').esGwRegionalSku)]",
@@ -2381,6 +2220,7 @@
                 "erAzSku": "[steps('esConnectivityGoalState').esErAzSku]",
                 "erRegionalSku": "[if(empty(steps('esConnectivityGoalState').esErRegionalSku), steps('esConnectivityGoalState').esErNoAzSku, steps('esConnectivityGoalState').esErRegionalSku)]",
                 "singlePlatformSubscriptionId": "[steps('lzSettings').esSingleSubSection.esSingleSub.subscriptionId]",
+                "denyClassicResources": "[steps('lzSettings').denyClassicResources]",
                 "expressRouteScaleUnit": "[steps('esConnectivityGoalState').esVwanErScaleUnits]",
                 "vpnGateWayScaleUnit": "[steps('esConnectivityGoalState').esVwanGwScaleUnits]",
                 "enablePrivateDnsZones": "[steps('esConnectivityGoalState').esPrivateDns]",

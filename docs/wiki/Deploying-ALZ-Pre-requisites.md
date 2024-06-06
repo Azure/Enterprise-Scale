@@ -6,7 +6,7 @@ Enterprise-Scale can bootstrap an entire Azure tenant without any infrastructure
 
 This requires the following:
 
-*    A user that is Global Admin in the Azure Active Directory
+*    A user that is Global Admin in the Microsoft Entra ID
 
 *   Elevation of privileges of this user which grants him/her the “User Access Administrator” permission at the tenant root scope
 
@@ -16,7 +16,7 @@ This requires the following:
 
 1.1  Sign into the Azure portal as a user being Global Administrator
 
-1.2  Open Azure Active Directory
+1.2  Open Microsoft Entra ID
 
 1.3  Under *Manage*, select *Properties
 
@@ -54,3 +54,12 @@ New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
 ```
 
 > Please note: sometimes it can take up to 15 minutes for permission to propagate at tenant root scope. It is highly recommended that you log out and log back in to refresh the token before you proceed with the deployment.*
+
+### Azure Monitor Baseline Alerts prerequisites
+
+The Azure Monitor Baseline Alerts are deployed as part of the Enterprise-Scale deployment, and they require the following:
+
+1. For the policies to work, the following Azure resource providers, normally registered by default, must be registered on all subscriptions in scope:
+  - Microsoft.AlertsManagement
+  - Microsoft.Insights
+Please see [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider) for details on how to register a resource provider should you need to do so.

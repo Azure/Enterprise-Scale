@@ -1,0 +1,177 @@
+{
+  "name": "Deploy-MDFC-SQL-AMA",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "[Deprecated]: Configure SQL Virtual Machines to automatically install Azure Monitor Agent",
+    "description": "Policy is deprecated as the built-in policy now supports bringing your own UAMI and DCR. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/f91991d1-5383-4c95-8ee5-5ac423dd8bb1.html",
+    "metadata": {
+      "version": "1.0.0-deprecated",
+      "category": "Security Center",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "deprecated": true,
+      "supersededBy": "f91991d1-5383-4c95-8ee5-5ac423dd8bb1",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "DeployIfNotExists",
+          "Disabled"
+        ],
+        "defaultValue": "DeployIfNotExists"
+      },
+      "identityResourceGroup": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Identity Resource Group",
+          "description": "The name of the resource group created by the policy."
+        },
+        "defaultValue": ""
+      },
+      "userAssignedIdentityName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "User Assigned Managed Identity Name",
+          "description": "The name of the user assigned managed identity."
+        },
+        "defaultValue": ""
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Compute/virtualMachines"
+          },
+          {
+            "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+            "like": "Windows*"
+          },
+          {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoftsqlserver"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]",
+        "details": {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "evaluationDelay": "AfterProvisioning",
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+          ],
+          "name": "[[concat(field('fullName'), '/AzureMonitorWindowsAgent')]",
+          "existenceCondition": {
+            "allOf": [
+              {
+                "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                "equals": "AzureMonitorWindowsAgent"
+              },
+              {
+                "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                "equals": "Microsoft.Azure.Monitor"
+              },
+              {
+                "field": "Microsoft.Compute/virtualMachines/extensions/provisioningState",
+                "in": [
+                  "Succeeded",
+                  "Provisioning succeeded"
+                ]
+              }
+            ]
+          },
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "vmName": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "userAssignedManagedIdentity": {
+                    "type": "string"
+                  },
+                  "userAssignedIdentityName": {
+                    "type": "string"
+                  },
+                  "identityResourceGroup": {
+                    "type": "string"
+                  }
+                },
+                "variables": {
+                  "extensionName": "AzureMonitorWindowsAgent",
+                  "extensionPublisher": "Microsoft.Azure.Monitor",
+                  "extensionType": "AzureMonitorWindowsAgent",
+                  "extensionTypeHandlerVersion": "1.2"
+                },
+                "resources": [
+                  {
+                    "name": "[[concat(parameters('vmName'), '/', variables('extensionName'))]",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "location": "[[parameters('location')]",
+                    "tags": {
+                      "createdBy": "MicrosoftDefenderForSQL"
+                    },
+                    "apiVersion": "2023-03-01",
+                    "properties": {
+                      "publisher": "[[variables('extensionPublisher')]",
+                      "type": "[[variables('extensionType')]",
+                      "typeHandlerVersion": "[[variables('extensionTypeHandlerVersion')]",
+                      "autoUpgradeMinorVersion": true,
+                      "enableAutomaticUpgrade": true,
+                      "settings": {
+                        "authentication": {
+                          "managedIdentity": {
+                            "identifier-name": "mi_res_id",
+                            "identifier-value": "[[parameters('userAssignedManagedIdentity')]"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "parameters": {
+                "vmName": {
+                  "value": "[[field('name')]"
+                },
+                "location": {
+                  "value": "[[field('location')]"
+                },
+                "userAssignedManagedIdentity": {
+                  "value": "[[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', trim(parameters('identityResourceGroup')), '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', trim(parameters('userAssignedIdentityName')))]"
+                },
+                "userAssignedIdentityName": {
+                  "value": "[[parameters('userAssignedIdentityName')]"
+                },
+                "identityResourceGroup": {
+                  "value": "[[parameters('identityResourceGroup')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -21,26 +21,37 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
         "policyDefinitions": {
-            "deployResourceDiagnostics": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics')]"
-            },
-        "policyAssignmentNames": {
-            "resourceDiagnostics": "Deploy-Resource-Diag",
-            "description": "This policy set deploys the configurations of application Azure resources to forward diagnostic logs and metrics to an Azure Log Analytics workspace. See the list of policies of the services that are included",
-            "displayName": "Deploy Diagnostic Settings to Azure Services"
-            },
-        "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
-        "roleAssignmentNames": {
-            "deployResourceRiagnostics": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').resourceDiagnostics))]"
-            }
+            "deployResourceDiagnostics": "/providers/Microsoft.Authorization/policySetDefinitions/0884adba-2312-4468-abeb-5422caed1038"
         },
+        "policyAssignmentNames": {
+            "resourceDiagnostics": "Deploy-Diag-Logs",
+            "description": "Resource logs should be enabled to track activities and events that take place on your resources and give you visibility and insights into any changes that occur. This initiative deploys diagnostic setting using the allLogs category group to route logs to an Event Hub for all supported resources.",
+            "displayName": "Enable allLogs category group resource logging for supported resources to Log Analytics"
+        },
+        "nonComplianceMessage": {
+            "message": "Diagnostic settings {enforcementMode} be deployed to Azure services to forward logs to Log Analytics.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+        "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "roleAssignmentNames": {
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').resourceDiagnostics,'-1'))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').resourceDiagnostics,'-2'))]"
+        }
+    },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').resourceDiagnostics]",
             "location": "[deployment().location]",
             "identity": {
@@ -51,6 +62,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployResourceDiagnostics]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "logAnalytics": {
                         "value": "[parameters('logAnalyticsResourceId')]"
@@ -61,13 +77,26 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
-            "name": "[variables('roleAssignmentNames').deployResourceRiagnostics]",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
             "dependsOn": [
                 "[variables('policyAssignmentNames').resourceDiagnostics]"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacOwner'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').resourceDiagnostics), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').resourceDiagnostics]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').resourceDiagnostics), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }

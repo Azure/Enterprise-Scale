@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "DineAtpSqlDb": "/providers/Microsoft.Authorization/policySetDefinitions/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97"
+        },
+        "policyAssignmentNames": {
+            "DineAtpSqlDb": "Deploy-MDFC-SqlAtp",
+            "description": "Enable Azure Defender on your SQL Servers and SQL Managed Instances to detect anomalous activities indicating unusual and potentially harmful attempts to access or exploit databases.",
+            "displayName": "Configure Azure Defender to be enabled on SQL Servers and SQL Managed Instances"
+        },
+        "nonComplianceMessage": {
+            "message": "Azure Defender {enforcementMode} be enabled on SQL Servers and SQL Managed Instances.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacSqlSecurityManager": "056cd41c-7e88-42e1-933e-88ba6a50c9c3",
+        "roleAssignmentNames": {
+            "deployAtpSqlRoles": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').DineAtpSqlDb))]"
+            }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').DineAtpSqlDb]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').DineAtpSqlDb]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {}
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2019-04-01-preview",
+            "name": "[variables('roleAssignmentNames').deployAtpSqlRoles]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').DineAtpSqlDb]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacSqlSecurityManager'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').DineAtpSqlDb), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

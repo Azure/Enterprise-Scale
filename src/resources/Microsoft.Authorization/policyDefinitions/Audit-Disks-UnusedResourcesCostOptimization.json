@@ -1,0 +1,69 @@
+{
+    "name": "Audit-Disks-UnusedResourcesCostOptimization",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "displayName": "Unused Disks driving cost should be avoided",
+        "mode": "All",
+        "description": "Optimize cost by detecting unused but chargeable resources. Leverage this Policy definition as a cost control to reveal orphaned Disks that are driving cost.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Cost Optimization",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/disks"
+                    },
+                    {
+                        "field": "Microsoft.Compute/disks/diskState",
+                        "equals": "Unattached"
+                    },
+                    {
+                        "allof": [
+                            {
+                                "field": "name",
+                                "notlike": "*-ASRReplica"
+                            },
+                            {
+                                "field": "name",
+                                "notlike": "ms-asr-*"
+                            },
+                            {
+                                "field": "name",
+                                "notlike": "asrseeddisk-*"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

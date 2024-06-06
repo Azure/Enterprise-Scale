@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "WorkspaceResourceId": {
+            "type": "String",
+            "metadata": {
+                "description": "Workspace Resource ID."
+            }
+        },
+        "WorkspaceLocation": {
+            "type": "String",
+            "metadata": {
+                "description": "Workspace Location."
+            }
+        },
+        "userGivenDcrName": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Name of the Data Collection Rule(DCR)",
+                "description": "This is the name of the Data Collection Rule(DCR) for Defender for SQL."
+            },
+            "defaultValue": "dcr-defendersql-prod"
+        },
+        "enableCollectionOfSqlQueriesForSecurityResearch": {
+            "type": "Bool",
+            "metadata": {
+                "displayName": "Enable collection of SQL queries for security research",
+                "description": "Enable collection of SQL queries for security research"
+            },
+            "defaultValue": false
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('userGivenDcrName')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Insights/dataCollectionRules",
+                            "apiVersion": "2021-04-01",
+                            "name": "[parameters('userGivenDcrName')]",
+                            "location": "[parameters('WorkspaceLocation')]",
+                            "properties": {
+                                "description": "Data collection rule for Defender for SQL.",
+                                "dataSources": {
+                                    "extensions": [
+                                        {
+                                            "extensionName": "MicrosoftDefenderForSQL",
+                                            "name": "MicrosoftDefenderForSQL",
+                                            "streams": [
+                                                "Microsoft-DefenderForSqlAlerts",
+                                                "Microsoft-DefenderForSqlLogins",
+                                                "Microsoft-DefenderForSqlTelemetry",
+                                                "Microsoft-DefenderForSqlScanEvents",
+                                                "Microsoft-DefenderForSqlScanResults"
+                                            ],
+                                            "extensionSettings": {
+                                                "enableCollectionOfSqlQueriesForSecurityResearch": "[parameters('enableCollectionOfSqlQueriesForSecurityResearch')]"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "destinations": {
+                                    "logAnalytics": [
+                                        {
+                                            "workspaceResourceId": "[parameters('WorkspaceResourceId')]",
+                                            "name": "LogAnalyticsDest"
+                                        }
+                                    ]
+                                },
+                                "dataFlows": [
+                                    {
+                                        "streams": [
+                                            "Microsoft-DefenderForSqlAlerts",
+                                            "Microsoft-DefenderForSqlLogins",
+                                            "Microsoft-DefenderForSqlTelemetry",
+                                            "Microsoft-DefenderForSqlScanEvents",
+                                            "Microsoft-DefenderForSqlScanResults"
+                                        ],
+                                        "destinations": [
+                                            "LogAnalyticsDest"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[split(parameters('WorkspaceResourceId'),'/')[2]]",
+            "resourceGroup": "[split(parameters('WorkspaceResourceId'),'/')[4]]"
+        }
+    ],
+    "outputs": {}
+}

@@ -14,7 +14,11 @@
                 "Default",
                 "DoNotEnforce"
             ],
-            "defaultValue": "Default"
+            "defaultValue": "DoNotEnforce"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         },
         "retentionInDays": {
             "type": "string",
@@ -62,7 +66,12 @@
             "description": "Deploy resource group containing Log Analytics workspace and linked automation account to centralize logs and monitoring. The automation account is aprerequisite for solutions like Updates and Change Tracking.",
             "displayName": "Configure Log Analytics workspace and automation account to centralize logs and monitoring"
         },
-        "rbac": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "nonComplianceMessage": {
+            "message": "Log Analytics workspace and automation account {enforcementMode} be configured to centralize logs and monitoring.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
         "roleAssignmentNames": {
             "deployLogAnalytics": "[guid(concat(parameters('topLevelManagementGroupPrefix'), variables('policyAssignmentNames').logAnalytics))]"
         }
@@ -70,7 +79,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').loganalytics]",
             "location": "[deployment().location]",
             "identity": {
@@ -81,6 +90,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployLogAnalytics]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {
                     "workspaceName": {
                         "value": "[parameters('logAnalyticsWorkspaceName')]"
@@ -112,7 +126,7 @@
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
-                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbac'))]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').loganalytics), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }

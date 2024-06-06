@@ -1,0 +1,255 @@
+{
+    "name": "Deny-MgmtPorts-From-Internet",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Management port access from the Internet should be blocked",
+        "description": "This policy denies any network security rule that allows management port access from the Internet, by default blocking SSH/RDP ports.",
+        "metadata": {
+            "version": "2.1.1",
+            "category": "Network",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "replacesPolicy": "Deny-RDP-From-Internet",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny"
+            },
+            "ports": {
+                "type": "Array",
+                "metadata": {
+                    "displayName": "Ports",
+                    "description": "Ports to be blocked"
+                },
+                "defaultValue": [
+                    "22",
+                    "3389"
+                ]
+            }
+        },
+        "policyRule": {
+            "if": {
+                "anyOf": [
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/networkSecurityGroups/securityRules"
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules/access",
+                                        "equals": "Allow"
+                                    },
+                                    {
+                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules/direction",
+                                        "equals": "Inbound"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+                                                "equals": "*"
+                                            },
+                                            {
+                                                "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+                                                "in": "[[parameters('ports')]"
+                                            },
+                                            {
+                                                "count": {
+                                                    "value": "[[parameters('ports')]",
+                                                    "where": {
+                                                        "value": "[[if(and(not(empty(field('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange'))), contains(field('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange'),'-')), and(lessOrEquals(int(first(split(field('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange'), '-'))),int(current())),greaterOrEquals(int(last(split(field('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange'), '-'))),int(current()))), 'false')]",
+                                                        "equals": "true"
+                                                    }
+                                                },
+                                                "greater": 0
+                                            },
+                                            {
+                                                "count": {
+                                                    "value": "[[parameters('ports')]",
+                                                    "name": "ports",
+                                                    "where": {
+                                                        "count": {
+                                                            "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]",
+                                                            "where": {
+                                                                "value": "[[if(and(not(empty(current('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]'))), contains(current('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]'),'-')), and(lessOrEquals(int(first(split(current('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]'), '-'))),int(current('ports'))),greaterOrEquals(int(last(split(current('Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]'), '-'))),int(current('ports')))) , 'false')]",
+                                                                "equals": "true"
+                                                            }
+                                                        },
+                                                        "greater": 0
+                                                    }
+                                                },
+                                                "greater": 0
+                                            },
+                                            {
+                                                "not": {
+                                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]",
+                                                    "notEquals": "*"
+                                                }
+                                            },
+                                            {
+                                                "not": {
+                                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]",
+                                                    "notIn": "[[parameters('ports')]"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+                                                "equals": "*"
+                                            },
+                                            {
+                                                "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+                                                "equals": "Internet"
+                                            },
+                                            {
+                                                "not": {
+                                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefixes[*]",
+                                                    "notEquals": "*"
+                                                }
+                                            },
+                                            {
+                                                "not": {
+                                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefixes[*]",
+                                                    "notEquals": "Internet"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/networkSecurityGroups"
+                            },
+                            {
+                                "count": {
+                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules[*]",
+                                    "where": {
+                                        "allOf": [
+                                            {
+                                                "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].access",
+                                                "equals": "Allow"
+                                            },
+                                            {
+                                                "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].direction",
+                                                "equals": "Inbound"
+                                            },
+                                            {
+                                                "anyOf": [
+                                                    {
+                                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange",
+                                                        "equals": "*"
+                                                    },
+                                                    {
+                                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange",
+                                                        "in": "[[parameters('ports')]"
+                                                    },
+                                                    {
+                                                        "count": {
+                                                            "value": "[[parameters('ports')]",
+                                                            "name": "ports",
+                                                            "where": {
+                                                                "value": "[[if(and(not(empty(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange'))), contains(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange'),'-')), and(lessOrEquals(int(first(split(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange'), '-'))),int(current('ports'))),greaterOrEquals(int(last(split(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange'), '-'))),int(current('ports')))), 'false')]",
+                                                                "equals": "true"
+                                                            }
+                                                        },
+                                                        "greater": 0
+                                                    },
+                                                    {
+                                                        "count": {
+                                                            "value": "[[parameters('ports')]",
+                                                            "name": "ports",
+                                                            "where": {
+                                                                "count": {
+                                                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]",
+                                                                    "where": {
+                                                                        "value": "[[if(and(not(empty(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]'))), contains(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]'),'-')), and(lessOrEquals(int(first(split(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]'), '-'))),int(current('ports'))),greaterOrEquals(int(last(split(current('Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]'), '-'))),int(current('ports')))) , 'false')]",
+                                                                        "equals": "true"
+                                                                    }
+                                                                },
+                                                                "greater": 0
+                                                            }
+                                                        },
+                                                        "greater": 0
+                                                    },
+                                                    {
+                                                        "not": {
+                                                            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]",
+                                                            "notEquals": "*"
+                                                        }
+                                                    },
+                                                    {
+                                                        "not": {
+                                                            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRanges[*]",
+                                                            "notIn": "[[parameters('ports')]"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "anyOf": [
+                                                    {
+                                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].sourceAddressPrefix",
+                                                        "equals": "*"
+                                                    },
+                                                    {
+                                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].sourceAddressPrefix",
+                                                        "equals": "Internet"
+                                                    },
+                                                    {
+                                                        "not": {
+                                                            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].sourceAddressPrefixes[*]",
+                                                            "notEquals": "*"
+                                                        }
+                                                    },
+                                                    {
+                                                        "not": {
+                                                            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].sourceAddressPrefixes[*]",
+                                                            "notEquals": "Internet"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "greater": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

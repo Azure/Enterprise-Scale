@@ -1,0 +1,227 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "dataCollectionRuleResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId to the Data collection rule"
+            }
+        },
+        "bringYourOwnUserAssignedManagedIdentity": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Provide your own user assigned managed identity to be used for the policy assignment"
+            }
+        },
+        "restrictBringYourOwnUserAssignedIdentityToSubscription": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enable this to enforce that the user assigned identity must exist in the same subscription as the virtual machine. When true, must provide User-Assigned Managed Identity Name and User-Assigned Managed Identity Resource Group Name parameters. When false, the parameter User Assigned Managed Identity Resource Id will be used instead."
+            }
+        },
+        "userAssignedIdentityResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resourceId of the user assigned managed identity"
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "effect": {
+            "type": "string",
+            "metadata": {
+                "description": "Enable or disable the policy assignment"
+            },
+            "defaultValue": "DeployIfNotExists",
+            "allowedValues": [
+                "DeployIfNotExists",
+                "Disabled"
+            ]
+        },
+        "scope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Scope",
+                "description": "Scope of the policy assignment"
+            }
+        },
+        "platformScope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Platform Scope",
+                "description": "Scope of the reader role assignment"
+            },
+            "defaultValue": "[parameters('scope')]"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "vmssChangeTracking": "/providers/Microsoft.Authorization/policySetDefinitions/c4a70814-96be-461c-889f-2b27429120dc"
+        },
+        "policyAssignmentNames": {
+            "vmssChangeTracking": "Deploy-VMSS-ChangeTrack",
+            "description": "Enable ChangeTracking and Inventory for virtual machine scale sets. Takes Data Collection Rule ID as parameter and asks for an option to input applicable locations and user-assigned identity for Azure Monitor Agent.",
+            "displayName": "Enable ChangeTracking and Inventory for virtual machine scale sets"
+        },
+        "nonComplianceMessage": {
+            "message": "Change Tracking {enforcementMode} be enabled for Virtual Machines Scales Sets.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacVMContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+        "rbacLogAnalyticsContributor": "92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+        "rbacMonitoringContributor": "749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+        "rbacManagedIdentityOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
+        "rbacReader": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+        "roleAssignmentNames": {
+            "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-1',parameters('scope')))]",
+            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-2',parameters('scope')))]",
+            "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-3',parameters('scope')))]",
+            "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-4',parameters('scope')))]",
+            "roleAssignmentNameReader": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-5',parameters('scope')))]",
+            "roleAssignmentNamePlatformManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-6',parameters('scope')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').vmssChangeTracking]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').vmssChangeTracking]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "dcrResourceId": {
+                        "value": "[parameters('dataCollectionRuleResourceId')]"
+                    },
+                    "bringYourOwnUserAssignedManagedIdentity": {
+                        "value": "[parameters('bringYourOwnUserAssignedManagedIdentity')]"
+                    },
+                    "restrictBringYourOwnUserAssignedIdentityToSubscription": {
+                        "value": "[parameters('restrictBringYourOwnUserAssignedIdentityToSubscription')]"
+                    },
+                    "userAssignedIdentityResourceId": {
+                        "value": "[parameters('userAssignedIdentityResourceId')]"
+                    },
+                    "effect": {
+                        "value": "[parameters('effect')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacLogAnalyticsContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameManagedIdentityOperator]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameReader]",
+            "scope": "[parameters('platformScope')]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacReader'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNamePlatformManagedIdentityOperator]",
+            "scope": "[parameters('platformScope')]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -9,6 +9,10 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
@@ -19,12 +23,17 @@
             "ascMonitoring": "Deploy-ASC-Monitoring",
             "description": "Microsoft Cloud Security Benchmark policy initiative.",
             "displayName": "Microsoft Cloud Security Benchmark"
+        },
+        "nonComplianceMessage": {
+            "message": "Microsoft Cloud Security Benchmark {enforcementMode} be met.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         }
       },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').ascMonitoring]",
             "location": "[deployment().location]",
             "identity": {
@@ -35,6 +44,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').ascMonitoring]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {}
             }
         }

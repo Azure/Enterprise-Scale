@@ -6,10 +6,11 @@
   "properties": {
     "policyType": "Custom",
     "mode": "Indexed",
-    "displayName": "Deploy Diagnostic Settings for Database for PostgreSQL to Log Analytics workspace",
-    "description": "Deploys the diagnostic settings for Database for PostgreSQL to stream to a Log Analytics workspace when any Database for PostgreSQL which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
+    "displayName": "[Deprecated]: Deploy Diagnostic Settings for Database for PostgreSQL to Log Analytics workspace",
+    "description": "Deploys the diagnostic settings for Database for PostgreSQL to stream to a Log Analytics workspace when any Database for PostgreSQL which is missing this diagnostic settings is created or updated. This policy is superseded by built-in initiative https://www.azadvertizer.net/azpolicyinitiativesadvertizer/0884adba-2312-4468-abeb-5422caed1038.html.",
     "metadata": {
-      "version": "1.1.0",
+      "deprecated": true,
+      "version": "2.0.0-deprecated",
       "category": "Monitoring",
       "source": "https://github.com/Azure/Enterprise-Scale/",
       "alzCloudEnvironments": [
@@ -74,8 +75,16 @@
     },
     "policyRule": {
       "if": {
-        "field": "type",
-        "equals": "Microsoft.DBforPostgreSQL/servers"
+        "anyOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.DBforPostgreSQL/flexibleServers"
+          },
+          {
+            "field": "type",
+            "equals": "Microsoft.DBforPostgreSQL/servers"
+          }
+        ]
       },
       "then": {
         "effect": "[[parameters('effect')]",
@@ -112,6 +121,9 @@
                   "resourceName": {
                     "type": "String"
                   },
+                  "resourceType": {
+                    "type": "String"
+                  },
                   "logAnalytics": {
                     "type": "String"
                   },
@@ -131,8 +143,37 @@
                 "variables": {},
                 "resources": [
                   {
+                    "condition": "[[startsWith(parameters('resourceType'),'Microsoft.DBforPostgreSQL/flexibleServers')]",
+                    "type": "Microsoft.DBforPostgreSQL/flexibleServers/providers/diagnosticSettings",
+                    "apiVersion": "2021-05-01-preview",
+                    "name": "[[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+                    "location": "[[parameters('location')]",
+                    "dependsOn": [],
+                    "properties": {
+                      "workspaceId": "[[parameters('logAnalytics')]",
+                      "metrics": [
+                        {
+                          "category": "AllMetrics",
+                          "enabled": "[[parameters('metricsEnabled')]",
+                          "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                          },
+                          "timeGrain": null
+                        }
+                      ],
+                      "logs": [
+                        {
+                          "category": "PostgreSQLLogs",
+                          "enabled": "[[parameters('logsEnabled')]"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "condition": "[[startsWith(parameters('resourceType'),'Microsoft.DBforPostgreSQL/servers')]",
                     "type": "Microsoft.DBforPostgreSQL/servers/providers/diagnosticSettings",
-                    "apiVersion": "2017-05-01-preview",
+                    "apiVersion": "2021-05-01-preview",
                     "name": "[[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
                     "location": "[[parameters('location')]",
                     "dependsOn": [],
@@ -177,6 +218,9 @@
                 },
                 "resourceName": {
                   "value": "[[field('name')]"
+                },
+                "resourceType": {
+                  "value": "[[field('type')]"
                 },
                 "profileName": {
                   "value": "[[parameters('profileName')]"

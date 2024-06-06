@@ -1,0 +1,171 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "assessmentMode": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Assessment mode",
+                "description": "Assessment mode for the machines."
+            },
+            "allowedValues": [
+                "ImageDefault",
+                "AutomaticByPlatform"
+            ],
+            "defaultValue": "AutomaticByPlatform"
+        },
+        "locations": {
+            "type": "Array",
+            "metadata": {
+                "displayName": "Machines locations",
+                "description": "The list of locations from which machines need to be targeted.",
+                "strongType": "location"
+            },
+            "defaultValue": []
+        },
+        "tagValues": {
+            "type": "Object",
+            "metadata": {
+                "displayName": "Tags on machines",
+                "description": "The list of tags that need to matched for getting target machines."
+            },
+            "defaultValue": {}
+        },
+        "tagOperator": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Tag operator",
+                "description": "Matching condition for resource tags"
+            },
+            "allowedValues": [
+                "All",
+                "Any"
+            ],
+            "defaultValue": "Any"
+        },
+        "scope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Scope",
+                "description": "Scope of the policy assignment"
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "vmCheckUpdates": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates')]"
+        },
+        "policyAssignmentNames": {
+            "vmCheckUpdates": "Enable-AUM-CheckUpdates",
+            "description": "Configure auto-assessment (every 24 hours) for OS updates. You can control the scope of assignment according to machine subscription, resource group, location or tag. Learn more about this for Windows: https://aka.ms/computevm-windowspatchassessmentmode, for Linux: https://aka.ms/computevm-linuxpatchassessmentmode.",
+            "displayName": "Configure periodic checking for missing system updates on azure virtual machines and Arc-enabled virtual machines."
+        },
+        "nonComplianceMessage": {
+            "message": "Periodic checking of missing updates {enforcementMode} be enabled.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacVmContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+        "rbacConnectedMachineResourceAdministrator": "cd570a14-e51a-42ad-bac8-bafd67325302",
+        "rbacManagedIdentityOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
+        "roleAssignmentNames": {
+            "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmCheckUpdates,'-1',parameters('scope')))]",
+            "roleAssignmentNameConnectedMachineResourceAdministrator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmCheckUpdates,'-2',parameters('scope')))]",
+            "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmCheckUpdates,'-3',parameters('scope')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[variables('policyAssignmentNames').vmCheckUpdates]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').vmCheckUpdates]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "assessmentMode": {
+                        "value": "[parameters('assessmentMode')]"
+                    },
+                    "locations": {
+                        "value": "[parameters('locations')]"
+                    },
+                    "tagValues": {
+                        "value": "[parameters('tagValues')]"
+                    },
+                    "tagOperator": {
+                        "value": "[parameters('tagOperator')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').vmCheckUpdates)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVmContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmCheckUpdates), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameConnectedMachineResourceAdministrator]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').vmCheckUpdates)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacConnectedMachineResourceAdministrator'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmCheckUpdates), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameManagedIdentityOperator]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').vmCheckUpdates)]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmCheckUpdates), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

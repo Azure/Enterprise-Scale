@@ -12,7 +12,7 @@ This article describes how to migrate ALZ custom policies and policy initiatives
 There are the following scenarios for ALZ custom policies being superseded by Azure built-in policies, listed in increasing order of complexity:
 1. A single ALZ custom policy, which is not assigned anywhere in your Azure estate, is superseded by an Azure built-in policy. This is the simplest scenario, and is not covered in more detail.
 2. A single ALZ custom policy, which is assigned at one or more scopes in your Azure estate, is superseded by an Azure built-in policy. The process for managing this is described in [Migrate single ALZ custom policy to built-in policy](#migrate-single-pol).
-3. One or more ALZ custom policies, assigned via ALZ custom policy intiative, which are superseded by Azure built-in policies. The process for managing this is described in [Migrate ALZ custom policies in initiatives to built-in policies](#migrate-multiple-pol).
+3. One or more ALZ custom policies, assigned via ALZ custom policy initiative, which are superseded by Azure built-in policies. The process for managing this is described in [Migrate ALZ custom policies in initiatives to built-in policies](#migrate-multiple-pol).
 
 ### Migrate single ALZ custom policy to built-in policy
 For this scenario we will use the ALZ custom policy _Deny the creation of public IP_ which will be migrated to the built-in policy _Not allowed resource types_

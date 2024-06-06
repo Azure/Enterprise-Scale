@@ -1,0 +1,67 @@
+{
+    "name": "Deny-FileServices-InsecureSmbChannel",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+      "policyType": "Custom",
+      "mode": "All",
+      "displayName": "File Services with insecure SMB channel encryption should be denied",
+      "description": "This policy denies the use of insecure channel encryption (AES-128-CCM) when using File Services on a storage account.",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Storage",
+        "source": "https://github.com/Azure/Enterprise-Scale/",
+        "alzCloudEnvironments": [
+          "AzureCloud",
+          "AzureChinaCloud",
+          "AzureUSGovernment"
+        ]
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Deny",
+          "allowedValues": [
+            "Audit",
+            "Deny",
+            "Disabled"
+          ],
+          "metadata": {
+            "displayName": "Effect",
+            "description": "The effect determines what happens when the policy rule is evaluated to match"
+          }
+        },
+        "notAllowedChannelEncryption": {
+          "type": "String",
+          "defaultValue": "AES-128-CCM",
+          "allowedValues": [
+            "AES-128-CCM",
+            "AES-128-GCM",
+            "AES-256-GCM"
+          ],
+          "metadata": {
+            "displayName": "SMB channel encryption supported by server. Valid values are AES-128-CCM, AES-128-GCM, AES-256-GCM.",
+            "description": "The list of channelEncryption not allowed."
+          }
+         }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "equals": "Microsoft.Storage/storageAccounts/fileServices"
+            },
+            {
+              "field": "Microsoft.Storage/storageAccounts/fileServices/protocolSettings.smb.channelEncryption",
+              "contains": "[[parameters('notAllowedChannelEncryption')]"
+            }
+          ]
+        },
+        "then": {
+          "effect": "[[parameters('effect')]"
+        }
+      }
+    }
+  }

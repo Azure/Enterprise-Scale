@@ -2,19 +2,19 @@
 
 This article will guide you through the process of configuring permissions in your Azure environment to enable ARM tenant level deployments.
 
-> Note: The steps below require you to use an identity that is local to the Azure AD, and **_not_** Guest user account due to known restrictions.
+> Note: The steps below require you to use an identity that is local to the Microsoft Entra ID, and **_not_** Guest user account due to known restrictions.
 
-Enterprise-Scale reference implementation requires permission at tenant root scope "/" to be able to configure Management Group and create/move subscription. In order to grant permission at tenant root scope "/", users in "AAD Global Administrators" group can temporarily elevate access, to manage all Azure resources in the directory.
+Enterprise-Scale reference implementation requires permission at tenant root scope "/" to be able to configure Management Group and create/move subscription. In order to grant permission at tenant root scope "/", users in "Microsoft Entra Global Administrators" group can temporarily elevate access, to manage all Azure resources in the directory.
 
 Once the User Access Administrator (UAA) role is enabled, a UAA can grant **_other users and service principals_** within organization to deploy/manage Enterprise-Scale reference implementation by granting "Owner" permission at tenant root scope "/".
 
-Once permission is granted to other **users and service principals**, you can safely disable "User Access Administrator" permission for the "AAD Global Administrator" users. For more information please follow this article [elevated account permissions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)
+Once permission is granted to other **users and service principals**, you can safely disable "User Access Administrator" permission for the "Microsoft Entra Global Administrator" users. For more information please follow this article [elevated account permissions](https://learn.microsoft.com/azure/role-based-access-control/elevate-access-global-admin)
 
 ## 1. Elevate Access to manage Azure resources in the directory
 
-1.1 Sign in to the Azure portal or the Azure Active Directory admin center as a Global Administrator. If you are using Azure AD Privileged Identity Management, activate your Global Administrator role assignment.
+1.1 Sign in to the Azure portal or the Microsoft Entra admin center as a Global Administrator. If you are using Microsoft Entra Privileged Identity Management, activate your Global Administrator role assignment.
 
-1.2 Open Azure Active Directory.
+1.2 Open Microsoft Entra ID.
 
 1.3 Under _Manage_, select _Properties_.
 ![alt](https://learn.microsoft.com/azure/role-based-access-control/media/elevate-access-global-admin/azure-active-directory-properties.png)
@@ -25,7 +25,7 @@ Once permission is granted to other **users and service principals**, you can sa
 
 ## 2. Grant Access to User and/or Service principal at root scope "/" to deploy Enterprise-Scale reference implementation
 
-Please ensure you are logged in as a user with UAA role enabled in AAD tenant and logged in user is not a guest user.
+Please ensure you are logged in as a user with UAA role enabled in Microsoft Entra tenant and logged in user is not a guest user.
 
 Bash
 
@@ -41,7 +41,7 @@ az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az a
 
 #(optional) assign Owner role at Tenant root scope ("/") as a User Access Administrator to service principal (set spn_displayname to your service principal displayname)
 spn_displayname='<ServicePrincipal DisplayName>'
-az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name $spn_displayname --query '[].{objectId:objectId}' -o tsv) --assignee-principal-type ServicePrincipal
+az role assignment create --scope '/' --role 'Owner' --assignee-object-id $(az ad sp list --display-name "$spn_displayname" --query '[].id' -o tsv) --assignee-principal-type ServicePrincipal
 ````
 
 PowerShell

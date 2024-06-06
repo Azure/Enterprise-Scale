@@ -1,0 +1,202 @@
+{
+  "name": "Deploy-MDFC-Arc-SQL-DCR-Association",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "displayName": "[Deprecated]: Configure Arc-enabled SQL Servers with DCR Association to Microsoft Defender for SQL user-defined DCR",
+    "description": "Policy is deprecated as the built-in policy now supports bringing your own UAMI and DCR. Superseded by https://www.azadvertizer.net/azpolicyadvertizer/2227e1f1-23dd-4c3a-85a9-7024a401d8b2.html",
+    "metadata": {
+      "version": "1.0.0-deprecated",
+      "category": "Security Center",
+      "source": "https://github.com/Azure/Enterprise-Scale/",
+      "deprecated": true,
+      "supersededBy": "2227e1f1-23dd-4c3a-85a9-7024a401d8b2",
+      "alzCloudEnvironments": [
+        "AzureCloud",
+        "AzureChinaCloud",
+        "AzureUSGovernment"
+      ]
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "DeployIfNotExists",
+          "Disabled"
+        ],
+        "defaultValue": "DeployIfNotExists"
+      },
+      "workspaceRegion": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Workspace region",
+          "description": "Region of the Log Analytics workspace destination for the Data Collection Rule.",
+          "strongType": "location"
+        }
+      },
+      "dcrName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Data Collection Rule Name",
+          "description": "Name of the Data Collection Rule."
+        }
+      },
+      "dcrResourceGroup": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Data Collection Rule Resource Group",
+          "description": "Resource Group of the Data Collection Rule."
+        }
+      },
+      "dcrId": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Data Collection Rule Id",
+          "description": "Id of the Data Collection Rule."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.HybridCompute/machines"
+          },
+          {
+            "field": "Microsoft.HybridCompute/machines/osName",
+            "equals": "Windows"
+          },
+          {
+            "field": "Microsoft.HybridCompute/machines/mssqlDiscovered",
+            "equals": "true"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]",
+        "details": {
+          "type": "Microsoft.Insights/dataCollectionRuleAssociations",
+          "name": "MicrosoftDefenderForSQL-RulesAssociation",
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+            "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+          ],
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "resourceGroup": {
+                    "type": "string"
+                  },
+                  "vmName": {
+                    "type": "string"
+                  },
+                  "workspaceRegion": {
+                    "type": "string"
+                  },
+                  "dcrName": {
+                    "type": "string"
+                  },
+                  "dcrResourceGroup": {
+                    "type": "string"
+                  },
+                  "dcrId": {
+                    "type": "string"
+                  }
+                },
+                "variables": {
+                  "locationLongNameToShortMap": {
+                    "australiacentral": "CAU",
+                    "australiaeast": "EAU",
+                    "australiasoutheast": "SEAU",
+                    "brazilsouth": "CQ",
+                    "canadacentral": "CCA",
+                    "canadaeast": "CCA",
+                    "centralindia": "CIN",
+                    "centralus": "CUS",
+                    "eastasia": "EA",
+                    "eastus2euap": "eus2p",
+                    "eastus": "EUS",
+                    "eastus2": "EUS2",
+                    "francecentral": "PAR",
+                    "germanywestcentral": "DEWC",
+                    "japaneast": "EJP",
+                    "jioindiawest": "CIN",
+                    "koreacentral": "SE",
+                    "koreasouth": "SE",
+                    "northcentralus": "NCUS",
+                    "northeurope": "NEU",
+                    "norwayeast": "NOE",
+                    "southafricanorth": "JNB",
+                    "southcentralus": "SCUS",
+                    "southeastasia": "SEA",
+                    "southindia": "CIN",
+                    "swedencentral": "SEC",
+                    "switzerlandnorth": "CHN",
+                    "switzerlandwest": "CHW",
+                    "uaenorth": "DXB",
+                    "uksouth": "SUK",
+                    "ukwest": "WUK",
+                    "westcentralus": "WCUS",
+                    "westeurope": "WEU",
+                    "westindia": "CIN",
+                    "westus": "WUS",
+                    "westus2": "WUS2"
+                  },
+                  "locationCode": "[[if(contains(variables('locationLongNameToShortMap'), parameters('workspaceRegion')), variables('locationLongNameToShortMap')[parameters('workspaceRegion')], parameters('workspaceRegion'))]",
+                  "subscriptionId": "[[subscription().subscriptionId]",
+                  "defaultRGName": "[[parameters('resourceGroup')]",
+                  "dcrName": "[[parameters('dcrName')]",
+                  "dcrId": "[[parameters('dcrId')]",
+                  "dcraName": "[[concat(parameters('vmName'),'/Microsoft.Insights/MicrosoftDefenderForSQL-RulesAssociation')]"
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.HybridCompute/machines/providers/dataCollectionRuleAssociations",
+                    "name": "[[variables('dcraName')]",
+                    "apiVersion": "2021-04-01",
+                    "properties": {
+                      "description": "Configure association between Arc-enabled SQL Server and the Microsoft Defender for SQL user-defined DCR. Deleting this association will break the detection of security vulnerabilities for this Arc-enabled SQL Server.",
+                      "dataCollectionRuleId": "[[variables('dcrId')]"
+                    }
+                  }
+                ]
+              },
+              "parameters": {
+                "resourceGroup": {
+                  "value": "[[parameters('dcrResourceGroup')]"
+                },
+                "vmName": {
+                  "value": "[[field('name')]"
+                },
+                "workspaceRegion": {
+                  "value": "[[parameters('workspaceRegion')]"
+                },
+                "dcrName": {
+                  "value": "[[parameters('dcrName')]"
+                },
+                "dcrResourceGroup": {
+                  "value": "[[parameters('dcrResourceGroup')]"
+                },
+                "dcrId": {
+                  "value": "[[parameters('dcrId')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

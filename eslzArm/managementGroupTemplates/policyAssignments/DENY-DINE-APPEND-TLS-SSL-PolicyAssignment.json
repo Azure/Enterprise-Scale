@@ -15,16 +15,25 @@
                 "DoNotEnforce"
             ],
             "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
         }
     },
     "variables": {
         "policyDefinitions": {
-            "deployEncryptionInTransit": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit')]"
+            "deployEncryptionInTransit": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240509')]"
         },
         "policyAssignmentNames": {
-            "deployEncryptionInTransit": "Enforce-TLS-SSL",
-            "description": "Choose either Deploy if not exist and append in combination with audit or Select Deny in the Policy effect. Deny polices shift left. Deploy if not exist and append enforce but can be changed, and because missing exsistense condition require then the combination of Audit.",
+            "deployEncryptionInTransit": "Enforce-TLS-SSL-H224",
+            "description": "Choose either Deploy if not exist and append in combination with audit or Select Deny in the Policy effect. Deny polices shift left. Deploy if not exist and append enforce but can be changed, and because missing existence condition require then the combination of Audit.",
             "displayName": "Deny or Deploy and append TLS requirements and SSL enforcement on resources without Encryption in transit"
+        },
+        "nonComplianceMessage": {
+            "message": "TLS and SSL {enforcementMode} be enabled for on resources without encryption in transit.",
+            "Default": "must",
+            "DoNotEnforce": "should"
         },
         "rbacOwner": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
         "roleAssignmentNames": {
@@ -34,7 +43,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').deployEncryptionInTransit]",
             "location": "[deployment().location]",
             "identity": {
@@ -45,6 +54,11 @@
                 "displayName": "[variables('policyAssignmentNames').displayName]",
                 "policyDefinitionId": "[variables('policyDefinitions').deployEncryptionInTransit]",
                 "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
                 "parameters": {}
             }
         },

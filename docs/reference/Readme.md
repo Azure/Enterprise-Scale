@@ -36,8 +36,8 @@ Networking:
 
 IAM
 
-1) Create Azure AD Group for Subscriptions access
-2) Create Azure AD PIM Entitlement for the scope
+1) Create Microsoft Entra Group for Subscriptions access
+2) Create Microsoft Entra PIM Entitlement for the scope
 
 # File -> New -> Sandbox
 
@@ -45,4 +45,4 @@ Sandbox Subscriptions are for experiment and validation only. Sandbox Subscripti
 
 ## File -> Delete -> Sandbox/Landing Zone
 
-Susbcription will be moved to a decommissioned Management Group. Decommissioned Management Group policies will deny creation of new services and a Subscription cancellation request will be sent.
+Subscription will be moved to a decommissioned Management Group. Decommissioned Management Group policies will deny creation of new services and a Subscription cancellation request will be sent.
