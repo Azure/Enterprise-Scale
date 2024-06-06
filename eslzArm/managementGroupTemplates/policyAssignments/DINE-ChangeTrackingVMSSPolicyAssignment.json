@@ -22,16 +22,17 @@
                 "description": "Provide your own user assigned managed identity to be used for the policy assignment"
             }
         },
-        "userAssignedManagedIdentityResourceGroup": {
-            "type": "string",
+        "restrictBringYourOwnUserAssignedIdentityToSubscription": {
+            "type": "bool",
+            "defaultValue": false,
             "metadata": {
-                "description": "Provide the resource group name where the user assigned managed identity is located"
+                "description": "Enable this to enforce that the user assigned identity must exist in the same subscription as the virtual machine. When true, must provide User-Assigned Managed Identity Name and User-Assigned Managed Identity Resource Group Name parameters. When false, the parameter User Assigned Managed Identity Resource Id will be used instead."
             }
         },
-        "userAssignedManagedIdentityName": {
+        "userAssignedIdentityResourceId": {
             "type": "string",
             "metadata": {
-                "description": "Provide the name of the user assigned managed identity"
+                "description": "Provide the resourceId of the user assigned managed identity"
             }
         },
         "enforcementMode": {
@@ -55,68 +56,6 @@
             "allowedValues": [
                 "DeployIfNotExists",
                 "Disabled"
-            ]
-        },
-        "listOfApplicableLocations": {
-            "type": "array",
-            "metadata": {
-                "displayName": "Applicable Locations",
-                "description": "The list of locations where the policy should be applied.",
-                "strongType": "location"
-            },
-            "allowedValues": [
-                "australiasoutheast",
-                "australiaeast",
-                "brazilsouth",
-                "canadacentral",
-                "centralindia",
-                "centralus",
-                "eastasia",
-                "eastus2euap",
-                "eastus",
-                "eastus2",
-                "francecentral",
-                "japaneast",
-                "koreacentral",
-                "northcentralus",
-                "northeurope",
-                "norwayeast",
-                "southcentralus",
-                "southeastasia",
-                "switzerlandnorth",
-                "uaenorth",
-                "uksouth",
-                "westcentralus",
-                "westeurope",
-                "westus",
-                "westus2"
-            ],
-            "defaultValue": [
-                "australiasoutheast",
-                "australiaeast",
-                "brazilsouth",
-                "canadacentral",
-                "centralindia",
-                "centralus",
-                "eastasia",
-                "eastus2euap",
-                "eastus",
-                "eastus2",
-                "francecentral",
-                "japaneast",
-                "koreacentral",
-                "northcentralus",
-                "northeurope",
-                "norwayeast",
-                "southcentralus",
-                "southeastasia",
-                "switzerlandnorth",
-                "uaenorth",
-                "uksouth",
-                "westcentralus",
-                "westeurope",
-                "westus",
-                "westus2"
             ]
         },
         "scope": {
@@ -159,7 +98,8 @@
             "roleAssignmentNameVmContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-2',parameters('scope')))]",
             "roleAssignmentNameMonitoringContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-3',parameters('scope')))]",
             "roleAssignmentNameManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-4',parameters('scope')))]",
-            "roleAssignmentNameReader": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-5',parameters('scope')))]"
+            "roleAssignmentNameReader": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-5',parameters('scope')))]",
+            "roleAssignmentNamePlatformManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmssChangeTracking,'-6',parameters('scope')))]"
         }
     },
     "resources": [
@@ -188,14 +128,11 @@
                     "bringYourOwnUserAssignedManagedIdentity": {
                         "value": "[parameters('bringYourOwnUserAssignedManagedIdentity')]"
                     },
-                    "userAssignedManagedIdentityResourceGroup": {
-                        "value": "[parameters('userAssignedManagedIdentityResourceGroup')]"
+                    "restrictBringYourOwnUserAssignedIdentityToSubscription": {
+                        "value": "[parameters('restrictBringYourOwnUserAssignedIdentityToSubscription')]"
                     },
-                    "userAssignedManagedIdentityName": {
-                        "value": "[parameters('userAssignedManagedIdentityName')]"
-                    },
-                    "listOfApplicableLocations": {
-                        "value": "[parameters('listOfApplicableLocations')]"
+                    "userAssignedIdentityResourceId": {
+                        "value": "[parameters('userAssignedIdentityResourceId')]"
                     },
                     "effect": {
                         "value": "[parameters('effect')]"
@@ -267,6 +204,21 @@
             "properties": {
                 "principalType": "ServicePrincipal",
                 "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacReader'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNamePlatformManagedIdentityOperator]",
+            "scope": "[parameters('platformScope')]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').vmssChangeTracking]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacManagedIdentityOperator'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmssChangeTracking), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
