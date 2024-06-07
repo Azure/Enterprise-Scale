@@ -73,7 +73,7 @@ Depending on your requirements, you may choose to deploy additional network infr
 
 ![vwan](./media/clip_image078.jpg)
 
-### Deploying networking resources in an additional region
+### Deploying networking resources in a second region
 
 If you selected **Deploy in a secondary region** in the Core steps, you will also configure a secondary region for networking platform resource in this blade.  This secondary platform network deployment prepares you you to take advantage of capacity in multiple regions, and for recovery or multi-region high availability.
 
