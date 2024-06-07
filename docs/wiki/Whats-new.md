@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [June 2024](#june-2024)
   - [🆕 AMA Updates](#-ama-updates)
   - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
   - [May 2024](#may-2024)
@@ -50,6 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - Added new custom policy [Do not allow deletion of specified resource and resource type](https://www.azadvertizer.net/azpolicyadvertizer/DenyAction-DeleteResources.html) that provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA. Assigned at the Platform Management Group, it blocks delete calls using the deny action effect.
+- Updated the custom policy [Deploy-ASC-SecurityContacts](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-ASC-SecurityContacts.html) as part of the [Deploy-MDFC-Config](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/deploy-mdfc-config.html) initiative to use the new API and revised construct for the Security Contact API in Defender for Cloud (`alertNotications` alias has been deprecated, and replaced by `notificationSources`).
 
 ### 🆕 AMA Updates
 
