@@ -1,0 +1,74 @@
+{
+    "name": "Deny-Storage-CopyScope",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Allowed Copy scope should be restricted for Storage Accounts",
+        "description": "Azure Storage accounts should restrict the allowed copy scope. Enforce this for increased data exfiltration protection.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Storage",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "allowedCopyScope": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Allowed Copy Scope",
+                    "description": "Specify the allowed copy scope."
+                },
+                "allowedValues": [
+                    "AAD",
+                    "PrivateLink"
+                ],
+                "defaultValue": "AAD"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "field": "Microsoft.Storage/storageAccounts/allowedCopyScope",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "Microsoft.Storage/storageAccounts/allowedCopyScope",
+                                "notEquals": "[[parameters('allowedCopyScope')]"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

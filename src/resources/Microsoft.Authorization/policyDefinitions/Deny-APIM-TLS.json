@@ -1,0 +1,70 @@
+{
+    "name": "Deny-APIM-TLS",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "API Management services should use TLS version 1.2",
+        "description": "Azure API Management service should use TLS version 1.2",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "API Management",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.ApiManagement/service"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "value": "[[indexof(toLower(string(field('Microsoft.ApiManagement/service/customProperties'))), '\"microsoft.windowsazure.apimanagement.gateway.security.protocols.tls10\":\"true\"')]",
+                                "greater": 0
+                            },
+                            {
+                                "value": "[[indexof(toLower(string(field('Microsoft.ApiManagement/service/customProperties'))), '\"microsoft.windowsazure.apimanagement.gateway.security.protocols.tls10\":true')]",
+                                "greater": 0
+                            },
+                            {
+                                "value": "[[indexof(toLower(string(field('Microsoft.ApiManagement/service/customProperties'))), '\"microsoft.windowsazure.apimanagement.gateway.security.protocols.tls11\":\"true\"')]",
+                                "greater": 0
+                            },
+                            {
+                                "value": "[[indexof(toLower(string(field('Microsoft.ApiManagement/service/customProperties'))), '\"microsoft.windowsazure.apimanagement.gateway.security.protocols.tls11\":true')]",
+                                "greater": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

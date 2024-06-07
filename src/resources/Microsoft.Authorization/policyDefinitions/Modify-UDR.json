@@ -1,0 +1,103 @@
+{
+    "name": "Modify-UDR",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Enforce specific configuration of User-Defined Routes (UDR)",
+        "description": "This policy enforces the configuration of User-Defined Routes (UDR) within a subnet.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Network",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Modify",
+                    "Disabled"
+                ],
+                "defaultValue": "Modify",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            },
+            "addressPrefix": {
+                "type": "string",
+                "metadata": {
+                    "description": "The destination IP address range in CIDR notation that this Policy checks for within the UDR. Example: 0.0.0.0/0 to check for the presence of a default route.",
+                    "displayName": "Address Prefix"
+                }
+            },
+            "nextHopType": {
+                "type": "string",
+                "metadata": {
+                    "description": "The next hope type that the policy checks for within the inspected route. The value can be Virtual Network, Virtual Network Gateway, Internet, Virtual Appliance, or None.",
+                    "displayName": "Next Hop Type"
+                },
+                "allowedValues": [
+                    "VnetLocal",
+                    "VirtualNetworkGateway",
+                    "Internet",
+                    "VirtualAppliance",
+                    "None"
+                ]
+            },
+            "nextHopIpAddress": {
+                "type": "string",
+                "metadata": {
+                    "description": "The IP address packets should be forwarded to.",
+                    "displayName": "Next Hop IP Address"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/routeTables"
+                    },
+                    {
+                        "count": {
+                            "field": "Microsoft.Network/routeTables/routes[*]"
+                        },
+                        "equals": 0
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                    ],
+                    "conflictEffect": "audit",
+                    "operations": [
+                        {
+                            "operation": "add",
+                            "field": "Microsoft.Network/routeTables/routes[*]",
+                            "value": {
+                                "name": "default",
+                                "properties": {
+                                    "addressPrefix": "[[parameters('addressPrefix')]",
+                                    "nextHopType": "[[parameters('nextHopType')]",
+                                    "nextHopIpAddress": "[[parameters('nextHopIpAddress')]"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

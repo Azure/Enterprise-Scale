@@ -71,6 +71,10 @@ function ProcessObjectByResourceType {
             }
             "microsoft.authorization/policysetdefinitions" {
                 $outputObject = [PolicySetDefinition]::new($ResourceObject)
+                # Workaround for policySetDefinitions that only have a single policyDefinition. PowerShell tires to convert to an object in that scenario.
+                if($outputObject.properties.policyDefinitions.GetType().ToString() -eq "PolicySetDefinitionPropertiesPolicyDefinitions") {
+                    $outputObject.properties.policyDefinitions = @($outputObject.properties.policyDefinitions)
+                }
             }
             "microsoft.authorization/roleassignments" {
                 $outputObject = [RoleAssignment]::new($ResourceObject)
