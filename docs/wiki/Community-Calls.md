@@ -16,6 +16,16 @@ On this page you will find the meeting recordings and PowerPoint slides from pre
 
 > Short link to this page is [aka.ms/alz/community](https://aka.ms/alz/community)
 
+## 12th June 2024 (12/06/2024)
+
+### Recording
+
+[![Screenshot of Azure Landing Zones Community Call from June 2024 recording on YouTube](./media/community-calls/june-2024/youtube-thumbnail.png)](https://youtu.be/KNJ0J4jkD7M?si=iOSrP-_uLoB0VW0t)
+
+### Slides
+
+A PDF of the PowerPoint slides is available [here.](./media/community-calls/june-2024/ALZ-Community-Call-12062024.pdf)
+
 ## 11th March 2024 (11/03/2024)
 
 ### Recording
