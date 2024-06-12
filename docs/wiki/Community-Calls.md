@@ -20,7 +20,7 @@ On this page you will find the meeting recordings and PowerPoint slides from pre
 
 ### Recording
 
-[![Screenshot of Azure Landing Zones Community Call from June 2024 recording on YouTube](./media/community-calls/june-2024/youtube-thumbnail.png)](https://youtu.be/KNJ0J4jkD7M?si=iOSrP-_uLoB0VW0t)
+[![Screenshot of Azure Landing Zones Community Call from June 2024 recording on YouTube](./media/community-calls/june-2024/youtube-thumbnail.png)](https://youtu.be/m4_peeUdZoY?si=PNS8ySiC-bWCSs83)
 
 ### Slides
 
