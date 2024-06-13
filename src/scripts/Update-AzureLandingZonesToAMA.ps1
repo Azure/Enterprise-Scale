@@ -1,6 +1,31 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+# what if -plan
+# configuration
+
+# check changetracking migration https://learn.microsoft.com/en-us/azure/automation/change-tracking/guidance-migration-log-analytics-monitoring-agent?tabs=ps-policy%2Climit-single-vm
+# Deploy CT new and see if Legacy Solution is deployed
+
 <#
     .SYNOPSIS
     Updates Azure Landing Zones to use AMA.
@@ -51,40 +76,36 @@ param (
     [string]
     $workspaceRegion,
 
-    [Parameter()]
-    [bool]
-    $DeployVMInsights = $true,
+    [switch]
+    $DeployUserAssignedManagedIdentity,
+    
+    [switch]
+    $DeployVMInsights,
 
-    [Parameter()]
-    [bool]
-    $DeployChangeTracking = $true,
+    [switch]
+    $DeployChangeTracking,
 
-    [Parameter()]
-    [bool]
-    $DeployMDfCDefenderSQL = $true,
+    [switch]
+    $DeployMDfCDefenderSQL,
 
-    [Parameter()]
-    [bool]
-    $DeployAzureUpdateManager = $true,
+    [switch]
+    $DeployAzureUpdateManager,
 
-    [Parameter()]
-    [bool]
-    $RemediatePolicies = $true,
+    [switch]
+    $RemediatePolicies,
 
-    [Parameter()]
-    [bool]
-    $RemoveLegacyPolicyAssignments = $true,
+    [switch]
+    $RemoveLegacyPolicyAssignments,
 
-    [Parameter()]
-    [bool]
-    $RemoveLegacySolutions = $true,
+    [switch]
+    $RemoveLegacySolutions,
 
-    [Parameter()]
-    [bool]
-    $UpdatePolicyDefinitions = $true
+    [switch]
+    $UpdatePolicyDefinitions
 )
 
 function Add-RbacRolesToManagedIdentities {
+    [CmdletBinding(SupportsShouldProcess)]
     Param(
         [Parameter(Mandatory = $true)]
         [string] 
@@ -138,7 +159,8 @@ function Add-RbacRolesToManagedIdentities {
         Write-Output "`tOne or more management group of type 'Platform' and 'Landing Zones' was not found. Make sure you have the necessary permissions and/or that the hierachy is Azure Landing Zones aligned."
     }
 }
-Function Start-PolicyRemediation {
+function Start-PolicyRemediation {
+    [CmdletBinding(SupportsShouldProcess)]
     Param(
         [Parameter(Mandatory = $true)] [string] $managementGroupName,
         [Parameter(Mandatory = $true)] [string] $policyAssignmentName,
@@ -161,6 +183,7 @@ Function Start-PolicyRemediation {
 }
 #Function to get the policy assignments in the management group scope
 function Get-PolicyType {
+    [CmdletBinding(SupportsShouldProcess)]
     Param (
         [Parameter(Mandatory = $true)] [string] $managementGroupName,
         [Parameter(Mandatory = $true)] [string] $policyName
@@ -219,6 +242,7 @@ function Get-PolicyType {
 }
 # Function to enumerate the policies in the policy set and trigger remediation for each individual policy
 function Enumerate-PolicySet {
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory = $true)] [string] $managementGroupName,
         [Parameter(Mandatory = $true)] [object] $policyAssignmentObject
@@ -243,6 +267,7 @@ function Enumerate-PolicySet {
 }
 #Function to get specific information about a policy assignment for a single policy and trigger remediation
 function Enumerate-Policy {
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory = $true)] [string] $managementGroupName,
         [Parameter(Mandatory = $true)] [object] $policyAssignmentObject
@@ -253,140 +278,482 @@ function Enumerate-Policy {
     $policyDefinitionId = $policyAssignmentObject.properties.policyDefinitionId
     Start-PolicyRemediation -managementGroupName $managementGroupName -policyAssignmentName $name -polassignId $polassignId
 }
+function Update-Policies {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location
+    )
+    begin {
+        $resultsPolicy = Get-AzManagementGroupDeploymentWhatIfResult -ManagementGroupId $eslzRoot -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyDefinitions\policies.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot } | Out-string -Stream | Select-String -Pattern 'Resource changes'
+        $resultsPolicySet = Get-AzManagementGroupDeploymentWhatIfResult -ManagementGroupId $eslzRoot -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyDefinitions\initiatives.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot } | Out-string -Stream | Select-String -Pattern 'Resource changes'
+    }
+    process {
+        if ($PSCmdlet.ShouldProcess($eslzRoot, "- Updating Policy Definitions: $resultsPolicy")) {
+            # Update Policy Definitions
+            Write-Host "- Updating Policy Definitions: $resultsPolicy ..." -ForegroundColor DarkCyan
+            New-AzManagementGroupDeployment -ManagementGroupId $eslzRoot -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyDefinitions\policies.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot } > $null
+        }
+        if ($PSCmdlet.ShouldProcess($eslzRoot, "- Updating Policy Set Definitions: $resultsPolicySet")) {
+            # Update Policy Set Definitions
+            Write-Host "- Updating Policy Set Definitions: $resultsPolicySet ..." -ForegroundColor DarkCyan
+            New-AzManagementGroupDeployment -ManagementGroupId $eslzRoot -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyDefinitions\initiatives.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot } > $null
+        }
+    }
+}
+function Remove-LegacyAssignments {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $legacyAssignments
+    )
+    process {
+        foreach ($legacyAssignment in $legacyAssignments) {
+            $assignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$eslzRoot/providers/microsoft.authorization/policyassignments/$legacyAssignment" -ErrorAction SilentlyContinue
+            if ($PSCmdlet.ShouldProcess($eslzRoot, "- Removing legacy Policy Assignments: $($assignment.Name)")) {
+                if ($assignment) {
+                    Write-Host "- Removing legacy Policy Assignments: $($assignment.Name) ..." -ForegroundColor DarkRed
+                    Remove-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$eslzRoot/providers/microsoft.authorization/policyassignments/$legacyAssignment" > $null
+                }
+                else {
+                    Write-Host "- No legacy Policy Assignments found ..." -ForegroundColor DarkGray
+                }
+            }
+        }
+    }
+}
+function Deploy-UserAssignedManagedIdentity {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $managementResourceGroupName,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $platformScope,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $userAssignedIdentityName
+    )
+    begin {
+        $uami = Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue
+        $uamiAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$platformScope/providers/microsoft.authorization/policyassignments/DenyAction-DeleteUAMIAMA" -ErrorAction SilentlyContinue
+        $resultsUAMI = Get-AzResourceGroupDeploymentWhatIfResult -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\userAssignedIdentity.json" -TemplateParameterObject @{"location" = $location; "userAssignedIdentityName" = $userAssignedIdentityName; "userAssignedIdentityResourceGroup" = $managementResourceGroupName } | Out-string -Stream | Select-String -Pattern 'Resource changes'
+        $resultsUAMIAssignment = Get-AzManagementGroupDeploymentWhatIfResult -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DENYACTION-DeleteUAMIAMAPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "resourceName" = $userAssignedIdentityName; "resourceType" = "Microsoft.ManagedIdentity/userAssignedIdentities" } | Out-string -Stream | Select-String -Pattern 'Resource changes'
+    }
+    process {
+        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "- Deploying User Assigned Managed Identity: $userAssignedIdentityName $resultsUAMI")) {
+            if ($uami) {
+                Write-Host "- User Assigned Managed Identity $userAssignedIdentityName already exists ..." -ForegroundColor DarkGray
+            }
+            if (-NOT($uami)) {
+                Write-Host "- Deploying User Assigned Managed Identity: $userAssignedIdentityName ..." -ForegroundColor DarkGreen
+                New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\userAssignedIdentity.json" -TemplateParameterObject @{"location" = $location; "userAssignedIdentityName" = $userAssignedIdentityName; "userAssignedIdentityResourceGroup" = $managementResourceGroupName } > $null    
+            }
+        }
+        if ($PSCmdlet.ShouldProcess($platformScope, "- Assigning 'DenyAction-DeleteUAMIAMA' policy: $resultsUAMIAssignment")) {
+            if ($uamiAssignment) {
+                Write-Host "- Policy Assignment to protect the User Assigned Managed Identity from accidental deletion already exists ..." -ForegroundColor DarkGray
+            }
+            if (-NOT($uamiAssignment)) {
+                Write-Host "- Assigning 'DenyAction-DeleteUAMIAMA' policy to protect the User Assigned Managed Identity from accidental deletion ..." -ForegroundColor DarkGreen
+                New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DENYACTION-DeleteUAMIAMAPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "resourceName" = $userAssignedIdentityName; "resourceType" = "Microsoft.ManagedIdentity/userAssignedIdentities" } > $null
+            }
+        }
+    }
+}
+function Deploy-VMInsights {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $managementResourceGroupName,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $workspaceResourceId,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $userAssignedIdentityName,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $scopes,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $VMInsightsAssignmentTemplates
+    )
+    $userAssignedIdentityResourceId = (Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName).Id
+    # Create a data collection rule for VMInsights
+    $dataCollectionRuleVmInsightsName = "dcr-vminsights-prod-$location-001"
+    $dcrVMinsights = Get-AzDataCollectionRule -Name $dataCollectionRuleVmInsightsName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue
+    if ($dcrVMinsights) {
+        Write-Host "- Found existing data collection rule: $($dcrVMinsights.Name) ..." -ForegroundColor DarkGray
+    }
+    if (-NOT($dcrVMinsights)) {
+        Write-Host "- Creating a data collection rule for VMInsights ..." -ForegroundColor DarkGreen
+        New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-VmInsights.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleVmInsightsName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
+    }
+    $dataCollectionRuleResourceIdVMInsights = (Get-AzDataCollectionRule -Name $dataCollectionRuleVmInsightsName -ResourceGroupName $managementResourceGroupName).Id
+    
+    # Assign policies for VMInsights
+    foreach ($scope in $scopes) {
+        foreach ($template in $VMInsightsAssignmentTemplates) {
+            if ($template -eq "DINE-VMMonitoringPolicyAssignment.json") {
+                $vminsightsAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-VM-Monitoring" -ErrorAction SilentlyContinue
+            }
+            if ($template -eq "DINE-VMSSMonitoringPolicyAssignment.json") {
+                $vminsightsAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-VMSS-Monitoring" -ErrorAction SilentlyContinue
+            }
+            if ($template -eq "DINE-VMHybridMonitoringPolicyAssignment.json") {
+                $vminsightsAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-vmHybr-Monitoring" -ErrorAction SilentlyContinue
+            }
+            if ($vminsightsAssignment) {
+                Write-Host "- Found existing policy assignment: $($vminsightsAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+            }
+            if (-NOT($vminsightsAssignment)) {
+                if ($template -eq "DINE-VMHybridMonitoringPolicyAssignment.json") {
+                    Write-Host "- Assigning policies for VMInsights ..." -ForegroundColor DarkGreen
+                    New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights } > $null
+                }
+                else {
+                    Write-Host "- Assigning policies for VMInsights ..." -ForegroundColor DarkGreen
+                    New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } > $null
+                }
+            }
+        }
+    }
+
+    # Assign roles to Managed Identities
+    Add-RbacRolesToManagedIdentities -enterpriseScaleCompanyPrefix $eslzRoot -azureComputePolicyList @("Deploy-VM-Monitoring", "Deploy-VMSS-Monitoring") -arcEnabledPolicyList @("Deploy-vmHybr-Monitoring") > $null
+}
+function Deploy-ChangeTracking {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $managementResourceGroupName,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $workspaceResourceId,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $userAssignedIdentityName,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $scopes,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $ChangeTrackingAssignmentTemplates
+    )
+    $userAssignedIdentityResourceId = (Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName).Id
+    # Create a data collection rule for ChangeTracking
+    $dataCollectionRuleChangeTrackingName = "dcr-changetracking-prod-$location-001"
+    $dcrChangeTracking = Get-AzDataCollectionRule -Name $dataCollectionRuleChangeTrackingName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue
+    if ($dcrChangeTracking) {
+        Write-Host "- Found existing data collection rule: $($dcrChangeTracking.Name) ..." -ForegroundColor DarkGray
+    }
+    if (-NOT($dcrChangeTracking)) {
+        Write-Host "- Creating a data collection rule for ChangeTracking ..." -ForegroundColor DarkGreen
+        New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-CT.json" -TemplateParameterObject @{"dataCollectionRuleName" = $dataCollectionRuleChangeTrackingName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
+    }
+    $dataCollectionRuleResourceIdChangeTracking = (Get-AzDataCollectionRule -Name $dataCollectionRuleChangeTrackingName -ResourceGroupName $managementResourceGroupName).Id
+    
+    # Assign policies for ChangeTracking
+    foreach ($scope in $scopes) {
+        foreach ($template in $ChangeTrackingAssignmentTemplates) {
+            if ($template -eq "DINE-ChangeTrackingVMPolicyAssignment.json") {
+                $changeTrackingAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-VM-ChangeTrack" -ErrorAction SilentlyContinue
+            }
+            if ($template -eq "DINE-ChangeTrackingVMSSPolicyAssignment.json") {
+                $changeTrackingAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-VMSS-ChangeTrack" -ErrorAction SilentlyContinue
+            }
+            if ($template -eq "DINE-ChangeTrackingVMArcPolicyAssignment.json") {
+                $changeTrackingAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-vmArc-ChangeTrack" -ErrorAction SilentlyContinue
+            }
+            if ($changeTrackingAssignment) {
+                Write-Host "- Found existing policy assignment: $($changeTrackingAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+            }
+            if (-NOT($changeTrackingAssignment)) {
+                if ($template -eq "DINE-ChangeTrackingVMArcPolicyAssignment.json") {
+                    Write-Host "- Assigning policies for ChangeTracking ..." -ForegroundColor DarkGreen
+                    New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking } > $null
+                }
+                else {
+                    Write-Host "- Assigning policies for ChangeTracking ..." -ForegroundColor DarkGreen
+                    New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } > $null
+                }
+            }
+        }
+    }
+
+    # Assign roles to Managed Identities
+    Add-RbacRolesToManagedIdentities -enterpriseScaleCompanyPrefix $eslzRoot -azureComputePolicyList @("Deploy-VM-ChangeTrack", "Deploy-VMSS-ChangeTrack") -arcEnabledPolicyList @("Deploy-vmArc-ChangeTrack") > $null
+
+}
+function Deploy-MDFCDefenderSQL {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $managementResourceGroupName,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $workspaceResourceId,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $userAssignedIdentityName,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $scopes,
+
+        [Parameter(Mandatory = $true)]
+        [array]
+        $MDfCDefenderSQLAssignmentTemplates
+    )
+    $userAssignedIdentityResourceId = (Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName).Id
+    # Create a data collection rule for MDFC Defender SQL
+    $dataCollectionRuleMdfcDefenderSqlName = "dcr-defendersql-prod-$location-001"
+    $dcrMDfCDefenderSQL = Get-AzDataCollectionRule -Name $dataCollectionRuleMdfcDefenderSqlName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue
+    if ($dcrMDfCDefenderSQL) {
+        Write-Host "- Found existing data collection rule: $($dcrMDfCDefenderSQL.Name) ..." -ForegroundColor DarkGray
+    }
+    if (-NOT($dcrMDfCDefenderSQL)) {
+        Write-Host "- Creating a data collection rule for MDFC Defender for SQL ..." -ForegroundColor DarkGreen
+        New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-DefenderSQL.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleMdfcDefenderSqlName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
+    }
+    $dataCollectionRuleResourceIdMDfCDefenderSQL = (Get-AzDataCollectionRule -Name $dataCollectionRuleMdfcDefenderSqlName -ResourceGroupName $managementResourceGroupName).Id
+    
+    # Assign policies for MDFC Defender for SQL
+    foreach ($scope in $scopes) {
+        foreach ($template in $MDfCDefenderSQLAssignmentTemplates) {
+            $mdfcDefenderSQLAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-MDFC-DefSQL-AMA" -ErrorAction SilentlyContinue
+            if ($mdfcDefenderSQLAssignment) {
+                Write-Host "- Found existing policy assignment: $($mdfcDefenderSQLAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+            }
+            if (-NOT($mdfcDefenderSQLAssignment)) {
+                Write-Host "- Assigning policies for MDFC Defender for SQL ..." -ForegroundColor DarkGreen
+                New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "userWorkspaceResourceId" = $workspaceResourceId; "workspaceRegion" = $workspaceRegion; "dcrResourceId" = $dataCollectionRuleResourceIdMDfCDefenderSQL; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } > $null
+            }
+        }
+    }
+
+    # Assign roles to Managed Identities
+    Add-RbacRolesToManagedIdentities -enterpriseScaleCompanyPrefix $eslzRoot -azureComputePolicyList @("Deploy-MDFC-DefSQL-AMA") > $null
+}
+function Deploy-AzureUpdateManager {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $eslzRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $managementResourceGroupName,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $workspaceResourceId,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $userAssignedIdentityName
+    )
+    foreach ($scope in $scopes) {
+        foreach ($template in $AzureUpdateManagerAssignmentTemplates) {
+            $azureUpdateManagerAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Enable-AUM-CheckUpdates" -ErrorAction SilentlyContinue
+            if ($azureUpdateManagerAssignment) {
+                Write-Host "- Found existing policy assignment: $($azureUpdateManagerAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+            }
+            if (-NOT($azureUpdateManagerAssignment)) {
+                Write-Host "- Assigning policies for Azure Update Manager ..." -ForegroundColor DarkGreen
+                New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope } > $null
+            }
+        }
+    }
+}
+function Remove-LegacySolutions {
+    [CmdletBinding(SupportsShouldProcess)]
+    param ()
+    $legacySolutions = Get-AzMonitorLogAnalyticsSolution | Where-Object { $_.Name -notlike "SecurityInsights*" -and $_.Name -notlike "ChangeTracking*" }
+    if ($legacySolutions) {
+        Write-Host "- Removing legacy solutions: $($legacySolutions.Name) ..." -ForegroundColor DarkRed
+        $legacySolutions | Remove-AzMonitorLogAnalyticsSolution  > $null
+    }
+    if (-NOT($legacySolutions)) {
+        Write-Host "- No legacy solutions found ..." -ForegroundColor DarkGray
+    }
+}
 
 $landingZoneScope = "$eslzRoot-landingzones"
 $platformScope = "$eslzRoot-platform"
+$scopes = @(
+    $platformScope, 
+    $landingZoneScope
+)
+$legacyAssignments = @(
+    "deploy-vm-monitoring", 
+    "deploy-vmss-monitoring"
+)
+$userAssignedIdentityName = "id-ama-prod-$location-001"
+$VMInsightsAssignmentTemplates = @(
+    "DINE-VMMonitoringPolicyAssignment.json", 
+    "DINE-VMSSMonitoringPolicyAssignment.json", 
+    "DINE-VMHybridMonitoringPolicyAssignment.json"
+)
+$ChangeTrackingAssignmentTemplates = @(
+    "DINE-ChangeTrackingVMPolicyAssignment.json", 
+    "DINE-ChangeTrackingVMSSPolicyAssignment.json", 
+    "DINE-ChangeTrackingVMArcPolicyAssignment.json"
+)
+$MDfCDefenderSQLAssignmentTemplates = @(
+    "DINE-MDFCDefenderSQLAMAPolicyAssignment.json"
+)
+$AzureUpdateManagerAssignmentTemplates = @(
+    "MODIFY-AUM-CheckUpdatesPolicyAssignment.json"
+)
+$policyRemediationList = @( 
+    "c4a70814-96be-461c-889f-2b27429120dc",
+    "92a36f05-ebc9-4bba-9128-b47ad2ea3354",
+    "53448c70-089b-4f52-8f38-89196d7f2de1",
+    "f5bf694c-cca7-4033-b883-3a23327d5485",
+    "924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
+    "2b00397d-c309-49c4-aa5a-f0b2c5bc6321",
+    "de01d381-bae9-4670-8870-786f89f49e26",
+    "Deploy-AUM-CheckUpdates"
+)
 
 # Check for required modules
-try {
-    if (-not (Get-Module -ListAvailable Az.Resources)) {
-        Write-Output "This script requires the Az.Resources module."
-        $response = Read-Host "Would you like to install the 'Az.Resources' module now? (y/n)"
-        if ($response -match '[yY]') {
-            Install-Module Az.Resources -Scope CurrentUser
-        }
-    }
-}
-catch {
-    Write-Output "An error occurred while checking for the Az.Resources module: $_"
+If (-NOT(Get-Module -ListAvailable Az.Resources)) {
+    Write-Output "This script requires the Az.Resources module."
+    $response = Read-Host "Would you like to install the 'Az.Resources' module now? (y/n)"
+    If ($response -match '[yY]') { Install-Module Az.Resources -Scope CurrentUser }
 }
 
-try {
-    if (-not (Get-Module -ListAvailable Az.MonitoringSolutions)) {
-        Write-Output "This script requires the Az.MonitoringSolutions module."
-        $response = Read-Host "Would you like to install the 'Az.MonitoringSolutions' module now? (y/n)"
-        if ($response -match '[yY]') {
-            Install-Module Az.MonitoringSolutions -Scope CurrentUser
-        }
-    }
-}
-catch {
-    Write-Output "An error occurred while checking for the Az.MonitoringSolutions module: $_"
+If (-NOT(Get-Module -ListAvailable Az.Accounts)) {
+    Write-Output "This script requires the Az.Accounts module."
+    $response = Read-Host "Would you like to install the 'Az.Accounts' module now? (y/n)"
+    If ($response -match '[yY]') { Install-Module Az.Accounts -Scope CurrentUser }
 }
 
+If (-NOT(Get-Module -ListAvailable Az.MonitoringSolutions)) {
+    Write-Output "This script requires the Az.MonitoringSolutions module."
+    $response = Read-Host "Would you like to install the 'Az.MonitoringSolutions' module now? (y/n)"
+    If ($response -match '[yY]') { Install-Module Az.MonitoringSolutions -Scope CurrentUser }
+}
+
+# Update Policy Definitions
 if ($UpdatePolicyDefinitions) {
-    # Update Policy Definitions
-    New-AzManagementGroupDeployment -ManagementGroupId $eslzRoot -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyDefinitions\policies.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot }
-    # Update Policy Set Definitions
-    New-AzManagementGroupDeployment -ManagementGroupId $eslzRoot -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyDefinitions\initiatives.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot }
+    Write-Host "`r`nUpdating Policies ...`r`n" -ForegroundColor DarkBlue
+    Update-Policies -eslzRoot $eslzRoot -location $location
 }
 
+# Remove legacy Policy Assignments
 If ($RemoveLegacyPolicyAssignments) {
-    # Remove legacy Policy Assignments
-    Remove-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$eslzRoot/providers/microsoft.authorization/policyassignments/deploy-vm-monitoring"
-    Remove-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$eslzRoot/providers/microsoft.authorization/policyassignments/deploy-vmss-monitoring"
+    Write-Host "`r`nRemoving legacy Policy Assignments ...`r`n" -ForegroundColor DarkBlue
+    Remove-LegacyAssignments -eslzRoot $eslzRoot -legacyAssignments $legacyAssignments
 }
 
-if ($DeployVMInsights -or $DeployChangeTracking -or $DeployMDfCDefenderSQL) {
-    # Deploy User Assigned Managed Identity
-    $userAssignedIdentityName = "id-ama-prod-$location-001"
-    New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\userAssignedIdentity.json" -TemplateParameterObject @{"location" = $location; "userAssignedIdentityName" = $userAssignedIdentityName; "userAssignedIdentityResourceGroup" = $managementResourceGroupName }
-    # Do now allow deletion of the user assigned identity
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DENYACTION-DeleteUAMIAMAPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "resourceName" = $userAssignedIdentityName; "resourceType" = "Microsoft.ManagedIdentity/userAssignedIdentities" }
-    $userAssignedIdentityResourceId = (Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName).Id
+# Deploy User Assigned Managed Identity
+if ($DeployUserAssignedManagedIdentity -or $DeployVMInsights -or $DeployChangeTracking -or $DeployMDfCDefenderSQL) {
+    Write-Host "`r`nDeploying User Assigned Managed Identity ...`r`n" -ForegroundColor DarkBlue
+    Deploy-UserAssignedManagedIdentity -eslzRoot $eslzRoot -location $location -managementResourceGroupName $managementResourceGroupName -platformScope $platformScope -userAssignedIdentityName $userAssignedIdentityName
 }
 
+# Deploy VMInsights
 if ($DeployVMInsights) {
-    # Create a data collection rule for VMInsights
-    $dataCollectionRuleVmInsightsName = "dcr-vminsights-prod-$location-001"
-    New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-VmInsights.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleVmInsightsName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location }
-    $dataCollectionRuleResourceIdVMInsights = (Get-AzDataCollectionRule -Name $dataCollectionRuleVmInsightsName -ResourceGroupName $managementResourceGroupName).Id
-    # VMInsights Azure Virtual Machines to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMMonitoringPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # VMInsights Azure Virtual Machines to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMMonitoringPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # VMInsights Azure Virtual Machine Scale Sets to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMSSMonitoringPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # VMInsights Azure Virtual Machine Scale Sets to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMSSMonitoringPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # VMInsights Arc-enabled VMs to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMHybridMonitoringPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights }
-    # VMInsights Arc-enabled VMs to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-VMHybridMonitoringPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights }
-    # Assigning Reader and Managed Identity Operator to VMInsights Managed Identity
-    Add-RbacRolesToManagedIdentities -enterpriseScaleCompanyPrefix $eslzRoot -azureComputePolicyList @("Deploy-VM-Monitoring", "Deploy-VMSS-Monitoring") -arcEnabledPolicyList @("Deploy-vmHybr-Monitoring")
+    Write-Host "`r`nDeploying VMInsights ...`r`n" -ForegroundColor DarkBlue
+    Deploy-VMInsights -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -VMInsightsAssignmentTemplates $VMInsightsAssignmentTemplates
 }
 
-If ($DeployChangeTracking) {
-    # Create a data collection rule for Change Tracking
-    $dataCollectionRuleChangeTrackingName = "dcr-changetracking-prod-$location-001"
-    New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-CT.json" -TemplateParameterObject @{"dataCollectionRuleName" = $dataCollectionRuleChangeTrackingName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location }
-    $dataCollectionRuleResourceIdChangeTracking = (Get-AzDataCollectionRule -Name $dataCollectionRuleChangeTrackingName -ResourceGroupName $managementResourceGroupName).Id
-    # Change Tracking Azure Virtual Machines to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-ChangeTrackingVMPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # Change Tracking Azure Virtual Machines to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-ChangeTrackingVMPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # Change Tracking Azure Virtual Machine Scale Sets to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-ChangeTrackingVMSSPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # Change Tracking Azure Virtual Machine Scale Sets to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-ChangeTrackingVMSSPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId }
-    # Change Tracking Arc-enabled VMs to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-ChangeTrackingVMArcPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking }
-    # Change Tracking Arc-enabled VMs to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-ChangeTrackingVMArcPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking }
-    # Assigning Reader and Managed Identity Operator to VMInsights Managed Identity
-    Add-RbacRolesToManagedIdentities -enterpriseScaleCompanyPrefix $eslzRoot -azureComputePolicyList @("Deploy-VM-ChangeTrack", "Deploy-VMSS-ChangeTrack") -arcEnabledPolicyList @("Deploy-vmArc-ChangeTrack")
+# Deploy ChangeTracking
+if ($DeployChangeTracking) {
+    Write-Host "`r`nDeploying ChangeTracking ...`r`n" -ForegroundColor DarkBlue
+    Deploy-ChangeTracking -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -ChangeTrackingAssignmentTemplates $ChangeTrackingAssignmentTemplates
 }
 
-If ($DeployMDfCDefenderSQL) {
-    # Create a data collection rule for MDFC Defender SQL
-    $dataCollectionRuleMdfcDefenderSqlName = "dcr-defendersql-prod-$location-001"
-    New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-DefenderSQL.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleMdfcDefenderSqlName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location }
-    $dataCollectionRuleResourceIdMDfCDefenderSQL = (Get-AzDataCollectionRule -Name $dataCollectionRuleMdfcDefenderSqlName -ResourceGroupName $managementResourceGroupName).Id
-    # MDFC Defender for SQL AMA initiative to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-MDFCDefenderSQLAMAPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "userWorkspaceResourceId" = $workspaceResourceId; "workspaceRegion" = $workspaceRegion; "dcrResourceId" = $dataCollectionRuleResourceIdMDfCDefenderSQL; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId; "scope" = $platformScope }
-    # MDFC Defender for SQL AMA initiative to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DINE-MDFCDefenderSQLAMAPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "userWorkspaceResourceId" = $workspaceResourceId; "workspaceRegion" = $workspaceRegion; "dcrResourceId" = $dataCollectionRuleResourceIdMDfCDefenderSQL; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId; "scope" = $landingZoneScope }
-    # Assigning Reader and Managed Identity Operator to VMInsights Managed Identity
-    Add-RbacRolesToManagedIdentities -enterpriseScaleCompanyPrefix $eslzRoot -azureComputePolicyList @("Deploy-MDFC-DefSQL-AMA")
+# Deploy MDFC Defender for SQL
+if ($DeployMDfCDefenderSQL) {
+    Write-Host "`r`nDeploying MDFC Defender for SQL ...`r`n" -ForegroundColor DarkBlue
+    Deploy-MDFCDefenderSQL -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -MDfCDefenderSQLAssignmentTemplates $MDfCDefenderSQLAssignmentTemplates
 }
 
-If ($DeployAzureUpdateManager) {
-    ## Azure Update Manager policy to platform management group
-    New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\MODIFY-AUM-CheckUpdatesPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $platformScope }
-    ## Azure Update Manager policy to landing zone management group
-    New-AzManagementGroupDeployment -ManagementGroupId $landingZoneScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\MODIFY-AUM-CheckUpdatesPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $landingZoneScope }
+# Deploy Azure Update Manager
+if ($DeployAzureUpdateManager) {
+    Write-Host "`r`nDeploying Azure Update Manager ...`r`n" -ForegroundColor DarkBlue
+    Deploy-AzureUpdateManager -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName
 }
 
+# Remove legacy solutions
 If ($RemoveLegacySolutions) {
-    Get-AzMonitorLogAnalyticsSolution | Where-Object { $_.Name -notlike "SecurityInsights*" } | Remove-AzMonitorLogAnalyticsSolution
+    Write-Host "`r`nRemoving legacy solutions ...`r`n" -ForegroundColor DarkBlue
+    Remove-LegacySolutions
 }
-    
+
+# Policy Remediation
 if ($RemediatePolicies) {
-    $policyRemediationList = @( 
-        "c4a70814-96be-461c-889f-2b27429120dc",
-        "92a36f05-ebc9-4bba-9128-b47ad2ea3354",
-        "53448c70-089b-4f52-8f38-89196d7f2de1",
-        "f5bf694c-cca7-4033-b883-3a23327d5485",
-        "924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
-        "2b00397d-c309-49c4-aa5a-f0b2c5bc6321",
-        "de01d381-bae9-4670-8870-786f89f49e26",
-        "Deploy-AUM-CheckUpdates"
-    )
-    # Policy Remediation
+    Write-Host "`r`nRemediating policies ...`r`n" -ForegroundColor DarkBlue
     foreach ($policy in $policyRemediationList) {
-        Get-PolicyType -managementGroupName $landingZoneScope -policyName $policy
-        Get-PolicyType -managementGroupName $platformScope -policyName $policy
+        Get-PolicyType -managementGroupName $landingZoneScope -policyName $policy > $null
+        Get-PolicyType -managementGroupName $platformScope -policyName $policy > $null
     }
 }
 
