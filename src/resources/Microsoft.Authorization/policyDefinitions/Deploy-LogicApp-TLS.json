@@ -1,0 +1,95 @@
+{
+    "name": "Deploy-LogicApp-TLS",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "Indexed",
+        "displayName": "Configure Logic apps to use the latest TLS version",
+        "description": "Periodically, newer versions are released for TLS either due to security flaws, include additional functionality, and enhance speed. Upgrade to the latest TLS version for Function apps to take advantage of security fixes, if any, and/or new functionalities of the latest version.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Logic Apps",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "DeployIfNotExists",
+                    "Disabled"
+                ],
+                "defaultValue": "DeployIfNotExists",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Web/sites"
+                    },
+                    {
+                        "field": "kind",
+                        "contains": "workflowapp"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Web/sites/config",
+                    "name": "web",
+                    "existenceCondition": {
+                        "field": "Microsoft.Web/sites/config/minTlsVersion",
+                        "equals": "1.2"
+                    },
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/de139f84-1756-47ae-9be6-808fbbe84772"
+                    ],
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "parameters": {
+                                "siteName": {
+                                    "value": "[[field('name')]"
+                                }
+                            },
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "siteName": {
+                                        "type": "string"
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Web/sites/config",
+                                        "apiVersion": "2021-02-01",
+                                        "name": "[[concat(parameters('siteName'), '/web')]",
+                                        "properties": {
+                                            "minTlsVersion": "1.2"
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -26,8 +26,13 @@ The following are the unique ID's (also known as PIDs) used in each of the modul
 | Telemetry                                                                 | PID                                  |
 | ------------------------------------------------------------------------- | ------------------------------------ |
 | ALZ Accelerator/ESLZ ARM Deployment                                       | 35c42e79-00b3-42eb-a9ac-e542953efb3c |
-| ALZ Accelerator/ESLZ ARM Deployment - Zero Trust Networking - Phase 1 | f09f64b8-5cb3-4b16-900d-6ba1df8a597e |
-| ALZ Accelerator/ESLZ ARM Deployment - Azure Monitor baseline alerts | 5f0e5693-3998-4ae2-8115-ee96e38dac62 |
+| ALZ Accelerator/ESLZ ARM Deployment - Single Platform Subscription        | b35a8452-8a67-49f9-b1a9-1aee3c1a13c2 |
+| ALZ Accelerator/ESLZ ARM Deployment - Multiple Platform Subscriptions     | 725aea60-cfaa-4a0c-9fe7-71b07f53803d |
+| ALZ Accelerator/ESLZ ARM Deployment - No Networking                       | 35c1ce02-165f-43b2-8d3a-fc68a04b802a |
+| ALZ Accelerator/ESLZ ARM Deployment - Hub & Spoke Networking              | f7fcc714-0c0d-4011-87bf-319810bbb03d |
+| ALZ Accelerator/ESLZ ARM Deployment - Virtual WAN Networking              | 0263335d-f570-470c-8389-aa6c916e5008 |
+| ALZ Accelerator/ESLZ ARM Deployment - Zero Trust Networking - Phase 1     | f09f64b8-5cb3-4b16-900d-6ba1df8a597e |
+| ALZ Accelerator/ESLZ ARM Deployment - Azure Monitor baseline alerts       | 5f0e5693-3998-4ae2-8115-ee96e38dac62 |
 
 ## External modules telemetry tracking
 
@@ -36,7 +41,6 @@ In addition to the above, there are a number of modules in external repos that a
 | Module Name                                                                 | PID documentation                                |
 | ------------------------------------------------------------------------- | ------------------------------------ |
 | [Azure Monitor Baseline Alerts for ALZ](https://aka.ms/amba)              | [Telemetry](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Telemetry)|
-
 
 ### What is Zero Trust Network Telemetry
 

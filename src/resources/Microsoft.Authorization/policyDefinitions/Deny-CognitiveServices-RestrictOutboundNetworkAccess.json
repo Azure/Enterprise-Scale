@@ -1,0 +1,62 @@
+{
+    "name": "Deny-CognitiveServices-RestrictOutboundNetworkAccess",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "Outbound network access should be restricted for Cognitive Services",
+        "description": "Azure Cognitive Services allow restricting outbound network access. Enable this to limit outbound connectivity for the service.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Cognitive Services",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Deny",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.CognitiveServices/accounts"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "field": "Microsoft.CognitiveServices/accounts/restrictOutboundNetworkAccess",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "Microsoft.CognitiveServices/accounts/restrictOutboundNetworkAccess",
+                                "notEquals": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

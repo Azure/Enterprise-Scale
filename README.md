@@ -2,6 +2,7 @@
 
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/azure/enterprise-scale.svg)](http://isitmaintained.com/project/azure/enterprise-scale "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/azure/enterprise-scale.svg)](http://isitmaintained.com/project/azure/enterprise-scale "Percentage of issues still open")
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Azure/Enterprise-Scale/badge)](https://scorecard.dev/viewer/?uri=github.com/Azure/Enterprise-Scale)
 
 ## User documentation
 
@@ -56,6 +57,10 @@ The Azure Landing Zones (Enterprise-Scale Architecture) is modular by design and
 [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://aka.ms/alz/portal)
 
 You can find all of the implementation options for Azure Landing Zones here: [aka.ms/alz/aac](https://aka.ms/alz/aac#platform)
+
+## Azure Landing Zones Roadmap
+
+The Azure Landing Zones (Enterprise-Scale) architecture is continuously updated to align with advancements in the Azure platform and insights from customer feedback. For detailed information on future updates, please refer to the roadmap at: [Azure Landing Zones Roadmap](https://aka.ms/alz/roadmap)
 
 ## Contributing
 

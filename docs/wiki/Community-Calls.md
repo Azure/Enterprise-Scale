@@ -1,6 +1,7 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
+- [March 2024](#11th-march-2024-11032024)
 - [December 2023](#6th-december-2023-06122023)
 - [September 2023](#25th-september-2023-25092023)
 - [April 2023](#27th-april-2023-27042023)
@@ -14,6 +15,26 @@
 On this page you will find the meeting recordings and PowerPoint slides from previous Azure Landing Zone External Community Calls. To sign-up to the next Azure Landing Zone External Community Call, head to: [https://aka.ms/alz/communitycallregister](https://aka.ms/alz/communitycallregister)
 
 > Short link to this page is [aka.ms/alz/community](https://aka.ms/alz/community)
+
+## 12th June 2024 (12/06/2024)
+
+### Recording
+
+[![Screenshot of Azure Landing Zones Community Call from June 2024 recording on YouTube](./media/community-calls/june-2024/youtube-thumbnail.png)](https://youtu.be/m4_peeUdZoY?si=PNS8ySiC-bWCSs83)
+
+### Slides
+
+A PDF of the PowerPoint slides is available [here.](./media/community-calls/june-2024/ALZ-Community-Call-12062024.pdf)
+
+## 11th March 2024 (11/03/2024)
+
+### Recording
+
+[![Screenshot of Azure Landing Zones Community Call from March 2024 recording on YouTube](./media/community-calls/march-2024/youtube-thumbnail.png)](https://youtu.be/KNJ0J4jkD7M?si=iOSrP-_uLoB0VW0t)
+
+### Slides
+
+A PDF of the PowerPoint slides is available [here.](./media/community-calls/march-2024/ALZ-Community-Call-11032024.pdf)
 
 ## 6th December 2023 (06/12/2023)
 
