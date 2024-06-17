@@ -19,30 +19,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-#-------------------------------------------------------------------------------------------------------------------------------------
-# add if statement to replace placeholder
-# Assigning policies for VMInsights: DINE-VMMonitoringPolicyAssignment.json; Resource changes: 5 to create. ...-----> add scope
-# Creating a data collection rule for ChangeTracking: Name: dcr-changetracking-prod-northeurope-001; Resource changes: 1 to create, 1 to modify, 13 to ignore. ...---> at resource group
-# Creating a data collection rule for ChangeTracking: add - before
-# standard messenging Found existing data collection rule
-# update AMA # add removal of assignment Deploy-MDFC-DefenSQL-AMA and Deploy-UAMI-VMInsights
-# update synopsis
-
-# strech goal add test for custom configuration and give a warning with link.
-
-# check changetracking migration https://learn.microsoft.com/en-us/azure/automation/change-tracking/guidance-migration-log-analytics-monitoring-agent?tabs=ps-policy%2Climit-single-vm
-
-#-------------------------------------------------------------------------------------------------------------------------------------
-
-
 <#
     .SYNOPSIS
     Updates Azure Landing Zones to use AMA.
 
     .DESCRIPTION
     The Update-AzureLandingZonesToAMA command performs the following tasks:
-    - Deploys Data Collection Rules for VMInsights, ChangeTracking, and MDFC Defender for SQL.
     - Deploys User Assigned Managed Identity.
+    - Deploys VMInsights, ChangeTracking, and MDFC Defender for SQL.
     - Updates Policy Definitions.
     - Removes legacy Policy Assignments.
     - Removes legacy solutions.
@@ -50,17 +34,53 @@
     - Updates Managed Identity roles.
     - Creates Policy Remediation tasks.
 
-    .PARAMETER Name
-    Required. 
+    .PARAMETER location
+    Required. Specifies the deployment location.
 
-    .PARAMETER ResourceGroupName
-    Required. 
+    .PARAMETER eslzRoot
+    Required. Specifies the intermediate root management group name of the enterprise-scale landing zones environment.
+
+    .PARAMETER managementResourceGroupName
+    Required. Specifies the name of the management resource group.
+
+    .PARAMETER workspaceResourceId
+    Required. Specifies the resource ID of the Log Analytics Workspace.
+
+    .PARAMETER workspaceRegion
+    Required. Specifies the region of the Log Analytics Workspace.
+
+    .PARAMETER DeployUserAssignedManagedIdentity
+    Specifies whether to deploy the User Assigned Managed Identity.
+
+    .PARAMETER DeployVMInsights
+    Specifies whether to deploy VMInsights.
+
+    .PARAMETER DeployChangeTracking
+    Specifies whether to deploy ChangeTracking.
+
+    .PARAMETER DeployMDfCDefenderSQL
+    Specifies whether to deploy MDFC Defender for SQL.
+
+    .PARAMETER DeployAzureUpdateManager
+    Specifies whether to deploy Azure Update Manager.
+
+    .PARAMETER RemediatePolicies
+    Specifies whether to remediate policies.
+
+    .PARAMETER RemoveLegacyPolicyAssignments
+    Specifies whether to remove legacy policy assignments.
+
+    .PARAMETER RemoveLegacySolutions
+    Specifies whether to remove legacy solutions.
+
+    .PARAMETER UpdatePolicyDefinitions
+    Specifies whether to update policy definitions.
 
     .EXAMPLE
-    example
+    .\src\scripts\Update-AzureLandingZonesToAMA.ps1 -location "northeurope" -eslzRoot "contoso" -managementResourceGroupName "contoso-mgmt" -workspaceResourceId "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}" -workspaceRegion "northeurope" -DeployUserAssignedManagedIdentity -DeployVMInsights -DeployChangeTracking -DeployMDfCDefenderSQL -DeployAzureUpdateManager -RemoveLegacyPolicyAssignments -RemoveLegacySolutions -UpdatePolicyDefinitions
 
     .LINK
-    alz link
+    https://github.com/Azure/Enterprise-Scale
 #>
 
 #Requires -Modules Az.Resources, Az.Accounts, Az.MonitoringSolutions
@@ -372,19 +392,19 @@ function Deploy-UserAssignedManagedIdentity {
     process {
         if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "- Deploying User Assigned Managed Identity: ${userAssignedIdentityName}; $resultsUAMI")) {
             if ($uami) {
-                Write-Host "- User Assigned Managed Identity $userAssignedIdentityName already exists ..." -ForegroundColor DarkGray
+                Write-Host "- Found existing User Assigned Managed Identity $userAssignedIdentityName ..." -ForegroundColor DarkGray
             }
             if (-NOT($uami)) {
-                Write-Host "- Deploying User Assigned Managed Identity: Name: ${userAssignedIdentityName}; $resultsUAMI ..." -ForegroundColor DarkGreen
+                Write-Host "- Deploying User Assigned Managed Identity: Name: ${userAssignedIdentityName} to resource group ${managementResourceGroupName}; $resultsUAMI ..." -ForegroundColor DarkGreen
                 New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\userAssignedIdentity.json" -TemplateParameterObject @{"location" = $location; "userAssignedIdentityName" = $userAssignedIdentityName; "userAssignedIdentityResourceGroup" = $managementResourceGroupName } > $null    
             }
         }
         if ($PSCmdlet.ShouldProcess($platformScope, "- Assigning 'DenyAction-DeleteUAMIAMA' policy: $resultsUAMIAssignment")) {
             if ($uamiAssignment) {
-                Write-Host "- Policy Assignment to protect the User Assigned Managed Identity from accidental deletion already exists ..." -ForegroundColor DarkGray
+                Write-Host "- Found existing policy assignment: $($uamiAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
             }
             if (-NOT($uamiAssignment)) {
-                Write-Host "- Assigning 'DenyAction-DeleteUAMIAMA' policy to protect the User Assigned Managed Identity from accidental deletion ..." -ForegroundColor DarkGreen
+                Write-Host "- Assigning 'DenyAction-DeleteUAMIAMA' policy to scope $platformScope ..." -ForegroundColor DarkGreen
                 New-AzManagementGroupDeployment -ManagementGroupId $platformScope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\DENYACTION-DeleteUAMIAMAPolicyAssignment.json" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "resourceName" = $userAssignedIdentityName; "resourceType" = "Microsoft.ManagedIdentity/userAssignedIdentities" } > $null
             }
         }
@@ -428,12 +448,12 @@ function Deploy-VMInsights {
         $resultsDcrVMInsights = Get-AzResourceGroupDeploymentWhatIfResult -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-VmInsights.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleVmInsightsName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } | Out-string -Stream | Select-String -Pattern 'Resource changes'
     }
     process {
-        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "- Creating a data collection rule for VMInsights: Name: ${dataCollectionRuleVmInsightsName}; $resultsDcrVMInsights")) {
+        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "- Deploying a data collection rule for VMInsights: Name: ${dataCollectionRuleVmInsightsName}; $resultsDcrVMInsights")) {
             if ($dcrVMinsights) {
                 Write-Host "- Found existing data collection rule: $($dcrVMinsights.Name) ..." -ForegroundColor DarkGray
             }
             if (-NOT($dcrVMinsights)) {
-                Write-Host "- Creating a data collection rule for VMInsights: Name: ${dataCollectionRuleVmInsightsName}; $resultsDcrVMInsights ..." -ForegroundColor DarkGreen
+                Write-Host "- Deploying a data collection rule for VMInsights: Name: ${dataCollectionRuleVmInsightsName} to resource group ${managementResourceGroupName}; $resultsDcrVMInsights ..." -ForegroundColor DarkGreen
                 New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-VmInsights.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleVmInsightsName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
             }
             $dataCollectionRuleResourceIdVMInsights = (Get-AzDataCollectionRule -Name $dataCollectionRuleVmInsightsName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue).Id
@@ -459,11 +479,11 @@ function Deploy-VMInsights {
                 if (-NOT($vminsightsAssignment)) {
                     if ($PSCmdlet.ShouldProcess($scope, "- Assigning policies for VMInsights: ${template}; $resultsVminsightsAssignment")) {
                         if ($template -eq "DINE-VMHybridMonitoringPolicyAssignment.json") {
-                            Write-Host "- Assigning policies for VMInsights: ${template}; $resultsVminsightsAssignment ..." -ForegroundColor DarkGreen
+                            Write-Host "- Assigning policies for VMInsights: ${template} to scope ${scope}; $resultsVminsightsAssignment ..." -ForegroundColor DarkGreen
                             New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights } > $null
                         }
                         if ($template -eq "DINE-VMSSMonitoringPolicyAssignment.json" -or $template -eq "DINE-VMMonitoringPolicyAssignment.json") {
-                            Write-Host "- Assigning policies for VMInsights: ${template}; $resultsVminsightsAssignment ..." -ForegroundColor DarkGreen
+                            Write-Host "- Assigning policies for VMInsights: ${template} to scope ${scope}; $resultsVminsightsAssignment ..." -ForegroundColor DarkGreen
                             New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } > $null
                         }
                     }
@@ -515,12 +535,12 @@ function Deploy-ChangeTracking {
         $resultsDcrChangeTracking = Get-AzResourceGroupDeploymentWhatIfResult -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-CT.json" -TemplateParameterObject @{"dataCollectionRuleName" = $dataCollectionRuleChangeTrackingName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } | Out-string -Stream | Select-String -Pattern 'Resource changes'
     }
     process {
-        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "Creating a data collection rule for ChangeTracking: Name: ${dataCollectionRuleChangeTrackingName}; $resultsDcrChangeTracking")) {
+        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "Deploying a data collection rule for ChangeTracking: Name: ${dataCollectionRuleChangeTrackingName}; $resultsDcrChangeTracking")) {
             if ($dcrChangeTracking) {
                 Write-Host "- Found existing data collection rule: $($dcrChangeTracking.Name) ..." -ForegroundColor DarkGray
             }
             if (-NOT($dcrChangeTracking)) {
-                Write-Host "Creating a data collection rule for ChangeTracking: Name: ${dataCollectionRuleChangeTrackingName}; $resultsDcrChangeTracking ..." -ForegroundColor DarkGreen
+                Write-Host "- Deploying a data collection rule for ChangeTracking: Name: ${dataCollectionRuleChangeTrackingName} to resource group ${managementResourceGroupName}; $resultsDcrChangeTracking ..." -ForegroundColor DarkGreen
                 New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-CT.json" -TemplateParameterObject @{"dataCollectionRuleName" = $dataCollectionRuleChangeTrackingName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
             }
             $dataCollectionRuleResourceIdChangeTracking = (Get-AzDataCollectionRule -Name $dataCollectionRuleChangeTrackingName -ResourceGroupName $managementResourceGroupName).Id
@@ -546,11 +566,11 @@ function Deploy-ChangeTracking {
                 if (-NOT($changeTrackingAssignment)) {
                     if ($PSCmdlet.ShouldProcess($scope, "- Assigning policies for ChangeTracking: ${template}; $resultChangeTrackingAssignment")) {
                         if ($template -eq "DINE-ChangeTrackingVMArcPolicyAssignment.json") {
-                            Write-Host "- Assigning policies for ChangeTracking: $template; $resultChangeTrackingAssignment ..." -ForegroundColor DarkGreen
+                            Write-Host "- Assigning policies for ChangeTracking: $template  to scope ${scope}; $resultChangeTrackingAssignment ..." -ForegroundColor DarkGreen
                             New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking } > $null
                         }
                         if ($template -eq "DINE-ChangeTrackingVMPolicyAssignment.json" -or $template -eq "DINE-ChangeTrackingVMSSPolicyAssignment.json") {
-                            Write-Host "- Assigning policies for ChangeTracking: $template; $resultChangeTrackingAssignment ..." -ForegroundColor DarkGreen
+                            Write-Host "- Assigning policies for ChangeTracking: $template  to scope ${scope}; $resultChangeTrackingAssignment ..." -ForegroundColor DarkGreen
                             New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } > $null
                         }
                     }
@@ -602,12 +622,12 @@ function Deploy-MDFCDefenderSQL {
         $resultsDcrMDfCDefenderSQL = Get-AzResourceGroupDeploymentWhatIfResult -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-DefenderSQL.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleMdfcDefenderSqlName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } | Out-string -Stream | Select-String -Pattern 'Resource changes'
     }
     process {
-        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "- Creating a data collection rule for MDFC Defender for SQL: Name: ${dataCollectionRuleMdfcDefenderSqlName}; $resultsDcrMDfCDefenderSQL")) {
+        if ($PSCmdlet.ShouldProcess($managementResourceGroupName, "- Deploying a data collection rule for MDFC Defender for SQL: Name: ${dataCollectionRuleMdfcDefenderSqlName}; $resultsDcrMDfCDefenderSQL")) {
             if ($dcrMDfCDefenderSQL) {
                 Write-Host "- Found existing data collection rule: $($dcrMDfCDefenderSQL.Name) ..." -ForegroundColor DarkGray
             }
             if (-NOT($dcrMDfCDefenderSQL)) {
-                Write-Host "- Creating a data collection rule for MDFC Defender for SQL: Name: ${dataCollectionRuleMdfcDefenderSqlName}; $resultsDcrMDfCDefenderSQL ..." -ForegroundColor DarkGreen
+                Write-Host "- Deploying a data collection rule for MDFC Defender for SQL: Name: ${dataCollectionRuleMdfcDefenderSqlName} to resource group ${managementResourceGroupName}; $resultsDcrMDfCDefenderSQL ..." -ForegroundColor DarkGreen
                 New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-DefenderSQL.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleMdfcDefenderSqlName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
             }
             $dataCollectionRuleResourceIdMDfCDefenderSQL = (Get-AzDataCollectionRule -Name $dataCollectionRuleMdfcDefenderSqlName -ResourceGroupName $managementResourceGroupName).Id    
@@ -616,13 +636,13 @@ function Deploy-MDFCDefenderSQL {
         foreach ($scope in $scopes) {
             foreach ($template in $MDfCDefenderSQLAssignmentTemplates) {
                 $resultsMDfCDefenderSQLAssignment = Get-AzManagementGroupDeploymentWhatIfResult -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "userWorkspaceResourceId" = $workspaceResourceId; "workspaceRegion" = $location; "dcrResourceId" = "placeholder"; "userAssignedIdentityResourceId" = "placeholder" } | Out-string -Stream | Select-String -Pattern 'Resource changes'
-                if ($PSCmdlet.ShouldProcess($scope, "- Assigning policies for MDFC Defender for SQL: ${template}; $resultsMDfCDefenderSQLAssignment")) {
+                if ($PSCmdlet.ShouldProcess($scope, "- Assigning policies for MDFC Defender for SQL: ${template} to scope ${scope}; $resultsMDfCDefenderSQLAssignment")) {
                     $mdfcDefenderSQLAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/Deploy-MDFC-DefSQL-AMA" -ErrorAction SilentlyContinue
                     if ($mdfcDefenderSQLAssignment) {
                         Write-Host "- Found existing policy assignment: $($mdfcDefenderSQLAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
                     }
                     if (-NOT($mdfcDefenderSQLAssignment)) {
-                        Write-Host "- Assigning policies for MDFC Defender for SQL: ${template}; $resultsMDfCDefenderSQLAssignment ..." -ForegroundColor DarkGreen
+                        Write-Host "- Assigning policies for MDFC Defender for SQL: ${template} to scope ${scope}; $resultsMDfCDefenderSQLAssignment ..." -ForegroundColor DarkGreen
                         New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "userWorkspaceResourceId" = $workspaceResourceId; "workspaceRegion" = $workspaceRegion; "dcrResourceId" = $dataCollectionRuleResourceIdMDfCDefenderSQL; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } > $null
                     }
                 }
@@ -668,7 +688,7 @@ function Deploy-AzureUpdateManager {
                         Write-Host "- Found existing policy assignment: $($azureUpdateManagerAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
                     }
                     if (-NOT($azureUpdateManagerAssignment)) {
-                        Write-Host "- Assigning policies for Azure Update Manager: ${template}; $resultsAzureUpdateManagerAssignment ..." -ForegroundColor DarkGreen
+                        Write-Host "- Assigning policies for Azure Update Manager: ${template} to scope ${scope}; $resultsAzureUpdateManagerAssignment ..." -ForegroundColor DarkGreen
                         New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope } > $null
                     }
                 }
@@ -685,7 +705,7 @@ function Remove-LegacySolutions {
     process {
         foreach ($legacySolution in $legacySolutions) {
             if ($PSCmdlet.ShouldProcess($legacySolution.WorkspaceResourceId, "- Removing legacy solutions: $($legacySolution.Name)")) {
-                Write-Host "- Removing legacy solution: $($legacySolution.Name) from ${legacySolution.WorkspaceResourceId} ..." -ForegroundColor DarkRed
+                Write-Host "- Removing legacy solution: $($legacySolution.Name) ..." -ForegroundColor DarkRed
                 $legacySolution | Remove-AzMonitorLogAnalyticsSolution > $null
             }
         }
