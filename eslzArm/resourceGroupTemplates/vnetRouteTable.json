@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix" : {
+            "type": "string"
+        },
+        "connectivityHubResourceId": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "cidrRange": {
+            "type": "string"
+        },
+        "targetFWSubnetCidr": {
+            "type": "string"
+        },
+        "sourceFWSubnetCidr": {
+            "type": "string"
+        },
+        "hubLocation": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "routeTableName": "[concat(parameters('topLevelManagementGroupPrefix'), '-rt-hub-', parameters('hubLocation'))]",
+        "vNetName": "[last(split(parameters('connectivityHubResourceId'), '/'))]",
+        "nextHopIP": "[first(split(cidrsubnet(parameters('targetFWSubnetCidr'), 32, 4), '/'))]"
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2020-07-01",
+            "name": "[variables('routeTableName')]",
+            "location": "[parameters('hubLocation')]",
+            "properties": {
+                "routes": [
+                    {
+                        "name": "hubRoute",
+                        "properties": {
+                            "addressPrefix": "[parameters('cidrRange')]",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "[variables('nextHopIP')]"
+                        }
+                    },
+                    {
+                        "name": "internetRoute",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopType": "Internet"
+                        }
+                    }
+                ]
+                
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-07-01",
+            "name": "[concat(variables('vNetName'), '/', parameters('subnetName'))]",
+            "properties": {
+                "addressPrefix": "[parameters('sourceFWSubnetCidr')]",
+                "routeTable": {
+                    "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                }
+                
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+            ]
+        }
+    ]
+}
+
