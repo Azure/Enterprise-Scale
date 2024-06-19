@@ -76,14 +76,17 @@
     .PARAMETER UpdatePolicyDefinitions
     Specifies whether to update policy definitions.
 
+    .PARAMETER RemoveObsoleteUAMI
+    Specifies whether to remove obsolete User Assigned Managed Identities.
+
     .EXAMPLE
-    .\src\scripts\Update-AzureLandingZonesToAMA.ps1 -location "northeurope" -eslzRoot "contoso" -managementResourceGroupName "contoso-mgmt" -workspaceResourceId "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}" -workspaceRegion "northeurope" -DeployUserAssignedManagedIdentity -DeployVMInsights -DeployChangeTracking -DeployMDfCDefenderSQL -DeployAzureUpdateManager -RemoveLegacyPolicyAssignments -RemoveLegacySolutions -UpdatePolicyDefinitions
+    .\src\scripts\Update-AzureLandingZonesToAMA.ps1 -migrationPath MMAToAMA -location "northeurope" -eslzRoot "contoso" -managementResourceGroupName "contoso-mgmt" -workspaceResourceId "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}" -workspaceRegion "northeurope" -DeployUserAssignedManagedIdentity -DeployVMInsights -DeployChangeTracking -DeployMDfCDefenderSQL -DeployAzureUpdateManager -RemoveLegacyPolicyAssignments -RemoveLegacySolutions -UpdatePolicyDefinitions
 
     .LINK
     https://github.com/Azure/Enterprise-Scale
 #>
 
-#Requires -Modules Az.Resources, Az.Accounts, Az.MonitoringSolutions
+#Requires -Modules Az.Resources, Az.Accounts, Az.MonitoringSolutions, Az.ResourceGraph
 
 [CmdletBinding(SupportsShouldProcess)]
 param (
@@ -107,32 +110,43 @@ param (
     [string]
     $workspaceRegion,
 
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("MMAToAMA", "UpdateAMA")]
+    [string]
+    $migrationPath,
+
     [switch]
-    $DeployUserAssignedManagedIdentity,
+    $deployUserAssignedManagedIdentity,
     
     [switch]
-    $DeployVMInsights,
+    $deployVMInsights,
 
     [switch]
-    $DeployChangeTracking,
+    $deployChangeTracking,
 
     [switch]
-    $DeployMDfCDefenderSQL,
+    $deployMDfCDefenderSQL,
 
     [switch]
-    $DeployAzureUpdateManager,
+    $deployAzureUpdateManager,
 
     [switch]
-    $RemediatePolicies,
+    $remediatePolicies,
 
     [switch]
-    $RemoveLegacyPolicyAssignments,
+    $removeLegacyPolicyAssignments,
 
     [switch]
-    $RemoveLegacySolutions,
+    $removeLegacySolutions,
 
     [switch]
-    $UpdatePolicyDefinitions
+    $updatePolicyDefinitions,
+
+    [switch]
+    $removeObsoleteUAMI,
+
+    [string]
+    $obsoleteUAMIResourceGroupName = "rg-ama-prod-001"
 )
 
 function Add-RbacRolesToManagedIdentities {
@@ -339,7 +353,7 @@ function Remove-LegacyAssignments {
     param (
         [Parameter(Mandatory = $true)]
         [string]
-        $eslzRoot,
+        $scope,
 
         [Parameter(Mandatory = $true)]
         [array]
@@ -347,11 +361,11 @@ function Remove-LegacyAssignments {
     )
     process {
         foreach ($legacyAssignment in $legacyAssignments) {
-            $assignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$eslzRoot/providers/microsoft.authorization/policyassignments/$legacyAssignment" -ErrorAction SilentlyContinue
-            if ($PSCmdlet.ShouldProcess($eslzRoot, "- Removing legacy Policy Assignments: $($assignment.Name)")) {
+            $assignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/$legacyAssignment" -ErrorAction SilentlyContinue
+            if ($PSCmdlet.ShouldProcess($scope, "- Removing legacy Policy Assignments: $($assignment.Name)")) {
                 if ($assignment) {
-                    Write-Host "- Removing legacy Policy Assignments: $($assignment.Name) ..." -ForegroundColor DarkRed
-                    Remove-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$eslzRoot/providers/microsoft.authorization/policyassignments/$legacyAssignment" > $null
+                    Write-Host "- Removing legacy Policy Assignments: $($assignment.Name) from scope $scope ..." -ForegroundColor DarkRed
+                    Remove-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/$scope/providers/microsoft.authorization/policyassignments/$legacyAssignment" > $null
                 }
                 else {
                     Write-Host "- No legacy Policy Assignments found ..." -ForegroundColor DarkGray
@@ -401,7 +415,7 @@ function Deploy-UserAssignedManagedIdentity {
         }
         if ($PSCmdlet.ShouldProcess($platformScope, "- Assigning 'DenyAction-DeleteUAMIAMA' policy: $resultsUAMIAssignment")) {
             if ($uamiAssignment) {
-                Write-Host "- Found existing policy assignment: $($uamiAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+                Write-Host "- Found existing policy assignment: $($uamiAssignment.Name) on $platformScope ..." -ForegroundColor DarkGray
             }
             if (-NOT($uamiAssignment)) {
                 Write-Host "- Assigning 'DenyAction-DeleteUAMIAMA' policy to scope $platformScope ..." -ForegroundColor DarkGreen
@@ -439,7 +453,11 @@ function Deploy-VMInsights {
 
         [Parameter(Mandatory = $true)]
         [array]
-        $VMInsightsAssignmentTemplates
+        $VMInsightsAssignmentTemplates,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $migrationPath
     )
     begin {
         $userAssignedIdentityResourceId = (Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue).Id
@@ -474,7 +492,21 @@ function Deploy-VMInsights {
                     $resultsVminsightsAssignment = Get-AzManagementGroupDeploymentWhatIfResult -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = "placeholder" } | Out-string -Stream | Select-String -Pattern 'Resource changes'
                 }
                 if ($vminsightsAssignment) {
-                    Write-Host "- Found existing policy assignment: $($vminsightsAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+                    if ($migrationPath -eq "UpdateAMA") {
+                        if ($PSCmdlet.ShouldProcess($scope, "- Updating policy assignment for VMInsights: $($vminsightsAssignment.Name); $resultsVminsightsAssignment")) {
+                            if ($template -eq "DINE-VMHybridMonitoringPolicyAssignment.json") {
+                                Write-Host "- Updating policy assignment for VMInsights: $($vminsightsAssignment.Name) on $($scope); $resultsVminsightsAssignment ..." -ForegroundColor DarkGreen
+                                New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights } -ErrorAction SilentlyContinue > $null
+                            }
+                            if ($template -eq "DINE-VMSSMonitoringPolicyAssignment.json" -or $template -eq "DINE-VMMonitoringPolicyAssignment.json") {
+                                Write-Host "- Updating policy assignment for VMInsights: $($vminsightsAssignment.Name) on $($scope); $resultsVminsightsAssignment ..." -ForegroundColor DarkGreen
+                                New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdVMInsights; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } -ErrorAction SilentlyContinue > $null
+                            }
+                        }
+                    }
+                    else {
+                        Write-Host "- Found existing policy assignment: $($vminsightsAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+                    }
                 }
                 if (-NOT($vminsightsAssignment)) {
                     if ($PSCmdlet.ShouldProcess($scope, "- Assigning policies for VMInsights: ${template}; $resultsVminsightsAssignment")) {
@@ -526,7 +558,11 @@ function Deploy-ChangeTracking {
 
         [Parameter(Mandatory = $true)]
         [array]
-        $ChangeTrackingAssignmentTemplates
+        $ChangeTrackingAssignmentTemplates,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $migrationPath
     )
     begin {
         $userAssignedIdentityResourceId = (Get-AzUserAssignedIdentity -Name $userAssignedIdentityName -ResourceGroupName $managementResourceGroupName -ErrorAction SilentlyContinue).Id
@@ -561,7 +597,21 @@ function Deploy-ChangeTracking {
                     $resultChangeTrackingAssignment = Get-AzManagementGroupDeploymentWhatIfResult -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = "placeholder" } | Out-string -Stream | Select-String -Pattern 'Resource changes'
                 }
                 if ($changeTrackingAssignment) {
-                    Write-Host "- Found existing policy assignment: $($changeTrackingAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+                    if ($migrationPath -eq "UpdateAMA") {
+                        if ($PSCmdlet.ShouldProcess($scope, "- Updating policy assignment for ChangeTracking: $($changeTrackingAssignment.Name); $resultChangeTrackingAssignment")) {
+                            if ($template -eq "DINE-ChangeTrackingVMArcPolicyAssignment.json") {
+                                Write-Host "- Updating policy assignment for ChangeTracking: $($changeTrackingAssignment.Name) on $($scope); $resultChangeTrackingAssignment ..." -ForegroundColor DarkGreen
+                                New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking } -ErrorAction SilentlyContinue > $null
+                            }
+                            if ($template -eq "DINE-ChangeTrackingVMPolicyAssignment.json" -or $template -eq "DINE-ChangeTrackingVMSSPolicyAssignment.json") {
+                                Write-Host "- Updating policy assignment for ChangeTracking: $($changeTrackingAssignment.Name) on $($scope); $resultChangeTrackingAssignment ..." -ForegroundColor DarkGreen
+                                New-AzManagementGroupDeployment -ManagementGroupId $scope -Location $location -TemplateFile ".\eslzArm\managementGroupTemplates\policyAssignments\$template" -TemplateParameterObject @{"topLevelManagementGroupPrefix" = $eslzRoot; "scope" = $scope; "dataCollectionRuleResourceId" = $dataCollectionRuleResourceIdChangeTracking; "userAssignedIdentityResourceId" = $userAssignedIdentityResourceId } -ErrorAction SilentlyContinue > $null
+                            }
+                        }
+                    }
+                    else {
+                        Write-Host "- Found existing policy assignment: $($changeTrackingAssignment.Name) on $($scope) ..." -ForegroundColor DarkGray
+                    }
                 }
                 if (-NOT($changeTrackingAssignment)) {
                     if ($PSCmdlet.ShouldProcess($scope, "- Assigning policies for ChangeTracking: ${template}; $resultChangeTrackingAssignment")) {
@@ -714,6 +764,39 @@ function Remove-LegacySolutions {
         }
     }
 }
+function Remove-ObsoleteUAMI {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $location,
+
+        [Parameter(Mandatory = $true)]
+        [string]
+        $obsoleteUAMIResourceGroupName
+    )
+    begin {
+        $results = Search-AzGraph -Query "resources | where type == 'microsoft.managedidentity/userassignedidentities' | where name == 'id-ama-prod-$location-001' | where resourceGroup == '$obsoleteUAMIResourceGroupName'"
+        $denyActionAssignment = Get-AzPolicyAssignment -Id "/providers/microsoft.management/managementgroups/contoso-platform/providers/microsoft.authorization/policyassignments/denyaction-deleteuamiama"
+        $ExpiresOn = (Get-Date).AddDays(1).ToString("yyyy-MM-dd")
+    }
+    process {
+        foreach ($result in $results) {
+            if ($PSCmdlet.ShouldProcess($result.subscriptionId, "- Removing obsolete User Assigned Managed Identity: $($result.Name)")) {
+                Write-Host "- Removing obsolete User Assigned Managed Identity: $($result.Name) from $($result.subscriptionId) ..." -ForegroundColor DarkRed
+                New-AzPolicyExemption -Name "exempt-delete-uami-ama-$($result.subscriptionId)" -PolicyAssignment $denyActionAssignment -Scope $result.id -ExpiresOn $ExpiresOn -Description "Exempted for AMA migration" -ExemptionCategory "Waiver" -ErrorAction SilentlyContinue > $null
+                Set-AzContext -SubscriptionId $result.subscriptionId > $null
+                Remove-AzUserAssignedIdentity -ResourceGroupName $result.resourceGroup -name $result.name > $null
+                if (-NOT(Get-AzResource -ResourceGroupName $result.resourceGroup)) {
+                    Remove-AzResourceGroup -Name $result.resourceGroup -Force -ErrorAction SilentlyContinue > $null
+                }
+            }
+        }
+        if (-NOT($results)) {
+            Write-Host "- No obsolete User Assigned Managed Identities found ..." -ForegroundColor DarkGray
+        }
+    }
+}
 
 # Generate 8 character random string (combination of lowercase letters and integers)
 $userConfirmationRandomID = -join ((48..57) + (97..122) | Get-Random -Count 8 | ForEach-Object { [char]$_ })
@@ -738,9 +821,13 @@ $scopes = @(
     $platformScope, 
     $landingZoneScope
 )
-$legacyAssignments = @(
+$legacyAssignmentsMMAToAMA = @(
     "deploy-vm-monitoring", 
     "deploy-vmss-monitoring"
+)
+$legacyAssignmentsUpdateAMA = @(
+    "deploy-mdfc-defensql-ama", 
+    "deploy-uami-vminsights"
 )
 $userAssignedIdentityName = "id-ama-prod-$location-001"
 $VMInsightsAssignmentTemplates = @(
@@ -776,10 +863,18 @@ if ($UpdatePolicyDefinitions) {
     Update-Policies -eslzRoot $eslzRoot -location $location
 }
 
-# Remove legacy Policy Assignments
-If ($RemoveLegacyPolicyAssignments) {
+# Remove legacy Policy Assignments for for MMA to AMA migration path
+If ($RemoveLegacyPolicyAssignments -and $migrationPath -eq "MMAtoAMA") {
     Write-Host "`r`nRemoving legacy Policy Assignments ...`r`n" -ForegroundColor DarkBlue
-    Remove-LegacyAssignments -eslzRoot $eslzRoot -legacyAssignments $legacyAssignments
+    Remove-LegacyAssignments -scope $eslzRoot -legacyAssignments $legacyAssignmentsMMAToAMA
+}
+
+# Remove legacy Policy Assignments for Update AMA migration path
+If ($RemoveLegacyPolicyAssignments -and $migrationPath -eq "UpdateAMA") {
+    Write-Host "`r`nRemoving legacy Policy Assignments ...`r`n" -ForegroundColor DarkBlue
+    foreach ($scope in $scopes) {
+        Remove-LegacyAssignments -scope $scope -legacyAssignments $legacyAssignmentsUpdateAMA
+    }
 }
 
 # Deploy User Assigned Managed Identity
@@ -791,13 +886,13 @@ if ($DeployUserAssignedManagedIdentity -or $DeployVMInsights -or $DeployChangeTr
 # Deploy VMInsights
 if ($DeployVMInsights) {
     Write-Host "`r`nDeploying VMInsights ...`r`n" -ForegroundColor DarkBlue
-    Deploy-VMInsights -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -VMInsightsAssignmentTemplates $VMInsightsAssignmentTemplates
+    Deploy-VMInsights -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -VMInsightsAssignmentTemplates $VMInsightsAssignmentTemplates -migrationPath $migrationPath
 }
 
 # Deploy ChangeTracking
 if ($DeployChangeTracking) {
     Write-Host "`r`nDeploying ChangeTracking ...`r`n" -ForegroundColor DarkBlue
-    Deploy-ChangeTracking -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -ChangeTrackingAssignmentTemplates $ChangeTrackingAssignmentTemplates
+    Deploy-ChangeTracking -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName -scopes $scopes -ChangeTrackingAssignmentTemplates $ChangeTrackingAssignmentTemplates -migrationPath $migrationPath
 }
 
 # Deploy MDFC Defender for SQL
@@ -807,13 +902,13 @@ if ($DeployMDfCDefenderSQL) {
 }
 
 # Deploy Azure Update Manager
-if ($DeployAzureUpdateManager) {
+if ($DeployAzureUpdateManager -and $migrationPath -eq "MMAtoAMA") {
     Write-Host "`r`nDeploying Azure Update Manager ...`r`n" -ForegroundColor DarkBlue
     Deploy-AzureUpdateManager -location $location -eslzRoot $eslzRoot -managementResourceGroupName $managementResourceGroupName -workspaceResourceId $workspaceResourceId -userAssignedIdentityName $userAssignedIdentityName
 }
 
 # Remove legacy solutions
-If ($RemoveLegacySolutions) {
+If ($RemoveLegacySolutions -and $migrationPath -eq "MMAtoAMA") {
     Write-Host "`r`nRemoving legacy solutions ...`r`n" -ForegroundColor DarkBlue
     Remove-LegacySolutions
 }
@@ -825,4 +920,10 @@ if ($RemediatePolicies) {
         Get-PolicyType -managementGroupName $landingZoneScope -policyName $policy > $null
         Get-PolicyType -managementGroupName $platformScope -policyName $policy > $null
     }
+}
+
+# Remove obsolete User Assigned Managed Identities
+if ($removeObsoleteUAMI -and $migrationPath -eq "UpdateAMA") {
+    Write-Host "`r`nRemoving obsolete User Assigned Managed Identities ...`r`n" -ForegroundColor DarkBlue
+    Remove-ObsoleteUAMI -location $location -obsoleteUAMIResourceGroupName $obsoleteUAMIResourceGroupName
 }
