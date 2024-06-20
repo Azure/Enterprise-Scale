@@ -42,6 +42,7 @@
 * MMA Deprecation Guidance
   * [Azure Monitor Agent Update](./ALZ-AMA-Update)
   * [AMA Migration Guidance](./ALZ-AMA-Migration-Guidance)
+  * [PowerShell script](./ALZ-AMA-PowerShell-Script)
   * [AMA FAQ](./ALZ-AMA-FAQ)
 * [Contributing](./ALZ-Contribution-Guide)
   * [Reporting Bugs](./ALZ-Contribution-Guide#reporting-bugs)
