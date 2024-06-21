@@ -48,6 +48,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### June 2024
 
+#### Documentation
+
+- As the Log Analytics agent is set to be retired on August 31, 2024, it is crucial for users to plan their migration to avoid any disruption in their monitoring services. The migration involves understanding the current setup, including agents, workspaces, solutions, insights, and data collections, and then configuring the new data collections to ensure a smooth transition. Tools like the AMA Migration Helper and DCR Config Generator can assist in automating and tracking the migration process. We've now made available [migration guidance](./ALZ-AMA-Migration-Guidance) to assist in the process.
+- Developed a script to facilitate the transition from Microsoft Monitoring Agent (MMA) to Azure Monitor Agent (AMA) within Azure landing zones. Review the [migration guidance](./ALZ-AMA-Migration-Guidance) for additional information on how the script can be used.
+- General update AMA documentation [ALZ AMA Update](./ALZ-AMA-Update)
+
 #### Policy
 
 - Added new custom policy [Do not allow deletion of specified resource and resource type](https://www.azadvertizer.net/azpolicyadvertizer/DenyAction-DeleteResources.html) that provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA. Assigned at the Platform Management Group, it blocks delete calls using the deny action effect.
