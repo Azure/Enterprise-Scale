@@ -93,7 +93,7 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Variable names are plural for consistency')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '', Justification = 'Approved verbs are not available for this scenario')]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'False positive')]
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '', Scope = 'Function', Target = '*-Policy*', Justification = 'False positive')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '', Scope = 'Function', Target = '*-Policy*', Justification = 'ShouldProcess not required for these functions')]
 
 #Requires -Modules Az.Resources, Az.Accounts, Az.MonitoringSolutions, Az.ResourceGraph
 
