@@ -86,6 +86,11 @@
     https://github.com/Azure/Enterprise-Scale
 #>
 
+# The following SuppressMessageAttribute entries are used to surpress
+# PSScriptAnalyzer tests against known exceptions as per:
+# https://github.com/powershell/psscriptanalyzer#suppressing-rules
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'SourcePath', Justification = 'False positive')]
+
 #Requires -Modules Az.Resources, Az.Accounts, Az.MonitoringSolutions, Az.ResourceGraph
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -117,7 +122,7 @@ param (
 
     [switch]
     $deployUserAssignedManagedIdentity,
-    
+
     [switch]
     $deployVMInsights,
 
@@ -153,7 +158,7 @@ function Add-RbacRolesToManagedIdentities {
     [CmdletBinding(SupportsShouldProcess)]
     Param(
         [Parameter(Mandatory = $true)]
-        [string] 
+        [string]
         $enterpriseScaleCompanyPrefix,
 
         [Parameter()]
@@ -177,9 +182,9 @@ function Add-RbacRolesToManagedIdentities {
         Write-Output "`tRetrieving role assignments on Landing Zones management group ..."
         $landingZonesMgHybridRoleAssignments = Get-AzRoleAssignment -Scope $($landingZonesMg.Id) | where-object { $_.Displayname -in $arcEnabledPolicyList } | Sort-Object -Property ObjectId -Unique
         $landingZonesMgVmiCtRoleAssignments = Get-AzRoleAssignment -Scope $($landingZonesMg.Id) | where-object { $_.Displayname -in $azureComputePolicyList } | Sort-Object -Property ObjectId -Unique
-        
+
         # Performing role assignments
-        
+
         if ($landingZonesMgVmiCtRoleAssignments) {
             # Assigning Reader and Managed Identity Operator to VMInsights, Change Tracking and MDfC Defender for SQL Managed Identities
             Write-Output "`t`tAssigning 'Reader' and 'Managed Identity Operator' roles to 'VMInsights', 'Change Tracking' and 'MDfC Defender for SQL' Managed Identities from Landing Zones to Platform management group ..."
@@ -410,7 +415,7 @@ function Deploy-UserAssignedManagedIdentity {
             }
             if (-NOT($uami)) {
                 Write-Host "- Deploying User Assigned Managed Identity: Name: ${userAssignedIdentityName} to resource group ${managementResourceGroupName}; $resultsUAMI ..." -ForegroundColor DarkGreen
-                New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\userAssignedIdentity.json" -TemplateParameterObject @{"location" = $location; "userAssignedIdentityName" = $userAssignedIdentityName; "userAssignedIdentityResourceGroup" = $managementResourceGroupName } > $null    
+                New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\userAssignedIdentity.json" -TemplateParameterObject @{"location" = $location; "userAssignedIdentityName" = $userAssignedIdentityName; "userAssignedIdentityResourceGroup" = $managementResourceGroupName } > $null
             }
         }
         if ($PSCmdlet.ShouldProcess($platformScope, "- Assigning 'DenyAction-DeleteUAMIAMA' policy: $resultsUAMIAssignment")) {
@@ -680,7 +685,7 @@ function Deploy-MDFCDefenderSQL {
                 Write-Host "- Deploying a data collection rule for MDFC Defender for SQL: Name: ${dataCollectionRuleMdfcDefenderSqlName} to resource group ${managementResourceGroupName}; $resultsDcrMDfCDefenderSQL ..." -ForegroundColor DarkGreen
                 New-AzResourceGroupDeployment -ResourceGroupName $managementResourceGroupName -TemplateFile ".\eslzArm\resourceGroupTemplates\dataCollectionRule-DefenderSQL.json" -TemplateParameterObject @{"userGivenDcrName" = $dataCollectionRuleMdfcDefenderSqlName; "workspaceResourceId" = $workspaceResourceId; "workspaceLocation" = $location } > $null
             }
-            $dataCollectionRuleResourceIdMDfCDefenderSQL = (Get-AzDataCollectionRule -Name $dataCollectionRuleMdfcDefenderSqlName -ResourceGroupName $managementResourceGroupName).Id    
+            $dataCollectionRuleResourceIdMDfCDefenderSQL = (Get-AzDataCollectionRule -Name $dataCollectionRuleMdfcDefenderSqlName -ResourceGroupName $managementResourceGroupName).Id
         }
         # Assign policies for MDFC Defender for SQL
         foreach ($scope in $scopes) {
@@ -818,26 +823,26 @@ else {
 $landingZoneScope = "$eslzRoot-landingzones"
 $platformScope = "$eslzRoot-platform"
 $scopes = @(
-    $platformScope, 
+    $platformScope,
     $landingZoneScope
 )
 $legacyAssignmentsMMAToAMA = @(
-    "deploy-vm-monitoring", 
+    "deploy-vm-monitoring",
     "deploy-vmss-monitoring"
 )
 $legacyAssignmentsUpdateAMA = @(
-    "deploy-mdfc-defensql-ama", 
+    "deploy-mdfc-defensql-ama",
     "deploy-uami-vminsights"
 )
 $userAssignedIdentityName = "id-ama-prod-$location-001"
 $VMInsightsAssignmentTemplates = @(
-    "DINE-VMMonitoringPolicyAssignment.json", 
-    "DINE-VMSSMonitoringPolicyAssignment.json", 
+    "DINE-VMMonitoringPolicyAssignment.json",
+    "DINE-VMSSMonitoringPolicyAssignment.json",
     "DINE-VMHybridMonitoringPolicyAssignment.json"
 )
 $ChangeTrackingAssignmentTemplates = @(
-    "DINE-ChangeTrackingVMPolicyAssignment.json", 
-    "DINE-ChangeTrackingVMSSPolicyAssignment.json", 
+    "DINE-ChangeTrackingVMPolicyAssignment.json",
+    "DINE-ChangeTrackingVMSSPolicyAssignment.json",
     "DINE-ChangeTrackingVMArcPolicyAssignment.json"
 )
 $MDfCDefenderSQLAssignmentTemplates = @(
@@ -846,7 +851,7 @@ $MDfCDefenderSQLAssignmentTemplates = @(
 $AzureUpdateManagerAssignmentTemplates = @(
     "MODIFY-AUM-CheckUpdatesPolicyAssignment.json"
 )
-$policyRemediationList = @( 
+$policyRemediationList = @(
     "c4a70814-96be-461c-889f-2b27429120dc",
     "92a36f05-ebc9-4bba-9128-b47ad2ea3354",
     "53448c70-089b-4f52-8f38-89196d7f2de1",
