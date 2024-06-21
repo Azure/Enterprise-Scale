@@ -6,7 +6,7 @@ This guide explains the topics and configurations that Azure Landing Zones use, 
 
 If you are looking for Terraform guidance please refer to [\[User Guide\] Upgrade from v5.2.1 to v6.0.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v5.2.1-to-v6.0.0)
 
-And for Bicep refer to: 
+And for Bicep guidance refer to: [v0.18.0 Release Notes](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.18.0)
 
 ## Parity gaps
 
@@ -281,7 +281,7 @@ If you require to migrate additional configurations like schedules, please revie
 
 After you migrate your machines to the Azure Monitor Agent (AMA), you need to remove the Log Analytics Agent (also called the Microsoft Management Agent or MMA) to avoid duplication of logs.
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > For more information on running both agents on the same Machine please review the considerations provided here: [Before you begin](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-migration#before-you-begin)
 
 The Azure Tenant Security Solution (AzTS) MMA Discovery and Removal Utility provided by the Azure Monitor team can centrally remove the MMA extension from Azure virtual machines (VMs), Azure virtual machine scale sets, and Azure Arc servers from a tenant. [MMA Discovery and Removal Utility - Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-mma-removal-tool?tabs=single-tenant%2Cdiscovery)
