@@ -86,10 +86,13 @@
     https://github.com/Azure/Enterprise-Scale
 #>
 
-# The following SuppressMessageAttribute entries are used to surpress
-# PSScriptAnalyzer tests against known exceptions as per:
+# The following SuppressMessageAttribute entries are used to surpress PSScriptAnalyzer tests against known exceptions as per:
 # https://github.com/powershell/psscriptanalyzer#suppressing-rules
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'SourcePath', Justification = 'False positive')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'False positive')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Write-Host is used for console output')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Variable names are plural for consistency')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '', Justification = 'Approved verbs are not available for this scenario')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'False positive')]
 
 #Requires -Modules Az.Resources, Az.Accounts, Az.MonitoringSolutions, Az.ResourceGraph
 
