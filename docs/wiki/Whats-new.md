@@ -48,6 +48,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### June 2024
 
+#### Documentation
+
+- As the Log Analytics agent is set to be retired on August 31, 2024, it is crucial for users to plan their migration to avoid any disruption in their monitoring services. The migration involves understanding the current setup, including agents, workspaces, solutions, insights, and data collections, and then configuring the new data collections to ensure a smooth transition. Tools like the AMA Migration Helper and DCR Config Generator can assist in automating and tracking the migration process. We've now made available [migration guidance](./ALZ-AMA-Migration-Guidance) to assist in the process.
+- Developed a script to facilitate the transition from Microsoft Monitoring Agent (MMA) to Azure Monitor Agent (AMA) within Azure landing zones. Review the [migration guidance](./ALZ-AMA-Migration-Guidance) for additional information on how the script can be used.
+- General update AMA documentation [ALZ AMA Update](./ALZ-AMA-Update)
+
 #### Policy
 
 - Added new custom policy [Do not allow deletion of specified resource and resource type](https://www.azadvertizer.net/azpolicyadvertizer/DenyAction-DeleteResources.html) that provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA. Assigned at the Platform Management Group, it blocks delete calls using the deny action effect.
@@ -145,6 +151,17 @@ Special Note: Existing consumers of ALZ will notice that some "assigned by defau
 #### Documentation
 
 - Archived the readme content in the eslzArm folder as it is no longer relevant. Please refer to the [ALZ Wiki](https://aka.ms/alz/wiki) for the latest information on how to deploy Enterprise-Scale Landing Zones. To view the content that was previously here, refer to the [archive](https://github.com/Azure/Enterprise-Scale/blob/45d5c2bd8c1a9e19b1a46a3a0dabb311e5320b64/eslzArm/README.md).
+- Added new instructions for deploying hub and spoke network topology in [multiple regions](./Deploying-ALZ-HubAndSpoke#deploying-networking-resources-in-an-additional-region).
+- Added new instructions for deploying additional vWAN hubs in [multiple regions](./Deploying-ALZ-HubAndSpoke#deploying-networking-resources-in-an-additional-region).
+
+#### Tooling
+
+- Added functionality to deploy platform resources into multiple regions.  In the Core settings, you will have the option to deploy resources in a secondary region.  If you select **Yes** you will have new options:
+  - In the **Networking topology and connectivity** tab:
+    - If you select *Hub and spoke with Azure Firewall* you will deploy a second hub in a secondary region.  You can configure the IP space, VPN Gateway settings, ExpressRoute Gateway settings, and Azure Firewall settings for this region.  Both of the hubs will be peered, with routing for the hubs to the Azure Firewalls being deployed.  If you select DDoS protection or to select the creation of Azure Private DNS Zones, these will be linked to the second hub as well.
+    - If you select *Hub and spoke with your third-party NVA* you will deploy a second hub in a secondary region.  You can configure the IP space, VPN Gateway settings, and ExpressRoute Gateway settings for this region.  Both of the hubs will be peered, but no routing configured.  If you select DDoS protection or to select the creation of Azure Private DNS Zones, these will be linked to the second hub as well.
+    - If you select *Virtual WAN* you will deploy a second virtual hub in a secondary region, as part of your virtual WAN deployment.  You can configure the IP space, VPN Gateway settings, ExpressRoute Gateway settings, and Azure Firewall settings for this region.  Both of the hubs will be peered, with routing for the hubs to the Azure Firewalls being deployed.
+  - In the **Identity** tab, if you have selected a topology to deploy, you will have the option to deploy an Identity virtual network to the secondary region, peered to the hub in that region.
 
 ### April 2024
 

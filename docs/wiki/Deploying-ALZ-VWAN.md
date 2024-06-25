@@ -34,6 +34,10 @@ Provide a prefix that will be used to create the management group hierarchy and 
 
 ![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix.JPG)
 
+Next, select if you wish to **Deploy in a secondary region**.  If this is left as *Yes*, then you will receive additional inputs later in the process to deploy resources in a secondary region.
+
+![ALZ-Secondary-Region](./media/ALZ-secondaryregion-multisubscription.jpg)
+
 ## 5. Platform management, security, and governance
 
 On the *Platform management, security, and governance* blade, you will configure the core components to enable platform monitoring and security. The options you enable will also be enforced using Azure Policy to ensure resources, landing zones, and more are continuously compliant as your deployments scales and grows. To enable this, you must provide a dedicated (empty) subscription that will be used to host the requisite infrastructure.
@@ -69,11 +73,25 @@ Depending on your requirements, you may choose to deploy additional network infr
 
 ![vwan](./media/clip_image078.jpg)
 
+### Deploying networking resources in a second region
+
+If you selected **Deploy in a secondary region** in the Core steps, you will also configure a secondary region for networking platform resource in this blade.  This secondary platform network deployment prepares you you to take advantage of capacity in multiple regions, and for recovery or multi-region high availability.
+
+The deployment will deploy an additional virtual hub in the secondary region that you specify.
+
+You will need to provide the configuration for the virtual hub, same as the primary region.
+
+![img](./media/clip_image084.png)
+
 ## 8. Identity
 
 On the *Identity* blade you can specify if you want to assign recommended policies to govern identity and domain controllers. If you decide to enable this feature, you do need to provide an empty subscription for this. You can then select which policies you want to get assigned, and you will need to provide the address space for the virtual network that will be deployed on this subscription. Please note that this virtual network will be connected to the hub virtual network via VNet peering.
 
  ![img](./media/clip_image036c.png)
+
+In addition, you selected **Deploy in a secondary region** and deployed a network topology,  you also have the option to deploy an additional Identity virtual network in that region.  It will be connected to the hub in your secondary region.
+
+![img](./media/clip_image085.png)
 
 ## 9. Landing zone configuration
 

@@ -243,7 +243,7 @@ For this scenario we will use the ALZ custom initiative _Deploy Diagnostic Setti
         if ($policyDefId -match '(\/\w+\/\w+\.\w+\/\w+\/)(\w+)(\/.+)') {
           $policyDefinitionName = $policyDefId.substring($policyDefId.lastindexof('/') + 1)
           $policyDefinitionPath = "./$($policyDefinitionName).json"
-          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policyDefinitions/$($policyDefinitionName).json" -OutFile $policySetDefinitionPath
+          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/Enterprise-Scale/main/src/resources/Microsoft.Authorization/policyDefinitions/$($policyDefinitionName).json" -OutFile $policyDefinitionPath
           $policyDef = Get-Content $policyDefinitionPath | ConvertFrom-Json -Depth 100
           $policyName = $policyDef.name
           $displayName = $policyDef.properties.displayName

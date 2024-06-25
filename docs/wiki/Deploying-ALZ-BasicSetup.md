@@ -46,12 +46,17 @@ On the *Azure Core setup* blade you will:
 
 - **Provide a prefix** that will be used to name your management group hierarchy **and** platform resources.
 - Choose between using dedicated subscriptions or a single subscription to host platform resources.
+- Choose between deploying in a single region, or in two regions.
 
 **Please Note:** A dedicated platform subscriptions is in general recommended. However, some Customers have the requirement to host their platform and applications within a single subscription. This tutorial is aimed at Customers with this requirement.
 
   Select **Single** and **provide a dedicated (empty) subscription** that will be used to host your Platform resources.
 
   ![ESLZ-Company-Prefix](./media/ESLZ-Company-Prefix-singlesubscription.jpg)
+
+Next, select if you wish to **Deploy in a secondary region**.  If this is left as *Yes*, then you will receive additional inputs later in the process to deploy resources in a secondary region.
+
+![ALZ-Secondary-Region](./media/ALZ-secondaryregion-singlesubscription.jpg)
 
 Click **Next: Platform management, security, and governance>**.
 
@@ -207,6 +212,24 @@ On the *Network topology and connectivity* blade you will configure your core ne
   - **Subnet for Azure Firewall**: **provide an address space (/26 or larger)** to be assigned to the subnet dedicated to host your Azure Firewall instances.
 
   ![networkTab-fwSubnet](./media/clip_image036b-10-singlesubscription.png)
+
+### Deploying networking resources in a second region
+
+If you selected **Deploy in a secondary region** in the Core steps, you will also configure a secondary region for networking platform resource in this blade.  This secondary platform network deployment prepares you you to take advantage of capacity in multiple regions, and for recovery or multi-region high availability.
+
+The deployment will use the same deployment type as the primary region - either two hub and spokes with Azure firewall, two hub and spokes with your own-third party NVA, or an additional virtual WAN hub.
+
+![img](./media/clip_image080.png)
+
+You will need to specify the additional region to deploy to, and then you will be given the option to deploy and configure your gateways and (if applicable) your Azure firewall.
+
+![img](./media/clip_image081.png)
+
+For best results, use similar inputs to make sure that your regional deployments can both support the same architecture.  However, if you want to forgo deploying a gateway or firewall in the second region, you can select the appropriate options.
+
+Once deployed, your regional hubs will be peered together and have routing tables assigned to the firewall subnets to handle routing to each other.  You can add routes to this route table later, as you add spoke networks.  If you have deployed DDoS protection in the primary region, it will be applied to the secondary region as well.
+
+Your Private DNS zones will be deployed in a resource group linked to your primary region, and will be assigned to both regions.  See [Private Link and DNS integration at scale](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/private-link-and-dns-integration-at-scale) for more information.
 
 Click **Next: Identity>** once you had configured your network setup.
 
