@@ -46,6 +46,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### 🔃 Policy Refresh Q1 FY25
+
+- Fixed parameter allowed values for `modifyNsgRuleAccess` in the [Enforce-Guardrails-Network](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html) initiative.
+
 ### June 2024
 
 #### Documentation
