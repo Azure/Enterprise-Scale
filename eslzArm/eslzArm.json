@@ -1892,6 +1892,7 @@
             "ddosName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos-', parameters('connectivityLocation'))]",
             "azFwPolicyName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azfwpolicy-', parameters('connectivityLocation'))]",
             "azFwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', parameters('connectivityLocation'))]",
+            "azFwNameSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', parameters('connectivityLocationSecondary'))]",
             "azErGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-erpip-', parameters('connectivityLocation'))]",
             "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocation'))]",
             "hubNameSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocationSecondary'))]",
@@ -1918,6 +1919,7 @@
             "vWanHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubNameSecondary)]",
             "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
             "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]",
+            "azFirewallResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
             "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
@@ -4700,7 +4702,7 @@
         },
         {
             // Creating the virtual network hub (hub and spoke)
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'vhub'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vhub'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "scope": "[variables('scopes').connectivityManagementGroup]",
@@ -4951,7 +4953,7 @@
                         "value": "[parameters('vWANHubCapacity')]"
                     },
                     "enableHubSecondary": {
-                        "value": "[parameters('enableHubSecondary')]"
+                        "value": "[parameters('enableSecondaryRegion')]"
                     },
                     "enableAzFwSecondary": {
                         "value": "[parameters('enableAzFwSecondary')]"
@@ -5078,7 +5080,7 @@
                         "value": "[parameters('enablePrivateDnsZonesSecondary')]"
                     },
                     "enableHubSecondary": {
-                        "value": "[parameters('enableHubSecondary')]"
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 }
                 }
@@ -5168,7 +5170,7 @@
         */
         {
             // Creating the virtual network hub (hub and spoke) in a secondary region
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHubSecondary'), 'vhub'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),  equals(parameters('enableSecondaryRegion'), 'Yes'), equals(parameters('enableHubSecondary'), 'vhub'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "scope": "[variables('scopes').connectivityManagementGroup]",
@@ -5264,7 +5266,7 @@
         },
         {
             // Creating the virtual network hub (with NVA) in a secondary region
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHubSecondary'), 'nva'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableSecondaryRegion'), 'Yes'), equals(parameters('enableHubSecondary'), 'nva'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "scope": "[variables('scopes').connectivityManagementGroup]",
@@ -5342,7 +5344,7 @@
         },
         {
             // Peering the primary hub and the secondary hub (when nva or vhub is selected)
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')), equals(parameters('enableSecondaryRegion'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "[variables('deploymentNames').hubPeeringDeploymentName]",
@@ -7087,7 +7089,7 @@
         },
         {
             // Peer vnet in identity subscription to connectivity hub in a secondary region if vhub or nva condition is true
-            "condition": "[and(or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')), not(empty(parameters('identityAddressPrefix'))))]",
+            "condition": "[and(or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHub'), 'vhub')), not(empty(parameters('identityAddressPrefixSecondary'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "[variables('deploymentNames').identityPeering2DeploymentName]",
@@ -8240,7 +8242,7 @@
         */
         {
             // Configuring and deploying the connectivity hub (hub and spoke) in a secondary region
-            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))),equals(parameters('enableHubSecondary'), 'vhub'))]",
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableSecondaryRegion'), 'Yes'), equals(parameters('enableHubSecondary'), 'vhub'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[variables('scopes').platformManagementGroup]",
@@ -8337,7 +8339,7 @@
         */
         {
             // Configuring and deploying the connectivity hub (NVA) in a secondary region
-            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))),equals(parameters('enableHubSecondary'), 'nva'))]",
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableSecondaryRegion'), 'Yes'), equals(parameters('enableHubSecondary'), 'nva'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "scope": "[variables('scopes').platformManagementGroup]",
@@ -8416,7 +8418,7 @@
         */
         {
             // Peering the primary hub and the secondary hub (when nva or vhub is selected)
-            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')))]",
+            "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), or(equals(parameters('enableHubSecondary'), 'nva'), equals(parameters('enableHubSecondary'), 'vhub')), equals(parameters('enableSecondaryRegion'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "[variables('esLitedeploymentNames').hubPeeringDeploymentName]",

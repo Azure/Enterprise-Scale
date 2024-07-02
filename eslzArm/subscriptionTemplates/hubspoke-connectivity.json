@@ -177,6 +177,7 @@
         "azErGwIpName": "[concat(variables('erGwName'), '-pip')]",
         "azVpnGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
         "azVpnGwAAPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwAAIpName'))]",
+        "azVpnPIPZones": "[split('1,2,3', ',')]",
         "azFwIpName": "[concat(variables('azFwName'), '-pip')]",
         "azFwMgmtIpName": "[concat(variables('azFwName'), '-mgmtpip')]",
         "azErGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
@@ -298,10 +299,11 @@
                                         },
                                         {
                                             "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
-                                            "apiVersion": "2020-05-01",
+                                            "apiVersion": "2023-11-01",
                                             "type": "Microsoft.Network/publicIpAddresses",
                                             "location": "[parameters('location')]",
                                             "name": "[variables('azVpnGwIpName')]",
+                                            "zones": "[if(equals(parameters('gwRegionalOrAz'), 'Zone'), variables('azVpnPIPZones'), json('null'))]",
                                             "sku": {
                                                 "name": "Standard"
                                             },
@@ -311,10 +313,11 @@
                                         },
                                         {
                                             "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
-                                            "apiVersion": "2020-05-01",
+                                            "apiVersion": "2023-11-01",
                                             "type": "Microsoft.Network/publicIpAddresses",
                                             "location": "[parameters('location')]",
                                             "name": "[variables('azVpnGwAAIpName')]",
+                                            "zones": "[if(equals(parameters('gwRegionalOrAz'), 'Zone'), variables('azVpnPIPZones'), json('null'))]",
                                             "sku": {
                                                 "name": "Standard"
                                             },
@@ -324,7 +327,7 @@
                                         }, 
                                         {
                                             "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'No'), not(empty(parameters('subnetMaskForGw'))))]",
-                                            "apiVersion": "2020-05-01",
+                                            "apiVersion": "2023-11-01",
                                             "name": "[variables('vpngwname')]",
                                             "type": "Microsoft.Network/virtualNetworkGateways",
                                             "location": "[parameters('location')]",
