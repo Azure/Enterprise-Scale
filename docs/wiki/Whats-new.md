@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [July 2024](#july-2024)
   - [June 2024](#june-2024)
   - [🆕 AMA Updates](#-ama-updates)
   - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
@@ -46,11 +47,21 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### July 2024
+
+#### Policy
+
+- Alignment of ****allowedValues*** in the following initiatives with those used in the included policyDefinitions:
+  - [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html)
+  - [Enforce recommended guardrails for Kubernetes](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html)
+  - [Enforce recommended guardrails for Network and Networking services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html)
+  - [Enforce recommended guardrails for Synapse workspaces](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Synapse.html)
+
 ### June 2024
 
 #### Documentation
 
-- As the Log Analytics agent is set to be retired on August 31, 2024, it is crucial for users to plan their migration to avoid any disruption in their monitoring services. The migration involves understanding the current setup, including agents, workspaces, solutions, insights, and data collections, and then configuring the new data collections to ensure a smooth transition. Tools like the AMA Migration Helper and DCR Config Generator can assist in automating and tracking the migration process. We've now made available [migration guidance](./ALZ-AMA-Migration-Guidance) to assist in the process.
+- As the Log Analytics agent is set to be retired on August 31, 2024, it is crucial for users to plan their migration to avoid any disruption in their monitoring services. The migration involves understanding the current setup, including agents, workspaces, solutions, insights, and data collections, and then configuring the new data collections to ensure a smooth transition. Tools like the AMA Migration Helper and DCR Config Generator can assist in automating and tracking the migration process. We've now made available **[migration guidance](./ALZ-AMA-Migration-Guidance) to assist in the process.
 - Developed a script to facilitate the transition from Microsoft Monitoring Agent (MMA) to Azure Monitor Agent (AMA) within Azure landing zones. Review the [migration guidance](./ALZ-AMA-Migration-Guidance) for additional information on how the script can be used.
 - General update AMA documentation [ALZ AMA Update](./ALZ-AMA-Update)
 
