@@ -51,7 +51,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
-- Alignment of ****allowedValues*** in the following initiatives with those used in the included policyDefinitions:
+- Alignment of **allowedValues** in the following initiatives with those used in the included policyDefinitions:
   - [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html)
   - [Enforce recommended guardrails for Kubernetes](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html)
   - [Enforce recommended guardrails for Network and Networking services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html)
