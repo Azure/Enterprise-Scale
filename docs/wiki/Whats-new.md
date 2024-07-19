@@ -46,6 +46,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### 🔃 Policy Refresh Q1 FY25
+
+- Removed duplicate assignment and portal option of [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html) at Landing Zones scope, as this policy is assigned in the initiative [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) at Intermediate Root scope.
+
 ### June 2024
 
 #### Documentation
