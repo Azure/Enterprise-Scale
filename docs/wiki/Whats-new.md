@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [July 2024](#july-2024)
   - [June 2024](#june-2024)
   - [🆕 AMA Updates](#-ama-updates)
   - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
@@ -45,6 +46,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### July 2024
+
+#### Other
+
+- Cleaned up the Log Analytics "solutions" in portal ARM template, as these are no longer required and deployed by ALZ.
+- Updated Microsoft Sentinel onboarding (enablement) using the new mechanism that fixes issues after 1 July 2024. Microsoft Sentinel is enabled by default through the portal accelerator as a best practice - we do not however configure any data connectors, we only enable the service. Should you wish to remove this, you can delete the association from the Azure Portal after deployment from the "Sentinel" feature blade.
 
 ### June 2024
 
