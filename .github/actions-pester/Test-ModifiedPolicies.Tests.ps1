@@ -109,6 +109,16 @@ Describe 'UnitTest-ModifiedPolicies' {
             }
         }
 
+        It "Check policy metadata name matches policy filename" {
+            $ModifiedAddedFiles | ForEach-Object {
+                $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $PolicyFile = Split-Path $_ -Leaf
+                $PolicyMetadataName = $PolicyJson.properties.metadata.name
+                Write-Warning "$($PolicyFile) - This is the policy metadata name: $($PolicyMetadataName)"
+                $PolicyMetadataName | Should -Be substr($PolicyFile, 0, $PolicyFile.Length - 5)
+            }
+        }
+
         }
         
         Context "Validate policy parameters" {
