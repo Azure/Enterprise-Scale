@@ -113,9 +113,14 @@ Describe 'UnitTest-ModifiedPolicies' {
             $ModifiedAddedFiles | ForEach-Object {
                 $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                 $PolicyFile = Split-Path $_ -Leaf
-                $PolicyMetadataName = $PolicyJson.properties.metadata.name
-                Write-Warning "$($PolicyFile) - This is the policy metadata name: $($PolicyMetadataName)"
-                $PolicyMetadataName | Should -Be substr($PolicyFile, 0, $PolicyFile.Length - 5)
+                $PolicyMetadataName = $PolicyJson.name
+                $PolicyFileNoExt = [System.IO.Path]::GetFileNameWithoutExtension($PolicyFile)
+                if ($PolicyFileNoExt.Contains("AzureChinaCloud") -or $PolicyFileNoExt.Contains("AzureUSGovernment"))
+                {
+                    $PolicyFileNoExt = $PolicyFileNoExt.Substring(0, $PolicyFileNoExt.IndexOf("."))
+                }
+                Write-Warning "$($PolicyFileNoExt) - This is the policy metadata name: $($PolicyMetadataName)"
+                $PolicyMetadataName | Should -Be $PolicyFileNoExt
             }
         }
 
