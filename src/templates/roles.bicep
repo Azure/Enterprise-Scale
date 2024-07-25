@@ -8,10 +8,12 @@ var loadRoleDefinitions = {
   All: [
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Application-Owners.json')
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Network-Management.json')
-    loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Security-Operations.json')
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Subscription-Owner.json')
   ]
-  AzureCloud: []
+  AzureCloud: [
+    loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Security-Operations.json') // Not working in AzureChinaCloud, needs validating on AzureUSGovernment
+    loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Network-Management.json') // Not working in AzureChinaCloud, needs validating on AzureUSGovernment
+  ]
   AzureChinaCloud: []
   AzureUSGovernment: []
 }
