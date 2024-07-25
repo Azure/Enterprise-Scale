@@ -7,7 +7,6 @@ var cloudEnv = environment().name
 var loadRoleDefinitions = {
   All: [
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Application-Owners.json')
-    loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Network-Management.json')
     loadJsonContent('../resources/Microsoft.Authorization/roleDefinitions/Subscription-Owner.json')
   ]
   AzureCloud: [
