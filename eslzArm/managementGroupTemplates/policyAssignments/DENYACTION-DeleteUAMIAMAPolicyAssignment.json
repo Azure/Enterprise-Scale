@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
         "enforcementMode": {
             "type": "string",
             "allowedValues": [
@@ -18,22 +24,27 @@
             ],
             "defaultValue": "DenyAction"
         },
-        "listOfResourceTypesDisallowedForDeletion": {
-            "type": "Array",
+        "resourceName": {
+            "type": "string",
             "metadata": {
-                "displayName": "Resource types that cannot be deleted",
-                "description": "The list of resource types that cannot be deleted."
+                "description": "Provide the name of the resource that you want to protect from accidental deletion."
+            }
+        },
+        "resourceType": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the resource type that you want to protect from accidental deletion."
             }
         }
     },
     "variables": {
         "policyDefinitions": {
-            "denyActionResourceDeletion": "/providers/Microsoft.Authorization/policyDefinitions/78460a36-508a-49a4-b2b2-2f5ec564f4bb"
+            "denyActionResourceDeletion": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('topLevelManagementGroupPrefix'), '/providers/Microsoft.Authorization/policyDefinitions/DenyAction-DeleteResources')]"
         },
         "policyAssignmentNames": {
-            "denyActionResourceDeletion": "DenyAction-Resource-Del",
-            "description": "This policy enables you to specify the resource types that your organization can protect from accidentals deletion by blocking delete calls using deny action effect.",
-            "displayName": "Do not allow deletion of resource types"
+            "denyActionResourceDeletion": "DenyAction-DeleteUAMIAMA",
+            "description": "This policy provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA by blocking delete calls using deny action effect.",
+            "displayName": "Do not allow deletion of the User Assigned Managed Identity used by AMA"
         }
     },
     "resources": [
@@ -50,8 +61,11 @@
                     "effect": {
                         "value": "[parameters('effect')]"
                     },
-                    "listOfResourceTypesDisallowedForDeletion": {
-                        "value": "[parameters('listOfResourceTypesDisallowedForDeletion')]"
+                    "resourceName": {
+                        "value": "[parameters('resourceName')]"
+                    },
+                    "resourceType": {
+                        "value": "[parameters('resourceType')]"
                     }
                 }
             }
