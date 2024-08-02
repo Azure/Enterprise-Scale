@@ -1575,6 +1575,7 @@
             "monitorRepo": "https://raw.githubusercontent.com/Azure/azure-monitor-baseline-alerts/2023-11-14/"
         },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
+        // Referring to different Policy Set definition for different cloud enviornment
         "azPrivateDnsPolicyAssignmentMapping": {
             "https://management.azure.com/": "managementGroupTemplates/policyAssignments/DINE-PrivateDNSZonesPolicyAssignment.json",
             "https://management.usgovcloudapi.net": "managementGroupTemplates/policyAssignments/gov/fairfaxDINE-PrivateDNSZonesPolicyAssignment.json",
@@ -1582,13 +1583,31 @@
 
         },
         "azPrivateDnsPolicyAssignment": "[variables('azPrivateDnsPolicyAssignmentMapping')[environment().resourceManager]]",
-        // Referring to different Policy Set definition for different cloud enviornment
+
+        "PublicEndpointPolicyAssignmentMapping": {
+            "https://management.azure.com/": "managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json",
+            "https://management.usgovcloudapi.net": "managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json", // This needs to be updated for USGovernmentCloud
+            "https://management.chinacloudapi.cn": "managementGroupTemplates/policyAssignments/china/mcDINE-PublicEndpointPolicyAssignment.json"
+
+        },
+        "PublicEndpointPolicyAssignment": "[variables('PublicEndpointPolicyAssignmentMapping')[environment().resourceManager]]",
+
         "regulatoryCompliancePolicyAssignmentMapping": {
             "https://management.azure.com/": "managementGroupTemplates/policyAssignments/ENFORCE-RegulatoryCompliancePolicyAssignment.json",
+            "https://management.usgovcloudapi.net": "managementGroupTemplates/policyAssignments/ENFORCE-RegulatoryCompliancePolicyAssignment.json", // This needs to be updated for USGovernmentCloud
             "https://management.chinacloudapi.cn": "managementGroupTemplates/policyAssignments/china/mcENFORCE-RegulatoryCompliancePolicyAssignment.json"
 
         },
         "regulatoryCompliancePolicy": "[variables('regulatoryCompliancePolicyAssignmentMapping')[environment().resourceManager]]",
+
+        "mdfcConfigPolicyInitiativeMapping": {
+            "https://management.azure.com/": "managementGroupTemplates/policyAssignments/DINE-MDFCConfigPolicyAssignment.json",
+            "https://management.usgovcloudapi.net": "managementGroupTemplates/policyAssignments/DINE-MDFCConfigPolicyAssignment.json", // This needs to be updated for USGovernmentCloud
+            "https://management.chinacloudapi.cn": "managementGroupTemplates/policyAssignments/china/mcDINE-MDFCConfigPolicyAssignment.json"
+
+        },
+        "mdfcConfigPolicyInitiative": "[variables('mdfcConfigPolicyInitiativeMapping')[environment().resourceManager]]",
+
         "deploymentUris": {
             "managementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroups.json')]",
             "managementGroupsLite": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/mgmtGroupStructure/mgmtGroupsLite.json')]",
@@ -1610,7 +1629,7 @@
             "regulatoryComplianceInitaitves": "[uri(deployment().properties.templateLink.uri, variables('regulatoryCompliancePolicy'))]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
             "activityDiagnosticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ActivityLogPolicyAssignment.json')]",
-            "mdfcConfigPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDFCConfigPolicyAssignment.json')]",
+            "mdfcConfigPolicyInitiative": "[uri(deployment().properties.templateLink.uri, variables('mdfcConfigPolicyInitiative'))]",
             "mdEnpointsPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDEndpointsPolicyAssignment.json')]",
             "mdEnpointsAMAPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-MDEndpointsAMAPolicyAssignment.json')]",
             "atpOssDbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-AtpOssDbPolicyAssignment.json')]",
@@ -1625,7 +1644,7 @@
             "tlsSslPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-DINE-APPEND-TLS-SSL-PolicyAssignment.json')]",
             "aksHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-AksWithoutHttpsPolicyAssignment.json')]",
             "ipFwdPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-IPForwardingPolicyAssignment.json')]",
-            "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicEndpointPolicyAssignment.json')]",
+            "publicEndpointPolicyAssignment": "[uri(deployment().properties.templateLink.uri, variables('PublicEndpointPolicyAssignment'))]",
             "privateDnsZonePolicyAssignment": "[uri(deployment().properties.templateLink.uri, variables('azPrivateDnsPolicyAssignment'))]",
             "pipPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressPolicyAssignment.json')]",
             "pipOnNicPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-PublicIpAddressOnNICPolicyAssignment.json')]",
