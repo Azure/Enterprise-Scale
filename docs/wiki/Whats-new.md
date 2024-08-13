@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [July 2024](#july-2024)
   - [June 2024](#june-2024)
   - [🆕 AMA Updates](#-ama-updates)
   - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
@@ -45,6 +46,16 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### July 2024
+
+#### Policy
+
+- Alignment of **allowedValues** in the following initiatives with those used in the included policyDefinitions:
+  - [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html)
+  - [Enforce recommended guardrails for Kubernetes](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html)
+  - [Enforce recommended guardrails for Network and Networking services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html)
+  - [Enforce recommended guardrails for Synapse workspaces](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Synapse.html)
 
 ### June 2024
 
