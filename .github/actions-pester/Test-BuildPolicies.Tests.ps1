@@ -1,3 +1,5 @@
+
+Import-Module -Name $PSScriptRoot\PolicyPesterTestHelper.psm1 -Force -Verbose
 Describe 'UnitTest-BuildPolicies' {
 
     BeforeAll {
