@@ -1,8 +1,7 @@
-
-Import-Module -Name $PSScriptRoot\PolicyPesterTestHelper.psm1 -Force -Verbose
 Describe 'UnitTest-BuildPolicies' {
 
     BeforeAll {
+        Import-Module -Name $PSScriptRoot\PolicyPesterTestHelper.psm1 -Force -Verbose
 
         New-Item -Name "buildout" -Type Directory
         
