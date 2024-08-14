@@ -14,6 +14,7 @@ var loadRoleDefinitions = {
   AzureCloud: []
   AzureChinaCloud: []
   AzureUSGovernment: []
+  test: 'test'
 }
 
 // The following var is used to compile the required Role Definitions into a single object
