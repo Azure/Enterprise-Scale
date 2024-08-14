@@ -109,6 +109,21 @@ Describe 'UnitTest-ModifiedPolicies' {
             }
         }
 
+        It "Check policy metadata name matches policy filename" {
+            $ModifiedAddedFiles | ForEach-Object {
+                $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
+                $PolicyFile = Split-Path $_ -Leaf
+                $PolicyMetadataName = $PolicyJson.name
+                $PolicyFileNoExt = [System.IO.Path]::GetFileNameWithoutExtension($PolicyFile)
+                if ($PolicyFileNoExt.Contains("AzureChinaCloud") -or $PolicyFileNoExt.Contains("AzureUSGovernment"))
+                {
+                    $PolicyFileNoExt = $PolicyFileNoExt.Substring(0, $PolicyFileNoExt.IndexOf("."))
+                }
+                Write-Warning "$($PolicyFileNoExt) - This is the policy metadata name: $($PolicyMetadataName)"
+                $PolicyMetadataName | Should -Be $PolicyFileNoExt
+            }
+        }
+
         }
         
         Context "Validate policy parameters" {
