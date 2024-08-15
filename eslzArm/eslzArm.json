@@ -16,10 +16,11 @@
         },
         "enablePrivateSubnet": {
             "type": "string",
-            "defaultValue": "No",
+            "defaultValue": "Audit",
             "allowedValues": [
-                "Yes",
-                "No"
+                "Audit",
+                "Deny",
+                "Disabled"
             ]
         },
         "telemetryOptOut": {
@@ -6437,7 +6438,7 @@
             }
         },
         {
-            "condition": "[equals(parameters('enablePrivateSubnet'), 'Yes')]",
+            "condition": "[or(equals(parameters('enablePrivateSubnet'), 'Yes'), equals(parameters('enablePrivateSubnet'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "[variables('deploymentNames').privateSubnetDeploymentName]",
@@ -6455,12 +6456,15 @@
                 "parameters": {
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "effect": {
+                        "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }
         },
         {
-            "condition": "[equals(parameters('enablePrivateSubnet'), 'Yes')]",
+            "condition": "[or(equals(parameters('enablePrivateSubnet'), 'Yes'), equals(parameters('enablePrivateSubnet'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "[variables('deploymentNames').privateSubnetDeploymentName]",
@@ -6478,6 +6482,9 @@
                 "parameters": {
                     "enforcementMode": {
                         "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "effect": {
+                        "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }
