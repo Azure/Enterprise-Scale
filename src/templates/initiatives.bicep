@@ -38,7 +38,6 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security_20240529.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json') 
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/DenyAction-DeleteProtection.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM.json') // FSI specific initiative
@@ -61,6 +60,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-VirtualDesktop.json') // FSI specific initiative
   ]
   AzureCloud: [
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json') // Not working in AzureChinaCloud, needs validating in AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
@@ -97,6 +97,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MySQL.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (3a58212a-c829-4f13-9872-6371df2fd0b4)
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (055aa869-bc98-4af8-bafc-23f1ab6ffe2c)
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-CosmosDb.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (b5f04e03-92a3-4b09-9410-2cc5e5047656)
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.AzureChinaCloud.json') // Due to missing service DevTestLab which will be used by policy "Deploy-Vm-autoShutdown"
   ]
   AzureUSGovernment: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.AzureUSGovernment.json') // Due to missing built-in Policy Definitions (5e1de0e3-42cb-4ebc-a86d-61d0c619ca48, c9299215-ae47-4f50-9c54-8a392f68a052)

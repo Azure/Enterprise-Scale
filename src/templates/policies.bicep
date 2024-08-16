@@ -183,7 +183,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Modify-UDR.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-Generic.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DeleteResources.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json') 
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
@@ -201,6 +200,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-PublicNetworkAccess.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Budget.json') // Needs validating in AzureChinaCloud (already used in AzureUSGovernment)
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-AVDScalingPlans.json') // No obvious reason for exclusion from AzureChinaCloud and AzureUSGovernment, impacts "Deploy-Diagnostics-LogAnalytics" Policy Set Definition
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json') // Not working in AzureChinaCloud since servie DevTestLab doesn't exist in Mooncake, needs validating in AzureUSGovernment
   ]
   AzureChinaCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AFSPaasPublicIP.AzureChinaCloud.json') // Used by "Deny-PublicPaaSEndpoints" Policy Set Definition to replace missing built-in Policy Definition in AzureChinaCloud
