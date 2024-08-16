@@ -38,6 +38,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security_20240529.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json') 
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/DenyAction-DeleteProtection.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM.json') // FSI specific initiative
@@ -69,7 +70,6 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ACSB.json') // Unable to validate if Guest Configuration is working in other clouds
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-DefenderSQL-AMA.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Backup.json') // Unable to validate if all Azure Site Recovery features are working in other clouds
-    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json') // Not working in AzureChinaCloud, needs validating in AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Storage.json') // FSI specific initiative. Not working in AzureChinaCloud, needs validating in AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault-Sup.json') // FSI specific initiative. Not working in AzureChinaCloud, needs validating in AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json') // Not working in AzureChinaCloud, needs validating in AzureUSGovernment
@@ -91,6 +91,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Storage.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (361c2074-3595-4e5d-8cab-4f21dffc835c)
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240509.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (0e80e269-43a4-4ae9-b5bc-178126b8a5cb)
     //loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ContainerApps.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (8b346db6-85af-419b-8557-92cee2c0f9bb, b874ab2d-72dd-47f1-8cb5-4a306478a4e7)
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Backup.AzureChinaCloud.json') // Unable to validate if all Azure Site Recovery features are working in other clouds
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (86810a98-8e91-4a44-8386-ec66d0de5d57)
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Automation.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (6d02d2f7-e38b-4bdc-96f3-adc0a8726abc)
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MySQL.AzureChinaCloud.json') // Due to missing built-in Policy Definitions (3a58212a-c829-4f13-9872-6371df2fd0b4)
