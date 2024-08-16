@@ -2677,9 +2677,8 @@
         },
         {
             // Deploying Diagnostic Settings to management groups if Log Analytics was deployed via a loop
-            "condition": "[and(empty(parameters('singlePlatformSubscriptionId')), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
+            // exclude Mooncake since Management Group Diagnostic Settings Rest API is NOT supported in Azure China. https://learn.microsoft.com/en-us/answers/questions/1640390/confirm-if-management-group-diagnostic-settings-re
+            "condition": "[and(empty(parameters('singlePlatformSubscriptionId')), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableLogAnalytics'), 'Yes'), not(equals(environment().resourceManager, 'https://management.chinacloudapi.cn')))]", 
             "name": "[take(concat(variables('mgmtGroupsArray')[copyIndex()], variables('deploymentNames').diagnosticSettingsforMGsDeploymentName), 64)]",
             "scope": "[concat('Microsoft.Management/managementGroups/', variables('mgmtGroupsArray')[copyIndex()])]",
             "location": "[deployment().location]",
@@ -4132,7 +4131,8 @@
         },
         {
             // Assigning Azure Monitor Resource Diagnostics policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            // exclude China since the build-in initiative(0884adba-2312-4468-abeb-5422caed1038) doesn't exist in China
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), not(equals(environment().resourceManager, 'https://management.chinacloudapi.cn')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName]",
@@ -4162,7 +4162,8 @@
         },
         {
             // Assigning Azure Activity Diagnostics Log policy to intermediate root management group if condition is true
-            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'))]",
+            //exclude Mooncake since the build-in initiative(2465583e-4e78-4c15-b6be-a36cbc7c8b0f) doesn't exist in Mooncake
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableLogAnalytics'), 'Yes'), not(equals(environment().resourceManager, 'https://management.chinacloudapi.cn')))]",  
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "name": "[variables('deploymentNames').activityDiagnosticsPolicyDeploymentName]",
