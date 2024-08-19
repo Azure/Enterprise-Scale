@@ -1,0 +1,51 @@
+---
+    name: Check Policy Build
+    
+    ##########################################
+    # Start the job on PR for all branches #
+    ##########################################
+    
+    # yamllint disable-line rule:truthy
+    on:
+      pull_request:
+        types:
+          - opened
+          - reopened
+          - synchronize
+          - ready_for_review
+        paths:
+          - "eslzArm/**.json"
+          - "src/Alz.Tools/**"
+          - "src/**.json"
+          - "src/**.bicep"
+    
+    ###############
+    # Set the Job #
+    ###############
+    
+    jobs:
+      check-policy:
+        name: Check Policy Build
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+    
+          - name: Check build
+            shell: pwsh
+            run: |
+              Import-Module Pester -Force
+                $pesterConfiguration = @{
+                  Run    = @{
+                    Container = New-PesterContainer -Path "./.github/actions-pester/Test-BuildPolicies.Tests.ps1"
+                    PassThru  = $true
+                  }
+                  Output = @{
+                    Verbosity = 'Detailed'
+                  }
+                }
+                $result = Invoke-Pester -Configuration $pesterConfiguration
+                exit $result.FailedCount
