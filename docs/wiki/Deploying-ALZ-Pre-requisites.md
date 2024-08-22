@@ -55,7 +55,7 @@ New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
 
 > Please note: sometimes it can take up to 15 minutes for permission to propagate at tenant root scope. It is highly recommended that you log out and log back in to refresh the token before you proceed with the deployment.*
 
-## Azure Resource Provider pre-requisites
+## Azure Resource Provider prerequisites
 
 For the ALZ deployment, a number of resource providers must be registered on ALL subscriptions. Ensure that all the resource providers listed [here](./ALZ-Resource-Provider-Recommendations.md) are registered before deploying Azure Landing Zones.
 
