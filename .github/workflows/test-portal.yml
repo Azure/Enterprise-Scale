@@ -114,7 +114,12 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
+            if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
+              $paramfile = "./eslzArm/eslzArm.test.param.${{ github.event.inputs.testScope }}.json"
+            } else {
+              $paramfile = "./eslzArm/eslzArm.test.param.json"
+            }
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath $paramFile
             Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
           azPSVersion: "latest"
         env:
