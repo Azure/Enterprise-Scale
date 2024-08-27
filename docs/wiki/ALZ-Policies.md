@@ -107,7 +107,7 @@ This management group contains all the platform child management groups, like ma
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **10**     |
-| `Policy Definitions`      | **0**     |
+| `Policy Definitions`      | **2**     |
 </td></tr> </table>
 
 | Assignment Name                                                            | Definition Name                                                            | Policy Type                       | Description                                                                                                                                                               | Effect(s) |
@@ -123,6 +123,7 @@ This management group contains all the platform child management groups, like ma
 | **Enable ChangeTracking and Inventory for Arc-enabled virtual machines**\*   | **[Preview]: Enable ChangeTracking and Inventory for Arc-enabled virtual machines** | `Policy Definition Set`, **Built-in** | This policy initiative enables ChangeTracking and Inventory for Arc-enabled servers. It uses a Data Collection Rule to define what data to collect and where to send it, and a user-assigned identity to authenticate the Azure Monitor Agent.                                                                 | DeployIfNotExists, Disabled |
 | **Enable Defender for SQL on SQL VMs and Arc-enabled SQL Servers**\*         | **Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace** | `Policy Definition Set`, **Built-in** | This policy initiative enables Microsoft Defender for SQL and AMA on SQL VMs and Arc-enabled SQL Servers.                                                                                                                                                          | DeployIfNotExists, Disabled |
 | **Do not allow deletion of the User Assigned Managed Identity used by AMA**\*| **Do not allow deletion of specified resource and resource type**                              | `Policy Definition`, **Custom** | This policy provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA by blocking delete calls using deny action effect.                                                                                                                                                                 | DenyAction |
+| **Subnets should be private** | **Subnets should be private** | `Policy Definition`, **Built-in** | Ensure your subnets are secure by default by preventing default outbound access. For more information go to https://aka.ms/defaultoutboundaccessretirement | Audit, Deny |
 
 > \* The AMA policies and initiatives are in effect for the portal implementation only. Terraform and Bicep will adopt these policies in the near future.
 
@@ -224,7 +225,7 @@ This is the parent management group for all the landing zone child management gr
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **13**     |
-| `Policy Definitions`      | **14**    |
+| `Policy Definitions`      | **15**    |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Landing Zones Management Group**.
@@ -257,6 +258,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Enable ChangeTracking and Inventory for virtual machine scale sets**\*     | **[Preview]: Enable ChangeTracking and Inventory for virtual machine scale sets** | `Policy Definition Set`, **Built-in** | This policy initiative enables ChangeTracking and Inventory for virtual machines scale sets. It uses a Data Collection Rule to define what data to collect and where to send it, and a user-assigned identity to authenticate the Azure Monitor Agent.                                                           | DeployIfNotExists, Disabled |
 | **Enable ChangeTracking and Inventory for Arc-enabled virtual machines**\*   | **[Preview]: Enable ChangeTracking and Inventory for Arc-enabled virtual machines** | `Policy Definition Set`, **Built-in** | This policy initiative enables ChangeTracking and Inventory for Arc-enabled servers. It uses a Data Collection Rule to define what data to collect and where to send it, and a user-assigned identity to authenticate the Azure Monitor Agent.                                                                 | DeployIfNotExists, Disabled |
 | **Enable Defender for SQL on SQL VMs and Arc-enabled SQL Servers**\*         | **Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace** | `Policy Definition Set`, **Built-in** | This policy initiative enables Microsoft Defender for SQL and AMA on SQL VMs and Arc-enabled SQL Servers.                                                                                                                                                         | DeployIfNotExists, Disabled |
+| **Subnets should be private** | **Subnets should be private** | `Policy Definition`, **Built-in** | Ensure your subnets are secure by default by preventing default outbound access. For more information go to https://aka.ms/defaultoutboundaccessretirement | Audit, Deny |
 
 > \* The AMA policies and initiatives are in effect for the portal implementation only. Terraform and Bicep will adopt these policies in the near future.
 

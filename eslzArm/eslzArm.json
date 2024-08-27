@@ -14,6 +14,15 @@
             "defaultValue": "",
             "maxLength": 36
         },
+        "enablePrivateSubnet": {
+            "type": "string",
+            "defaultValue": "Audit",
+            "allowedValues": [
+                "Audit",
+                "Deny",
+                "Disabled"
+            ]
+        },
         "telemetryOptOut": {
             "type": "string",
             "defaultValue": "No",
@@ -1634,6 +1643,7 @@
             "resourceRgLocationPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-ResourceRGLocationPolicyAssignment.json')]",
             "VMUnmanagedDiskPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-VMUnmanagedDiskPolicyAssignment.json')]",
             "diagnosticSettingsforManagementGroups": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/diagSettingsMGs/diagSettingsMGs.json')]",
+            "privateSubnetPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-SubnetPrivatePolicyAssignment.json')]",
             // references to https://github.com/Azure/azure-monitor-baseline-alerts
             "monitorPolicyDefinitions": "[uri(variables('rootUris').monitorRepo, 'patterns/alz/alzArm.json')]",
             "azureUpdateManagerPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-AUM-CheckUpdatesPolicyAssignment.json')]",
@@ -1764,6 +1774,7 @@
             "mdEndpointsDeploymentName": "[take(concat('alz-MDEndpoints', variables('deploymentSuffix')), 64)]",
             "mdEndpointsAMADeploymentName": "[take(concat('alz-MDEndpointsAMA', variables('deploymentSuffix')), 64)]",
             "corpConnectedLzVwanSubs": "[take(concat('alz-CorpConnLzsVwan', variables('deploymentSuffix')), 50)]",
+            "privateSubnetDeploymentName": "[take(concat('alz-pvtSubnet', variables('deploymentSuffix')), 64)]",
             "pidCuaDeploymentName": "[take(concat('pid-', variables('cuaid'), '-' , uniqueString(deployment().location, parameters('enterpriseScaleCompanyPrefix'), parameters('currentDateTimeUtcNow'))), 64)]",
             "denyClassicResourcePolicyDeploymentName": "[take(concat('alz-NoClassicResource', variables('deploymentSuffix')), 64)]",
             "costOptimizationDeploymentName": "[take(concat('alz-CostOptimization', variables('deploymentSuffix')), 64)]",
@@ -6384,6 +6395,58 @@
                     },
                     "enforcementMode": {
                         "value": "[if(equals(parameters('denyMgmtPorts'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[or(equals(parameters('enablePrivateSubnet'), 'Yes'), equals(parameters('enablePrivateSubnet'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').privateSubnetDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateSubnetPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "effect": {
+                        "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Deny', 'Audit')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[or(equals(parameters('enablePrivateSubnet'), 'Yes'), equals(parameters('enablePrivateSubnet'), 'Audit'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('deploymentNames').privateSubnetDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "policyCompletion"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateSubnetPolicyAssignment]"
+                },
+                "parameters": {
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "effect": {
+                        "value": "[if(equals(parameters('enablePrivateSubnet'), 'Yes'), 'Deny', 'Audit')]"
                     }
                 }
             }

@@ -54,6 +54,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to the the newer version of DCSPM: [Configure Microsoft Defender CSPM plan](https://www.azadvertizer.net/azpolicyadvertizer/72f8cee7-2937-403d-84a1-a4e3e57f3c21.html)
 - Updated [Deploy-Private-DNS-Generic](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Private-DNS-Generic.html) policy to include the ability to configure the location/region.
 - Removed duplicate assignment and portal option of [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html) at Landing Zones scope, as this policy is assigned in the initiative [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) at Intermediate Root scope.
+- Added new built-in policy assignment and portal option for [Subnets should be private](https://www.azadvertizer.net/azpolicyadvertizer/7bca8353-aa3b-429b-904a-9229c4385837.html) assigned at Platform and Landing Zones management groups. This policy's assignment effect is defaulted to "Audit" in this release, giving the community time to adopt the good practice and address subnet compliance. We will default to the "Deny" effect as part of the next Policy Refresh.
 
 ### August 2024
 
