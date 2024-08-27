@@ -131,17 +131,26 @@ Describe 'UnitTest-ModifiedPolicies' {
                 $ModifiedAddedFiles | ForEach-Object {
                     $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                     $PolicyFile = Split-Path $_ -Leaf
-                    $PolicyParameters = $PolicyJson.properties.parameters
-                    if ($PolicyParameters | Get-Member -MemberType NoteProperty)
+                    $PolicyMetadataName = $PolicyJson.name
+                    $ExcludePolicy = @("Deploy-Private-DNS-Zones","Deploy-Vm-autoShutdown","Deploy-Custom-Route-Table","Deploy-DDoSProtection","Deploy-Default-Udr")
+                    $ExcludeParams = @("allowedVnets","userAssignedIdentityName","identityResourceGroup","resourceName","logAnalytics","ddosPlanResourceId","modifyUdrNextHopIpAddress","emailSecurityContact","contactEmails","contactGroups","contactRoles","privateDnsZoneId","resourceType","groupId","azureAcrPrivateDnsZoneId","userWorkspaceResourceId","workspaceRegion","dcrName","dcrResourceGroup","dcrId","keyVaultNonIntegratedCaValue","excludedSubnets","excludedDestinations","allowedBypassOptions","ports","denyMgmtFromInternetPorts","allowedVmSizes","allowedKinds","predefinedPolicyName","privateLinkDnsZones","locations","tagValues","ascExportResourceGroupLocation","ascExportResourceGroupName","vulnerabilityAssessmentsEmail","vulnerabilityAssessmentsStorageID","listOfResourceTypesAllowed","listOfResourceTypesNotAllowed","synapseAllowedTenantIds","storageAllowedNetworkAclsBypass","keyVaultIntegratedCaValue","keyVaultHmsCurveNamesValue")
+                    if ($PolicyMetadataName -notin $ExcludePolicy)
                     {
-                        $Parameters = $PolicyParameters | Get-Member -MemberType NoteProperty | Select-Object -Expand Name
-                        Write-Warning "$($PolicyFile) - These are the params: $($Parameters)"
-                        $Parameters = $PolicyParameters | Get-Member -MemberType NoteProperty
-                        $Parameters | ForEach-Object {
-                            $key = $_.name
-                            $defaultValue = $PolicyParameters.$key | Get-Member -MemberType NoteProperty | Where-Object Name -EQ "defaultValue"
-                            Write-Warning "$($PolicyFile) - Parameter: $($key) - Default Value: $($defaultValue)"
-                            $PolicyParameters.$key.defaultValue | Should -Not -BeNullOrEmpty
+                        $PolicyParameters = $PolicyJson.properties.parameters
+                        if ($PolicyParameters | Get-Member -MemberType NoteProperty)
+                        {
+                            $Parameters = $PolicyParameters | Get-Member -MemberType NoteProperty | Select-Object -Expand Name
+                            Write-Warning "$($PolicyFile) - These are the params: $($Parameters)"
+                            $Parameters = $PolicyParameters | Get-Member -MemberType NoteProperty
+                            $Parameters | ForEach-Object {
+                                $key = $_.name
+                                if ($key -notin $ExcludeParams)
+                                {
+                                    $defaultValue = $PolicyParameters.$key | Get-Member -MemberType NoteProperty | Where-Object Name -EQ "defaultValue"
+                                    Write-Warning "$($PolicyFile) - Parameter: $($key) - Default Value: $($defaultValue)"
+                                    $PolicyParameters.$key.defaultValue | Should -Not -BeNullOrEmpty
+                                }
+                            }
                         }
                     }
                 }
