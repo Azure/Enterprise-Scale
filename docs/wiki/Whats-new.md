@@ -61,6 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Cleaned up the Log Analytics "solutions" in portal ARM template, as these are no longer required and deployed by ALZ.
 - Re-introduced the option to enable "Sentinel" in the portal accelerator.
 - Updated Microsoft Sentinel onboarding (enablement) using the new mechanism that fixes issues after 1 July 2024. Microsoft Sentinel is enabled by default through the portal accelerator as a best practice - we do not however configure any data connectors, we only enable the service. Should you wish to remove this, you can delete the association from the Azure Portal after deployment from the "Sentinel" feature blade.
+- Fixed a bug that would result in a failed deployment if deploying an Express Route Gateway and Basic Firewall SKU through the portal accelerator.
 
 ### July 2024
 
