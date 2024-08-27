@@ -57,6 +57,6 @@ New-AzRoleAssignment -Scope '/' -RoleDefinitionName 'Owner' -ObjectId $user.Id
 
 ## Azure Resource Provider prerequisites
 
-For the ALZ deployment, a number of resource providers must be registered on ALL subscriptions. Ensure that all the resource providers listed [here](./ALZ-Resource-Provider-Recommendations.md) are registered before deploying Azure Landing Zones.
+For the ALZ deployment, a number of resource providers must be registered on ALL subscriptions. Ensure that all the resource providers listed [here](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Resource-Provider-Recommendations) are registered before deploying Azure Landing Zones.
 
 Please see [here](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider) for details on how to register a resource provider should you need to do so.
