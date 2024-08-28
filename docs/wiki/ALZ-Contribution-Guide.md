@@ -183,7 +183,13 @@ For a policy set definition, additional code should be added inside of the `load
 
 `loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json')`
 
-The policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.
+~~The policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.~~
+
+> Due to security compliance requirements, we've made core changes that mean we no longer automatically build the policies, initiatives and roles templates after changes in the `src` folder are committed. This means that you as a contributor must run the bicep build commands to generate the required outputs as part of your pull request. Depending on the files you've updated these are the commands:
+> 
+> - `bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json`
+> - `bicep build ./src/templates/initiatives.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/initiatives.json`
+> - `bicep build ./src/templates/roles.bicep --outfile ./eslzArm/managementGroupTemplates/roleDefinitions/customRoleDefinitions.json`
 
 Once the policy work has been completed, a pull request should be submitted to the repository:
 

@@ -40,6 +40,10 @@
             "type": "string",
             "defaultValue": ""
         },
+        "enableSentinel": {
+            "type": "string",
+            "defaultValue": "Yes"
+        },
         "managementSubscriptionId": {
             "type": "string",
             "defaultValue": "",
@@ -1672,7 +1676,6 @@
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
-            "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsSolutions.json')]",
             "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
             "regulatoryComplianceInitaitves": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-RegulatoryCompliancePolicyAssignment.json')]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
@@ -1790,7 +1793,6 @@
             "monitorManagementDeploymentName": "[take(concat('alz-ManagementMonitor', variables('deploymentSuffix')), 64)]",
             "monitorLandingZoneDeploymentName": "[take(concat('alz-LandingZoneMonitor', variables('deploymentSuffix')), 64)]",
             "monitorServiceHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
-            "monitoringSolutionsDeploymentName": "[take(concat('alz-Solutions', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
             "regulatoryComplianceInitativesToAssignDeploymentName": "[take(concat('alz-RegComp-', deployment().location, '-', uniqueString(parameters('currentDateTimeUtcNow')), '-'), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -1918,7 +1920,6 @@
             "subnetNsgIdentityLitePolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "monitoringLiteDeploymentName": "[take(concat('alz-MonitoringLite', variables('deploymentSuffix')), 64)]",
             "logAnalyticsLitePolicyDeploymentName": "[take(concat('alz-LAPolicyLite', variables('deploymentSuffix')), 64)]",
-            "monitoringSolutionsLiteDeploymentName": "[take(concat('alz-SolutionsLite', variables('deploymentSuffix')), 64)]",
             "platformLiteSubscriptionPlacement": "[take(concat('alz-PlatformSubLite', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubLiteDeploymentName": "[take(concat('alz-VnetHubLite', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubLiteDeploymentName": "[take(concat('alz-VWanHubLite', variables('deploymentSuffix')), 64)]",
@@ -2540,6 +2541,9 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    },
+                    "enableSentinel": {
+                        "value": "[parameters('enableSentinel')]"
                     }
                 }
             }
@@ -2660,40 +2664,6 @@
                     },
                     "userAssignedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
-                    }
-                }
-            }
-        },
-        {
-            // Deploying Sentinel to Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
-            "location": "[deployment().location]",
-            "subscriptionId": "[parameters('managementSubscriptionId')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').monitoringSolutions]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
-                    },
-                    "workspaceRegion": {
-                        "value": "[deployment().location]"
-                    },
-                    "enableSecuritySolution": {
-                        "value": "[parameters('enableSecuritySolution')]"
                     }
                 }
             }
@@ -7670,6 +7640,9 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    },
+                    "enableSentinel": {
+                        "value": "[parameters('enableSentinel')]"
                     }
                 }
             }
@@ -7703,43 +7676,6 @@
                     },
                     "userAssignedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
-                    }
-                }
-            }
-        },
-        /*
-            Note: ES Lite only: the following deployments will deploy Sentinel to the platform subscription
-        */
-        {
-            // Deploying Sentinel to the Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
-            "location": "[deployment().location]",
-            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]",
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').monitoringSolutions]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
-                    },
-                    "workspaceRegion": {
-                        "value": "[deployment().location]"
-                    },
-                    "enableSecuritySolution": {
-                        "value": "[parameters('enableSecuritySolution')]"
                     }
                 }
             }

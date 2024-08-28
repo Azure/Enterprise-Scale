@@ -1,6 +1,8 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [August 2024](#august-2024)
+  - [July 2024](#july-2024)
   - [June 2024](#june-2024)
   - [🆕 AMA Updates](#-ama-updates)
   - [🔃 Policy Refresh H2 FY24](#-policy-refresh-h2-fy24)
@@ -45,6 +47,31 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### August 2024
+
+> NOTE TO CONTRIBUTORS: Due to security compliance requirements, we've made core changes that mean we no longer automatically build the policies, initiatives and roles templates after changes in the `src` folder are committed. This means that you as a contributor must run the bicep build commands to generate the required outputs as part of your pull request. Depending on the files you've updated these are the commands (assuming you have bicep installed):
+> 
+> - `bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json`
+> - `bicep build ./src/templates/initiatives.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/initiatives.json`
+> - `bicep build ./src/templates/roles.bicep --outfile ./eslzArm/managementGroupTemplates/roleDefinitions/customRoleDefinitions.json`
+
+#### Other
+
+- Cleaned up the Log Analytics "solutions" in portal ARM template, as these are no longer required and deployed by ALZ.
+- Re-introduced the option to enable "Sentinel" in the portal accelerator.
+- Updated Microsoft Sentinel onboarding (enablement) using the new mechanism that fixes issues after 1 July 2024. Microsoft Sentinel is enabled by default through the portal accelerator as a best practice - we do not however configure any data connectors, we only enable the service. Should you wish to remove this, you can delete the association from the Azure Portal after deployment from the "Sentinel" feature blade.
+- Fixed a bug that would result in a failed deployment if deploying an Express Route Gateway and Basic Firewall SKU through the portal accelerator.
+
+### July 2024
+
+#### Policy
+
+- Alignment of **allowedValues** in the following initiatives with those used in the included policyDefinitions:
+  - [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html)
+  - [Enforce recommended guardrails for Kubernetes](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html)
+  - [Enforce recommended guardrails for Network and Networking services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html)
+  - [Enforce recommended guardrails for Synapse workspaces](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Synapse.html)
 
 ### June 2024
 
