@@ -109,13 +109,9 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            Switch (${{github.event.pull_request.labels.*.name}})
-            {
-              {$_ -contains "Test: Standard :test_tube:"} { $paramfile = "./eslzArm/eslzArm.test.param.std.json" }
-              {$_ -contains "Test: Hub & Spoke :test_tube:"} { $paramfile = "./eslzArm/eslzArm.test.param.hns.json" }
-              {$_ -contains "Test: VWAN :test_tube:"} { $paramfile = "./eslzArm/eslzArm.test.param.vwan.json" }
-              Default { $paramfile = "./eslzArm/eslzArm.test.param.json" }
-            }
+            if (${{contains(github.event.pull_request.labels.*.name, 'Test: Standard :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.std.json" }
+            if (${{contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.hns.json" }
+            if (${{contains(github.event.pull_request.labels.*.name, 'Test: VWAN :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.vwan.json" }
             ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath $paramfile
             Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
           azPSVersion: "latest"
