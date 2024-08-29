@@ -110,9 +110,21 @@ jobs:
         with:
           inlineScript: |
             if (${{contains(github.event.pull_request.labels.*.name, 'Test: Standard :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.std.json" }
-            if (${{contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.hns.json" }
-            if (${{contains(github.event.pull_request.labels.*.name, 'Test: VWAN :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.vwan.json" }
+            elseif (${{contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.hns.json" }
+            elseif (${{contains(github.event.pull_request.labels.*.name, 'Test: VWAN :test_tube:')}}) { $paramfile = "./eslzArm/eslzArm.test.param.vwan.json" }
+            else { $paramfile = "./eslzArm/eslzArm.test.param.json" }
             ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath $paramfile
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+          azPSVersion: "latest"
+        env:
+          DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
+
+      - name: Generate eslzArm configuration (Standard)
+        if: contains(github.event.pull_request.labels.*.name, 'Test: Standard :test_tube:')
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.std.json"
             Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
           azPSVersion: "latest"
         env:
