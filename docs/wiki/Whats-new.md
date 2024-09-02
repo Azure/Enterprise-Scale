@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2024](#september-2024)
   - [August 2024](#august-2024)
   - [July 2024](#july-2024)
   - [June 2024](#june-2024)
@@ -17,10 +18,7 @@
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
-  - [August 2023](#august-2023)
-  - [July 2023](#july-2023)
-  - [June 2023](#june-2023)
-  - [Previous Updates](#may-2023)
+  - [Previous Updates](#august-2023)
 
 ---
 
@@ -48,6 +46,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### September 2024
+
+- Updated the Azure Monitoring Baseline Alerts (AMBA) integration section in the portal accelerator to include new features exposed by the AMBA solution. To read more on the changes https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Whats-New/
+
 ### August 2024
 
 > NOTE TO CONTRIBUTORS: Due to security compliance requirements, we've made core changes that mean we no longer automatically build the policies, initiatives and roles templates after changes in the `src` folder are committed. This means that you as a contributor must run the bicep build commands to generate the required outputs as part of your pull request. Depending on the files you've updated these are the commands (assuming you have bicep installed):
@@ -62,7 +64,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Re-introduced the option to enable "Sentinel" in the portal accelerator.
 - Updated Microsoft Sentinel onboarding (enablement) using the new mechanism that fixes issues after 1 July 2024. Microsoft Sentinel is enabled by default through the portal accelerator as a best practice - we do not however configure any data connectors, we only enable the service. Should you wish to remove this, you can delete the association from the Azure Portal after deployment from the "Sentinel" feature blade.
 - Fixed a bug that would result in a failed deployment if deploying an Express Route Gateway and Basic Firewall SKU through the portal accelerator.
-- Updated the Azure Monitoring Baseline Alerts (AMBA) integration section in the portal accelerator to include new features exposed by the AMBA solution. To read more on the changes https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Whats-New/
+
 
 ### July 2024
 
