@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2024](#september-2024)
   - [August 2024](#august-2024)
   - [July 2024](#july-2024)
   - [June 2024](#june-2024)
@@ -17,10 +18,7 @@
   - [November 2023](#november-2023)
   - [October 2023](#october-2023)
   - [September 2023](#september-2023)
-  - [August 2023](#august-2023)
-  - [July 2023](#july-2023)
-  - [June 2023](#june-2023)
-  - [Previous Updates](#may-2023)
+  - [Previous Updates](#august-2023)
 
 ---
 
@@ -61,6 +59,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - VM
   - Web
 - [Guidance](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/UpdateToNewReleases/Update_from_release_2024-06-05/) for updating and implementing these changes in existing environments is available on the AMBA website.
+- Updated the Azure Monitoring Baseline Alerts (AMBA) integration section in the portal accelerator to include new features exposed by the AMBA solution. To read more on the changes https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Whats-New/
+
 
 ### August 2024
 
@@ -78,6 +78,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a bug that would result in a failed deployment if deploying an Express Route Gateway and Basic Firewall SKU through the portal accelerator.
 - Fixed a bug that would result in a failed deployment for some multi-region Virtual WAN scenarios with identity networks and gateways.
 - Fixed a bug that had ALZ-LITE deployments try to connect DNS zones twice for single regions deployment.
+
 
 
 ### July 2024
