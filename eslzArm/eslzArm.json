@@ -224,6 +224,21 @@
             ],
             "defaultValue": "Disabled"
         },
+        "enableSecuritySolution": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableServiceHealth": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for Service Health in your environment. If 'No', it will be ignored."
+            }
+        },
         "enableMonitorBaselines": {
             "type": "string",
             "defaultValue": "",
@@ -256,14 +271,6 @@
                 "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select management resources in your environment. If 'No', it will be ignored."
             }
         },
-        "enableMonitorLandingZones": {
-            "type": "string",
-            "defaultValue": "",
-            "maxLength": 36,
-            "metadata": {
-                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select resources in your environment. If 'No', it will be ignored."
-            }
-        },
         "monitorAlertsResourceGroup": {
             "type": "string",
             "defaultValue": "",
@@ -272,12 +279,89 @@
                 "description": "Name of the resource group to be created for monitoring resources in each subscription."
             }
         },
-        "emailContactActionGroup": {
+        "userAssignedManagedIdentityName": {
             "type": "string",
             "defaultValue": "",
-            "maxLength": 36,
+            "maxLength": 90,
+            "metadata": {
+                "description": "The name of the user assigned managed identity for monitoring purpose."
+            }
+        },
+        "ambaAgEmailContact": {
+            "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "Email address for alerting purposes."
+            }
+        },
+        "ambaAgServiceHook": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Service Hook URI for action group notifications."
+            }
+        },
+        "ambaAgArmRole": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "ARM roles for action group notifications."
+            }
+        },
+        "enableAMBAHybridVM": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign HybridVM initiative"
+            }
+        },
+        "enableAMBAKeyManagement": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Key Management initiative"
+            }
+        },
+        "enableAMBALoadBalancing": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Load Balancing initiative"
+            }
+        },
+        "enableAMBANetworkChanges": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Network Changes initiative"
+            }
+        },
+        "enableAMBARecoveryServices": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Recovery Services initiative"
+            }
+        },
+        "enableAMBAStorage": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Storage initiative"
+            }
+        },
+        "enableAMBAVM": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign VM initiative"
+            }
+        },
+        "enableAMBAWeb": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Web initiative"
             }
         },
         "connectivitySubscriptionId": {
@@ -1576,7 +1660,7 @@
         },
         // Declaring root uris for external dependency repositories.
         "rootUris": {
-            "monitorRepo": "https://raw.githubusercontent.com/Azure/azure-monitor-baseline-alerts/2023-11-14/"
+            "monitorRepo": "https://raw.githubusercontent.com/Azure/azure-monitor-baseline-alerts/2024-09-02/"
         },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
         "azPrivateDnsPolicyAssignmentMapping": {
@@ -1921,6 +2005,7 @@
             "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
             "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]",
             "azFirewallResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
+            "azFirewallResourceIdSecondaryVwan": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
             "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
@@ -2156,34 +2241,62 @@
                     "enableAMBAIdentity": {
                         "value": "[parameters('enableMonitorIdentity')]"
                     },
-                    "enableAMBALandingZone": {
-                        "value": "[parameters('enableMonitorLandingZones')]"
-                    },
                     "enableAMBAManagement": {
                         "value": "[parameters('enableMonitorManagement')]"
                     },
                     "enableAMBAServiceHealth": {
-                        "value": "[parameters('enableMonitorBaselines')]"
+                        "value": "[parameters('enableServiceHealth')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[parameters('userAssignedManagedIdentityName')]"
+                    },
+                    "ALZWebhookServiceUri": {
+                        "value": "[array(parameters('ambaAgServiceHook'))]"
+                    },
+                    "ALZArmRoleId": {
+                        "value": "[array(parameters('ambaAgArmRole'))]"
                     },
                     "delayCount": {
                         "value": "[parameters('delayCount')]"
                     },
-                    "policyAssignmentParametersCommon": {
-                        "value": {
-                            "alzMonitorResourceGroupName": {
-                                "value": "[parameters('monitorAlertsResourceGroup')]"
-                            },
-                            "alzMonitorResourceGroupLocation": {
-                                "value": "[deployment().location]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('monitorAlertsResourceGroup')]"
                     },
-                    "policyAssignmentParametersServiceHealth": {
-                        "value": {
-                            "alzMonitorActionGroupEmail": {
-                                "value": "[parameters('emailContactActionGroup')]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "ALZMonitorActionGroupEmail": {
+                        "value": "[array(parameters('ambaAgEmailContact'))]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "enableAMBAHybridVM": {
+                        "value": "[parameters('enableAMBAHybridVM')]"
+                    },
+		            "enableAMBAKeyManagement": {
+                        "value": "[parameters('enableAMBAKeyManagement')]"
+                    },
+		            "enableAMBALoadBalancing": {
+                        "value": "[parameters('enableAMBALoadBalancing')]"
+                    },
+		            "enableAMBANetworkChanges": {
+                        "value": "[parameters('enableAMBANetworkChanges')]"
+                    },
+		            "enableAMBARecoveryServices": {
+                        "value": "[parameters('enableAMBARecoveryServices')]"
+                    },
+		            "enableAMBAStorage": {
+                        "value": "[parameters('enableAMBAStorage')]"
+                    },
+		            "enableAMBAVM": {
+                        "value": "[parameters('enableAMBAVM')]"
+                    },
+		            "enableAMBAWeb": {
+                        "value": "[parameters('enableAMBAWeb')]"
+                    },
+                    "deployALZPortalAccelerator": {
+                        "value": "Yes"
                     }
                 }
             }
@@ -2216,13 +2329,13 @@
                         "value": "[variables('mgmtGroups').platform]"
                     },
                     "IdentityManagementGroup": {
-                        "value": "[variables('mgmtGroups').platform]"
+                        "value": "[variables('mgmtGroups').identity]"
                     },
                     "managementManagementGroup": {
-                        "value": "[variables('mgmtGroups').platform]"
+                        "value": "[variables('mgmtGroups').management]"
                     },
                     "connectivityManagementGroup": {
-                        "value": "[variables('mgmtGroups').platform]"
+                        "value": "[variables('mgmtGroups').connectivity]"
                     },
                     "LandingZoneManagementGroup": {
                         "value": "[variables('mgmtGroups').lzs]"
@@ -2233,34 +2346,56 @@
                     "enableAMBAIdentity": {
                         "value": "[parameters('enableMonitorIdentity')]"
                     },
-                    "enableAMBALandingZone": {
-                        "value": "[parameters('enableMonitorLandingZones')]"
-                    },
                     "enableAMBAManagement": {
                         "value": "[parameters('enableMonitorManagement')]"
                     },
                     "enableAMBAServiceHealth": {
-                        "value": "[parameters('enableMonitorBaselines')]"
+                        "value": "[parameters('enableServiceHealth')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[parameters('userAssignedManagedIdentityName')]"
+                    },
+                    "ALZWebhookServiceUri": {
+                        "value": "[array(parameters('ambaAgServiceHook'))]"
+                    },
+                    "ALZArmRoleId": {
+                        "value": "[array(parameters('ambaAgArmRole'))]"
                     },
                     "delayCount": {
                         "value": "[parameters('delayCount')]"
                     },
-                    "policyAssignmentParametersCommon": {
-                        "value": {
-                            "alzMonitorResourceGroupName": {
-                                "value": "[parameters('monitorAlertsResourceGroup')]"
-                            },
-                            "alzMonitorResourceGroupLocation": {
-                                "value": "[deployment().location]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('monitorAlertsResourceGroup')]"
                     },
-                    "policyAssignmentParametersServiceHealth": {
-                        "value": {
-                            "alzMonitorActionGroupEmail": {
-                                "value": "[parameters('emailContactActionGroup')]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "ALZMonitorActionGroupEmail": {
+                        "value": "[array(parameters('ambaAgEmailContact'))]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+		            "enableAMBALoadBalancing": {
+                        "value": "[parameters('enableAMBALoadBalancing')]"
+                    },
+		            "enableAMBANetworkChanges": {
+                        "value": "[parameters('enableAMBANetworkChanges')]"
+                    },
+		            "enableAMBARecoveryServices": {
+                        "value": "[parameters('enableAMBARecoveryServices')]"
+                    },
+		            "enableAMBAStorage": {
+                        "value": "[parameters('enableAMBAStorage')]"
+                    },
+		            "enableAMBAVM": {
+                        "value": "[parameters('enableAMBAVM')]"
+                    },
+		            "enableAMBAWeb": {
+                        "value": "[parameters('enableAMBAWeb')]"
+                    },
+                    "deployALZPortalAccelerator": {
+                        "value": "Yes"
                     }
                 }
             }
@@ -7221,7 +7356,7 @@
                         "value": "[variables('platformResourceIds').vWanHubResourceIdSecondary]"
                     },
                     "azureFirewallResourceId": {
-                        "value": "[if(equals(parameters('enableAzFwDnsProxySecondary'), 'Yes'), variables('platformResourceIds').azFirewallResourceIdSecondary, '')]"
+                        "value": "[if(equals(parameters('enableAzFwDnsProxySecondary'), 'Yes'), variables('platformResourceIds').azFirewallResourceIdSecondaryVwan, '')]"
                     }
                 }
             }
@@ -7811,7 +7946,7 @@
                         "value": "[parameters('enablePrivateDnsZonesSecondary')]"
                     },
                     "enableHubSecondary": {
-                        "value": "[parameters('enableHubSecondary')]"
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 }
             }

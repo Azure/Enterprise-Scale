@@ -60,11 +60,11 @@ This management group is a parent to all the other management groups created wit
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
 <tr></tr>
 <tr><td>
-  
+
 ![image](./media/IntRoot_v0.1.jpg)
-  
+
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **13**     |
@@ -87,7 +87,8 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Audit-UnusedResourcesCostOptimization** | **Audit-UnusedResourcesCostOptimization** | `Policy Definition Set`, **Custom**     | Optimize cost by detecting unused but chargeable resources. Leverage this Azure Policy Initiative as a cost control tool to reveal orphaned resources that are contributing cost.                                                                                                                                                                                                                              | Audit                   |
 | **Audit-TrustedLaunch** | **Audit-TrustedLaunch** | `Policy Definition Set`, **Custom**     | Trusted Launch improves security of a Virtual Machine which requires VM SKU, OS Disk & OS Image to support it (Gen 2). To learn more about Trusted Launch, visit https://aka.ms/trustedlaunch.  | Audit                   |
 | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | **Deny Virtual Machines and Virtual Machine Scale Sets from not using OS Managed Disks** | `Policy Definition`, **Built-In**     | Deny virtual machines not using managed disk. It checks the managedDisk property on virtual machine OS Disk fields.                                                                                                                                                                                                                         | Deny                   |
-| **Deploy Azure Monitor Baseline Alerts for Service Health** | **Deploy Azure Monitor Baseline Alerts for Service Health** | `Policy Definition Set`, **Custom**     | Deploys service health alerts, action group and alert processing rule. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Service Health initiative. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Service Health** | **Deploy Azure Monitor Baseline Alerts for Service Health** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Service Health Events such as Service issues, Planned maintenance, Health advisories, Security advisories, and Resource health. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Service Health initiative. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts - Notification Assets** | **Deploy Azure Monitor Baseline Alerts - Notification Assets** | `Policy Definition Set`, **Custom**     | Deploys Notification Assets for Azure Monitor Baseline Alerts. This includes the setup of an Alert Processing Rule and an Action Group to manage notifications and actions, along with a Notification Suppression Rule to manage alert notifications, as well as a Notification Suppression Rule to control alert notifications. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Service Health initiative. | DeployIfNotExists                   |
 | **Resources should be Zone Resilient** | **Resources should be Zone Resilient** | `Policy Definition Set`, **Built-in**     | Some resource types can be deployed Zone Redundant (e.g. SQL Databases); some can be deploy Zone Aligned (e.g. Virtual Machines); and some can be deployed either Zone Aligned or Zone Redundant (e.g. Virtual Machine Scale Sets). Being zone aligned does not guarantee resilience, but it is the foundation on which a resilient solution can be built (e.g. three Virtual Machine Scale Sets zone aligned to three different zones in the same region with a load balancer). See https://aka.ms/AZResilience for more info. | Audit                   |
 | **Resource Group and Resource locations should match** | **Resource Group and Resource locations should match** | `Policy Definition`, **Built-in**     | In order to improve resilience and reliability, you need to be aware of where resources are deployed. To aid this awareness, ensure that the location of the resource group matches the location of the resources it contains. | Audit                   |
 
@@ -99,11 +100,11 @@ This management group contains all the platform child management groups, like ma
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
 <tr></tr>
 <tr><td>
-  
+
 ![image](./media/Platform_v0.1.svg)
-  
+
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **10**     |
@@ -135,11 +136,11 @@ This management group contains a dedicated subscription for connectivity. This s
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
 <tr></tr>
 <tr><td>
-  
+
 ![image](./media/Connectivity_v0.1.jpg)
-  
+
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **1**     |
@@ -161,11 +162,11 @@ This management group contains a dedicated subscription for management, monitori
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
 <tr></tr>
 <tr><td>
-  
+
 ![image](./media/Management_v0.1.jpg)
-  
+
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **1**     |
@@ -188,11 +189,11 @@ This management group contains a dedicated subscription for identity. This subsc
 <tr><th>Management Group </th><th>Policy Configuration</th></tr>
 <tr></tr>
 <tr><td>
-  
+
 ![image](./media/Identity_v0.1.jpg)
-  
+
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **1**     |
@@ -221,7 +222,7 @@ This is the parent management group for all the landing zone child management gr
 ![image](./media/LandingZone_v0.1.jpg)
 
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **13**     |
@@ -249,7 +250,6 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Kubernetes clusters should not allow container privilege escalation**                                             | **Kubernetes clusters should not allow container privilege escalation**                                             | `Policy Definition`, **Built-in**   | Do not allow containers to run with privilege escalation to root in a Kubernetes cluster. This recommendation is part of CIS 5.2.5 which is intended to improve the security of your Kubernetes environments. This policy is generally available for Kubernetes Service (AKS), and preview for AKS Engine and Azure Arc enabled Kubernetes.                                         | Audit                                            |
 | **Kubernetes clusters should be accessible only over HTTPS**                                                        | **Kubernetes clusters should be accessible only over HTTPS**                                                        | `Policy Definition`, **Built-in**   | Use of HTTPS ensures authentication and protects data in transit from network layer eavesdropping attacks. This capability is currently generally available for Kubernetes Service (AKS), and in preview for AKS Engine and Azure Arc enabled Kubernetes.                                                                                                                           | Deny                                             |
 | **Web Application Firewall (WAF) should be enabled for Application Gateway**                                                        | **Web Application Firewall (WAF) should be enabled for Application Gateway**                                                        | `Policy Definition`, **Built-in**   | Deploy Azure Web Application Firewall (WAF) in front of public facing web applications for additional inspection of incoming traffic. Web Application Firewall (WAF) provides centralized protection of your web applications from common exploits and vulnerabilities such as SQL injections, Cross-Site Scripting, local and remote file executions. You can also restrict access to your web applications by countries, IP address ranges, and other http(s) parameters via custom rules.                                                                                                                           | Audit                                             |
-| **Deploy Azure Monitor Baseline Alerts for Landing Zone**\* | **Deploy Azure Monitor Baseline Alerts for Landing Zone** | `Policy Definition Set`, **Custom**     | Deploys alerting for landing zone related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
 | **Enable Azure Monitor for VMs**\*                                           | **Enable Azure Monitor for VMs with Azure Monitoring Agent(AMA)**        | `Policy Definition Set`, **Built-in** | This policy initiative installs the Azure Monitoring Agent (AMA) on the virtual machines (VMs) and enables Azure Monitor for them. Azure Monitor collects and analyzes data from the VMs, such as performance metrics, logs, and dependencies.                                                                            | DeployIfNotExists, Disabled |
 | **Enable Azure Monitor for Virtual Machine Scale Sets**\*                    | **Enable Azure Monitor for VMSS with Azure Monitoring Agent(AMA)**       | `Policy Definition Set`, **Built-in** | This policy initiative installs the Azure Monitoring Agent (AMA) on the virtual machines scale sets (VMSS) and enables Azure Monitor for them. Azure Monitor collects and analyzes data from the VMs, such as performance metrics, logs, and dependencies.                                                                | DeployIfNotExists, Disabled |
 | **Enable Azure Monitor for Hybrid Virtual Machines**\*                       | **Enable Azure Monitor for Hybrid VMs with AMA**                         | `Policy Definition Set`, **Built-in** | This policy initiative installs the Azure Monitoring Agent (AMA) on Arc-enabled servers (Hybrid) and enables Azure Monitor for them. Azure Monitor collects and analyzes data from the VMs, such as performance metrics, logs, and dependencies.                                                                          | DeployIfNotExists, Disabled |
@@ -259,6 +259,14 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Enable ChangeTracking and Inventory for Arc-enabled virtual machines**\*   | **[Preview]: Enable ChangeTracking and Inventory for Arc-enabled virtual machines** | `Policy Definition Set`, **Built-in** | This policy initiative enables ChangeTracking and Inventory for Arc-enabled servers. It uses a Data Collection Rule to define what data to collect and where to send it, and a user-assigned identity to authenticate the Azure Monitor Agent.                                                                 | DeployIfNotExists, Disabled |
 | **Enable Defender for SQL on SQL VMs and Arc-enabled SQL Servers**\*         | **Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace** | `Policy Definition Set`, **Built-in** | This policy initiative enables Microsoft Defender for SQL and AMA on SQL VMs and Arc-enabled SQL Servers.                                                                                                                                                         | DeployIfNotExists, Disabled |
 | **Subnets should be private** | **Subnets should be private** | `Policy Definition`, **Built-in** | Ensure your subnets are secure by default by preventing default outbound access. For more information go to https://aka.ms/defaultoutboundaccessretirement | Audit, Deny |
+| **Deploy Azure Monitor Baseline Alerts for Hybrid VMs** | **Deploy Azure Monitor Baseline Alerts for Hybrid VMs** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Azure Arc-enabled Servers. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Key Management** | **Deploy Azure Monitor Baseline Alerts for Key Management** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Key Management Services such as Azure Key Vault, and Managed HSM. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Load Balancing** | **Deploy Azure Monitor Baseline Alerts for Load Balancing** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Load Balancing Services such as Load Balancer, Application Gateway, Traffic Manager, and Azure Front Door. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Changes in Network Routing and Security** | **Deploy Azure Monitor Baseline Alerts for Changes in Network Routing and Security** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor alterations in Network Routing and Security, such as modifications to Route Tables and the removal of Network Security Groups. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Recovery Services** | **Deploy Azure Monitor Baseline Alerts for Recovery Services** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Recovery Services such as Azure Backup, and Azure Site Recovery. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Storage** | **Deploy Azure Monitor Baseline Alerts for Storage** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Storage Services such as Storage accounts. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Virtual Machines** | **Deploy Azure Monitor Baseline Alerts for Virtual Machines** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Azure Virtual Machines. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Deploy Azure Monitor Baseline Alerts for Web** | **Deploy Azure Monitor Baseline Alerts for Web** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Web Services such as App Services. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
 
 > \* The AMA policies and initiatives are in effect for the portal implementation only. Terraform and Bicep will adopt these policies in the near future.
 
@@ -274,7 +282,7 @@ This management group is for corporate landing zones. This group is for workload
 ![image](./media/Corp_v0.1.jpg)
 
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **2**     |
@@ -303,7 +311,7 @@ This management group is for online landing zones. This group is for workloads t
 ![image](./media/Online_v0.1.jpg)
 
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **0**     |
@@ -322,7 +330,7 @@ This management group is for landing zones that are being cancelled. Cancelled l
 ![image](./media/Decom_v0.1.svg)
 
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **1**     |
@@ -345,7 +353,7 @@ This management group is for subscriptions that will only be used for testing an
 ![image](./media/Sandbox_v0.1.svg)
 
 </td><td>
-  
+
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **1**     |
@@ -399,18 +407,18 @@ This version is incremented according to the following rules (subject to change)
          - String changes (displayName, description, etc…)
          - Other metadata changes
    - **Suffix**
-      - Append "-preview" to the version if the policy is in a preview state  
+      - Append "-preview" to the version if the policy is in a preview state
          - Example:  1.3.2-preview
       - Append "-deprecated" to the version if the policy is in a deprecated state
          - Example:  1.3.2-deprecated
- 
+
 ## Preview and deprecated policies
 
-This section aims to explain what it means when a built-in policy has a state of ‘preview’ or ‘deprecated’.  
+This section aims to explain what it means when a built-in policy has a state of ‘preview’ or ‘deprecated’.
 
 Policies can be in preview because a property (alias) referenced in the policy definition is in preview, or the policy is newly introduced and would like additional customer feedback. A policy may get deprecated when the property (alias) becomes deprecated & not supported in the resource type's latest API version, or when there is manual migration needed by customers due to a breaking change in a resource type's latest API version.
 
-When a policy gets deprecated or gets out of preview, there is no impact on existing assignments. Existing assignments continue to work as-is. The policy is still evaluated & enforced like normal and continues to produce compliance results.  
+When a policy gets deprecated or gets out of preview, there is no impact on existing assignments. Existing assignments continue to work as-is. The policy is still evaluated & enforced like normal and continues to produce compliance results.
 
 Here are the changes that occur when a policy gets deprecated:
 

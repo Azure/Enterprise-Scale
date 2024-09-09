@@ -14,9 +14,9 @@ Some resource providers are turned on by Azure by default on all subscriptions d
 
 ## Resource Providers for Enterprise-Scale ALZ Deployment (Empty Subscriptions)
 
-To successfully deploy an Enterprise-Scale with a predefined [template](https://aka.ms/caf/ready/accelerator), along with ensuring other [prerequisites](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-Pre-requisites) are complete, ensure these Resource Providers are [registered](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-providers-and-types) in ALL subscriptions associated with your new Landing Zone:
+To successfully deploy an Enterprise-Scale with a predefined [template](https://learn.microsoft.com/azure/architecture/landing-zones/landing-zone-deploy#platform), along with ensuring other [prerequisites](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-Pre-requisites) are complete, ensure these Resource Providers are [registered](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-providers-and-types) in ALL subscriptions associated with your new Landing Zone:
 
-* microsoft.insights
+* Microsoft.Insights
 * Microsoft.AlertsManagement
 * Microsoft.OperationalInsights
 * Microsoft.OperationsManagement
