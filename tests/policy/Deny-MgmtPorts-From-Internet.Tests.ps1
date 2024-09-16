@@ -36,7 +36,33 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
 
     # Create or update NSG is actually the same PUT request, hence testing create covers update as well.
     Context "Test open ports NSG is created or updated" -Tag "deny-mgmtports-from-internet-nsg-port" {
-        
+        It "Should deny non-compliant port '3389' with 0.0.0.0/0 as the source ip" -Tag "deny-noncompliant-nsg-port" {
+            AzTest -ResourceGroup {
+                param($ResourceGroup)
+
+                $networkSecurityGroup = New-AzNetworkSecurityGroup `
+                -Name "nsg-test" `
+                -ResourceGroupName $$res.ResourceGroupName `
+                -Location $ResourceGroup.Location
+
+                # Should be disallowed by policy, so exception should be thrown.
+                {
+                    $networkSecurityGroup | Add-AzNetworkSecurityRuleConfig `
+                        -Name RDP-rule `
+                        -Description "Allow RDP" `
+                        -Access Allow `
+                        -Protocol Tcp `
+                        -Direction Inbound `
+                        -Priority 200 `
+                        -SourceAddressPrefix '0.0.0.0/0' ` # Incompliant.
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
+                        -DestinationPortRange 3389 # Incompliant.
+                    | Set-AzNetworkSecurityGroup
+                } | Should -Throw "disallowed by policy"
+            }
+        }
+
         It "Should deny non-compliant port '3389'" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
@@ -55,12 +81,12 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         -Protocol Tcp `
                         -Direction Inbound `
                         -Priority 200 `
-                        -SourceAddressPrefix * `
-                        -SourcePortRange * `
-                        -DestinationAddressPrefix * `
+                        -SourceAddressPrefix  `
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
                         -DestinationPortRange 3389 # Incompliant.
                     | Set-AzNetworkSecurityGroup
-                } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "disallowed by policy"
             }
         }
 
@@ -80,12 +106,12 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         -Protocol Tcp `
                         -Direction Inbound `
                         -Priority 200 `
-                        -SourceAddressPrefix * `
-                        -SourcePortRange * `
-                        -DestinationAddressPrefix * `
+                        -SourceAddressPrefix  `
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
                         -DestinationPortRange 3389 # Incompliant.
                     | Set-AzNetworkSecurityGroup
-                } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "disallowed by policy"
             }
         }
 
@@ -107,12 +133,12 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         -Protocol Tcp `
                         -Direction Inbound `
                         -Priority 200 `
-                        -SourceAddressPrefix * `
-                        -SourcePortRange * `
-                        -DestinationAddressPrefix * `
+                        -SourceAddressPrefix  `
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
                         -DestinationPortRange "21-23" # Incompliant.
                     | Set-AzNetworkSecurityGroup
-                } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "disallowed by policy"
             }
         }
 
@@ -134,9 +160,9 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         -Protocol Tcp `
                         -Direction Inbound `
                         -Priority 200 `
-                        -SourceAddressPrefix * `
-                        -SourcePortRange * `
-                        -DestinationAddressPrefix * `
+                        -SourceAddressPrefix  `
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
                         -DestinationPortRange 443 # Compliant.
                     | Set-AzNetworkSecurityGroup
                 } | Should -Not -Throw
@@ -161,9 +187,9 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         -Protocol Tcp `
                         -Direction Inbound `
                         -Priority 300 `
-                        -SourceAddressPrefix * `
-                        -SourcePortRange * `
-                        -DestinationAddressPrefix * `
+                        -SourceAddressPrefix  `
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
                         -DestinationPortRange 443 
                     | Add-AzNetworkSecurityRuleConfig `
                         -Name SSH-rule `
@@ -172,16 +198,16 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         -Protocol Tcp `
                         -Direction Inbound `
                         -Priority 310 `
-                        -SourceAddressPrefix * `
-                        -SourcePortRange * `
-                        -DestinationAddressPrefix * `
+                        -SourceAddressPrefix  `
+                        -SourcePortRange  `
+                        -DestinationAddressPrefix  `
                         -DestinationPortRange "21-23" # Incompliant.
                     | Set-AzNetworkSecurityGroup
-                } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "disallowed by policy"
             }
         }
 
-        It "Should deny non-compliant port ranges* - API" -Tag "deny-noncompliant-nsg-port" {
+        It "Should deny non-compliant port ranges - API" -Tag "deny-noncompliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -194,10 +220,10 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         properties = @{
                             description = "Allow Web"
                             protocol = "Tcp"
-                            sourcePortRange = "*"
+                            sourcePortRange = ""
                             destinationPortRange = "443"
-                            sourceAddressPrefix = "*"
-                            destinationAddressPrefix = "*"
+                            sourceAddressPrefix = ""
+                            destinationAddressPrefix = ""
                             access = "Allow"
                             priority = 300
                             direction = "Inbound"
@@ -208,10 +234,10 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         properties = @{
                             description = "Allow Mgmt"
                             protocol = "Tcp"
-                            sourcePortRange = "*"
+                            sourcePortRange = ""
                             destinationPortRanges = $portRanges
-                            sourceAddressPrefix = "*"
-                            destinationAddressPrefix = "*"
+                            sourceAddressPrefix = ""
+                            destinationAddressPrefix = ""
                             access = "Allow"
                             priority = 310
                             direction = "Inbound"
@@ -246,11 +272,11 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                 else {
                     throw "Operation failed with message: '$($httpResponse.Content)'"
                 }              
-                } | Should -Throw "*disallowed by policy*"
+                } | Should -Throw "disallowed by policy"
             }
         }
 
-        It "Should allow compliant port ranges* - API" -Tag "allow-compliant-nsg-port" {
+        It "Should allow compliant port ranges - API" -Tag "allow-compliant-nsg-port" {
             AzTest -ResourceGroup {
                 param($ResourceGroup)
 
@@ -264,10 +290,10 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         properties = @{
                             description = "Allow Web2"
                             protocol = "Tcp"
-                            sourcePortRange = "*"
+                            sourcePortRange = ""
                             destinationPortRange = "443"
-                            sourceAddressPrefix = "*"
-                            destinationAddressPrefix = "*"
+                            sourceAddressPrefix = ""
+                            destinationAddressPrefix = ""
                             access = "Allow"
                             priority = 300
                             direction = "Inbound"
@@ -278,10 +304,10 @@ Describe "Testing policy 'Deny-MgmtPorts-From-Internet'" -Tag "deny-mgmtports-fr
                         properties = @{
                             description = "Allow Mgmt3"
                             protocol = "Tcp"
-                            sourcePortRange = "*"
+                            sourcePortRange = ""
                             destinationPortRanges = $portRanges
-                            sourceAddressPrefix = "*"
-                            destinationAddressPrefix = "*"
+                            sourceAddressPrefix = ""
+                            destinationAddressPrefix = ""
                             access = "Allow"
                             priority = 310
                             direction = "Inbound"

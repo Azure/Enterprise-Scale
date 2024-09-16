@@ -61,6 +61,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - [Guidance](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/UpdateToNewReleases/Update_from_release_2024-06-05/) for updating and implementing these changes in existing environments is available on the AMBA website.
 - Updated the Azure Monitoring Baseline Alerts (AMBA) integration section in the portal accelerator to include new features exposed by the AMBA solution. To read more on the changes https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Whats-New/
 
+#### Policy
+- Updated Deny-MgmtPorts-From-Internet.json to recognize 0.0.0.0/0 as being equivalent to * to represent all remote IP addresses.
 
 ### August 2024
 
