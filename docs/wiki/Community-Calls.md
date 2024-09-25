@@ -36,7 +36,7 @@ A PDF of the PowerPoint slides are available [here.](./media/community-calls/sep
 
 ### Slides
 
-A PDF of the PowerPoint slides are available [here.](./media/community-calls/june-2024/ALZ-Community-Call-12062024.pdf)
+A PDF of the PowerPoint slides is available [here.](./media/community-calls/june-2024/ALZ-Community-Call-12062024.pdf)
 
 ## 11th March 2024 (11/03/2024)
 
