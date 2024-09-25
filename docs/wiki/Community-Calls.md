@@ -56,7 +56,7 @@ A PDF of the PowerPoint slides are available [here.](./media/community-calls/mar
 
 ### Slides
 
-A PDF of the PowerPoint slides are available [here.](./media/community-calls/dec-2023/ALZ-Community-Call-06122023.pdf)
+A PDF of the PowerPoint slides is available [here.](./media/community-calls/dec-2023/ALZ-Community-Call-06122023.pdf)
 
 ## 25th September 2023 (25/09/2023)
 
