@@ -63,7 +63,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Other
 
-- September community call rording and slides uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
+- The September community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### August 2024
 
