@@ -1,6 +1,7 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
+- [September 2024](#25th-september-2024-25092024)
 - [June 2024](#12th-june-2024-12062024)
 - [March 2024](#11th-march-2024-11032024)
 - [December 2023](#6th-december-2023-06122023)
@@ -13,9 +14,19 @@
 
 ---
 
-On this page you will find the meeting recordings and PowerPoint slides from previous Azure Landing Zone External Community Calls. To sign-up to the next Azure Landing Zone External Community Call, head to: [https://aka.ms/alz/communitycallregister](https://aka.ms/alz/communitycallregister)
+On this page you will find the meeting recordings and PowerPoint slides from previous Azure Landing Zone External Community Calls. To sign-up to the next Azure Landing Zone External Community Call, head to: [aka.ms/alz/communitycall](https://aka.ms/alz/communitycall)
 
 > Short link to this page is [aka.ms/alz/community](https://aka.ms/alz/community)
+
+## 25th September 2024 (25/09/2024)
+
+### Recording
+
+[![Screenshot of Azure Landing Zones Community Call from September 2024 recording on YouTube](./media/community-calls/sept-2024/youtube-thumbnail.png)](https://youtu.be/eta4v9ETDl4?si=DJl93_95uEVWK8NC)
+
+### Slides
+
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/sept-2024/ALZ-Community-Call-25092024.pdf)
 
 ## 12th June 2024 (12/06/2024)
 
@@ -25,7 +36,7 @@ On this page you will find the meeting recordings and PowerPoint slides from pre
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/june-2024/ALZ-Community-Call-12062024.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/june-2024/ALZ-Community-Call-12062024.pdf)
 
 ## 11th March 2024 (11/03/2024)
 
@@ -35,7 +46,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/june
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/march-2024/ALZ-Community-Call-11032024.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/march-2024/ALZ-Community-Call-11032024.pdf)
 
 ## 6th December 2023 (06/12/2023)
 
@@ -45,7 +56,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/marc
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/dec-2023/ALZ-Community-Call-06122023.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/dec-2023/ALZ-Community-Call-06122023.pdf)
 
 ## 25th September 2023 (25/09/2023)
 
@@ -55,7 +66,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/dec-
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/sept-2023/ALZ-Community-Call-25092023.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/sept-2023/ALZ-Community-Call-25092023.pdf)
 
 ## 27th April 2023 (27/04/2023)
 
@@ -65,7 +76,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/sept
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/april-2023/ALZ-Community-Call-27-04-2023.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/april-2023/ALZ-Community-Call-27-04-2023.pdf)
 
 ## 31st January 2023 (31/01/2023)
 
@@ -75,7 +86,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/apri
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/jan-2023/ALZ-Community-Call-31012023.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/jan-2023/ALZ-Community-Call-31012023.pdf)
 
 ## 2nd May 2022 (02/05/2022)
 
@@ -85,7 +96,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/jan-
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/may-2022/ALZ-Community-Call-02052022.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/may-2022/ALZ-Community-Call-02052022.pdf)
 
 ## 17th November 2021 (17/11/2021)
 
@@ -95,7 +106,7 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/may-
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/nov-2021/ESLZ-Community-Call-17112021.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/nov-2021/ESLZ-Community-Call-17112021.pdf)
 
 ## 25th August 2021 (25/08/2021)
 
@@ -105,4 +116,4 @@ A PDF of the PowerPoint slides is available [here.](./media/community-calls/nov-
 
 ### Slides
 
-A PDF of the PowerPoint slides is available [here.](./media/community-calls/aug-2021/ESLZ-Community-Call-25082021.pdf)
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/aug-2021/ESLZ-Community-Call-25082021.pdf)
