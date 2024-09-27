@@ -104,12 +104,42 @@ jobs:
           inlineScript: ./src/scripts/Invoke-ActionRemoveOrphanedRBAC.ps1
           azPSVersion: "latest"
 
-      - name: Generate eslzArm configuration
-        id: config
+      - name: Check test label set
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: Standard') || contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke')  || contains(github.event.pull_request.labels.*.name, 'Test: VWAN') }}
+        run: echo "Test label has been set, test can proceed."
+
+      - name: Generate eslzArm configuration (Standard)
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: Standard') }}
         uses: azure/powershell@v2
         with:
           inlineScript: |
-            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.std.json"
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+          azPSVersion: "latest"
+        env:
+          DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
+
+      - name: Generate eslzArm configuration (Hub & Spoke)
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke') }}
+        uses: azure/powershell@v2
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.hns.json"
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+          azPSVersion: "latest"
+        env:
+          DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
+
+      - name: Generate eslzArm configuration (VWAN)
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: VWAN') }}
+        uses: azure/powershell@v2
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.vwan.json"
             Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
           azPSVersion: "latest"
         env:
