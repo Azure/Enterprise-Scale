@@ -49,17 +49,19 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### 🔃 Policy Refresh Q1 FY25
 
+- Updated ALZ custom policies enforcing minimum TLS versions to properly evaluate the minimum TLS version, ensuring services configured to deploy TLS 1.3 will successfully evaluate.
 - Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to the the newer version of DCSPM: [Configure Microsoft Defender CSPM plan](https://www.azadvertizer.net/azpolicyadvertizer/72f8cee7-2937-403d-84a1-a4e3e57f3c21.html)
 - Updated [Deploy-Private-DNS-Generic](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Private-DNS-Generic.html) policy to include the ability to configure the location/region.
 - Removed duplicate assignment and portal option of [Deploy Azure Policy Add-on to Azure Kubernetes Service clusters](https://www.azadvertizer.net/azpolicyadvertizer/a8eff44f-8c92-45c3-a3fb-9880802d67a7.html) at Landing Zones scope, as this policy is assigned in the initiative [Deploy Microsoft Defender for Cloud configuration](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) at Intermediate Root scope.
 - Updated the Deny-vNet-Peer-Cross-Sub.json definition policy to include a parameter for allowed virtual networks (vNets) in other subscriptions. For vNets to be permitted to peer, both vNet IDs must be added to the allowed list.
 - Added new built-in policy assignment and portal option for [Subnets should be private](https://www.azadvertizer.net/azpolicyadvertizer/7bca8353-aa3b-429b-904a-9229c4385837.html) assigned at Platform and Landing Zones management groups. This policy's assignment effect is defaulted to "Audit" in this release, giving the community time to adopt the good practice and address subnet compliance. We will default to the "Deny" effect as part of the next Policy Refresh.
 - Added option to select Diagnostic Settings category for logging to Log Analytics in the portal experience. You can now select between the recommended "All Logs" which covers almost all Azure resources, or "Audit Only" which is limited to resources that support this category.
-- Added additional built-in policies to initiatives for the following Azure AI services:
-  - OpenAI
-  - Cognitive Services/Search
+- Added additional built-in policies to initiatives for the following Azure AI Services:
+  - Azure OpenAI
+  - Cognitive Services/Search -> AI Services
   - Machine Learning
-  - Bot Service
+  - Bot Service (new) -> AI Bot Services
+- Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to include an additional parameter that allows you to specify if the Defender for Cloud export to Log Analytics should create a new resource group. This is useful when you want to specify the resource group name or requires tags on resource groups. Will be used by other RIs - Terraform and Bicep (portal accelerator will use default values).
 
 ### September 2024
 
