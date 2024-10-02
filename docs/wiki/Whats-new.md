@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [October 2024](#october-2024)
   - [September 2024](#september-2024)
   - [August 2024](#august-2024)
   - [July 2024](#july-2024)
@@ -45,6 +46,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### October 2024
+
+#### Tooling
+
+- Resolved a bug in the Portal Accelerator related to deploying the single platform subscription setup. Incorrect parameter settings led to the failure of AMBA, as it erroneously attempted to deploy to a standard management group structure instead of a single platform management group as needed.
 
 ### September 2024
 
