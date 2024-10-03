@@ -1,0 +1,139 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "resourceGroupName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm-rg')]"
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "displayName": "location",
+                "description": "Location of the HUB"
+            },
+            "defaultValue": "[deployment().location]"
+        },
+        "connectivitySubscriptionId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the subscription id for the dedicated connectivity subscription."
+            }
+        },
+        "managementGrounpScopeId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the management group scope id for the dedicated connectivity subscription."
+            }
+        },
+        "enableHub": {
+            "type": "string",
+            "allowedValues": [
+                "vhub",
+                "No"
+            ],
+            "defaultValue": "No",
+            "metadata": {
+                "description": "Select whether the virtual network hub should be deployed or not."
+            }
+        },
+        "connectivityTopology": {
+            "type": "string",
+            "defaultValue": "hubAndSpoke",
+            "allowedValues": [
+                "mesh",
+                "hubAndSpoke",
+                "meshWithHubAndSpoke"
+            ],
+            "metadata": {
+                "description": "Defines how spokes will connect to each other and how spokes will connect the hub. Valid values: \"mesh\", \"hubAndSpoke\", \"meshWithHubAndSpoke\"; default value: \"meshWithHubAndSpoke\""
+            }
+        },
+        "networkGroupMembershipType": {
+            "type": "string",
+            "defaultValue": "static",
+            "allowedValues": [
+                "static",
+                "dynamic"
+            ],
+            "metadata": {
+                "description": "Connectivity group membership type. Valid values: \"static\", \"dynamic\"; default: \"static\""
+            }
+        }
+    },
+    "variables": {
+        "rgName": "[parameters('resourceGroupName')]",
+        "resourceDeploymentName": "[concat('alz-', parameters('resourceGroupName'), '-avnm')]",
+        "avnmName": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm')]"
+    },
+    "resources": [
+        {
+            // Conditionally deploy avnm
+            "condition": "[and(equals(parameters('enableHub'), 'vhub'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('location')]",
+            "name": "[concat('alz-', parameters('location'), '-', substring(uniqueString(parameters('connectivitySubscriptionId')),0,6), '-connectivityAVNM')]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2019-10-01",
+                            "location": "[parameters('location')]",
+                            "name": "[variables('rgName')]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
+                            "name": "[variables('resourceDeploymentName')]",
+                            "resourceGroup": "[variables('rgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "resources": [
+                                        {
+                                            "name": "[variables('avnmName')]",
+                                            "type": "Microsoft.Network/networkManagers",
+                                            "apiVersion": "2023-11-01",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "networkManagerScopeAccesses": [ "SecurityAdmin" ],
+                                                "networkManagerScopes": {
+                                                    "managementGroups": "[parameters('managementGrounpScopeId')]",
+                                                    "subscriptions": []
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
