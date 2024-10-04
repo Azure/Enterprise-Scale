@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -48,18 +48,11 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2022-09-01",
-            "name": "[variables('rgName')]",
-            "location": "[parameters('location')]"
-        },
-        {
             // Conditionally deploy avnm
             "condition": "[and(equals(parameters('enableHub'), 'vhub'), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "avnm",
-            "resourceGroup": "[variables('rgName')]",
             "location": "[parameters('location')]",
             "properties": {
                 "expressionEvaluationOptions": {
@@ -86,9 +79,19 @@
                         "type": "string"
                     }
                 },
-                "variables": {},
+                "variables": {
+                    "rgName": {
+                        "type": "string"
+                    }
+                },
                 "resources": [
-                    {
+                {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2022-09-01",
+                    "name": "[variables('rgName')]",
+                    "location": "[parameters('location')]"
+                },
+                {
                     "type": "Microsoft.Network/networkManagers",
                     "apiVersion": "2022-09-01",
                     "name": "[format('avnm-{0}', parameters('location'))]",
