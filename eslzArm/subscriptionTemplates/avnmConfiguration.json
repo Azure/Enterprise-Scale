@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "topLevelManagementGroupPrefix": {
+            "topLevelManagementGroupPrefix": {
             "type": "string",
             "maxLength": 10,
             "metadata": {
@@ -44,101 +44,88 @@
         }
     },
     "variables": {
-        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm-', parameters('location'))]"
+        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm-', parameters('location'))]",
+        "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]"
     },
     "resources": [
         {
-            // Conditionally deploy avnm
+            // Conditionally deploy virtual network hub
             "condition": "[and(equals(parameters('enableHub'), 'vhub'), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2022-09-01",
-            "name": "avnm",
+            "apiVersion": "2019-10-01",
             "location": "[parameters('location')]",
+            "name": "[concat('alz-', parameters('location'), '-', substring(uniqueString(parameters('connectivitySubscriptionId')),0,6), '-connectivityAVNM')]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
             "properties": {
-                "expressionEvaluationOptions": {
-                "scope": "inner"
-                },
                 "mode": "Incremental",
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "mgmtScope": {
-                        "value": "[parameters('managementGroupScope')]"
-                    }
-                },
-                "variables": {
-                    "rgName": {
-                        "value": "[variables('rgName')]"
-                    }
-                },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "metadata": {},
-                "parameters": {
-                    "location": {
-                        "type": "string"
-                    },
-                    "mgmtScope": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "rgName": {
-                        "type": "string"
-                    }
-                },
-                "resources": [
-                {
-                    "type": "Microsoft.Resources/resourceGroups",
-                    "apiVersion": "2022-09-01",
-                    "name": "[variables('rgName')]",
-                    "location": "[parameters('location')]"
-                },
-                {
-                    "type": "Microsoft.Network/networkManagers",
-                    "apiVersion": "2022-09-01",
-                    "name": "[format('avnm-{0}', parameters('location'))]",
-                    "location": "[parameters('location')]",
-                    "properties": {
-                        "networkManagerScopeAccesses": [
-                        "SecurityAdmin"
-                        ],
-                        "networkManagerScopes": {
-                            "subscriptions": [
-                                "[format('/subscriptions/{0}', subscription().subscriptionId)]"
-                        ],
-                            "managementGroups": [
-                                "[parameters('mgmtScope')]"
-                        ]
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2019-10-01",
+                            "location": "[parameters('location')]",
+                            "name": "[variables('rgName')]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
+                            "name": "[variables('resourceDeploymentName')]",
+                            "resourceGroup": "[variables('rgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/networkManagers",
+                                            "apiVersion": "2022-09-01",
+                                            "name": "[format('avnm-{0}', parameters('location'))]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "networkManagerScopeAccesses": [
+                                                "SecurityAdmin"
+                                                ],
+                                                "networkManagerScopes": {
+                                                    "subscriptions": [
+                                                        "[format('/subscriptions/{0}', subscription().subscriptionId)]"
+                                                    ],
+                                                    "managementGroups": [
+                                                        "[parameters('managementGroupScope')]"
+                                                    ]
+                                                }
+                                            },
+                                            "metadata": {
+                                                "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
+                                            }
+                                        },
+                                        {
+                                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                                            "apiVersion": "2022-09-01",
+                                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
+                                            "properties": {
+                                                "description": "Network Group - Static"
+                                            },
+                                            "dependsOn": [
+                                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                                            ],
+                                            "metadata": {
+                                                "description": "This is the static network group for the spoke VNETs, and hub when topology is mesh."
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
                         }
-                    },
-                    "metadata": {
-                        "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
-                    }
-                    },
-                    {
-                    "type": "Microsoft.Network/networkManagers/networkGroups",
-                    "apiVersion": "2022-09-01",
-                    "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
-                    "properties": {
-                        "description": "Network Group - Static"
-                    },
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
-                    ],
-                    "metadata": {
-                        "description": "This is the static network group for the spoke VNETs, and hub when topology is mesh."
-                    }
-                    }
-                ],
-                "outputs": {
-                    "networkManagerName": {
-                    "type": "string",
-                    "value": "[format('avnm-{0}', parameters('location'))]"
-                    }
-                }
+                    ]
                 }
             }
         }
