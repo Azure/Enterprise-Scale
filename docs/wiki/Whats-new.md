@@ -56,6 +56,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the Deny-vNet-Peer-Cross-Sub.json definition policy to include a parameter for allowed virtual networks (vNets) in other subscriptions. For vNets to be permitted to peer, both vNet IDs must be added to the allowed list.
 - Added new built-in policy assignment and portal option for [Subnets should be private](https://www.azadvertizer.net/azpolicyadvertizer/7bca8353-aa3b-429b-904a-9229c4385837.html) assigned at Platform and Landing Zones management groups. This policy's assignment effect is defaulted to "Audit" in this release, giving the community time to adopt the good practice and address subnet compliance. We will default to the "Deny" effect as part of the next Policy Refresh.
 - Added option to select Diagnostic Settings category for logging to Log Analytics in the portal experience. You can now select between the recommended "All Logs" which covers almost all Azure resources, or "Audit Only" which is limited to resources that support this category.
+- Added additional built-in policies to initiatives for the following Azure AI Services:
+  - Azure OpenAI
+  - Cognitive Services/Search -> AI Services
+  - Machine Learning
+  - Bot Service (new) -> AI Bot Services
 - Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to include an additional parameter that allows you to specify if the Defender for Cloud export to Log Analytics should create a new resource group. This is useful when you want to specify the resource group name or requires tags on resource groups. Will be used by other RIs - Terraform and Bicep (portal accelerator will use default values).
 
 ### September 2024
@@ -73,6 +78,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - [Guidance](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/UpdateToNewReleases/Update_from_release_2024-06-05/) for updating and implementing these changes in existing environments is available on the AMBA website.
 - Updated the Azure Monitoring Baseline Alerts (AMBA) integration section in the portal accelerator to include new features exposed by the AMBA solution. To read more on the changes https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz/Whats-New/
 
+#### Other
+
+- The September community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### August 2024
 
