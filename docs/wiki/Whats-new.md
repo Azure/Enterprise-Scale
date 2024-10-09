@@ -62,6 +62,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Machine Learning
   - Bot Service (new) -> AI Bot Services
 - Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to include an additional parameter that allows you to specify if the Defender for Cloud export to Log Analytics should create a new resource group. This is useful when you want to specify the resource group name or requires tags on resource groups. Will be used by other RIs - Terraform and Bicep (portal accelerator will use default values).
+- Updated Automation Account to disable local authentication by default.
+
+#### Known Issue
+
+>Note: there a known issue when re-deploying ALZ using the portal accelerator with CMK enabled. For details please see [Known Issues](ALZ-Known-Issues).
 
 ### September 2024
 
