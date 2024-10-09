@@ -2,6 +2,7 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
+  - [October 2024](#october-2024)
   - [September 2024](#september-2024)
   - [August 2024](#august-2024)
   - [July 2024](#july-2024)
@@ -67,6 +68,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Known Issue
 
 >Note: there a known issue when re-deploying ALZ using the portal accelerator with CMK enabled. For details please see [Known Issues](ALZ-Known-Issues).
+
+### October 2024
+
+#### Tooling
+
+- Resolved a bug in the Portal Accelerator related to deploying the single platform subscription setup. Incorrect parameter settings led to the failure of AMBA, as it erroneously attempted to deploy to a standard management group structure instead of a single platform management group as needed.
 
 ### September 2024
 
