@@ -9,7 +9,7 @@
     "displayName": "Deny vNet peering cross subscription.",
     "description": "This policy denies the creation of vNet Peerings outside of the same subscriptions under the assigned scope.",
     "metadata": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "category": "Network",
       "source": "https://github.com/Azure/Enterprise-Scale/",
       "alzCloudEnvironments": [
@@ -31,6 +31,14 @@
           "Disabled"
         ],
         "defaultValue": "Deny"
+      },
+      "allowedVnets": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed vNets to peer with",
+          "description": "Array of allowed vNets that can be peered with. Must be entered using their resource ID. Example: /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}"
+        },
+        "defaultValue": []
       }
     },
     "policyRule": {
@@ -41,8 +49,16 @@
             "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings"
           },
           {
-            "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
-            "notcontains": "[[subscription().id]"
+            "allOf": [
+              {
+                "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+                "notIn": "[[parameters('allowedVnets')]"
+              },
+              {
+                "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/remoteVirtualNetwork.id",
+                "notLike": "[[concat(subscription().id, '/*')]"
+              }
+            ]
           }
         ]
       },
