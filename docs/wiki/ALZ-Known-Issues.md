@@ -6,6 +6,25 @@ These have been discovered whilst running the reference implementation, and cust
 
 Some of these issues may be resolved in future release, while others require input from specific Azure product teams.
 
+## Deploying Automation Account with CMK controls enabled
+
+### Area
+
+Automation Account
+
+### Issue
+
+There is a very rare scenario, that if you have enabled the Customer Managed Key initiative and you run a redeployment of ALZ through the portal accelerator (including Log Analytics) you will get a policy compliance failure:
+
+```
+"Azure Automation accounts should use customer-managed keys to encrypt data at rest"
+```
+This is due to the additional requirements needed to enable CMK for Automation Accounts, and have it fully configured.
+
+### Status
+
+As a workaround to avoid this scenario, create an exemption on the intiative [Enforce-Encryption-CMK](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Encryption-CMK.html), and if you want to maximize granularity, only exempt the specific policy: [Azure Automation accounts should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/56a5ee18-2ae6-4810-86f7-18e39ce5629b.html) - Policy ID 56a5ee18-2ae6-4810-86f7-18e39ce5629b
+
 ## Deploying the reference implementation fails due to 'Policy <name> cannot be found (404)'
 
 ### Area
