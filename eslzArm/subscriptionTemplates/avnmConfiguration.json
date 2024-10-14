@@ -76,6 +76,128 @@
                         {
                             "type": "Microsoft.Resources/deployments",
                             "apiVersion": "2019-10-01",
+                            "name": "[concat(variables('resourceDeploymentName'), '-id')]",
+                            "resourceGroup": "[variables('rgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                                            "apiVersion": "2022-01-31-preview",
+                                            "name": "[format('uai-{0}', parameters('location'))]",
+                                            "location": "[parameters('location')]",
+                                            "metadata": {
+                                                "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                                            }
+                                            },
+                                            {
+                                            "type": "Microsoft.Authorization/roleAssignments",
+                                            "apiVersion": "2022-04-01",
+                                            "name": "[guid(resourceGroup().id, format('uai-{0}', parameters('location')))]",
+                                            "properties": {
+                                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5d58bcaf-24a5-4b20-bdb6-eed9f69fbe4c')]",
+                                                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-{0}', parameters('location'))), '2022-01-31-preview').principalId]",
+                                                "principalType": "ServicePrincipal"
+                                            },
+                                            "dependsOn": [
+                                                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-{0}', parameters('location')))]"
+                                            ],
+                                            "metadata": {
+                                                "description": "This role assignment grants the user assigned identity the Contributor role on the management group."
+                                            }
+                                        }
+                                    ],
+                                    "outputs": {
+                                        "userAssignedIdentityId": {
+                                            "type": "string",
+                                            "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-{0}', parameters('location')))]"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
+                            "name": "[concat(variables('resourceDeploymentName'), '-ds')]",
+                            "resourceGroup": "[variables('rgName')]",
+                            "dependsOn": [
+                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "expressionEvaluationOptions": {
+                                "scope": "inner"
+                                },
+                                "parameters": {
+                                    "location": {
+                                        "value": "[parameters('location')]"
+                                    },
+                                    "userAssignedIdentityId": {
+                                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', concat(variables('resourceDeploymentName'), '-id')), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                                    },
+                                    "deploymentScriptName": {
+                                        "value": "[format('ds-{0}-mgScopeConfigs', parameters('location'))]"
+                                    },
+                                    "managementGroupScope": {
+                                        "value": "[parameters('topLevelManagementGroupPrefix')]"
+                                    }
+                                },
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {
+                                        "location": {
+                                            "type": "string"
+                                        },
+                                        "userAssignedIdentityId": {
+                                            "type": "string"
+                                        },
+                                        "deploymentScriptName": {
+                                            "type": "string"
+                                        },
+                                        "managementGroupScope": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "resources": [
+                                        {
+                                        "type": "Microsoft.Resources/deploymentScripts",
+                                        "apiVersion": "2020-10-01",
+                                        "name": "[parameters('deploymentScriptName')]",
+                                        "location": "[parameters('location')]",
+                                        "kind": "AzurePowerShell",
+                                        "identity": {
+                                            "type": "UserAssigned",
+                                            "userAssignedIdentities": {
+                                            "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                                            }
+                                        },
+                                        "properties": {
+                                            "azPowerShellVersion": "8.3",
+                                            "retentionInterval": "PT1H",
+                                            "timeout": "PT1H",
+                                            "arguments": "[format('-mgmtGroupId \"{0}\"', parameters('managementGroupScope'))]",
+                                            "scriptContent": "Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$mgmtGroupId/providers/Microsoft.Network/register?api-version=2021-04-01\""
+                                        },
+                                        "metadata": {
+                                            "description": "Create a Deployment Script resource to perform the commit/deployment of the Network Manager connectivity configuration."
+                                        }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2019-10-01",
                             "name": "[variables('resourceDeploymentName')]",
                             "resourceGroup": "[variables('rgName')]",
                             "dependsOn": [
@@ -107,7 +229,7 @@
                                                 }
                                             },
                                             "metadata": {
-                                                "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
+                                                "description": "This is the Azure Virtual Network Manager which will be used to configure Security Admin Rules."
                                             }
                                         },
                                         {
