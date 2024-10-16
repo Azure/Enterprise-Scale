@@ -82,17 +82,22 @@
                             ],
                             "properties": {
                                 "mode": "Incremental",
-                                    "expressionEvaluationOptions": {
-                                        "scope": "inner"
+                                "expressionEvaluationOptions": {
+                                    "scope": "inner"
+                                },
+                                "parameters": {
+                                    "location": {
+                                        "value": "[parameters('location')]"
                                     },
-                                    "parameters": {
-                                            "location": {
-                                                "value": "[parameters('location')]"
-                                            },
-                                            "connectivitySubscriptionId": {
-                                                "value": "[parameters('connectivitySubscriptionId')]"
-                                            }
-                                    },
+                                    "connectivitySubscriptionId": {
+                                        "value": "[parameters('connectivitySubscriptionId')]"
+                                    }
+                                },
+                                "variables": {
+                                    "rgName": {
+                                        "value": "[variables('rgName')]"
+                                    }
+                                },
                                 "template": {
                                     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                                     "contentVersion": "1.0.0.0",
@@ -101,6 +106,11 @@
                                             "type": "string"
                                         },
                                         "connectivitySubscriptionId": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "variables": {
+                                        "rgName": {
                                             "type": "string"
                                         }
                                     },
@@ -120,7 +130,8 @@
                                             "name": "[guid(resourceGroup().id, format('uai-{0}', parameters('location')))]",
                                             "properties": {
                                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5d58bcaf-24a5-4b20-bdb6-eed9f69fbe4c')]",
-                                                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-{0}', parameters('location'))), '2023-01-31').principalId]"
+                                                "principalId": "[reference(resourceId(parameters('connectivitySubscriptionId'), variables('rgName'),'Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-{0}', parameters('location'))), '2023-01-31').principalId]",
+                                                "principalType": "ServicePrincipal"
                                             },
                                             "dependsOn": [
                                                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-{0}', parameters('location')))]"
