@@ -74,6 +74,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Resolved a bug in the Portal Accelerator related to deploying the single platform subscription setup. Incorrect parameter settings led to the failure of AMBA, as it erroneously attempted to deploy to a standard management group structure instead of a single platform management group as needed.
+- Increasing Policy assignment delay by a couple of minutes to help reduce assignment errors using the portal accelerator experience (the infamous "please wait 30 minutes and try again" error).
 
 ### September 2024
 
