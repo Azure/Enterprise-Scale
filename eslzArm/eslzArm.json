@@ -40,6 +40,10 @@
             "type": "string",
             "defaultValue": ""
         },
+        "enableSentinel": {
+            "type": "string",
+            "defaultValue": "Yes"
+        },
         "managementSubscriptionId": {
             "type": "string",
             "defaultValue": "",
@@ -211,6 +215,13 @@
                 "No"
             ]
         },
+        "enableServiceHealth": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for Service Health in your environment. If 'No', it will be ignored."
+            }
+        },
         "enableMonitorBaselines": {
             "type": "string",
             "defaultValue": "",
@@ -243,14 +254,6 @@
                 "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select management resources in your environment. If 'No', it will be ignored."
             }
         },
-        "enableMonitorLandingZones": {
-            "type": "string",
-            "defaultValue": "",
-            "maxLength": 36,
-            "metadata": {
-                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for select resources in your environment. If 'No', it will be ignored."
-            }
-        },
         "monitorAlertsResourceGroup": {
             "type": "string",
             "defaultValue": "",
@@ -259,12 +262,89 @@
                 "description": "Name of the resource group to be created for monitoring resources in each subscription."
             }
         },
-        "emailContactActionGroup": {
+        "userAssignedManagedIdentityName": {
             "type": "string",
             "defaultValue": "",
-            "maxLength": 36,
+            "maxLength": 90,
+            "metadata": {
+                "description": "The name of the user assigned managed identity for monitoring purpose."
+            }
+        },
+        "ambaAgEmailContact": {
+            "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "Email address for alerting purposes."
+            }
+        },
+        "ambaAgServiceHook": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Service Hook URI for action group notifications."
+            }
+        },
+        "ambaAgArmRole": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "ARM roles for action group notifications."
+            }
+        },
+        "enableAMBAHybridVM": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign HybridVM initiative"
+            }
+        },
+        "enableAMBAKeyManagement": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Key Management initiative"
+            }
+        },
+        "enableAMBALoadBalancing": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Load Balancing initiative"
+            }
+        },
+        "enableAMBANetworkChanges": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Network Changes initiative"
+            }
+        },
+        "enableAMBARecoveryServices": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Recovery Services initiative"
+            }
+        },
+        "enableAMBAStorage": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Storage initiative"
+            }
+        },
+        "enableAMBAVM": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign VM initiative"
+            }
+        },
+        "enableAMBAWeb": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Assign Web initiative"
             }
         },
         "connectivitySubscriptionId": {
@@ -1572,7 +1652,7 @@
         },
         // Declaring root uris for external dependency repositories.
         "rootUris": {
-            "monitorRepo": "https://raw.githubusercontent.com/Azure/azure-monitor-baseline-alerts/2023-11-14/"
+            "monitorRepo": "https://raw.githubusercontent.com/Azure/azure-monitor-baseline-alerts/2024-09-02/"
         },
         // Declaring all required deployment uri's used for deployments of composite ARM templates for ESLZ
         // Referring to different Policy Set definition for different cloud enviornment
@@ -1665,7 +1745,6 @@
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "logAnalyticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-LogAnalyticsPolicyAssignment.json')]",
-            "monitoringSolutions": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsSolutions.json')]",
             "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
             "regulatoryComplianceInitaitves": "[uri(deployment().properties.templateLink.uri, variables('regulatoryCompliancePolicy'))]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
@@ -1783,7 +1862,6 @@
             "monitorManagementDeploymentName": "[take(concat('alz-ManagementMonitor', variables('deploymentSuffix')), 64)]",
             "monitorLandingZoneDeploymentName": "[take(concat('alz-LandingZoneMonitor', variables('deploymentSuffix')), 64)]",
             "monitorServiceHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
-            "monitoringSolutionsDeploymentName": "[take(concat('alz-Solutions', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
             "regulatoryComplianceInitativesToAssignDeploymentName": "[take(concat('alz-RegComp-', deployment().location, '-', uniqueString(parameters('currentDateTimeUtcNow')), '-'), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -1911,7 +1989,6 @@
             "subnetNsgIdentityLitePolicyDeploymentName": "[take(concat('alz-SubnetNsgIdentity', variables('deploymentSuffix')), 64)]",
             "monitoringLiteDeploymentName": "[take(concat('alz-MonitoringLite', variables('deploymentSuffix')), 64)]",
             "logAnalyticsLitePolicyDeploymentName": "[take(concat('alz-LAPolicyLite', variables('deploymentSuffix')), 64)]",
-            "monitoringSolutionsLiteDeploymentName": "[take(concat('alz-SolutionsLite', variables('deploymentSuffix')), 64)]",
             "platformLiteSubscriptionPlacement": "[take(concat('alz-PlatformSubLite', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubLiteDeploymentName": "[take(concat('alz-VnetHubLite', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubLiteDeploymentName": "[take(concat('alz-VWanHubLite', variables('deploymentSuffix')), 64)]",
@@ -1989,6 +2066,7 @@
             "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
             "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]",
             "azFirewallResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
+            "azFirewallResourceIdSecondaryVwan": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
             "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
@@ -2224,34 +2302,62 @@
                     "enableAMBAIdentity": {
                         "value": "[parameters('enableMonitorIdentity')]"
                     },
-                    "enableAMBALandingZone": {
-                        "value": "[parameters('enableMonitorLandingZones')]"
-                    },
                     "enableAMBAManagement": {
                         "value": "[parameters('enableMonitorManagement')]"
                     },
                     "enableAMBAServiceHealth": {
-                        "value": "[parameters('enableMonitorBaselines')]"
+                        "value": "[parameters('enableServiceHealth')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[parameters('userAssignedManagedIdentityName')]"
+                    },
+                    "ALZWebhookServiceUri": {
+                        "value": "[array(parameters('ambaAgServiceHook'))]"
+                    },
+                    "ALZArmRoleId": {
+                        "value": "[array(parameters('ambaAgArmRole'))]"
                     },
                     "delayCount": {
                         "value": "[parameters('delayCount')]"
                     },
-                    "policyAssignmentParametersCommon": {
-                        "value": {
-                            "alzMonitorResourceGroupName": {
-                                "value": "[parameters('monitorAlertsResourceGroup')]"
-                            },
-                            "alzMonitorResourceGroupLocation": {
-                                "value": "[deployment().location]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('monitorAlertsResourceGroup')]"
                     },
-                    "policyAssignmentParametersServiceHealth": {
-                        "value": {
-                            "alzMonitorActionGroupEmail": {
-                                "value": "[parameters('emailContactActionGroup')]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "ALZMonitorActionGroupEmail": {
+                        "value": "[array(parameters('ambaAgEmailContact'))]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "enableAMBAHybridVM": {
+                        "value": "[parameters('enableAMBAHybridVM')]"
+                    },
+		            "enableAMBAKeyManagement": {
+                        "value": "[parameters('enableAMBAKeyManagement')]"
+                    },
+		            "enableAMBALoadBalancing": {
+                        "value": "[parameters('enableAMBALoadBalancing')]"
+                    },
+		            "enableAMBANetworkChanges": {
+                        "value": "[parameters('enableAMBANetworkChanges')]"
+                    },
+		            "enableAMBARecoveryServices": {
+                        "value": "[parameters('enableAMBARecoveryServices')]"
+                    },
+		            "enableAMBAStorage": {
+                        "value": "[parameters('enableAMBAStorage')]"
+                    },
+		            "enableAMBAVM": {
+                        "value": "[parameters('enableAMBAVM')]"
+                    },
+		            "enableAMBAWeb": {
+                        "value": "[parameters('enableAMBAWeb')]"
+                    },
+                    "deployALZPortalAccelerator": {
+                        "value": "Yes"
                     }
                 }
             }
@@ -2284,13 +2390,13 @@
                         "value": "[variables('mgmtGroups').platform]"
                     },
                     "IdentityManagementGroup": {
-                        "value": "[variables('mgmtGroups').platform]"
+                        "value": "[variables('mgmtGroups').identity]"
                     },
                     "managementManagementGroup": {
-                        "value": "[variables('mgmtGroups').platform]"
+                        "value": "[variables('mgmtGroups').management]"
                     },
                     "connectivityManagementGroup": {
-                        "value": "[variables('mgmtGroups').platform]"
+                        "value": "[variables('mgmtGroups').connectivity]"
                     },
                     "LandingZoneManagementGroup": {
                         "value": "[variables('mgmtGroups').lzs]"
@@ -2301,34 +2407,56 @@
                     "enableAMBAIdentity": {
                         "value": "[parameters('enableMonitorIdentity')]"
                     },
-                    "enableAMBALandingZone": {
-                        "value": "[parameters('enableMonitorLandingZones')]"
-                    },
                     "enableAMBAManagement": {
                         "value": "[parameters('enableMonitorManagement')]"
                     },
                     "enableAMBAServiceHealth": {
-                        "value": "[parameters('enableMonitorBaselines')]"
+                        "value": "[parameters('enableServiceHealth')]"
+                    },
+                    "userAssignedManagedIdentityName": {
+                        "value": "[parameters('userAssignedManagedIdentityName')]"
+                    },
+                    "ALZWebhookServiceUri": {
+                        "value": "[array(parameters('ambaAgServiceHook'))]"
+                    },
+                    "ALZArmRoleId": {
+                        "value": "[array(parameters('ambaAgArmRole'))]"
                     },
                     "delayCount": {
                         "value": "[parameters('delayCount')]"
                     },
-                    "policyAssignmentParametersCommon": {
-                        "value": {
-                            "alzMonitorResourceGroupName": {
-                                "value": "[parameters('monitorAlertsResourceGroup')]"
-                            },
-                            "alzMonitorResourceGroupLocation": {
-                                "value": "[deployment().location]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupName": {
+                        "value": "[parameters('monitorAlertsResourceGroup')]"
                     },
-                    "policyAssignmentParametersServiceHealth": {
-                        "value": {
-                            "alzMonitorActionGroupEmail": {
-                                "value": "[parameters('emailContactActionGroup')]"
-                            }
-                        }
+                    "ALZMonitorResourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "ALZMonitorActionGroupEmail": {
+                        "value": "[array(parameters('ambaAgEmailContact'))]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+		            "enableAMBALoadBalancing": {
+                        "value": "[parameters('enableAMBALoadBalancing')]"
+                    },
+		            "enableAMBANetworkChanges": {
+                        "value": "[parameters('enableAMBANetworkChanges')]"
+                    },
+		            "enableAMBARecoveryServices": {
+                        "value": "[parameters('enableAMBARecoveryServices')]"
+                    },
+		            "enableAMBAStorage": {
+                        "value": "[parameters('enableAMBAStorage')]"
+                    },
+		            "enableAMBAVM": {
+                        "value": "[parameters('enableAMBAVM')]"
+                    },
+		            "enableAMBAWeb": {
+                        "value": "[parameters('enableAMBAWeb')]"
+                    },
+                    "deployALZPortalAccelerator": {
+                        "value": "Yes"
                     }
                 }
             }
@@ -2483,6 +2611,9 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    },
+                    "enableSentinel": {
+                        "value": "[parameters('enableSentinel')]"
                     }
                 }
             }
@@ -2603,40 +2734,6 @@
                     },
                     "userAssignedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
-                    }
-                }
-            }
-        },
-        {
-            // Deploying Sentinel to Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('managementSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('deploymentNames').monitoringSolutionsDeploymentName]",
-            "location": "[deployment().location]",
-            "subscriptionId": "[parameters('managementSubscriptionId')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').monitoringSolutions]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
-                    },
-                    "workspaceRegion": {
-                        "value": "[deployment().location]"
-                    },
-                    "enableSecuritySolution": {
-                        "value": "[parameters('enableSecuritySolution')]"
                     }
                 }
             }
@@ -7296,7 +7393,7 @@
                         "value": "[variables('platformResourceIds').vWanHubResourceIdSecondary]"
                     },
                     "azureFirewallResourceId": {
-                        "value": "[if(equals(parameters('enableAzFwDnsProxySecondary'), 'Yes'), variables('platformResourceIds').azFirewallResourceIdSecondary, '')]"
+                        "value": "[if(equals(parameters('enableAzFwDnsProxySecondary'), 'Yes'), variables('platformResourceIds').azFirewallResourceIdSecondaryVwan, '')]"
                     }
                 }
             }
@@ -7617,6 +7714,9 @@
                     },
                     "retentionInDays": {
                         "value": "[parameters('retentionInDays')]"
+                    },
+                    "enableSentinel": {
+                        "value": "[parameters('enableSentinel')]"
                     }
                 }
             }
@@ -7650,43 +7750,6 @@
                     },
                     "userAssignedIdentityResourceGroup": {
                         "value": "[variables('platformRgNames').mgmtRg]"
-                    }
-                }
-            }
-        },
-        /*
-            Note: ES Lite only: the following deployments will deploy Sentinel to the platform subscription
-        */
-        {
-            // Deploying Sentinel to the Log Analytics workspace if condition is true
-            "condition": "[and(equals(parameters('enableLogAnalytics'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableSecuritySolution'), 'Yes'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('esLiteDeploymentNames').monitoringSolutionsLiteDeploymentName]",
-            "location": "[deployment().location]",
-            "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]",
-                "policyCompletion"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').monitoringSolutions]"
-                },
-                "parameters": {
-                    "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
-                    },
-                    "workspaceRegion": {
-                        "value": "[deployment().location]"
-                    },
-                    "enableSecuritySolution": {
-                        "value": "[parameters('enableSecuritySolution')]"
                     }
                 }
             }
@@ -7920,7 +7983,7 @@
                         "value": "[parameters('enablePrivateDnsZonesSecondary')]"
                     },
                     "enableHubSecondary": {
-                        "value": "[parameters('enableHubSecondary')]"
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 }
             }

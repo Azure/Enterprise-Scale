@@ -440,6 +440,26 @@
                             }
                         },
                         {
+                            "name": "enableSentinel",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Microsoft Sentinel (configuration required to activate)",
+                            "defaultValue": "Yes (recommended)",
+                            "toolTip": "If 'Yes' is selected Sentinel will be enabled on the Log Analytics workspace. Note additional configuration is required to complete Sentinel onboarding.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
                             "name": "esMgmtSubSection",
                             "type": "Microsoft.Common.Section",
                             "label": "Management subscription",
@@ -903,6 +923,25 @@
                     "bladeTitle": "ALZ - Baseline Alerts",
                     "elements": [
                         {
+                            "name": "esAmbaTitle",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Azure Monitor Baseline Alerts (AMBA)",
+                            "elements": [
+                                {
+                                    "name": "esAmbaDescription",
+                                    "type": "Microsoft.Common.TextBlock",
+                                    "visible": true,
+                                    "options": {
+                                      "text": "AMBA for ALZ is a best practice collection of alerts for resources commonly deployed into Azure landing zones and demonstrates how to deploy alerts at scale using Azure Policy.",
+                                      "link": {
+                                        "label": "Learn more",
+                                        "uri": "https://aka.ms/amba/alz"
+                                      }
+                                    }
+                                }
+                            ]
+                        },
+                        {
                             "name": "baselinealertsintro",
                             "type": "Microsoft.Common.InfoBox",
                             "visible": true,
@@ -911,6 +950,26 @@
                                 "uri": "https://aka.ms/amba/alz/docs",
                                 "style": "Info"
                             }
+                        },
+                        {
+                            "name": "enableServiceHealth",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Service Health Alerts",
+                            "defaultValue": "Yes (highly recommended)",
+                            "toolTip": "If 'Yes' is selected Azure Monitor Baseline Alerts - Service Health alerts will be enabled on subscriptions in scope. For more information on what is included in the Service Health initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes (highly recommended)",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": true
                         },
                         {
                             "name": "enableMonitorBaselines",
@@ -931,32 +990,6 @@
                                 ]
                             },
                             "visible": true
-                        },
-                        {
-                            "name": "monitorAlertsResourceGroup",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Resource group for baseline alerts",
-                            "toolTip": "Resource group for activity log alerts and action groups. Will be created in all subscriptions in scope for the policy",
-                            "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                            "defaultValue": "rg-amba-monitoring-001",
-                            "constraints": {
-                                "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
-                                "validationMessage": "Please provide a valid resource group name"
-                            }
-                        },
-                        {
-                            "name": "emailContactActionGroup",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Email contact for action group notifications",
-                            "toolTip": "Email address to get email notifications from alerts",
-                            "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                            "defaultValue": "",
-                            "constraints": {
-                                "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                                "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
-                                "validationMessage": "Please provide a valid email address"
-                            }
                         },
                         {
                             "name": "enableMonitorConnectivity",
@@ -1019,24 +1052,282 @@
                             "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]"
                         },
                         {
-                            "name": "enableMonitorLandingZones",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Enable Azure Monitor Baseline Alerts for Landing Zones",
-                            "defaultValue": "Yes (recommended)",
-                            "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts for Landing Zone policy initiative is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes (recommended)",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
+                            "name": "esAmbaCategoryConfig",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Resource category alert enablement for Landing Zones",
+                            "elements": [
+                                {
+                                    "name": "esAmbaEnableInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "You can selectively enable/disable Azure Monitor Baseline Alerts configuration for resource categories applied to the Landing Zones management group.",
+                                        "style": "Info"
                                     }
-                                ]
-                            },
+                                },
+                                {
+                                    "name": "enableAMBAHybridVM",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Azure Arc-enabled Servers",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Azure Arc-enabled Servers policy initiative is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBAKeyManagement",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Key Management Services",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Key Management Services, such as Azure Key Vault and Managed HSM, policy initiative is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBALoadBalancing",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Load Balancing Services",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Load Balancing Services, such as Load Balancer, Application Gateway, Traffic Manager and Azure Front Door, policy initiative is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBANetworkChanges",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for alterations in Network Routing and Security",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor alterations in Network Routing and Security, such as modifications to Route Tables and the removal of Network Security Groups, policy initiatives is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBARecoveryServices",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Recovery Services",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Recovery Services,  such as Azure Backup and Azure Site Recovery, policy initiatives is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBAStorage",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Storage Services",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Storage Services, such as Storage accounts, policy initiatives is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBAVM",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Azure Virtual Machines",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Azure Virtual Machines policy initiatives is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                },
+                                {
+                                    "name": "enableAMBAWeb",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable AMBA for Web Services",
+                                    "defaultValue": "Yes (recommended)",
+                                    "toolTip": "If 'Yes' is selected the Deploy Azure Monitor Baseline Alerts to monitor Web Services, such as App Services, policy initiatives is assigned to the Landing Zones management group. This will ensure that relevant new resources created within that scope are configured with appropriate baseline alerts. For more details on what is included in the initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes (recommended)",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                }
+                            ],
                             "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]"
+                        },
+                        {
+                            "name": "esAmbaAgConfig",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Action Group configuration",
+                            "elements": [
+                                {
+                                    "name": "esAmbaAgInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Action groups in Azure Monitor allow for the creation of a set of actions that will be carried out when an alert is activated. Azure Monitor Baseline Alerts can incorporate various actions including Azure Function, Event Hub, and Logic App into their configuration. However, it's important to note that these actions are contingent upon the prior existence of the Azure Function, Event Hub, or Logic App resources. To set up these actions, please proceed with the current deployment, deploy the preferred resource you intend to use for actions, and then utilize the AMBA Portal Accelerator to implement the updated configuration.",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
+                                        "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "monitorAlertsResourceGroup",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Resource group for baseline alerts",
+                                    "toolTip": "Resource group for activity log alerts and action groups. Will be created in all subscriptions in scope for the policy",
+                                    "visible": "true",
+                                    "defaultValue": "rg-amba-monitoring-001",
+                                    "constraints": {
+                                        "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
+                                        "validationMessage": "Please provide a valid resource group name"
+                                    }
+                                },
+                                {
+                                    "name": "userAssignedManagedIdentityName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "User Assigned Managed Identity Name",
+                                    "subLabel": "",
+                                    "defaultValue": "id-amba-prod-001",
+                                    "toolTip": "Specify the name of the user assigned managed identity for monitoring purpose.",
+                                    "constraints": {
+                                      "required": true,
+                                      "regex": "",
+                                      "validationMessage": "",
+                                      "validations": []
+                                    },
+                                    "infoMessages": [],
+                                    "visible": true
+                                },
+                                {
+                                    "name": "ambaAgEmailContact",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Email contact for action group notifications",
+                                    "toolTip": "Email address to get email notifications from alerts",
+                                    "visible": "true",
+                                    "defaultValue": "",
+                                    "constraints": {
+                                        "required": false,
+                                        "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                                        "validationMessage": "Please provide a valid email address"
+                                    }
+                                },
+                                {
+                                    "name": "ambaAgServiceHook",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Web Hook URI for action group notifications",
+                                    "toolTip": "Web Hook URI to forward alerts to for integration with third-party systems",
+                                    "visible": "true",
+                                    "defaultValue": "",
+                                    "constraints": {}
+                                },
+                                {
+                                    "name": "ambaAgArmRole",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "ARM Roles for action group notifications",
+                                    "defaultValue": ["Owner"],
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": false,
+                                    "multiLine": false,
+                                    "toolTip": "Choose the ARM RBAC roles that should receive alerts.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Owner",
+                                                "value": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                                            },
+                                            {
+                                                "label": "Contributor",
+                                                "value": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+                                            },
+                                            {
+                                                "label": "Monitoring Contributor",
+                                                "value": "749f88d5-cbae-40b8-bcfc-e573ddc772fa"
+                                            },
+                                            {
+                                                "label": "Monitoring Reader",
+                                                "value": "43d0d8ad-25c7-4714-9337-8ba259a9fe05"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]"
                         }
                     ]
                 },
@@ -6298,7 +6589,7 @@
                         {
                             "name": "enableWsKeyVaultSupInitiatives",
                             "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Key Vault - Supplementry",
+                            "label": "Key Vault - Supplementary",
                             "defaultValue": "No",
                             "visible": true,
                             "toolTip": "If 'Yes' is selected you will have the option to selected additional policy initiatives for regulated industries. Check initiative <a href=\"https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault-Sup.html\">here</a>.",
@@ -6318,7 +6609,7 @@
                         {
                             "name": "wsKeyVaultSupSelectorMG",
                             "type": "Microsoft.Common.DropDown",
-                            "label": "Select Management Group scopes to assign the Key Vault - Supplementry initiative to:",
+                            "label": "Select Management Group scopes to assign the Key Vault - Supplementary initiative to:",
                             "toolTip": "",
                             "multiselect": true,
                             "selectAll": false,
@@ -8972,6 +9263,7 @@
                 "enableUpdateMgmt": "[steps('management').enableUpdateMgmt]",
                 "enableVmInsights": "[steps('management').enableVmInsights]",
                 "retentionInDays": "[string(steps('management').retentionInDays)]",
+                "enableSentinel": "[steps('management').enableSentinel]",
                 "managementSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub]",
                 "enableAsc": "[steps('management').enableAsc]",
                 "emailContactAsc": "[steps('management').emailContactAsc]",
@@ -8989,13 +9281,24 @@
                 "enableAscForCspm": "[steps('management').enableAscForCspm]",
                 "enableAscForContainers": "[steps('management').enableAscForContainers]",
                 "enableMDEndpoints": "[steps('management').enableMDEndpoints]",
+                "enableServiceHealth": "[steps('monitor').enableServiceHealth]",
                 "enableMonitorBaselines": "[steps('monitor').enableMonitorBaselines]",
-                "monitorAlertsResourceGroup": "[steps('monitor').monitorAlertsResourceGroup]",
-                "emailContactActionGroup": "[steps('monitor').emailContactActionGroup]",
+                "monitorAlertsResourceGroup": "[steps('monitor').esAmbaAgConfig.monitorAlertsResourceGroup]",
+                "userAssignedManagedIdentityName": "[steps('monitor').esAmbaAgConfig.userAssignedManagedIdentityName]",
+                "ambaAgEmailContact": "[steps('monitor').esAmbaAgConfig.ambaAgEmailContact]",
+                "ambaAgArmRole": "[steps('monitor').esAmbaAgConfig.ambaAgArmRole]",
+                "ambaAgServiceHook": "[steps('monitor').esAmbaAgConfig.ambaAgServiceHook]",
                 "enableMonitorConnectivity": "[steps('monitor').enableMonitorConnectivity]",
                 "enableMonitorIdentity": "[steps('monitor').enableMonitorIdentity]",
                 "enableMonitorManagement": "[steps('monitor').enableMonitorManagement]",
-                "enableMonitorLandingZones": "[steps('monitor').enableMonitorLandingZones]",
+                "enableAMBAHybridVM": "[steps('monitor').esAmbaCategoryConfig.enableAMBAHybridVM]",
+                "enableAMBAKeyManagement": "[steps('monitor').esAmbaCategoryConfig.enableAMBAKeyManagement]",
+                "enableAMBALoadBalancing": "[steps('monitor').esAmbaCategoryConfig.enableAMBALoadBalancing]",
+                "enableAMBANetworkChanges": "[steps('monitor').esAmbaCategoryConfig.enableAMBANetworkChanges]",
+                "enableAMBARecoveryServices": "[steps('monitor').esAmbaCategoryConfig.enableAMBARecoveryServices]",
+                "enableAMBAStorage": "[steps('monitor').esAmbaCategoryConfig.enableAMBAStorage]",
+                "enableAMBAVM": "[steps('monitor').esAmbaCategoryConfig.enableAMBAVM]",
+                "enableAMBAWeb": "[steps('monitor').esAmbaCategoryConfig.enableAMBAWeb]",
                 "connectivitySubscriptionId": "[if(not(equals(steps('connectivity').esNwSubSection.esNwSub,steps('management').esMgmtSubSection.esMgmtSub)),steps('connectivity').esNwSubSection.esNwSub,'')]",
                 "addressPrefix": "[coalesce(steps('connectivity').esAddressHubVWAN, steps('connectivity').esAddressHubHS, '')]",
                 "connectivityLocation": "[steps('connectivity').connectivityLocation]",
