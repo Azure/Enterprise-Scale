@@ -1,0 +1,113 @@
+{
+    "name": "Deploy-Storage-ChangefeedForBlobIfTagExists",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+      "policyType": "Custom",
+      "mode": "Indexed",
+      "displayName": "Enable change feed for blobs",
+      "description": "This policy enables changefeed if its not enabled for blob services based on a specific tag on the Storage Account.\n",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Storage",
+        "source": "https://github.com/Azure/Enterprise-Scale/",
+        "alzCloudEnvironments": [
+          "AzureCloud",
+          "AzureChinaCloud",
+          "AzureUSGovernment"
+        ]
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Effect Azure Storage",
+            "description": "Enable or disable the execution of the policy to enable blob versioning if a specific tag is set."
+          },
+          "allowedValues": [
+            "DeployIfNotExists",
+            "Disabled"
+          ],
+          "defaultValue": "DeployIfNotExists"
+        },
+        "tagName": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Tag Name",
+            "description": "Name of the tag, such as 'environment'"
+          },
+          "defaultValue": ""
+        },
+        "tagValue": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Tag Value",
+            "description": "Value of the tag, such as 'production'"
+          },
+          "defaultValue": ""
+        }
+      },
+"policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Storage/storageAccounts"
+          },
+          {
+            "field": "[[concat('tags[', parameters('tagName'), ']')]",
+            "equals": "[[parameters('tagValue')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]",
+        "details": {
+          "type": "Microsoft.Storage/storageAccounts/blobServices",
+          "name": "default",
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
+          ],
+          "existenceCondition": {
+            "field": "Microsoft.Storage/storageAccounts/blobServices/changeFeed.enabled",
+            "equals": "true"
+          },
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "resourceName": {
+                    "type": "string"
+                  }
+                },
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.Storage/storageAccounts/blobServices",
+                    "apiVersion": "2019-06-01",
+                    "name": "[[concat(parameters('resourceName'), '/default')]",
+                    "properties": {
+                      "changeFeed": {
+                        "enabled": true
+                    }
+                    }
+                  }
+                ]
+              },
+              "parameters": {
+                "resourceName": {
+                  "value": "[[field('name')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    }
+  }
+  
