@@ -390,7 +390,6 @@
                                 }
                             ]
                         },
-                        
                         {
                             "name": "multiPlatformMgmtSub",
                             "type": "Microsoft.Common.InfoBox",
@@ -1243,6 +1242,41 @@
                                 }
                             ],
                             "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]"
+                        },
+                        {
+                            "name": "AmbaEsMgmtSubSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Management subscription",
+                            "elements": [
+                                {
+                                    "name": "AmbaEsMgmtSubUniqueWarningAmba",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Ensure you select a subscription that is dedicated/unique for Management. Selecting the same Subscription here for Connectivity or Identity will result in a deployment failure. If you want to use a single Subscription for all platform resources, select 'Single' on the 'Azure Core Setup' blade.",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
+                                        "style": "Warning"
+                                    }
+                                },
+                                {
+                                    "name": "AmbaEsMgmtSub",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Management subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": true
+                                    }
+                                }
+                            ],
+                            "visible": "[and(equals(steps('management').enableLogAnalytics, 'No'), equals(steps('monitor').enableMonitorBaselines,'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
                         },
                         {
                             "name": "esAmbaAgConfig",
@@ -4453,7 +4487,7 @@
                             },
                             "visible": "[and(equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                         },
-                        { 
+                        {
                             "name": "esIdentitySecondarySubSection",
                             "type": "Microsoft.Common.Section",
                             "label": "Secondary Region Identity",
@@ -4498,7 +4532,7 @@
                                     "visible": "[and(equals(steps('identity').esIdentitySecondarySubSection.esIdentityConnectivitySecondary, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                                 }
                             ]
-                            }                      
+                            }
                     ]
                 },
                 {
@@ -9411,7 +9445,7 @@
                 "enableVmInsights": "[steps('management').enableVmInsights]",
                 "retentionInDays": "[string(steps('management').retentionInDays)]",
                 "enableSentinel": "[steps('management').enableSentinel]",
-                "managementSubscriptionId": "[steps('management').esMgmtSubSection.esMgmtSub]",
+                "managementSubscriptionId": "[if(and(equals(steps('management').enableLogAnalytics, 'No'), equals(steps('monitor').enableMonitorBaselines,'Yes'), not(equals(steps('core').platformSubscription, 'Single'))), steps('monitor').AmbaEsMgmtSubSection.AmbaEsMgmtSub, steps('management').esMgmtSubSection.esMgmtSub )]",
                 "enableAsc": "[steps('management').enableAsc]",
                 "emailContactAsc": "[steps('management').emailContactAsc]",
                 "enableAscForServers": "[steps('management').enableAscForServers]",
