@@ -48,6 +48,10 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### 🔃 Policy Refresh Q2 FY25
+
+- Fixed a Portal Accelerator bug that results in failed deployment when choosing not to deploy policies to the Identity management group.
+
 ### 🔃 Policy Refresh Q1 FY25
 
 - Updated ALZ custom policies enforcing minimum TLS versions to properly evaluate the minimum TLS version, ensuring services configured to deploy TLS 1.3 will successfully evaluate.
