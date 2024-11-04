@@ -1,13 +1,10 @@
 ## In this Section
 
 - [Updates](#updates)
-<<<<<<< HEAD
-=======
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [October 2024](#october-2024)
   - [September 2024](#september-2024)
   - [August 2024](#august-2024)
->>>>>>> 548bb1d58ab97726deaee2e2d04c251924b269fb
   - [July 2024](#july-2024)
   - [June 2024](#june-2024)
   - [🆕 AMA Updates](#-ama-updates)
@@ -51,8 +48,6 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
-<<<<<<< HEAD
-=======
 ### 🔃 Policy Refresh Q1 FY25
 
 - Updated ALZ custom policies enforcing minimum TLS versions to properly evaluate the minimum TLS version, ensuring services configured to deploy TLS 1.3 will successfully evaluate.
@@ -119,16 +114,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 
 
->>>>>>> 548bb1d58ab97726deaee2e2d04c251924b269fb
 ### July 2024
 
 #### Policy
 
-<<<<<<< HEAD
-- Alignment of ****allowedValues*** in the following initiatives with those used in the included policyDefinitions:
-=======
 - Alignment of **allowedValues** in the following initiatives with those used in the included policyDefinitions:
->>>>>>> 548bb1d58ab97726deaee2e2d04c251924b269fb
   - [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html)
   - [Enforce recommended guardrails for Kubernetes](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html)
   - [Enforce recommended guardrails for Network and Networking services](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Network.html)
@@ -138,7 +128,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Documentation
 
-- As the Log Analytics agent is set to be retired on August 31, 2024, it is crucial for users to plan their migration to avoid any disruption in their monitoring services. The migration involves understanding the current setup, including agents, workspaces, solutions, insights, and data collections, and then configuring the new data collections to ensure a smooth transition. Tools like the AMA Migration Helper and DCR Config Generator can assist in automating and tracking the migration process. We've now made available **[migration guidance](./ALZ-AMA-Migration-Guidance) to assist in the process.
+- As the Log Analytics agent is set to be retired on August 31, 2024, it is crucial for users to plan their migration to avoid any disruption in their monitoring services. The migration involves understanding the current setup, including agents, workspaces, solutions, insights, and data collections, and then configuring the new data collections to ensure a smooth transition. Tools like the AMA Migration Helper and DCR Config Generator can assist in automating and tracking the migration process. We've now made available [migration guidance](./ALZ-AMA-Migration-Guidance) to assist in the process.
 - Developed a script to facilitate the transition from Microsoft Monitoring Agent (MMA) to Azure Monitor Agent (AMA) within Azure landing zones. Review the [migration guidance](./ALZ-AMA-Migration-Guidance) for additional information on how the script can be used.
 - General update AMA documentation [ALZ AMA Update](./ALZ-AMA-Update)
 
