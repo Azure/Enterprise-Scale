@@ -248,7 +248,7 @@ var policyDefinitionsByCloudType = {
 var policyDefinitions = concat(policyDefinitionsByCloudType.All, policyDefinitionsByCloudType[cloudEnv])
 
 // Create the Policy Definitions as needed for the target cloud environment
-resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2020-09-01' = [for policy in policyDefinitions: {
+resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [for policy in policyDefinitions: {
   name: policy.name
   properties: {
     description: policy.properties.description
