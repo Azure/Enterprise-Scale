@@ -19,6 +19,9 @@
       },
       "retentionInDays": {
         "type": "String"
+      },
+      "enableSentinel": {
+        "type": "String"
       }
     },
     "variables": {
@@ -34,7 +37,7 @@
       },
       {
         "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2018-05-01",
+        "apiVersion": "2024-03-01",
         "name": "[variables('deploymentName')]",
         "resourceGroup": "[parameters('rgName')]",
         "dependsOn": [
@@ -54,6 +57,7 @@
                 "name": "[parameters('AutomationAccountName')]",
                 "type": "Microsoft.Automation/automationAccounts",
                 "properties": {
+                  "disableLocalAuth": true,
                   "sku": {
                     "name": "Basic"
                   }
@@ -85,6 +89,20 @@
                     }
                   }
                 ]
+              },
+              {
+                  // Onboard Sentinel
+                  "condition": "[equals(parameters('enableSentinel'), 'Yes')]",
+                  "apiVersion": "2023-02-01-preview",
+                  "type": "Microsoft.SecurityInsights/onboardingStates",
+                  "name": "default",
+                  "scope": "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                  "dependsOn": [
+                      "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                  ],
+                  "properties": {
+                      "customerManagedKey": false
+                  }
               }
             ],
             "outputs": {}

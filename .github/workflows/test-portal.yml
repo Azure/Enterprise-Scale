@@ -65,7 +65,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
@@ -75,7 +75,7 @@ jobs:
         run: env | sort
 
       - name: List available pwsh modules
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: Get-Module -ListAvailable
           azPSVersion: "latest"
@@ -89,7 +89,7 @@ jobs:
           enable-AzPSSession: true
 
       - name: Register subscriptions
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             ./src/scripts/Invoke-ActionRegisterSubscriptions.ps1
@@ -99,36 +99,66 @@ jobs:
           BILLING_SCOPE: ${{ secrets.BILLING_SCOPE }}
 
       - name: Pre-process subscriptions
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: ./src/scripts/Invoke-ActionRemoveOrphanedRBAC.ps1
           azPSVersion: "latest"
 
-      - name: Generate eslzArm configuration
-        id: config
-        uses: azure/powershell@v1
+      - name: Check test label set
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: Standard') || contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke')  || contains(github.event.pull_request.labels.*.name, 'Test: VWAN') }}
+        run: echo "Test label has been set, test can proceed."
+
+      - name: Generate eslzArm configuration (Standard)
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: Standard') }}
+        uses: azure/powershell@v2
         with:
           inlineScript: |
-            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.std.json"
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+          azPSVersion: "latest"
+        env:
+          DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
+
+      - name: Generate eslzArm configuration (Hub & Spoke)
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: Hub & Spoke') }}
+        uses: azure/powershell@v2
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.hns.json"
+            Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
+          azPSVersion: "latest"
+        env:
+          DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
+
+      - name: Generate eslzArm configuration (VWAN)
+        if: |
+          ${{ contains(github.event.pull_request.labels.*.name, 'Test: VWAN') }}
+        uses: azure/powershell@v2
+        with:
+          inlineScript: |
+            ./src/scripts/Invoke-ActionGenerateEslzArmConfig.ps1 -TemplateParameterPath "./eslzArm/eslzArm.test.param.vwan.json"
             Get-Content -Path $env:TEMP_DEPLOYMENT_OBJECT_PATH | jq
           azPSVersion: "latest"
         env:
           DEPLOYMENT_LOCATION: ${{ secrets.DEPLOYMENT_LOCATION }}
 
       - name: Run eslzArm deployment (TEST)
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: ./src/scripts/Invoke-ActionRunEslzArmDeployment.ps1 -Test
           azPSVersion: "latest"
 
       - name: Run eslzArm deployment (WHAT IF)
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: ./src/scripts/Invoke-ActionRunEslzArmDeployment.ps1 -WhatIf
           azPSVersion: "latest"
 
       - name: Run eslzArm deployment (DEPLOY)
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: ./src/scripts/Invoke-ActionRunEslzArmDeployment.ps1
           azPSVersion: "latest"
@@ -140,7 +170,7 @@ jobs:
           Update-AzConfig -DisplayBreakingChangeWarning $false
 
       - name: Pester Test for Policies
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: ./.github/actions-pester/PTF-TestPolicies.ps1
           azPSVersion: "latest"
@@ -150,7 +180,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}          
 
       - name: Run eslzArm deployment (DESTROY)
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: ./src/scripts/Invoke-ActionRunEslzArmDeployment.ps1 -Destroy
           azPSVersion: "9.4.0"
