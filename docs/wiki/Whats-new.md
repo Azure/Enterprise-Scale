@@ -53,6 +53,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a Portal Accelerator bug that results in failed deployment when choosing not to deploy policies to the Identity management group.
 - Updated the display name of the many `Effect` parameters to clearly identify the policy it applies to in the initiative [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html).
 - Updated the policy and policySet definition API version `2023-04-01` to supporting policy versioning. In this repo, this is used in the master policies.json and initiatives.json files, that are built from individual policy and initiative files in the src folder.
+- Added description for custom ALZ policy [Deny-Subnet-Without-Penp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Penp.html) to the [ALZ Policies Extra](./ALZ-Policies-Extra) wiki page.
 
 ### 🔃 Policy Refresh Q1 FY25
 
