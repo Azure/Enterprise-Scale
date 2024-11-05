@@ -1,5 +1,5 @@
 param(
-  $managementGroupId = "6da17bdb-c2cc-4a35-8f10-cded38ebfc47",
+  $managementGroupId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   $policySetDefinitionFolderPath = "./src/resources/Microsoft.Authorization/policySetDefinitions",
   $policySetFileName = "Deploy-Private-DNS-Zones.json",
   $uninstall = $false
