@@ -82,6 +82,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Resolved a bug in the Portal Accelerator related to deploying the single platform subscription setup. Incorrect parameter settings led to the failure of AMBA, as it erroneously attempted to deploy to a standard management group structure instead of a single platform management group as needed.
 - Increasing Policy assignment delay by a couple of minutes to help reduce assignment errors using the portal accelerator experience (the infamous "please wait 30 minutes and try again" error).
+- An issue with the Portal Accelerator regarding the Azure Monitor Baseline Alerts notifications settings was resolved. The problem occurred when no Email Address or Service Hook was specified on the Baseline alerts and monitoring tab. In this scenario, an empty string was converted to an array, resulting in the format `[""]` instead of `[]`. This caused errors during the remediation of the Notification Assets initiative.
 
 ### September 2024
 
