@@ -72,6 +72,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Bot Service (new) -> AI Bot Services
 - Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to include an additional parameter that allows you to specify if the Defender for Cloud export to Log Analytics should create a new resource group. This is useful when you want to specify the resource group name or requires tags on resource groups. Will be used by other RIs - Terraform and Bicep (portal accelerator will use default values).
 - Updated Automation Account to disable local authentication by default.
+- Updated the initiative [Deploy-Private-DNS-Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html) to reduce the number of parameters required while retaining backward compatibility. The initiative now only requires the subscription ID, resource group name, and location for the private DNS zone. The DNS zone resource id is now generated based on those inputs. This simplifies usage in the upstream Terraform and Bicep modules.
 
 #### Known Issue
 
