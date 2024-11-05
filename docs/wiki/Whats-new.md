@@ -2,6 +2,7 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
+  - [November 2024](#november-2024)
   - [October 2024](#october-2024)
   - [September 2024](#september-2024)
   - [August 2024](#august-2024)
