@@ -1,8 +1,8 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [November 2024](#november-2024)
+  - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [October 2024](#october-2024)
   - [September 2024](#september-2024)
   - [August 2024](#august-2024)
@@ -49,6 +49,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### November 2024
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-11-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+
 ### 🔃 Policy Refresh Q1 FY25
 
 - Updated ALZ custom policies enforcing minimum TLS versions to properly evaluate the minimum TLS version, ensuring services configured to deploy TLS 1.3 will successfully evaluate.
@@ -69,12 +75,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Known Issue
 
 >Note: there a known issue when re-deploying ALZ using the portal accelerator with CMK enabled. For details please see [Known Issues](ALZ-Known-Issues).
-
-### November 2024
-
-#### Tooling
-
-- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-11-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
 ### October 2024
 
