@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [November 2024](#november-2024)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [November 2024](#november-2024)
   - [October 2024](#october-2024)
@@ -49,6 +50,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### November 2024
+
+#### Tooling
+
+- A bug was resolved in the Portal Accelerator that caused deployment validation to fail with the error message "The 'location' property must be specified for 'amba-id-amba-prod-001'". This event happened when a Log Analytics Workspace was not deployed, but Azure Monitor Baseline Alerts were enabled. This issue occurred because Azure Monitor Baseline Alerts depend on the management subscription, which is not provided if the Log Analytics Workspace is not deployed. To address this scenario, an additional section was implemented in the Baseline alerts and monitoring tab allowing the selection of a Management subscription when not deploying a Log Analytics Workspace.
+
 ### 🔃 Policy Refresh Q1 FY25
 
 - Updated ALZ custom policies enforcing minimum TLS versions to properly evaluate the minimum TLS version, ensuring services configured to deploy TLS 1.3 will successfully evaluate.
@@ -82,6 +89,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Resolved a bug in the Portal Accelerator related to deploying the single platform subscription setup. Incorrect parameter settings led to the failure of AMBA, as it erroneously attempted to deploy to a standard management group structure instead of a single platform management group as needed.
 - Increasing Policy assignment delay by a couple of minutes to help reduce assignment errors using the portal accelerator experience (the infamous "please wait 30 minutes and try again" error).
+- An issue with the Portal Accelerator regarding the Azure Monitor Baseline Alerts notifications settings was resolved. The problem occurred when no Email Address or Service Hook was specified on the Baseline alerts and monitoring tab. In this scenario, an empty string was converted to an array, resulting in the format `[""]` instead of `[]`. This caused errors during the remediation of the Notification Assets initiative.
 
 ### September 2024
 
