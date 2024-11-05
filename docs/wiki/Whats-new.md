@@ -54,6 +54,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - A bug was resolved in the Portal Accelerator that caused deployment validation to fail with the error message "The 'location' property must be specified for 'amba-id-amba-prod-001'". This event happened when a Log Analytics Workspace was not deployed, but Azure Monitor Baseline Alerts were enabled. This issue occurred because Azure Monitor Baseline Alerts depend on the management subscription, which is not provided if the Log Analytics Workspace is not deployed. To address this scenario, an additional section was implemented in the Baseline alerts and monitoring tab allowing the selection of a Management subscription when not deploying a Log Analytics Workspace.
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-11-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
 ### 🔃 Policy Refresh Q1 FY25
 
@@ -120,8 +121,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a bug that would result in a failed deployment if deploying an Express Route Gateway and Basic Firewall SKU through the portal accelerator.
 - Fixed a bug that would result in a failed deployment for some multi-region Virtual WAN scenarios with identity networks and gateways.
 - Fixed a bug that had ALZ-LITE deployments try to connect DNS zones twice for single regions deployment.
-
-
 
 ### July 2024
 
@@ -333,7 +332,6 @@ Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some
 - Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 - Added wiki document for recommended Resource Providers to register for Subscriptions in ALZ [ALZ Azure Resource Provider Recommendations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Resource-Provider-Recommendations)
 
-
 ### December 2023
 
 #### Tooling
@@ -543,7 +541,6 @@ We strongly advise staying up-to-date to ensure the best possible security postu
 - [Migrate Azure landing zone policies to Azure built-in policies](https://aka.ms/alz/update/builtin)
 
 > **Please note** that, in some cases, moving to the new Built-In Policy definitions, deploying changes to existing custom policies or removing deprecated policies will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
-
 > While we've made every effort to test the stability of this release, should you have any issues and the guidance provided does not resolve your issue, please open a [GitHub issue](https://github.com/Azure/Enterprise-Scale/issues) so we can do our best to support you and document the fix for others.
 
 #### Policy
@@ -695,7 +692,6 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 | [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md)                   | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions)                       |
 | [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)                                       | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure)                                           |
 
-
 - Updated the guidance for contributing to the [Azure/Enterprise-Scale](https://github.com/Azure/Enterprise-Scale/) repository
 
 #### Tooling
@@ -778,7 +774,6 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 | Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
 | Deploy-Nsg-FlowLogs       | e920df7f-9a64-4066-9b58-52684c02a091 |
 | Deny-PublicIp             | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 |
-
 
 - "**"Deploy-ASC-SecurityContacts"**" definition update
 
