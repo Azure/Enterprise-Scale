@@ -1,6 +1,8 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
+  - [November 2024](#november-2024)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [October 2024](#october-2024)
   - [September 2024](#september-2024)
@@ -55,6 +57,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the policy and policySet definition API version `2023-04-01` to supporting policy versioning. In this repo, this is used in the master policies.json and initiatives.json files, that are built from individual policy and initiative files in the src folder.
 - Added description for custom ALZ policy [Deny-Subnet-Without-Penp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Penp.html) to the [ALZ Policies Extra](./ALZ-Policies-Extra) wiki page.
 - Updated initiative [Enforce-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) `AppServiceMinTlsVersion` parameter to include TLS version 1.3 (as supported by the policy).
+
+### November 2024
+
+#### Tooling
+
+- Fixed a bug in the Portal Accelerator that caused the deployment to fail when deploying a hub & spoke with NVA topology and regional VPN gateway (basic sku for Public IP not supported).
 
 ### 🔃 Policy Refresh Q1 FY25
 
