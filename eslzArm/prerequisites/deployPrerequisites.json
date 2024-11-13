@@ -1,0 +1,182 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "type": "string",
+      "defaultValue": "rg-alz-prereqs",
+      "metadata": {
+        "description": "The resource group name where the AVNM and VNET resources will be created"
+      }
+    },
+    "location": {
+      "type": "string",
+      "minLength": 6,
+      "metadata": {
+        "description": "The location of this regional hub. All resources will be deployed to this region."
+      }
+    },
+    "eslzRootName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Enterprise Scale Landing Zone root resource."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[parameters('resourceGroupName')]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "alz-prequisites-identity",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2022-01-31-preview",
+              "name": "[format('uai-prereq-{0}', parameters('location'))]",
+              "location": "[parameters('location')]",
+              "metadata": {
+                "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[guid(resourceGroup().id, format('uai-prereq-{0}', parameters('location')))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-prereq-{0}', parameters('location'))), '2022-01-31-preview').principalId]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-prereq-{0}', parameters('location')))]"
+              ],
+              "metadata": {
+                "description": "This role assignment grants the user assigned identity the Contributor role on the resource group."
+              }
+            }
+          ],
+          "outputs": {
+            "userAssignedIdentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-prereq-{0}', parameters('location')))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[format('ds-{0}-prereqs', parameters('location'))]",
+      "resourceGroup": "[parameters('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "userAssignedIdentityId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prequisites-identity'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+          },
+          "eslzRootName": {
+            "value": "[parameters('eslzRootName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "eslzRootName":{
+                "type": "string"
+            },
+            "userAssignedIdentityId": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "alz-deploymentscript",
+              "location": "[parameters('location')]",
+              "kind": "AzurePowerShell",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                }
+              },
+              "properties": {
+                "azPowerShellVersion": "12.3",
+                "retentionInterval": "PT1H",
+                "timeout": "PT1H",
+                "arguments": "[format('-eslzRootName \"{0}\"', parameters('eslzRootName'))]",
+                "scriptContent": "
+                    param(
+                        [Parameter(Mandatory=$true, HelpMessage=\"Enter the ESLZ root name.\")]
+                        [string]
+                        $eslzRootName
+                    )
+                    
+                    $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
+                    Write-Output $result
+                    $DeploymentScriptOutputs = @{}
+                    $DeploymentScriptOutputs['text'] = $result.StatusCode
+                "
+              },
+              "metadata": {
+                "description": "Create a Deployment Script resource to perform the prequisites."
+              }
+            }
+          ],
+            "outputs": {
+                "result": {
+                    "value": "[reference('alz-deploymentscript').outputs.text]",
+                    "type": "string"
+                }
+            }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prequisites-identity')]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

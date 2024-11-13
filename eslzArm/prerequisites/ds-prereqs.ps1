@@ -1,9 +1,12 @@
+<#
+    Script to deploy pre-requisites needed for the deployment of the Azure Landing Zone
+#>
+
 # Parameter help description
 param(
     [Parameter(Mandatory=$true, HelpMessage="Enter the ESLZ root name.")]
     [string]
     $eslzRootName
-
 )
 
 # Register Microsoft.Network resource provider with eslzRoot 
