@@ -1698,6 +1698,7 @@
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
             "initiativeDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/initiatives.json')]",
             "preRequisites": "[uri(deployment().properties.templateLink.uri, 'prerequisites/deployPrerequisites.json')]",
+            "alzSleep": "[uri(deployment().properties.templateLink.uri, 'prerequisites/dsSleep.json')]",
             "avnmConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/avnmConfiguration.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
@@ -2429,6 +2430,25 @@
             }
         },
         {
+            // Azure's untold story version 2.0
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "alz-sleep",
+            "location": "[deployment().location]",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
+            "dependsOn": [
+                "[variables('deploymentNames').initiativeDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').alzSleep]"
+                },
+                "parameters": {}
+            }
+        },
+        {
             // One of Azure's untold stories.....
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -2476,7 +2496,7 @@
                     "location": {
                         "value": "[deployment().location]"
                     },
-                    "eslzRootGroup": {
+                    "eslzRootName": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
                 }
