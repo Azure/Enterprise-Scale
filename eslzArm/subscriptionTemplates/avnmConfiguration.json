@@ -164,7 +164,6 @@
                                                 "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
                                             ],
                                             "properties": {
-                                                "applyOnNetworkIntentPolicyBasedServices": [ "None" ],
                                                 "description": "ALZ Security Admin Configuration"
                                             },
                                             "resources": [
@@ -173,7 +172,9 @@
                                                     "apiVersion": "2024-03-01",
                                                     "name": "[format('{0}/{1}/{2}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]",
                                                     "dependsOn": [
-                                                        "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]"
+                                                        "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
+                                                        "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
+                                                        "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]"
                                                     ],
                                                     "properties": {
                                                         "appliesToGroups": [
@@ -193,26 +194,19 @@
                                                             ],
                                                             "kind": "Custom",
                                                             "properties": {
-                                                                "description": "Deny dangerous VM inbound traffic",
-                                                                "priority": 500,
-                                                                "source": {
-                                                                    "addressPrefixes": [
-                                                                        "*"
-                                                                    ]
-                                                                },
-                                                                "destination": {
-                                                                    "addressPrefixes": [
-                                                                        "*"
-                                                                    ]
-                                                                },
+                                                                "description": "Deny VM Management inbound traffic",
+                                                                "priority": 1000,
+                                                                "sources": [
+                                                                    {
+                                                                        "addressPrefixType": "ServiceTag",
+                                                                        "addressPrefix": "Internet"
+                                                                    }
+                                                                ],
                                                                 "destinationPortRanges": [
                                                                     "22",
                                                                     "3389"
                                                                 ],
-                                                                "protocols": [
-                                                                    "TCP",
-                                                                    "UDP"
-                                                                ],
+                                                                "protocol": "Any",
                                                                 "direction": "Inbound",
                                                                 "access": "Deny"
                                                             }
