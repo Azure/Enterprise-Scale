@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
             "topLevelManagementGroupPrefix": {
@@ -25,19 +25,6 @@
                 "description": "Provide the subscription id for the dedicated connectivity subscription."
             }
         },
-        "enableHub": {
-            "type": "string",
-            "allowedValues": [
-                "vhub",
-                "vwan",
-                "nva",
-                "No"
-            ],
-            "defaultValue": "No",
-            "metadata": {
-                "description": "Select whether the virtual network hub should be deployed or not."
-            }
-        },
         "managementGroupScope": {
             "type": "string",
             "defaultValue": "",
@@ -52,172 +39,156 @@
     },
     "resources": [
         {
-            // Conditionally deploy virtual network hub
-            "condition": "[and(or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('connectivitySubscriptionId'))))]",
-            "type": "Microsoft.Resources/deployments",
+            "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2019-10-01",
             "location": "[parameters('location')]",
-            "name": "[concat('alz-', parameters('location'), '-', substring(uniqueString(parameters('connectivitySubscriptionId')),0,6), '-connectivityAVNM')]",
-            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('rgName')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('resourceDeploymentName')]",
+            "resourceGroup": "[variables('rgName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    }
+                },
                 "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        }
+                    },
                     "resources": [
                         {
-                            "type": "Microsoft.Resources/resourceGroups",
-                            "apiVersion": "2019-10-01",
+                            "type": "Microsoft.Network/networkManagers",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('avnm-{0}', parameters('location'))]",
                             "location": "[parameters('location')]",
-                            "name": "[variables('rgName')]",
-                            "properties": {}
-                        },
-                        {
-                            "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2019-10-01",
-                            "name": "[variables('resourceDeploymentName')]",
-                            "resourceGroup": "[variables('rgName')]",
-                            "dependsOn": [
-                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
-                            ],
                             "properties": {
-                                "mode": "Incremental",
-                                "expressionEvaluationOptions": {
-                                    "scope": "inner"
-                                },
-                                "parameters": {
-                                    "location": {
-                                        "value": "[parameters('location')]"
-                                    },
-                                    "connectivitySubscriptionId": {
-                                        "value": "[parameters('connectivitySubscriptionId')]"
-                                    }
-                                },
-                                "template": {
-                                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                                    "contentVersion": "1.0.0.0",
-                                    "parameters": {
-                                        "location": {
-                                            "type": "string"
-                                        },
-                                        "connectivitySubscriptionId": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "resources": [
-                                        {
-                                            "type": "Microsoft.Network/networkManagers",
-                                            "apiVersion": "2024-03-01",
-                                            "name": "[format('avnm-{0}', parameters('location'))]",
-                                            "location": "[parameters('location')]",
-                                            "properties": {
-                                                "networkManagerScopeAccesses": [
-                                                    "SecurityAdmin"
-                                                ],
-                                                "networkManagerScopes": {
-                                                    "subscriptions": [
-                                                        "[format('/subscriptions/{0}', parameters('connectivitySubscriptionId'))]"
-                                                    ],
-                                                    "managementGroups": []
-                                                }
-                                            },
-                                            "dependsOn": [
-                                                
-                                            ],
-                                            "metadata": {
-                                                "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
-                                            }
-                                        },
-                                        {
-                                            "type": "Microsoft.Network/networkManagers/networkGroups",
-                                            "apiVersion": "2024-03-01",
-                                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
-                                            "properties": {
-                                                "memberType": "VirtualNetwork",
-                                                "description": "Network Group - Static"
-                                            },
-                                            "dependsOn": [
-                                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
-                                            ],
-                                            "metadata": {
-                                                "description": "This is the static network group for the spoke VNETs, and hub when topology is mesh."
-                                            }
-                                        },
-                                        {
-                                            "type": "Microsoft.Network/networkManagers/networkGroups",
-                                            "apiVersion": "2024-03-01",
-                                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]",
-                                            "properties": {
-                                                "memberType": "VirtualNetwork",
-                                                "description": "Network Group - Dynamic"
-                                            },
-                                            "dependsOn": [
-                                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
-                                            ],
-                                            "metadata": {
-                                                "description": "This is the dynamic network group for the spoke VNETs, and hub when topology is mesh."
-                                            }
-                                        },
-                                        {
-                                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations",
-                                            "apiVersion": "2023-11-01",
-                                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
-                                            "dependsOn": [
-                                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
-                                            ],
-                                            "properties": {
-                                                "description": "ALZ Security Admin Configuration"
-                                            }
-                                        },
-                                        {
-                                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections",
-                                            "apiVersion": "2024-03-01",
-                                            "name": "[format('{0}/{1}/{2}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]",
-                                            "dependsOn": [
-                                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
-                                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
-                                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]"
-                                            ],
-                                            "properties": {
-                                                "appliesToGroups": [
-                                                    {
-                                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]"
-                                                    }
-
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
-                                            "apiVersion": "2024-03-01",
-                                            "name": "[format('{0}/{1}/{2}/{3}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyMgmtInbound')]",
-                                            "dependsOn": [
-                                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]"
-                                            ],
-                                            "kind": "Custom",
-                                            "properties": {
-                                                "description": "Deny VM Management inbound traffic",
-                                                "priority": 1000,
-                                                "sources": [
-                                                    {
-                                                        "addressPrefixType": "ServiceTag",
-                                                        "addressPrefix": "Internet"
-                                                    }
-                                                ],
-                                                "destinationPortRanges": [
-                                                    "22",
-                                                    "3389"
-                                                ],
-                                                "protocol": "Any",
-                                                "direction": "Inbound",
-                                                "access": "Deny"
-                                            }
-                                        }
-                                        
+                                "networkManagerScopeAccesses": [
+                                    "SecurityAdmin"
+                                ],
+                                "networkManagerScopes": {
+                                    "subscriptions": [
+                                        "[format('/subscriptions/{0}', parameters('connectivitySubscriptionId'))]"
+                                    ],
+                                    "managementGroups": [
+                                        "[parameters('managementGroupScope')]"
                                     ]
                                 }
+                            },
+                            "dependsOn": [
+                                
+                            ],
+                            "metadata": {
+                                "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "Network Group - Static"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                            ],
+                            "metadata": {
+                                "description": "This is the static network group for the spoke VNETs, and hub when topology is mesh."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "Network Group - Dynamic"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for the spoke VNETs, and hub when topology is mesh."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations",
+                            "apiVersion": "2023-11-01",
+                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                            ],
+                            "properties": {
+                                "description": "ALZ Security Admin Configuration"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]"
+                            ],
+                            "properties": {
+                                "appliesToGroups": [
+                                    {
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]"
+                                    }
+
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}/{3}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyMgmtInbound')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]"
+                            ],
+                            "kind": "Custom",
+                            "properties": {
+                                "description": "Deny VM Management inbound traffic",
+                                "priority": 1000,
+                                "sources": [
+                                    {
+                                        "addressPrefixType": "ServiceTag",
+                                        "addressPrefix": "Internet"
+                                    }
+                                ],
+                                "destinationPortRanges": [
+                                    "22",
+                                    "3389"
+                                ],
+                                "protocol": "Any",
+                                "direction": "Inbound",
+                                "access": "Deny"
                             }
                         }
+                        
                     ]
                 }
             }
