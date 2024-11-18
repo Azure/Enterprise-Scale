@@ -50,7 +50,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### 🔃 Policy Refresh Q2 FY25
 
-- [PREVIEW] Added ability to deploy Virtual Network Manager through the portal accelerator with support for Security Admin.
+- [PREVIEW] Added ability to deploy Virtual Network Manager through the portal accelerator with support for Security Admin, including default rules blocking high-risk ports [read more](https://learn.microsoft.com/en-us/azure/virtual-network-manager/concept-security-admins).
 - [Important] To support the configuration of AVNM, we've had to included a deployment script to configure the Microsoft.Network resource provider on the intermediate root management group.
   - Additionally, due to performance improvements of ARM, we've also had to change the "wait" process in the portal accelerator. We are now using the same deployment script with a "Start-Sleep" PowerShell command which is far more reliable.
 - Fixed a Portal Accelerator bug that results in failed deployment when choosing not to deploy policies to the Identity management group.
