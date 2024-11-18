@@ -10,7 +10,8 @@ ALZ provides several additional policies that are not assigned by default but th
 
 | Policy | Description | Notes |
 |------------|-------------|-------------|
-| Audit-Tags-Mandatory | Audit for mandatory tags on resource groups | Audits resource groups to ensure they have required tags based on tag array. |
+| Audit-Tags-Mandatory | Audit for mandatory tags on resources | Audits resources to ensure they have required tags based on tag array. Does not apply to resource groups. |
+| Audit-Tags-Mandatory-RG | Audit for mandatory tags on resource groups | Audits resource groups to ensure they have required tags based on tag array. |
 | Deny-Appgw-Without-Waf | Application Gateway should be deployed with WAF enabled | Use to ensure Application Gateways are deployed with Web Application Firewall enabled |
 | Deny-Private-Dns-Zones | Deny the creation of private DNS | For organizations that centralize core networking functions, use this policy to prevent the creation of additional Private DNS Zones under specific scopes |
 | Deny-Subnet-Without-Penp | Subnets without Private Endpoint Network Policies enabled should be denied | This policy denies the creation of a subnet without Private Endpoint Network Policies enabled. This policy is intended for 'workload' subnets, not 'central infrastructure' (aka, 'hub') subnets. |
