@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [November 2024](#november-2024)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [October 2024](#october-2024)
   - [September 2024](#september-2024)
@@ -48,6 +49,21 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### 🔃 Policy Refresh Q2 FY25
+
+- Fixed a Portal Accelerator bug that results in failed deployment when choosing not to deploy policies to the Identity management group.
+- Updated the display name of the many `Effect` parameters to clearly identify the policy it applies to in the initiative [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html).
+- Updated the policy and policySet definition API version `2023-04-01` to supporting policy versioning. In this repo, this is used in the master policies.json and initiatives.json files, that are built from individual policy and initiative files in the src folder.
+- Added description for custom ALZ policy [Deny-Subnet-Without-Penp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Penp.html) to the [ALZ Policies Extra](./ALZ-Policies-Extra) wiki page.
+- Updated initiative [Enforce-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) `AppServiceMinTlsVersion` parameter to include TLS version 1.3 (as supported by the policy).
+
+### November 2024
+
+#### Tooling
+
+- A bug was resolved in the Portal Accelerator that caused deployment validation to fail with the error message "The 'location' property must be specified for 'amba-id-amba-prod-001'". This event happened when a Log Analytics Workspace was not deployed, but Azure Monitor Baseline Alerts were enabled. This issue occurred because Azure Monitor Baseline Alerts depend on the management subscription, which is not provided if the Log Analytics Workspace is not deployed. To address this scenario, an additional section was implemented in the Baseline alerts and monitoring tab allowing the selection of a Management subscription when not deploying a Log Analytics Workspace.
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-11-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+
 ### 🔃 Policy Refresh Q1 FY25
 
 - Updated ALZ custom policies enforcing minimum TLS versions to properly evaluate the minimum TLS version, ensuring services configured to deploy TLS 1.3 will successfully evaluate.
@@ -64,6 +80,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Bot Service (new) -> AI Bot Services
 - Updated the initiative [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) to include an additional parameter that allows you to specify if the Defender for Cloud export to Log Analytics should create a new resource group. This is useful when you want to specify the resource group name or requires tags on resource groups. Will be used by other RIs - Terraform and Bicep (portal accelerator will use default values).
 - Updated Automation Account to disable local authentication by default.
+- Updated the initiative [Deploy-Private-DNS-Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html) to reduce the number of parameters required while retaining backward compatibility. The initiative now only requires the subscription ID, resource group name, and location for the private DNS zone. The DNS zone resource id is now generated based on those inputs. This simplifies usage in the upstream Terraform and Bicep modules.
 
 #### Known Issue
 
@@ -75,6 +92,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Resolved a bug in the Portal Accelerator related to deploying the single platform subscription setup. Incorrect parameter settings led to the failure of AMBA, as it erroneously attempted to deploy to a standard management group structure instead of a single platform management group as needed.
 - Increasing Policy assignment delay by a couple of minutes to help reduce assignment errors using the portal accelerator experience (the infamous "please wait 30 minutes and try again" error).
+- An issue with the Portal Accelerator regarding the Azure Monitor Baseline Alerts notifications settings was resolved. The problem occurred when no Email Address or Service Hook was specified on the Baseline alerts and monitoring tab. In this scenario, an empty string was converted to an array, resulting in the format `[""]` instead of `[]`. This caused errors during the remediation of the Notification Assets initiative.
 
 ### September 2024
 
@@ -111,8 +129,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a bug that would result in a failed deployment if deploying an Express Route Gateway and Basic Firewall SKU through the portal accelerator.
 - Fixed a bug that would result in a failed deployment for some multi-region Virtual WAN scenarios with identity networks and gateways.
 - Fixed a bug that had ALZ-LITE deployments try to connect DNS zones twice for single regions deployment.
-
-
 
 ### July 2024
 
@@ -324,7 +340,6 @@ Yes, the Q2 Policy Refresh has been delayed due to a light past quarter and some
 - Updated broken links in [Deploying ALZ ZT Network](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-ALZ-ZTNetwork#azure-landing-zone-portal-accelerator-deployment-with-zero-trust-network-principles)
 - Added wiki document for recommended Resource Providers to register for Subscriptions in ALZ [ALZ Azure Resource Provider Recommendations](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Resource-Provider-Recommendations)
 
-
 ### December 2023
 
 #### Tooling
@@ -534,7 +549,6 @@ We strongly advise staying up-to-date to ensure the best possible security postu
 - [Migrate Azure landing zone policies to Azure built-in policies](https://aka.ms/alz/update/builtin)
 
 > **Please note** that, in some cases, moving to the new Built-In Policy definitions, deploying changes to existing custom policies or removing deprecated policies will require a new Policy Assignment and removing the previous Policy Assignment, which will mean compliance history for the Policy Assignment will be lost. However, if you have configured your Activity Logs and Security Center to export to a Log Analytics Workspace, Policy Assignment historic data will be stored here as per the retention duration configured. Thank you for your cooperation, and we look forward to continuing to work with you to ensure the security and compliance of our Azure environment.
-
 > While we've made every effort to test the stability of this release, should you have any issues and the guidance provided does not resolve your issue, please open a [GitHub issue](https://github.com/Azure/Enterprise-Scale/issues) so we can do our best to support you and document the fix for others.
 
 #### Policy
@@ -686,7 +700,6 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 | [docs/EnterpriseScale-Setup-aad-permissions.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-aad-permissions.md)                   | [wiki/ALZ-Setup-aad-permissions](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-aad-permissions)                       |
 | [docs/EnterpriseScale-Setup-azure.md](https://github.com/Azure/Enterprise-Scale/blob/main/docs/EnterpriseScale-Setup-azure.md)                                       | [wiki/ALZ-Setup-azure](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Setup-azure)                                           |
 
-
 - Updated the guidance for contributing to the [Azure/Enterprise-Scale](https://github.com/Azure/Enterprise-Scale/) repository
 
 #### Tooling
@@ -769,7 +782,6 @@ Note that a number of initiatives have been updated that will fail to deploy if 
 | Deploy-Nsg-FlowLogs-to-LA | e920df7f-9a64-4066-9b58-52684c02a091 |
 | Deploy-Nsg-FlowLogs       | e920df7f-9a64-4066-9b58-52684c02a091 |
 | Deny-PublicIp             | 6c112d4e-5bc7-47ae-a041-ea2d9dccd749 |
-
 
 - "**"Deploy-ASC-SecurityContacts"**" definition update
 
