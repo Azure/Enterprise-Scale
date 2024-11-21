@@ -6,14 +6,14 @@
       "type": "string",
       "defaultValue": "rg-alz-prereqs",
       "metadata": {
-        "description": "The resource group name where the AVNM and VNET resources will be created"
+        "description": "The resource group name where the AVNM resources will be created"
       }
     },
     "location": {
       "type": "string",
       "minLength": 6,
       "metadata": {
-        "description": "The location of this regional hub. All resources will be deployed to this region."
+        "description": "The location of this AVNM instance. All resources will be deployed to this region."
       }
     },
     "eslzRootName": {
@@ -33,7 +33,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "alz-prequisites-identity",
+      "name": "alz-prerequisites-identity",
       "resourceGroup": "[parameters('resourceGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -152,15 +152,17 @@
                         [string]
                         $eslzRootName
                     )
+
+                    Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
                     
                     #Sleep for 30 minutes to wait for Management Groups to load to cache before assignments
                     Start-Sleep -Duration (New-TimeSpan -Minutes 30)
 
-                    $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
+                    Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
                 "
               },
               "metadata": {
-                "description": "Create a Deployment Script resource to perform the prequisites."
+                "description": "Create a Deployment Script resource to perform the prerequisites."
               }
             }
           ],
@@ -168,7 +170,7 @@
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prequisites-identity')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-identity')]",
         "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]"
       ]
     }
