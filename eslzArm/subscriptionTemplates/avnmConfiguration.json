@@ -87,7 +87,7 @@
                         {
                             "type": "Microsoft.Network/networkManagers",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('avnm-{0}', parameters('location'))]",
+                            "name": "avnm",
                             "location": "[parameters('location')]",
                             "properties": {
                                 "networkManagerScopeAccesses": [
@@ -112,13 +112,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
+                            "name": "[format('{0}/{1}', 'avnm', format('ng-{0}-static', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "Network Group - Static"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
                             ],
                             "metadata": {
                                 "description": "This is the static network group for the spoke VNETs, and hub when topology is mesh."
@@ -127,13 +127,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]",
+                            "name": "[format('{0}/{1}', 'avnm', format('ng-{0}-dynamic', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "Network Group - Dynamic"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for the spoke VNETs, and hub when topology is mesh."
@@ -142,9 +142,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations",
                             "apiVersion": "2023-11-01",
-                            "name": "[format('{0}/{1}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', 'avnm', format('sac-{0}', parameters('location')))]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', format('avnm-{0}', parameters('location')))]"
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
                             ],
                             "properties": {
                                 "description": "ALZ Security Admin Configuration"
@@ -153,16 +153,19 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]",
+                            "name": "[format('{0}/{1}/{2}', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')))]",
-                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]",
-                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-dynamic', parameters('location')))]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location')))]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-static', parameters('location')))]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-dynamic', parameters('location')))]"
                             ],
                             "properties": {
                                 "appliesToGroups": [
                                     {
-                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', format('avnm-{0}', parameters('location')), format('ng-{0}-static', parameters('location')))]"
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-static', parameters('location')))]"
+                                    },
+                                    {
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-dynamic', parameters('location')))]"
                                     }
 
                                 ]
@@ -171,9 +174,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyMgmtInbound')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyMgmtInbound')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -197,9 +200,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyHighRiskInboundTCP')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyHighRiskInboundTCP')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -232,9 +235,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyHighRiskInboundUDP')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyHighRiskInboundUDP')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -258,9 +261,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyHighRiskInboundANY')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ', 'DenyHighRiskInboundANY')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', format('avnm-{0}', parameters('location')), format('sac-{0}', parameters('location')), 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', format('sac-{0}', parameters('location')), 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
