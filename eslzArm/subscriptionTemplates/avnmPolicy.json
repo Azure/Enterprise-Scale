@@ -16,17 +16,10 @@
                 "description": "Location of the HUB"
             },
             "defaultValue": "[deployment().location]"
-        },
-        "networkGroupId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Provide the subscription id for the dedicated connectivity subscription."
-            }
         }
     },
     "variables": {
-        
+        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-dynamic', parameters('location')))]"
     },
     "resources": [
         {
@@ -57,7 +50,7 @@
                 "then": {
                     "effect": "addToNetworkGroup",
                     "details": {
-                    "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-dynamic', parameters('location')))]"
+                    "networkGroupId": "[variables('networkGroupId')]"
                     }
                 }
                 }
@@ -69,15 +62,15 @@
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
-            "name": "[uniqueString(parameters('networkGroupId'))]",
+            "name": "[uniqueString(variables('networkGroupId'))]",
             "properties": {
-                "description": "AVNM quickstart dynamic group membership Policy",
-                "displayName": "AVNM quickstart dynamic group membership Policy",
+                "description": "AVNM dynamic group membership Policy",
+                "displayName": "AVNM dynamic group membership Policy",
                 "enforcementMode": "Default",
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(parameters('networkGroupId')))]"
+                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupId')))]"
             },
             "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(parameters('networkGroupId')))]"
+                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupId')))]"
             ],
             "metadata": {
                 "description": "Assigns above policy for dynamic group membership"
