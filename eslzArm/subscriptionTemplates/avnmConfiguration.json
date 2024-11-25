@@ -25,7 +25,7 @@
                 "description": "Management group scope for AVNM."
             }
         },
-        "connectivitySubscriptionId": {
+        "managementSubscriptionId": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -65,8 +65,11 @@
                     "managementGroupScope": {
                         "value": "[parameters('managementGroupScope')]"
                     },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
+                    "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "userAssignedIdentityId": {
+                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), 'rg-alz-prereqs'), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
                     }
                 },
                 "template": {
@@ -79,9 +82,15 @@
                         "managementGroupScope": {
                             "type": "string"
                         },
-                        "connectivitySubscriptionId": {
+                        "managementSubscriptionId": {
+                            "type": "string"
+                        },
+                        "userAssignedIdentityId": {
                             "type": "string"
                         }
+                    },
+                    "variables": {
+                        "rgName": "[variables('rgName')]"
                     },
                     "resources": [
                         {
@@ -282,6 +291,46 @@
                                 "protocol": "Any",
                                 "direction": "Inbound",
                                 "access": "Deny"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Resources/deploymentScripts",
+                            "apiVersion": "2020-10-01",
+                            "name": "alz-deploymentscript-config",
+                            "location": "[parameters('location')]",
+                            "kind": "AzurePowerShell",
+                            "identity": {
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                                }
+                            },
+                            "properties": {
+                                "azPowerShellVersion": "12.3",
+                                "retentionInterval": "PT1H",
+                                "timeout": "PT1H",
+                                "arguments": "[format('-regions \"{0}\" -rgname \"{1}\" -configids \"{2}\"', parameters('location'), variables('rgName'), resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location'))))]",
+                                "scriptContent": "
+                                    param(
+                                        [Parameter(Mandatory=$true, HelpMessage=\"Location for deployment.\")]
+                                        [string]
+                                        $regions
+
+                                        [Parameter(Mandatory=$true, HelpMessage=\"Resource Group Name.\")]
+                                        [string]
+                                        $rgname
+
+                                        [Parameter(Mandatory=$true, HelpMessage=\"Configuration IDs.\")]
+                                        [string]
+                                        $configids
+                                    )
+
+                                    Deploy-AzNetworkManagerCommit -ResourceGroupName \"psResourceGroup\" -Name \"psNetworkManager\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configids
+                                    
+                                "
+                            },
+                            "metadata": {
+                                "description": "Create a Deployment Script resource to perform the configuration deployment."
                             }
                         }
                         
