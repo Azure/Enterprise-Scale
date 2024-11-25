@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "displayName": "location",
+                "description": "Location of the HUB"
+            },
+            "defaultValue": "[deployment().location]"
+        },
+        "networkGroupId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide the subscription id for the dedicated connectivity subscription."
+            }
+        }
+    },
+    "variables": {
+        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2021-06-01",
+            "name": "[uniqueString(resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-dynamic', parameters('location'))))]",
+            "properties": {
+                "description": "AVNM dynamic group membership Policy",
+                "displayName": "AVNM dynamic group membership Policy",
+                "mode": "Microsoft.Network.Data",
+                "policyRule": {
+                "if": {
+                    "allof": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Network/virtualNetworks"
+                        },
+                        {
+                            "allOf": [
+                                {
+                                    "value": "[resourceGroup().Name]",
+                                    "contains": "vnet"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "then": {
+                    "effect": "addToNetworkGroup",
+                    "details": {
+                    "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('ng-{0}-dynamic', parameters('location')))]"
+                    }
+                }
+                }
+            },
+            "metadata": {
+                "description": "This is a Policy definition for dyanamic group membership"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2022-06-01",
+            "name": "[uniqueString(parameters('networkGroupId'))]",
+            "properties": {
+                "description": "AVNM quickstart dynamic group membership Policy",
+                "displayName": "AVNM quickstart dynamic group membership Policy",
+                "enforcementMode": "Default",
+                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(parameters('networkGroupId')))]"
+            },
+            "dependsOn": [
+                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(parameters('networkGroupId')))]"
+            ],
+            "metadata": {
+                "description": "Assigns above policy for dynamic group membership"
+            }
+        }
+        
+    ],
+    "outputs": {}
+}
