@@ -43,7 +43,7 @@
     "variables": {
         "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm')]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]",
-        "configIds": "[subscriptionResourceId(parameters('connectivitySubscriptionId'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location')))]"
+        "configIds": "[resourceId(parameters('connectivitySubscriptionId'), variables('rgName'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location')))]"
     },
     "resources": [
         {
@@ -81,6 +81,9 @@
                     },
                     "configIds": {
                         "value": "[variables('configIds')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
                     }
                 },
                 "template": {
@@ -100,6 +103,9 @@
                             "type": "string"
                         },
                         "configIds": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
                             "type": "string"
                         }
                     },
@@ -320,7 +326,7 @@
                                 "azPowerShellVersion": "12.3",
                                 "retentionInterval": "PT1H",
                                 "timeout": "PT1H",
-                                "arguments": "[format('-regions \"{0}\" -rgname \"{1}\" -configids \"{2}\"', parameters('location'), parameters('rgName'), parameters('configIds'))]",
+                                "arguments": "[format('-regions \"{0}\" -rgName \"{1}\" -configIds \"{2}\" -connectivitySubscriptionId', parameters('location'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
                                 "scriptContent": "
                                     param(
                                         [Parameter(Mandatory=$true, HelpMessage=\"Location for deployment.\")]
@@ -329,14 +335,20 @@
 
                                         [Parameter(Mandatory=$true, HelpMessage=\"Resource Group Name.\")]
                                         [string]
-                                        $rgname,
+                                        $rgName,
 
                                         [Parameter(Mandatory=$true, HelpMessage=\"Configuration IDs.\")]
                                         [string]
-                                        $configids
+                                        $configIds,
+
+                                        [Parameter(Mandatory=$true, HelpMessage=\"Connectivity subscription id.\")]
+                                        [string]
+                                        $connectivitySubscriptionId
                                     )
 
-                                    Deploy-AzNetworkManagerCommit -ResourceGroupName $rgname -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configids
+                                    Select-AzSubscription -SubscriptionId $connectivitySubscriptionId
+
+                                    Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
                                     
                                 "
                             },
