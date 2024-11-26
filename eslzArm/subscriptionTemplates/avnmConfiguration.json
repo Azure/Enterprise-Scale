@@ -42,7 +42,8 @@
     },
     "variables": {
         "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm')]",
-        "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]"
+        "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]",
+        "configIds": "[subscriptionResourceId(parameters('connectivitySubscriptionId'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location')))]"
     },
     "resources": [
         {
@@ -72,14 +73,14 @@
                     "managementGroupScope": {
                         "value": "[parameters('managementGroupScope')]"
                     },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
-                    },
                     "userAssignedIdentityId": {
                         "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), 'rg-alz-prereqs'), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
                     },
                     "rgName": {
                         "value": "[variables('rgName')]"
+                    },
+                    "configIds": {
+                        "value": "[variables('configIds')]"
                     }
                 },
                 "template": {
@@ -92,13 +93,13 @@
                         "managementGroupScope": {
                             "type": "string"
                         },
-                        "connectivitySubscriptionId": {
-                            "type": "string"
-                        },
                         "userAssignedIdentityId": {
                             "type": "string"
                         },
                         "rgName": {
+                            "type": "string"
+                        },
+                        "configIds": {
                             "type": "string"
                         }
                     },
@@ -319,7 +320,7 @@
                                 "azPowerShellVersion": "12.3",
                                 "retentionInterval": "PT1H",
                                 "timeout": "PT1H",
-                                "arguments": "[format('-regions \"{0}\" -rgname \"{1}\" -configids \"{2}\"', parameters('location'), parameters('rgName'), subscriptionResourceId(parameters('connectivitySubscriptionId'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location'))))]",
+                                "arguments": "[format('-regions \"{0}\" -rgname \"{1}\" -configids \"{2}\"', parameters('location'), parameters('rgName'), parameters('configIds'))]",
                                 "scriptContent": "
                                     param(
                                         [Parameter(Mandatory=$true, HelpMessage=\"Location for deployment.\")]
