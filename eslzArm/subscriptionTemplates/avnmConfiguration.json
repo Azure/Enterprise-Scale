@@ -49,7 +49,7 @@
         }
     },
     "variables": {
-        "rgName": "rg-alz-avnm",
+        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-avnm')]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]",
         "configIds": "[resourceId(parameters('connectivitySubscriptionId'), variables('rgName'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', format('sac-{0}', parameters('location')))]"
     },
@@ -80,18 +80,6 @@
                     },
                     "managementGroupScope": {
                         "value": "[parameters('managementGroupScope')]"
-                    },
-                    "userAssignedIdentityId": {
-                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), 'rg-alz-prereqs'), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
-                    },
-                    "rgName": {
-                        "value": "[variables('rgName')]"
-                    },
-                    "configIds": {
-                        "value": "[variables('configIds')]"
-                    },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
                     }
                 },
                 "template": {
@@ -102,18 +90,6 @@
                             "type": "string"
                         },
                         "managementGroupScope": {
-                            "type": "string"
-                        },
-                        "userAssignedIdentityId": {
-                            "type": "string"
-                        },
-                        "rgName": {
-                            "type": "string"
-                        },
-                        "configIds": {
-                            "type": "string"
-                        },
-                        "connectivitySubscriptionId": {
                             "type": "string"
                         }
                     },
@@ -330,16 +306,13 @@
             "resourceGroup": "[variables('rgName')]",
             "properties": {
                 "expressionEvaluationOptions": {
-                "scope": "inner"
+                    "scope": "inner"
                 },
                 "mode": "Incremental",
                 "parameters": {
-                "location": {
-                    "value": "[parameters('location')]"
-                },
-                "eslzRootName": {
-                    "value": "[parameters('topLevelManagementGroupPrefix')]"
-                }
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
                 },
                 "template": {
                 "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -347,21 +320,18 @@
                 "parameters": {
                     "location": {
                     "type": "string"
-                    },
-                    "eslzRootName": {
-                    "type": "string"
                     }
                 },
                 "variables": {},
                 "resources": [
                     {
-                    "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-                    "apiVersion": "2022-01-31-preview",
-                    "name": "[format('uai-avnm-{0}', parameters('location'))]",
-                    "location": "[parameters('location')]",
-                    "metadata": {
-                        "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
-                    }
+                        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                        "apiVersion": "2022-01-31-preview",
+                        "name": "[format('uai-avnm-{0}', parameters('location'))]",
+                        "location": "[parameters('location')]",
+                        "metadata": {
+                            "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                        }
                     },
                     {
                     "type": "Microsoft.Authorization/roleAssignments",
