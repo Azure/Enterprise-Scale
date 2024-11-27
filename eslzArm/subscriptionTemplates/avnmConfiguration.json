@@ -309,52 +309,6 @@
                                 "direction": "Inbound",
                                 "access": "Deny"
                             }
-                        },
-                        {
-                            "type": "Microsoft.Resources/deploymentScripts",
-                            "apiVersion": "2020-10-01",
-                            "name": "alz-deploymentscript-config",
-                            "location": "[parameters('location')]",
-                            "kind": "AzurePowerShell",
-                            "identity": {
-                                "type": "UserAssigned",
-                                "userAssignedIdentities": {
-                                    "[format('{0}', parameters('userAssignedIdentityId'))]": {}
-                                }
-                            },
-                            "properties": {
-                                "azPowerShellVersion": "12.3",
-                                "retentionInterval": "PT1H",
-                                "timeout": "PT1H",
-                                "arguments": "[format('-regions \"{0}\" -rgName \"{1}\" -configIds \"{2}\" -connSubId \"{3}\"', parameters('location'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
-                                "scriptContent": "
-                                    param(
-                                        [Parameter(Mandatory=$true, HelpMessage=\"Location for deployment.\")]
-                                        [string]
-                                        $regions,
-
-                                        [Parameter(Mandatory=$true, HelpMessage=\"Resource Group Name.\")]
-                                        [string]
-                                        $rgName,
-
-                                        [Parameter(Mandatory=$true, HelpMessage=\"Configuration IDs.\")]
-                                        [string]
-                                        $configIds,
-
-                                        [Parameter(Mandatory=$true, HelpMessage=\"Connectivity subscription id.\")]
-                                        [string]
-                                        $connSubId
-                                    )
-
-                                    Select-AzSubscription -SubscriptionId $connSubId
-
-                                    Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
-                                    
-                                "
-                            },
-                            "metadata": {
-                                "description": "Create a Deployment Script resource to perform the configuration deployment."
-                            }
                         }
                         
                     ]
@@ -434,22 +388,31 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "[format('ds-{0}-prereqs', parameters('location'))]",
-            "resourceGroup": "[parameters('resourceGroupName')]",
+            "resourceGroup": "[variables('rgName')]",
             "properties": {
-                "expressionEvaluationOptions": {
-                "scope": "inner"
+                    "expressionEvaluationOptions": {
+                    "scope": "inner"
                 },
                 "mode": "Incremental",
                 "parameters": {
-                "location": {
-                    "value": "[parameters('location')]"
-                },
-                "userAssignedIdentityId": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
-                },
-                "eslzRootName": {
-                    "value": "[parameters('eslzRootName')]"
-                }
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "userAssignedIdentityId": {
+                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                    },
+                    "eslzRootName": {
+                        "value": "[parameters('topLevelManagementGroupPrefix')]"
+                    },
+                    "rgName": {
+                        "value": "[variables('rgName')]"
+                    },
+                    "configIds": {
+                        "value": "[variables('configIds')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    }
                 },
                 "template": {
                 "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -462,53 +425,69 @@
                         "type": "string"
                     },
                     "userAssignedIdentityId": {
-                    "type": "string"
+                        "type": "string"
+                    },
+                    "rgName": {
+                        "type": "string"
+                    },
+                    "configIds": {
+                        "type": "string"
+                    },
+                    "connectivitySubscriptionId": {
+                        "type": "string"
                     }
                 },
                 "resources": [
                     {
-                    "type": "Microsoft.Resources/deploymentScripts",
-                    "apiVersion": "2020-10-01",
-                    "name": "alz-deploymentscript",
-                    "location": "[parameters('location')]",
-                    "kind": "AzurePowerShell",
-                    "identity": {
-                        "type": "UserAssigned",
-                        "userAssignedIdentities": {
-                        "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                        "type": "Microsoft.Resources/deploymentScripts",
+                        "apiVersion": "2020-10-01",
+                        "name": "alz-avnm-deploymentscript",
+                        "location": "[parameters('location')]",
+                        "kind": "AzurePowerShell",
+                        "identity": {
+                            "type": "UserAssigned",
+                            "userAssignedIdentities": {
+                                "[format('{0}', parameters('userAssignedIdentityId'))]": {}
                         }
                     },
                     "properties": {
-                        "azPowerShellVersion": "12.3",
-                        "retentionInterval": "PT1H",
-                        "timeout": "PT1H",
-                        "arguments": "[format('-eslzRootName \"{0}\"', parameters('eslzRootName'))]",
-                        "scriptContent": "
-                            param(
-                                [Parameter(Mandatory=$true, HelpMessage=\"Enter the ESLZ root name.\")]
-                                [string]
-                                $eslzRootName
-                            )
+                            "azPowerShellVersion": "12.3",
+                            "retentionInterval": "PT1H",
+                            "timeout": "PT1H",
+                            "arguments": "[format('-regions \"{0}\" -rgName \"{1}\" -configIds \"{2}\" -connSubId \"{3}\"', parameters('location'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                            "scriptContent": "
+                                param(
+                                    [Parameter(Mandatory=$true, HelpMessage=\"Location for deployment.\")]
+                                    [string]
+                                    $regions,
 
-                            Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
-                            
-                            #Sleep for 30 minutes to wait for Management Groups to load to cache before assignments
-                            Start-Sleep -Duration (New-TimeSpan -Minutes 10)
+                                    [Parameter(Mandatory=$true, HelpMessage=\"Resource Group Name.\")]
+                                    [string]
+                                    $rgName,
 
-                            Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
-                        "
-                    },
-                    "metadata": {
-                        "description": "Create a Deployment Script resource to perform the prerequisites."
-                    }
+                                    [Parameter(Mandatory=$true, HelpMessage=\"Configuration IDs.\")]
+                                    [string]
+                                    $configIds,
+
+                                    [Parameter(Mandatory=$true, HelpMessage=\"Connectivity subscription id.\")]
+                                    [string]
+                                    $connSubId
+                                )
+
+                                Select-AzSubscription -SubscriptionId $connSubId
+
+                                Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
+                                
+                            "
+                        }
                     }
                 ],
                     "outputs": {}
                 }
             },
             "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai')]",
-                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]"
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', variables('resourceDeploymentName'))]",
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName'))]"
             ]
             }
     ],
