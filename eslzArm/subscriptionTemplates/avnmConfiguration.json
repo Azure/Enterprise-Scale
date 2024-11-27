@@ -18,6 +18,14 @@
             },
             "defaultValue": "[deployment().location]"
         },
+        "locationSecondary": {
+            "type": "string",
+            "metadata": {
+                "displayName": "locationSecondary",
+                "description": "Secondary location of the HUB for instances deploying in multiple regions"
+            },
+            "defaultValue": ""
+        },
         "managementGroupScope": {
             "type": "string",
             "defaultValue": "",
@@ -398,11 +406,11 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
                     "userAssignedIdentityId": {
                         "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
-                    },
-                    "eslzRootName": {
-                        "value": "[parameters('topLevelManagementGroupPrefix')]"
                     },
                     "rgName": {
                         "value": "[variables('rgName')]"
@@ -421,8 +429,8 @@
                     "location": {
                     "type": "string"
                     },
-                    "eslzRootName":{
-                        "type": "string"
+                    "locationSecondary": {
+                    "type": "string"
                     },
                     "userAssignedIdentityId": {
                         "type": "string"
@@ -454,25 +462,26 @@
                             "azPowerShellVersion": "12.3",
                             "retentionInterval": "PT1H",
                             "timeout": "PT1H",
-                            "arguments": "[format('-regions \"{0}\" -rgName \"{1}\" -configIds \"{2}\" -connSubId \"{3}\"', parameters('location'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                            "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
                             "scriptContent": "
                                 param(
-                                    [Parameter(Mandatory=$true, HelpMessage=\"Location for deployment.\")]
                                     [string]
-                                    $regions,
+                                    $location,
 
-                                    [Parameter(Mandatory=$true, HelpMessage=\"Resource Group Name.\")]
+                                    [string]
+                                    $locationSecond,
+
                                     [string]
                                     $rgName,
 
-                                    [Parameter(Mandatory=$true, HelpMessage=\"Configuration IDs.\")]
                                     [string]
                                     $configIds,
 
-                                    [Parameter(Mandatory=$true, HelpMessage=\"Connectivity subscription id.\")]
                                     [string]
                                     $connSubId
                                 )
+
+                                $regions = @($location, $locationSecond)
 
                                 Select-AzSubscription -SubscriptionId $connSubId
 
