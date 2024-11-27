@@ -44,6 +44,9 @@ AzAdvertizer also updates once per day!
 
 As part of a default deployment configuration, policy and policy set definitions are deployed at multiple levels within the Azure landing zone Management Group hierarchy as depicted within the below diagram.
 
+> [!IMPORTANT]
+> As part of a default deployment configuration, policy and policy set definitions are assigned only at the intermediary management group created during the deployment and at other management groups within the hierarchy. Our automation does not assign any policies at the root management group level. This approach aligns with the Cloud Adoption Framework's best practices for Azure Policy assignment, ensuring clear delineation of policy application and avoiding unintended policy inheritance across the entire tenant. By placing policies only at the intermediary root and subordinate management groups, we maintain compliance, flexibility, and alignment with organizational governance requirements.
+
 ![image](./media/MgmtGroups_Policies_v0.1.svg)
 
 The subsequent sections will provide a summary of policy sets and policy set definitions applied at each level of the Management Group hierarchy.
