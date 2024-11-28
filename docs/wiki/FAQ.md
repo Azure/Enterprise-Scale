@@ -155,11 +155,7 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
   - `<Resource Prefix (Root ID)>-decommissioned`
   - `<Resource Prefix (Root ID)>-sandbox`
 
-## Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?
-
-**Update January 2024** We have been working on the removal of MMA from ALZ and the first step in the overall removal process is to update the ALZ Portal reference implementation (greenfield deployments) which has now been updated. Our next step is to work on the deployment to Terraform and Bicep reference implementations which requires significant investment to minimise impact to existing customers and providing clear guidance for the transition. For more details please see [Azure Monitor Agent Update](./ALZ-AMA-Update.md).
-
-### What if we are not ready to make the switch and migrate, right now?
+### What if we are not ready to make the switch and migrate to AMA, right now?
 
 Another good question. You will need to plan, and complete, the migration to the Azure Monitor Agent before the Log Analytics Agent is retired as [documented here.](https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/)
 
