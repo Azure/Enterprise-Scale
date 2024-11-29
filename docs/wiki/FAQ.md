@@ -159,7 +159,7 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
 
 ### What if we are not ready to make the switch (from MMA) and migrate to AMA, right now?
 
-Another good question. You will need to plan, and complete, the migration to the Azure Monitor Agent as soon as possible as the Log Analytics Agent has retired as [documented here.](https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/)
+The log analytics agent (MMA) has retired as documented [here]( https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/). Cloud ingestion services will gradually reduce support for MMA agents, which may result in compatibility issues over time. Ingestion for MMA will remain unchanged until February 1, 2025. You need to complete the migration to the Azure Monitor Agent before that date. 
 
 ## Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
 
