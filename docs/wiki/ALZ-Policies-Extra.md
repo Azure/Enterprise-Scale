@@ -10,6 +10,8 @@ ALZ provides several additional policies that are not assigned by default but th
 
 | Policy | Description | Notes |
 |------------|-------------|-------------|
+| Audit-Tags-Mandatory | Audit for mandatory tags on resources | Audits resources to ensure they have required tags based on tag array. Does not apply to resource groups. |
+| Audit-Tags-Mandatory-RG | Audit for mandatory tags on resource groups | Audits resource groups to ensure they have required tags based on tag array. |
 | Deny-Appgw-Without-Waf | Application Gateway should be deployed with WAF enabled | Use to ensure Application Gateways are deployed with Web Application Firewall enabled |
 | Deny-Private-Dns-Zones | Deny the creation of private DNS | For organizations that centralize core networking functions, use this policy to prevent the creation of additional Private DNS Zones under specific scopes |
 | Deny-Subnet-Without-Penp | Subnets without Private Endpoint Network Policies enabled should be denied | This policy denies the creation of a subnet without Private Endpoint Network Policies enabled. This policy is intended for 'workload' subnets, not 'central infrastructure' (aka, 'hub') subnets. |
@@ -18,6 +20,7 @@ ALZ provides several additional policies that are not assigned by default but th
 | Deny-Vnet-Peering | Deny vNet peering | Use to prevent vNet peering under specific scopes (e.g., Sandbox management group) |
 | Deny-Vnet-Peering-To-Non-Approved-Vnets | Deny vNet peering to non-approved vNets | Use to control vNet peering under specific scopes, like in the Corp management group, only allow peering to the hub vNet. |
 | Deploy-Budget | Deploy a default budget on all subscriptions under the assigned scope | Set a default budget for a specific scope, like setting a $500 budget on all subscriptions in the Sandbox management group |
+|Deploy-Sql-Security_20240529| Deploy-SQL Database built-in SQL security configuration| Deploy auditing, Alert, TDE and SQL vulnerability to SQL Databases when it not exist in the deployment|
 | Deploy-Vnet-Hubspoke | Deploy Virtual Network with peering to the hub | Automatically peer a new virtual network with the hub, for example, in the Corp management group |
 | Deploy-Windows-DomainJoin | Deploy Windows Domain Join Extension with Key Vault configuration | Windows Domain Join a virtual machine using domain name and password stored in Key Vault as secrets |
 
