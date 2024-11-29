@@ -57,6 +57,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the policy and policySet definition API version `2023-04-01` to supporting policy versioning. In this repo, this is used in the master policies.json and initiatives.json files, that are built from individual policy and initiative files in the src folder.
 - Added description for custom ALZ policy [Deny-Subnet-Without-Penp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Penp.html) to the [ALZ Policies Extra](./ALZ-Policies-Extra) wiki page.
 - Updated initiative [Enforce-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) `AppServiceMinTlsVersion` parameter to include TLS version 1.3 (as supported by the policy).
+- Added new custom policies [Audit-Tags-Mandatory](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory.html) and [Audit-Tags-Mandatory-Rg](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory-Rg.html) to support auditing for the existence of mandatory tags (based on an array of tags). Not assigned by default.
 
 ### November 2024
 

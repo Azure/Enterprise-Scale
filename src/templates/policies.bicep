@@ -50,6 +50,8 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PublicIpAddresses-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-ServerFarms-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-AzureHybridBenefit.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-Tags-Mandatory.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-Tags-Mandatory-Rg.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppGW-Without-WAF.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppServiceApiApp-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppServiceFunctionApp-http.json')
