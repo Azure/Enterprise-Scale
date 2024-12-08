@@ -158,10 +158,11 @@
 
                     #Register all resource providers
                     $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
+                    $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
 
                     foreach ($sub in $subs) {
                         Select-AzSubscription -SubscriptionId $sub.id
-                        Get-AzResourceProvider -ListAvailable | where {$_.RegistrationState -eq \"NotRegistered\"} | Register-AzResourceProvider
+                        Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -eq \"NotRegistered\"} | Register-AzResourceProvider
                     }
                     
                     #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
