@@ -156,15 +156,6 @@
                     #API call to register the Microsoft.Network provider against intermediate resource group for AVNM
                     Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
 
-                    #Register all resource providers
-                    $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
-                    $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
-
-                    foreach ($sub in $subs) {
-                        Select-AzSubscription -SubscriptionId $sub.id
-                        Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -eq \"NotRegistered\"} | Register-AzResourceProvider
-                    }
-                    
                     #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
                     Start-Sleep -Duration (New-TimeSpan -Minutes 20)
 
@@ -177,6 +168,15 @@
                       Start-Sleep -Seconds 300
                       Write-Output 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
                     } while ($result.StatusCode -ne 200 -and $count -lt 10)
+
+                    #Register all resource providers
+                    $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
+                    $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
+
+                    foreach ($sub in $subs) {
+                        Select-AzSubscription -SubscriptionId $sub.id
+                        Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -eq \"NotRegistered\"} | Register-AzResourceProvider
+                    }
                 "
               },
               "metadata": {
