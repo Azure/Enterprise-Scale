@@ -142,7 +142,7 @@
                 }
               },
               "properties": {
-                "azPowerShellVersion": "12.3",
+                "azPowerShellVersion": "13.0",
                 "retentionInterval": "PT1H",
                 "timeout": "PT1H",
                 "arguments": "[format('-eslzRootName \"{0}\"', parameters('eslzRootName'))]",
@@ -153,7 +153,7 @@
                         $eslzRootName
                     )
 
-                    #One initial call to register the provider for good measure
+                    #API call to register the Microsoft.Network provider against intermediate resource group for AVNM
                     Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
 
                     #Register all resource providers
@@ -166,7 +166,7 @@
                     }
                     
                     #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
-                    Start-Sleep -Duration (New-TimeSpan -Minutes 10)
+                    Start-Sleep -Duration (New-TimeSpan -Minutes 20)
 
                     $result = \"\"
                     $count = 0
@@ -174,7 +174,7 @@
                     do {
                       $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
                       $count++
-                      Start-Sleep -Seconds 30
+                      Start-Sleep -Seconds 10
                       Write-Output 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
                     } while ($result.StatusCode -ne 200 -and $count -lt 10)
                 "
