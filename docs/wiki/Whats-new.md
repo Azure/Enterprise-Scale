@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2024](#december-2024)
   - [November 2024](#november-2024)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [October 2024](#october-2024)
@@ -48,6 +49,10 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### December 2024
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-12-10). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
 ### November 2024
 
