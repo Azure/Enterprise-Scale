@@ -166,7 +166,7 @@
                       $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
                       $count++
                       Start-Sleep -Seconds 30
-                      Write-Output 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
+                      Write-Host 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
                     } while ($result.StatusCode -ne 200 -and $count -lt 10)
 
                     #Register all resource providers
@@ -175,7 +175,8 @@
 
                     foreach ($sub in $subs) {
                         Select-AzSubscription -SubscriptionId $sub.id
-                        Get-AzResourceProvider -ProviderNamespace $rps | Register-AzResourceProvider
+                        Write-Host 'Registering resource providers for subscription: ' $sub.id
+                        Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -ne \"Registered\"} | Register-AzResourceProvider
                     }
                 "
               },
