@@ -33,7 +33,7 @@
       {
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2022-09-01",
-        "name": "alz-prerequisites",
+        "name": "alz-prerequisites-001",
         "location": "[parameters('location')]",
         "subscriptionId": "[parameters('managementSubscriptionId')]",
         "properties": {
@@ -53,6 +53,9 @@
                     "apiVersion": "2022-09-01",
                     "name": "alz-prerequisites-uai",
                     "resourceGroup": "[parameters('resourceGroupName')]",
+                    "dependsOn": [
+                        "[format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), parameters('resourceGroupName'))]"
+                    ],
                     "properties": {
                     "expressionEvaluationOptions": {
                         "scope": "inner"
@@ -60,10 +63,13 @@
                     "mode": "Incremental",
                     "parameters": {
                         "location": {
-                        "value": "[parameters('location')]"
+                            "value": "[parameters('location')]"
                         },
-                        "eslzRootName": {
-                        "value": "[parameters('eslzRootName')]"
+                        "managementSubscriptionId": {
+                            "value": "[parameters('managementSubscriptionId')]"
+                        },
+                        "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                         }
                     },
                     "template": {
@@ -73,70 +79,84 @@
                             "location": {
                                 "type": "string"
                             },
-                            "eslzRootName": {
+                            "managementSubscriptionId": {
+                                "type": "string"
+                            },
+                            "resourceGroupName": {
                                 "type": "string"
                             }
                         },
                         "variables": {},
                         "resources": [
-                        {
-                            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-                            "apiVersion": "2023-07-31-preview",
-                            "name": "uai-prereq",
-                            "location": "[parameters('location')]",
-                            "metadata": {
-                                "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                            {
+                                "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                                "apiVersion": "2023-07-31-preview",
+                                "name": "uai-alz-prereq",
+                                "location": "[parameters('location')]"
                             }
-                        },
-                        {
-                            "type": "Microsoft.Authorization/roleAssignments",
-                            "apiVersion": "2022-04-01",
-                            "name": "[guid(parameters('eslzRootName'), 'uai-prereq')]",
-                            "scope": "[format('/providers/Microsoft.Management/managementGroups/{0}', parameters('eslzRootName'))]",
-                            "properties": {
-                                "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
-                                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-prereq'), '2023-07-31-preview').principalId]",
-                                "principalType": "ServicePrincipal"
-                            },
-                            "dependsOn": [
-                                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-prereq')]"
-                            ],
-                            "metadata": {
-                                "description": "This role assignment grants the user assigned identity the Contributor role on the resource group."
-                            }
-                        }
                         ],
                         "outputs": {
-                        "userAssignedIdentityId": {
-                            "type": "string",
-                            "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-prereq')]"
-                        }
+                            "userAssignedIdentityId": {
+                                "type": "string",
+                                "value": "[resourceId(parameters('managementSubscriptionId'),parameters('resourceGroupName'),'Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]"
+                            }
                         }
                     }
-                    },
-                    "dependsOn": [
-                        "[format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), parameters('resourceGroupName'))]"
-                    ]
-                },
+                    }
+                }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2022-04-01",
+        "name": "[guid(format('alz-prerequisites-002-{0}', parameters('location')))]",
+        "location": "[parameters('location')]",
+        "properties": {
+            "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+            "principalId": "[reference(resourceId(parameters('managementSubscriptionId'),parameters('resourceGroupName'),'Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq'), '2023-07-31-preview').principalId]",
+            "principalType": "ServicePrincipal"
+        },
+        "dependsOn": [
+            "alz-prerequisites-001"
+        ]
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2022-09-01",
+        "name": "alz-prerequisites-003",
+        "location": "[parameters('location')]",
+        "subscriptionId": "[parameters('managementSubscriptionId')]",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": [
                 {
                     "type": "Microsoft.Resources/deployments",
                     "apiVersion": "2022-09-01",
-                    "name": "[format('ds-{0}-prereqs', parameters('location'))]",
+                    "name": "alz-prereq-ds",
                     "resourceGroup": "[parameters('resourceGroupName')]",
+                    "dependsOn": [],
                     "properties": {
-                    "expressionEvaluationOptions": {
-                        "scope": "inner"
+                        "expressionEvaluationOptions": {
+                            "scope": "inner"
                     },
                     "mode": "Incremental",
                     "parameters": {
                         "location": {
                         "value": "[parameters('location')]"
                         },
-                        "userAssignedIdentityId": {
-                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
-                        },
                         "eslzRootName": {
                         "value": "[parameters('eslzRootName')]"
+                        },
+                        "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                        },
+                        "resourceGroupName": {
+                        "value": "[parameters('resourceGroupName')]"
                         }
                     },
                     "template": {
@@ -149,7 +169,10 @@
                             "eslzRootName":{
                                 "type": "string"
                             },
-                            "userAssignedIdentityId": {
+                            "managementSubscriptionId": {
+                                "type": "string"
+                            },
+                            "resourceGroupName": {
                                 "type": "string"
                             }
                         },
@@ -161,49 +184,49 @@
                             "location": "[parameters('location')]",
                             "kind": "AzurePowerShell",
                             "identity": {
-                            "type": "UserAssigned",
-                            "userAssignedIdentities": {
-                                "[format('{0}', parameters('userAssignedIdentityId'))]": {}
-                            }
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                    "[resourceId(parameters('managementSubscriptionId'),parameters('resourceGroupName'),'Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]": {}
+                                }
                             },
                             "properties": {
-                            "azPowerShellVersion": "12.3",
-                            "retentionInterval": "PT1H",
-                            "timeout": "PT2H",
-                            "arguments": "[format('-eslzRootName \"{0}\"', parameters('eslzRootName'))]",
-                            "scriptContent": "
-                                param(
-                                    [Parameter(Mandatory=$true, HelpMessage=\"Enter the ESLZ root name.\")]
-                                    [string]
-                                    $eslzRootName
-                                )
-            
-                                #API call to register the Microsoft.Network provider against intermediate resource group for AVNM
-                                Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
-            
-                                #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
-                                Start-Sleep -Duration (New-TimeSpan -Minutes 10)
-            
-                                $result = \"\"
-                                $count = 0
-                                
-                                do {
-                                    $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
-                                    $count++
-                                    Start-Sleep -Seconds 30
-                                    Write-Host 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
-                                } while ($result.StatusCode -ne 200 -and $count -lt 10)
-            
-                                #Register all resource providers
-                                $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
-                                $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
-            
-                                foreach ($sub in $subs) {
-                                    Select-AzSubscription -SubscriptionId $sub.id
-                                    Write-Host 'Registering resource providers for subscription: ' $sub.id
-                                    Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -ne \"Registered\"} | Register-AzResourceProvider
-                                }
-                            "
+                                "azPowerShellVersion": "12.3",
+                                "retentionInterval": "PT1H",
+                                "timeout": "PT2H",
+                                "arguments": "[format('-eslzRootName \"{0}\"', parameters('eslzRootName'))]",
+                                "scriptContent": "
+                                    param(
+                                        [Parameter(Mandatory=$true, HelpMessage=\"Enter the ESLZ root name.\")]
+                                        [string]
+                                        $eslzRootName
+                                    )
+                
+                                    #API call to register the Microsoft.Network provider against intermediate resource group for AVNM
+                                    Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
+                
+                                    #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
+                                    Start-Sleep -Duration (New-TimeSpan -Minutes 10)
+                
+                                    $result = \"\"
+                                    $count = 0
+                                    
+                                    do {
+                                        $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
+                                        $count++
+                                        Start-Sleep -Seconds 30
+                                        Write-Host 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
+                                    } while ($result.StatusCode -ne 200 -and $count -lt 10)
+                
+                                    #Register all resource providers
+                                    $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
+                                    $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
+                
+                                    foreach ($sub in $subs) {
+                                        Select-AzSubscription -SubscriptionId $sub.id
+                                        Write-Host 'Registering resource providers for subscription: ' $sub.id
+                                        Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -ne \"Registered\"} | Register-AzResourceProvider
+                                    }
+                                "
                             },
                             "metadata": {
                             "description": "Create a Deployment Script resource to perform the prerequisites."
@@ -212,16 +235,15 @@
                         ],
                         "outputs": {}
                     }
-                    },
-                    "dependsOn": [
-                        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai')]",
-                        "[format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), parameters('resourceGroupName'))]"
-
-                    ]
+                    }
                 }
             ]
           }
-        }
+        },
+        "dependsOn": [
+            "alz-prerequisites-001",
+            "[guid(format('alz-prerequisites-002-{0}', parameters('location')))]"
+        ]
       }
     ],
     "outputs": {}
