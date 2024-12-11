@@ -1,0 +1,146 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.32.4.45862",
+      "templateHash": "4591170525781576280"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "uksouth"
+    },
+    "eslzRootName": {
+      "type": "string",
+      "defaultValue": "ALZ1"
+    },
+    "managementSubscriptionId": {
+      "type": "string",
+      "defaultValue": "0f808fc8-eaf7-4731-bf31-8a318dcde228"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(parameters('eslzRootName'), parameters('managementSubscriptionId'), parameters('location'))]",
+      "properties": {
+        "principalId": "[reference(subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alzPreReqsDeploy'), '2022-09-01').outputs.uaiPrincipalId.value]",
+        "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alzPreReqsDeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "alzPreReqsDeploy",
+      "subscriptionId": "[parameters('managementSubscriptionId')]",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.32.4.45862",
+              "templateHash": "5158946764779715563"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/resourceGroups",
+              "apiVersion": "2024-07-01",
+              "name": "rg-alz-prereqs",
+              "location": "[parameters('location')]"
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "uaiDeployment",
+              "resourceGroup": "rg-alz-prereqs",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "location": {
+                    "value": "[parameters('location')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.32.4.45862",
+                      "templateHash": "8078331262112599049"
+                    }
+                  },
+                  "parameters": {
+                    "location": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                      "apiVersion": "2023-07-31-preview",
+                      "name": "uai-alz-prereq",
+                      "location": "[parameters('location')]"
+                    }
+                  ],
+                  "outputs": {
+                    "uaiResourceId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]"
+                    },
+                    "uaiPrincipalId": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq'), '2023-07-31-preview').principalId]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', 'rg-alz-prereqs')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "uaiResourceId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, 'rg-alz-prereqs'), 'Microsoft.Resources/deployments', 'uaiDeployment'), '2022-09-01').outputs.uaiResourceId.value]"
+            },
+            "uaiPrincipalId": {
+              "type": "string",
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, 'rg-alz-prereqs'), 'Microsoft.Resources/deployments', 'uaiDeployment'), '2022-09-01').outputs.uaiPrincipalId.value]"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

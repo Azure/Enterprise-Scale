@@ -37,10 +37,35 @@
         "location": "[parameters('location')]",
         "subscriptionId": "[parameters('managementSubscriptionId')]",
         "properties": {
+          "expressionEvaluationOptions": {
+            "scope": "inner"
+            },
           "mode": "Incremental",
+          "parameters": {
+            "location": {
+              "value": "[parameters('location')]"
+            },
+            "managementSubscriptionId": {
+              "value": "[parameters('managementSubscriptionId')]"
+            },
+            "resourceGroupName": {
+              "value": "[parameters('resourceGroupName')]"
+            }
+          },
           "template": {
             "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
             "contentVersion": "1.0.0.0",
+            "parameters": {
+              "location": {
+                "type": "string"
+              },
+              "managementSubscriptionId": {
+                "type": "string"
+              },
+              "resourceGroupName": {
+                "type": "string"
+              }
+            },
             "resources": [
                 {
                     "type": "Microsoft.Resources/resourceGroups",
@@ -54,57 +79,72 @@
                     "name": "alz-prerequisites-uai",
                     "resourceGroup": "[parameters('resourceGroupName')]",
                     "dependsOn": [
-                        "[format('/subscriptions/{0}/resourceGroups/{1}', parameters('managementSubscriptionId'), parameters('resourceGroupName'))]"
+                        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]"
                     ],
                     "properties": {
-                    "expressionEvaluationOptions": {
-                        "scope": "inner"
-                    },
-                    "mode": "Incremental",
-                    "parameters": {
-                        "location": {
-                            "value": "[parameters('location')]"
+                        "expressionEvaluationOptions": {
+                            "scope": "inner"
                         },
-                        "managementSubscriptionId": {
-                            "value": "[parameters('managementSubscriptionId')]"
-                        },
-                        "resourceGroupName": {
-                            "value": "[parameters('resourceGroupName')]"
-                        }
-                    },
-                    "template": {
-                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                        "contentVersion": "1.0.0.0",
+                        "mode": "Incremental",
                         "parameters": {
                             "location": {
-                                "type": "string"
+                                "value": "[parameters('location')]"
                             },
                             "managementSubscriptionId": {
-                                "type": "string"
+                                "value": "[parameters('managementSubscriptionId')]"
                             },
                             "resourceGroupName": {
-                                "type": "string"
+                                "value": "[parameters('resourceGroupName')]"
                             }
                         },
-                        "variables": {},
-                        "resources": [
-                            {
-                                "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-                                "apiVersion": "2023-07-31-preview",
-                                "name": "uai-alz-prereq",
-                                "location": "[parameters('location')]"
-                            }
-                        ],
-                        "outputs": {
-                            "userAssignedIdentityId": {
-                                "type": "string",
-                                "value": "[resourceId(parameters('managementSubscriptionId'),parameters('resourceGroupName'),'Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]"
+                        "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                                "location": {
+                                    "type": "string"
+                                },
+                                "managementSubscriptionId": {
+                                    "type": "string"
+                                },
+                                "resourceGroupName": {
+                                    "type": "string"
+                                }
+                            },
+                            "variables": {},
+                            "resources": [
+                                {
+                                    "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                                    "apiVersion": "2023-07-31-preview",
+                                    "name": "uai-alz-prereq",
+                                    "location": "[parameters('location')]"
+                                }
+                            ],
+                            "outputs": {
+                                "userAssignedIdentityId": {
+                                    "type": "string",
+                                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]"
+                                },
+                                "uaiPrincipalId": {
+                                    "type": "string",
+                                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq'), '2023-07-31-preview').principalId]"
+                                }
                             }
                         }
                     }
-                    }
                 }
-            ]
+            ],
+            "outputs": {
+                "userAssignedIdentityId": {
+                    "type": "string",
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                },
+                "uaiPrincipalId": {
+                    "type": "string",
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.uaiPrincipalId.value]"
+                }
+            }
+
           }
         }
       },
@@ -115,11 +155,11 @@
         "location": "[parameters('location')]",
         "properties": {
             "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
-            "principalId": "[reference(resourceId(parameters('managementSubscriptionId'),parameters('resourceGroupName'),'Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq'), '2023-07-31-preview').principalId]",
+            "principalId": "[reference(subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alz-prerequisites-001'), '2022-09-01').outputs.uaiPrincipalId.value]",
             "principalType": "ServicePrincipal"
         },
         "dependsOn": [
-            "alz-prerequisites-001"
+            "[subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alz-prerequisites-001')]"
         ]
       },
       {
@@ -186,7 +226,7 @@
                             "identity": {
                                 "type": "UserAssigned",
                                 "userAssignedIdentities": {
-                                    "[resourceId(parameters('managementSubscriptionId'),parameters('resourceGroupName'),'Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]": {}
+                                    "[reference(subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alz-prerequisites-001'), '2022-09-01').outputs.userAssignedIdentityId.value]": {}
                                 }
                             },
                             "properties": {
