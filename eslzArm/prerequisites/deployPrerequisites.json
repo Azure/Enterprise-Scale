@@ -243,21 +243,8 @@
                 
                                     #API call to register the Microsoft.Network provider against intermediate resource group for AVNM
                                     Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
-                
-                                    #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
-                                    Start-Sleep -Duration (New-TimeSpan -Minutes 10)
-                
-                                    $result = \"\"
-                                    $count = 0
-                                    
-                                    do {
-                                        $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
-                                        $count++
-                                        Start-Sleep -Seconds 30
-                                        Write-Host 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
-                                    } while ($result.StatusCode -ne 200 -and $count -lt 10)
-                
-                                    #Register all resource providers
+
+                                    #Register all resource providers required for ALZ
                                     $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
                                     $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
                 
@@ -266,6 +253,19 @@
                                         Select-AzSubscription -SubscriptionId $sub.subscriptionId
                                         Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -ne \"Registered\"} | Register-AzResourceProvider
                                     }
+                
+                                    #Sleep for XX minutes to wait for Management Groups to load to cache before assignments
+                                    Start-Sleep -Duration (New-TimeSpan -Minutes 10)
+                
+                                    #$result = \"\"
+                                    #$count = 0
+                                    
+                                    #do {
+                                    #    $result = Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
+                                    #    $count++
+                                    #    Start-Sleep -Seconds 30
+                                    #    Write-Host 'MG RP Register - Status Code: ' $result.StatusCode ' Count: ' $count
+                                    #} while ($result.StatusCode -ne 200 -and $count -lt 10)
                                 "
                             },
                             "metadata": {
