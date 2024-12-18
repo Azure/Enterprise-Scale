@@ -63,6 +63,9 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
                     "managementGroupScope": {
                         "value": "[parameters('managementGroupScope')]"
                     }
@@ -72,6 +75,9 @@
                     "contentVersion": "1.0.0.0",
                     "parameters": {
                         "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
                             "type": "string"
                         },
                         "managementGroupScope": {
@@ -104,32 +110,42 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', 'ng-static')]",
+                            "name": "[format('{0}/{1}', 'avnm', 'avnm-ng-all')]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
-                                "description": "Network Group - Static"
+                                "description": "Network Group - All Landing Zone virtual networks"
                             },
                             "dependsOn": [
                                 "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
                             ],
                             "metadata": {
-                                "description": "This is the static network group for the spoke VNETs, and hub when topology is mesh."
+                                "description": "This is the dynamic network group for all ALZ VNETs."
                             }
                         },
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', 'ng-dynamic')]",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
-                                "description": "Network Group - Dynamic"
+                                "description": "[format('Network Group - Region - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
                                 "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
-                            ],
-                            "metadata": {
-                                "description": "This is the dynamic network group for the spoke VNETs, and hub when topology is mesh."
-                            }
+                            ]
+                        },
+                        {
+                            "condition": "[not(empty(parameters('locationSecondary')))]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Region - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ]
                         },
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations",
@@ -148,16 +164,20 @@
                             "name": "[format('{0}/{1}/{2}', 'avnm', 'sac-alz', 'rc-ALZ')]",
                             "dependsOn": [
                                 "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]",
-                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'ng-static')]",
-                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'ng-dynamic')]"
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary')))]"
                             ],
                             "properties": {
                                 "appliesToGroups": [
                                     {
-                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'ng-static')]"
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]"
                                     },
                                     {
-                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'ng-dynamic')]"
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('location')))]"
+                                    },
+                                    {
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary')))]"
                                     }
 
                                 ]
