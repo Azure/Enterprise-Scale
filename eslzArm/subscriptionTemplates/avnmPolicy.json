@@ -13,28 +13,68 @@
             "type": "string",
             "metadata": {
                 "displayName": "location",
-                "description": "Location for all resources."
+                "description": "Primary region for all resources."
             },
             "defaultValue": "[deployment().location]"
+        },
+        "locationSecondary": {
+            "type": "string",
+            "metadata": {
+                "displayName": "location",
+                "description": "Secondary region for all resources."
+            },
+            "defaultValue": ""
         },
         "connectivitySubscriptionId": {
             "type": "string",
             "metadata": {
                 "description": "Provide the subscriptionId you will place into the management group"
             }
+        },
+        "managementGroups": {
+            "type": "array",
+            "metadata": {
+                "description": "Management Groups list"
+            },
+            "defaultValue": [
+                "sandbox",
+                "online",
+                "corp",
+                "identity",
+                "management",
+                "connectivity",
+                "decommissioned"
+            ]
+
         }
     },
     "variables": {
-        "networkGroupId": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]"
+        "networkGroupIdAll": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]",
+        "networkGroupIdRegion1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
+        "networkGroupIdRegion2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdCorp1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('location')))]",
+        "networkGroupIdCorp2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdOnline1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('location')))]",
+        "networkGroupIdOnline2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdIdentity1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('location')))]",
+        "networkGroupIdIdentity2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdManagement1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('location')))]",
+        "networkGroupIdManagement2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdConnectivity1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('location')))]",
+        "networkGroupIdConnectivity2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdSandbox1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('location')))]",
+        "networkGroupIdSandbox2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('locationSecondary')))]",
+        "networkGroupIdDecommissioned1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('location')))]",
+        "networkGroupIdDecommissioned2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('locationSecondary')))]"
     },
     "resources": [
         {
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupId'))]",
+            "name": "[uniqueString(variables('networkGroupIdAll'))]",
             "properties": {
-                "description": "AVNM dynamic group membership Policy",
-                "displayName": "AVNM dynamic group membership Policy",
+                "description": "AVNM intermediate root group membership Policy",
+                "displayName": "AVNM intermediate root group membership Policy",
                 "mode": "Microsoft.Network.Data",
                 "policyRule": {
                     "if": {
@@ -48,35 +88,136 @@
                     "then": {
                         "effect": "addToNetworkGroup",
                         "details": {
-                            "networkGroupId": "[variables('networkGroupId')]"
+                            "networkGroupId": "[variables('networkGroupIdAll')]"
                         }
                     }
                 }
-            },
-            "metadata": {
-                "description": "This is a Policy definition for dynamic group membership"
             }
         },
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupId'))]",
+            "name": "[uniqueString(variables('networkGroupIdAll'))]",
             "location": "[parameters('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
             "properties": {
-                "description": "AVNM dynamic group membership Policy",
-                "displayName": "AVNM dynamic group membership Policy",
+                "description": "AVNM intermediate root group membership Policy",
+                "displayName": "AVNM intermediate root group membership Policy",
                 "enforcementMode": "Default",
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupId')))]"
+                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdAll')))]"
             },
             "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupId')))]"
-            ],
-            "metadata": {
-                "description": "Assigns above policy for dynamic group membership"
+                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdAll')))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2023-04-01",
+            "name": "AVNMRegionalGroupMembershipPolicy",
+            "properties": {
+                "description": "AVNM dynamic group membership Policy",
+                "displayName": "AVNM dynamic group membership Policy",
+                "mode": "Microsoft.Network.Data",
+                "parameters": {
+                    "networkGroupId": {
+                        "type": "String",
+                        "metadata": {
+                            "displayName": "Network Group ID",
+                            "description": "The ID of the network group to add the virtual network to."
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/virtualNetworks"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "addToNetworkGroup",
+                        "details": {
+                            "networkGroupId": "[[parameters('networkGroupId')]"
+                        }
+                    }
+                }
             }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2023-04-01",
+            "name": "testAVNMregional1",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "AVNM intermediate root group membership Policy",
+                "displayName": "AVNM intermediate root group membership Policy",
+                "enforcementMode": "Default",
+                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', 'AVNMRegionalGroupMembershipPolicy')]",
+                "resourceSelectors": [
+                    {
+                        "name": "Regions",
+                        "selectors": [
+                        {
+                            "kind": "resourceLocation",
+                            "in": [
+                                "[parameters('location')]"
+                            ]
+                        }
+                        ]
+                    }
+                ],
+                "parameters": {
+                    "networkGroupId": {
+                        "value": "[variables('networkGroupIdRegion1')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "Microsoft.Authorization/policyDefinitions/AVNMRegionalGroupMembershipPolicy'"
+            ]
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2023-04-01",
+            "name": "testAVNMregional2",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "AVNM intermediate root group membership Policy",
+                "displayName": "AVNM intermediate root group membership Policy",
+                "enforcementMode": "Default",
+                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', 'AVNMRegionalGroupMembershipPolicy')]",
+                "resourceSelectors": [
+                    {
+                        "name": "Regions",
+                        "selectors": [
+                        {
+                            "kind": "resourceLocation",
+                            "in": [
+                                "[parameters('locationSecondary')]"
+                            ]
+                        }
+                        ]
+                    }
+                ],
+                "parameters": {
+                    "networkGroupId": {
+                        "value": "[variables('networkGroupIdRegion2')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "Microsoft.Authorization/policyDefinitions/AVNMRegionalGroupMembershipPolicy'"
+            ]
         }
     ]
 }
