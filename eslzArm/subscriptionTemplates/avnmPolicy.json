@@ -30,12 +30,19 @@
             "metadata": {
                 "description": "Provide the subscriptionId you will place into the management group"
             }
+        },
+        "enableSecondaryRegion": {
+            "type": "string",
+            "metadata": {
+                "description": "Enable secondary region for instances deploying in multiple regions"
+            },
+            "defaultValue": "no"
         }
     },
     "variables": {
         "networkGroupIdAll": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]",
         "networkGroupIdRegion1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
-        "networkGroupIdRegion2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary'))))]"
+        "networkGroupIdRegion2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary'))))]"
     },
     "resources": [
         {
@@ -140,7 +147,7 @@
             ]
         },
         {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
+            "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2023-04-01",
             "name": "[uniqueString(variables('networkGroupIdRegion2'))]",
@@ -167,7 +174,7 @@
             }
         },
         {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
+            "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2023-04-01",
             "name": "[uniqueString(variables('networkGroupIdRegion2'))]",
@@ -221,6 +228,9 @@
                     },
                     "connectivitySubscriptionId": {
                         "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 },
                 "template": {
@@ -238,11 +248,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -295,7 +308,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -321,7 +334,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
@@ -361,18 +374,21 @@
                 },
                 "mode": "Incremental",
                 "parameters": {
-                "location": {
-                    "value": "[parameters('location')]"
-                },
-                "locationSecondary": {
-                    "value": "[parameters('locationSecondary')]"
-                },
-                "mgmtGroup": {
-                    "value": "[format('{0}-online', parameters('topLevelManagementGroupPrefix'))]"
-                },
-                "connectivitySubscriptionId": {
-                    "value": "[parameters('connectivitySubscriptionId')]"
-                }
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
+                    "mgmtGroup": {
+                        "value": "[format('{0}-online', parameters('topLevelManagementGroupPrefix'))]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
+                    }
                 },
                 "template": {
                 "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
@@ -389,11 +405,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -446,7 +465,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -472,7 +491,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
@@ -523,6 +542,9 @@
                     },
                     "connectivitySubscriptionId": {
                         "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 },
                 "template": {
@@ -540,11 +562,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -597,7 +622,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -623,7 +648,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
@@ -674,6 +699,9 @@
                     },
                     "connectivitySubscriptionId": {
                         "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 },
                 "template": {
@@ -691,11 +719,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -748,7 +779,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -774,7 +805,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
@@ -810,22 +841,25 @@
             "location": "[deployment().location]",
             "properties": {
                 "expressionEvaluationOptions": {
-                "scope": "inner"
+                    "scope": "inner"
                 },
                 "mode": "Incremental",
                 "parameters": {
-                "location": {
-                    "value": "[parameters('location')]"
-                },
-                "locationSecondary": {
-                    "value": "[parameters('locationSecondary')]"
-                },
-                "mgmtGroup": {
-                    "value": "[format('{0}-connectivity', parameters('topLevelManagementGroupPrefix'))]"
-                },
-                "connectivitySubscriptionId": {
-                    "value": "[parameters('connectivitySubscriptionId')]"
-                }
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
+                    "mgmtGroup": {
+                        "value": "[format('{0}-connectivity', parameters('topLevelManagementGroupPrefix'))]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
+                    }
                 },
                 "template": {
                 "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
@@ -842,11 +876,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -899,7 +936,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -925,7 +962,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
@@ -961,22 +998,25 @@
             "location": "[deployment().location]",
             "properties": {
                 "expressionEvaluationOptions": {
-                "scope": "inner"
+                    "scope": "inner"
                 },
                 "mode": "Incremental",
                 "parameters": {
-                "location": {
-                    "value": "[parameters('location')]"
-                },
-                "locationSecondary": {
-                    "value": "[parameters('locationSecondary')]"
-                },
-                "mgmtGroup": {
-                    "value": "[format('{0}-sandboxes', parameters('topLevelManagementGroupPrefix'))]"
-                },
-                "connectivitySubscriptionId": {
-                    "value": "[parameters('connectivitySubscriptionId')]"
-                }
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
+                    "mgmtGroup": {
+                        "value": "[format('{0}-sandboxes', parameters('topLevelManagementGroupPrefix'))]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
+                    }
                 },
                 "template": {
                 "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
@@ -993,11 +1033,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -1050,7 +1093,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -1076,7 +1119,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
@@ -1127,6 +1170,9 @@
                     },
                     "connectivitySubscriptionId": {
                         "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 },
                 "template": {
@@ -1144,11 +1190,14 @@
                     },
                     "connectivitySubscriptionId": {
                         "type": "string"
+                    },
+                    "enableSecondaryRegion": {
+                        "type": "string"
                     }
                 },
                 "variables": {
                     "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(empty(parameters('locationSecondary')), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('locationSecondary'))))]"
+                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'no'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('locationSecondary'))))]"
                 },
                 "resources": [
                     {
@@ -1201,7 +1250,7 @@
                         ]
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyDefinitions",
                         "apiVersion": "2023-04-01",
                         "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
@@ -1227,7 +1276,7 @@
                         }
                     },
                     {
-                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "condition": "[equals(parameters('enableSecondaryRegion'), 'yes')]",
                         "type": "Microsoft.Authorization/policyAssignments",
                         "apiVersion": "2023-04-01",
                         "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",

@@ -1700,7 +1700,6 @@
             "preRequisites": "[uri(deployment().properties.templateLink.uri, 'prerequisites/deployPrerequisites.json')]",
             "avnmConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/avnmConfiguration.json')]",
             "avnmPolicy": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/avnmPolicy.json')]",
-            "avnmPolicySingle": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/avnmPolicySingle.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
@@ -1839,7 +1838,6 @@
             "ascGovPolicyDeploymentName": "[take(concat('alz-Gov-ASC', variables('deploymentSuffix')), 64)]",
             "avnmConnectivityHubDeploymentName": "[take(concat('alz-AVNM', variables('deploymentSuffix')), 64)]",
             "avnmPolicyDeploymentName": "[take(concat('alz-AVNMPolicy', variables('deploymentSuffix')), 64)]",
-            "avnmPolicySingleDeploymentName": "[take(concat('alz-AVNMPolicySingle', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHubDeploymentName": "[take(concat('alz-HubSpoke', variables('deploymentSuffix')), 64)]",
             "vwanConnectivityHubDeploymentName": "[take(concat('alz-VWanHub', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityHub2DeploymentName": "[take(concat('alz-HubSpoke2', variables('deploymentSuffix')), 64)]",
@@ -5234,13 +5232,16 @@
                     },
                     "connectivitySubscriptionId": {
                         "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 }
             }
         },
         {
             // Deploying AVNM policy - multi-region
-            "condition": "[and(parameters('deployAVNM'), equals(parameters('enableSecondaryRegion'), 'yes'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "condition": "[and(parameters('deployAVNM'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('deploymentNames').avnmPolicyDeploymentName]",
@@ -5264,33 +5265,9 @@
                     },
                     "locationSecondary": {
                         "value": "[parameters('connectivityLocationSecondary')]"
-                    }
-                }
-            }
-        },
-        {
-            // Deploying AVNM policy single region
-            "condition": "[and(parameters('deployAVNM'), equals(parameters('enableSecondaryRegion'), 'no'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('connectivitySubscriptionId'))))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "[variables('deploymentNames').avnmPolicySingleDeploymentName]",
-            "location": "[deployment().location]",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').avnmConnectivityHubDeploymentName)]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').avnmPolicySingle]"
-                },
-                "parameters": {
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
                     }
                 }
             }
