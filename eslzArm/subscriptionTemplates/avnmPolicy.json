@@ -214,171 +214,475 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "name": "[format('AvnmAssignment-{0}-corp', parameters('topLevelManagementGroupPrefix'))]",
-            "scope": "[format('Microsoft.Management/managementGroups/{0}-corp', parameters('topLevelManagementGroupPrefix'))]",
+            "apiVersion": "2022-09-01",
+            "name": "policyCorp",
+            "scope": "[format('Microsoft.Management/managementGroups/{0}', format('{0}-corp', parameters('topLevelManagementGroupPrefix')))]",
             "location": "[deployment().location]",
             "properties": {
                 "expressionEvaluationOptions": {
-                    "scope": "inner"
+                "scope": "inner"
                 },
                 "mode": "Incremental",
                 "parameters": {
+                "location": {
+                    "value": "[parameters('location')]"
+                },
+                "locationSecondary": {
+                    "value": "[parameters('locationSecondary')]"
+                },
+                "mgmtGroup": {
+                    "value": "[format('{0}-corp', parameters('topLevelManagementGroupPrefix'))]"
+                },
+                "connectivitySubscriptionId": {
+                    "value": "[parameters('connectivitySubscriptionId')]"
+                }
+                },
+                "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                    "_generator": {
+                    "name": "bicep",
+                    "version": "0.32.4.45862",
+                    "templateHash": "15861206698474595241"
+                    }
+                },
+                "parameters": {
                     "location": {
-                        "value": "[parameters('location')]"
+                    "type": "string"
                     },
                     "locationSecondary": {
-                        "value": "[parameters('locationSecondary')]"
+                    "type": "string"
+                    },
+                    "mgmtGroup": {
+                    "type": "string"
+                    },
+                    "connectivitySubscriptionId": {
+                    "type": "string"
                     }
                 },
                 "variables": {
-                    "networkGroupIdCorp1": {
-                        "value": "[variables('networkGroupIdCorp1')]"
-                    },
-                    "networkGroupIdCorp2": {
-                        "value": "[variables('networkGroupIdCorp2')]"
-                    }
+                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('location')))]",
+                    "networkGroupId2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary')))]"
                 },
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "location": {
-                            "type": "string"
-                        },
-                        "locationSecondary": {
-                            "type": "string"
-                        }
-                    },
-                    "variables": {
-                        "networkGroupIdCorp1": {
-                            "type": "string"
-                        },
-                        "networkGroupIdCorp2": {
-                            "type": "string"
-                        }
-                    },
-                    "resources": [
-                        {
-                            "type": "Microsoft.Authorization/policyDefinitions",
-                            "apiVersion": "2023-04-01",
-                            "name": "[uniqueString(variables('networkGroupIdCorp1'))]",
-                            "properties": {
-                                "description": "AVNM Corp management group membership Policy",
-                                "displayName": "AVNM Corp management group membership Policy",
-                                "mode": "Microsoft.Network.Data",
-                                "policyRule": {
-                                    "if": {
-                                        "allOf": [
-                                            {
-                                                "field": "type",
-                                                "equals": "Microsoft.Network/virtualNetworks"
-                                            }
-                                        ]
-                                    },
-                                    "then": {
-                                        "effect": "addToNetworkGroup",
-                                        "details": {
-                                            "networkGroupId": "[variables('networkGroupIdCorp1')]"
-                                        }
-                                    }
+                "resources": [
+                    {
+                        "type": "Microsoft.Authorization/policyDefinitions",
+                        "apiVersion": "2023-04-01",
+                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                        "properties": {
+                            "policyType": "Custom",
+                            "mode": "Microsoft.Network.Data",
+                            "policyRule": {
+                            "if": {
+                                "allOf": [
+                                {
+                                    "field": "type",
+                                    "equals": "Microsoft.Network/virtualNetworks"
+                                }
+                                ]
+                            },
+                            "then": {
+                                "effect": "addToNetworkGroup",
+                                "details": {
+                                "networkGroupId": "[variables('networkGroupId1')]"
                                 }
                             }
-                        },
-                        {
-                            "type": "Microsoft.Authorization/policyAssignments",
-                            "apiVersion": "2023-04-01",
-                            "name": "[uniqueString(variables('networkGroupIdCorp1'))]",
-                            "location": "[parameters('location')]",
-                            "identity": {
-                                "type": "SystemAssigned"
-                            },
-                            "properties": {
-                                "description": "AVNM Corp management group membership Policy",
-                                "displayName": "AVNM Corp management group membership Policy",
-                                "enforcementMode": "Default",
-                                "resourceSelectors": [
-                                    {
-                                        "name": "regionalResource",
-                                        "selectors": [
-                                            {
-                                                "kind": "ResourceLocation",
-                                                "in": [
-                                                    "[parameters('location')]"
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdCorp1')))]"
-                            },
-                            "dependsOn": [
-                                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdCorp1')))]"
-                            ]
-                        },
-                        {
-                            "condition": "[not(empty(parameters('locationSecondary')))]",
-                            "type": "Microsoft.Authorization/policyDefinitions",
-                            "apiVersion": "2023-04-01",
-                            "name": "[uniqueString(variables('networkGroupIdCorp2'))]",
-                            "properties": {
-                                "description": "AVNM Corp management group membership Policy",
-                                "displayName": "AVNM Corp management group membership Policy",
-                                "mode": "Microsoft.Network.Data",
-                                "policyRule": {
-                                    "if": {
-                                        "allOf": [
-                                            {
-                                                "field": "type",
-                                                "equals": "Microsoft.Network/virtualNetworks"
-                                            }
-                                        ]
-                                    },
-                                    "then": {
-                                        "effect": "addToNetworkGroup",
-                                        "details": {
-                                            "networkGroupId": "[variables('networkGroupIdCorp2')]"
-                                        }
-                                    }
-                                }
                             }
-                        },
-                        {
-                            "condition": "[not(empty(parameters('locationSecondary')))]",
-                            "type": "Microsoft.Authorization/policyAssignments",
-                            "apiVersion": "2023-04-01",
-                            "name": "[uniqueString(variables('networkGroupIdCorp2'))]",
-                            "location": "[parameters('locationSecondary')]",
-                            "identity": {
-                                "type": "SystemAssigned"
-                            },
-                            "properties": {
-                                "description": "AVNM intermediate root group membership Policy",
-                                "displayName": "AVNM intermediate root group membership Policy",
-                                "enforcementMode": "Default",
-                                "resourceSelectors": [
-                                    {
-                                    "name": "regionalResource",
-                                    "selectors": [
-                                    {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                        "[parameters('locationSecondary')]"
-                                        ]
-                                    }
+                        }
+                    },
+                    {
+                        "type": "Microsoft.Authorization/policyAssignments",
+                        "apiVersion": "2023-04-01",
+                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                        "properties": {
+                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                            "resourceSelectors": [
+                            {
+                                "name": "regionalResource",
+                                "selectors": [
+                                {
+                                    "kind": "ResourceLocation",
+                                    "in": [
+                                    "[parameters('location')]"
                                     ]
-                                    }
-                                ],
-                                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdCorp2')))]"
-                            },
-                            "dependsOn": [
-                                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdCorp2')))]"
+                                }
+                                ]
+                            }
                             ]
+                        },
+                        "dependsOn": [
+                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
+                        ]
+                    },
+                    {
+                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "type": "Microsoft.Authorization/policyDefinitions",
+                        "apiVersion": "2023-04-01",
+                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                        "properties": {
+                            "policyType": "Custom",
+                            "mode": "Microsoft.Network.Data",
+                            "policyRule": {
+                            "if": {
+                                "allOf": [
+                                {
+                                    "field": "type",
+                                    "equals": "Microsoft.Network/virtualNetworks"
+                                }
+                                ]
+                            },
+                            "then": {
+                                "effect": "addToNetworkGroup",
+                                "details": {
+                                "networkGroupId": "[variables('networkGroupId2')]"
+                                }
+                            }
+                            }
                         }
-                    ]
+                    },
+                    {
+                        "condition": "[not(empty(parameters('locationSecondary')))]",
+                        "type": "Microsoft.Authorization/policyAssignments",
+                        "apiVersion": "2023-04-01",
+                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                        "properties": {
+                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                            "resourceSelectors": [
+                            {
+                                "name": "regionalResource",
+                                "selectors": [
+                                {
+                                    "kind": "ResourceLocation",
+                                    "in": [
+                                    "[parameters('locationSecondary')]"
+                                    ]
+                                }
+                                ]
+                            }
+                            ]
+                        },
+                        "dependsOn": [
+                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                        ]
+                    }
+                ]
                 }
             }
         },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "policyOnline",
+            "scope": "[format('Microsoft.Management/managementGroups/{0}', format('{0}-online', parameters('topLevelManagementGroupPrefix')))]",
+            "location": "[deployment().location]",
+            "properties": {
+                "expressionEvaluationOptions": {
+                "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                "location": {
+                    "value": "[parameters('location')]"
+                },
+                "locationSecondary": {
+                    "value": "[parameters('locationSecondary')]"
+                },
+                "mgmtGroup": {
+                    "value": "[format('{0}-online', parameters('topLevelManagementGroupPrefix'))]"
+                },
+                "connectivitySubscriptionId": {
+                    "value": "[parameters('connectivitySubscriptionId')]"
+                }
+                },
+                "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                    "_generator": {
+                    "name": "bicep",
+                    "version": "0.32.4.45862",
+                    "templateHash": "15861206698474595241"
+                    }
+                },
+                "parameters": {
+                    "location": {
+                    "type": "string"
+                    },
+                    "locationSecondary": {
+                    "type": "string"
+                    },
+                    "mgmtGroup": {
+                    "type": "string"
+                    },
+                    "connectivitySubscriptionId": {
+                    "type": "string"
+                    }
+                },
+                "variables": {
+                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('location')))]",
+                    "networkGroupId2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary')))]"
+                },
+                "resources": [
+                    {
+                    "type": "Microsoft.Authorization/policyDefinitions",
+                    "apiVersion": "2023-04-01",
+                    "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                    "properties": {
+                        "policyType": "Custom",
+                        "mode": "Microsoft.Network.Data",
+                        "policyRule": {
+                        "if": {
+                            "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/virtualNetworks"
+                            }
+                            ]
+                        },
+                        "then": {
+                            "effect": "addToNetworkGroup",
+                            "details": {
+                            "networkGroupId": "[variables('networkGroupId1')]"
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    "type": "Microsoft.Authorization/policyAssignments",
+                    "apiVersion": "2023-04-01",
+                    "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                    "properties": {
+                        "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                        "resourceSelectors": [
+                        {
+                            "name": "regionalResource",
+                            "selectors": [
+                            {
+                                "kind": "ResourceLocation",
+                                "in": [
+                                "[parameters('location')]"
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
+                    ]
+                    },
+                    {
+                    "type": "Microsoft.Authorization/policyDefinitions",
+                    "apiVersion": "2023-04-01",
+                    "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                    "properties": {
+                        "policyType": "Custom",
+                        "mode": "Microsoft.Network.Data",
+                        "policyRule": {
+                        "if": {
+                            "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/virtualNetworks"
+                            }
+                            ]
+                        },
+                        "then": {
+                            "effect": "addToNetworkGroup",
+                            "details": {
+                            "networkGroupId": "[variables('networkGroupId2')]"
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    "type": "Microsoft.Authorization/policyAssignments",
+                    "apiVersion": "2023-04-01",
+                    "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                    "properties": {
+                        "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                        "resourceSelectors": [
+                        {
+                            "name": "regionalResource",
+                            "selectors": [
+                            {
+                                "kind": "ResourceLocation",
+                                "in": [
+                                "[parameters('locationSecondary')]"
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                    ]
+                    }
+                ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "policyIdentity",
+            "scope": "[format('Microsoft.Management/managementGroups/{0}', format('{0}-identity', parameters('topLevelManagementGroupPrefix')))]",
+            "location": "[deployment().location]",
+            "properties": {
+                "expressionEvaluationOptions": {
+                "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                "location": {
+                    "value": "[parameters('location')]"
+                },
+                "locationSecondary": {
+                    "value": "[parameters('locationSecondary')]"
+                },
+                "mgmtGroup": {
+                    "value": "[format('{0}-identity', parameters('topLevelManagementGroupPrefix'))]"
+                },
+                "connectivitySubscriptionId": {
+                    "value": "[parameters('connectivitySubscriptionId')]"
+                }
+                },
+                "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "metadata": {
+                    "_generator": {
+                    "name": "bicep",
+                    "version": "0.32.4.45862",
+                    "templateHash": "15861206698474595241"
+                    }
+                },
+                "parameters": {
+                    "location": {
+                    "type": "string"
+                    },
+                    "locationSecondary": {
+                    "type": "string"
+                    },
+                    "mgmtGroup": {
+                    "type": "string"
+                    },
+                    "connectivitySubscriptionId": {
+                    "type": "string"
+                    }
+                },
+                "variables": {
+                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('location')))]",
+                    "networkGroupId2": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary')))]"
+                },
+                "resources": [
+                    {
+                    "type": "Microsoft.Authorization/policyDefinitions",
+                    "apiVersion": "2023-04-01",
+                    "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                    "properties": {
+                        "policyType": "Custom",
+                        "mode": "Microsoft.Network.Data",
+                        "policyRule": {
+                        "if": {
+                            "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/virtualNetworks"
+                            }
+                            ]
+                        },
+                        "then": {
+                            "effect": "addToNetworkGroup",
+                            "details": {
+                            "networkGroupId": "[variables('networkGroupId1')]"
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    "type": "Microsoft.Authorization/policyAssignments",
+                    "apiVersion": "2023-04-01",
+                    "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                    "properties": {
+                        "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                        "resourceSelectors": [
+                        {
+                            "name": "regionalResource",
+                            "selectors": [
+                            {
+                                "kind": "ResourceLocation",
+                                "in": [
+                                "[parameters('location')]"
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
+                    ]
+                    },
+                    {
+                    "type": "Microsoft.Authorization/policyDefinitions",
+                    "apiVersion": "2023-04-01",
+                    "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                    "properties": {
+                        "policyType": "Custom",
+                        "mode": "Microsoft.Network.Data",
+                        "policyRule": {
+                        "if": {
+                            "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Network/virtualNetworks"
+                            }
+                            ]
+                        },
+                        "then": {
+                            "effect": "addToNetworkGroup",
+                            "details": {
+                            "networkGroupId": "[variables('networkGroupId2')]"
+                            }
+                        }
+                        }
+                    }
+                    },
+                    {
+                    "type": "Microsoft.Authorization/policyAssignments",
+                    "apiVersion": "2023-04-01",
+                    "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                    "properties": {
+                        "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                        "resourceSelectors": [
+                        {
+                            "name": "regionalResource",
+                            "selectors": [
+                            {
+                                "kind": "ResourceLocation",
+                                "in": [
+                                "[parameters('locationSecondary')]"
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                    ]
+                    }
+                ]
+                }
+            }
+        }
+
         // {
         //     "type": "Microsoft.Authorization/policyDefinitions",
         //     "apiVersion": "2023-04-01",
@@ -495,701 +799,701 @@
         //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdCorp2')))]"
         //     ]
         // },
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdOnline1'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdOnline1')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdOnline1'))]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdOnline1')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdOnline1')))]"
-            ]
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdOnline2'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdOnline2')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdOnline2'))]",
-            "location": "[parameters('locationSecondary')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdOnline2')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdOnline2')))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdIdentity1'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdIdentity1')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdIdentity1'))]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdIdentity1')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdIdentity1')))]"
-            ]
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdIdentity2'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdIdentity2')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdIdentity2'))]",
-            "location": "[parameters('locationSecondary')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdIdentity2')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdIdentity2')))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdManagement1'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdManagement1')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdManagement1'))]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdManagement1')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdManagement1')))]"
-            ]
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdManagement2'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdManagement2')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdManagement2'))]",
-            "location": "[parameters('locationSecondary')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdManagement2')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdManagement2')))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdConnectivity1'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdConnectivity1')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdConnectivity1'))]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdConnectivity1')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdConnectivity1')))]"
-            ]
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdConnectivity2'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdConnectivity2')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdConnectivity2'))]",
-            "location": "[parameters('locationSecondary')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdConnectivity2')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdConnectivity2')))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdSandbox1'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdSandbox1')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdSandbox1'))]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdSandbox1')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdSandbox1')))]"
-            ]
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdSandbox2'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdSandbox2')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdSandbox2'))]",
-            "location": "[parameters('locationSecondary')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdSandbox2')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdSandbox2')))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdDecommissioned1'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdDecommissioned1')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdDecommissioned1'))]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdDecommissioned1')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdDecommissioned1')))]"
-            ]
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyDefinitions",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdDecommissioned2'))]",
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "mode": "Microsoft.Network.Data",
-                "policyRule": {
-                    "if": {
-                        "allOf": [
-                            {
-                                "field": "type",
-                                "equals": "Microsoft.Network/virtualNetworks"
-                            }
-                        ]
-                    },
-                    "then": {
-                        "effect": "addToNetworkGroup",
-                        "details": {
-                            "networkGroupId": "[variables('networkGroupIdDecommissioned2')]"
-                        }
-                    }
-                }
-            }
-        },
-        {
-            "condition": "[not(empty(parameters('locationSecondary')))]",
-            "type": "Microsoft.Authorization/policyAssignments",
-            "apiVersion": "2023-04-01",
-            "name": "[uniqueString(variables('networkGroupIdDecommissioned2'))]",
-            "location": "[parameters('locationSecondary')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "description": "AVNM intermediate root group membership Policy",
-                "displayName": "AVNM intermediate root group membership Policy",
-                "enforcementMode": "Default",
-                "resourceSelectors": [
-                    {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
-                        ]
-                      }
-                    ]
-                    }
-                ],
-                "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdDecommissioned2')))]"
-            },
-            "dependsOn": [
-                "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdDecommissioned2')))]"
-            ]
-        }
+        // {
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdOnline1'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdOnline1')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdOnline1'))]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('location')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdOnline1')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdOnline1')))]"
+        //     ]
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdOnline2'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdOnline2')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdOnline2'))]",
+        //     "location": "[parameters('locationSecondary')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('locationSecondary')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdOnline2')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdOnline2')))]"
+        //     ]
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdIdentity1'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdIdentity1')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdIdentity1'))]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('location')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdIdentity1')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdIdentity1')))]"
+        //     ]
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdIdentity2'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdIdentity2')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdIdentity2'))]",
+        //     "location": "[parameters('locationSecondary')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('locationSecondary')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdIdentity2')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdIdentity2')))]"
+        //     ]
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdManagement1'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdManagement1')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdManagement1'))]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('location')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdManagement1')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdManagement1')))]"
+        //     ]
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdManagement2'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdManagement2')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdManagement2'))]",
+        //     "location": "[parameters('locationSecondary')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('locationSecondary')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdManagement2')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdManagement2')))]"
+        //     ]
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdConnectivity1'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdConnectivity1')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdConnectivity1'))]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('location')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdConnectivity1')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdConnectivity1')))]"
+        //     ]
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdConnectivity2'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdConnectivity2')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdConnectivity2'))]",
+        //     "location": "[parameters('locationSecondary')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('locationSecondary')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdConnectivity2')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdConnectivity2')))]"
+        //     ]
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdSandbox1'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdSandbox1')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdSandbox1'))]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('location')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdSandbox1')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdSandbox1')))]"
+        //     ]
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdSandbox2'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdSandbox2')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdSandbox2'))]",
+        //     "location": "[parameters('locationSecondary')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('locationSecondary')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdSandbox2')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdSandbox2')))]"
+        //     ]
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdDecommissioned1'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdDecommissioned1')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdDecommissioned1'))]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('location')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdDecommissioned1')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdDecommissioned1')))]"
+        //     ]
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyDefinitions",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdDecommissioned2'))]",
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "mode": "Microsoft.Network.Data",
+        //         "policyRule": {
+        //             "if": {
+        //                 "allOf": [
+        //                     {
+        //                         "field": "type",
+        //                         "equals": "Microsoft.Network/virtualNetworks"
+        //                     }
+        //                 ]
+        //             },
+        //             "then": {
+        //                 "effect": "addToNetworkGroup",
+        //                 "details": {
+        //                     "networkGroupId": "[variables('networkGroupIdDecommissioned2')]"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
+        // {
+        //     "condition": "[not(empty(parameters('locationSecondary')))]",
+        //     "type": "Microsoft.Authorization/policyAssignments",
+        //     "apiVersion": "2023-04-01",
+        //     "name": "[uniqueString(variables('networkGroupIdDecommissioned2'))]",
+        //     "location": "[parameters('locationSecondary')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "description": "AVNM intermediate root group membership Policy",
+        //         "displayName": "AVNM intermediate root group membership Policy",
+        //         "enforcementMode": "Default",
+        //         "resourceSelectors": [
+        //             {
+        //             "name": "regionalResource",
+        //             "selectors": [
+        //               {
+        //                 "kind": "ResourceLocation",
+        //                 "in": [
+        //                   "[parameters('locationSecondary')]"
+        //                 ]
+        //               }
+        //             ]
+        //             }
+        //         ],
+        //         "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdDecommissioned2')))]"
+        //     },
+        //     "dependsOn": [
+        //         "[format('Microsoft.Authorization/policyDefinitions/{0}', uniqueString(variables('networkGroupIdDecommissioned2')))]"
+        //     ]
+        // }
     ]
 }
