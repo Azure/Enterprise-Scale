@@ -155,15 +155,13 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
   - `<Resource Prefix (Root ID)>-decommissioned`
   - `<Resource Prefix (Root ID)>-sandbox`
 
-## Why hasn't Azure landing zones migrated to the Azure Monitor Agent yet?
+## Azure Monitor Agent
 
-**Update January 2024** We have been working on the removal of MMA from ALZ and the first step in the overall removal process is to update the ALZ Portal reference implementation (greenfield deployments) which has now been updated. Our next step is to work on the deployment to Terraform and Bicep reference implementations which requires significant investment to minimise impact to existing customers and providing clear guidance for the transition. For more details please see [Azure Monitor Agent Update](./ALZ-AMA-Update.md).
+### What if we are not ready to make the switch (from MMA) and migrate to AMA, right now?
 
-### What if we are not ready to make the switch and migrate, right now?
+The log analytics agent (MMA) has retired as documented [here]( https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/). Cloud ingestion services will gradually reduce support for MMA agents, which may result in compatibility issues over time. Ingestion for MMA will remain unchanged until February 1, 2025. You need to complete the migration to the Azure Monitor Agent before that date. 
 
-Another good question. You will need to plan, and complete, the migration to the Azure Monitor Agent before the Log Analytics Agent is retired as [documented here.](https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/)
-
-### Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
+## Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
 
 Great question! As this is maintained in a repository outside of the Azure landing zones repository please refer to [Azure Monitor Baseline Alerts wiki](https://azure.github.io/azure-monitor-baseline-alerts/patterns/alz) for more details.
 

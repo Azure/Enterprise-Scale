@@ -2,6 +2,7 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
+  - [December 2024](#december-2024)
   - [November 2024](#november-2024)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
   - [October 2024](#october-2024)
@@ -64,6 +65,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated initiative [Enforce-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) `AppServiceMinTlsVersion` parameter to include TLS version 1.3 (as supported by the policy).
 - Added new custom policies [Audit-Tags-Mandatory](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory.html) and [Audit-Tags-Mandatory-Rg](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory-Rg.html) to support auditing for the existence of mandatory tags (based on an array of tags). Not assigned by default.
 
+### December 2024
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-12-10). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+
 ### November 2024
 
 #### Tooling
@@ -71,6 +78,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Fixed a bug in the Portal Accelerator that caused the deployment to fail when deploying a hub & spoke with NVA topology and regional VPN gateway (basic sku for Public IP not supported).
 - A bug was resolved in the Portal Accelerator that caused deployment validation to fail with the error message "The 'location' property must be specified for 'amba-id-amba-prod-001'". This event happened when a Log Analytics Workspace was not deployed, but Azure Monitor Baseline Alerts were enabled. This issue occurred because Azure Monitor Baseline Alerts depend on the management subscription, which is not provided if the Log Analytics Workspace is not deployed. To address this scenario, an additional section was implemented in the Baseline alerts and monitoring tab allowing the selection of a Management subscription when not deploying a Log Analytics Workspace.
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-11-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+
+#### Documentation
+
+- Link for the Bicep Subscription Vending changed to AVM (Azure Verified Modules)
 
 ### 🔃 Policy Refresh Q1 FY25
 
