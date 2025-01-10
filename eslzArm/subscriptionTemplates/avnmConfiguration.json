@@ -1,0 +1,706 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "metadata": {
+                "displayName": "location",
+                "description": "Location of the HUB"
+            },
+            "defaultValue": "[deployment().location]"
+        },
+        "locationSecondary": {
+            "type": "string",
+            "metadata": {
+                "displayName": "locationSecondary",
+                "description": "Secondary location of the HUB for instances deploying in multiple regions"
+            },
+            "defaultValue": ""
+        },
+        "managementGroupScope": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Management group scope for AVNM. Intermediate root management group is the default."
+            }
+        },
+        "connectivitySubscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "SubscriptionId for the connectivity subscription."
+            },
+            "defaultValue": "[subscription().subscriptionId]"
+        },
+        "enableSecondaryRegion": {
+            "type": "string",
+            "metadata": {
+                "description": "Enable secondary region for instances deploying in multiple regions"
+            },
+            "defaultValue": "no"
+        }
+    },
+    "variables": {
+        "rgName": "rg-alz-avnm",
+        "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]",
+        "configIds": "[resourceId(parameters('connectivitySubscriptionId'), variables('rgName'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2019-10-01",
+            "location": "[parameters('location')]",
+            "name": "[variables('rgName')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('resourceDeploymentName')]",
+            "resourceGroup": "[variables('rgName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
+                    "managementGroupScope": {
+                        "value": "[parameters('managementGroupScope')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "managementGroupScope": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/networkManagers",
+                            "apiVersion": "2024-03-01",
+                            "name": "avnm",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "networkManagerScopeAccesses": [
+                                    "SecurityAdmin"
+                                ],
+                                "networkManagerScopes": {
+                                    "managementGroups": [
+                                        "[parameters('managementGroupScope')]"
+                                    ]
+                                }
+                            },
+                            "dependsOn": [
+                                
+                            ],
+                            "metadata": {
+                                "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', 'avnm-ng-all')]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "Network Group - All Landing Zone virtual networks"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ VNETs."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-corp-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Corp - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ CORP VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Corp - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ CORP VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-online-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Online - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ ONLINE VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Online - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ ONLINE VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-identity-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Identity - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ IDENTITY VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Identity - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ IDENTITY VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-management-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Management - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ MANAGEMENT VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-management-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Management - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ MANAGEMENT VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-connectivity-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Connectivity - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ CONNECTIVITY VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-connectivity-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Connectivity - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ CONNECTIVITY VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-sandbox-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Sandbox - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ SANDBOX VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-sandbox-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Sandbox - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ SANDBOX VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('location')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Decommissioned - {0}', parameters('location'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ DECOMMISSIONED VNETs in the primary region."
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Network/networkManagers/networkGroups",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('locationSecondary')))]",
+                            "properties": {
+                                "memberType": "VirtualNetwork",
+                                "description": "[format('Network Group - Decommissioned - {0}', parameters('locationSecondary'))]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "metadata": {
+                                "description": "This is the dynamic network group for all ALZ DECOMMISSIONED VNETs in the secondary region, if selected."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations",
+                            "apiVersion": "2023-11-01",
+                            "name": "[format('{0}/{1}', 'avnm', 'sac-alz')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                            ],
+                            "properties": {
+                                "description": "ALZ Security Admin Configuration"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}', 'avnm', 'sac-alz', 'rc-ALZ')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]"
+                            ],
+                            "properties": {
+                                "appliesToGroups": [
+                                    {
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyMgmtInbound')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                            ],
+                            "kind": "Custom",
+                            "properties": {
+                                "description": "Deny VM Management inbound traffic, similar to the ALZ policy https://www.azadvertizer.net/azpolicyadvertizer/Deny-MgmtPorts-From-Internet.html",
+                                "priority": 1000,
+                                "sources": [
+                                    {
+                                        "addressPrefixType": "ServiceTag",
+                                        "addressPrefix": "Internet"
+                                    }
+                                ],
+                                "destinationPortRanges": [
+                                    "22",
+                                    "3389"
+                                ],
+                                "protocol": "Any",
+                                "direction": "Inbound",
+                                "access": "Deny"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundTCP')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                            ],
+                            "kind": "Custom",
+                            "properties": {
+                                "description": "Deny high-risk TCP inbound traffic",
+                                "priority": 1001,
+                                "sources": [
+                                    {
+                                        "addressPrefixType": "ServiceTag",
+                                        "addressPrefix": "Internet"
+                                    }
+                                ],
+                                "destinationPortRanges": [
+                                    "20",
+                                    "21",
+                                    "23",
+                                    "119",
+                                    "161",
+                                    "445",
+                                    "512",
+                                    "514",
+                                    "873",
+                                    "5800",
+                                    "5900"
+                                ],
+                                "protocol": "TCP",
+                                "direction": "Inbound",
+                                "access": "Deny"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundUDP')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                            ],
+                            "kind": "Custom",
+                            "properties": {
+                                "description": "Deny high-risk UDP inbound traffic",
+                                "priority": 1002,
+                                "sources": [
+                                    {
+                                        "addressPrefixType": "ServiceTag",
+                                        "addressPrefix": "Internet"
+                                    }
+                                ],
+                                "destinationPortRanges": [
+                                    "69",
+                                    "11211"
+                                ],
+                                "protocol": "UDP",
+                                "direction": "Inbound",
+                                "access": "Deny"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
+                            "apiVersion": "2024-03-01",
+                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundANY')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                            ],
+                            "kind": "Custom",
+                            "properties": {
+                                "description": "Deny high-risk ANY inbound traffic",
+                                "priority": 1003,
+                                "sources": [
+                                    {
+                                        "addressPrefixType": "ServiceTag",
+                                        "addressPrefix": "Internet"
+                                    }
+                                ],
+                                "destinationPortRanges": [
+                                    "111",
+                                    "135",
+                                    "162",
+                                    "593",
+                                    "2049"
+                                ],
+                                "protocol": "Any",
+                                "direction": "Inbound",
+                                "access": "Deny"
+                            }
+                        }
+                        
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "alz-avnm-uai",
+            "resourceGroup": "[variables('rgName')]",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                },
+                "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                    "location": {
+                    "type": "string"
+                    }
+                },
+                "variables": {},
+                "resources": [
+                    {
+                        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                        "apiVersion": "2022-01-31-preview",
+                        "name": "[format('uai-avnm-{0}', parameters('location'))]",
+                        "location": "[parameters('location')]",
+                        "metadata": {
+                            "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                        }
+                    },
+                    {
+                        "type": "Microsoft.Authorization/roleAssignments",
+                        "apiVersion": "2022-04-01",
+                        "name": "[guid(resourceGroup().id, format('uai-avnm-{0}', parameters('location')))]",
+                        "properties": {
+                            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                            "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-avnm-{0}', parameters('location'))), '2022-01-31-preview').principalId]",
+                            "principalType": "ServicePrincipal"
+                        },
+                        "dependsOn": [
+                            "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-avnm-{0}', parameters('location')))]"
+                        ],
+                        "metadata": {
+                            "description": "This role assignment grants the user assigned identity the Contributor role on the resource group."
+                        }
+                    }
+                ],
+                "outputs": {
+                    "userAssignedIdentityId": {
+                    "type": "string",
+                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-avnm-{0}', parameters('location')))]"
+                    }
+                }
+                }
+            },
+            "dependsOn": [
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName'))]"
+            ]
+            },
+            {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "[format('ds-{0}-prereqs', parameters('location'))]",
+            "resourceGroup": "[variables('rgName')]",
+            "properties": {
+                    "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
+                    "userAssignedIdentityId": {
+                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                    },
+                    "rgName": {
+                        "value": "[variables('rgName')]"
+                    },
+                    "configIds": {
+                        "value": "[variables('configIds')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    }
+                },
+                "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                    "location": {
+                        "type": "string"
+                    },
+                    "locationSecondary": {
+                        "type": "string"
+                    },
+                    "userAssignedIdentityId": {
+                        "type": "string"
+                    },
+                    "rgName": {
+                        "type": "string"
+                    },
+                    "configIds": {
+                        "type": "string"
+                    },
+                    "connectivitySubscriptionId": {
+                        "type": "string"
+                    }
+                },
+                "resources": [
+                    {
+                        "type": "Microsoft.Resources/deploymentScripts",
+                        "apiVersion": "2020-10-01",
+                        "name": "alz-avnm-deploymentscript",
+                        "location": "[parameters('location')]",
+                        "kind": "AzurePowerShell",
+                        "identity": {
+                            "type": "UserAssigned",
+                            "userAssignedIdentities": {
+                                "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                        }
+                    },
+                    "properties": {
+                            "azPowerShellVersion": "12.3",
+                            "retentionInterval": "PT1H",
+                            "timeout": "PT1H",
+                            "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                            "scriptContent": "
+                                param(
+                                    [string]
+                                    $location,
+
+                                    [string]
+                                    $locationSecond,
+
+                                    [string]
+                                    $rgName,
+
+                                    [string]
+                                    $configIds,
+
+                                    [string]
+                                    $connSubId
+                                )
+
+                                $regions = @($location, $locationSecond)
+
+                                Select-AzSubscription -SubscriptionId $connSubId
+
+                                Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
+                                
+                            "
+                        }
+                    }
+                ],
+                    "outputs": {}
+                }
+            },
+            "dependsOn": [
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', variables('resourceDeploymentName'))]",
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName'))]"
+            ]
+            }
+    ],
+    "outputs": {}
+}
