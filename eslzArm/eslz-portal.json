@@ -87,7 +87,15 @@
                                     "query": "policyresources | where type == 'microsoft.authorization/policysetdefinitions' | extend metadataCategory=tostring(properties.metadata.category) | extend metadataDeprecated=tostring(properties.metadata.deprecated) | extend displayName=tostring(properties.displayName) | extend description=tostring(properties.description) | where properties.metadata.category =~ 'Regulatory Compliance' | where metadataDeprecated != 'true' |  extend valueOutput=pack('displayName', displayName, 'id', id, 'description', description) | project id, name, displayName, description, metadataCategory, valueOutput | project label=displayName, description, value=valueOutput | order by label asc"
                                 }
                             }
-                        }
+                        },
+                        {
+                            "name": "subscriptionsApi",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "GET",
+                                "path": "subscriptions?api-version=2022-12-01"
+                            }
+                        },
                     ]
                 },
                 {
@@ -107,14 +115,6 @@
                                 "text": "Azure Landing Zones ARM deployment requires access at the tenant root (/) scope. Visit this link to ensure you have the appropriate RBAC permission to complete the deployment",
                                 "uri": "https://docs.microsoft.com/azure/role-based-access-control/elevate-access-global-admin",
                                 "style": "Info"
-                            }
-                        },
-                        {
-                            "name": "subscriptionsApi",
-                            "type": "Microsoft.Solutions.ArmApiControl",
-                            "request": {
-                                "method": "GET",
-                                "path": "subscriptions?api-version=2022-01-01"
                             }
                         },
                         {
@@ -195,21 +195,9 @@
                                     }
                                 },
                                 {
-                                    "name": "getSubscriptions2",
-                                    "type": "Microsoft.Solutions.ArmApiControl",
-                                    "request": {
-                                        "method": "POST",
-                                        "path": "providers/Microsoft.ResourceGraph/resources?api-version=2024-04-01",
-                                        "body": {
-                                            "query": "ResourceContainers | where type =~ 'microsoft.resources/subscriptions' | where properties.state =~ 'enabled' | project label=tostring(name), description=subscriptionId, value=subscriptionId | order by label asc"
-                                        }
-                                    }
-                                },
-                                {
                                     "name": "selector",
                                     "type": "Microsoft.Common.DropDown",
                                     "label": "Platform subscription",
-                                    "defaultValue": "[parse('[]')]",
                                     "toolTip": "",
                                     "multiselect": false,
                                     "selectAll": false,
@@ -218,7 +206,7 @@
                                     "multiLine": true,
                                     "visible": true,
                                     "constraints": {
-                                        "allowedValues": "[steps('core').singleSubscription.getSubscriptions.data]",
+                                        "allowedValues": "[map(steps('basics').subscriptionsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                         "required": true
                                     }
                                 }
