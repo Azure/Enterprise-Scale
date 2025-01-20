@@ -63,7 +63,7 @@
                             "type": "Microsoft.Solutions.ArmApiControl",
                             "request": {
                                 "method": "POST",
-                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2024-04-01",
                                 "body": {
                                     "query": "ResourceContainers | where type =~ 'microsoft.resources/subscriptions' | where properties.state =~ 'enabled' | project label=tostring(name), description=subscriptionId, value=subscriptionId | order by label asc"
                                 }
@@ -82,10 +82,18 @@
                             "type": "Microsoft.Solutions.ArmApiControl",
                             "request": {
                                 "method": "POST",
-                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+                                "path": "providers/Microsoft.ResourceGraph/resources?api-version=2024-04-01",
                                 "body": {
                                     "query": "policyresources | where type == 'microsoft.authorization/policysetdefinitions' | extend metadataCategory=tostring(properties.metadata.category) | extend metadataDeprecated=tostring(properties.metadata.deprecated) | extend displayName=tostring(properties.displayName) | extend description=tostring(properties.description) | where properties.metadata.category =~ 'Regulatory Compliance' | where metadataDeprecated != 'true' |  extend valueOutput=pack('displayName', displayName, 'id', id, 'description', description) | project id, name, displayName, description, metadataCategory, valueOutput | project label=displayName, description, value=valueOutput | order by label asc"
                                 }
+                            }
+                        },
+                        {
+                            "name": "subscriptionsApi",
+                            "type": "Microsoft.Solutions.ArmApiControl",
+                            "request": {
+                                "method": "GET",
+                                "path": "subscriptions?api-version=2022-12-01"
                             }
                         }
                     ]
@@ -190,7 +198,6 @@
                                     "name": "selector",
                                     "type": "Microsoft.Common.DropDown",
                                     "label": "Platform subscription",
-                                    "defaultValue": "[parse('[]')]",
                                     "toolTip": "",
                                     "multiselect": false,
                                     "selectAll": false,
@@ -199,7 +206,7 @@
                                     "multiLine": true,
                                     "visible": true,
                                     "constraints": {
-                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "allowedValues": "[map(steps('basics').subscriptionsApi.value, (sub) => parse(concat('{\"label\":\"', sub.displayName, '\",\"description\":\"', sub.subscriptionId, '\",\"value\":\"', toLower(sub.subscriptionId), '\"}')) )]",
                                         "required": true
                                     }
                                 }
@@ -947,11 +954,11 @@
                                     "type": "Microsoft.Common.TextBlock",
                                     "visible": true,
                                     "options": {
-                                      "text": "AMBA for ALZ is a best practice collection of alerts for resources commonly deployed into Azure landing zones and demonstrates how to deploy alerts at scale using Azure Policy.",
-                                      "link": {
-                                        "label": "Learn more",
-                                        "uri": "https://aka.ms/amba/alz"
-                                      }
+                                        "text": "AMBA for ALZ is a best practice collection of alerts for resources commonly deployed into Azure landing zones and demonstrates how to deploy alerts at scale using Azure Policy.",
+                                        "link": {
+                                            "label": "Learn more",
+                                            "uri": "https://aka.ms/amba/alz"
+                                        }
                                     }
                                 }
                             ]
@@ -1314,10 +1321,10 @@
                                     "defaultValue": "id-amba-prod-001",
                                     "toolTip": "Specify the name of the user assigned managed identity for monitoring purpose.",
                                     "constraints": {
-                                      "required": true,
-                                      "regex": "",
-                                      "validationMessage": "",
-                                      "validations": []
+                                        "required": true,
+                                        "regex": "",
+                                        "validationMessage": "",
+                                        "validations": []
                                     },
                                     "infoMessages": [],
                                     "visible": true
@@ -1348,7 +1355,9 @@
                                     "name": "ambaAgArmRole",
                                     "type": "Microsoft.Common.DropDown",
                                     "label": "ARM Roles for action group notifications",
-                                    "defaultValue": ["Owner"],
+                                    "defaultValue": [
+                                        "Owner"
+                                    ],
                                     "multiselect": true,
                                     "selectAll": true,
                                     "filter": false,
@@ -1806,7 +1815,7 @@
                                     "value": "privatelink.wvd.microsoft.com"
                                 },
                                 {
-                                    "value" : "privatelink-global.wvd.microsoft.com"
+                                    "value": "privatelink-global.wvd.microsoft.com"
                                 }
                             ],
                             "visible": "[and(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva')), not(equals(steps('connectivity').enablePrivateDnsZones,'No')))]",
@@ -2693,7 +2702,17 @@
                             "name": "firewallZones",
                             "type": "Microsoft.Common.DropDown",
                             "label": "Select Availability Zones for the Azure Firewall",
-                            "defaultValue": [{"value": "1"}, {"value": "2"}, {"value": "3"}],
+                            "defaultValue": [
+                                {
+                                    "value": "1"
+                                },
+                                {
+                                    "value": "2"
+                                },
+                                {
+                                    "value": "3"
+                                }
+                            ],
                             "multiselect": true,
                             "selectAll": true,
                             "filter": true,
@@ -3159,7 +3178,7 @@
                             "type": "Microsoft.Common.Section",
                             "label": "Secondary Region Networking",
                             "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
-                            "elements":[
+                            "elements": [
                                 {
                                     "name": "secondaryRegionNetworkInfo",
                                     "type": "Microsoft.Common.InfoBox",
@@ -3808,7 +3827,17 @@
                                     "name": "firewallZonesSecondary",
                                     "type": "Microsoft.Common.DropDown",
                                     "label": "Select Availability Zones for the Azure Firewall in your second region",
-                                    "defaultValue": [{"value": "1"}, {"value": "2"}, {"value": "3"}],
+                                    "defaultValue": [
+                                        {
+                                            "value": "1"
+                                        },
+                                        {
+                                            "value": "2"
+                                        },
+                                        {
+                                            "value": "3"
+                                        }
+                                    ],
                                     "multiselect": true,
                                     "selectAll": true,
                                     "filter": true,
@@ -4269,9 +4298,9 @@
                                         ]
                                     }
                                 }
-                                ]
-                            }
-                        ]
+                            ]
+                        }
+                    ]
                 },
                 {
                     "name": "identity",
@@ -4492,7 +4521,7 @@
                             "type": "Microsoft.Common.Section",
                             "label": "Secondary Region Identity",
                             "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
-                            "elements":[
+                            "elements": [
                                 {
                                     "name": "esIdentityConnectivitySecondary",
                                     "type": "Microsoft.Common.OptionsGroup",
@@ -4532,7 +4561,7 @@
                                     "visible": "[and(equals(steps('identity').esIdentitySecondarySubSection.esIdentityConnectivitySecondary, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                                 }
                             ]
-                            }
+                        }
                     ]
                 },
                 {
@@ -5404,7 +5433,14 @@
                                     "filterPlaceholder": "Filter items ...",
                                     "multiLine": true,
                                     "visible": "[equals(steps('workloadspecific').wlcCMK.enableWsCMKInitiatives, 'Yes')]",
-                                    "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                                    "defaultValue": [
+                                        {
+                                            "value": "contoso-platform"
+                                        },
+                                        {
+                                            "value": "contoso-landingzones"
+                                        }
+                                    ],
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -5500,7 +5536,14 @@
                                     "filterPlaceholder": "Filter items ...",
                                     "multiLine": true,
                                     "visible": "[equals(steps('workloadspecific').wlcAIReady.enableWsBotServiceInitiatives, 'Yes')]",
-                                    "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                                    "defaultValue": [
+                                        {
+                                            "value": "contoso-platform"
+                                        },
+                                        {
+                                            "value": "contoso-landingzones"
+                                        }
+                                    ],
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -5588,7 +5631,14 @@
                                     "filterPlaceholder": "Filter items ...",
                                     "multiLine": true,
                                     "visible": "[equals(steps('workloadspecific').wlcAIReady.enableWsCognitiveServicesInitiatives, 'Yes')]",
-                                    "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                                    "defaultValue": [
+                                        {
+                                            "value": "contoso-platform"
+                                        },
+                                        {
+                                            "value": "contoso-landingzones"
+                                        }
+                                    ],
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -5676,7 +5726,14 @@
                                     "filterPlaceholder": "Filter items ...",
                                     "multiLine": true,
                                     "visible": "[equals(steps('workloadspecific').wlcAIReady.enableWsMachineLearningInitiatives, 'Yes')]",
-                                    "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                                    "defaultValue": [
+                                        {
+                                            "value": "contoso-platform"
+                                        },
+                                        {
+                                            "value": "contoso-landingzones"
+                                        }
+                                    ],
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -5764,7 +5821,14 @@
                                     "filterPlaceholder": "Filter items ...",
                                     "multiLine": true,
                                     "visible": "[equals(steps('workloadspecific').wlcAIReady.enableWsOpenAIInitiatives, 'Yes')]",
-                                    "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                                    "defaultValue": [
+                                        {
+                                            "value": "contoso-platform"
+                                        },
+                                        {
+                                            "value": "contoso-landingzones"
+                                        }
+                                    ],
                                     "constraints": {
                                         "allowedValues": [
                                             {
@@ -5861,7 +5925,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsDataExplorerInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -5949,7 +6020,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsDataFactoryInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6037,7 +6115,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsSynapseInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6131,7 +6216,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsComputeInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6219,7 +6311,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsVirtualDesktopInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6313,7 +6412,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsContainerAppsInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6401,7 +6507,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsContainerInstanceInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6489,7 +6602,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsContainerRegistryInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6577,7 +6697,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsKubernetesInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6671,7 +6798,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsCosmosDbInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6759,7 +6893,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsMySQLInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6847,7 +6988,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsPostgreSQLInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -6935,7 +7083,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsSQLInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7029,7 +7184,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsEventGridInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7117,7 +7279,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsEventHubInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7205,7 +7374,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsServiceBusInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7299,7 +7475,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsAutomationInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7394,7 +7577,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsNetworkInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7488,7 +7678,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsKeyVaultSupInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7582,7 +7779,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsStorageInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7676,7 +7880,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsAPIMInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
@@ -7764,7 +7975,14 @@
                             "filterPlaceholder": "Filter items ...",
                             "multiLine": true,
                             "visible": "[equals(steps('workloadspecific').enableWsAppServicesInitiatives, 'Yes')]",
-                            "defaultValue": [{"value": "contoso-platform"},{"value": "contoso-landingzones"}],
+                            "defaultValue": [
+                                {
+                                    "value": "contoso-platform"
+                                },
+                                {
+                                    "value": "contoso-landingzones"
+                                }
+                            ],
                             "constraints": {
                                 "allowedValues": [
                                     {
