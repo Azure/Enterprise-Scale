@@ -66,6 +66,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Removed duplicate policy assignment "Container Apps should only be accessible over HTTPS" from initiative [Enforce-EncryptTransit_20241211](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_2024.html). Note, this is a breaking change, and existing assignments should be removed and re-assigned.
 - Added new custom policies [Audit-Tags-Mandatory](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory.html) and [Audit-Tags-Mandatory-Rg](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory-Rg.html) to support auditing for the existence of mandatory tags (based on an array of tags). Not assigned by default.
 - Updated the Workload Specific Compliance initiative section in the portal accelerator to allow configuring `Audit Only` effect for workloads using the `DoNotEnforce` enforcement mode.
+- Updated the Management Group creation template to use the latest API version `2023-04-01`.
 
 ### December 2024
 
