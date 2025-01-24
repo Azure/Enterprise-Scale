@@ -2460,7 +2460,7 @@
         },
         {
             // ALZ Pre-Requisites and Azure's Untold Story...
-            "condition": "[or(not(empty(parameters('managementSubscriptionId'))), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "condition": "[not(empty(parameters('managementSubscriptionId')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "alz-prerequisites",
@@ -2485,6 +2485,37 @@
                     },
                     "managementSubscriptionId": {
                         "value": "[parameters('managementSubscriptionId')]"
+                    }
+                }
+            }
+        },
+        {
+            // ALZ Pre-Requisites and Azure's Untold Story... LITE
+            "condition": "[not(empty(parameters('singlePlatformSubscriptionId')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "alz-prerequisites",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[variables('deploymentNames').initiativeDeploymentName]",
+                "[variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').preRequisites]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[deployment().location]"
+                    },
+                    "eslzRootName": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "managementSubscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
                     }
                 }
             }
