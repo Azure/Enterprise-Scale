@@ -1991,6 +1991,8 @@
             "vnetConnectivityRouteTableDeploymentName": "[take(concat('alz-HubRoute', variables('deploymentSuffix')), 64)]",
             "vnetConnectivityRouteTable2DeploymentName": "[take(concat('alz-HubRoute2', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubLite2DeploymentName": "[take(concat('alz-NVAHubLite2', variables('deploymentSuffix')), 64)]",
+            "avnmLiteConnectivityHubDeploymentName": "[take(concat('alz-AVNMLite', variables('deploymentSuffix')), 64)]",
+            "avnmLitePolicyDeploymentName": "[take(concat('alz-AVNMLitePolicy', variables('deploymentSuffix')), 64)]",
             "ddosRgLiteDeploymentName": "[take(concat('alz-DDoSRgLite', variables('deploymentSuffix')), 64)]",
             "ddosLiteDeploymentName": "[take(concat('alz-DDoSLite', variables('deploymentSuffix')), 64)]",
             "ddosHubLitePolicyDeploymentName": "[take(concat('alz-DDoSHubPolicyLite', variables('deploymentSuffix')), 64)]",
@@ -5345,6 +5347,46 @@
             }
         },
         {
+            // Deploy AVNM Lite
+            "condition": "[and(parameters('deployAVNM'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('esLiteDeploymentNames').avnmLiteConnectivityHubDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
+                "dnsZones",
+                "dnsZonesLite",
+                "alz-prerequisites"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').avnmConnectivityHub]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "managementGroupScope": {
+                        "value": "[variables('scopes').eslzRootManagementGroup]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
+                    }
+                }
+            }
+        },
+        {
             // Deploying AVNM policy - to add virtual networks to AVNM network groups
             "condition": "[and(parameters('deployAVNM'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('connectivitySubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
@@ -5367,6 +5409,39 @@
                     },
                     "connectivitySubscriptionId": {
                         "value": "[parameters('connectivitySubscriptionId')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "enableSecondaryRegion": {
+                        "value": "[parameters('enableSecondaryRegion')]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploying AVNM Lite policy - to add virtual networks to AVNM network groups
+            "condition": "[and(parameters('deployAVNM'), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), not(empty(parameters('singlePlatformSubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('esLiteDeploymentNames').avnmLitePolicyDeploymentName]",
+            "location": "[deployment().location]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').avnmLiteConnectivityHubDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').avnmPolicy]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('singlePlatformSubscriptionId')]"
                     },
                     "locationSecondary": {
                         "value": "[parameters('connectivityLocationSecondary')]"
