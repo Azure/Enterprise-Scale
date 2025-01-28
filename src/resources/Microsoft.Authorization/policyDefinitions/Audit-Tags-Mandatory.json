@@ -1,0 +1,66 @@
+{
+    "name": "Audit-Tags-Mandatory",
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "apiVersion": "2021-06-01",
+    "scope": null,
+    "properties": {
+        "policyType": "Custom",
+        "displayName": "Audit for mandatory tags on resources",
+        "mode": "All",
+        "description": "Audits resources to ensure they have required tags based on tag array. Does not apply to resource groups.",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Tags",
+            "source": "https://github.com/Azure/Enterprise-Scale/",
+            "alzCloudEnvironments": [
+                "AzureCloud",
+                "AzureChinaCloud",
+                "AzureUSGovernment"
+            ]
+        },
+        "parameters": {
+            "effect": {
+                "type": "String",
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "Enable or disable the execution of the policy"
+                },
+                "allowedValues": [
+                    "Audit",
+                    "Deny",
+                    "Disabled"
+                ],
+                "defaultValue": "Audit"
+            },
+            "mandatoryTags": {
+                "type": "Array",
+                "metadata": {
+                    "displayName": "Array of mandatory tags",
+                    "description": "Array of mandatory tags that must be present on the resource group. The array should contain semicolon separated list of the tag names."
+                },
+                "defaultValue": [
+                    "owner",
+                    "costcenter"
+                ]
+            }
+        },
+        "policyRule": {
+            "if": {
+                "not": {
+                    "count": {
+                        "value": "[[parameters('mandatoryTags')]",
+                        "name": "tagcount",
+                        "where": {
+                            "field": "tags",
+                            "containsKey": "[[current('tagcount')]"
+                        }
+                    },
+                    "equals": "[[length(parameters('mandatoryTags'))]"
+                }
+            },
+            "then": {
+                "effect": "[[parameters('effect')]"
+            }
+        }
+    }
+}

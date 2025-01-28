@@ -1,0 +1,255 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resourceGroupName": {
+        "type": "string",
+        "defaultValue": "rg-alz-prereqs",
+        "metadata": {
+          "description": "The resource group name where the AVNM resources will be created"
+        }
+      },
+      "location": {
+        "type": "string",
+        "metadata": {
+          "description": "The location of this AVNM instance. All resources will be deployed to this region."
+        }
+      },
+      "eslzRootName": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the Enterprise Scale Landing Zone root resource."
+        }
+      },
+      "managementSubscriptionId": {
+        "type": "string",
+        "metadata": {
+          "description": "The subscription ID of the management subscription."
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2022-09-01",
+        "name": "alz-prerequisites-001",
+        "location": "[parameters('location')]",
+        "subscriptionId": "[parameters('managementSubscriptionId')]",
+        "properties": {
+          "expressionEvaluationOptions": {
+            "scope": "inner"
+            },
+          "mode": "Incremental",
+          "parameters": {
+            "location": {
+              "value": "[parameters('location')]"
+            },
+            "resourceGroupName": {
+              "value": "[parameters('resourceGroupName')]"
+            }
+          },
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "location": {
+                "type": "string"
+              },
+              "resourceGroupName": {
+                "type": "string"
+              }
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "apiVersion": "2022-09-01",
+                    "name": "[parameters('resourceGroupName')]",
+                    "location": "[parameters('location')]"
+                },
+                {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2022-09-01",
+                    "name": "alz-prerequisites-uai",
+                    "resourceGroup": "[parameters('resourceGroupName')]",
+                    "dependsOn": [
+                        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupName'))]"
+                    ],
+                    "properties": {
+                        "expressionEvaluationOptions": {
+                            "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                            "location": {
+                                "value": "[parameters('location')]"
+                            }
+                        },
+                        "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                                "location": {
+                                    "type": "string"
+                                }
+                            },
+                            "variables": {},
+                            "resources": [
+                                {
+                                    "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                                    "apiVersion": "2023-07-31-preview",
+                                    "name": "uai-alz-prereq",
+                                    "location": "[parameters('location')]"
+                                }
+                            ],
+                            "outputs": {
+                                "userAssignedIdentityId": {
+                                    "type": "string",
+                                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]"
+                                },
+                                "uaiPrincipalId": {
+                                    "type": "string",
+                                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq'), '2023-07-31-preview').principalId]"
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "outputs": {
+                "userAssignedIdentityId": {
+                    "type": "string",
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                },
+                "uaiPrincipalId": {
+                    "type": "string",
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupName')), 'Microsoft.Resources/deployments', 'alz-prerequisites-uai'), '2022-09-01').outputs.uaiPrincipalId.value]"
+                }
+            }
+
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2022-04-01",
+        "name": "[guid(format('alz-prerequisites-{0}-{1}', parameters('eslzRootName'), parameters('location')))]",
+        "location": "[parameters('location')]",
+        "properties": {
+            "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+            "principalId": "[reference(subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alz-prerequisites-001'), '2022-09-01').outputs.uaiPrincipalId.value]",
+            "principalType": "ServicePrincipal"
+        },
+        "dependsOn": [
+            "[subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alz-prerequisites-001')]"
+        ]
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2022-09-01",
+        "name": "alz-prerequisites-002",
+        "location": "[parameters('location')]",
+        "subscriptionId": "[parameters('managementSubscriptionId')]",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": [
+                {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2022-09-01",
+                    "name": "alz-prereq-ds",
+                    "resourceGroup": "[parameters('resourceGroupName')]",
+                    "dependsOn": [],
+                    "properties": {
+                        "expressionEvaluationOptions": {
+                            "scope": "inner"
+                    },
+                    "mode": "Incremental",
+                    "parameters": {
+                        "location": {
+                        "value": "[parameters('location')]"
+                        },
+                        "eslzRootName": {
+                        "value": "[parameters('eslzRootName')]"
+                        },
+                        "managementSubscriptionId": {
+                        "value": "[parameters('managementSubscriptionId')]"
+                        }
+                    },
+                    "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                            "location": {
+                                "type": "string"
+                            },
+                            "eslzRootName":{
+                                "type": "string"
+                            },
+                            "managementSubscriptionId": {
+                                "type": "string"
+                            }
+                        },
+                        "resources": [
+                        {
+                            "type": "Microsoft.Resources/deploymentScripts",
+                            "apiVersion": "2020-10-01",
+                            "name": "alz-prereq-deploymentscript",
+                            "location": "[parameters('location')]",
+                            "kind": "AzurePowerShell",
+                            "identity": {
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                    "[reference(subscriptionResourceId(parameters('managementSubscriptionId'), 'Microsoft.Resources/deployments', 'alz-prerequisites-001'), '2022-09-01').outputs.userAssignedIdentityId.value]": {}
+                                }
+                            },
+                            "properties": {
+                                "azPowerShellVersion": "12.3",
+                                "retentionInterval": "PT1H",
+                                "timeout": "PT2H",
+                                "arguments": "[format('-eslzRootName \"{0}\"', parameters('eslzRootName'))]",
+                                "scriptContent": "
+                                    param(
+                                        [Parameter(Mandatory=$true, HelpMessage=\"Enter the ESLZ root name.\")]
+                                        [string]
+                                        $eslzRootName
+                                    )
+                
+                                    #API call to register the Microsoft.Network provider against intermediate resource group for AVNM
+                                    Invoke-AzRestMethod -Method POST -Uri \"https://management.azure.com/providers/Microsoft.Management/managementGroups/$eslzRootName/providers/Microsoft.Network/register?api-version=2021-04-01\"
+
+                                    #Register all resource providers required for ALZ
+                                    $subs = Search-AzGraph -Query \"ResourceContainers | where type =~ 'microsoft.resources/subscriptions'\" -ManagementGroup $eslzRootName
+                                    $rps = @('Microsoft.Insights','Microsoft.AlertsManagement','Microsoft.OperationalInsights','Microsoft.OperationsManagement','Microsoft.Automation','Microsoft.AlertsManagement','Microsoft.Security','Microsoft.Network','Microsoft.EventGrid','Microsoft.ManagedIdentity','Microsoft.GuestConfiguration','Microsoft.Advisor','Microsoft.PolicyInsights')
+                
+                                    foreach ($sub in $subs) {
+                                        Write-Host 'Registering resource providers for subscription: ' $sub.subscriptionId
+                                        Select-AzSubscription -SubscriptionId $sub.subscriptionId
+                                        Get-AzResourceProvider -ProviderNamespace $rps | where {$_.RegistrationState -ne \"Registered\"} | Register-AzResourceProvider
+                                    }
+                
+                                    #Sleep for 15 minutes to wait for Management Groups to load to cache before policy assignments
+                                    Start-Sleep -Duration (New-TimeSpan -Minutes 15)
+                                "
+                            },
+                            "metadata": {
+                            "description": "Create a Deployment Script resource to perform the prerequisites."
+                            }
+                        }
+                        ],
+                        "outputs": {}
+                    }
+                    }
+                }
+            ]
+          }
+        },
+        "dependsOn": [
+            "alz-prerequisites-001",
+            "[guid(format('alz-prerequisites-{0}-{1}', parameters('eslzRootName'), parameters('location')))]"
+        ]
+      }
+    ],
+    "outputs": {}
+  }
