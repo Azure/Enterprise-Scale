@@ -58,6 +58,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-01-10). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - Added SQL Advanced Threat Protection status log to [dataCollectionRule-DefenderSQL.json](Enterprise-Scale/eslzArm/resourceGroupTemplates/dataCollectionRule-DefenderSQL.json) data collection rule. The logs allows identifying machines connected to the workspace with SQL ATP and the protection status on each instance on those machines and is used by MDfC Defender for SQL.
+- Resolved deployment issues related to Service Health alerts. Previously, Service Health was not deployed when selected unless Azure Monitor Baseline Alerts were also selected.
 
 ### 🔃 Policy Refresh Q2 FY25
 
@@ -81,7 +82,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-12-10). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
-- Resolved deployment issues related to Service Health alerts. Previously, Service Health was not deployed when selected unless Azure Monitor Baseline Alerts were also selected.
 
 ### November 2024
 
