@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
   - [December 2024](#december-2024)
   - [November 2024](#november-2024)
   - [🔃 Policy Refresh Q1 FY25](#-policy-refresh-q1-fy25)
@@ -50,6 +51,23 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### 🔃 Policy Refresh Q2 FY25
+
+- [PREVIEW] Added ability to deploy Virtual Network Manager through the portal accelerator with support for Security Admin feature, including default rules blocking high-risk ports [read more](https://learn.microsoft.com/en-us/azure/virtual-network-manager/concept-security-admins).
+  - [Important] To support the configuration of AVNM, we've had to included a deployment script to configure the Microsoft.Network resource provider on the intermediate root management group. This deployment script and required User-Assigned Managed Identity are created in a resource group in the Management subscription. Please remove the user assigned identity in the resource group hosting the AVNM instance.
+  - [Important] Due to performance improvements of ARM, we've also had to change the "wait" process in the portal accelerator (waiting for Management Groups to be registered so we can do policy assignments). We are now using the same deployment script with a "Start-Sleep" PowerShell command which is far more reliable. In the management subscription, you will find a resource group `rg-alz-prereqs` that you should remove (with contents) as the identity has Contributor rights on the Intermediate Management Group.
+  - [Important] A deployment script and User-Assigned Managed Identity is needed in the `rg-alz-avnm` resource group in the Connectivity subscription to register the Security Admin configuration with selected deployment regions. You should delete this identity after deployment.
+- *Policy Versioning Support* - all initiatives and assignments have been pinned to the current major version of built-in policies or initiatives deployed by ALZ. This ensures that all ALZ deployments will successfully deploy using the currently validated versions of ALZ built-in policies and initiatives. As these get updated the team will validate changes and impact before incrementing the recommended version.
+- Fixed a Portal Accelerator bug that results in failed deployment when choosing not to deploy policies to the Identity management group.
+- Updated the display name of the many `Effect` parameters to clearly identify the policy it applies to in the initiative [Enforce recommended guardrails for Azure Key Vault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html).
+- Updated the policy and policySet definition API version `2023-04-01` to supporting policy versioning. In this repo, this is used in the master policies.json and initiatives.json files, that are built from individual policy and initiative files in the src folder.
+- Added description for custom ALZ policy [Deny-Subnet-Without-Penp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Penp.html) to the [ALZ Policies Extra](./ALZ-Policies-Extra) wiki page.
+- Updated initiative [Enforce-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) `AppServiceMinTlsVersion` parameter to include TLS version 1.3 (as supported by the policy).
+- Removed duplicate policy assignment "Container Apps should only be accessible over HTTPS" from initiative [Enforce-EncryptTransit_20241211](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_2024.html). Note, this is a breaking change, and existing assignments should be removed and re-assigned.
+- Added new custom policies [Audit-Tags-Mandatory](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory.html) and [Audit-Tags-Mandatory-Rg](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory-Rg.html) to support auditing for the existence of mandatory tags (based on an array of tags). Not assigned by default.
+- Updated the Workload Specific Compliance initiative section in the portal accelerator to allow configuring `Audit Only` effect for workloads using the `DoNotEnforce` enforcement mode.
+- Updated the Management Group creation template to use the latest API version `2023-04-01`.
+
 ### December 2024
 
 #### Tooling
@@ -60,6 +78,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- Fixed a bug in the Portal Accelerator that caused the deployment to fail when deploying a hub & spoke with NVA topology and regional VPN gateway (basic sku for Public IP not supported).
 - A bug was resolved in the Portal Accelerator that caused deployment validation to fail with the error message "The 'location' property must be specified for 'amba-id-amba-prod-001'". This event happened when a Log Analytics Workspace was not deployed, but Azure Monitor Baseline Alerts were enabled. This issue occurred because Azure Monitor Baseline Alerts depend on the management subscription, which is not provided if the Log Analytics Workspace is not deployed. To address this scenario, an additional section was implemented in the Baseline alerts and monitoring tab allowing the selection of a Management subscription when not deploying a Log Analytics Workspace.
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2024-11-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
