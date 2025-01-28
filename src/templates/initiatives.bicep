@@ -39,6 +39,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security_20240529.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240509.json')
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20241211.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/DenyAction-DeleteProtection.json')
@@ -124,7 +125,7 @@ var policySetDefinitions = concat(policySetDefinitionsByCloudType.All, policySet
 
 // Create the Policy Definitions as needed for the target cloud environment
 // Depends on Policy Definitons to ensure they exist before creating dependent Policy Set Definitions (Initiatives)
-resource PolicySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2020-09-01' = [for policy in policySetDefinitions: {
+resource PolicySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2023-04-01' = [for policy in policySetDefinitions: {
   // dependsOn: [
   //   PolicyDefinitions
   // ]
