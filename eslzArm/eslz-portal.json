@@ -1466,8 +1466,7 @@
                             "type": "Microsoft.Common.CheckBox",
                             "label": "Deploy Azure NAT Gateways",
                             "toolTip": "If selected, Azure Virtual Network Manager will be deployed to manage your virtual networks. Currently, ALZ will only enable Security Admin Rules role by default",
-                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]",
-                            "enable": false
+                            "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]"
                         },
                         {
                             "name": "esNwNVANote",
@@ -2839,6 +2838,35 @@
                                     {
                                         "label": "No",
                                         "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForBastion",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for Azure Bastion",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.3.0/24)",
+                            "defaultValue": "10.100.3.0/24",
+                            "visible": "[and(equals(steps('connectivity').deployBastion), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 8), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 1)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 1))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (first octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 16), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 2)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 2))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (second octet)."
+                                    },
+                                    {
+                                        "isValid": "[if(greaterOrEquals(last(split(steps('connectivity').esAddressHubHS, '/')), 24), equals(last(take(split(first(split(steps('connectivity').esAddressHubHS, '/')), '.'), 3)), last(take(split(first(split(steps('connectivity').subnetMaskForAzFw, '/')), '.'), 3))), true)]",
+                                        "message": "CIDR range not within virtual network CIDR range (third octet)."
                                     }
                                 ]
                             }
