@@ -408,6 +408,30 @@
             "type": "string",
             "defaultValue": ""
         },
+        "enableSidecarVnetPrimary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForSidecarPrimary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableSidecarVnetSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForSidecarSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "enableDdoS": {
             "type": "string",
             "defaultValue": "No",
@@ -1751,6 +1775,7 @@
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
             "bastion": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/bastion.json')]",
+            "vwanSidecar": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-sidecar.json')]",
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
             "dataCollectionRuleVmInsights": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-VmInsights.json')]",
@@ -1895,6 +1920,8 @@
             "nvaConnectivityHub2DeploymentName": "[take(concat('alz-NVAHub2', variables('deploymentSuffix')), 64)]",
             "bastionPriDeploymentName": "[take(concat('alz-BastionPri', variables('deploymentSuffix')), 64)]",
             "bastionSecDeploymentName": "[take(concat('alz-BastionSec', variables('deploymentSuffix')), 64)]",
+            "vwanSidecarPriDeploymentName": "[take(concat('alz-VWanSidecarPri', variables('deploymentSuffix')), 64)]",
+            "vwanSidecarSecDeploymentName": "[take(concat('alz-VWanSidecarSec', variables('deploymentSuffix')), 64)]",
             "azVmMonitorPolicyDeploymentName": "[take(concat('alz-AzVmMonitor', variables('deploymentSuffix')), 64)]",
             "azVmssMonitorPolicyDeploymentName": "[take(concat('alz-AzVmssMonitor', variables('deploymentSuffix')), 64)]",
             "azVmHybridMonitorPolicyDeploymentName": "[take(concat('alz-AzVmHybridMonitor', variables('deploymentSuffix')), 64)]",
@@ -5416,6 +5443,88 @@
                     },
                     "vWANHubCapacitySecondary": {
                         "value": "[parameters('vWANHubCapacitySecondary')]"
+                    }
+                }
+            }
+        },
+        {
+            // VWAN - Sidecar network deployment - Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').vwanSidecarPriDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "alz-prerequisites"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanSidecar]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetName": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-sidecar-', parameters('connectivityLocation'))]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForSidecarPrimary')]"
+                    }
+                }
+            }
+        },
+        {
+            // VWAN - Sidecar network deployment - Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "scope": "[variables('scopes').connectivityManagementGroup]",
+            "name": "[variables('deploymentNames').vwanSidecarSecDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "alz-prerequisites"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanSidecar]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetName": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-sidecar-', parameters('connectivityLocationSecondary'))]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForSidecarSecondary')]"
                     }
                 }
             }
