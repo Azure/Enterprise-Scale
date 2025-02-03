@@ -13,7 +13,7 @@ To meet the diverse needs of our community, we offer the following reference imp
 
 - [ALZ ARM portal experience (this repository)](https://github.com/Azure/Enterprise-Scale)
 - [ALZ Bicep modules](https://github.com/Azure/ALZ-Bicep)
-- [ALZ Terraform module](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale)
+- [ALZ Terraform](https://aka.ms/alz/tf)
 
 Whilst each reference implementation is uniquely characterized by its target community, they all aim to deliver against the Azure landing zone [conceptual architecture](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-conceptual-architecture), [design principles](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-principles) and [design areas](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-areas).
 
@@ -103,7 +103,7 @@ When contributing a custom policy based on appending resources at scale, the cor
 
 ##### **Audit**
 
-Auditing resources at scale via policy is achievable using the correct effect inside the definition. This policy contribution should be prefixed with `Audit` - example, `Audit-MachineLearning-PrivateEndpointId.json`. 
+Auditing resources at scale via policy is achievable using the correct effect inside the definition. This policy contribution should be prefixed with `Audit` - example, `Audit-MachineLearning-PrivateEndpointId.json`.
 
 ##### **Deny**
 
@@ -186,14 +186,14 @@ For a policy set definition, additional code should be added inside of the `load
 ~~The policy definition files will be compiled into a `policies.json` file from the `policy.bicep` file which was amended.~~
 
 > Due to security compliance requirements, we've made core changes that mean we no longer automatically build the policies, initiatives and roles templates after changes in the `src` folder are committed. This means that you as a contributor must run the bicep build commands to generate the required outputs as part of your pull request. Depending on the files you've updated these are the commands:
-> 
+>
 > - `bicep build ./src/templates/policies.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/policies.json`
 > - `bicep build ./src/templates/initiatives.bicep --outfile ./eslzArm/managementGroupTemplates/policyDefinitions/initiatives.json`
 > - `bicep build ./src/templates/roles.bicep --outfile ./eslzArm/managementGroupTemplates/roleDefinitions/customRoleDefinitions.json`
 
 Once the policy work has been completed, a pull request should be submitted to the repository:
 
-![pr-example](media/pr-example.png) 
+![pr-example](media/pr-example.png)
 
 #### Versioning
 
@@ -242,7 +242,6 @@ When creating new policies that will be assigned by default by the portal refere
 Example for the Key Vault initiative (note the tooltip):
 
 ![Example of adding tooltip in portal experience](media/alz-contrib-portal1.png)
-
 
 ### Forking the repository and submitting a Pull Request
 
