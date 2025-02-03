@@ -3176,7 +3176,7 @@
                         {
                             "name": "primarySidecarNetworkNote",
                             "type": "Microsoft.Common.InfoBox",
-                            "visible": "[(equals(steps('connectivity').enableHub, 'vwan')]",
+                            "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
                             "options": {
                               "icon": "None",
                               "text": "If you need to use Azure Bastion or Private DNS Resolver you will need to deploy an additional sidecar virtual network to support those services, as Virtual WAN does not currently support integration with those services.",
@@ -3184,7 +3184,7 @@
                             }
                         },
                         {
-                            "name": "enableSidecarVnet",
+                            "name": "enableSidecarVnetPrimary",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Enable sidecar virtual network",
                             "defaultValue": "Yes",
@@ -3209,7 +3209,7 @@
                             "label": "Address space for sidecar virtual network",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.3.0/21)",
                             "defaultValue": "10.100.3.0/21",
-                            "visible": "[equals(steps('connectivity').enableSidecarVnet, 'Yes')]",
+                            "visible": "[equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes')]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -3225,7 +3225,7 @@
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Bastion",
                             "defaultValue": "No",
-                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableSidecarVnet, 'Yes'))]",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes'))]",
                             "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (Standard and zone redundant) in the connectivity subscription.",
                             "constraints": {
                                 "allowedValues": [
@@ -4031,43 +4031,6 @@
                                     }
                                 },
                                 {
-                                    "name": "enableBastionSecondary",
-                                    "type": "Microsoft.Common.OptionsGroup",
-                                    "label": "Deploy Bastion",
-                                    "defaultValue": "No",
-                                    "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'))]",
-                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (Standard and zone redundant) in the connectivity subscription.",
-                                    "constraints": {
-                                        "allowedValues": [
-                                            {
-                                                "label": "Yes",
-                                                "value": "Yes"
-                                            },
-                                            {
-                                                "label": "No",
-                                                "value": "No"
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    "name": "subnetMaskForBastionSecondary",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "Subnet for Azure Bastion",
-                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.3.0/24)",
-                                    "defaultValue": "10.200.3.0/24",
-                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary, 'Yes')]",
-                                    "constraints": {
-                                        "required": true,
-                                        "validations": [
-                                            {
-                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
-                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
                                     "name": "enablevWANRoutingIntentSecondary",
                                     "type": "Microsoft.Common.OptionsGroup",
                                     "label": "Enable vWAN Routing Intent in your second",
@@ -4415,6 +4378,90 @@
                                                 "label": "50",
                                                 "description": "50 Routing Infrastructure Units, 50 Gbps Aggregate Throughput, Supports 50000 VMs",
                                                 "value": "50"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "secondarySidecarNetworkNote",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                                    "options": {
+                                      "icon": "None",
+                                      "text": "If you need to use Azure Bastion or Private DNS Resolver you will need to deploy an additional sidecar virtual network to support those services, as Virtual WAN does not currently support integration with those services.",
+                                      "uri": "https://aka.ms/alz"
+                                    }
+                                },
+                                {
+                                    "name": "enableSidecarVnetSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Enable sidecar virtual network",
+                                    "defaultValue": "Yes",
+                                    "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, additional options will be provided for provisioning supported services.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForSidecarSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Address space for sidecar virtual network",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.3.0/21)",
+                                    "defaultValue": "10.100.3.0/21",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "enableBastionSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy Bastion",
+                                    "defaultValue": "No",
+                                    "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes'))]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (Standard and zone redundant) in the connectivity subscription.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForBastionSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Subnet for Azure Bastion",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.3.0/24)",
+                                    "defaultValue": "10.200.3.0/24",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
                                             }
                                         ]
                                     }
