@@ -1,6 +1,7 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
+- [January 2025](#29th-january-2025-29012025)
 - [September 2024](#25th-september-2024-25092024)
 - [June 2024](#12th-june-2024-12062024)
 - [March 2024](#11th-march-2024-11032024)
