@@ -1,0 +1,294 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "string",
+            "defaultValue": "vnet01-sidecar",
+            "metadata": {
+                "description": "Name of new or existing vnet"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Azure region for primary networking"
+            }
+        },
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the intermediate root management group"
+            }
+        },
+        "resourceGroupOverride": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of the resource group to deploy to"
+            }
+        }
+    },
+    "variables": {
+        "resourceDeploymentName": "[format('{0}-vwanconnect-deployment', parameters('vnetName'))]",
+        "rgName": "[if(empty(parameters('resourceGroupOverride')), concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location')), parameters('resourceGroupOverride'))]",
+        "vwanHubId": "[resourceId('Microsoft.Network/virtualWANHubs', parameters('vnetName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "alz-vwancheck-uai",
+            "resourceGroup": "[variables('rgName')]",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                        "type": "string"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                            "apiVersion": "2022-01-31-preview",
+                            "name": "[format('uai-avnm-{0}', parameters('location'))]",
+                            "location": "[parameters('location')]",
+                            "metadata": {
+                                "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(resourceGroup().id, format('uai-vwancheck-{0}', parameters('location')))]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+                                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-vwancheck-{0}', parameters('location'))), '2022-01-31-preview').principalId]",
+                                "principalType": "ServicePrincipal"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-vwancheck-{0}', parameters('location')))]"
+                            ],
+                            "metadata": {
+                                "description": "This role assignment grants the user assigned identity the Contributor role on the resource group."
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "userAssignedIdentityId": {
+                            "type": "string",
+                            "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-vwancheck-{0}', parameters('location')))]"
+                        }
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "ds-vwancheck",
+            "resourceGroup": "[variables('rgName')]",
+            "properties": {
+                    "expressionEvaluationOptions": {
+                        "scope": "inner"
+                    },
+                "mode": "Incremental",
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locationSecondary": {
+                        "value": "[parameters('locationSecondary')]"
+                    },
+                    "userAssignedIdentityId": {
+                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                    },
+                    "rgName": {
+                        "value": "[variables('rgName')]"
+                    },
+                    "configIds": {
+                        "value": "[variables('configIds')]"
+                    },
+                    "connectivitySubscriptionId": {
+                        "value": "[parameters('connectivitySubscriptionId')]"
+                    }
+                },
+                "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                    "location": {
+                        "type": "string"
+                    },
+                    "locationSecondary": {
+                        "type": "string"
+                    },
+                    "userAssignedIdentityId": {
+                        "type": "string"
+                    },
+                    "rgName": {
+                        "type": "string"
+                    },
+                    "configIds": {
+                        "type": "string"
+                    },
+                    "connectivitySubscriptionId": {
+                        "type": "string"
+                    }
+                },
+                "resources": [
+                    {
+                        "type": "Microsoft.Resources/deploymentScripts",
+                        "apiVersion": "2020-10-01",
+                        "name": "alz-vwancheck-deploymentscript",
+                        "location": "[parameters('location')]",
+                        "kind": "AzurePowerShell",
+                        "identity": {
+                            "type": "UserAssigned",
+                            "userAssignedIdentities": {
+                                "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                        }
+                    },
+                    "properties": {
+                        "azPowerShellVersion": "12.3",
+                        "retentionInterval": "PT1H",
+                        "timeout": "PT1H",
+                        "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                        "scriptContent": "
+                            param (
+                                [string]
+                                $azResourceResourceId,
+
+                                [string]
+                                $apiVersion = \"2022-05-01\",
+
+                                [string]
+                                $azResourcePropertyToCheck = \"provisioningState\",
+
+                                [string]
+                                $azResourceDesiredState = \"Provisioned\",
+
+                                [int]
+                                $waitInSecondsBetweenIterations = 30,
+
+                                [int]
+                                $maxIterations = 30
+                            )
+
+                                $totalTimeoutCalculation = $waitInSecondsBetweenIterations * $maxIterations
+
+                                $azResourcePropertyExistenceCheck = Invoke-AzRestMethod -Method GET -Path \"$($azResourceResourceId)?api-version=$($apiVersion)\"
+
+                                if ($azResourcePropertyExistenceCheck.StatusCode -ne \"200\") {
+                                    $DeploymentScriptOutputs[\"azResourcePropertyState\"] = \"Not Found\"
+                                    throw \"Unable to get Azure Resource - $($azResourceResourceId). Likely it doesn't exist. Status code: $($azResourcePropertyExistenceCheck.StatusCode) Error: $($azResourcePropertyExistenceCheck.Content)\"
+                                }
+
+                                $azResourcePropertyStateResult = \"Unknown\"
+                                $iterationCount = 0
+
+                                do {
+                                    $azResourcePropertyStateGet = Invoke-AzRestMethod -Method GET -Path \"$($azResourceResourceId)?api-version=$($apiVersion)\"
+                                    $azResourcePropertyStateJsonConverted = $azResourcePropertyStateGet.Content | ConvertFrom-Json -Depth 10
+                                    $azResourcePropertyStateResult = $azResourcePropertyStateJsonConverted.properties.$($azResourcePropertyToCheck)
+
+                                    if ($azResourcePropertyStateResult -ne $azResourceDesiredState) {
+                                        Write-Host \"Azure Resource Property ($($azResourcePropertyToCheck)) is not in $($azResourceDesiredState) state. Waiting $($waitInSecondsBetweenIterations) seconds before checking again. Iteration count: $($iterationCount)\"
+                                        Start-Sleep -Seconds $waitInSecondsBetweenIterations
+                                        $iterationCount++
+                                    }
+                                } while (
+                                    $azResourcePropertyStateResult -ne $azResourceDesiredState -and $iterationCount -ne $maxIterations
+                                )
+
+                                if ($azResourcePropertyStateResult -eq $azResourceDesiredState) {
+                                    Write-Host \"Azure Resource Property ($($azResourcePropertyToCheck)) is now in $($azResourceDesiredState) state.\"
+                                    $DeploymentScriptOutputs[\"azResourcePropertyState\"] = \"$($azResourceDesiredState)\"
+                                }
+
+                                if ($iterationCount -eq $maxIterations -and $azResourcePropertyStateResult -ne $azResourceDesiredState) {
+                                    $DeploymentScriptOutputs[\"azResourcePropertyState\"] = \"Azure Resource Property ($($azResourcePropertyToCheck)) is still not in desired state of $($azResourceDesiredState). Timeout reached of $($totalTimeoutCalculation) seconds.\"
+                                    throw \"Azure Resource Property ($($azResourcePropertyToCheck)) is still not in $($azResourceDesiredState) state after $($totalTimeoutCalculation) seconds.\"
+                                }
+                            "
+                        }
+                    }
+                ],
+                    "outputs": {}
+                }
+            },
+            "dependsOn": [
+                "alz-vwancheck-uai"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "alz-vwancheck-uai",
+            "resourceGroup": "[variables('rgName')]",
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections",
+                            "apiVersion": "2020-05-01",
+                            "name": "contoso-vhub-westeurope/spokeConnectionName",
+                            "properties": {
+                                "remoteVirtualNetwork": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks', 'spokeVnetName')]"
+                                },
+                                "enableInternetSecurity": true,
+                                "routingConfiguration": {
+                                "associatedRouteTable": {
+                                    "id": "[resourceId('Microsoft.Network/virtualHubs/hubRouteTables', 'contoso-vhub-westeurope/RT_VNet')]"
+                                },
+                                "propagatedRouteTables": {
+                                    "labels": [
+                                    "VNet"
+                                    ],
+                                    "ids": [
+                                    {
+                                        "id": "[resourceId('Microsoft.Network/virtualHubs/hubRouteTables', 'contoso-vhub-westeurope/RT_VNet')]"
+                                    }
+                                    ]
+                                }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
