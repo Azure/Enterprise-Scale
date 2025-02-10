@@ -58,6 +58,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-02-05). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
+#### Other
+- Azure Policy Initative for Private DNS Zone updated to include SQL Server private dns zone. A new policy definition is also included as we waith for the auzre policy built-in policy PR to be approved and merged. [Built-In Policy PR](https://github.com/Azure/azure-policy/pull/1418)
+
 ### January 2025
 
 #### Tooling
