@@ -56,6 +56,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- Updated the initiative [Deploy-Private-DNS-Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html), Removing the 'Effect1' parameter from the policy set "Deploy-Private-DNS-Zones" and using the "Effect" parameter.
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-02-05). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
 ### January 2025
