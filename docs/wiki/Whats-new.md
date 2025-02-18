@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [February 2025](#february-2025)
   - [January 2025](#january-2025)
   - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
   - [December 2024](#december-2024)
@@ -60,7 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Breaking Changes
 
-- The policy defintion [Azure AI Search services should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/76a56461-9dc0-40f0-82f5-2453283afa2f.html) has been updated to version 2.0.0. This changes the default effect value from "Deny" to "AuditIfNotExists" while removing "Deny" from allowedValues, therefore we needed to adopt this change in our initiative.
+- The policy definition [Azure AI Search services should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/76a56461-9dc0-40f0-82f5-2453283afa2f.html) has been updated to version 2.0.0. This changes the default effect value from "Deny" to "AuditIfNotExists" while removing "Deny" from allowedValues, therefore we needed to adopt this change in our initiative.
 
 ### January 2025
 
