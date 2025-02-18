@@ -58,6 +58,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-02-05). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
+#### Breaking Changes
+
+- The policy defintion [Azure AI Search services should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/76a56461-9dc0-40f0-82f5-2453283afa2f.html) has been upgrade to version 2.0.0. This changes the default effect value from "Deny" to "AuditIfNotExists" while removing "Deny" from allowedValues.
+
 ### January 2025
 
 #### Tooling
