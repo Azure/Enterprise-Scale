@@ -57,7 +57,7 @@ By default, all recommendations are enabled, and you must explicitly disable the
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
 - Azure Policies that will enable autonomy for the platform and the landing zones.
 - An Azure subscription dedicated for Management, which enables core platform capabilities at scale using Azure Policy such as:
-  - A Log Analytics workspace
+  - A Log Analytics workspace and an Automation account
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
   - Azure Sentinel

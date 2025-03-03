@@ -48,7 +48,7 @@ By default, all recommendations are enabled. You must explicitly disable them if
 
 - A scalable Management Group hierarchy aligned to core platform capabilities, allowing you to operationalize at scale using centrally managed Azure RBAC and Azure Policy where platform and workloads have clear separation.
 - An Azure subscription dedicated for management, connectivity, and identity. This subscription hosts core platform capabilities such as:  
-  - A Log Analytics workspace
+  - A Log Analytics workspace and an Automation account.
   - Azure Sentinel.
   - A hub virtual network  
   - VPN Gateway (optional - deployment across Availability Zones)

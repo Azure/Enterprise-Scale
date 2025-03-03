@@ -8,8 +8,6 @@ Some of these issues may be resolved in future release, while others require inp
 
 ## Deploying Automation Account with CMK controls enabled
 
-> Note that automation accounts have been removed in ALZ as of February 2025.
-
 ### Area
 
 Automation Account

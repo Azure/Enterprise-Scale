@@ -173,13 +173,14 @@ This management group contains a dedicated subscription for management, monitori
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **1**     |
-| `Policy Definitions`      | **0**     |
+| `Policy Definitions`      | **1**     |
 </td></tr> </table>
 
 The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Management Management Group**.
 
 | Assignment Name          | Definition Name                                                                                | Policy Type                       | Description                                                                                                               | Effect(s)         |
 | ------------------------ | ---------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| **Deploy-Log-Analytics** | **Configure Log Analytics workspace and automation account to centralize logs and monitoring** | `Policy Definition`, **Built-in** | Deploy resource group containing Log Analytics workspace and linked automation account to centralize logs and monitoring. | DeployIfNotExists |
 | **Deploy Azure Monitor Baseline Alerts for Management** | **Deploy Azure Monitor Baseline Alerts for Management** | `Policy Definition Set`, **Custom**     | Deploys alerting for management related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Management initiative. | DeployIfNotExists                   |
 
 

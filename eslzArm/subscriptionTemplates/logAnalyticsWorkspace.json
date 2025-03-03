@@ -11,6 +11,12 @@
       "workspaceRegion": {
         "type": "String"
       },
+      "automationAccountName": {
+        "type": "String"
+      },
+      "automationRegion": {
+        "type": "String"
+      },
       "retentionInDays": {
         "type": "String"
       },
@@ -46,6 +52,18 @@
             "variables": {},
             "resources": [
               {
+                "apiVersion": "2015-10-31",
+                "location": "[parameters('AutomationRegion')]",
+                "name": "[parameters('AutomationAccountName')]",
+                "type": "Microsoft.Automation/automationAccounts",
+                "properties": {
+                  "disableLocalAuth": true,
+                  "sku": {
+                    "name": "Basic"
+                  }
+                }
+              },
+              {
                 "apiVersion": "2020-08-01",
                 "location": "[parameters('workspaceRegion')]",
                 "name": "[parameters('workspaceName')]",
@@ -56,7 +74,21 @@
                   },
                   "enableLogAccessUsingOnlyResourcePermissions": true,
                   "retentionInDays": "[int(parameters('retentionInDays'))]"
-                }
+                },
+                "resources": [
+                  {
+                    "name": "Automation",
+                    "type": "linkedServices",
+                    "apiVersion": "2020-08-01",
+                    "dependsOn": [
+                      "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]",
+                      "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                    ],
+                    "properties": {
+                      "resourceId": "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                    }
+                  }
+                ]
               },
               {
                   // Onboard Sentinel

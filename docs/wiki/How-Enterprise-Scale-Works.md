@@ -87,7 +87,7 @@ By default, all recommended settings and resources recommendations are enabled a
 - Azure Policies that will enable autonomy for the platform and the landing zones. The full list of policies leveraged by Enterprise-Scale, their intent, assignment scope, and life-cycle can be viewed [here](./ALZ-Policies).
 - An Azure subscription dedicated for **Management**, which enables core platform capabilities at scale using Azure Policy such as:
 
-  - A Log Analytics workspace
+  - A Log Analytics workspace and an Automation account
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
 
