@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [February 2025](#february-2025)
   - [January 2025](#january-2025)
   - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
   - [December 2024](#december-2024)
@@ -52,6 +53,19 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### February 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-02-05). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- We are removing the deployment of Automation Accounts by default going forward in ALZ (February 2025). This is because since the Azure Monitor Agent (AMA) changes the requirement of the Automation Account is no longer needed for things like change tracking and update management. If you require an Automation Account for other purposes, you can deploy one using the Azure Portal or any other supported method, Bicep, Terraform etc. in the Management Subscription if required. You do not need to remove the automation account if you already have one today deployed, although you may choose to remove it if not in use.
+  - With this we will also stop assigning the policy with the assignment name of: `Deploy-Log-Analytics` at the Platform > Management Management Group scope which utilizes the built-in policy with the ID of: [`8e3e61b3-0b32-22d5-4edf-55f87fdb5955`](https://www.azadvertizer.net/azpolicyadvertizer/8e3e61b3-0b32-22d5-4edf-55f87fdb5955.html). Please remove/delete this assignment if you wish to as you have no need to monitor and enforce the deployment of the Log Analytics Workspace and Automation Account via policy.
+- Added support for new Azure Regions that have been recently launched into the ALZ Portal Accelerator
+
+#### Breaking Changes
+
+- The policy definition [Azure AI Search services should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/76a56461-9dc0-40f0-82f5-2453283afa2f.html) has been updated to version 2.0.0. This changes the default effect value from "Deny" to "AuditIfNotExists" while removing "Deny" from allowedValues, therefore we needed to adopt this change in our initiative.
+
 ### January 2025
 
 #### Tooling
@@ -59,7 +73,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-01-10). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - Added SQL Advanced Threat Protection status log to [dataCollectionRule-DefenderSQL.json](Enterprise-Scale/eslzArm/resourceGroupTemplates/dataCollectionRule-DefenderSQL.json) data collection rule. The logs allows identifying machines connected to the workspace with SQL ATP and the protection status on each instance on those machines and is used by MDfC Defender for SQL.
 - Resolved deployment issues related to Service Health alerts. Previously, Service Health was not deployed when selected unless Azure Monitor Baseline Alerts were also selected.
-- 
+
 #### Other
 
 - The January community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
@@ -76,7 +90,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the policy and policySet definition API version `2023-04-01` to supporting policy versioning. In this repo, this is used in the master policies.json and initiatives.json files, that are built from individual policy and initiative files in the src folder.
 - Added description for custom ALZ policy [Deny-Subnet-Without-Penp](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Penp.html) to the [ALZ Policies Extra](./ALZ-Policies-Extra) wiki page.
 - Updated initiative [Enforce-EncryptTransit_20240509](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20240509.html) `AppServiceMinTlsVersion` parameter to include TLS version 1.3 (as supported by the policy).
-- Removed duplicate policy assignment "Container Apps should only be accessible over HTTPS" from initiative [Enforce-EncryptTransit_20241211](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_2024.html). Note, this is a breaking change, and existing assignments should be removed and re-assigned.
+- Removed duplicate policy assignment "Container Apps should only be accessible over HTTPS" from initiative [Enforce-EncryptTransit_20241211](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-EncryptTransit_20241211.html). Note, this is a breaking change, and existing assignments should be removed and re-assigned.
 - Added new custom policies [Audit-Tags-Mandatory](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory.html) and [Audit-Tags-Mandatory-Rg](https://www.azadvertizer.net/azpolicyadvertizer/Audit-Tags-Mandatory-Rg.html) to support auditing for the existence of mandatory tags (based on an array of tags). Not assigned by default.
 - Updated the Workload Specific Compliance initiative section in the portal accelerator to allow configuring `Audit Only` effect for workloads using the `DoNotEnforce` enforcement mode.
 - Updated the Management Group creation template to use the latest API version `2023-04-01`.
