@@ -28,12 +28,17 @@
             "metadata": {
                 "description": "Name of the resource group to deploy to"
             }
+        },
+        "azResourceResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Resource ID of the resource to check"
+            }
         }
     },
     "variables": {
         "resourceDeploymentName": "[format('{0}-vwanconnect-deployment', parameters('vnetName'))]",
-        "rgName": "[if(empty(parameters('resourceGroupOverride')), concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location')), parameters('resourceGroupOverride'))]",
-        "vwanHubId": "[resourceId('Microsoft.Network/virtualWANHubs', parameters('vnetName'))]"
+        "rgName": "[if(empty(parameters('resourceGroupOverride')), concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location')), parameters('resourceGroupOverride'))]"
     },
     "resources": [
         {
@@ -111,20 +116,14 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
-                    "locationSecondary": {
-                        "value": "[parameters('locationSecondary')]"
-                    },
                     "userAssignedIdentityId": {
-                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-vwancheck-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
                     },
                     "rgName": {
                         "value": "[variables('rgName')]"
                     },
-                    "configIds": {
-                        "value": "[variables('configIds')]"
-                    },
-                    "connectivitySubscriptionId": {
-                        "value": "[parameters('connectivitySubscriptionId')]"
+                    "azResourceResourceId": {
+                        "value": "[parameters('azResourceResourceId')]"
                     }
                 },
                 "template": {
@@ -134,19 +133,13 @@
                     "location": {
                         "type": "string"
                     },
-                    "locationSecondary": {
-                        "type": "string"
-                    },
                     "userAssignedIdentityId": {
                         "type": "string"
                     },
                     "rgName": {
                         "type": "string"
                     },
-                    "configIds": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
+                    "azResourceResourceId": {
                         "type": "string"
                     }
                 },
@@ -167,7 +160,7 @@
                         "azPowerShellVersion": "12.3",
                         "retentionInterval": "PT1H",
                         "timeout": "PT1H",
-                        "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                        "arguments": "[format('-location \"{0}\" -azResourceResourceId \"{1}\"', parameters('location'), parameters('azResourceResourceId'))]",
                         "scriptContent": "
                             param (
                                 [string]
@@ -238,7 +231,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
-            "name": "alz-vwancheck-uai",
+            "name": "alz-vwansidecar-connect",
             "resourceGroup": "[variables('rgName')]",
             "properties": {
                 "expressionEvaluationOptions": {
@@ -266,29 +259,32 @@
                             "name": "contoso-vhub-westeurope/spokeConnectionName",
                             "properties": {
                                 "remoteVirtualNetwork": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks', 'spokeVnetName')]"
+                                    "id": "[resourceId('Microsoft.Network/virtualNetworks', 'spokeVnetName')]"
                                 },
                                 "enableInternetSecurity": true,
                                 "routingConfiguration": {
-                                "associatedRouteTable": {
-                                    "id": "[resourceId('Microsoft.Network/virtualHubs/hubRouteTables', 'contoso-vhub-westeurope/RT_VNet')]"
-                                },
-                                "propagatedRouteTables": {
-                                    "labels": [
-                                    "VNet"
-                                    ],
-                                    "ids": [
-                                    {
+                                    "associatedRouteTable": {
                                         "id": "[resourceId('Microsoft.Network/virtualHubs/hubRouteTables', 'contoso-vhub-westeurope/RT_VNet')]"
+                                    },
+                                    "propagatedRouteTables": {
+                                        "labels": [
+                                        "VNet"
+                                        ],
+                                        "ids": [
+                                        {
+                                            "id": "[resourceId('Microsoft.Network/virtualHubs/hubRouteTables', 'contoso-vhub-westeurope/RT_VNet')]"
+                                        }
+                                        ]
                                     }
-                                    ]
-                                }
                                 }
                             }
                         }
                     ]
                 }
-            }
+            },
+            "dependsOn": [
+                "ds-vwancheck"
+            ]
         }
     ]
 }
