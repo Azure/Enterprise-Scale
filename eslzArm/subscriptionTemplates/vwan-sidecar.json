@@ -35,6 +35,13 @@
             "metadata": {
                 "description": "Name of the resource group to deploy to"
             }
+        },
+        "vwanHubResourceId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Provide full resourceId of VWAN Hub"
+            }
         }
     },
     "variables": {
@@ -109,8 +116,58 @@
                                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
                             ]
                         }
-                        //Add VWAN Hub connection here
                     ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[concat('alz-vwanhub-sidecar-peering-', parameters('location'), '-', substring(uniqueString(subscription().id),0,6))]",
+            "resourceGroup": "[variables('rgName')]",
+            "dependsOn": [
+                "[parameters('vNetName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "remoteVirtualNetwork": {
+                        "value": "[concat(subscription().id,'/resourceGroups/',variables('rgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
+                    },
+                    "vWanvhubName": {
+                        "value": "[split(parameters('vWanhubResourceId'),'/')[8]]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "remoteVirtualNetwork": {
+                            "Type": "string",
+                            "defaultValue": false
+                        },
+                        "vWanvhubName": {
+                            "Type": "string",
+                            "defaultValue": false
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections",
+                            "apiVersion": "2020-05-01",
+                            "name": "[[concat(parameters('vWanVhubName'),'/',last(split(parameters('remoteVirtualNetwork'),'/')))]",
+                            "properties": {
+                                "remoteVirtualNetwork": {
+                                    "id": "[[parameters('remoteVirtualNetwork')]"
+                                }
+                            }
+                        }
+                    ],
+                    "outputs": {}
                 }
             }
         }
