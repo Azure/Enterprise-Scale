@@ -73,11 +73,8 @@
                     "vwanHubResourceId": {
                         "value": "[parameters('vwanHubResourceId')]"
                     },
-                    "resourceGroupOverride": {
-                        "value": "[parameters('resourceGroupOverride')]"
-                    },
-                    "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('topLevelManagementGroupPrefix')]"
+                    "rgName": {
+                        "value": "[variables('rgName')]"
                     }
                 },
                 "template": {
@@ -96,16 +93,12 @@
                         "vwanHubResourceId": {
                             "type": "string"
                         },
-                        "resourceGroupOverride": {
-                            "type": "string"
-                        },
-                        "topLevelManagementGroupPrefix": {
+                        "rgName": {
                             "type": "string"
                         }
                     },
                     "variables": {
-                        "nsgName": "[format('{0}-nsg', parameters('vnetName'))]",
-                        "rgName": "[if(empty(parameters('resourceGroupOverride')), concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location')), parameters('resourceGroupOverride'))]"
+                        "nsgName": "[format('{0}-nsg', parameters('vnetName'))]"
                     },
                     "resources": [
                         {
@@ -139,7 +132,7 @@
                             "type": "Microsoft.Resources/deployments",
                             "apiVersion": "2020-06-01",
                             "name": "[concat('alz-vwanhub-sidecar-peering-', parameters('location'), '-', substring(uniqueString(subscription().id),0,6))]",
-                            "resourceGroup": "[variables('rgName')]",
+                            "resourceGroup": "[parameters('rgName')]",
                             "dependsOn": [
                                 "[parameters('vNetName')]"
                             ],
@@ -150,7 +143,7 @@
                                 },
                                 "parameters": {
                                     "remoteVirtualNetwork": {
-                                        "value": "[concat(subscription().id,'/resourceGroups/',variables('rgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
+                                        "value": "[concat(subscription().id,'/resourceGroups/',parameters('rgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
                                     },
                                     "vWanvhubName": {
                                         "value": "[split(parameters('vWanhubResourceId'),'/')[8]]"
