@@ -1807,6 +1807,7 @@
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
             "bastion": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/bastion.json')]",
+            "privateDnsResolver": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/privateDnsResolver.json')]",
             "vwanSidecar": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-sidecar.json')]",
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
@@ -1950,6 +1951,8 @@
             "nvaConnectivityHub2DeploymentName": "[take(concat('alz-NVAHub2', variables('deploymentSuffix')), 64)]",
             "bastionPriDeploymentName": "[take(concat('alz-BastionPri', variables('deploymentSuffix')), 64)]",
             "bastionSecDeploymentName": "[take(concat('alz-BastionSec', variables('deploymentSuffix')), 64)]",
+            "privateDnsResolverPriDeploymentName": "[take(concat('alz-PDnsResolverPri', variables('deploymentSuffix')), 64)]",
+            "privateDnsResolverSecDeploymentName": "[take(concat('alz-PDnsResolverSec', variables('deploymentSuffix')), 64)]",
             "vwanSidecarPriDeploymentName": "[take(concat('alz-VWanSidecarPri', variables('deploymentSuffix')), 64)]",
             "vwanSidecarSecDeploymentName": "[take(concat('alz-VWanSidecarSec', variables('deploymentSuffix')), 64)]",
             "azVmMonitorPolicyDeploymentName": "[take(concat('alz-AzVmMonitor', variables('deploymentSuffix')), 64)]",
@@ -5224,6 +5227,61 @@
             }
         },
         {
+            // Creating the H&S or NVA - Private DNS Resolver Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), equals(parameters('enableDnsResolverPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').privateDnsResolverPriDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionPriDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[variables('platformResourceNames').hubName]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundPrimary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundPrimary')]"
+                    }
+                }
+            }
+        },
+        {
             // Creating the virtual network hub (with NVA)
             "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))),equals(parameters('enableHub'), 'nva'))]",
             "type": "Microsoft.Resources/deployments",
@@ -5540,6 +5598,63 @@
             }
         },
         {
+            // Creating the VWAN - Private DNS Resolver Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva'), equals(parameters('enableSidecarVnetPrimary'), 'Yes')), equals(parameters('enableDnsResolverPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').privateDnsResolverPriDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionPriDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-sidecar-', parameters('connectivityLocation'))]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundPrimary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundPrimary')]"
+                    }
+                }
+            }
+        },
+        {
             // VWAN - Sidecar network deployment - Secondary
             "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
@@ -5649,6 +5764,66 @@
                     },
                     "resourceGroupOverride": {
                         "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the VWAN - Private DNS Resolver Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva'), equals(parameters('enableSidecarVnetSecondary'), 'Yes')), equals(parameters('enableDnsResolverSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').privateDnsResolverSecDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionSecDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-sidecar-', parameters('connectivityLocationSecondary'))]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundSecondary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundSecondary')]"
                     }
                 }
             }
@@ -6122,6 +6297,61 @@
                     },
                     "location": {
                         "value": "[parameters('connectivityLocationSecondary')]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the H&S or NVA - Private DNS Resolver Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), equals(parameters('enableDnsResolverSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').privateDnsResolverSecDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionSecDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[variables('platformResourceNames').hubNameSecondary]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundSecondary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundSecondary')]"
                     }
                 }
             }
