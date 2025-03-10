@@ -1949,10 +1949,10 @@
             "vnetConnectivityRouteTable2DeploymentName": "[take(concat('alz-HubRoute2', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubDeploymentName": "[take(concat('alz-NVAHub', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHub2DeploymentName": "[take(concat('alz-NVAHub2', variables('deploymentSuffix')), 64)]",
-            "bastionPriDeploymentName": "[take(concat('alz-BastionPri', variables('deploymentSuffix')), 64)]",
-            "bastionSecDeploymentName": "[take(concat('alz-BastionSec', variables('deploymentSuffix')), 64)]",
-            "privateDnsResolverPriDeploymentName": "[take(concat('alz-PDnsResolverPri', variables('deploymentSuffix')), 64)]",
-            "privateDnsResolverSecDeploymentName": "[take(concat('alz-PDnsResolverSec', variables('deploymentSuffix')), 64)]",
+            "bastionPriDeploymentName": "[take(concat('alz-BastionPri', variables('deploymentSuffix')), 58)]",
+            "bastionSecDeploymentName": "[take(concat('alz-BastionSec', variables('deploymentSuffix')), 58)]",
+            "privateDnsResolverPriDeploymentName": "[take(concat('alz-PDnsResolverPri', variables('deploymentSuffix')), 58)]",
+            "privateDnsResolverSecDeploymentName": "[take(concat('alz-PDnsResolverSec', variables('deploymentSuffix')), 58)]",
             "vwanSidecarPriDeploymentName": "[take(concat('alz-VWanSidecarPri', variables('deploymentSuffix')), 64)]",
             "vwanSidecarSecDeploymentName": "[take(concat('alz-VWanSidecarSec', variables('deploymentSuffix')), 64)]",
             "azVmMonitorPolicyDeploymentName": "[take(concat('alz-AzVmMonitor', variables('deploymentSuffix')), 64)]",
@@ -5537,7 +5537,7 @@
         },
         {
             // Creating the VWAN - Bastion Primary
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva'), equals(parameters('enableSidecarVnetPrimary'), 'Yes')), equals(parameters('enableBastionPrimary'), 'Yes'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetPrimary'), 'Yes'), equals(parameters('enableBastionPrimary'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
@@ -5560,7 +5560,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
                 "alz-prerequisites",
                 "corpConnectedMoveLzs"
@@ -5599,7 +5598,7 @@
         },
         {
             // Creating the VWAN - Private DNS Resolver Primary
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva'), equals(parameters('enableSidecarVnetPrimary'), 'Yes')), equals(parameters('enableDnsResolverPrimary'), 'Yes'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetPrimary'), 'Yes'), equals(parameters('enableDnsResolverPrimary'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
@@ -5622,9 +5621,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionPriDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').bastionPriDeploymentName))]",
                 "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
@@ -5705,7 +5703,7 @@
         },
         {
             // Creating the VWAN - Bastion Secondary
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva'), equals(parameters('enableSidecarVnetSecondary'), 'Yes')), equals(parameters('enableBastionSecondary'), 'Yes'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'), equals(parameters('enableBastionSecondary'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
@@ -5728,8 +5726,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').vwanSidecarSecDeploymentName))]",
                 "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
@@ -5770,11 +5767,11 @@
         },
         {
             // Creating the VWAN - Private DNS Resolver Secondary
-            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva'), equals(parameters('enableSidecarVnetSecondary'), 'Yes')), equals(parameters('enableDnsResolverSecondary'), 'Yes'))]",
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'), equals(parameters('enableDnsResolverSecondary'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "name": "[concat('vwan', variables('deploymentNames').privateDnsResolverSecDeploymentName)]",
+            "name": "[concat('vwan-', variables('deploymentNames').privateDnsResolverSecDeploymentName)]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
@@ -5793,9 +5790,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionSecDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').bastionSecDeploymentName))]",
                 "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
