@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "natGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the NAT Gateway."
+            }
+        },
+        "natGatewayPublicIpName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the NAT Gateway Public IP."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "displayName": "location",
+                "description": "Location of the NAT gateway"
+            },
+            "defaultValue": "[deployment().location]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2024-05-01",
+            "name": "[parameters('natGatewayPublicIpName')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "zones": [
+                "1"
+            ],
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "type": "Microsoft.Network/natGateways",
+            "apiVersion": "2024-05-01",
+            "name": "[parameters('natGatewayName')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "zones": [
+                "1"
+            ],
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIpAddresses": [
+                    {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('natGatewayPublicIpName'))]"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('natGatewayPublicIpName'))]"
+            ]
+        }
+    ]
+}

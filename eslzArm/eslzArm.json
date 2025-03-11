@@ -1770,6 +1770,7 @@
             "sandboxPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-ALZ-SandboxPolicyAssignment.json')]",
             "ddosPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/MODIFY-DDoSPolicyAssignment.json')]",
             "corpVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeering.json')]",
+            "corpNatGateway": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/corp-nat-gateway.json')]",
             "corpVwanPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringVwan.json')]",
             "hubVnetPeering": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vnetPeeringHub.json')]",
             "hubVnetRouting": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/vnetRouteTable.json')]",
@@ -1830,6 +1831,7 @@
             "mgmtGroupDeploymentName": "[take(concat('alz-Mgs', variables('deploymentSuffix')), 64)]",
             "mgmtSubscriptionPlacement": "[take(concat('alz-MgmtSub', variables('deploymentSuffix')), 64)]",
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
+            "corpNatGWDeploymentName": "[take(concat('alz-CorpNatGw', variables('deploymentSuffix')), 60)]",
             "hubPeeringDeploymentName": "[take(concat('alz-HubPeering', variables('deploymentSuffix')), 60)]",
             "hubPeering2DeploymentName": "[take(concat('alz-HubPeering2', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
@@ -7846,6 +7848,52 @@
                     },
                     "azureFirewallResourceId": {
                         "value": "[if(equals(parameters('enableAzFwDnsProxy'), 'Yes'), variables('platformResourceIds').azFirewallResourceId, '')]"
+                    }
+                }
+            }
+        },
+        {
+            // Deploy a NAT gateway into the Corp subscription's virtual network
+            "condition": "[and(or(equals(parameters('enableHub'), 'nva'), equals(parameters('enableHub'), 'vhub')), not(empty(parameters('corpConnectedLzSubscriptionId'))),map(parameters('corpConnectedLzSubscriptionId'), lambda('natGw', lambdaVariables('natGw').corpNatGw)))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(variables('deploymentNames').corpNatGWDeploymentName, copyIndex())]",
+            "subscriptionId": "[if(not(empty(parameters('corpConnectedLzSubscriptionId'))), parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '')]",
+            "location": "[parameters('connectivityLocation')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "corpConnectedMoveLzs"
+            ],
+            "copy": {
+                "name": "deployNatGw",
+                "count": "[length(parameters('corpConnectedLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').corpNatGateway]"
+                },
+                "parameters": {
+                    "vNetRgName": {
+                        "value": "[variables('platformRgNames').lzVnetRg]"
+                    },
+                    "vNetName": {
+                        "value": "[take(concat(variables('platformResourceNames').lzVnet, '-', parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs), 64)]"
+                    },
+                    "vNetLocation": {
+                        "value": "[parameters('connectivityLocation')]"
                     }
                 }
             }
