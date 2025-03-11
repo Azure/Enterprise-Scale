@@ -1839,6 +1839,7 @@
             "corpPeeringDeploymentName": "[take(concat('alz-CorpPeering', variables('deploymentSuffix')), 60)]",
             "corpConnectedNatGWDeploymentName": "[take(concat('alz-CorpConnectedNatGw', variables('deploymentSuffix')), 60)]",
             "corpNatGWDeploymentName": "[take(concat('alz-CorpNatGw', variables('deploymentSuffix')), 60)]",
+            "corpRgDeploymentName": "[take(concat('alz-NatGwRg', variables('deploymentSuffix')), 64)]",
             "hubPeeringDeploymentName": "[take(concat('alz-HubPeering', variables('deploymentSuffix')), 60)]",
             "hubPeering2DeploymentName": "[take(concat('alz-HubPeering2', variables('deploymentSuffix')), 60)]",
             "connectivitySubscriptionPlacement": "[take(concat('alz-ConnectivitySub', variables('deploymentSuffix')), 64)]",
@@ -2023,7 +2024,8 @@
             "privateDnsRg2": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns-02')]",
             "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
             "identityVnetRgSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocationSecondary'))]",
-            "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]"
+            "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
+            "natGwRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-natgw-', parameters('connectivityLocation'))]"
         },
         // Declaring deterministic names for platform resources that will be created
         "platformResourceNames": {
@@ -7862,13 +7864,47 @@
             }
         },
         {
+            // Creating resource group for Corp Nat gateway deployment
+            "condition": "[and(not(empty(parameters('corpLzSubscriptionId'))), equals(parameters('corpDeployNATGateway'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').corpRgDeploymentName, copyIndex())]",
+            "subscriptionId": "[if(not(empty(parameters('corpLzSubscriptionId'))), parameters('corpLzSubscriptionId')[copyIndex()], '')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]"
+            ],
+            "copy": {
+                "name": "deployNatGwRg",
+                "count": "[length(parameters('corpLzSubscriptionId'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
+                },
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').natGwRg]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    }
+                }
+            }
+        },
+        {
             // Deploy a NAT gateway into the Corp subscription's virtual network
             "condition": "[and(not(empty(parameters('corpLzSubscriptionId'))), equals(parameters('corpDeployNATGateway'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
             "name": "[concat(variables('deploymentNames').corpNatGWDeploymentName, copyIndex())]",
             "subscriptionId": "[if(not(empty(parameters('corpLzSubscriptionId'))), parameters('corpLzSubscriptionId')[copyIndex()], '')]",
-            "resourceGroup": "[variables('platformRgNames').lzVnetRg]",
+            "resourceGroup": "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').corpRgDeploymentName, copyIndex())]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
