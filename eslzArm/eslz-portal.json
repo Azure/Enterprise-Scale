@@ -1443,7 +1443,7 @@
                         {
                             "name": "deployAVNM",
                             "type": "Microsoft.Common.CheckBox",
-                            "label": "Deploy Azure Virtual Network Manager - PREVIEW",
+                            "label": "Deploy Azure Virtual Network Manager",
                             "toolTip": "If selected, Azure Virtual Network Manager will be deployed to manage your virtual networks. Currently, ALZ will only enable Security Admin Rules role by default",
                             "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'))]"
                         },
@@ -3174,6 +3174,144 @@
                             }
                         },
                         {
+                            "name": "primarySidecarNetworkNote",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                            "options": {
+                              "text": "<b>Sidecar</b><br>If you need to use Azure Bastion or Private DNS Resolver you will need to deploy an additional sidecar virtual network to support those services as Virtual WAN does not currently support native integration with those services.",
+                              "uri": "https://aka.ms/alz",
+                              "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "enableSidecarVnetPrimary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy sidecar virtual network",
+                            "defaultValue": "Yes",
+                            "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, a sidecar virtual network will be deployed and additional options will be provided for provisioning supported services.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForSidecarPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Address space for sidecar virtual network",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.8.0/21)",
+                            "defaultValue": "10.100.8.0/21",
+                            "visible": "[equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableBastionPrimary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Bastion",
+                            "defaultValue": "No",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (Standard and zone redundant) in the connectivity subscription.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForBastionPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for Azure Bastion",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.8.0/24)",
+                            "defaultValue": "10.100.8.0/24",
+                            "visible": "[equals(steps('connectivity').enableBastionPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "enableDnsResolverPrimary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Private DNS Resolver",
+                            "defaultValue": "No",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Private DNS Resolver in the connectivity subscription.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForDnsResolverInboundPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Inbound Subnet for Azure Private DNS Resolver",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.9.0/28)",
+                            "defaultValue": "10.100.9.0/28",
+                            "visible": "[equals(steps('connectivity').enableDnsResolverPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForDnsResolverOutboundPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Outbound Subnet for Azure Private DNS Resolver",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.9.16/28)",
+                            "defaultValue": "10.100.9.16/28",
+                            "visible": "[equals(steps('connectivity').enableDnsResolverPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
                             "name": "esNetworkSecondarySubSection",
                             "type": "Microsoft.Common.Section",
                             "label": "Secondary Region Networking",
@@ -4294,6 +4432,144 @@
                                                 "label": "50",
                                                 "description": "50 Routing Infrastructure Units, 50 Gbps Aggregate Throughput, Supports 50000 VMs",
                                                 "value": "50"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "secondarySidecarNetworkNote",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                                    "options": {
+                                      "text": "<b>Sidecar</b><br>If you need to use Azure Bastion or Private DNS Resolver you will need to deploy an additional sidecar virtual network to support those services as Virtual WAN does not currently support native integration with those services.",
+                                      "uri": "https://aka.ms/alz",
+                                      "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "enableSidecarVnetSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy sidecar virtual network",
+                                    "defaultValue": "Yes",
+                                    "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, a sidecar virtual network will be deployed and additional options will be provided for provisioning supported services.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForSidecarSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Address space for sidecar virtual network",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.8.0/21)",
+                                    "defaultValue": "10.200.8.0/21",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "enableBastionSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy Bastion",
+                                    "defaultValue": "No",
+                                    "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes'))]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (Standard and zone redundant) in the connectivity subscription.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForBastionSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Subnet for Azure Bastion",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.8.0/24)",
+                                    "defaultValue": "10.200.8.0/24",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "enableDnsResolverSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy Private DNS Resolver",
+                                    "defaultValue": "No",
+                                    "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes'))]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Private DNS Resolver in the connectivity subscription.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForDnsResolverInboundSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Inbound Subnet for Azure Private DNS Resolver",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.9.0/28)",
+                                    "defaultValue": "10.200.9.0/28",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForDnsResolverOutboundSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Outbound Subnet for Azure Private DNS Resolver",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.9.16/28)",
+                                    "defaultValue": "10.200.9.16/28",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
                                             }
                                         ]
                                     }
@@ -9826,6 +10102,20 @@
                 "expressRouteScaleUnit": "[steps('connectivity').expressRouteScaleUnit]",
                 "enableHub": "[steps('connectivity').enableHub]",
                 "deployAVNM": "[steps('connectivity').deployAVNM]",
+                "enableBastionPrimary": "[steps('connectivity').enableBastionPrimary]",
+                "subnetMaskForBastionPrimary": "[steps('connectivity').subnetMaskForBastionPrimary]",
+                "enableBastionSecondary": "[steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary]",
+                "subnetMaskForBastionSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForBastionSecondary]",
+                "enableDnsResolverPrimary": "[steps('connectivity').enableDnsResolverPrimary]",
+                "subnetMaskForDnsResolverInboundPrimary": "[steps('connectivity').subnetMaskForDnsResolverInboundPrimary]",
+                "subnetMaskForDnsResolverOutboundPrimary": "[steps('connectivity').subnetMaskForDnsResolverOutboundPrimary]",
+                "enableDnsResolverSecondary": "[steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary]",
+                "subnetMaskForDnsResolverInboundSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForDnsResolverInboundSecondary]",
+                "subnetMaskForDnsResolverOutboundSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForDnsResolverOutboundSecondary]",
+                "enableSidecarVnetPrimary": "[steps('connectivity').enableSidecarVnetPrimary]",
+                "subnetMaskForSidecarPrimary": "[steps('connectivity').subnetMaskForSidecarPrimary]",
+                "enableSidecarVnetSecondary": "[steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary]",
+                "subnetMaskForSidecarSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForSidecarSecondary]",
                 "enableAzFw": "[steps('connectivity').enableAzFw]",
                 "enableAzFwDnsProxy": "[if(equals(steps('connectivity').firewallSku, 'Basic'), 'No', steps('connectivity').enableAzFwDnsProxy)]",
                 "firewallSku": "[steps('connectivity').firewallSku]",
