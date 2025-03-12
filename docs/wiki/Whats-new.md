@@ -53,6 +53,13 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### March 2025
+
+#### Tooling
+
+- **NEW** ALZ Portal Accelerator - adding new networking options to deploy "Bastion" and/or "Private DNS Resovler"
+  - For "Private DNS Resolver" we are deploying a default forwarding rule to `contoso.com` domain. This is a placeholder and should be updated to your own domain once ExpressRoutes or VPN sites are configured.
+
 ### February 2025
 
 #### Tooling
