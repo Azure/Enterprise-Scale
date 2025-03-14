@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [March 2025](#march-2025)
   - [February 2025](#february-2025)
   - [January 2025](#january-2025)
   - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
@@ -52,6 +53,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### March 2025
+
+#### Policy
+
+- Minor fix updating Deny-EH-minTLS policy name to match casing of the filename "Deny-EH-minTLS" to "Deny-EH-MINTLS".
 
 ### February 2025
 
