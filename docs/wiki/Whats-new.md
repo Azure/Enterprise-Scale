@@ -60,6 +60,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Minor fix updating Deny-EH-minTLS policy name to match casing of the filename "Deny-EH-minTLS" to "Deny-EH-MINTLS".
 
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+
 ### February 2025
 
 #### Tooling
