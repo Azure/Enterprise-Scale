@@ -66,6 +66,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
+- Updated the [Deploy-Windows-DomainJoin](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Windows-DomainJoin.html) policy to support newer versions of Windows Server (2022 and 2025) and added the Key Vault Secrets User RBAC role to support reading secrets from Key Vault.
 - Updated the [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) initiative to use the improved Microsoft Defender for Servers policy [Configure Microsoft Defender for Servers plan](https://www.azadvertizer.net/azpolicyadvertizer/5eb6d64a-4086-4d7a-92da-ec51aed0332d.html), which includes additional features and parameters. Additionally, the initiative now exposes all the parameters from the referenced built-in policies (VM, Storage, CSPM, ARM, Key Vault).
 
 ### February 2025
