@@ -58,6 +58,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- **NEW** ALZ Portal Accelerator - adding new networking options to deploy "Bastion" and/or "Private DNS Resovler"
+  - For "Private DNS Resolver" we are deploying a default forwarding rule to `contoso.com` domain. This is a placeholder and should be updated to your own domain once ExpressRoutes or VPN sites are configured.
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the AzureFirewallManagementSubnet.
 
