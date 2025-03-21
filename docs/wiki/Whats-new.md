@@ -60,6 +60,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - Added the ability to deploy a NAT Gateway into the Corp and Online subscriptions to provide [secure and scalable outbound internet access](https://learn.microsoft.com/azure/virtual-network/ip-services/default-outbound-access) for workloads.
+- The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the AzureFirewallManagementSubnet.
 
 ### February 2025
 
