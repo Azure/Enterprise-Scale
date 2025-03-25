@@ -229,7 +229,7 @@ This is the parent management group for all the landing zone child management gr
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
 | `Policy Definition Sets`  | **13**     |
-| `Policy Definitions`      | **20**    |
+| `Policy Definitions`      | **14**    |
 
 </td></tr> </table>
 
