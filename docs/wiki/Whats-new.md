@@ -63,6 +63,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- The Workload Specific Compliance policies are now assigned by default (Audit). This enables auditing compliance for specific workloads, such as SQL and Storage, which is often required in highly regulated industries like financial services and healthcare. Please note that these policies were previously available; however, they were not assigned by default.
 
 #### Policy
 
