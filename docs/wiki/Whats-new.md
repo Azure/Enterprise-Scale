@@ -56,10 +56,19 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### March 2025
 
+#### Policy
+
+- Minor fix updating Deny-EH-minTLS policy name to match casing of the filename "Deny-EH-minTLS" to "Deny-EH-MINTLS".
+
 #### Tooling
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - The Workload Specific Compliance policies are now assigned by default (Audit). This enables auditing compliance for specific workloads, such as SQL and Storage, which is often required in highly regulated industries like financial services and healthcare. Please note that these policies were previously available; however, they were not assigned by default.
+
+#### Policy
+
+- Updated the [Deploy-Windows-DomainJoin](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Windows-DomainJoin.html) policy to support newer versions of Windows Server (2022 and 2025) and added the Key Vault Secrets User RBAC role to support reading secrets from Key Vault.
+- Updated the [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) initiative to use the improved Microsoft Defender for Servers policy [Configure Microsoft Defender for Servers plan](https://www.azadvertizer.net/azpolicyadvertizer/5eb6d64a-4086-4d7a-92da-ec51aed0332d.html), which includes additional features and parameters. Additionally, the initiative now exposes all the parameters from the referenced built-in policies (VM, Storage, CSPM, ARM, Key Vault).
 
 ### February 2025
 
