@@ -1,6 +1,8 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [March 2025](#march-2025)
+  - [February 2025](#february-2025)
   - [January 2025](#january-2025)
   - [🔃 Policy Refresh Q2 FY25](#-policy-refresh-q2-fy25)
   - [December 2024](#december-2024)
@@ -52,6 +54,26 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### March 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- The Workload Specific Compliance policies are now assigned by default (Audit). This enables auditing compliance for specific workloads, such as SQL and Storage, which is often required in highly regulated industries like financial services and healthcare. Please note that these policies were previously available; however, they were not assigned by default.
+
+### February 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-02-05). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- We are removing the deployment of Automation Accounts by default going forward in ALZ (February 2025). This is because since the Azure Monitor Agent (AMA) changes the requirement of the Automation Account is no longer needed for things like change tracking and update management. If you require an Automation Account for other purposes, you can deploy one using the Azure Portal or any other supported method, Bicep, Terraform etc. in the Management Subscription if required. You do not need to remove the automation account if you already have one today deployed, although you may choose to remove it if not in use.
+  - With this we will also stop assigning the policy with the assignment name of: `Deploy-Log-Analytics` at the Platform > Management Management Group scope which utilizes the built-in policy with the ID of: [`8e3e61b3-0b32-22d5-4edf-55f87fdb5955`](https://www.azadvertizer.net/azpolicyadvertizer/8e3e61b3-0b32-22d5-4edf-55f87fdb5955.html). Please remove/delete this assignment if you wish to as you have no need to monitor and enforce the deployment of the Log Analytics Workspace and Automation Account via policy.
+- Added support for new Azure Regions that have been recently launched into the ALZ Portal Accelerator
+
+#### Breaking Changes
+
+- The policy definition [Azure AI Search services should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/76a56461-9dc0-40f0-82f5-2453283afa2f.html) has been updated to version 2.0.0. This changes the default effect value from "Deny" to "AuditIfNotExists" while removing "Deny" from allowedValues, therefore we needed to adopt this change in our initiative.
+
 ### January 2025
 
 #### Tooling
@@ -59,7 +81,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-01-10). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - Added SQL Advanced Threat Protection status log to [dataCollectionRule-DefenderSQL.json](Enterprise-Scale/eslzArm/resourceGroupTemplates/dataCollectionRule-DefenderSQL.json) data collection rule. The logs allows identifying machines connected to the workspace with SQL ATP and the protection status on each instance on those machines and is used by MDfC Defender for SQL.
 - Resolved deployment issues related to Service Health alerts. Previously, Service Health was not deployed when selected unless Azure Monitor Baseline Alerts were also selected.
-- 
+
 #### Other
 
 - The January community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
