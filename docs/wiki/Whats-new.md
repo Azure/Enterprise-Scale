@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [April 2025](#april-2025)
   - [March 2025](#march-2025)
   - [February 2025](#february-2025)
   - [January 2025](#january-2025)
@@ -53,6 +54,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### April 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-04-04). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
 ### March 2025
 
