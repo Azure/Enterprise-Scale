@@ -318,6 +318,7 @@ class PolicySetDefinitionPropertiesPolicyDefinitions : ALZBase {
     [String]$policyDefinitionId = ""
     [Object]$parameters = @{}
     [Array]$groupNames = @()
+    [String]$definitionVersion = ""
 
     PolicySetDefinitionPropertiesPolicyDefinitions(): base() {}
 
@@ -326,6 +327,7 @@ class PolicySetDefinitionPropertiesPolicyDefinitions : ALZBase {
         $this.policyDefinitionId = $that.policyDefinitionId
         $this.parameters = $that.parameters ?? $this.parameters
         $this.groupNames = $that.groupNames ?? $this.groupNames
+        $this.definitionVersion = $that.definitionVersion ?? $this.definitionVersion
     }
 
 }

@@ -169,8 +169,6 @@ If not carefully planned, log information coming from multiple sources is Azure 
 
 Azure Log Analytics enables enterprises to store and manage logs from multiple sources efficiently. Querying the data stored in Azure Log Analytics for trend or pattern analysis is very easy with Azure Log Analytics. Alerts or interactive reports can be created using Azure Log Analytics queries.
 
-There exists an ESLZ custom policy which creates Azure Log Analytics Workspace that acts as a repository to store log data. An Azure Automation Account is also created and linked with Log Analytics Workspace for automating tasks or deploying Azure Monitor Solutions which may have dependency on Log Analytics Workspace. It also helps in configuring properties such as log retention period, azure region, etc.
-
 ## Provision logging for Azure-Arc enabled servers
 
 With IT estates spanning multiple clouds, on-premise sites and edge locations, many enterprises may be struggling to manage and govern servers which are scattered across environments and geographic locations. Using multitude of products to monitor servers can be a jarring experience. Putting servers in multiple environments under a single unified access and identity management solution can be challenging to set up and manage.

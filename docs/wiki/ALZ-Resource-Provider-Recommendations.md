@@ -21,7 +21,6 @@ To successfully deploy an Enterprise-Scale with a predefined [template](https://
 * Microsoft.OperationalInsights
 * Microsoft.OperationsManagement
 * Microsoft.Automation
-* Microsoft.AlertsManagement
 * Microsoft.Security
 * Microsoft.Network
 * Microsoft.EventGrid

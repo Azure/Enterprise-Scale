@@ -4,7 +4,8 @@ The ALZ Portal Accelerator has recently been enhanced, and starting with the 202
 
 This guide explains the topics and configurations that Azure Landing Zones use, and we discuss many of the common scenarios in the section on assessing the current state. However, this guide does not provide detailed instructions for custom implementations or extra features that are not part of Azure Landing Zones. For those scenarios, we refer to the documentation from the Product teams.
 
-If you are looking for Terraform guidance please refer to [\[User Guide\] Upgrade from v5.2.1 to v6.0.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v5.2.1-to-v6.0.0)
+The new [Terraform Platform Landing Zones for Azure Verified Modules](https://aka.ms/alz/tf) offering only deploys the new AMA agent.
+If you are looking for Terraform guidance for the caf-enterprise-scale module please refer to [\[User Guide\] Upgrade from v5.2.1 to v6.0.0](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale/wiki/%5BUser-Guide%5D-Upgrade-from-v5.2.1-to-v6.0.0)
 
 And for Bicep guidance refer to: [v0.18.0 Release Notes](https://github.com/Azure/ALZ-Bicep/releases/tag/v0.18.0)
 
