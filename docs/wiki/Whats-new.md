@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [May 2025](#may-2025)
   - [April 2025](#april-2025)
   - [March 2025](#march-2025)
   - [February 2025](#february-2025)
@@ -54,6 +55,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### May 2025
+
+#### Tooling
+
+- FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
 
 ### April 2025
 
