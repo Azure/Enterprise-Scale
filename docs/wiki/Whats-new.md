@@ -2,6 +2,8 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
+  - [May 2025](#may-2025)
+  - [April 2025](#april-2025)
   - [March 2025](#march-2025)
   - [February 2025](#february-2025)
   - [January 2025](#january-2025)
@@ -66,6 +68,21 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - While still in preview, with the significant adoption of AI technologies in Azure, the ALZ team have agreed to enable this capability in Defender for Cloud (should customers enable it) as part of their ALZ deployment. While in preview, there is no additional cost associated with this capability, however, once it is GA, there may be a cost associated with the use of this capability. The ALZ team will continue to monitor this and provide updates as needed.
   - Added new built-in policy [Configure Microsoft Defender threat protection for AI workloads](https://www.azadvertizer.net/azpolicyadvertizer/359a48a3-351a-4618-bb32-f1628645694b.html) to the [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) initiative.
   - Updated the default portal accelerator deployment to enable Defender for AI workloads on subscriptions directly.
+
+### May 2025
+
+#### Policy
+
+- FIX: Updated the Audit-Tags-Mandatory-RG Policy Definition to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+
+### April 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-04-04). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- Sentinel is no longer enabled by default. However, it can be enabled by selecting "Yes" during the deployment process. This decision should be made deliberately, as additional configuration will be necessary post-deployment of ALZ. Please also verify regional availability for this service, as it may not yet be accessible in some newer regions.
+- FIX: ER Gateway SKU selection would provide two selectors when choosing specific regions. This has been fixed to only show the relevant SKU options for the selected region.
+- FIX: Added additional new regions to the Private DNS Zones policy assignment. New regions added are: Indonesia Central, Israel Central, Mexico Central, New Zealand North, Poland Central, and Spain Central.
 
 ### March 2025
 
