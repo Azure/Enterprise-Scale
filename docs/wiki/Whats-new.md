@@ -1,6 +1,8 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [May 2025](#may-2025)
+  - [April 2025](#april-2025)
   - [March 2025](#march-2025)
   - [February 2025](#february-2025)
   - [January 2025](#january-2025)
@@ -54,6 +56,21 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### May 2025
+
+#### Policy
+
+- FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+
+### April 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-04-04). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- Sentinel is no longer enabled by default. However, it can be enabled by selecting "Yes" during the deployment process. This decision should be made deliberately, as additional configuration will be necessary post-deployment of ALZ. Please also verify regional availability for this service, as it may not yet be accessible in some newer regions.
+- FIX: ER Gateway SKU selection would provide two selectors when choosing specific regions. This has been fixed to only show the relevant SKU options for the selected region.
+- FIX: Added additional new regions to the Private DNS Zones policy assignment. New regions added are: Indonesia Central, Israel Central, Mexico Central, New Zealand North, Poland Central, and Spain Central.
+
 ### March 2025
 
 #### Tooling
@@ -62,6 +79,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - For "Private DNS Resolver" we are deploying a default forwarding rule to `contoso.com` domain. This is a placeholder and should be updated to your own domain once ExpressRoutes or VPN sites are configured.
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 - The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the AzureFirewallManagementSubnet.
+- The Workload Specific Compliance policies are now assigned by default (Audit). This enables auditing compliance for specific workloads, such as SQL and Storage, which is often required in highly regulated industries like financial services and healthcare. Please note that these policies were previously available; however, they were not assigned by default.
 
 ### February 2025
 
