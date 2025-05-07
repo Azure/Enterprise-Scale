@@ -62,6 +62,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
 
+#### Other
+
+- The May community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
+
 ### April 2025
 
 #### Tooling
