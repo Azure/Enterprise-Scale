@@ -61,6 +61,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Policy
 
 - FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+- FIX: Updated the Audit-Tags-Mandatory-RG Policy & Audit-Tags-Mandatory Definition to single brackets to allow validation during deployment
 
 #### Other
 
