@@ -62,6 +62,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - FIX: Updated Deny-MgmtPorts-From-Internet Policy Definition to deny the use of "0.0.0.0/0" as a Source Address Prefix in Network Security Rules. "0.0.0.0/0" is equivalent to "Internet" or "*", and therefore should be denied.
 - FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+- Updated the initiative [Deploy-Private-DNS-Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html), Removing the 'Effect1' parameter from the policy set "Deploy-Private-DNS-Zones" and using the "Effect" parameter.
+- Update eventgrid topic and domain name DNS zone name in the initiative [Deploy-Private-DNS-Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html) to also contain regionName.
+
 
 #### Other
 
