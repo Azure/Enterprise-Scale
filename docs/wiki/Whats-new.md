@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [May 2025](#may-2025)
   - [April 2025](#april-2025)
   - [March 2025](#march-2025)
   - [February 2025](#february-2025)
@@ -55,11 +56,25 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### May 2025
+
+#### Policy
+
+- FIX: Updated Deny-MgmtPorts-From-Internet Policy Definition to deny the use of "0.0.0.0/0" as a Source Address Prefix in Network Security Rules. "0.0.0.0/0" is equivalent to "Internet" or "*", and therefore should be denied.
+- FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+
+#### Other
+
+- The May community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
+
 ### April 2025
 
 #### Tooling
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-04-04). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- Sentinel is no longer enabled by default. However, it can be enabled by selecting "Yes" during the deployment process. This decision should be made deliberately, as additional configuration will be necessary post-deployment of ALZ. Please also verify regional availability for this service, as it may not yet be accessible in some newer regions.
+- FIX: ER Gateway SKU selection would provide two selectors when choosing specific regions. This has been fixed to only show the relevant SKU options for the selected region.
+- FIX: Added additional new regions to the Private DNS Zones policy assignment. New regions added are: Indonesia Central, Israel Central, Mexico Central, New Zealand North, Poland Central, and Spain Central.
 
 ### March 2025
 
