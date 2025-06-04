@@ -72,6 +72,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - NOTE: for environments using NSGs or Firewalls to manage traffic, you may need to create rules to facilitate service communication, details: https://learn.microsoft.com/en-us/azure/virtual-machines/boot-integrity-monitoring-overview?tabs=portal#troubleshooting-guide-for-guest-attestation-extension-installation
 - Updated and cleaned up the Excel Policy Assignments file available in the wiki https://github.com/Azure/Enterprise-Scale/wiki/media/ALZ%20Policy%20Assignments%20v2.xlsx
 
+### June 2025
+
+#### Tooling
+
+- Updated the portal accelerator to remove sovereign cloud options as the ALZ team are unable to validate portal deployments in those environments. The only supported environment for Azure Landing Zones via the portal accelerator is Azure Public Cloud.
+
 ### May 2025
 
 #### Policy
