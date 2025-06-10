@@ -84,7 +84,12 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Policy
 
-- FIX: Updated the Audit-Tags-Mandatory-RG Policy Definition to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+- FIX: Updated Deny-MgmtPorts-From-Internet Policy Definition to deny the use of "0.0.0.0/0" as a Source Address Prefix in Network Security Rules. "0.0.0.0/0" is equivalent to "Internet" or "*", and therefore should be denied.
+- FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+
+#### Other
+
+- The May community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### April 2025
 
