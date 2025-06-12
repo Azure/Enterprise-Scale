@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [June 2025](#june-2025)
   - [May 2025](#may-2025)
   - [April 2025](#april-2025)
   - [March 2025](#march-2025)
@@ -55,6 +56,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### June 2025
+
+#### Tooling
+
+- Updated the portal accelerator to remove sovereign cloud options as the ALZ team are unable to validate portal deployments in those environments. The only supported environment for Azure Landing Zones via the portal accelerator is Azure Public Cloud.
 
 ### May 2025
 
