@@ -62,7 +62,6 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Updated the portal accelerator to remove sovereign cloud options as the ALZ team are unable to validate portal deployments in those environments. The only supported environment for Azure Landing Zones via the portal accelerator is Azure Public Cloud.
-- Some random text.
 
 ### May 2025
 
