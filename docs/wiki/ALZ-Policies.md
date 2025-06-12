@@ -111,7 +111,7 @@ This management group contains all the platform child management groups, like ma
 
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **10**     |
+| `Policy Definition Sets`  | **11**     |
 | `Policy Definitions`      | **2**     |
 </td></tr> </table>
 
@@ -129,6 +129,7 @@ This management group contains all the platform child management groups, like ma
 | **Enable Defender for SQL on SQL VMs and Arc-enabled SQL Servers**\*         | **Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace** | `Policy Definition Set`, **Built-in** | This policy initiative enables Microsoft Defender for SQL and AMA on SQL VMs and Arc-enabled SQL Servers.                                                                                                                                                          | DeployIfNotExists, Disabled |
 | **Do not allow deletion of the User Assigned Managed Identity used by AMA**\*| **Do not allow deletion of specified resource and resource type**                              | `Policy Definition`, **Custom** | This policy provides a safeguard against accidental removal of the User Assigned Managed Identity used by AMA by blocking delete calls using deny action effect.                                                                                                                                                                 | DenyAction |
 | **Subnets should be private** | **Subnets should be private** | `Policy Definition`, **Built-in** | Ensure your subnets are secure by default by preventing default outbound access. For more information go to https://aka.ms/defaultoutboundaccessretirement | Audit, Deny |
+| **Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs** | **[Preview]: Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs** | `Policy Definition Set`, **Built-in** | Configure the Trusted Launch enabled virtual machines to automatically install the Guest Attestation extension and enable system-assigned managed identity to allow Azure Security Center to proactively attest and monitor the boot integrity. Boot integrity is attested via Remote Attestation. For more details, please refer to the following link - https://aka.ms/trustedlaunch | DeployIfNotExists, Disabled |
 
 > \* The AMA policies and initiatives are in effect for the portal implementation only. Terraform and Bicep will adopt these policies in the near future.
 
@@ -228,7 +229,7 @@ This is the parent management group for all the landing zone child management gr
 
 | **Policy Type**           | **Count** |
 | :---                      |   :---:   |
-| `Policy Definition Sets`  | **13**     |
+| `Policy Definition Sets`  | **14**     |
 | `Policy Definitions`      | **14**    |
 
 </td></tr> </table>
@@ -271,6 +272,7 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Deploy Azure Monitor Baseline Alerts for Storage** | **Deploy Azure Monitor Baseline Alerts for Storage** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Storage Services such as Storage accounts. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
 | **Deploy Azure Monitor Baseline Alerts for Virtual Machines** | **Deploy Azure Monitor Baseline Alerts for Virtual Machines** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Azure Virtual Machines. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
 | **Deploy Azure Monitor Baseline Alerts for Web** | **Deploy Azure Monitor Baseline Alerts for Web** | `Policy Definition Set`, **Custom**     | Deploys Azure Monitor Baseline Alerts to monitor Web Services such as App Services. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives. | DeployIfNotExists                   |
+| **Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs** | **[Preview]: Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs** | `Policy Definition Set`, **Built-in** | Configure the Trusted Launch enabled virtual machines to automatically install the Guest Attestation extension and enable system-assigned managed identity to allow Azure Security Center to proactively attest and monitor the boot integrity. Boot integrity is attested via Remote Attestation. For more details, please refer to the following link - https://aka.ms/trustedlaunch | DeployIfNotExists, Disabled |
 
 > \* The AMA policies and initiatives are in effect for the portal implementation only. Terraform and Bicep will adopt these policies in the near future.
 

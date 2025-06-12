@@ -64,6 +64,7 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MachineLearning.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MySQL.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network.json') // FSI specific initiative
+    loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network_20250326.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-OpenAI.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-PostgreSQL.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-ServiceBus.json') // FSI specific initiative
