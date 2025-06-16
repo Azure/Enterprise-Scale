@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [June 2025](#june-2025)
   - [May 2025](#may-2025)
   - [April 2025](#april-2025)
   - [March 2025](#march-2025)
@@ -56,11 +57,22 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### June 2025
+
+#### Tooling
+
+- Updated the portal accelerator to remove sovereign cloud options as the ALZ team are unable to validate portal deployments in those environments. The only supported environment for Azure Landing Zones via the portal accelerator is Azure Public Cloud.
+
 ### May 2025
 
 #### Policy
 
+- FIX: Updated Deny-MgmtPorts-From-Internet Policy Definition to deny the use of "0.0.0.0/0" as a Source Address Prefix in Network Security Rules. "0.0.0.0/0" is equivalent to "Internet" or "*", and therefore should be denied.
 - FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+
+#### Other
+
+- The May community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### April 2025
 
