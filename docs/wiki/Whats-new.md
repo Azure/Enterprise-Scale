@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [June 2025](#june-2025)
   - [May 2025](#may-2025)
   - [April 2025](#april-2025)
   - [March 2025](#march-2025)
@@ -59,6 +60,8 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 ### June 2025
 
 #### Tooling
+
+- Updated the portal accelerator to remove sovereign cloud options as the ALZ team are unable to validate portal deployments in those environments. The only supported environment for Azure Landing Zones via the portal accelerator is Azure Public Cloud.
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-06-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
