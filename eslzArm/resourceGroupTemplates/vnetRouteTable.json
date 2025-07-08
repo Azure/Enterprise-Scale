@@ -22,10 +22,16 @@
         },
         "hubLocation": {
             "type": "string"
+        },
+        "routeTableName": {
+            "type": "string",
+            "defaultValue": "[concat('rt-hub-', parameters('topLevelManagementGroupPrefix'), 'prod', parameters('hubLocation'))]",
+            "metadata": {
+                "description": "Name for the route table"
+            }
         }
     },
     "variables": {
-        "routeTableName": "[concat(parameters('topLevelManagementGroupPrefix'), '-rt-hub-', parameters('hubLocation'))]",
         "vNetName": "[last(split(parameters('connectivityHubResourceId'), '/'))]",
         "nextHopIP": "[first(split(cidrsubnet(parameters('targetFWSubnetCidr'), 32, 4), '/'))]"
         },
@@ -33,7 +39,7 @@
         {
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2020-07-01",
-            "name": "[variables('routeTableName')]",
+            "name": "[parameters('routeTableName')]",
             "location": "[parameters('hubLocation')]",
             "properties": {
                 "routes": [
@@ -63,12 +69,12 @@
             "properties": {
                 "addressPrefix": "[parameters('sourceFWSubnetCidr')]",
                 "routeTable": {
-                    "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                    "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTableName'))]"
                 }
                 
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                "[resourceId('Microsoft.Network/routeTables', parameters('routeTableName'))]"
             ]
         }
     ]
