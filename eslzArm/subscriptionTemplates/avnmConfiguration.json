@@ -38,28 +38,34 @@
                 "description": "Enable secondary region for instances deploying in multiple regions"
             },
             "defaultValue": "no"
+        },
+        "rgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name for AVNM resources"
+            },
+            "defaultValue": "rg-alz-avnm"
         }
     },
     "variables": {
-        "rgName": "rg-alz-avnm",
         "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]",
-        "configIds": "[resourceId(parameters('connectivitySubscriptionId'), variables('rgName'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]"
+        "configIds": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2019-10-01",
             "location": "[parameters('location')]",
-            "name": "[variables('rgName')]",
+            "name": "[parameters('rgName')]",
             "properties": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('resourceDeploymentName')]",
-            "resourceGroup": "[variables('rgName')]",
+            "resourceGroup": "[parameters('rgName')]",
             "dependsOn": [
-                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                "[concat('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -535,7 +541,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "alz-avnm-uai",
-            "resourceGroup": "[variables('rgName')]",
+            "resourceGroup": "[parameters('rgName')]",
             "properties": {
                 "expressionEvaluationOptions": {
                     "scope": "inner"
@@ -591,14 +597,14 @@
                 }
             },
             "dependsOn": [
-                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName'))]"
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('rgName'))]"
             ]
             },
             {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "[format('ds-{0}-prereqs', parameters('location'))]",
-            "resourceGroup": "[variables('rgName')]",
+            "resourceGroup": "[parameters('rgName')]",
             "properties": {
                     "expressionEvaluationOptions": {
                     "scope": "inner"
@@ -612,10 +618,10 @@
                         "value": "[parameters('locationSecondary')]"
                     },
                     "userAssignedIdentityId": {
-                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
+                        "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'alz-avnm-uai'), '2022-09-01').outputs.userAssignedIdentityId.value]"
                     },
                     "rgName": {
-                        "value": "[variables('rgName')]"
+                        "value": "[parameters('rgName')]"
                     },
                     "configIds": {
                         "value": "[variables('configIds')]"
@@ -697,8 +703,8 @@
                 }
             },
             "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('rgName')), 'Microsoft.Resources/deployments', variables('resourceDeploymentName'))]",
-                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName'))]"
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', variables('resourceDeploymentName'))]",
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('rgName'))]"
             ]
             }
     ],
