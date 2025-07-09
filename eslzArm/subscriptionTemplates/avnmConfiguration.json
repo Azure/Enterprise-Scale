@@ -44,12 +44,19 @@
             "metadata": {
                 "description": "Resource group name for AVNM resources"
             },
-            "defaultValue": "rg-alz-avnm"
+            "defaultValue": "[concat('rg-avnm-prod-', parameters('location'))]"
+        },
+        "userAssignedIdentityName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the user-assigned managed identity for AVNM"
+            },
+            "defaultValue": "[concat('id-avnm-prod-', parameters('location'))]"
         }
     },
     "variables": {
         "resourceDeploymentName": "[take(concat(deployment().name, '-avnm', parameters('location')), 64)]",
-        "configIds": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]"
+        "configIds": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Network/networkManagers/avnm/securityAdminConfigurations/sac-alz')]"
     },
     "resources": [
         {
@@ -120,7 +127,6 @@
                                 }
                             },
                             "dependsOn": [
-                                
                             ],
                             "metadata": {
                                 "description": "This is the Azure Virtual Network Manager which will be used to implement the connected group for spoke-to-spoke connectivity."
@@ -532,7 +538,6 @@
                                 "access": "Deny"
                             }
                         }
-                        
                     ]
                 }
             }
@@ -550,63 +555,69 @@
                 "parameters": {
                     "location": {
                         "value": "[parameters('location')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('userAssignedIdentityName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                    "type": "string"
-                    }
-                },
-                "variables": {},
-                "resources": [
-                    {
-                        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-                        "apiVersion": "2022-01-31-preview",
-                        "name": "[format('uai-avnm-{0}', parameters('location'))]",
-                        "location": "[parameters('location')]",
-                        "metadata": {
-                            "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "userAssignedIdentityName": {
+                            "type": "string"
                         }
                     },
-                    {
-                        "type": "Microsoft.Authorization/roleAssignments",
-                        "apiVersion": "2022-04-01",
-                        "name": "[guid(resourceGroup().id, format('uai-avnm-{0}', parameters('location')))]",
-                        "properties": {
-                            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-                            "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-avnm-{0}', parameters('location'))), '2022-01-31-preview').principalId]",
-                            "principalType": "ServicePrincipal"
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                            "apiVersion": "2022-01-31-preview",
+                            "name": "[parameters('userAssignedIdentityName')]",
+                            "location": "[parameters('location')]",
+                            "metadata": {
+                                "description": "This user assigned identity is used by the Deployment Script resource to interact with Azure resources."
+                            }
                         },
-                        "dependsOn": [
-                            "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-avnm-{0}', parameters('location')))]"
-                        ],
-                        "metadata": {
-                            "description": "This role assignment grants the user assigned identity the Contributor role on the resource group."
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(resourceGroup().id, parameters('userAssignedIdentityName'))]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName')), '2022-01-31-preview').principalId]",
+                                "principalType": "ServicePrincipal"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
+                            ],
+                            "metadata": {
+                                "description": "This role assignment grants the user assigned identity the Contributor role on the resource group."
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "userAssignedIdentityId": {
+                            "type": "string",
+                            "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
                         }
                     }
-                ],
-                "outputs": {
-                    "userAssignedIdentityId": {
-                    "type": "string",
-                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('uai-avnm-{0}', parameters('location')))]"
-                    }
-                }
                 }
             },
             "dependsOn": [
                 "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('rgName'))]"
             ]
-            },
-            {
+        },
+        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2022-09-01",
             "name": "[format('ds-{0}-prereqs', parameters('location'))]",
             "resourceGroup": "[parameters('rgName')]",
             "properties": {
-                    "expressionEvaluationOptions": {
+                "expressionEvaluationOptions": {
                     "scope": "inner"
                 },
                 "mode": "Incremental",
@@ -631,47 +642,47 @@
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
-                    },
-                    "locationSecondary": {
-                        "type": "string"
-                    },
-                    "userAssignedIdentityId": {
-                        "type": "string"
-                    },
-                    "rgName": {
-                        "type": "string"
-                    },
-                    "configIds": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    }
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Resources/deploymentScripts",
-                        "apiVersion": "2020-10-01",
-                        "name": "alz-avnm-deploymentscript",
-                        "location": "[parameters('location')]",
-                        "kind": "AzurePowerShell",
-                        "identity": {
-                            "type": "UserAssigned",
-                            "userAssignedIdentities": {
-                                "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "userAssignedIdentityId": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "configIds": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
                         }
                     },
-                    "properties": {
-                            "azPowerShellVersion": "12.3",
-                            "retentionInterval": "PT1H",
-                            "timeout": "PT1H",
-                            "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
-                            "scriptContent": "
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/deploymentScripts",
+                            "apiVersion": "2020-10-01",
+                            "name": "alz-avnm-deploymentscript",
+                            "location": "[parameters('location')]",
+                            "kind": "AzurePowerShell",
+                            "identity": {
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                    "[format('{0}', parameters('userAssignedIdentityId'))]": {}
+                                }
+                            },
+                            "properties": {
+                                "azPowerShellVersion": "12.3",
+                                "retentionInterval": "PT1H",
+                                "timeout": "PT1H",
+                                "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                                "scriptContent": "
                                 param(
                                     [string]
                                     $location,
@@ -696,9 +707,9 @@
                                 Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
                                 
                             "
+                            }
                         }
-                    }
-                ],
+                    ],
                     "outputs": {}
                 }
             },
@@ -706,7 +717,7 @@
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', variables('resourceDeploymentName'))]",
                 "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('rgName'))]"
             ]
-            }
+        }
     ],
     "outputs": {}
 }
