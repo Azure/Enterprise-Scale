@@ -2,6 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        },
         "location": {
             "type": "string",
             "metadata": {
@@ -38,6 +45,13 @@
                 "description": "Enable secondary region for instances deploying in multiple regions"
             },
             "defaultValue": "no"
+        },
+        "avnmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Virtual Network Manager"
+            },
+            "defaultValue": "[concat('vnm-', parameters('topLevelManagementGroupPrefix'), '-prod-', parameters('location'))]"
         },
         "rgName": {
             "type": "string",
@@ -91,6 +105,9 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
@@ -108,13 +125,16 @@
                         },
                         "enableSecondaryRegion": {
                             "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
                         }
                     },
                     "resources": [
                         {
                             "type": "Microsoft.Network/networkManagers",
                             "apiVersion": "2024-03-01",
-                            "name": "avnm",
+                            "name": "[parameters('avnmName')]",
                             "location": "[parameters('location')]",
                             "properties": {
                                 "networkManagerScopeAccesses": [
