@@ -79,7 +79,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-07-02). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
-- Updated GitHub workflow to exclude testing the Deploy-Windows-DomainJoin policy for default values (as some cannot be set).
+- Updated GitHub workflow to exclude testing the `Deploy-Windows-DomainJoin policy` for default values (as some cannot be set).
 
 ### June 2025
 
