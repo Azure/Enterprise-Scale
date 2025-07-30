@@ -72,6 +72,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
   - Updated the default portal accelerator deployment to enable Defender for AI workloads on subscriptions directly.
 - Added new initiative [Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/281d9e47-d14d-4f05-b8eb-18f2c4a034ff.html) to enhance virtual machine security leveraging enhanced features of Trusted Launch- for more information: [https://aka.ms/trustedlaunch](https://aka.ms/trustedlaunch). This initiative is assigned by default at the Platform and Landing Zones management groups scope.
   - NOTE: for environments using NSGs or Firewalls to manage traffic, you may need to create rules to facilitate service communication, details: https://learn.microsoft.com/en-us/azure/virtual-machines/boot-integrity-monitoring-overview?tabs=portal#troubleshooting-guide-for-guest-attestation-extension-installation
+- Added default policy assignment at the intermediate root management group scope for the [Service Health built-in policy](https://www.azadvertizer.net/azpolicyadvertizer/98903777-a9f6-47f5-90a9-acaf62ab01a8.html) and changed AMBA ALZ Service Health policy assignment default to no, as replaced with built-in policy.
 - Updated and cleaned up the Excel Policy Assignments file available in the wiki https://github.com/Azure/Enterprise-Scale/wiki/media/ALZ%20Policy%20Assignments%20v2.xlsx
 
 ### July 2025
