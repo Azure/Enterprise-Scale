@@ -959,12 +959,12 @@
                 },
                 {
                     "name": "monitor",
-                    "label": "Baseline alerts and monitoring",
+                    "label": "Alerts and monitoring",
                     "subLabel": {
                         "preValidation": "",
                         "postValidation": ""
                     },
-                    "bladeTitle": "ALZ - Baseline Alerts",
+                    "bladeTitle": "ALZ - Alerts & Monitoring",
                     "elements": [
                         {
                             "name": "esServiceHealthBuiltInTitle",
@@ -1010,10 +1010,111 @@
                             "type": "Microsoft.Common.InfoBox",
                             "visible": true,
                             "options": {
-                                "text": "There are 2 ways to enable Service Health alerts via Azure Policy in ALZ. One is via the built-in policy and the other is via Azure Monitor Baseline Alerts (AMBA). Both are valid and achieve the same outcome of enabling Service Health on all Azure Subscriptions in-scope of the policy assignment at the intermediate root Management Group, e.g. Contoso. You should pick only one way to enable Service Health alerts and not both. We recommend using the built-in policy as it is simpler to use and does not require any additional configuration. To deploy via AMBA you must select 'No' to the built-in policy, above, and 'Yes' in the AMBA section below.",
+                                "text": "There are 2 ways to enable Service Health alerts via Azure Policy in ALZ. One is via the built-in policy and the other is via Azure Monitor Baseline Alerts (AMBA), which also uses the same built-in policy but also comes with other AMBA policies. If you only wish to enable the service health policy and not AMBA, then select 'Yes' to the option 'Deploy Service Health Alerts via built-in policy' and 'No' to 'Deploy one or more Azure Monitor Baseline Alerts' below. If you want to enable the service health policy and AMBA then we suggest to do this all via AMBA below. Therefore, select 'Yes' to the option 'Deploy one or more Azure Monitor Baseline Alerts' below and 'No' to ''Deploy Service Health Alerts via built-in policy' above as this will simplify the deployment process.",
                                 "uri": "https://learn.microsoft.com/azure/service-health/service-health-alert-deploy-policy",
                                 "style": "Warning"
                             }
+                        },
+                        {
+                            "name": "esAmbaAgConfig",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Action Group configuration",
+                            "elements": [
+                                {
+                                    "name": "esAmbaAgInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Action groups in Azure Monitor allow for the creation of a set of actions that will be carried out when an alert is activated. Azure Monitor Baseline Alerts can incorporate various actions including Azure Function, Event Hub, and Logic App into their configuration. However, it's important to note that these actions are contingent upon the prior existence of the Azure Function, Event Hub, or Logic App resources. To set up these actions, please proceed with the current deployment, deploy the preferred resource you intend to use for actions, and then utilize the AMBA Portal Accelerator to implement the updated configuration.",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
+                                        "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "monitorAlertsResourceGroup",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Resource group for alerts",
+                                    "toolTip": "Resource group for service health, activity log alerts, action groups. Will be created in all subscriptions in scope for the policy",
+                                    "visible": "true",
+                                    "defaultValue": "rg-alz-monitoring-001",
+                                    "constraints": {
+                                        "required": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]",
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
+                                        "validationMessage": "Please provide a valid resource group name"
+                                    }
+                                },
+                                {
+                                    "name": "userAssignedManagedIdentityName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "User Assigned Managed Identity Name",
+                                    "subLabel": "",
+                                    "defaultValue": "id-amba-prod-001",
+                                    "toolTip": "Specify the name of the user assigned managed identity for AMBA monitoring purpose.",
+                                    "infoMessages": [],
+                                    "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]"
+                                },
+                                {
+                                    "name": "ambaAgEmailContact",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Email contact for action group notifications",
+                                    "toolTip": "Email address to get email notifications from alerts",
+                                    "visible": "true",
+                                    "defaultValue": "",
+                                    "constraints": {
+                                        "required": false,
+                                        "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                                        "validationMessage": "Please provide a valid email address"
+                                    }
+                                },
+                                {
+                                    "name": "ambaAgServiceHook",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Web Hook URI for action group notifications",
+                                    "toolTip": "Web Hook URI to forward alerts to for integration with third-party systems",
+                                    "visible": "true",
+                                    "defaultValue": "",
+                                    "constraints": {}
+                                },
+                                {
+                                    "name": "ambaAgArmRole",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "ARM Roles for action group notifications",
+                                    "defaultValue": [
+                                        "Owner"
+                                    ],
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": false,
+                                    "multiLine": false,
+                                    "toolTip": "Choose the ARM RBAC roles that should receive alerts.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Owner",
+                                                "value": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                                            },
+                                            {
+                                                "label": "Contributor",
+                                                "value": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+                                            },
+                                            {
+                                                "label": "Monitoring Contributor",
+                                                "value": "749f88d5-cbae-40b8-bcfc-e573ddc772fa"
+                                            },
+                                            {
+                                                "label": "Monitoring Reader",
+                                                "value": "43d0d8ad-25c7-4714-9337-8ba259a9fe05"
+                                            },
+                                            {
+                                                "label": "Monitoring Policy Contributor",
+                                                "value": "47be4a87-7950-4631-9daf-b664a405f074"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]"
                         },
                         {
                             "name": "esAmbaTitle",
@@ -1045,26 +1146,6 @@
                             }
                         },
                         {
-                            "name": "enableServiceHealth",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Deploy Service Health Alerts via AMBA",
-                            "defaultValue": "No",
-                            "toolTip": "If 'Yes' is selected Azure Monitor Baseline Alerts - Service Health alerts will be enabled on subscriptions in scope. For more information on what is included in the Service Health initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details. Defaults to No as Service Health built-in policy is assigned by default in ALZ now it exists see https://learn.microsoft.com/azure/service-health/service-health-alert-deploy-policy ",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
-                                    }
-                                ]
-                            },
-                            "visible": "[equals(steps('monitor').enableServiceHealthBuiltIn, 'No')]"
-                        },
-                        {
                             "name": "enableMonitorBaselines",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy one or more Azure Monitor Baseline Alerts",
@@ -1083,6 +1164,26 @@
                                 ]
                             },
                             "visible": true
+                        },
+                        {
+                            "name": "enableServiceHealth",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Service Health Alerts via AMBA",
+                            "defaultValue": "No",
+                            "toolTip": "If 'Yes' is selected Azure Monitor Baseline Alerts - Service Health alerts will be enabled on subscriptions in scope. For more information on what is included in the Service Health initiative please refer to https://aka.ms/amba/alz/wiki under Azure Policy Initiatives and Alert Details. Defaults to No as Service Health built-in policy is assigned by default in ALZ now it exists see https://learn.microsoft.com/azure/service-health/service-health-alert-deploy-policy ",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            },
+                            "visible": "[equals(steps('monitor').enableServiceHealthBuiltIn, 'No')]"
                         },
                         {
                             "name": "enableMonitorConnectivity",
@@ -1355,113 +1456,6 @@
                                 }
                             ],
                             "visible": "[and(equals(steps('management').enableLogAnalytics, 'No'), equals(steps('monitor').enableMonitorBaselines,'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
-                        },
-                        {
-                            "name": "esAmbaAgConfig",
-                            "type": "Microsoft.Common.Section",
-                            "label": "Action Group configuration",
-                            "elements": [
-                                {
-                                    "name": "esAmbaAgInfo",
-                                    "type": "Microsoft.Common.InfoBox",
-                                    "visible": true,
-                                    "options": {
-                                        "text": "Action groups in Azure Monitor allow for the creation of a set of actions that will be carried out when an alert is activated. Azure Monitor Baseline Alerts can incorporate various actions including Azure Function, Event Hub, and Logic App into their configuration. However, it's important to note that these actions are contingent upon the prior existence of the Azure Function, Event Hub, or Logic App resources. To set up these actions, please proceed with the current deployment, deploy the preferred resource you intend to use for actions, and then utilize the AMBA Portal Accelerator to implement the updated configuration.",
-                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
-                                        "style": "Info"
-                                    }
-                                },
-                                {
-                                    "name": "monitorAlertsResourceGroup",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "Resource group for baseline alerts",
-                                    "toolTip": "Resource group for activity log alerts and action groups. Will be created in all subscriptions in scope for the policy",
-                                    "visible": "true",
-                                    "defaultValue": "rg-amba-monitoring-001",
-                                    "constraints": {
-                                        "required": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]",
-                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
-                                        "validationMessage": "Please provide a valid resource group name"
-                                    }
-                                },
-                                {
-                                    "name": "userAssignedManagedIdentityName",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "User Assigned Managed Identity Name",
-                                    "subLabel": "",
-                                    "defaultValue": "id-amba-prod-001",
-                                    "toolTip": "Specify the name of the user assigned managed identity for monitoring purpose.",
-                                    "constraints": {
-                                        "required": true,
-                                        "regex": "",
-                                        "validationMessage": "",
-                                        "validations": []
-                                    },
-                                    "infoMessages": [],
-                                    "visible": true
-                                },
-                                {
-                                    "name": "ambaAgEmailContact",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "Email contact for action group notifications",
-                                    "toolTip": "Email address to get email notifications from alerts",
-                                    "visible": "true",
-                                    "defaultValue": "",
-                                    "constraints": {
-                                        "required": false,
-                                        "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
-                                        "validationMessage": "Please provide a valid email address"
-                                    }
-                                },
-                                {
-                                    "name": "ambaAgServiceHook",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "label": "Web Hook URI for action group notifications",
-                                    "toolTip": "Web Hook URI to forward alerts to for integration with third-party systems",
-                                    "visible": "true",
-                                    "defaultValue": "",
-                                    "constraints": {}
-                                },
-                                {
-                                    "name": "ambaAgArmRole",
-                                    "type": "Microsoft.Common.DropDown",
-                                    "label": "ARM Roles for action group notifications",
-                                    "defaultValue": [
-                                        "Owner"
-                                    ],
-                                    "multiselect": true,
-                                    "selectAll": true,
-                                    "filter": false,
-                                    "multiLine": false,
-                                    "toolTip": "Choose the ARM RBAC roles that should receive alerts.",
-                                    "constraints": {
-                                        "allowedValues": [
-                                            {
-                                                "label": "Owner",
-                                                "value": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
-                                            },
-                                            {
-                                                "label": "Contributor",
-                                                "value": "b24988ac-6180-42a0-ab88-20f7382dd24c"
-                                            },
-                                            {
-                                                "label": "Monitoring Contributor",
-                                                "value": "749f88d5-cbae-40b8-bcfc-e573ddc772fa"
-                                            },
-                                            {
-                                                "label": "Monitoring Reader",
-                                                "value": "43d0d8ad-25c7-4714-9337-8ba259a9fe05"
-                                            },
-                                            {
-                                                "label": "Monitoring Policy Contributor",
-                                                "value": "47be4a87-7950-4631-9daf-b664a405f074"
-                                            }
-                                        ]
-                                    },
-                                    "visible": true
-                                }
-                            ],
-                            "visible": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]"
                         }
                     ]
                 },
