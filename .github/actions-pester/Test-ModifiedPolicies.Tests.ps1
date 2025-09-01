@@ -132,7 +132,7 @@ Describe 'UnitTest-ModifiedPolicies' {
                     $PolicyJson = Get-Content -Path $_ -Raw | ConvertFrom-Json
                     $PolicyFile = Split-Path $_ -Leaf
                     $PolicyMetadataName = $PolicyJson.name
-                    $ExcludePolicy = @("Deploy-Private-DNS-Zones","Deploy-Vm-autoShutdown","Deploy-Custom-Route-Table","Deploy-DDoSProtection","Deploy-Default-Udr")
+                    $ExcludePolicy = @("Deploy-Private-DNS-Zones","Deploy-Vm-autoShutdown","Deploy-Custom-Route-Table","Deploy-DDoSProtection","Deploy-Default-Udr","Deploy-Windows-DomainJoin")
                     $ExcludeParams = @("allowedVnets","userAssignedIdentityName","identityResourceGroup","resourceName","logAnalytics","ddosPlanResourceId","modifyUdrNextHopIpAddress","emailSecurityContact","contactEmails","contactGroups","contactRoles","privateDnsZoneId","resourceType","groupId","azureAcrPrivateDnsZoneId","userWorkspaceResourceId","workspaceRegion","dcrName","dcrResourceGroup","dcrId","keyVaultNonIntegratedCaValue","excludedSubnets","excludedDestinations","allowedBypassOptions","ports","denyMgmtFromInternetPorts","allowedVmSizes","allowedKinds","predefinedPolicyName","privateLinkDnsZones","locations","tagValues","ascExportResourceGroupLocation","ascExportResourceGroupName","vulnerabilityAssessmentsEmail","vulnerabilityAssessmentsStorageID","listOfResourceTypesAllowed","listOfResourceTypesNotAllowed","synapseAllowedTenantIds","storageAllowedNetworkAclsBypass","keyVaultIntegratedCaValue","keyVaultHmsCurveNamesValue")
                     if ($PolicyMetadataName -notin $ExcludePolicy)
                     {

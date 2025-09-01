@@ -234,9 +234,24 @@
         },
         "enableServiceHealth": {
             "type": "string",
-            "defaultValue": "Yes",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
             "metadata": {
-                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for Service Health in your environment. If 'No', it will be ignored."
+                "description": "If 'Yes' is selected, ARM will assign a policy initiative to deploy alerting for Service Health in your environment via AMBA. If 'No', it will be ignored."
+            }
+        },
+        "enableServiceHealthBuiltIn": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "If 'Yes' is selected, ARM will assign the built-in policy definition (98903777-a9f6-47f5-90a9-acaf62ab01a8) to deploy alerting for Service Health in your environment. If 'No', it will be ignored."
             }
         },
         "enableMonitorBaselines": {
@@ -1041,6 +1056,22 @@
                 "No"
             ]
         },
+        "enableGuestAttestationPlat": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "enableGuestAttestationLZ": {
+            "type": "string",
+            "defaultValue": "Yes",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "denyHybridNetworking": {
             "type": "string",
             "defaultValue": "No",
@@ -1733,6 +1764,7 @@
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
+            "svcHealthBuiltInPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ServiceHealthBuiltInPolicyAssignment.json')]",
             "regulatoryComplianceInitaitves": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-RegulatoryCompliancePolicyAssignment.json')]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
             "activityDiagnosticsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ActivityLogPolicyAssignment.json')]",
@@ -1758,6 +1790,7 @@
             "storageHttpsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-StorageWithoutHttpsPolicyAssignment.json')]",
             "kvGuardrailsPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-GuardrailsKeyVaultPolicyAssignment.json')]",
             "backupPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-BackupPolicyAssignment.json')]",
+            "guestAttestationAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-TrustedLaunchGuestAttestationAssignment.json')]",
             "denyHybridNetworkingPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DENY-HybridNetworkingPolicyAssignment.json')]",
             "auditPeDnsZonesPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-PeDnsZonesPolicyAssignment.json')]",
             "auditAppGwWafPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/AUDIT-AppGwWafPolicyAssignment.json')]",
@@ -1849,6 +1882,7 @@
             "monitorManagementDeploymentName": "[take(concat('alz-ManagementMonitor', variables('deploymentSuffix')), 64)]",
             "monitorLandingZoneDeploymentName": "[take(concat('alz-LandingZoneMonitor', variables('deploymentSuffix')), 64)]",
             "monitorServiceHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
+            "monitorServiceHealthBuiltInDeploymentName": "[take(concat('alz-SvcHealthBuiltIn', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
             "regulatoryComplianceInitativesToAssignDeploymentName": "[take(concat('alz-RegComp-', deployment().location, '-', uniqueString(parameters('currentDateTimeUtcNow')), '-'), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -1887,6 +1921,8 @@
             "kvGuardrailsPolicyPlatDeploymentName": "[take(concat('alz-KvGuardrailsPlat', variables('deploymentSuffix')), 64)]",
             "backupPolicyDeploymentName": "[take(concat('alz-Backup', variables('deploymentSuffix')), 64)]",
             "backupPlatPolicyDeploymentName": "[take(concat('alz-BackupPlat', variables('deploymentSuffix')), 64)]",
+            "guestAttLZPolicyDeploymentName": "[take(concat('alz-GuestAtt', variables('deploymentSuffix')), 64)]",
+            "guestAttPlatPolicyDeploymentName": "[take(concat('alz-GuestAttPlat', variables('deploymentSuffix')), 64)]",
             "denyHybridNetworkingPolicyDeploymentName": "[take(concat('alz-DenyHybridNetworking', variables('deploymentSuffix')), 64)]",
             "auditPeDnsZonesPolicyDeploymentName": "[take(concat('alz-AuditPeDnsZones', variables('deploymentSuffix')), 64)]",
             "auditAppGwWafPolicyDeploymentName": "[take(concat('alz-AppGwWaf', variables('deploymentSuffix')), 64)]",
@@ -2302,7 +2338,7 @@
                         "value": "[if(and(equals(parameters('enableMonitorBaselines'), 'No'), equals(parameters('enableServiceHealth'), 'Yes')), 'No', parameters('enableMonitorManagement'))]"
                     },
                     "enableAMBAServiceHealth": {
-                        "value": "[parameters('enableServiceHealth')]"
+                        "value": "[if(equals(parameters('enableServiceHealthBuiltIn'), 'Yes'), 'No', parameters('enableServiceHealth'))]"
                     },
                     "enableAMBAHybridVM": {
                         "value": "[if(and(equals(parameters('enableMonitorBaselines'), 'No'), equals(parameters('enableServiceHealth'), 'Yes')), 'No', parameters('enableAMBAHybridVM'))]"
@@ -2405,7 +2441,7 @@
                         "value": "[if(and(equals(parameters('enableMonitorBaselines'), 'No'), equals(parameters('enableServiceHealth'), 'Yes')), 'No', parameters('enableMonitorManagement'))]"
                     },
                     "enableAMBAServiceHealth": {
-                        "value": "[parameters('enableServiceHealth')]"
+                        "value": "[if(equals(parameters('enableServiceHealthBuiltIn'), 'Yes'), 'No', parameters('enableServiceHealth'))]"
                     },
                     "enableAMBAHybridVM": {
                         "value": "[if(and(equals(parameters('enableMonitorBaselines'), 'No'), equals(parameters('enableServiceHealth'), 'Yes')), 'No', parameters('enableAMBAHybridVM'))]"
@@ -2848,6 +2884,43 @@
                     "uri": "[variables('deploymentUris').asbPolicyInitiative]"
                 },
                 "parameters": {}
+            }
+        },
+        {
+            // Assigning Service Health built-in policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), equals(parameters('enableServiceHealthBuiltIn'), 'Yes'), equals(parameters('enableServiceHealth'), 'No'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').monitorServiceHealthBuiltInDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "alz-prerequisites"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').svcHealthBuiltInPolicyAssignment]"
+                },
+                "parameters": {
+                    "resourceGroupLocation": {
+                        "value": "[deployment().location]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "actionGroupResourcesEmail": {
+                        "value": "[if(empty(parameters('ambaAgEmailContact')), array(null()), array(parameters('ambaAgEmailContact')))]"
+                    },
+                    "actionGroupResourcesWebhook": {
+                        "value": "[if(empty(parameters('ambaAgServiceHook')), array(null()), array(parameters('ambaAgServiceHook')))]"
+                    },
+                    "actionGroupRoleIds": {
+                        "value": "[array(parameters('ambaAgArmRole'))]"
+                    }
+                }
             }
         },
         {
@@ -4518,6 +4591,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').platformLiteSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]",
                 "onlineLzs",
                 "corpLzs",
                 "corpConnectedMoveLzs"
@@ -5517,88 +5592,88 @@
                         "value": "[parameters('enableSecondaryRegion')]"
                     }
                 }
-                }
-            },
-            {
-                // Creating resource group for Private DNS Zones for a secondary region
-                "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
-                "type": "Microsoft.Resources/deployments",
-                "apiVersion": "2020-10-01",
-                "name": "[variables('deploymentNames').privateDnsZoneRg2DeploymentName]",
-                "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-                "location": "[deployment().location]",
-                "dependsOn": [
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
-                ],
-                "properties": {
-                    "mode": "Incremental",
-                    "templateLink": {
-                        "contentVersion": "1.0.0.0",
-                        "uri": "[variables('deploymentUris').resourceGroup]"
-                    },
-                    "parameters": {
-                        "rgName": {
-                            "value": "[variables('platformRgNames').privateDnsRg2]"
-                        },
-                        "location": {
-                            "value": "[parameters('connectivityLocationSecondary')]"
-                        }
-                    }
-                }
-            },
-             {
-                // Creating Private DNS Zones into the connectivity subscription for a secondary region
-                "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
-                "type": "Microsoft.Resources/deployments",
-                "apiVersion": "2020-10-01",
-                "name": "[concat(variables('deploymentNames').privateDnsZones2DeploymentName, copyIndex())]",
-                "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-                "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
-                "dependsOn": [
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRg2DeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                    "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
-                ],
-                "copy": {
-                    "name": "dnsZones",
-                    "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
+            }
+        },
+        {
+            // Creating resource group for Private DNS Zones for a secondary region
+            "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').privateDnsZoneRg2DeploymentName]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').resourceGroup]"
                 },
-                "properties": {
-                    "mode": "Incremental",
-                    "templateLink": {
-                        "contentVersion": "1.0.0.0",
-                        "uri": "[variables('deploymentUris').privateDnsZones]"
+                "parameters": {
+                    "rgName": {
+                        "value": "[variables('platformRgNames').privateDnsRg2]"
                     },
-                    "parameters": {
-                        "privateDnsZoneName": {
-                            "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
-                        },
-                        "connectivityHubResourceId": {
-                            "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
-                        },
-                        "connectivityHubResourceIdSecondary": {
-                            "value": "placeholder"
-                        },
-                        "enablePrivateDnsZonesSecondary": {
-                            "value": "[parameters('enablePrivateDnsZonesSecondary')]"
-                        },
-                        "enableHubSecondary": {
-                            "value": "No"
-                        }
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
                     }
                 }
+            }
+        },
+        {
+            // Creating Private DNS Zones into the connectivity subscription for a secondary region
+            "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('connectivitySubscriptionId'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat(variables('deploymentNames').privateDnsZones2DeploymentName, copyIndex())]",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRg2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHub2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHub2DeploymentName)]"
+            ],
+            "copy": {
+                "name": "dnsZones",
+                "count": "[length(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved'))]"
             },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsZones]"
+                },
+                "parameters": {
+                    "privateDnsZoneName": {
+                        "value": "[concat(variables('privateDnsZonesMergedWithBackupPlaceholderRemoved')[copyIndex()])]"
+                    },
+                    "connectivityHubResourceId": {
+                        "value": "[variables('platformResourceIds').vNetHubResourceIdSecondary]"
+                    },
+                    "connectivityHubResourceIdSecondary": {
+                        "value": "placeholder"
+                    },
+                    "enablePrivateDnsZonesSecondary": {
+                        "value": "[parameters('enablePrivateDnsZonesSecondary')]"
+                    },
+                    "enableHubSecondary": {
+                        "value": "No"
+                    }
+                }
+            }
+        },
         /*
             The following optional deployment will configure virtual network hub into the connectivity subscription for a secondary region
         */
@@ -5820,7 +5895,8 @@
                         "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
                     },
                     "hubRgNameSecondary": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"                    }
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"
+                    }
                 }
             }
         },
@@ -7056,6 +7132,66 @@
             }
         },
         {
+            // Assigning Guest Attestation initiative to platform management group if condition is true
+            "condition": "[equals(parameters('enableGuestAttestationPlat'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').guestAttPlatPolicyDeploymentName]",
+            "scope": "[variables('scopes').platformManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "alz-prerequisites"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').guestAttestationAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableGuestAttestationPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').platformManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
+            // Assigning Guest Attestation initiative to landing zone management group if condition is true
+            "condition": "[equals(parameters('enableGuestAttestationLZ'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('deploymentNames').guestAttLZPolicyDeploymentName]",
+            "scope": "[variables('scopes').lzsManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "alz-prerequisites"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').guestAttestationAssignment]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "enforcementMode": {
+                        "value": "[if(equals(parameters('enableGuestAttestationPlat'), 'Yes'), 'Default', 'DoNotEnforce')]"
+                    },
+                    "scope": {
+                        "value": "[variables('scopes').lzsManagementGroup]"
+                    }
+                }
+            }
+        },
+        {
             // Assigning policy to deny deployment of vWAN/ER/VPN Gateways to corp management group if condition is true
             "condition": "[or(equals(parameters('denyHybridNetworking'), 'Yes'), equals(parameters('denyHybridNetworking'), 'Audit'))]",
             "type": "Microsoft.Resources/deployments",
@@ -8138,7 +8274,7 @@
                 }
             }
         },
-                /*
+        /*
             Note: ES Lite only: deploy RG for Private DNS zones to platform subscription in a secondary region
         */
         {
@@ -8175,7 +8311,7 @@
                 }
             }
         },
-         /*
+        /*
             Note: ES Lite only: deploy private DNS zones for primary region
         */
         {
@@ -8610,7 +8746,7 @@
                 }
             }
         },
-                /*
+        /*
             Note: ES Lite only: deploys hub and spoke in a secondary region
         */
         {
@@ -8786,7 +8922,7 @@
                 }
             }
         },
-                /*
+        /*
             Note: ES Lite only: deploys peering between hub networks in the primary and secondary region
         */
         {
@@ -8837,11 +8973,12 @@
                         "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
                     },
                     "hubRgNameSecondary": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"                    }
+                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"
+                    }
                 }
             }
         },
-                        /*
+        /*
             Note: ES Lite only: deploys route tables to forward traffic between hubs
         */
         {
