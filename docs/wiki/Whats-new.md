@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2025]
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
   - [June 2025](#june-2025)
   - [May 2025](#may-2025)
@@ -57,6 +58,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### September 2025
+
+#### Tooling
+
+- The Security Management Group is now deployed when selecting multi-subscription for platform resources in the portal accelerator. This management group is intended to host security related resources such as Microsoft Sentinel as per our recent blog [A New Platform Management Group & Subscription for Security in Azure landing zone (ALZ)](https://techcommunity.microsoft.com/blog/azuregovernanceandmanagementblog/a-new-platform-management-group--subscription-for-security-in-azure-landing-zone/4433287)
+- Sentinel is now longer deployed by default in the portal accelerator and is no-longer available as an option to deploy it at all as part of the portal accelerator. If you want to deploy Sentinel, please follow the guidance in [Deployment guide for Microsoft Sentinel](https://learn.microsoft.com/azure/sentinel/deploy-overview)
 
 ### 🔃 Policy Refresh H2 FY25
 

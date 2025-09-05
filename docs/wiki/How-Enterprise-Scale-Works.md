@@ -65,7 +65,7 @@ The Management Group structure implemented with Enterprise-Scale is as follows:
 - **Top-level Management Group** (directly under the tenant root group) is created with a prefix provided by the organization, which purposely will avoid the usage of the root group to allow organizations to move existing Azure subscriptions into the hierarchy, and also enables future scenarios. This Management Group is parent to all the other Management Groups created by Enterprise-Scale
 - **Platform:** This Management Group contains all the *platform* child Management Groups, such as Management, Connectivity, and Identity. Common Azure Policies for the entire platform is assigned at this level
 
-  - **Management:** This Management Group contains the dedicated subscription for management, monitoring, and security, which will host Azure Log Analytics, Azure Automation, and Azure Sentinel. Specific Azure policies are assigned to harden and manage the resources in the management subscription.
+  - **Management:** This Management Group contains the dedicated subscription for management, monitoring, and security, which will host Azure Log Analytics, Azure Automation. Specific Azure policies are assigned to harden and manage the resources in the management subscription.
 
   - **Connectivity:** This Management Group contains the dedicated subscription for connectivity, which will host the Azure networking resources required for the platform, such as Azure Virtual WAN/Virtual Network for the hub, Azure Firewall, DNS Private Zones, Express Route circuits, ExpressRoute/VPN Gateways etc. among others. Specific Azure policies are assigned to harden and manage the resources in the connectivity subscription.
   - **Identity:** This Management Group contains the dedicated subscription for identity, which is a placeholder for Windows Server Active Directory Domain Services (AD DS) VMs, or Azure Active Directory Domain Services to enable AuthN/AuthZ for workloads within the landing zones. Specific Azure policies are assigned to harden and manage the resources in the identity subscription.
@@ -90,8 +90,6 @@ By default, all recommended settings and resources recommendations are enabled a
   - A Log Analytics workspace
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
-
-  - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, Management Groups and PaaS resources sent to Log Analytics
 
 - When deploying [**Adventure Works**](./ALZ-Deploy-reference-implementations#deploy-a-reference-implementation) or [**Contoso**](./ALZ-Deploy-reference-implementations#deploy-a-reference-implementation): An Azure subscription dedicated for **Connectivity**, which deploys core Azure networking resources such as:

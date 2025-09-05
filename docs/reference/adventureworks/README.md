@@ -57,7 +57,6 @@ By default, all recommendations are enabled and you must explicitly disable them
   - A Log Analytics workspace
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
-  - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
 - An Azure subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   - A hub virtual network

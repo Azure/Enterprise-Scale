@@ -495,33 +495,39 @@
                             }
                         },
                         {
-                            "name": "enableSentinel",
-                            "type": "Microsoft.Common.OptionsGroup",
-                            "label": "Deploy Microsoft Sentinel (configuration required to activate)",
-                            "defaultValue": "No",
-                            "toolTip": "If 'Yes' is selected Sentinel will be enabled on the Log Analytics workspace. Note additional configuration is required to complete Sentinel onboarding.",
-                            "constraints": {
-                                "allowedValues": [
-                                    {
-                                        "label": "Yes",
-                                        "value": "Yes"
-                                    },
-                                    {
-                                        "label": "No",
-                                        "value": "No"
+                            "name": "esSecuritySubSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Security subscription",
+                            "elements": [
+                                {
+                                    "name": "esSecuritySubUniqueWarning",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Ensure you select a subscription that is dedicated/unique for Security. Selecting the same Subscription here for Connectivity, Management, or Identity will result in a deployment failure. If you want to use a single Subscription for all platform resources, select 'Single' on the 'Azure Core Setup' blade.",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups#management-groups-in-the-azure-landing-zone-architecture",
+                                        "style": "Warning"
                                     }
-                                ]
-                            },
-                            "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
-                        },
-                        {
-                            "name": "sentinelInfo",
-                            "type": "Microsoft.Common.InfoBox",
-                            "visible": "[equals(steps('management').enableSentinel,'Yes')]",
-                            "options": {
-                                "text": "Before proceeding with the deployment, verify the regional availability of Microsoft Sentinel.<br><ul><li><a href=\"https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/table\">Product Availability by Region</a></ul>",
-                                "style": "Info"
-                            }
+                                },
+                                {
+                                    "name": "esSecuritySub",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Security subscription",
+                                    "defaultValue": "[parse('[]')]",
+                                    "toolTip": "",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": true,
+                                    "filterPlaceholder": "Filter subscriptions...",
+                                    "multiLine": true,
+                                    "visible": true,
+                                    "constraints": {
+                                        "allowedValues": "[steps('basics').getSubscriptions.data]",
+                                        "required": true
+                                    }
+                                }
+                            ],
+                            "visible": "[not(equals(steps('core').platformSubscription, 'Single'))]"
                         },
                         {
                             "name": "esMgmtSubSection",
@@ -9867,8 +9873,8 @@
                 "enableUpdateMgmt": "[steps('management').enableUpdateMgmt]",
                 "enableVmInsights": "[steps('management').enableVmInsights]",
                 "retentionInDays": "[string(steps('management').retentionInDays)]",
-                "enableSentinel": "[steps('management').enableSentinel]",
                 "managementSubscriptionId": "[if(and(equals(steps('management').enableLogAnalytics, 'No'), equals(steps('monitor').enableMonitorBaselines,'Yes'), not(equals(steps('core').platformSubscription, 'Single'))), steps('monitor').AmbaEsMgmtSubSection.AmbaEsMgmtSub, steps('management').esMgmtSubSection.esMgmtSub )]",
+                "securitySubscriptionId": "[steps('management').esSecuritySubSection.esSecuritySub]",
                 "enableAsc": "[steps('management').enableAsc]",
                 "emailContactAsc": "[steps('management').emailContactAsc]",
                 "enableAscForServers": "[steps('management').enableAscForServers]",
