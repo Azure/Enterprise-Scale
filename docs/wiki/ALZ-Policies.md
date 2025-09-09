@@ -160,6 +160,27 @@ The table below provides the specific **Custom** and **Built-in** **policy defin
 | **Virtual networks should be protected by Azure DDoS Network Protection** | **Virtual networks should be protected by Azure DDoS Network Protection** | `Policy Definition`, **Built-in**   | Protect your virtual networks against volumetric and protocol attacks with Azure DDoS Network Protection. For more information, visit https://aka.ms/ddosprotectiondocs.                 | Modify            |
 | **Deploy Azure Monitor Baseline Alerts for Connectivity**                 | **Deploy Azure Monitor Baseline Alerts for Connectivity**                 | `Policy Definition Set`, **Custom** | Deploys alerting for connectivity related resources. For more detail on policies included please refer to https://aka.ms/amba/alz/wiki under Policy Initiatives/Connectivity initiative. | DeployIfNotExists |
 
+### Security
+
+This management group contains a dedicated subscription for security resources. This subscription will host an Azure Log Analytics workspace, dedicated for security logs, and also resoruces like Microsoft Sentinel, Syslog VMs etc.. 
+
+<table>
+<tr><th>Policy Configuration</th></tr>
+<tr></tr>
+</td><td>
+
+| **Policy Type**          | **Count** |
+| :----------------------- | :-------: |
+| `Policy Definition Sets` |   **0**   |
+| `Policy Definitions`     |   **0**   |
+</td></tr> </table>
+
+The table below provides the specific **Custom** and **Built-in** **policy definitions** and **policy definitions sets** assigned at the **Security Management Group**.
+
+| Assignment Name                                         | Definition Name                                         | Policy Type                         | Description                                                                                                                                                                          | Effect(s)         |
+| ------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| - | - | - | - | - |
+
 ### Management
 
 This management group contains a dedicated subscription for management, monitoring, and security. This subscription will host an Azure Log Analytics workspace, including associated solutions, and an Azure Automation account. Policy assignment is predominantly focused on the deployment and configuration of the Log Analytics Workspace.
