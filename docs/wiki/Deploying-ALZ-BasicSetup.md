@@ -103,10 +103,6 @@ See [Manage usage and costs with Azure Monitor Logs](https://learn.microsoft.com
 
   ![mgmtTab-asc](./media/clip_image014asc-2-singlesubscription.jpg)
 
-- Depending on your requirements, you may want to select **Deploy Azure Sentinel** to enable [Azure Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/overview) in your Log Analytics Workspace. Please note, enabling Azure Sentinel will introduce additional costs. See [Azure Sentinel Pricing](https://azure.microsoft.com/en-us/pricing/details/azure-sentinel/) for additional information.
-
-  **In this tutorial, Azure Sentinel is not enabled**. [Azure Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/quickstart-onboard) can be deployed at any stage after the the Landing Zone has been deployed.
-
   ![mgmtTab-asc](./media/clip_image014asc-3-singlesubscription.jpg)
 
 Click **Next: Platform Devops and Automation>** to configure how your Azure environment will be deployed and managed.
