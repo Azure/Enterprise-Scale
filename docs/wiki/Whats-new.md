@@ -1,6 +1,9 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [September 2025]
+  - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
+  - [June 2025](#june-2025)
   - [May 2025](#may-2025)
   - [April 2025](#april-2025)
   - [March 2025](#march-2025)
@@ -56,11 +59,54 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### September 2025
+
+#### Tooling
+
+- The Security Management Group is now deployed when selecting multi-subscription for platform resources in the portal accelerator. This management group is intended to host security related resources such as Microsoft Sentinel as per our recent blog [A New Platform Management Group & Subscription for Security in Azure landing zone (ALZ)](https://techcommunity.microsoft.com/blog/azuregovernanceandmanagementblog/a-new-platform-management-group--subscription-for-security-in-azure-landing-zone/4433287)
+- Sentinel is now longer deployed by default in the portal accelerator and is no-longer available as an option to deploy it at all as part of the portal accelerator. If you want to deploy Sentinel, please follow the guidance in [Deployment guide for Microsoft Sentinel](https://learn.microsoft.com/azure/sentinel/deploy-overview)
+
+### 🔃 Policy Refresh H2 FY25
+
+- **Breaking Change** - updated the Workload Specific Compliance initiative for Network and Network Services to remove deprecated policies and update policies that have a new version available.
+  - Please delete the existing assignment prior to deploying the update. This will only impact customers who have enabled DDOS Network Protection and deployed the Network and Network Services initiative (DDOS Network Protection is required to enable this initiative).
+- Minor fix updating Deny-EH-minTLS policy name to match casing of the filename "Deny-EH-minTLS" to "Deny-EH-MINTLS".
+- Updated the [Deploy-Windows-DomainJoin](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-Windows-DomainJoin.html) policy to support newer versions of Windows Server (2022 and 2025) and added the Key Vault Secrets User RBAC role to support reading secrets from Key Vault.
+- Updated the [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) initiative to use the improved Microsoft Defender for Servers policy [Configure Microsoft Defender for Servers plan](https://www.azadvertizer.net/azpolicyadvertizer/5eb6d64a-4086-4d7a-92da-ec51aed0332d.html), which includes additional features and parameters. Additionally, the initiative now exposes all the parameters from the referenced built-in policies (VM, Storage, CSPM, ARM, Key Vault).
+- Update the [Deploy-Encryption-CMK_20250218](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Encryption-CMK_20250218.html) initiative to replace the deprecated policy [[Deprecated]: Virtual machines should encrypt temp disks, caches, and data flows between Compute and Storage resources](https://www.azadvertizer.net/azpolicyadvertizer/0961003e-5a0a-4549-abde-af6a37f2724d.html) with the more specific policies for Windows and Linux.
+- Defender for Cloud - AI Workloads:
+  - While still in preview, with the significant adoption of AI technologies in Azure, the ALZ team have agreed to enable this capability in Defender for Cloud (should customers enable it) as part of their ALZ deployment. While in preview, there is no additional cost associated with this capability, however, once it is GA, there may be a cost associated with the use of this capability. The ALZ team will continue to monitor this and provide updates as needed.
+  - Added new built-in policy [Configure Microsoft Defender threat protection for AI workloads](https://www.azadvertizer.net/azpolicyadvertizer/359a48a3-351a-4618-bb32-f1628645694b.html) to the [Deploy-MDFC-Config_20240319](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-MDFC-Config_20240319.html) initiative.
+  - Updated the default portal accelerator deployment to enable Defender for AI workloads on subscriptions directly.
+- Added new initiative [Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/281d9e47-d14d-4f05-b8eb-18f2c4a034ff.html) to enhance virtual machine security leveraging enhanced features of Trusted Launch- for more information: [https://aka.ms/trustedlaunch](https://aka.ms/trustedlaunch). This initiative is assigned by default at the Platform and Landing Zones management groups scope.
+  - NOTE: for environments using NSGs or Firewalls to manage traffic, you may need to create rules to facilitate service communication, details: https://learn.microsoft.com/en-us/azure/virtual-machines/boot-integrity-monitoring-overview?tabs=portal#troubleshooting-guide-for-guest-attestation-extension-installation
+- Added default policy assignment at the intermediate root management group scope for the [Service Health built-in policy](https://www.azadvertizer.net/azpolicyadvertizer/98903777-a9f6-47f5-90a9-acaf62ab01a8.html) and changed AMBA ALZ Service Health policy assignment default to no, as replaced with built-in policy.
+- Updated and cleaned up the Excel Policy Assignments file available in the wiki https://github.com/Azure/Enterprise-Scale/wiki/media/ALZ%20Policy%20Assignments%20v2.xlsx
+
+### July 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-07-02). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- Updated GitHub workflow to exclude testing the `Deploy-Windows-DomainJoin policy` for default values (as some cannot be set).
+
+### June 2025
+
+#### Tooling
+
+- Updated the portal accelerator to remove sovereign cloud options as the ALZ team are unable to validate portal deployments in those environments. The only supported environment for Azure Landing Zones via the portal accelerator is Azure Public Cloud.
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-06-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+
 ### May 2025
 
 #### Policy
 
+- FIX: Updated Deny-MgmtPorts-From-Internet Policy Definition to deny the use of "0.0.0.0/0" as a Source Address Prefix in Network Security Rules. "0.0.0.0/0" is equivalent to "Internet" or "*", and therefore should be denied.
 - FIX: Updated the Audit-Tags-Mandatory-RG Policy Defintion to mode 'All' from 'Indexed' so that it evaluates resource group tags as intended.
+
+#### Other
+
+- The May community call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### April 2025
 

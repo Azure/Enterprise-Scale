@@ -52,7 +52,6 @@ The rest of the options across the different blades will depend on your environm
   - A Log Analytics workspace
   - Azure Security Center monitoring
   - Azure Security Center (Standard or Free tier)
-  - Azure Sentinel
   - Diagnostics settings for Activity Logs, VMs, and PaaS resources sent to Log Analytics
 - An Azure Subscription dedicated for **connectivity**, which deploys core Azure networking resources such as:
   -  Azure VWAN
