@@ -1,7 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [September 2025]
+  - [September 2025](#september-2025)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
   - [June 2025](#june-2025)
   - [May 2025](#may-2025)
