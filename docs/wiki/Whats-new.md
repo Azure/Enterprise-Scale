@@ -137,6 +137,9 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - The policy definition [Azure AI Search services should use customer-managed keys to encrypt data at rest](https://www.azadvertizer.net/azpolicyadvertizer/76a56461-9dc0-40f0-82f5-2453283afa2f.html) has been updated to version 2.0.0. This changes the default effect value from "Deny" to "AuditIfNotExists" while removing "Deny" from allowedValues, therefore we needed to adopt this change in our initiative.
 
+#### Other
+- Azure Policy Initative for Private DNS Zone updated to include SQL Server private dns zone. A new policy definition is also included as we waith for the auzre policy built-in policy PR to be approved and merged. [Built-In Policy PR](https://github.com/Azure/azure-policy/pull/1418)
+
 ### January 2025
 
 #### Tooling
