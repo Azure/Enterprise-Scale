@@ -100,6 +100,13 @@
             "metadata": {
                 "description": "Name of the resource group to deploy to"
             }
+        },
+        "vnetRg": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of the resource group where the vnet is located"
+            }
         }
     },
     "variables": {
@@ -110,18 +117,12 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2020-10-01",
-            "name": "[variables('rgName')]",
-            "location": "[parameters('location')]"
-        },
-        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "[variables('resourceDeploymentName')]",
-            "resourceGroup": "[variables('rgName')]",
+            "resourceGroup": "[parameters('vnetRg')]",
             "dependsOn": [
-                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                "[concat('Microsoft.Resources/resourceGroups/', parameters('vnetRg'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -149,12 +150,6 @@
                     },
                     "outboundSubnet": {
                         "value": "[parameters('outboundSubnet')]"
-                    },
-                    "forwardingRulesetName": {
-                        "value": "[variables('dnsForwardingRuleName')]"
-                    },
-                    "resolvervnetlink": {
-                        "value": "[parameters('resolvervnetlink')]"
                     }
                 },
                 "template": {
@@ -180,12 +175,6 @@
                             "type": "string"
                         },
                         "outboundSubnet": {
-                            "type": "string"
-                        },
-                        "forwardingRulesetName": {
-                            "type": "string"
-                        },
-                        "resolvervnetlink": {
                             "type": "string"
                         }
                     },
@@ -478,7 +467,82 @@
                                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgNameOutbound'))]",
                                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('resolverVnetName'), parameters('inboundSubnet'))]"
                             ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('rgName')]",
+            "location": "[parameters('location')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('resourceDeploymentName')]",
+            "resourceGroup": "[variables('rgName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "resolverVnetName": {
+                        "value": "[parameters('resolverVnetName')]"
+                    },
+                    "dnsResolverName": {
+                        "value": "[variables('dnsResolverName')]"
+                    },
+                    "inboundSubnet": {
+                        "value": "[parameters('inboundSubnet')]"
+                    },
+                    "outboundSubnet": {
+                        "value": "[parameters('outboundSubnet')]"
+                    },
+                    "forwardingRulesetName": {
+                        "value": "[variables('dnsForwardingRuleName')]"
+                    },
+                    "resolvervnetlink": {
+                        "value": "[parameters('resolvervnetlink')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
                         },
+                        "resolverVnetName": {
+                            "type": "string"
+                        },
+                        "dnsResolverName": {
+                            "type": "string"
+                        },
+                        "inboundSubnet": {
+                            "type": "string"
+                        },
+                        "outboundSubnet": {
+                            "type": "string"
+                        },
+                        "forwardingRulesetName": {
+                            "type": "string"
+                        },
+                        "resolvervnetlink": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {
+                    },
+                    "resources": [
                         {
                             "type": "Microsoft.Network/dnsResolvers",
                             "apiVersion": "2022-07-01",
