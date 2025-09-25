@@ -64,7 +64,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 #### Tooling
 
 - The Security Management Group is now deployed when selecting multi-subscription for platform resources in the portal accelerator. This management group is intended to host security related resources such as Microsoft Sentinel as per our recent blog [A New Platform Management Group & Subscription for Security in Azure landing zone (ALZ)](https://techcommunity.microsoft.com/blog/azuregovernanceandmanagementblog/a-new-platform-management-group--subscription-for-security-in-azure-landing-zone/4433287)
-- Sentinel is now longer deployed by default in the portal accelerator and is no-longer available as an option to deploy it at all as part of the portal accelerator. If you want to deploy Sentinel, please follow the guidance in [Deployment guide for Microsoft Sentinel](https://learn.microsoft.com/azure/sentinel/deploy-overview)
+- Sentinel is no-longer deployed by default in the portal accelerator and is no-longer available as an option to deploy it at all as part of the portal accelerator. If you want to deploy Sentinel, please follow the guidance in [Deployment guide for Microsoft Sentinel](https://learn.microsoft.com/azure/sentinel/deploy-overview)
 
 ### 🔃 Policy Refresh H2 FY25
 
