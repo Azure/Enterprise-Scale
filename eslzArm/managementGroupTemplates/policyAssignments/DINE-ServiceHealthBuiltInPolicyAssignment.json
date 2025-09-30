@@ -1,0 +1,135 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "resourceGroupLocation": {
+            "type": "String",
+            "metadata": {
+                "description": "Location used to create the resource group for the action group and alerts."
+            },
+            "defaultValue": "[deployment().location]"
+        },
+        "actionGroupResourcesEmail": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "actionGroupResourcesWebhook": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "actionGroupRoleIds": {
+            "type": "array",
+            "defaultValue": [
+                "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+            ]
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deploySvcHealthBuiltIn": "/providers/Microsoft.Authorization/policyDefinitions/98903777-a9f6-47f5-90a9-acaf62ab01a8",
+            "policyVersion": "1.*.*-preview"
+        },
+        "policyAssignmentNames": {
+            "svcHealthBuiltIn": "Deploy-SvcHealth-BuiltIn",
+            "description": "Assignable at the subscription or management group level, this policy ensures that each subscription has a service health alert rule configured with alert conditions and mapping to action groups as specified in the policy parameters. By default creates a resource group, alert rule and action group configured to send emails to subscription owners for all service health events.",
+            "displayName": "Configure subscriptions to enable service health alert monitoring rule"
+        },
+        "nonComplianceMessage": {
+            "message": "Service Health alerts {enforcementMode} be configured on all subscriptions.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacMonitoringPolicyContributor": "47be4a87-7950-4631-9daf-b664a405f074",
+        "roleAssignmentNames": {
+            "roleAssignmentNameMonitoringPolicyContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').svcHealthBuiltIn))]"
+        },
+        "copy": [
+            {
+                "name": "actionGroupRoleIdsToName",
+                "count": "[length(parameters('actionGroupRoleIds'))]",
+                "input": "[coalesce(variables('armRoleIdToNameMap')[parameters('actionGroupRoleIds')[copyIndex('actionGroupRoleIdsToName')]], null())]"
+            }
+        ],
+        "armRoleIdToNameMap": {
+            "8e3af657-a8ff-443c-a75c-2fe8c4bcb635": "Owner",
+            "b24988ac-6180-42a0-ab88-20f7382dd24c": "Contributor",
+            "749f88d5-cbae-40b8-bcfc-e573ddc772fa": "Monitoring Contributor",
+            "43d0d8ad-25c7-4714-9337-8ba259a9fe05": "Monitoring Reader",
+            "47be4a87-7950-4631-9daf-b664a405f074": "Monitoring Policy Contributor"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2024-04-01",
+            "name": "[variables('policyAssignmentNames').svcHealthBuiltIn]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').deploySvcHealthBuiltIn]",
+                "definitionVersion": "[variables('policyDefinitions').policyVersion]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "resourceGroupLocation": {
+                        "value": "[parameters('resourceGroupLocation')]"
+                    },
+                    "actionGroupResources": {
+                        "value": {
+                            "actionGroupEmail": "[parameters('actionGroupResourcesEmail')]",
+                            "webhookServiceUri": "[parameters('actionGroupResourcesWebhook')]",
+                            "logicappResourceId": "",
+                            "logicappCallbackUrl": "",
+                            "eventHubResourceId": [],
+                            "functionResourceId": "",
+                            "functionTriggerUrl": ""
+                        }
+                    },
+                    "actionGroupRoleIds": {
+                        "value": "[variables('actionGroupRoleIdsToName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringPolicyContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').svcHealthBuiltIn]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMonitoringPolicyContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').svcHealthBuiltIn), '2024-04-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -1,6 +1,8 @@
 targetScope = 'managementGroup'
 
-@metadata({ message: 'The JSON version of this file is programatically generated from Bicep. PLEASE DO NOT UPDATE MANUALLY!!' })
+@metadata({
+  message: 'The JSON version of this file is programatically generated from Bicep. PLEASE DO NOT UPDATE MANUALLY!!'
+})
 @description('Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of an Azure landing zone. DEFAULT VALUE = "alz"')
 @maxLength(10)
 param topLevelManagementGroupPrefix string = 'alz'
@@ -148,7 +150,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-SqlMi-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Storage-sslEnforcement.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-VNET-HubSpoke.json') // Only difference is hard-coded template deployment location (handled by this template)
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json') 
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Vm-autoShutdown.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Windows-DomainJoin.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VWanS2SVPNGW.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkDnsZones.json')
@@ -167,7 +169,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-NetworkAcls.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-Resource-Kinds.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-CognitiveServices-RestrictOutboundNetworkAccess.json') // FSI specific policy
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-EH-MINTLS.json') // FSI specific policy
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-EH-minTLS.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-EH-Premium-CMK.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-LogicApp-Public-Network.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-LogicApps-Without-Https.json') // FSI specific policy
@@ -224,18 +226,40 @@ var loadPolicyDefinitions = {
 
 // The following vars are used to manipulate the imported Policy Definitions to replace deployment location values
 // Needs a double replace to handle updates in both templates for All clouds, and localized templates
-var processPolicyDefinitionsAll = [for content in loadPolicyDefinitions.All: replace(replace(content, templateVars.defaultDeploymentLocation, deploymentLocation), templateVars.localizedDeploymentLocation, deploymentLocation)]
-var processPolicyDefinitionsAzureCloud = [for content in loadPolicyDefinitions.AzureCloud: replace(replace(content, templateVars.defaultDeploymentLocation, deploymentLocation), templateVars.localizedDeploymentLocation, deploymentLocation)]
-var processPolicyDefinitionsAzureChinaCloud = [for content in loadPolicyDefinitions.AzureChinaCloud: replace(replace(content, templateVars.defaultDeploymentLocation, deploymentLocation), templateVars.localizedDeploymentLocation, deploymentLocation)]
-var processPolicyDefinitionsAzureUSGovernment = [for content in loadPolicyDefinitions.AzureUSGovernment: replace(replace(content, templateVars.defaultDeploymentLocation, deploymentLocation), templateVars.localizedDeploymentLocation, deploymentLocation)]
-
+var processPolicyDefinitionsAll = [
+  for content in loadPolicyDefinitions.All: replace(
+    replace(content, templateVars.defaultDeploymentLocation, deploymentLocation),
+    templateVars.localizedDeploymentLocation,
+    deploymentLocation
+  )
+]
+var processPolicyDefinitionsAzureCloud = [
+  for content in loadPolicyDefinitions.AzureCloud: replace(
+    replace(content, templateVars.defaultDeploymentLocation, deploymentLocation),
+    templateVars.localizedDeploymentLocation,
+    deploymentLocation
+  )
+]
+var processPolicyDefinitionsAzureChinaCloud = [
+  for content in loadPolicyDefinitions.AzureChinaCloud: replace(
+    replace(content, templateVars.defaultDeploymentLocation, deploymentLocation),
+    templateVars.localizedDeploymentLocation,
+    deploymentLocation
+  )
+]
+var processPolicyDefinitionsAzureUSGovernment = [
+  for content in loadPolicyDefinitions.AzureUSGovernment: replace(
+    replace(content, templateVars.defaultDeploymentLocation, deploymentLocation),
+    templateVars.localizedDeploymentLocation,
+    deploymentLocation
+  )
+]
 
 // The following vars are used to convert the imported Policy Definitions into objects from JSON
 var policyDefinitionsAll = [for content in processPolicyDefinitionsAll: json(content)]
 var policyDefinitionsAzureCloud = [for content in processPolicyDefinitionsAzureCloud: json(content)]
 var policyDefinitionsAzureChinaCloud = [for content in processPolicyDefinitionsAzureChinaCloud: json(content)]
 var policyDefinitionsAzureUSGovernment = [for content in processPolicyDefinitionsAzureUSGovernment: json(content)]
-
 
 // The following var is used to compile the required Policy Definitions into a single object
 var policyDefinitionsByCloudType = {
@@ -250,17 +274,19 @@ var policyDefinitionsByCloudType = {
 var policyDefinitions = concat(policyDefinitionsByCloudType.All, policyDefinitionsByCloudType[cloudEnv])
 
 // Create the Policy Definitions as needed for the target cloud environment
-resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [for policy in policyDefinitions: {
-  name: policy.name
-  properties: {
-    description: policy.properties.description
-    displayName: policy.properties.displayName
-    metadata: policy.properties.metadata
-    mode: policy.properties.mode
-    parameters: policy.properties.parameters
-    policyType: policy.properties.policyType
-    policyRule: policy.properties.policyRule
+resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [
+  for policy in policyDefinitions: {
+    name: policy.name
+    properties: {
+      description: policy.properties.description
+      displayName: policy.properties.displayName
+      metadata: policy.properties.metadata
+      mode: policy.properties.mode
+      parameters: policy.properties.parameters
+      policyType: policy.properties.policyType
+      policyRule: policy.properties.policyRule
+    }
   }
-}]
+]
 
 output policyDefinitionNames array = [for policy in policyDefinitions: policy.name]

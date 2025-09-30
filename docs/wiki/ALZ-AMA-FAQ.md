@@ -38,7 +38,6 @@ Our intention is to use Built-in Policies, however there are scenarios where cus
 
 It's important to highlight that while MMA deprecation is in August 2024, this doesn't necessarily impact the Legacy Solutions in Log Analytics. The following Solutions are still deployed as part of the current version:
 
-- Sentinel: Is only deployed through ALZ, which is still achieved by deploying the Solution. We don't deploy additional configurations. Consult [AMA migration for Microsoft Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/ama-migrate) for more information.
 - Change Tracking: Aside from the solution being deployed in Log Analytics, we deploy the new components like DCRs and policies to enable Change Tracking through AMA.
 
 ## Why is a Policy disbled in the "Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace" initiative?
