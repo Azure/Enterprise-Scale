@@ -1,0 +1,146 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the ESLZ company prefix to the intermediate root management group containing the policy definitions."
+            }
+        },
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "scope": {
+            "type": "String",
+            "metadata": {
+                "displayName": "Scope",
+                "description": "Scope of the policy assignment"
+            }
+        },
+        "attestationEndpoint": {
+            "type": "string",
+            "metadata": {
+                "description": "The Microsoft Azure Attestation (MAA) custom tenant URL."
+            },
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "deployGuestAtt": "/providers/Microsoft.Authorization/policySetDefinitions/281d9e47-d14d-4f05-b8eb-18f2c4a034ff",
+            "policyVersion": "3.*.*-preview"
+        },
+        "policyAssignmentNames": {
+            "deployGuestAtt": "Deploy-GuestAttest",
+            "description": "Configure the Trusted Launch enabled virtual machines to automatically install the Guest Attestation extension and enable system-assigned managed identity to allow Azure Security Center to proactively attest and monitor the boot integrity. Boot integrity is attested via Remote Attestation. For more details, please refer to the following link - https://aka.ms/trustedlaunch.",
+            "displayName": "Configure prerequisites to enable Guest Attestation on Trusted Launch enabled VMs"
+        },
+        "nonComplianceMessage": {
+            "message": "Trusted Launch Guest Attestation {enforcementMode} be configured on applicable virtual machines.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacVMContributor": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c",
+        "rbacReader": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+        "rbacMIOperator": "f1a07417-d97a-45cb-824c-7a7467783830",
+        "rbacMIContributor": "e40ec5ca-96e0-45a2-b4ff-59039f2c2b59",
+        "roleAssignmentNames": {
+            "roleAssignmentVMContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployGuestAtt,'-1',parameters('scope')))]",
+            "roleAssignmentReader": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployGuestAtt,'-2',parameters('scope')))]",
+            "roleAssignmentMIOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployGuestAtt,'-3',parameters('scope')))]",
+            "roleAssignmentMIContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployGuestAtt,'-4',parameters('scope')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2024-05-01",
+            "name": "[variables('policyAssignmentNames').deployGuestAtt]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').deployGuestAtt]",
+                "definitionVersion": "[variables('policyDefinitions').policyVersion]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {
+                    "attestationEndpoint": {
+                        "value": "[parameters('attestationEndpoint')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentVMContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployGuestAtt]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacVMContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentReader]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployGuestAtt]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacReader'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentMIOperator]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployGuestAtt]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMIOperator'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentMIContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').deployGuestAtt]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacMIContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+
+    ],
+    "outputs": {}
+}
