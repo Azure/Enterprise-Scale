@@ -59,6 +59,12 @@ This article will be updated as and when changes are made to the above and anyth
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
+### October 2025
+
+#### Tooling
+
+- Update the portal accelerator to remove the option to select regional VPN gateways as these are being deprecated and all regions now support AZ aware VPN gateways.
+
 ### September 2025
 
 #### Tooling
