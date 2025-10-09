@@ -63,7 +63,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
-- Updated the ALZ portal accelerator to remove the option to select regional VPN gateways as these are being deprecated. All regions that support VPN gateways now support them deployed across availability zones by default.
+- Updated the ALZ portal accelerator to remove the option to select regional VPN gateways as these are being deprecated. All regions that support VPN gateways now deploy zone redundant VPN gateways by default.
 
 ### September 2025
 
