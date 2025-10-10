@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh H1 FY26](#-policy-refresh-h1-fy26)
   - [September 2025](#september-2025)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
   - [June 2025](#june-2025)
@@ -58,6 +59,10 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### 🔃 Policy Refresh H1 FY26
+
+- Updated [Enforce-Guardrails-SQL](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-SQL.html) to include additional policies to enforce Entra-only authentication for SQL and SQL Managed Instances (prevents changing authentication method after creation).
 
 ### September 2025
 
