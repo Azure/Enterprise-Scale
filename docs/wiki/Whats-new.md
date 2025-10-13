@@ -65,6 +65,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated initiative [Enforce-Guardrails-SQL](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-SQL.html) to include additional policies to enforce Entra-only authentication for SQL and SQL Managed Instances (prevents changing authentication method after creation).
 - Updated policy [Deny-FileServices-InsecureSmbVersions](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbVersions.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.versions` to `null` - which would have resulted in compliance being incorrectly reported.
 - Updated policy [Deny-FileServices-InsecureSmbChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbChannel.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.channelEncryption` to `null` - which would have resulted in compliance being incorrectly reported.
+- Updated policy [Deploy-ASC-SecurityContacts](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-ASC-SecurityContacts.html) to version 2.1.0. Added default deployment and compliance check for new attack path severity parameter.
 
 ### September 2025
 
