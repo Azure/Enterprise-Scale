@@ -48,44 +48,44 @@
         },
         "inboundSubnet": {
             "type": "string",
-            "defaultValue": "DnsResolverSubnet-Inbound",
+            "defaultValue": "snet-dnspr-in",
             "metadata": {
-                "description": "name of the subnet that will be used for private resolver inbound endpoint"
+                "description": "Name of the subnet that will be used for private resolver inbound endpoint"
             }
         },
         "inboundAddressPrefix": {
             "type": "string",
             "defaultValue": "10.100.9.0/28",
             "metadata": {
-                "description": "the inbound endpoint subnet address space"
+                "description": "The inbound endpoint subnet address space"
             }
         },
         "outboundSubnet": {
             "type": "string",
-            "defaultValue": "DnsResolverSubnet-Outbound",
+            "defaultValue": "snet-dnspr-out",
             "metadata": {
-                "description": "name of the subnet that will be used for private resolver outbound endpoint"
+                "description": "Name of the subnet that will be used for private resolver outbound endpoint"
             }
         },
         "outboundAddressPrefix": {
             "type": "string",
             "defaultValue": "10.100.9.16/28",
             "metadata": {
-                "description": "the outbound endpoint subnet address space"
+                "description": "The outbound endpoint subnet address space"
             }
         },
         "resolvervnetlink": {
             "type": "string",
-            "defaultValue": "vnetlink",
+            "defaultValue": "dnspr-vnetlink",
             "metadata": {
-                "description": "name of the vnet link that links outbound endpoint with forwarding rule set"
+                "description": "Name of the vnet link that links outbound endpoint with forwarding rule set"
             }
         },
         "forwardingRulesetName": {
             "type": "string",
-            "defaultValue": "forwardingRule",
+            "defaultValue": "",
             "metadata": {
-                "description": "name of the forwarding ruleset"
+                "description": "Name of the forwarding ruleset"
             }
         },
         "topLevelManagementGroupPrefix": {
@@ -100,20 +100,29 @@
             "metadata": {
                 "description": "Name of the resource group to deploy to"
             }
+        },
+        "vnetRg": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of the resource group where the vnet is located"
+            }
         }
     },
     "variables": {
         "resourceDeploymentName": "[format('dsnpr-{0}-deployment', parameters('location'))]",
-        "rgName": "[if(empty(parameters('resourceGroupOverride')), concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location')), parameters('resourceGroupOverride'))]",
-        "dnsResolverName": "[format('dnspr-alz-{0}', parameters('location'))]"
+        "rgName": "[if(empty(parameters('resourceGroupOverride')), format('rg-{0}-dnspr-{1}', parameters('topLevelManagementGroupPrefix'), parameters('location')), parameters('resourceGroupOverride'))]",
+        "dnsResolverName": "[format('dnspr-{0}-{1}', parameters('topLevelManagementGroupPrefix'), parameters('location'))]",
+        "dnsForwardingRuleName": "[if(empty(parameters('forwardingRulesetName')), concat('dnsfrs-', parameters('topLevelManagementGroupPrefix'), '-', parameters('location')), parameters('forwardingRulesetName'))]"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "[variables('resourceDeploymentName')]",
-            "resourceGroup": "[variables('rgName')]",
-            "dependsOn": [],
+            "name": "[concat(variables('resourceDeploymentName'), '-corenetworking')]",
+            "resourceGroup": "[parameters('vnetRg')]",
+            "dependsOn": [
+            ],
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
@@ -140,12 +149,6 @@
                     },
                     "outboundSubnet": {
                         "value": "[parameters('outboundSubnet')]"
-                    },
-                    "forwardingRulesetName": {
-                        "value": "[parameters('forwardingRulesetName')]"
-                    },
-                    "resolvervnetlink": {
-                        "value": "[parameters('resolvervnetlink')]"
                     }
                 },
                 "template": {
@@ -171,12 +174,6 @@
                             "type": "string"
                         },
                         "outboundSubnet": {
-                            "type": "string"
-                        },
-                        "forwardingRulesetName": {
-                            "type": "string"
-                        },
-                        "resolvervnetlink": {
                             "type": "string"
                         }
                     },
@@ -469,7 +466,89 @@
                                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgNameOutbound'))]",
                                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('resolverVnetName'), parameters('inboundSubnet'))]"
                             ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2020-10-01",
+            "name": "[variables('rgName')]",
+            "location": "[parameters('location')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('resourceDeploymentName')]",
+            "resourceGroup": "[variables('rgName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]",
+                "[concat(variables('resourceDeploymentName'), '-corenetworking')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "resolverVnetName": {
+                        "value": "[parameters('resolverVnetName')]"
+                    },
+                    "vnetRgName": {
+                        "value": "[parameters('vnetRg')]"
+                    },
+                    "dnsResolverName": {
+                        "value": "[variables('dnsResolverName')]"
+                    },
+                    "inboundSubnet": {
+                        "value": "[parameters('inboundSubnet')]"
+                    },
+                    "outboundSubnet": {
+                        "value": "[parameters('outboundSubnet')]"
+                    },
+                    "forwardingRulesetName": {
+                        "value": "[variables('dnsForwardingRuleName')]"
+                    },
+                    "resolvervnetlink": {
+                        "value": "[parameters('resolvervnetlink')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
                         },
+                        "resolverVnetName": {
+                            "type": "string"
+                        },
+                        "vnetRgName": {
+                            "type": "string"
+                        },
+                        "dnsResolverName": {
+                            "type": "string"
+                        },
+                        "inboundSubnet": {
+                            "type": "string"
+                        },
+                        "outboundSubnet": {
+                            "type": "string"
+                        },
+                        "forwardingRulesetName": {
+                            "type": "string"
+                        },
+                        "resolvervnetlink": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {
+                    },
+                    "resources": [
                         {
                             "type": "Microsoft.Network/dnsResolvers",
                             "apiVersion": "2022-07-01",
@@ -477,12 +556,10 @@
                             "location": "[parameters('location')]",
                             "properties": {
                                 "virtualNetwork": {
-                                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('resolverVNETName'))]"
+                                    "id": "[concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName'))]"
                                 }
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('resolverVnetName'), parameters('inboundSubnet'))]",
-                                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('resolverVnetName'), parameters('outboundSubnet'))]"
                             ]
                         },
                         {
@@ -495,7 +572,7 @@
                             {
                                 "privateIpAllocationMethod": "Dynamic",
                                 "subnet": {
-                                    "id": "[format('{0}/subnets/{1}', resourceId('Microsoft.Network/virtualNetworks', parameters('resolverVNETName')), parameters('inboundSubnet'))]"
+                                    "id": "[format('{0}/subnets/{1}', concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName')), parameters('inboundSubnet'))]"
                                 }
                             }
                             ]
@@ -511,7 +588,7 @@
                             "location": "[parameters('location')]",
                             "properties": {
                                 "subnet": {
-                                    "id": "[format('{0}/subnets/{1}', resourceId('Microsoft.Network/virtualNetworks', parameters('resolverVNETName')), parameters('outboundSubnet'))]"
+                                    "id": "[format('{0}/subnets/{1}', concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName')), parameters('outboundSubnet'))]"
                                 }
                             },
                             "dependsOn": [
@@ -540,7 +617,7 @@
                             "name": "[format('{0}/{1}', parameters('forwardingRulesetName'), parameters('resolvervnetlink'))]",
                             "properties": {
                                 "virtualNetwork": {
-                                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('resolverVNETName'))]"
+                                    "id": "[concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName'))]"
                                 }
                             },
                             "dependsOn": [
