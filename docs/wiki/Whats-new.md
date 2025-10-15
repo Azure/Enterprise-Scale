@@ -1,7 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
-  - [September 2025]
+  - [September 2025](#september-2025)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
   - [June 2025](#june-2025)
   - [May 2025](#may-2025)
@@ -58,6 +58,14 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### October 2025
+
+#### Tooling
+
+- Portal experience:
+  - Added support for Bastion and Private DNS Resolver in the portal experience. These can be selected in the networking section of the portal experience.
+  - For Private DNS Resolver, last mile configuration is required. This requires configuring forwarding rules to your own dommain. By default peered networks are not configured to use the Private DNS Resolver. Please see [Private DNS Resolver documentation](https://learn.microsoft.com/azure/dns/resolver/overview) for more information, these need to be updated once Private DNS Resolver is fully configured.
 
 ### September 2025
 
