@@ -66,6 +66,15 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-010-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
+### October 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-010-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- Portal experience:
+  - Added support for Bastion and Private DNS Resolver in the portal experience. These can be selected in the networking section of the portal experience.
+  - For Private DNS Resolver, last mile configuration is required. This requires configuring forwarding rules to your own dommain. By default peered networks are not configured to use the Private DNS Resolver. Please see [Private DNS Resolver documentation](https://learn.microsoft.com/azure/dns/resolver/overview) for more information, these need to be updated once Private DNS Resolver is fully configured.
+
 ### September 2025
 
 #### Tooling
@@ -128,7 +137,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 #### Tooling
 
+- **NEW** ALZ Portal Accelerator - adding new networking options to deploy "Bastion" and/or "Private DNS Resovler"
+  - For "Private DNS Resolver" we are deploying a default forwarding rule to `contoso.com` domain. This is a placeholder and should be updated to your own domain once ExpressRoutes or VPN sites are configured.
 - Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-03-03). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
+- The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the AzureFirewallManagementSubnet.
 - The Workload Specific Compliance policies are now assigned by default (Audit). This enables auditing compliance for specific workloads, such as SQL and Storage, which is often required in highly regulated industries like financial services and healthcare. Please note that these policies were previously available; however, they were not assigned by default.
 
 ### February 2025
