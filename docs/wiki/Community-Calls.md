@@ -1,7 +1,7 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
-- [November 2025](#5th-november-2025-07112025)
+- [November 2025](#5th-november-2025-05112025)
 - [May 2025](#7th-may-2025-07052025)
 - [January 2025](#29th-january-2025-29012025)
 - [September 2024](#25th-september-2024-25092024)
@@ -21,7 +21,7 @@ On this page you will find the meeting recordings and PowerPoint slides from pre
 
 > Short link to this page is [aka.ms/alz/community](https://aka.ms/alz/community)
 
-## 5th November 2025 (07/11/2025)
+## 5th November 2025 (05/11/2025)
 
 ### Recording
 
