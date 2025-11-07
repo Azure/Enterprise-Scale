@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [November 2025](#november-2025)
   - [October 2025](#october-2025)
   - [September 2025](#september-2025)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
@@ -59,6 +60,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### November 2025
+
+#### Other
+
+- 5th November 2025 ALZ Community Call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
 
 ### October 2025
 
