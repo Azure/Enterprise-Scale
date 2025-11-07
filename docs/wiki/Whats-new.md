@@ -63,6 +63,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 ### November 2025
 
+#### Tooling
+
+- Implemented default Cloud Adoption Framework (CAF) naming standards across all resources. In addition, you now have the flexibility to apply custom naming conventions to suit your unique organizational requirements.
+
 #### Other
 
 - 5th November 2025 ALZ Community Call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
