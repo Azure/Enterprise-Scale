@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh H1 FY26](#-policy-refresh-h1-fy26)
   - [September 2025](#september-2025)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
   - [June 2025](#june-2025)
@@ -58,6 +59,14 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### 🔃 Policy Refresh H1 FY26
+
+- Updated initiative [Enforce-Guardrails-SQL](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-SQL.html) to include additional policies to enforce Entra-only authentication for SQL and SQL Managed Instances (prevents changing authentication method after creation).
+- Updated policy [Deny-FileServices-InsecureSmbVersions](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbVersions.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.versions` to `null` - which would have resulted in compliance being incorrectly reported.
+- Updated policy [Deny-FileServices-InsecureSmbChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbChannel.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.channelEncryption` to `null` - which would have resulted in compliance being incorrectly reported.
+- Updated policy [Deploy-ASC-SecurityContacts](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-ASC-SecurityContacts.html) to version 2.1.0. Updated the policy to update the default deployment and compliance check for the new attack path severity parameter, which is defaulted to `critical`.
+- Added the new built-in initiative [Microsoft cloud security benchmark v2](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e3ec7e09-768c-4b64-882c-fcada3772047.html) to the portal accelerator. This initiative includes updated policies and new controls to align with the latest security best practices. The new initiative is assigned by default (if Defender for Cloud and Log Analytics are enabled) at the Intermediate root management group scope using the default values as defined in the initiative. As this initiative is still in preview, we're are deploying this together with version 1 of the existing Microsoft Cloud Security Benchmark initiative to allow customers to evaluate and prepare for the transition.
 
 ### September 2025
 
