@@ -1,0 +1,59 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "ascMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/e3ec7e09-768c-4b64-882c-fcada3772047",
+            "policyVersion": "1.*.*-preview"
+        },
+        "policyAssignmentNames": {
+            "ascMonitoring": "Deploy-MCSB2-Monitoring",
+            "description": "Microsoft Cloud Security Benchmark v2 policy initiative.",
+            "displayName": "Microsoft Cloud Security Benchmark v2"
+        },
+        "nonComplianceMessage": {
+            "message": "Microsoft Cloud Security Benchmark v2 {enforcementMode} be met.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        }
+      },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2024-04-01",
+            "name": "[variables('policyAssignmentNames').ascMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').ascMonitoring]",
+                "definitionVersion": "[variables('policyDefinitions').policyVersion]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {}
+            }
+        }
+    ],
+    "outputs": {}
+}
