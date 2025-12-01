@@ -9,13 +9,6 @@
                 "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
             }
         },
-        "topLevelManagementGroupPrefix": {
-            "type": "string",
-            "maxLength": 10,
-            "metadata": {
-                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
-            }
-        },
         "location": {
             "type": "string",
             "metadata": {
@@ -162,13 +155,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', 'avnm-ng-all')]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), 'avnm-ng-all')]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "Network Group - All Landing Zone virtual networks"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ VNETs."
@@ -177,29 +170,29 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-management-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
-                                "description": "[format('Network Group - {0}', parameters('location'))]"
+                                "description": "Network Group - Primary Location Management Landing Zone virtual networks"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ VNETs in the primary region."
                             }
                         },
                         {
-                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "condition": "[not(equals(parameters('enableSecondaryRegion'), 'No'))]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-management-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
-                                "description": "[format('Network Group - {0}', parameters('locationSecondary'))]"
+                                "description": "Network Group - Secondary Location Management Landing Zone virtual networks"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ VNETs in the secondary region, if selected."
@@ -208,13 +201,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-corp-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-corp-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Corp - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ CORP VNETs in the primary region."
@@ -224,13 +217,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-corp-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Corp - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ CORP VNETs in the secondary region, if selected."
@@ -239,13 +232,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-online-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-online-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Online - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ ONLINE VNETs in the primary region."
@@ -255,13 +248,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-online-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Online - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ ONLINE VNETs in the secondary region, if selected."
@@ -270,13 +263,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-identity-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-identity-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Identity - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ IDENTITY VNETs in the primary region."
@@ -286,13 +279,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-identity-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Identity - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ IDENTITY VNETs in the secondary region, if selected."
@@ -301,13 +294,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-management-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-management-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Management - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ MANAGEMENT VNETs in the primary region."
@@ -317,13 +310,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-management-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-management-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Management - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ MANAGEMENT VNETs in the secondary region, if selected."
@@ -332,13 +325,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-connectivity-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-connectivity-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Connectivity - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ CONNECTIVITY VNETs in the primary region."
@@ -348,13 +341,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-connectivity-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-connectivity-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Connectivity - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ CONNECTIVITY VNETs in the secondary region, if selected."
@@ -363,13 +356,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-sandbox-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-sandbox-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Sandbox - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ SANDBOX VNETs in the primary region."
@@ -379,13 +372,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-sandbox-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-sandbox-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Sandbox - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ SANDBOX VNETs in the secondary region, if selected."
@@ -394,13 +387,13 @@
                         {
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('location')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-decommissioned-{0}', parameters('location')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Decommissioned - {0}', parameters('location'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ DECOMMISSIONED VNETs in the primary region."
@@ -410,13 +403,13 @@
                             "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
                             "type": "Microsoft.Network/networkManagers/networkGroups",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('locationSecondary')))]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), format('avnm-ng-decommissioned-{0}', parameters('locationSecondary')))]",
                             "properties": {
                                 "memberType": "VirtualNetwork",
                                 "description": "[format('Network Group - Decommissioned - {0}', parameters('locationSecondary'))]"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "metadata": {
                                 "description": "This is the dynamic network group for all ALZ DECOMMISSIONED VNETs in the secondary region, if selected."
@@ -425,9 +418,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations",
                             "apiVersion": "2023-11-01",
-                            "name": "[format('{0}/{1}', 'avnm', 'sac-alz')]",
+                            "name": "[format('{0}/{1}', parameters('avnmName'), 'sac-alz')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers', 'avnm')]"
+                                "[resourceId('Microsoft.Network/networkManagers', parameters('avnmName'))]"
                             ],
                             "properties": {
                                 "description": "ALZ Security Admin Configuration"
@@ -436,15 +429,15 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}', 'avnm', 'sac-alz', 'rc-ALZ')]",
+                            "name": "[format('{0}/{1}/{2}', parameters('avnmName'), 'sac-alz', 'rc-ALZ')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', 'avnm', 'sac-alz')]",
-                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations', parameters('avnmName'), 'sac-alz')]",
+                                "[resourceId('Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), 'avnm-ng-all')]"
                             ],
                             "properties": {
                                 "appliesToGroups": [
                                     {
-                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]"
+                                        "networkGroupId": "[resourceId('Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), 'avnm-ng-all')]"
                                     }
                                 ]
                             }
@@ -452,9 +445,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyMgmtInbound')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', parameters('avnmName'), 'sac-alz', 'rc-ALZ', 'DenyMgmtInbound')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', parameters('avnmName'), 'sac-alz', 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -478,9 +471,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundTCP')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', parameters('avnmName'), 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundTCP')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', parameters('avnmName'), 'sac-alz', 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -513,9 +506,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundUDP')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', parameters('avnmName'), 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundUDP')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', parameters('avnmName'), 'sac-alz', 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -539,9 +532,9 @@
                         {
                             "type": "Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections/rules",
                             "apiVersion": "2024-03-01",
-                            "name": "[format('{0}/{1}/{2}/{3}', 'avnm', 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundANY')]",
+                            "name": "[format('{0}/{1}/{2}/{3}', parameters('avnmName'), 'sac-alz', 'rc-ALZ', 'DenyHighRiskInboundANY')]",
                             "dependsOn": [
-                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', 'avnm', 'sac-alz', 'rc-ALZ')]"
+                                "[resourceId('Microsoft.Network/networkManagers/securityAdminConfigurations/ruleCollections', parameters('avnmName'), 'sac-alz', 'rc-ALZ')]"
                             ],
                             "kind": "Custom",
                             "properties": {
@@ -708,7 +701,7 @@
                                 "azPowerShellVersion": "12.3",
                                 "retentionInterval": "PT1H",
                                 "timeout": "PT1H",
-                                "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -configIds \"{3}\" -connSubId \"{4}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
+                                "arguments": "[format('-location \"{0}\" -locationSecond \"{1}\" -rgName \"{2}\" -avnmName \"{3}\" -configIds \"{4}\" -connSubId \"{5}\"', parameters('location'), parameters('locationSecondary'), parameters('rgName'), parameters('avnmName'), parameters('configIds'), parameters('connectivitySubscriptionId'))]",
                                 "scriptContent": "
                                 param(
                                     [string]
@@ -721,6 +714,9 @@
                                     $rgName,
 
                                     [string]
+                                    $avnmName,
+
+                                    [string]
                                     $configIds,
 
                                     [string]
@@ -731,7 +727,7 @@
 
                                 Select-AzSubscription -SubscriptionId $connSubId
 
-                                Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name \"avnm\" -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
+                                Deploy-AzNetworkManagerCommit -ResourceGroupName $rgName -Name $avnmName -TargetLocation $regions -CommitType \"SecurityAdmin\" -ConfigurationId $configIds
                                 
                             "
                             }
