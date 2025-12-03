@@ -44,12 +44,26 @@
                 "description": "Dedicated subscriptions selected"
             },
             "defaultValue": true
+        },
+        "avnmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Virtual Network Manager"
+            },
+            "defaultValue": "[concat('vnm-', parameters('topLevelManagementGroupPrefix'), '-prod-', parameters('location'))]"
+        },
+        "rgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name for AVNM resources"
+            },
+            "defaultValue": "[concat('rg-avnm-prod-', parameters('location'))]"
         }
     },
     "variables": {
-        "networkGroupIdAll": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', 'avnm-ng-all')]",
-        "networkGroupIdRegion1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('location')))]",
-        "networkGroupIdRegion2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-{0}', parameters('locationSecondary'))))]"
+        "networkGroupIdAll": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), 'avnm-ng-all')]",
+        "networkGroupIdRegion1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-{0}', parameters('location')))]",
+        "networkGroupIdRegion2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-{0}', parameters('locationSecondary'))))]"
     },
     "resources": [
         {
@@ -136,15 +150,15 @@
                 "enforcementMode": "Default",
                 "resourceSelectors": [
                     {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('location')]"
+                        "name": "regionalResource",
+                        "selectors": [
+                            {
+                                "kind": "ResourceLocation",
+                                "in": [
+                                    "[parameters('location')]"
+                                ]
+                            }
                         ]
-                      }
-                    ]
                     }
                 ],
                 "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdRegion1')))]"
@@ -195,15 +209,15 @@
                 "enforcementMode": "Default",
                 "resourceSelectors": [
                     {
-                    "name": "regionalResource",
-                    "selectors": [
-                      {
-                        "kind": "ResourceLocation",
-                        "in": [
-                          "[parameters('locationSecondary')]"
+                        "name": "regionalResource",
+                        "selectors": [
+                            {
+                                "kind": "ResourceLocation",
+                                "in": [
+                                    "[parameters('locationSecondary')]"
+                                ]
+                            }
                         ]
-                      }
-                    ]
                     }
                 ],
                 "policyDefinitionId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', uniqueString(variables('networkGroupIdRegion2')))]"
@@ -239,134 +253,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-corp-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-corp-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-corp-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                        {
-                                            "field": "type",
-                                            "equals": "Microsoft.Network/virtualNetworks"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
                                         }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId1')]"
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
+                        },
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                            "[parameters('location')]"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
                                         ]
                                     }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
                             ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                        {
-                                            "field": "type",
-                                            "equals": "Microsoft.Network/virtualNetworks"
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
                                         }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId2')]"
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
-                                {
-                                    "kind": "ResourceLocation",
-                                    "in": [
-                                        "[parameters('locationSecondary')]"
-                                    ]
-                                }
-                                ]
-                            }
-                            ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
+                                    {
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                            ]
+                        }
+                    ]
                 }
             }
         },
@@ -397,134 +423,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-online-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-online-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-online-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                    {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
-                                    }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId1')]"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
+                        },
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                            "[parameters('location')]"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
                                         ]
                                     }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
                             ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                            "if": {
-                                "allOf": [
-                                {
-                                    "field": "type",
-                                    "equals": "Microsoft.Network/virtualNetworks"
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
+                                        }
+                                    }
                                 }
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
+                                    {
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
+                                    }
                                 ]
                             },
-                            "then": {
-                                "effect": "addToNetworkGroup",
-                                "details": {
-                                "networkGroupId": "[variables('networkGroupId2')]"
-                                }
-                            }
-                            }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
-                                {
-                                    "kind": "ResourceLocation",
-                                    "in": [
-                                    "[parameters('locationSecondary')]"
-                                    ]
-                                }
-                                ]
-                            }
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
                             ]
-                        },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        }
+                    ]
                 }
             }
         },
@@ -555,134 +593,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-identity-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-identity-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-identity-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                    {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
-                                    }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                    "networkGroupId": "[variables('networkGroupId1')]"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
+                        },
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                            "[parameters('location')]"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
                                         ]
                                     }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
                             ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
                                     {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
                                     }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId2')]"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
-                                {
-                                    "kind": "ResourceLocation",
-                                    "in": [
-                                        "[parameters('locationSecondary')]"
-                                    ]
-                                }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
                             ]
-                        },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        }
+                    ]
                 }
             }
         },
@@ -713,134 +763,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-management-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-management-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-management-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                    {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
-                                    }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId1')]"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
+                        },
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                            "[parameters('location')]"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
                                         ]
                                     }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
                             ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                        {
-                                            "field": "type",
-                                            "equals": "Microsoft.Network/virtualNetworks"
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
                                         }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId2')]"
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
-                                {
-                                    "kind": "ResourceLocation",
-                                    "in": [
-                                        "[parameters('locationSecondary')]"
-                                    ]
-                                }
-                                ]
-                            }
-                            ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
+                                    {
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                            ]
+                        }
+                    ]
                 }
             }
         },
@@ -871,134 +933,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-connectivity-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-connectivity-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-connectivity-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                    {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
-                                    }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId1')]"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
+                        },
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                            "[parameters('location')]"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
                                         ]
                                     }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
                             ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
                                     {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
                                     }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId2')]"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
-                                {
-                                    "kind": "ResourceLocation",
-                                    "in": [
-                                        "[parameters('locationSecondary')]"
-                                    ]
-                                }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
                             ]
-                        },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        }
+                    ]
                 }
             }
         },
@@ -1029,134 +1103,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-sandbox-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-sandbox-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-sandbox-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                        {
-                                            "field": "type",
-                                            "equals": "Microsoft.Network/virtualNetworks"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
                                         }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId1')]"
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                                {
-                                    "name": "regionalResource",
-                                    "selectors": [
-                                        {
-                                            "kind": "ResourceLocation",
-                                            "in": [
-                                                "[parameters('location')]"
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
+                                        ]
                                     }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                    "networkGroupId": "[variables('networkGroupId2')]"
+                                ]
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
+                            ]
+                        },
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                                {
-                                    "name": "regionalResource",
-                                    "selectors": [
-                                        {
-                                            "kind": "ResourceLocation",
-                                            "in": [
-                                                "[parameters('locationSecondary')]"
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
+                                    {
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                            ]
+                        }
+                    ]
                 }
             }
         },
@@ -1187,134 +1273,146 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('avnmName')]"
                     }
                 },
                 "template": {
-                "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                    "location": {
-                        "type": "string"
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "locationSecondary": {
+                            "type": "string"
+                        },
+                        "mgmtGroup": {
+                            "type": "string"
+                        },
+                        "connectivitySubscriptionId": {
+                            "type": "string"
+                        },
+                        "enableSecondaryRegion": {
+                            "type": "string"
+                        },
+                        "rgName": {
+                            "type": "string"
+                        },
+                        "avnmName": {
+                            "type": "string"
+                        }
                     },
-                    "locationSecondary": {
-                        "type": "string"
+                    "variables": {
+                        "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-decommissioned-{0}', parameters('location')))]",
+                        "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), parameters('rgName'), 'Microsoft.Network/networkManagers/networkGroups', parameters('avnmName'), format('avnm-ng-decommissioned-{0}', parameters('locationSecondary'))))]"
                     },
-                    "mgmtGroup": {
-                        "type": "string"
-                    },
-                    "connectivitySubscriptionId": {
-                        "type": "string"
-                    },
-                    "enableSecondaryRegion": {
-                        "type": "string"
-                    }
-                },
-                "variables": {
-                    "networkGroupId1": "[resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('location')))]",
-                    "networkGroupId2": "[if(equals(parameters('enableSecondaryRegion'), 'No'), '', resourceId(parameters('connectivitySubscriptionId'), 'rg-alz-avnm', 'Microsoft.Network/networkManagers/networkGroups', 'avnm', format('avnm-ng-decommissioned-{0}', parameters('locationSecondary'))))]"
-                },
-                "resources": [
-                    {
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                    {
-                                        "field": "type",
-                                        "equals": "Microsoft.Network/virtualNetworks"
-                                    }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId1')]"
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId1')]"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
-                            "resourceSelectors": [
-                            {
-                                "name": "regionalResource",
-                                "selectors": [
+                        },
+                        {
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}1', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]",
+                                "resourceSelectors": [
                                     {
-                                        "kind": "ResourceLocation",
-                                        "in": [
-                                            "[parameters('location')]"
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('location')]"
+                                                ]
+                                            }
                                         ]
                                     }
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
                             ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('location')))]"
-                        ]
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyDefinitions",
-                        "apiVersion": "2023-04-01",
-                        "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
-                        "properties": {
-                            "policyType": "Custom",
-                            "mode": "Microsoft.Network.Data",
-                            "policyRule": {
-                                "if": {
-                                    "allOf": [
-                                        {
-                                            "field": "type",
-                                            "equals": "Microsoft.Network/virtualNetworks"
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyDefinitions",
+                            "apiVersion": "2023-04-01",
+                            "name": "[format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary'))]",
+                            "properties": {
+                                "policyType": "Custom",
+                                "mode": "Microsoft.Network.Data",
+                                "policyRule": {
+                                    "if": {
+                                        "allOf": [
+                                            {
+                                                "field": "type",
+                                                "equals": "Microsoft.Network/virtualNetworks"
+                                            }
+                                        ]
+                                    },
+                                    "then": {
+                                        "effect": "addToNetworkGroup",
+                                        "details": {
+                                            "networkGroupId": "[variables('networkGroupId2')]"
                                         }
-                                    ]
-                                },
-                                "then": {
-                                    "effect": "addToNetworkGroup",
-                                    "details": {
-                                        "networkGroupId": "[variables('networkGroupId2')]"
                                     }
                                 }
                             }
-                        }
-                    },
-                    {
-                        "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
-                        "type": "Microsoft.Authorization/policyAssignments",
-                        "apiVersion": "2023-04-01",
-                        "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
-                        "properties": {
-                            "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
-                            "resourceSelectors": [
-                                {
-                                    "name": "regionalResource",
-                                    "selectors": [
-                                        {
-                                            "kind": "ResourceLocation",
-                                            "in": [
-                                                "[parameters('locationSecondary')]"
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
                         },
-                        "dependsOn": [
-                            "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
-                        ]
-                    }
-                ]
+                        {
+                            "condition": "[equals(parameters('enableSecondaryRegion'), 'Yes')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2023-04-01",
+                            "name": "[uniqueString(format('ALZAvnmPolicyAssignment{0}2', parameters('mgmtGroup')))]",
+                            "properties": {
+                                "policyDefinitionId": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]",
+                                "resourceSelectors": [
+                                    {
+                                        "name": "regionalResource",
+                                        "selectors": [
+                                            {
+                                                "kind": "ResourceLocation",
+                                                "in": [
+                                                    "[parameters('locationSecondary')]"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "dependsOn": [
+                                "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policyDefinitions', format('ALZAvnmPolicy{0}{1}', parameters('mgmtGroup'), parameters('locationSecondary')))]"
+                            ]
+                        }
+                    ]
                 }
             }
         }
