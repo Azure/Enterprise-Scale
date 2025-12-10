@@ -1,0 +1,48 @@
+{
+  "name": "Audit-AKSkubenet",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "displayName": "Detect AKS clusters using kubenet network plugin",
+    "description": "Detects Azure Kubernetes Service (AKS) clusters that are configured to use the 'kubenet' network plugin that will be deprecated 31 March 2028. For more information review https://learn.microsoft.com/en-us/azure/aks/configure-kubenet",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "metadata": {
+      "category": "Kubernetes",
+      "version": "1.0.0"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy."
+        },
+        "allowedValues": [
+          "Audit",
+          "Deny",
+          "Disabled"
+        ],
+        "defaultValue": "Audit"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.ContainerService/managedClusters"
+          },
+          {
+            "field": "Microsoft.ContainerService/managedClusters/networkProfile.networkPlugin",
+            "equals": "kubenet"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[[parameters('effect')]"
+      }
+    }
+  }
+}
