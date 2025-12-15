@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [December 2025](#december-2025)
   - [November 2025](#november-2025)
   - [October 2025](#october-2025)
   - [September 2025](#september-2025)
@@ -60,6 +61,16 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### December 2025
+
+#### Tooling
+
+- Implemented default [Cloud Adoption Framework (CAF) naming standards](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) across all resources. In addition, you now have the flexibility to apply custom naming conventions to suit your unique organizational requirements.
+- The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the `AzureFirewallManagementSubnet`.
+- **NEW** ALZ Portal Accelerator:
+  - Added support for Bastion and Private DNS Resolver in the portal experience. These can be selected in the networking section of the portal experience.
+  - For Private DNS Resolver, last mile configuration is required. This requires configuring forwarding rules to your own domain. By default peered networks are not configured to use the Private DNS Resolver. Please see [Private DNS Resolver documentation](https://learn.microsoft.com/azure/dns/resolver/overview) for more information, these need to be updated once Private DNS Resolver is fully configured.
 
 ### November 2025
 

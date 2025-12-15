@@ -164,6 +164,26 @@
                             "visible": true
                         },
                         {
+                            "name": "namingConvention",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Naming convention",
+                            "defaultValue": "CAF naming convention (recommended)",
+                            "toolTip": "Select the naming convention to be used for resources deployed by this template. The CAF Naming Convention is recommended as it provides a consistent and predictable naming structure across all resources.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "CAF naming convention (recommended)",
+                                        "value": "CAF"
+                                    },
+                                    {
+                                        "label": "Custom naming",
+                                        "value": "custom"
+                                    }
+                                ]
+                            },
+                            "visible": true
+                        },
+                        {
                             "name": "singleSubscription",
                             "type": "Microsoft.Common.Section",
                             "label": "Single platform subscription",
@@ -451,6 +471,42 @@
                             "visible": true
                         },
                         {
+                            "name": "mgmtRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Management resource group name",
+                            "toolTip": "Name for the management resource group",
+                            "defaultValue": "rg-mgmt-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableLogAnalytics, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "logAnalyticsWorkspaceCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Log Analytics workspace name",
+                            "toolTip": "Name for the Log Analytics workspace",
+                            "defaultValue": "law-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableLogAnalytics, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-]{2,61}[a-zA-Z0-9]$",
+                                "validationMessage": "Log Analytics workspace name must be 4-63 characters long and can contain alphanumeric characters and hyphens. Cannot start or end with hyphen."
+                            }
+                        },
+                        {
+                            "name": "userAssignedIdentityCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "User Assigned Managed Identity name",
+                            "toolTip": "Name for the user assigned managed identity for monitoring",
+                            "defaultValue": "id-ama-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableLogAnalytics, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{1,126}[a-zA-Z0-9]$",
+                                "validationMessage": "User assigned identity name must be 3-128 characters long and can contain alphanumeric characters, hyphens, underscores, and periods. Cannot start or end with hyphen."
+                            }
+                        },
+                        {
                             "name": "laCategory",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Select Diagnostic Settings logging category",
@@ -597,6 +653,18 @@
                             "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
                         },
                         {
+                            "name": "dataCollectionRuleChangeTrackingCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Data Collection Rule Change Tracking name",
+                            "toolTip": "Name for the Change Tracking data collection rule",
+                            "defaultValue": "dcr-changetracking-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableChangeTracking, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Data collection rule name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
                             "name": "enableUpdateMgmt",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Azure Update Manager",
@@ -635,6 +703,18 @@
                                 ]
                             },
                             "visible": "[equals(steps('management').enableLogAnalytics,'Yes')]"
+                        },
+                        {
+                            "name": "dataCollectionRuleVmInsightsCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Data Collection Rule VM Insights name",
+                            "toolTip": "Name for the VM Insights data collection rule",
+                            "defaultValue": "dcr-vminsights-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableVmInsights, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Data collection rule name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
                         },
                         {
                             "name": "textBlock0",
@@ -679,6 +759,30 @@
                                 "required": "[equals(steps('management').enableAsc,'Yes')]",
                                 "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
                                 "validationMessage": "Please provide a valid email address"
+                            }
+                        },
+                        {
+                            "name": "dataCollectionRuleMdfcDefenderSqlCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Data Collection Rule MDFC Defender SQL name",
+                            "toolTip": "Name for the Microsoft Defender for Cloud Defender SQL data collection rule",
+                            "defaultValue": "dcr-defendersql-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableAsc, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Data collection rule name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "mdfcExportRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Microsoft Defender export resource group name",
+                            "toolTip": "Name for the Microsoft Defender for Cloud export resource group",
+                            "defaultValue": "rg-mdfc-export-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('management').enableAsc, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
                             }
                         },
                         {
@@ -960,6 +1064,42 @@
                                 ]
                             },
                             "visible": "[equals(steps('management').enableAsc,'Yes')]"
+                        },
+                        {
+                            "name": "alzPreReqRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "ALZ prerequisite resource group name",
+                            "toolTip": "Name for the Azure Landing Zone prerequisite resource group",
+                            "defaultValue": "rg-alz-prereq-prod",
+                            "visible": "[equals(steps('core').namingConvention, 'custom')]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "alzPreReqUAMICustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "ALZ prerequisite User Assigned Identity name",
+                            "toolTip": "Name for the Azure Landing Zone prerequisite User Assigned Managed Identity",
+                            "defaultValue": "id-alz-prereq-prod",
+                            "visible": "[equals(steps('core').namingConvention, 'custom')]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,126}[a-zA-Z0-9_]$",
+                                "validationMessage": "User Assigned Identity name must be 3-128 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "alzPreReqScriptCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "ALZ prerequisite script name",
+                            "toolTip": "Name for the Azure Landing Zone prerequisite deployment script",
+                            "defaultValue": "script-alz-prereq-prod",
+                            "visible": "[equals(steps('core').namingConvention, 'custom')]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,88}[a-zA-Z0-9_]$",
+                                "validationMessage": "Deployment script name must be 2-90 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
                         }
                     ]
                 },
@@ -1018,6 +1158,19 @@
                                         "uri": "https://learn.microsoft.com/azure/service-health/service-health-alert-deploy-policy",
                                         "style": "Warning"
                                     }
+                                },
+                                {
+                                    "name": "serviceHealthAlertRgCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Service Health Alert Resource Group Name",
+                                    "toolTip": "Resource group name for service health alerts, action groups. Created by the built-in service health policy.",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('monitor').esServiceHealthBuiltInTitle.enableServiceHealthBuiltIn, 'Yes'))]",
+                                    "defaultValue": "rg-service-health-prod",
+                                    "constraints": {
+                                        "required": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('monitor').esServiceHealthBuiltInTitle.enableServiceHealthBuiltIn, 'Yes'))]",
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                                    }
                                 }
                             ]
                         },
@@ -1042,7 +1195,7 @@
                                     "label": "Resource group for alerts",
                                     "toolTip": "Resource group for service health, activity log alerts, action groups. Will be created in all subscriptions in scope for the policy",
                                     "visible": "true",
-                                    "defaultValue": "rg-alz-monitoring-001",
+                                    "defaultValue": "rg-alz-monitoring",
                                     "constraints": {
                                         "required": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]",
                                         "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
@@ -1054,7 +1207,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "User Assigned Managed Identity Name",
                                     "subLabel": "",
-                                    "defaultValue": "id-amba-prod-001",
+                                    "defaultValue": "id-amba-prod",
                                     "toolTip": "Specify the name of the user assigned managed identity for AMBA monitoring purpose.",
                                     "infoMessages": [],
                                     "visible": "[equals(steps('monitor').enableMonitorBaselines,'Yes')]"
@@ -1463,6 +1616,107 @@
                                 }
                             ],
                             "visible": "[and(equals(steps('management').enableLogAnalytics, 'No'), equals(steps('monitor').enableMonitorBaselines,'Yes'), not(equals(steps('core').platformSubscription, 'Single')))]"
+                        },
+                        {
+                            "name": "esAmbaAgConfig",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Action Group configuration",
+                            "elements": [
+                                {
+                                    "name": "esAmbaAgInfo",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": true,
+                                    "options": {
+                                        "text": "Action groups in Azure Monitor allow for the creation of a set of actions that will be carried out when an alert is activated. Azure Monitor Baseline Alerts can incorporate various actions including Azure Function, Event Hub, and Logic App into their configuration. However, it's important to note that these actions are contingent upon the prior existence of the Azure Function, Event Hub, or Logic App resources. To set up these actions, please proceed with the current deployment, deploy the preferred resource you intend to use for actions, and then utilize the AMBA Portal Accelerator to implement the updated configuration.",
+                                        "uri": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-subscriptions#organization-and-governance-design-considerations",
+                                        "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "monitorAlertsResourceGroup",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Resource group for baseline alerts",
+                                    "toolTip": "Resource group for activity log alerts and action groups. Will be created in all subscriptions in scope for the policy",
+                                    "visible": "[equals(steps('core').namingConvention,'custom')]",
+                                    "defaultValue": "rg-amba-prod",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9]$",
+                                        "validationMessage": "Please provide a valid resource group name"
+                                    }
+                                },
+                                {
+                                    "name": "userAssignedManagedIdentityName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "User Assigned Managed Identity Name",
+                                    "subLabel": "",
+                                    "defaultValue": "id-amba-prod",
+                                    "toolTip": "Specify the name of the user assigned managed identity for monitoring purpose.",
+                                    "constraints": {
+                                        "regex": "",
+                                        "validationMessage": "",
+                                        "validations": []
+                                    },
+                                    "infoMessages": [],
+                                    "visible": "[equals(steps('core').namingConvention,'custom')]"
+                                },
+                                {
+                                    "name": "ambaAgEmailContact",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Email contact for action group notifications",
+                                    "toolTip": "Email address to get email notifications from alerts",
+                                    "visible": "true",
+                                    "defaultValue": "",
+                                    "constraints": {
+                                        "required": false,
+                                        "regex": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                                        "validationMessage": "Please provide a valid email address"
+                                    }
+                                },
+                                {
+                                    "name": "ambaAgServiceHook",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Web Hook URI for action group notifications",
+                                    "toolTip": "Web Hook URI to forward alerts to for integration with third-party systems",
+                                    "visible": "true",
+                                    "defaultValue": "",
+                                    "constraints": {}
+                                },
+                                {
+                                    "name": "ambaAgArmRole",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "ARM Roles for action group notifications",
+                                    "defaultValue": [
+                                        "Owner"
+                                    ],
+                                    "multiselect": true,
+                                    "selectAll": true,
+                                    "filter": false,
+                                    "multiLine": false,
+                                    "toolTip": "Choose the ARM RBAC roles that should receive alerts.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Owner",
+                                                "value": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                                            },
+                                            {
+                                                "label": "Contributor",
+                                                "value": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+                                            },
+                                            {
+                                                "label": "Monitoring Contributor",
+                                                "value": "749f88d5-cbae-40b8-bcfc-e573ddc772fa"
+                                            },
+                                            {
+                                                "label": "Monitoring Reader",
+                                                "value": "43d0d8ad-25c7-4714-9337-8ba259a9fe05"
+                                            }
+                                        ]
+                                    },
+                                    "visible": true
+                                }
+                            ],
+                            "visible": "[or(equals(steps('monitor').enableMonitorBaselines,'Yes'), equals(steps('monitor').enableServiceHealth,'Yes'))]"
                         }
                     ]
                 },
@@ -1526,9 +1780,45 @@
                         {
                             "name": "deployAVNM",
                             "type": "Microsoft.Common.CheckBox",
-                            "label": "Deploy Azure Virtual Network Manager - PREVIEW",
+                            "label": "Deploy Azure Virtual Network Manager",
                             "toolTip": "If selected, Azure Virtual Network Manager will be deployed to manage your virtual networks. Currently, ALZ will only enable Security Admin Rules role by default",
                             "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'))]"
+                        },
+                        {
+                            "name": "avnmCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Azure Virtual Network Manager name",
+                            "toolTip": "Name for the Azure Virtual Network Manager",
+                            "defaultValue": "avnm-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').deployAVNM, true))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual Network Manager name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "avnmRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Azure Virtual Network Manager resource group name",
+                            "toolTip": "Name for the Azure Virtual Network Manager resource group",
+                            "defaultValue": "rg-avnm-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').deployAVNM, true))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "avnmUserAssignedIdentityCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "AVNM User Assigned Identity name",
+                            "toolTip": "Name for the Azure Virtual Network Manager User Assigned Identity",
+                            "defaultValue": "id-avnm-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').deployAVNM, true))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,126}[a-zA-Z0-9_]$",
+                                "validationMessage": "User Assigned Identity name must be 3-128 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
                         },
                         {
                             "name": "esNwNVANote",
@@ -1623,6 +1913,67 @@
                             "visible": "[not(equals(steps('connectivity').enableHub, 'No'))]"
                         },
                         {
+                            "name": "connectivityRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Connectivity resource group name",
+                            "toolTip": "Name for the connectivity resource group",
+                            "defaultValue": "rg-vnet-hub-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "vnetHubCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Hub virtual network name",
+                            "toolTip": "Name for the hub virtual network",
+                            "defaultValue": "vnet-hub-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods. Cannot start or end with period or hyphen."
+                            }
+                        },
+                        {
+                            "name": "vwanCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Virtual WAN name",
+                            "toolTip": "Name for the Virtual WAN",
+                            "defaultValue": "vwan-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableHub, 'vwan'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual WAN name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "vwanHubCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Virtual WAN hub name",
+                            "toolTip": "Name for the Virtual WAN hub",
+                            "defaultValue": "vhub-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableHub, 'vwan'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual hub name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "routeTableCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Route Table name",
+                            "toolTip": "Name for the hub route table",
+                            "defaultValue": "rt-hub-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Route Table name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+
+                        {
                             "name": "esNwZtnNote",
                             "type": "Microsoft.Common.InfoBox",
                             "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'nva')))]",
@@ -1650,6 +2001,30 @@
                                         "value": "No"
                                     }
                                 ]
+                            }
+                        },
+                        {
+                            "name": "ddosCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "DDoS protection plan name",
+                            "toolTip": "Name for the DDoS protection plan",
+                            "defaultValue": "ddos-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableDdoS, 'Yes'), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "DDoS protection plan name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "ddosRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "DDoS resource group name",
+                            "toolTip": "Name for the DDoS resource group",
+                            "defaultValue": "rg-ddos-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableDdoS, 'Yes'), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
                             }
                         },
                         {
@@ -2205,6 +2580,30 @@
                             }
                         },
                         {
+                            "name": "privateDnsRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Private DNS zones resource group name",
+                            "toolTip": "Name for the private DNS zones resource group",
+                            "defaultValue": "rg-private-dns-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enablePrivateDnsZones, 'Yes'), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "privateDnsRg2CustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Private DNS zones secondary resource group name",
+                            "toolTip": "Name for the secondary private DNS zones resource group",
+                            "defaultValue": "rg-private-dns-prod-secondary",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enablePrivateDnsZones, 'Yes'), equals(steps('core').deploySecondaryRegion, 'Yes'), not(equals(steps('connectivity').enableHub, 'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
                             "name": "enableVpnGw",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy VPN Gateway",
@@ -2522,6 +2921,30 @@
                             }
                         },
                         {
+                            "name": "vpnGwCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "VPN Gateway name",
+                            "toolTip": "Name for the VPN Gateway",
+                            "defaultValue": "vpng-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableVpnGw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "VPN Gateway name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "azVpnGwIpCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "VPN Gateway public IP name",
+                            "toolTip": "Name for the VPN Gateway public IP address",
+                            "defaultValue": "pip-vpng-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableVpnGw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Public IP name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
                             "name": "enableErGw",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy ExpressRoute Gateway",
@@ -2721,6 +3144,30 @@
                             }
                         },
                         {
+                            "name": "erGwCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "ExpressRoute Gateway name",
+                            "toolTip": "Name for the ExpressRoute Gateway",
+                            "defaultValue": "ergw-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableErGw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "ExpressRoute Gateway name must be 2-80 characters long can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "azErGwIpCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "ExpressRoute Gateway public IP name",
+                            "toolTip": "Name for the ExpressRoute Gateway public IP address",
+                            "defaultValue": "pip-ergw-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableErGw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Public IP name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
                             "name": "enableAzFw",
                             "type": "Microsoft.Common.OptionsGroup",
                             "label": "Deploy Azure Firewall",
@@ -2819,6 +3266,42 @@
                             }
                         },
                         {
+                            "name": "azFwCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Azure Firewall name",
+                            "toolTip": "Name for the Azure Firewall",
+                            "defaultValue": "afw-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableAzFw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Azure Firewall name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "azFwPolicyCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Azure Firewall Policy name",
+                            "toolTip": "Name for the Azure Firewall Policy",
+                            "defaultValue": "afwp-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableAzFw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Azure Firewall Policy name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "azFwIpCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Azure Firewall public IP name",
+                            "toolTip": "Name for the Azure Firewall public IP address",
+                            "defaultValue": "pip-afw-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableAzFw, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Public IP name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
                             "name": "subnetMaskForAzFw",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Subnet for Azure Firewall",
@@ -2854,10 +3337,10 @@
                         {
                             "name": "subnetMaskForAzFwMgmt",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Subnet for Azure Firewall Mgmt (Optional Only for Basic SKU)",
+                            "label": "Subnet for Azure Firewall Mgmt",
                             "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.0.0/26)",
                             "defaultValue": "10.100.2.0/24",
-                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), equals(steps('connectivity').firewallSku, 'Basic'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
+                            "visible": "[and(equals(steps('connectivity').enableAzFw, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
                             "constraints": {
                                 "required": true,
                                 "validations": [
@@ -3257,6 +3740,208 @@
                             }
                         },
                         {
+                            "name": "primarySidecarNetworkNote",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                            "options": {
+                              "text": "<b>Sidecar</b><br>If you need to use Azure Bastion or Private DNS Resolver you will need to deploy an additional sidecar virtual network to support those services as Virtual WAN does not currently support native integration with those services.",
+                              "uri": "https://aka.ms/alz",
+                              "style": "Info"
+                            }
+                        },
+                        {
+                            "name": "enableSidecarVnetPrimary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy sidecar virtual network",
+                            "defaultValue": "Yes",
+                            "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, a sidecar virtual network will be deployed and additional options will be provided for provisioning supported services.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForSidecarPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Address space for sidecar virtual network",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.8.0/21)",
+                            "defaultValue": "10.100.8.0/21",
+                            "visible": "[equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "sidecarVnetCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Sidecar virtual network name in your primary region",
+                            "toolTip": "Name for the sidecar virtual network",
+                            "defaultValue": "vnet-sidecar-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "enableBastionPrimary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Bastion",
+                            "defaultValue": "No",
+                            "visible": "[and(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes')),contains(split('canadacentral,centralus,eastus,eastus2,eastus2euap,westus2,mexicocentral,italynorth,norwayeast,northeurope,uksouth,westeurope,swedencentral,spaincentral,qatarcentral,israelcentral,southafricanorth,australiaeast,koreacentral', ','), steps('connectivity').connectivityLocation))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (zone redundant) in the connectivity subscription.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "bastionPrimarySku",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Bastion SKU",
+                            "defaultValue": "Premium (default)",
+                            "multiselect": false,
+                            "selectAll": false,
+                            "filter": false,
+                            "multiLine": true,
+                            "visible": "[equals(steps('connectivity').enableBastionPrimary, 'Yes')]",
+                            "toolTip": "Bastion SKU selection: <a href=\"https://learn.microsoft.com/en-us/azure/bastion/bastion-overview\">Azure Bastion Overview</a>.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Premium (default)",
+                                        "value": "Premium"
+                                    },
+                                    {
+                                        "label": "Standard",
+                                        "value": "Standard"
+                                    },
+                                    {
+                                        "label": "Basic",
+                                        "value": "Basic"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForBastionPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Subnet for Azure Bastion",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.8.0/24)",
+                            "defaultValue": "10.100.8.0/24",
+                            "visible": "[equals(steps('connectivity').enableBastionPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "bastionCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Bastion name in your primary region",
+                            "toolTip": "Name for the Azure Bastion host",
+                            "defaultValue": "bas-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableBastionPrimary, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Bastion name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
+                            "name": "enableDnsResolverPrimary",
+                            "type": "Microsoft.Common.OptionsGroup",
+                            "label": "Deploy Private DNS Resolver",
+                            "defaultValue": "No",
+                            "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').enableSidecarVnetPrimary, 'Yes'))]",
+                            "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Private DNS Resolver in the connectivity subscription.",
+                            "constraints": {
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForDnsResolverInboundPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Inbound Subnet for Azure Private DNS Resolver",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.9.0/28)",
+                            "defaultValue": "10.100.9.0/28",
+                            "visible": "[equals(steps('connectivity').enableDnsResolverPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "subnetMaskForDnsResolverOutboundPrimary",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Outbound Subnet for Azure Private DNS Resolver",
+                            "toolTip": "Provide address prefix in CIDR notation (e.g 10.100.9.16/28)",
+                            "defaultValue": "10.100.9.16/28",
+                            "visible": "[equals(steps('connectivity').enableDnsResolverPrimary, 'Yes')]",
+                            "constraints": {
+                                "required": true,
+                                "validations": [
+                                    {
+                                        "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                        "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "privateDnsResolverCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Private DNS Resolver name in your primary region",
+                            "toolTip": "Name for the Azure Private DNS Resolver",
+                            "defaultValue": "dnspr-alz-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableDnsResolverPrimary, 'Yes'))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                "validationMessage": "Private DNS Resolver name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                            }
+                        },
+                        {
                             "name": "esNetworkSecondarySubSection",
                             "type": "Microsoft.Common.Section",
                             "label": "Secondary Region Networking",
@@ -3284,6 +3969,54 @@
                                         "required": true
                                     },
                                     "visible": "[and(not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'No')))]"
+                                },
+                                {
+                                    "name": "connectivityRgSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Connectivity resource group name in your secondary region",
+                                    "toolTip": "Name for the secondary connectivity resource group",
+                                    "defaultValue": "rg-vnet-hub-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), not(equals(steps('connectivity').enableHub, 'No')), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                                    }
+                                },
+                                {
+                                    "name": "vnetHubSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Hub virtual network name in your secondary region",
+                                    "toolTip": "Name for the secondary hub virtual network",
+                                    "defaultValue": "vnet-hub-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), not(equals(steps('connectivity').enableHub, 'No')), not(equals(steps('connectivity').enableHub, 'vwan')), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods. Cannot start or end with period or hyphen."
+                                    }
+                                },
+                                {
+                                    "name": "vwanHubSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Virtual WAN hub name in your secondary region",
+                                    "toolTip": "Name for the secondary vWAN hub",
+                                    "defaultValue": "vhub-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').enableHub, 'vwan'), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "vWAN hub name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
+                                },
+                                {
+                                    "name": "routeTableSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Route Table name in your secondary region",
+                                    "toolTip": "Name for the secondary hub route table",
+                                    "defaultValue": "rt-hub-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), not(equals(steps('connectivity').enableHub, 'No')), equals(steps('core').deploySecondaryRegion, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Route Table name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
                                 },
                                 {
                                     "name": "esAddressHubVWANSecondary",
@@ -3647,6 +4380,18 @@
                                     }
                                 },
                                 {
+                                    "name": "vpnGwSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "VPN Gateway name in your secondary region",
+                                    "toolTip": "Name for the secondary VPN Gateway",
+                                    "defaultValue": "vpng-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableVpnGwSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "VPN Gateway name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
+                                },
+                                {
                                     "name": "enableErGwSecondary",
                                     "type": "Microsoft.Common.OptionsGroup",
                                     "label": "Deploy ExpressRoute Gateway in your second region",
@@ -3846,6 +4591,18 @@
                                     }
                                 },
                                 {
+                                    "name": "erGwSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "ExpressRoute Gateway name in your secondary region",
+                                    "toolTip": "Name for the secondary ExpressRoute Gateway",
+                                    "defaultValue": "ergw-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableErGwSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "ExpressRoute Gateway name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
+                                },
+                                {
                                     "name": "enableAzFwSecondary",
                                     "type": "Microsoft.Common.OptionsGroup",
                                     "label": "Deploy Azure Firewall in your second region",
@@ -3979,10 +4736,10 @@
                                 {
                                     "name": "subnetMaskForAzFwMgmtSecondary",
                                     "type": "Microsoft.Common.TextBox",
-                                    "label": "Subnet for Azure Firewall Mgmt (Optional Only for Basic SKU) in your second region",
+                                    "label": "Subnet for Azure Firewall Mgmt in your second region",
                                     "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.0.0/26)",
                                     "defaultValue": "10.200.2.0/24",
-                                    "visible": "[and(equals(steps('connectivity').esNetworkSecondarySubSection.enableAzFwSecondary, 'Yes'), equals(steps('connectivity').esNetworkSecondarySubSection.firewallSkuSecondary, 'Basic'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
+                                    "visible": "[and(equals(steps('connectivity').esNetworkSecondarySubSection.enableAzFwSecondary, 'Yes'), not(equals(steps('connectivity').enableHub, 'vwan')))]",
                                     "constraints": {
                                         "required": true,
                                         "validations": [
@@ -4007,6 +4764,30 @@
                                                 "message": "CIDR range not within virtual network CIDR range (subnet mask)."
                                             }
                                         ]
+                                    }
+                                },
+                                {
+                                    "name": "azFwSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Azure Firewall name in your secondary region",
+                                    "toolTip": "Name for the secondary Azure Firewall",
+                                    "defaultValue": "afw-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableAzFwSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Azure Firewall name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
+                                },
+                                {
+                                    "name": "azFwPolicySecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Azure Firewall Policy name in your secondary region",
+                                    "toolTip": "Name for the secondary Azure Firewall Policy",
+                                    "defaultValue": "afwp-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableAzFwSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Azure Firewall Policy name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
                                     }
                                 },
                                 {
@@ -4380,6 +5161,208 @@
                                             }
                                         ]
                                     }
+                                },
+                                {
+                                    "name": "secondarySidecarNetworkNote",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                                    "options": {
+                                      "text": "<b>Sidecar</b><br>If you need to use Azure Bastion or Private DNS Resolver you will need to deploy an additional sidecar virtual network to support those services as Virtual WAN does not currently support native integration with those services.",
+                                      "uri": "https://aka.ms/alz",
+                                      "style": "Info"
+                                    }
+                                },
+                                {
+                                    "name": "enableSidecarVnetSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy sidecar virtual network",
+                                    "defaultValue": "Yes",
+                                    "visible": "[equals(steps('connectivity').enableHub, 'vwan')]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, a sidecar virtual network will be deployed and additional options will be provided for provisioning supported services.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForSidecarSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Address space for sidecar virtual network",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.8.0/21)",
+                                    "defaultValue": "10.200.8.0/21",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "sidecarVnetSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Sidecar virtual network name in your secondary region",
+                                    "toolTip": "Name for the sidecar virtual network in secondary region",
+                                    "defaultValue": "vnet-sidecar-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
+                                },
+                                {
+                                    "name": "enableBastionSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy Bastion",
+                                    "defaultValue": "No",
+                                    "visible": "[and(or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes')),contains(split('canadacentral,centralus,eastus,eastus2,eastus2euap,westus2,mexicocentral,italynorth,norwayeast,northeurope,uksouth,westeurope,swedencentral,spaincentral,qatarcentral,israelcentral,southafricanorth,australiaeast,koreacentral', ','), steps('connectivity').esNetworkSecondarySubSection.connectivityLocationSecondary))]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Bastion (Standard and zone redundant) in the connectivity subscription.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "bastionSecondarySku",
+                                    "type": "Microsoft.Common.DropDown",
+                                    "label": "Bastion SKU",
+                                    "defaultValue": "Premium (default)",
+                                    "multiselect": false,
+                                    "selectAll": false,
+                                    "filter": false,
+                                    "multiLine": true,
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary, 'Yes')]",
+                                    "toolTip": "Bastion SKU selection: <a href=\"https://learn.microsoft.com/en-us/azure/bastion/bastion-overview\">Azure Bastion Overview</a>.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Premium (default)",
+                                                "value": "Premium"
+                                            },
+                                            {
+                                                "label": "Standard",
+                                                "value": "Standard"
+                                            },
+                                            {
+                                                "label": "Basic",
+                                                "value": "Basic"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForBastionSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Subnet for Azure Bastion",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.8.0/24)",
+                                    "defaultValue": "10.200.8.0/24",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-6]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,26]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "bastionSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Bastion name in your secondary region",
+                                    "toolTip": "Name for the Azure Bastion host in the secondary region",
+                                    "defaultValue": "bas-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Bastion name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
+                                },
+                                {
+                                    "name": "enableDnsResolverSecondary",
+                                    "type": "Microsoft.Common.OptionsGroup",
+                                    "label": "Deploy Private DNS Resolver",
+                                    "defaultValue": "No",
+                                    "visible": "[or(equals(steps('connectivity').enableHub, 'vhub'), equals(steps('connectivity').enableHub, 'nva'), equals(steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary, 'Yes'))]",
+                                    "toolTip": "If 'Yes' is selected when also adding a subscription for connectivity, ARM will deploy Azure Private DNS Resolver in the connectivity subscription.",
+                                    "constraints": {
+                                        "allowedValues": [
+                                            {
+                                                "label": "Yes",
+                                                "value": "Yes"
+                                            },
+                                            {
+                                                "label": "No",
+                                                "value": "No"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForDnsResolverInboundSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Inbound Subnet for Azure Private DNS Resolver",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.9.0/28)",
+                                    "defaultValue": "10.200.9.0/28",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "subnetMaskForDnsResolverOutboundSecondary",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Outbound Subnet for Azure Private DNS Resolver",
+                                    "toolTip": "Provide address prefix in CIDR notation (e.g 10.200.9.16/28)",
+                                    "defaultValue": "10.200.9.16/28",
+                                    "visible": "[equals(steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary, 'Yes')]",
+                                    "constraints": {
+                                        "required": true,
+                                        "validations": [
+                                            {
+                                                "regex": "^(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\/(2[0-8]))$",
+                                                "message": "Invalid CIDR range. The address prefix must be in the range [20,28]."
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "privateDnsResolverSecondaryCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Private DNS Resolver name in your secondary region",
+                                    "toolTip": "Name for the Azure Private DNS Resolver in the secondary region",
+                                    "defaultValue": "dnspr-alz-prod-secondary",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,78}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Private DNS Resolver name must be 2-80 characters long and can contain alphanumeric characters, hyphens, underscores, and periods."
+                                    }
                                 }
                             ]
                         }
@@ -4599,6 +5582,55 @@
                             },
                             "visible": "[and(equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]"
                         },
+                        {
+                            "name": "identityVnetRgCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Identity virtual network resource group name",
+                            "toolTip": "Name for the identity virtual network resource group",
+                            "defaultValue": "rg-vnet-identity-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "identityVnetCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Identity virtual network name",
+                            "toolTip": "Name for the identity virtual network",
+                            "defaultValue": "vnet-identity-prod",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('identity').esIdentityConnectivity, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods. Cannot start or end with period or hyphen."
+                            }
+                        },
+                        {
+                            "name": "identityVnetRgSecondaryCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Identity resource group name in your secondary region",
+                            "toolTip": "Name for the secondary identity resource group",
+                            "defaultValue": "rg-vnet-identity-prod-secondary",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('identity').esIdentityConnectivity, 'Yes'), equals(steps('core').deploySecondaryRegion, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                            }
+                        },
+                        {
+                            "name": "identityVnetSecondaryCustomName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Identity virtual network name in your secondary region",
+                            "toolTip": "Name for the secondary identity virtual network",
+                            "defaultValue": "vnet-identity-prod-secondary",
+                            "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('identity').esIdentityConnectivity, 'Yes'), equals(steps('core').deploySecondaryRegion, 'Yes'), not(equals(steps('connectivity').enableHub,'No')))]",
+                            "constraints": {
+                                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods. Cannot start or end with period or hyphen."
+                            }
+                        },
+
                         {
                             "name": "esIdentitySecondarySubSection",
                             "type": "Microsoft.Common.Section",
@@ -5329,6 +6361,30 @@
                                                 }
                                             }
                                         ]
+                                    }
+                                },
+                                {
+                                    "name": "lzVnetRgCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Landing zone VNet resource group name (Custom naming)",
+                                    "toolTip": "Name for the landing zone virtual network resource group",
+                                    "defaultValue": "rg-vnet-lz-corp-prod",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('landingZones').corpSection.esLzConnectivity, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.()]{0,89}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Resource group name must be 1-90 characters long and can contain alphanumeric characters, hyphens, underscores, periods, and parentheses. Cannot start or end with period."
+                                    }
+                                },
+                                {
+                                    "name": "lzVnetCustomName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Landing zone VNet name (Custom naming)",
+                                    "toolTip": "Name for the landing zone virtual network",
+                                    "defaultValue": "vnet-corp-prod",
+                                    "visible": "[and(equals(steps('core').namingConvention, 'custom'), equals(steps('landingZones').corpSection.esLzConnectivity, 'Yes'))]",
+                                    "constraints": {
+                                        "regex": "^[a-zA-Z0-9][a-zA-Z0-9-_.]{0,62}[a-zA-Z0-9_]$",
+                                        "validationMessage": "Virtual network name must be 2-64 characters long and can contain alphanumeric characters, hyphens, underscores, and periods. Cannot start or end with period or hyphen."
                                     }
                                 },
                                 {
@@ -9895,8 +10951,8 @@
                 "enableServiceHealth": "[steps('monitor').enableServiceHealth]",
                 "enableServiceHealthBuiltIn": "[steps('monitor').esServiceHealthBuiltInTitle.enableServiceHealthBuiltIn]",
                 "enableMonitorBaselines": "[steps('monitor').enableMonitorBaselines]",
-                "monitorAlertsResourceGroup": "[steps('monitor').esAmbaAgConfig.monitorAlertsResourceGroup]",
-                "userAssignedManagedIdentityName": "[steps('monitor').esAmbaAgConfig.userAssignedManagedIdentityName]",
+                "monitorAlertsResourceGroup": "[if(equals(steps('core').namingConvention, 'custom'), steps('monitor').esAmbaAgConfig.monitorAlertsResourceGroup, concat('rg-amba-prod-', steps('basics').resourceScope.location.name))]",
+                "userAssignedManagedIdentityName": "[if(equals(steps('core').namingConvention, 'custom'), steps('monitor').esAmbaAgConfig.userAssignedManagedIdentityName, concat('id-amba-prod-', steps('basics').resourceScope.location.name))]",
                 "ambaAgEmailContact": "[steps('monitor').esAmbaAgConfig.ambaAgEmailContact]",
                 "ambaAgArmRole": "[steps('monitor').esAmbaAgConfig.ambaAgArmRole]",
                 "ambaAgServiceHook": "[steps('monitor').esAmbaAgConfig.ambaAgServiceHook]",
@@ -9931,6 +10987,22 @@
                 "expressRouteScaleUnit": "[steps('connectivity').expressRouteScaleUnit]",
                 "enableHub": "[steps('connectivity').enableHub]",
                 "deployAVNM": "[steps('connectivity').deployAVNM]",
+                "enableBastionPrimary": "[steps('connectivity').enableBastionPrimary]",
+                "subnetMaskForBastionPrimary": "[steps('connectivity').subnetMaskForBastionPrimary]",
+                "bastionPrimarySku": "[steps('connectivity').bastionPrimarySku]",
+                "enableBastionSecondary": "[steps('connectivity').esNetworkSecondarySubSection.enableBastionSecondary]",
+                "subnetMaskForBastionSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForBastionSecondary]",
+                "bastionSecondarySku": "[steps('connectivity').esNetworkSecondarySubSection.bastionSecondarySku]",
+                "enableDnsResolverPrimary": "[steps('connectivity').enableDnsResolverPrimary]",
+                "subnetMaskForDnsResolverInboundPrimary": "[steps('connectivity').subnetMaskForDnsResolverInboundPrimary]",
+                "subnetMaskForDnsResolverOutboundPrimary": "[steps('connectivity').subnetMaskForDnsResolverOutboundPrimary]",
+                "enableDnsResolverSecondary": "[steps('connectivity').esNetworkSecondarySubSection.enableDnsResolverSecondary]",
+                "subnetMaskForDnsResolverInboundSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForDnsResolverInboundSecondary]",
+                "subnetMaskForDnsResolverOutboundSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForDnsResolverOutboundSecondary]",
+                "enableSidecarVnetPrimary": "[steps('connectivity').enableSidecarVnetPrimary]",
+                "subnetMaskForSidecarPrimary": "[steps('connectivity').subnetMaskForSidecarPrimary]",
+                "enableSidecarVnetSecondary": "[steps('connectivity').esNetworkSecondarySubSection.enableSidecarVnetSecondary]",
+                "subnetMaskForSidecarSecondary": "[steps('connectivity').esNetworkSecondarySubSection.subnetMaskForSidecarSecondary]",
                 "enableAzFw": "[steps('connectivity').enableAzFw]",
                 "enableAzFwDnsProxy": "[if(equals(steps('connectivity').firewallSku, 'Basic'), 'No', steps('connectivity').enableAzFwDnsProxy)]",
                 "firewallSku": "[steps('connectivity').firewallSku]",
@@ -10092,7 +11164,59 @@
                 "regCompPolParNZIsmRestrictedVmAdminsExclude": "[coalesce(steps('regulatory').regPolicyParamNewZelandIsmRestricted.regCompPolParNZIsmRestrictedVmAdminsExclude, '')]",
                 "regCompPolParSoc2Type2AllowedRegistries": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2AllowedRegistries, '')]",
                 "regCompPolParSoc2Type2MaxCpuUnits": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2MaxCpuUnits, '')]",
-                "regCompPolParSoc2Type2MaxMemoryBytes": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2MaxMemoryBytes, '')]"
+                "regCompPolParSoc2Type2MaxMemoryBytes": "[coalesce(steps('regulatory').regPolicyParamSoc2Type2.regCompPolParSoc2Type2MaxMemoryBytes, '')]",
+                "customResourceNames": {
+                    "mgmtRg": "[steps('management').mgmtRgCustomName]",
+                    "connectivityRg": "[steps('connectivity').connectivityRgCustomName]",
+                    "connectivityRgSecondary": "[steps('connectivity').esNetworkSecondarySubSection.connectivityRgSecondaryCustomName]",
+                    "ddosRg": "[steps('connectivity').ddosRgCustomName]",
+                    "privateDnsRg": "[steps('connectivity').privateDnsRgCustomName]",
+                    "privateDnsRg2": "[steps('connectivity').privateDnsRg2CustomName]",
+                    "identityVnetRg": "[steps('identity').identityVnetRgCustomName]",
+                    "identityVnetRgSecondary": "[steps('identity').identityVnetRgSecondaryCustomName]",
+                    "lzVnetRg": "[steps('landingZones').corpSection.lzVnetRgCustomName]",
+                    "logAnalyticsWorkspace": "[steps('management').logAnalyticsWorkspaceCustomName]",
+                    "dataCollectionRuleVmInsights": "[steps('management').dataCollectionRuleVmInsightsCustomName]",
+                    "dataCollectionRuleChangeTracking": "[steps('management').dataCollectionRuleChangeTrackingCustomName]",
+                    "dataCollectionRuleMdfcDefenderSql": "[steps('management').dataCollectionRuleMdfcDefenderSqlCustomName]",
+                    "userAssignedIdentity": "[steps('management').userAssignedIdentityCustomName]",
+                    "vpnGwName": "[steps('connectivity').vpnGwCustomName]",
+                    "vpnGwNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.vpnGwSecondaryCustomName]",
+                    "erGwName": "[steps('connectivity').erGwCustomName]",
+                    "erGwNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.erGwSecondaryCustomName]",
+                    "ddosName": "[steps('connectivity').ddosCustomName]",
+                    "azFwPolicyName": "[steps('connectivity').azFwPolicyCustomName]",
+                    "azFwName": "[steps('connectivity').azFwCustomName]",
+                    "azFwNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.azFwSecondaryCustomName]",
+                    "azErGwIpName": "[steps('connectivity').azErGwIpCustomName]",
+                    "vnetHubName": "[steps('connectivity').vnetHubCustomName]",
+                    "vnetHubNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.vnetHubSecondaryCustomName]",
+                    "vwanHubName": "[steps('connectivity').vwanHubCustomName]",
+                    "vwanHubNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.vwanHubSecondaryCustomName]",
+                    "vwanName": "[steps('connectivity').vwanCustomName]",
+                    "azVpnGwIpName": "[steps('connectivity').azVpnGwIpCustomName]",
+                    "azFwIpName": "[steps('connectivity').azFwIpCustomName]",
+                    "identityVnet": "[steps('identity').identityVnetCustomName]",
+                    "identityVnetSecondary": "[steps('identity').identityVnetSecondaryCustomName]",
+                    "lzVnet": "[steps('landingZones').corpSection.lzVnetCustomName]",
+                    "mdfcExportRg": "[steps('management').mdfcExportRgCustomName]",
+                    "azFwPolicyNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.azFwPolicySecondaryCustomName]",
+                    "routeTableName": "[steps('connectivity').routeTableCustomName]",
+                    "routeTableNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.routeTableSecondaryCustomName]",
+                    "alzPreReqRg": "[steps('management').alzPreReqRgCustomName]",
+                    "alzPreReqUAMIName": "[steps('management').alzPreReqUAMICustomName]",
+                    "alzPreReqScriptName": "[steps('management').alzPreReqScriptCustomName]",
+                    "avnmName": "[steps('connectivity').avnmCustomName]",
+                    "avnmRgName": "[steps('connectivity').avnmRgCustomName]",
+                    "avnmUserAssignedIdentityName": "[steps('connectivity').avnmUserAssignedIdentityCustomName]",
+                    "bastionName": "[steps('connectivity').bastionCustomName]",
+                    "bastionNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.bastionSecondaryCustomName]",
+                    "privateDnsResolverName": "[steps('connectivity').privateDnsResolverCustomName]",
+                    "privateDnsResolverNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.privateDnsResolverSecondaryCustomName]",
+                    "sidecarVnetName": "[steps('connectivity').sidecarVnetCustomName]",
+                    "sidecarVnetNameSecondary": "[steps('connectivity').esNetworkSecondarySubSection.sidecarVnetSecondaryCustomName]",
+                    "serviceHealthAlertRg": "[steps('monitor').esServiceHealthBuiltInTitle.serviceHealthAlertRgCustomName]"
+                }
             },
             "kind": "Tenant",
             "location": "[steps('basics').resourceScope.location.name]"

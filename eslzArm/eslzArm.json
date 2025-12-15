@@ -292,7 +292,7 @@
         },
         "monitorAlertsResourceGroup": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "[concat('rg-amba-prod-', parameters('connectivityLocation'))]",
             "maxLength": 90,
             "metadata": {
                 "description": "Name of the resource group to be created for monitoring resources in each subscription."
@@ -300,7 +300,7 @@
         },
         "userAssignedManagedIdentityName": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "[concat('id-amba-prod-', parameters('connectivityLocation'))]",
             "maxLength": 90,
             "metadata": {
                 "description": "The name of the user assigned managed identity for monitoring purpose."
@@ -402,6 +402,86 @@
         "deployAVNM": {
             "type": "bool",
             "defaultValue": false
+        },
+        "enableBastionPrimary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForBastionPrimary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableBastionSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForBastionSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableDnsResolverPrimary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForDnsResolverInboundPrimary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subnetMaskForDnsResolverOutboundPrimary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableDnsResolverSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForDnsResolverInboundSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subnetMaskForDnsResolverOutboundSecondary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableSidecarVnetPrimary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForSidecarPrimary": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "enableSidecarVnetSecondary": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "subnetMaskForSidecarSecondary": {
+            "type": "string",
+            "defaultValue": ""
         },
         "enableDdoS": {
             "type": "string",
@@ -1688,6 +1768,65 @@
             "defaultValue": [
                 "microsoft.managedidentity/userassignedidentities"
             ]
+        },
+        "customResourceNames": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "resourceNames": {
+            "type": "object",
+            "defaultValue": {
+                "mgmtRg": "[if(and(contains(parameters('customResourceNames'), 'mgmtRg'), not(empty(parameters('customResourceNames').mgmtRg))), parameters('customResourceNames').mgmtRg, concat('rg-', 'mgmt-prod-', parameters('connectivityLocation')))]",
+                "connectivityRg": "[if(and(contains(parameters('customResourceNames'), 'connectivityRg'), not(empty(parameters('customResourceNames').connectivityRg))), parameters('customResourceNames').connectivityRg, concat('rg-', 'vnet-hub-prod-', parameters('connectivityLocation')))]",
+                "connectivityRgSecondary": "[if(and(contains(parameters('customResourceNames'), 'connectivityRgSecondary'), not(empty(parameters('customResourceNames').connectivityRgSecondary))), parameters('customResourceNames').connectivityRgSecondary, concat('rg-', 'vnet-hub-prod-', parameters('connectivityLocationSecondary')))]",
+                "ddosRg": "[if(and(contains(parameters('customResourceNames'), 'ddosRg'), not(empty(parameters('customResourceNames').ddosRg))), parameters('customResourceNames').ddosRg, concat('rg-', 'ddos-prod-', parameters('connectivityLocation')))]",
+                "privateDnsRg": "[if(and(contains(parameters('customResourceNames'), 'privateDnsRg'), not(empty(parameters('customResourceNames').privateDnsRg))), parameters('customResourceNames').privateDnsRg, concat('rg-', 'private-dns-zones-', parameters('connectivityLocation')))]",
+                "privateDnsRg2": "[if(and(contains(parameters('customResourceNames'), 'privateDnsRg2'), not(empty(parameters('customResourceNames').privateDnsRg2))), parameters('customResourceNames').privateDnsRg2, concat('rg-', 'private-dns-zones-', parameters('connectivityLocationSecondary')))]",
+                "identityVnetRg": "[if(and(contains(parameters('customResourceNames'), 'identityVnetRg'), not(empty(parameters('customResourceNames').identityVnetRg))), parameters('customResourceNames').identityVnetRg, concat('rg-', 'vnet-identity-prod-', parameters('connectivityLocation')))]",
+                "identityVnetRgSecondary": "[if(and(contains(parameters('customResourceNames'), 'identityVnetRgSecondary'), not(empty(parameters('customResourceNames').identityVnetRgSecondary))), parameters('customResourceNames').identityVnetRgSecondary, concat('rg-', 'vnet-identity-prod-', parameters('connectivityLocationSecondary')))]",
+                "lzVnetRg": "[if(and(contains(parameters('customResourceNames'), 'lzVnetRg'), not(empty(parameters('customResourceNames').lzVnetRg))), parameters('customResourceNames').lzVnetRg, concat('rg-', 'vnet-lz-corp-prod-', parameters('connectivityLocation')))]",
+                "logAnalyticsWorkspace": "[if(and(contains(parameters('customResourceNames'), 'logAnalyticsWorkspace'), not(empty(parameters('customResourceNames').logAnalyticsWorkspace))), parameters('customResourceNames').logAnalyticsWorkspace, concat('law-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "dataCollectionRuleVmInsights": "[if(and(contains(parameters('customResourceNames'), 'dataCollectionRuleVmInsights'), not(empty(parameters('customResourceNames').dataCollectionRuleVmInsights))), parameters('customResourceNames').dataCollectionRuleVmInsights, concat('dcr-vminsights-prod-', parameters('connectivityLocation')))]",
+                "dataCollectionRuleChangeTracking": "[if(and(contains(parameters('customResourceNames'), 'dataCollectionRuleChangeTracking'), not(empty(parameters('customResourceNames').dataCollectionRuleChangeTracking))), parameters('customResourceNames').dataCollectionRuleChangeTracking, concat('dcr-changetracking-prod-', parameters('connectivityLocation')))]",
+                "dataCollectionRuleMdfcDefenderSql": "[if(and(contains(parameters('customResourceNames'), 'dataCollectionRuleMdfcDefenderSql'), not(empty(parameters('customResourceNames').dataCollectionRuleMdfcDefenderSql))), parameters('customResourceNames').dataCollectionRuleMdfcDefenderSql, concat('dcr-defendersql-prod-', parameters('connectivityLocation')))]",
+                "userAssignedIdentity": "[if(and(contains(parameters('customResourceNames'), 'userAssignedIdentity'), not(empty(parameters('customResourceNames').userAssignedIdentity))), parameters('customResourceNames').userAssignedIdentity, concat('id-ama-prod-', parameters('connectivityLocation')))]",
+                "vpnGwName": "[if(and(contains(parameters('customResourceNames'), 'vpnGwName'), not(empty(parameters('customResourceNames').vpnGwName))), parameters('customResourceNames').vpnGwName, concat('vpng-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "vpnGwNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'vpnGwNameSecondary'), not(empty(parameters('customResourceNames').vpnGwNameSecondary))), parameters('customResourceNames').vpnGwNameSecondary, concat('vpng-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "erGwName": "[if(and(contains(parameters('customResourceNames'), 'erGwName'), not(empty(parameters('customResourceNames').erGwName))), parameters('customResourceNames').erGwName, concat('ergw-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "erGwNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'erGwNameSecondary'), not(empty(parameters('customResourceNames').erGwNameSecondary))), parameters('customResourceNames').erGwNameSecondary, concat('ergw-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "ddosName": "[if(and(contains(parameters('customResourceNames'), 'ddosName'), not(empty(parameters('customResourceNames').ddosName))), parameters('customResourceNames').ddosName, concat('ddos-', parameters('enterpriseScaleCompanyPrefix'), '-prod-',  parameters('connectivityLocation')))]",
+                "azFwPolicyName": "[if(and(contains(parameters('customResourceNames'), 'azFwPolicyName'), not(empty(parameters('customResourceNames').azFwPolicyName))), parameters('customResourceNames').azFwPolicyName, concat('afwp-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "azFwName": "[if(and(contains(parameters('customResourceNames'), 'azFwName'), not(empty(parameters('customResourceNames').azFwName))), parameters('customResourceNames').azFwName, concat('afw-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "azFwNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'azFwNameSecondary'), not(empty(parameters('customResourceNames').azFwNameSecondary))), parameters('customResourceNames').azFwNameSecondary, concat('afw-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "azErGwIpName": "[if(and(contains(parameters('customResourceNames'), 'azErGwIpName'), not(empty(parameters('customResourceNames').azErGwIpName))), parameters('customResourceNames').azErGwIpName, concat('pip-ergw-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "vnetHubName": "[if(and(contains(parameters('customResourceNames'), 'vnetHubName'), not(empty(parameters('customResourceNames').vnetHubName))), parameters('customResourceNames').vnetHubName, concat('vnet-hub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "vnetHubNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'vnetHubNameSecondary'), not(empty(parameters('customResourceNames').vnetHubNameSecondary))), parameters('customResourceNames').vnetHubNameSecondary, concat('vnet-hub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "vwanHubName": "[if(and(contains(parameters('customResourceNames'), 'vwanHubName'), not(empty(parameters('customResourceNames').vwanHubName))), parameters('customResourceNames').vwanHubName, concat('vhub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "vwanHubNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'vwanHubNameSecondary'), not(empty(parameters('customResourceNames').vwanHubNameSecondary))), parameters('customResourceNames').vwanHubNameSecondary, concat('vhub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "vwanName": "[if(and(contains(parameters('customResourceNames'), 'vwanName'), not(empty(parameters('customResourceNames').vwanName))), parameters('customResourceNames').vwanName, concat('vwan-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "azVpnGwIpName": "[if(and(contains(parameters('customResourceNames'), 'azVpnGwIpName'), not(empty(parameters('customResourceNames').azVpnGwIpName))), parameters('customResourceNames').azVpnGwIpName, concat('pip-vpng-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "azFwIpName": "[if(and(contains(parameters('customResourceNames'), 'azFwIpName'), not(empty(parameters('customResourceNames').azFwIpName))), parameters('customResourceNames').azFwIpName, concat('pip-afw-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "identityVnet": "[if(and(contains(parameters('customResourceNames'), 'identityVnet'), not(empty(parameters('customResourceNames').identityVnet))), parameters('customResourceNames').identityVnet, concat('vnet-identity-prod-', parameters('connectivityLocation')))]",
+                "identityVnetSecondary": "[if(and(contains(parameters('customResourceNames'), 'identityVnetSecondary'), not(empty(parameters('customResourceNames').identityVnetSecondary))), parameters('customResourceNames').identityVnetSecondary, concat('vnet-identity-prod-', parameters('connectivityLocationSecondary')))]",
+                "lzVnet": "[if(and(contains(parameters('customResourceNames'), 'lzVnet'), not(empty(parameters('customResourceNames').lzVnet))), parameters('customResourceNames').lzVnet, concat('vnet-corp-prod-', parameters('connectivityLocation')))]",
+                "mdfcExportRg": "[if(and(contains(parameters('customResourceNames'), 'mdfcExportRg'), not(empty(parameters('customResourceNames').mdfcExportRg))), parameters('customResourceNames').mdfcExportRg, concat('rg-mdfc-export-prod-', parameters('connectivityLocation')))]",
+                "azFwPolicyNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'azFwPolicyNameSecondary'), not(empty(parameters('customResourceNames').azFwPolicyNameSecondary))), parameters('customResourceNames').azFwPolicyNameSecondary, concat('afwp-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "routeTableName": "[if(and(contains(parameters('customResourceNames'), 'routeTableName'), not(empty(parameters('customResourceNames').routeTableName))), parameters('customResourceNames').routeTableName, concat('rt-hub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "routeTableNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'routeTableNameSecondary'), not(empty(parameters('customResourceNames').routeTableNameSecondary))), parameters('customResourceNames').routeTableNameSecondary, concat('rt-hub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "alzPreReqRg": "[if(and(contains(parameters('customResourceNames'), 'alzPreReqRg'), not(empty(parameters('customResourceNames').alzPreReqRg))), parameters('customResourceNames').alzPreReqRg, concat('rg-alz-prereq-prod-', parameters('connectivityLocation')))]",
+                "alzPreReqUAMIName": "[if(and(contains(parameters('customResourceNames'), 'alzPreReqUAMIName'), not(empty(parameters('customResourceNames').alzPreReqUAMIName))), parameters('customResourceNames').alzPreReqUAMIName, concat('id-alz-prereq-prod-', parameters('connectivityLocation')))]",
+                "alzPreReqScriptName": "[if(and(contains(parameters('customResourceNames'), 'alzPreReqScriptName'), not(empty(parameters('customResourceNames').alzPreReqScriptName))), parameters('customResourceNames').alzPreReqScriptName, concat('script-alz-prereq-prod-', parameters('connectivityLocation')))]",
+                "avnmName": "[if(and(contains(parameters('customResourceNames'), 'avnmName'), not(empty(parameters('customResourceNames').avnmName))), parameters('customResourceNames').avnmName, concat('vnm-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "avnmRgName": "[if(and(contains(parameters('customResourceNames'), 'avnmRgName'), not(empty(parameters('customResourceNames').avnmRgName))), parameters('customResourceNames').avnmRgName, concat('rg-vnm-prod-', parameters('connectivityLocation')))]",
+                "avnmUserAssignedIdentityName": "[if(and(contains(parameters('customResourceNames'), 'avnmUserAssignedIdentityName'), not(empty(parameters('customResourceNames').avnmUserAssignedIdentityName))), parameters('customResourceNames').avnmUserAssignedIdentityName, concat('id-vnm-prod-', parameters('connectivityLocation')))]",
+                "bastionName": "[if(and(contains(parameters('customResourceNames'), 'bastionName'), not(empty(parameters('customResourceNames').bastionName))), parameters('customResourceNames').bastionName, concat('bas-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "bastionNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'bastionNameSecondary'), not(empty(parameters('customResourceNames').bastionNameSecondary))), parameters('customResourceNames').bastionNameSecondary, concat('bas-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "privateDnsResolverName": "[if(and(contains(parameters('customResourceNames'), 'privateDnsResolverName'), not(empty(parameters('customResourceNames').privateDnsResolverName))), parameters('customResourceNames').privateDnsResolverName, concat('dnspr-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "privateDnsResolverNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'privateDnsResolverNameSecondary'), not(empty(parameters('customResourceNames').privateDnsResolverNameSecondary))), parameters('customResourceNames').privateDnsResolverNameSecondary, concat('dnspr-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "sidecarVnetName": "[if(and(contains(parameters('customResourceNames'), 'sidecarVnetName'), not(empty(parameters('customResourceNames').sidecarVnetName))), parameters('customResourceNames').sidecarVnetName, concat('vnet-sidecar-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
+                "sidecarVnetNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'sidecarVnetNameSecondary'), not(empty(parameters('customResourceNames').sidecarVnetNameSecondary))), parameters('customResourceNames').sidecarVnetNameSecondary, concat('vnet-sidecar-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
+                "serviceHealthAlertRg": "[if(and(contains(parameters('customResourceNames'), 'serviceHealthAlertRg'), not(empty(parameters('customResourceNames').serviceHealthAlertRg))), parameters('customResourceNames').serviceHealthAlertRg, concat('rg-service-health-prod-', parameters('connectivityLocation')))]"
+            }
         }
     },
     "variables": {
@@ -1762,6 +1901,9 @@
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
             "vwanConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-connectivity.json')]",
             "nvaConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/nvahubspoke-connectivity.json')]",
+            "bastion": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/bastion.json')]",
+            "privateDnsResolver": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/privateDnsResolver.json')]",
+            "vwanSidecar": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/vwan-sidecar.json')]",
             "subscriptionPlacement": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/subscriptionOrganization/subscriptionOrganization.json')]",
             "monitoring": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/logAnalyticsWorkspace.json')]",
             "dataCollectionRuleVmInsights": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/dataCollectionRule-VmInsights.json')]",
@@ -1906,6 +2048,12 @@
             "vnetConnectivityRouteTable2DeploymentName": "[take(concat('alz-HubRoute2', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHubDeploymentName": "[take(concat('alz-NVAHub', variables('deploymentSuffix')), 64)]",
             "nvaConnectivityHub2DeploymentName": "[take(concat('alz-NVAHub2', variables('deploymentSuffix')), 64)]",
+            "bastionPriDeploymentName": "[take(concat('alz-BastionPri', variables('deploymentSuffix')), 58)]",
+            "bastionSecDeploymentName": "[take(concat('alz-BastionSec', variables('deploymentSuffix')), 58)]",
+            "privateDnsResolverPriDeploymentName": "[take(concat('alz-PDnsResolverPri', variables('deploymentSuffix')), 58)]",
+            "privateDnsResolverSecDeploymentName": "[take(concat('alz-PDnsResolverSec', variables('deploymentSuffix')), 58)]",
+            "vwanSidecarPriDeploymentName": "[take(concat('alz-VWanSidecarPri', variables('deploymentSuffix')), 64)]",
+            "vwanSidecarSecDeploymentName": "[take(concat('alz-VWanSidecarSec', variables('deploymentSuffix')), 64)]",
             "azVmMonitorPolicyDeploymentName": "[take(concat('alz-AzVmMonitor', variables('deploymentSuffix')), 64)]",
             "azVmssMonitorPolicyDeploymentName": "[take(concat('alz-AzVmssMonitor', variables('deploymentSuffix')), 64)]",
             "azVmHybridMonitorPolicyDeploymentName": "[take(concat('alz-AzVmHybridMonitor', variables('deploymentSuffix')), 64)]",
@@ -2046,60 +2194,25 @@
             "dataCollectionRuleMdfcDefenderSQLLiteDeploymentName": "[take(concat('alz-DataCollectionRuleDefenderSQLLite', variables('deploymentSuffix')), 64)]",
             "userAssignedIdentityLiteDeploymentName": "[take(concat('alz-UserAssignedIdentityLite', variables('deploymentSuffix')), 60)]"
         },
-        // Declaring deterministic names for Resource Groups that will be created for platform resources
-        "platformRgNames": {
-            "mgmtRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-mgmt')]",
-            "connectivityRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]",
-            "connectivityRgSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]",
-            "ddosRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos')]",
-            "privateDnsRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns')]",
-            "privateDnsRg2": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-privatedns-02')]",
-            "identityVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
-            "identityVnetRgSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocationSecondary'))]",
-            "lzVnetRg": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]"
-        },
-        // Declaring deterministic names for platform resources that will be created
-        "platformResourceNames": {
-            "logAnalyticsWorkspace": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-law')]",
-            "dataCollectionRuleVmInsights": "[concat('dcr-vminsights-prod-', parameters('connectivityLocation'), '-001')]",
-            "dataCollectionRuleChangeTracking": "[concat('dcr-changetracking-prod-', parameters('connectivityLocation'), '-001')]",
-            "dataCollectionRuleMdfcDefenderSql": "[concat('dcr-defendersql-prod-', parameters('connectivityLocation'), '-001')]",
-            "userAssignedIdentity": "[concat('id-ama-prod-', parameters('connectivityLocation'), '-001')]",
-            "vpnGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vpngw-', parameters('connectivityLocation'))]",
-            "erGwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ergw-', parameters('connectivityLocation'))]",
-            "ddosName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-ddos-', parameters('connectivityLocation'))]",
-            "azFwPolicyName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-azfwpolicy-', parameters('connectivityLocation'))]",
-            "azFwName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', parameters('connectivityLocation'))]",
-            "azFwNameSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fw-', parameters('connectivityLocationSecondary'))]",
-            "azErGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-erpip-', parameters('connectivityLocation'))]",
-            "hubName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocation'))]",
-            "hubNameSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-hub-', parameters('connectivityLocationSecondary'))]",
-            "vwanName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vwan-', parameters('connectivityLocation'))]",
-            "azVpnGwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-gwpip-', parameters('connectivityLocation'))]",
-            "azFwIpName": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-fwpip-', parameters('connectivityLocation'))]",
-            "identityVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]",
-            "identityVnetSecondary": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocationSecondary'))]",
-            "lzVnet": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnet-', parameters('connectivityLocation'))]"
-        },
         // Declaring deterministic resourceId's for platform resources that will be created
         "singleVsDedicatedSecuritySub": "[if(empty(parameters('securitySubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('securitySubscriptionId'))]",
         "singleVsDedicatedMgmtSub": "[if(empty(parameters('managementSubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('managementSubscriptionId'))]",
         "singleVsDedicatedConnectivitySub": "[if(empty(parameters('connectivitySubscriptionId')), parameters('singlePlatformSubscriptionId'), parameters('connectivitySubscriptionId'))]",
         "platformResourceIds": {
-            "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', variables('platformResourceNames').logAnalyticsWorkspace)]",
-            "dataCollectionRuleVmInsightsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRuleVmInsights)]",
-            "dataCollectionRuleChangeTrackingResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRuleChangeTracking)]",
-            "dataCollectionRuleMdfcDefenderSQLResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql)]",
-            "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', variables('platformResourceNames').ddosName)]",
-            "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubName)]",
-            "vNetHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/virtualNetworks/', variables('platformResourceNames').hubNameSecondary)]",
-            "vWanHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubName)]",
-            "vWanHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', variables('platformResourceNames').hubNameSecondary)]",
-            "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').privateDnsRg)]",
-            "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwName)]",
-            "azFirewallResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRgSecondary, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
-            "azFirewallResourceIdSecondaryVwan": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', variables('platformRgNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', variables('platformResourceNames').azFwNameSecondary)]",
-            "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', variables('platformRgNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('platformResourceNames').userAssignedIdentity)]"
+            "logAnalyticsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', parameters('resourceNames').mgmtRg, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('resourceNames').logAnalyticsWorkspace)]",
+            "dataCollectionRuleVmInsightsResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', parameters('resourceNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', parameters('resourceNames').dataCollectionRuleVmInsights)]",
+            "dataCollectionRuleChangeTrackingResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', parameters('resourceNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', parameters('resourceNames').dataCollectionRuleChangeTracking)]",
+            "dataCollectionRuleMdfcDefenderSQLResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', parameters('resourceNames').mgmtRg, '/providers/Microsoft.Insights/dataCollectionRules/', parameters('resourceNames').dataCollectionRuleMdfcDefenderSql)]",
+            "ddosProtectionResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').ddosRg, '/providers/Microsoft.Network/ddosProtectionPlans/', parameters('resourceNames').ddosName)]",
+            "vNetHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRg, '/providers/Microsoft.Network/virtualNetworks/', parameters('resourceNames').vnetHubName)]",
+            "vNetHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRgSecondary, '/providers/Microsoft.Network/virtualNetworks/', parameters('resourceNames').vnetHubNameSecondary)]",
+            "vWanHubResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', parameters('resourceNames').vwanHubName)]",
+            "vWanHubResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRg, '/providers/Microsoft.Network/virtualHubs/', parameters('resourceNames').vwanHubNameSecondary)]",
+            "privateDnsRgResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').privateDnsRg)]",
+            "azFirewallResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', parameters('resourceNames').azFwName)]",
+            "azFirewallResourceIdSecondary": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRgSecondary, '/providers/Microsoft.Network/azureFirewalls/', parameters('resourceNames').azFwNameSecondary)]",
+            "azFirewallResourceIdSecondaryVwan": "[concat('/subscriptions/', variables('singleVsDedicatedConnectivitySub'), '/resourceGroups/', parameters('resourceNames').connectivityRg, '/providers/Microsoft.Network/azureFirewalls/', parameters('resourceNames').azFwNameSecondary)]",
+            "userAssignedIdentityResourceId": "[concat('/subscriptions/', variables('singleVsDedicatedMgmtSub'), '/resourceGroups/', parameters('resourceNames').mgmtRg, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('resourceNames').userAssignedIdentity)]"
         },
         // Declaring deterministic resourceId's for ES Lite platform resources (as they will be consolidated into a single platform subscription)
         "deterministicRoleAssignmentGuids": {
@@ -2189,6 +2302,15 @@
         "roleDefinitions": {
             "networkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7"
         },
+        // Role ID to Name mapping for AMBA policies
+        "armRoleIdToNameMap": {
+            "8e3af657-a8ff-443c-a75c-2fe8c4bcb635": "Owner",
+            "b24988ac-6180-42a0-ab88-20f7382dd24c": "Contributor",
+            "749f88d5-cbae-40b8-bcfc-e573ddc772fa": "Monitoring Contributor",
+            "43d0d8ad-25c7-4714-9337-8ba259a9fe05": "Monitoring Reader",
+            "acdd72a7-3385-48ef-bd42-f606fba81ae7": "Reader"
+        },
+        "ambaArmRoleConverted": "[if(empty(parameters('ambaAgArmRole')), array('Owner'), array(if(contains(variables('armRoleIdToNameMap'), parameters('ambaAgArmRole')[0]), variables('armRoleIdToNameMap')[parameters('ambaAgArmRole')[0]], parameters('ambaAgArmRole')[0])))]",
         "cuaid": "35c42e79-00b3-42eb-a9ac-e542953efb3c",
         "cuaidSinglePlatformSub": "b35a8452-8a67-49f9-b1a9-1aee3c1a13c2",
         "cuaidMultiPlatformSubs": "725aea60-cfaa-4a0c-9fe7-71b07f53803d",
@@ -2378,7 +2500,7 @@
                         "value": "[if(empty(parameters('ambaAgServiceHook')), null(), array(parameters('ambaAgServiceHook')))]"
                     },
                     "ALZArmRoleId": {
-                        "value": "[array(parameters('ambaAgArmRole'))]"
+                        "value": "[variables('ambaArmRoleConverted')]"
                     },
                     "ALZMonitorResourceGroupName": {
                         "value": "[parameters('monitorAlertsResourceGroup')]"
@@ -2481,7 +2603,7 @@
                         "value": "[if(empty(parameters('ambaAgServiceHook')), null(), array(parameters('ambaAgServiceHook')))]"
                     },
                     "ALZArmRoleId": {
-                        "value": "[array(parameters('ambaAgArmRole'))]"
+                        "value": "[variables('ambaArmRoleConverted')]"
                     },
                     "ALZMonitorResourceGroupName": {
                         "value": "[parameters('monitorAlertsResourceGroup')]"
@@ -2528,6 +2650,15 @@
                     },
                     "managementSubscriptionId": {
                         "value": "[parameters('managementSubscriptionId')]"
+                    },
+                    "resourceGroupName": {
+                        "value": "[parameters('resourceNames').alzPreReqRg]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('resourceNames').alzPreReqUAMIName]"
+                    },
+                    "deploymentScriptName": {
+                        "value": "[parameters('resourceNames').alzPreReqScriptName]"
                     }
                 }
             }
@@ -2559,6 +2690,15 @@
                     },
                     "managementSubscriptionId": {
                         "value": "[parameters('singlePlatformSubscriptionId')]"
+                    },
+                    "resourceGroupName": {
+                        "value": "[parameters('resourceNames').alzPreReqRg]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('resourceNames').alzPreReqUAMIName]"
+                    },
+                    "deploymentScriptName": {
+                        "value": "[parameters('resourceNames').alzPreReqScriptName]"
                     }
                 }
             }
@@ -2698,10 +2838,10 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
+                        "value": "[parameters('resourceNames').mgmtRg]"
                     },
                     "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                        "value": "[parameters('resourceNames').logAnalyticsWorkspace]"
                     },
                     "workspaceRegion": {
                         "value": "[deployment().location]"
@@ -2737,7 +2877,7 @@
                         "value": "[deployment().location]"
                     },
                     "userGivenDcrName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRuleVmInsights]"
+                        "value": "[parameters('resourceNames').dataCollectionRuleVmInsights]"
                     }
                 }
             }
@@ -2767,7 +2907,7 @@
                         "value": "[deployment().location]"
                     },
                     "dataCollectionRuleName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRuleChangeTracking]"
+                        "value": "[parameters('resourceNames').dataCollectionRuleChangeTracking]"
                     }
                 }
             }
@@ -2797,7 +2937,7 @@
                         "value": "[deployment().location]"
                     },
                     "userGivenDcrName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
+                        "value": "[parameters('resourceNames').dataCollectionRuleMdfcDefenderSql]"
                     }
                 }
             }
@@ -2824,10 +2964,10 @@
                         "value": "[deployment().location]"
                     },
                     "userAssignedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                        "value": "[parameters('resourceNames').userAssignedIdentity]"
                     },
                     "userAssignedIdentityResourceGroup": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
+                        "value": "[parameters('resourceNames').mgmtRg]"
                     }
                 }
             }
@@ -2939,6 +3079,9 @@
                     "resourceGroupLocation": {
                         "value": "[deployment().location]"
                     },
+                    "resourceGroupName": {
+                        "value": "[parameters('resourceNames').serviceHealthAlertRg]"
+                    },
                     "topLevelManagementGroupPrefix": {
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
@@ -2949,7 +3092,7 @@
                         "value": "[if(empty(parameters('ambaAgServiceHook')), null(), array(parameters('ambaAgServiceHook')))]"
                     },
                     "actionGroupRoleIds": {
-                        "value": "[array(parameters('ambaAgArmRole'))]"
+                        "value": "[variables('ambaArmRoleConverted')]"
                     }
                 }
             }
@@ -4646,7 +4789,7 @@
                         "value": "[deployment().location]"
                     },
                     "resourceGroupName": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-asc-export')]"
+                        "value": "[parameters('resourceNames').mdfcExportRg]"
                     },
                     "emailContactAsc": {
                         "value": "[parameters('emailContactAsc')]"
@@ -4753,6 +4896,9 @@
                     },
                     "enableAscForCosmosDbs": {
                         "value": "[parameters('enableAscForCosmosDbs')]"
+                    },
+                    "exportResourceGroupName": {
+                        "value": "[parameters('resourceNames').mdfcExportRg]"
                     }
                 }
             }
@@ -4985,7 +5131,7 @@
                         "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     },
                     "resourceName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                        "value": "[parameters('resourceNames').userAssignedIdentity]"
                     },
                     "resourceType": {
                         "value": "Microsoft.ManagedIdentity/userAssignedIdentities"
@@ -5020,7 +5166,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').ddosRg]"
+                        "value": "[parameters('resourceNames').ddosRg]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
@@ -5035,7 +5181,7 @@
             "apiVersion": "2024-11-01",
             "name": "[variables('deploymentNames').ddosDeploymentName]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').ddosRg]",
+            "resourceGroup": "[parameters('resourceNames').ddosRg]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosRgDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
@@ -5049,7 +5195,7 @@
                 },
                 "parameters": {
                     "ddosName": {
-                        "value": "[variables('platformResourceNames').ddosName]"
+                        "value": "[parameters('resourceNames').ddosName]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
@@ -5179,6 +5325,151 @@
                     },
                     "erRegionalSku": {
                         "value": "[parameters('erRegionalSku')]"
+                    },
+                    "vpnGwName": {
+                        "value": "[parameters('resourceNames').vpngwName]"
+                    },
+                    "erGwName": {
+                        "value": "[parameters('resourceNames').ergwName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    },
+                    "azFwPolicyName": {
+                        "value": "[parameters('resourceNames').azFwPolicyName]"
+                    },
+                    "hubName": {
+                        "value": "[parameters('resourceNames').vnetHubName]"
+                    },
+                    "azFwName": {
+                        "value": "[parameters('resourceNames').azFwName]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the H&S or NVA - Bastion Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), equals(parameters('enableBastionPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').bastionPriDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').bastion]"
+                },
+                "parameters": {
+                    "vnetName": {
+                        "value": "[parameters('resourceNames').vnetHubName]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('addressPrefix')]"
+                    },
+                    "vnetNewOrExisting": {
+                        "value": "existing"
+                    },
+                    "bastionSubnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForBastionPrimary')]"
+                    },
+                    "bastionHostName": {
+                        "value": "[parameters('resourceNames').bastionName]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the H&S or NVA - Private DNS Resolver Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), equals(parameters('enableDnsResolverPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').privateDnsResolverPriDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionPriDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[parameters('resourceNames').vnetHubName]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundPrimary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundPrimary')]"
+                    },
+                    "vnetRg":{
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    },
+                    "dnsResolverName": {
+                        "value": "[parameters('resourceNames').privateDnsResolverName]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
                     }
                 }
             }
@@ -5258,6 +5549,18 @@
                     },
                     "erRegionalSku": {
                         "value": "[parameters('erRegionalSku')]"
+                    },
+                    "vpnGwName": {
+                        "value": "[parameters('resourceNames').vpngwName]"
+                    },
+                    "erGwName": {
+                        "value": "[parameters('resourceNames').ergwName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    },
+                    "hubName": {
+                        "value": "[parameters('resourceNames').vnetHubName]"
                     }
                 }
             }
@@ -5387,6 +5690,398 @@
                     },
                     "vWANHubCapacitySecondary": {
                         "value": "[parameters('vWANHubCapacitySecondary')]"
+                    },
+                    "vWanName": {
+                        "value": "[parameters('resourceNames').vwanName]"
+                    },
+                    "vpnGwName": {
+                        "value": "[parameters('resourceNames').vpngwName]"
+                    },
+                    "erGwName": {
+                        "value": "[parameters('resourceNames').ergwName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    },
+                    "vHubName": {
+                        "value": "[parameters('resourceNames').vwanHubName]"
+                    },
+                    "azFwName": {
+                        "value": "[parameters('resourceNames').azFwName]"
+                    },
+                    "azFwPolicyName": {
+                        "value": "[parameters('resourceNames').azFwPolicyName]"
+                    },
+                    "vpnGwNameSecondary": {
+                        "value": "[concat(parameters('resourceNames').vpngwNameSecondary)]"
+                    },
+                    "erGwNameSecondary": {
+                        "value": "[concat(parameters('resourceNames').ergwNameSecondary)]"
+                    },
+                    "vHubNameSecondary": {
+                        "value": "[concat(parameters('resourceNames').vwanHubNameSecondary)]"
+                    },
+                    "azFwNameSecondary": {
+                        "value": "[parameters('resourceNames').azFwNameSecondary]"
+                    },
+                    "azFwPolicyNameSecondary": {
+                        "value": "[parameters('resourceNames').azFwPolicyNameSecondary]"
+                    }
+                }
+            }
+        },
+        {
+            // VWAN - Sidecar network deployment - Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').vwanSidecarPriDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "alz-prerequisites"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanSidecar]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetName": {
+                        "value": "[parameters('resourceNames').sidecarVnetName]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForSidecarPrimary')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    },
+                    "vWanHubResourceId": {
+                        "value": "[variables('platformResourceIds').vWanHubResourceId]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the VWAN - Bastion Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetPrimary'), 'Yes'), equals(parameters('enableBastionPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[concat('vwan-', variables('deploymentNames').bastionPriDeploymentName)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').bastion]"
+                },
+                "parameters": {
+                    "vnetName": {
+                        "value": "[parameters('resourceNames').sidecarVnetName]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForSidecarPrimary')]"
+                    },
+                    "vnetNewOrExisting": {
+                        "value": "existing"
+                    },
+                    "bastionSubnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForBastionPrimary')]"
+                    },
+                    "bastionHostName": {
+                        "value": "[parameters('resourceNames').bastionName]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the VWAN - Private DNS Resolver Primary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetPrimary'), 'Yes'), equals(parameters('enableDnsResolverPrimary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[concat('vwan-', variables('deploymentNames').privateDnsResolverPriDeploymentName)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').bastionPriDeploymentName))]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[parameters('resourceNames').sidecarVnetName]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocation')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundPrimary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundPrimary')]"
+                    },
+                    "vnetRg":{
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    },
+                    "dnsResolverName": {
+                        "value": "[parameters('resourceNames').privateDnsResolverName]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRg]"
+                    }
+                }
+            }
+        },
+        {
+            // VWAN - Sidecar network deployment - Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').vwanSidecarSecDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').connectivitySubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "alz-prerequisites"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').vwanSidecar]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetName": {
+                        "value": "[parameters('resourceNames').sidecarVnetNameSecondary]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForSidecarSecondary')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
+                    },
+                    "vWanHubResourceId": {
+                        "value": "[variables('platformResourceIds').vWanHubResourceIdSecondary]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the VWAN - Bastion Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'), equals(parameters('enableBastionSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[concat('vwan-', variables('deploymentNames').bastionSecDeploymentName)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').bastion]"
+                },
+                "parameters": {
+                    "vnetName": {
+                        "value": "[parameters('resourceNames').sidecarVnetNameSecondary]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForSidecarSecondary')]"
+                    },
+                    "vnetNewOrExisting": {
+                        "value": "existing"
+                    },
+                    "bastionSubnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForBastionSecondary')]"
+                    },
+                    "bastionHostName": {
+                        "value": "[parameters('resourceNames').bastionNameSecondary]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the VWAN - Private DNS Resolver Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), equals(parameters('enableHub'), 'vwan'), equals(parameters('enableSidecarVnetSecondary'), 'Yes'), equals(parameters('enableDnsResolverSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[concat('vwan-', variables('deploymentNames').privateDnsResolverSecDeploymentName)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').bastionSecDeploymentName))]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[parameters('resourceNames').sidecarVnetNameSecondary]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundSecondary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundSecondary')]"
+                    },
+                    "vnetRg":{
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
+                    },
+                    "dnsResolverName": {
+                        "value": "[parameters('resourceNames').privateDnsResolverNameSecondary]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
                     }
                 }
             }
@@ -5416,6 +6111,9 @@
                     "uri": "[variables('deploymentUris').avnmConnectivityHub]"
                 },
                 "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
                     },
@@ -5430,6 +6128,15 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('resourceNames').avnmName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').avnmRgName]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('resourceNames').avnmUserAssignedIdentityName]"
                     }
                 }
             }
@@ -5456,6 +6163,9 @@
                     "uri": "[variables('deploymentUris').avnmConnectivityHub]"
                 },
                 "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
                     },
@@ -5470,6 +6180,18 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('resourceNames').avnmName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').avnmRgName]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value": "[parameters('resourceNames').avnmUserAssignedIdentityName]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
                 }
             }
@@ -5503,6 +6225,12 @@
                     },
                     "enableSecondaryRegion": {
                         "value": "[parameters('enableSecondaryRegion')]"
+                    },
+                    "avnmName": {
+                        "value": "[parameters('resourceNames').avnmName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').avnmRgName]"
                     }
                 }
             }
@@ -5539,6 +6267,12 @@
                     },
                     "dedicatedSubscription": {
                         "value": false
+                    },
+                    "avnmName": {
+                        "value": "[parameters('resourceNames').avnmName]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').avnmRgName]"
                     }
                 }
             }
@@ -5570,7 +6304,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').privateDnsRg]"
+                        "value": "[parameters('resourceNames').privateDnsRg]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
@@ -5585,7 +6319,7 @@
             "apiVersion": "2024-11-01",
             "name": "[concat(variables('deploymentNames').privateDnsZonesDeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "resourceGroup": "[parameters('resourceNames').privateDnsRg]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRgDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
@@ -5652,7 +6386,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').privateDnsRg2]"
+                        "value": "[parameters('resourceNames').privateDnsRg2]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocationSecondary')]"
@@ -5667,7 +6401,7 @@
             "apiVersion": "2024-11-01",
             "name": "[concat(variables('deploymentNames').privateDnsZones2DeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
+            "resourceGroup": "[parameters('resourceNames').privateDnsRg2]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRg2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
@@ -5800,6 +6534,151 @@
                     },
                     "erRegionalSku": {
                         "value": "[parameters('erRegionalSkuSecondary')]"
+                    },
+                    "vpnGwName": {
+                        "value": "[parameters('resourceNames').vpnGwNameSecondary]"
+                    },
+                    "erGwName": {
+                        "value": "[parameters('resourceNames').erGwNameSecondary]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
+                    },
+                    "azFwPolicyName": {
+                        "value": "[parameters('resourceNames').azFwPolicyNameSecondary]"
+                    },
+                    "hubName": {
+                        "value": "[parameters('resourceNames').vnetHubNameSecondary]"
+                    },
+                    "azFwName": {
+                        "value": "[parameters('resourceNames').azFwNameSecondary]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the H&S or NVA - Bastion Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), equals(parameters('enableBastionSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').bastionSecDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').bastion]"
+                },
+                "parameters": {
+                    "vnetName": {
+                        "value": "[parameters('resourceNames').vnetHubNameSecondary]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "vnetIpPrefix": {
+                        "value": "[parameters('addressPrefixSecondary')]"
+                    },
+                    "vnetNewOrExisting": {
+                        "value": "existing"
+                    },
+                    "bastionSubnetIpPrefix": {
+                        "value": "[parameters('subnetMaskForBastionSecondary')]"
+                    },
+                    "bastionHostName": {
+                        "value": "[parameters('resourceNames').bastionNameSecondary]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
+                    }
+                }
+            }
+        },
+        {
+            // Creating the H&S or NVA - Private DNS Resolver Secondary
+            "condition": "[and(not(empty(parameters('connectivitySubscriptionId'))), or(equals(parameters('enableHub'), 'vhub'), equals(parameters('enableHub'), 'nva')), equals(parameters('enableDnsResolverSecondary'), 'Yes'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "subscriptionId": "[parameters('connectivitySubscriptionId')]",
+            "name": "[variables('deploymentNames').privateDnsResolverSecDeploymentName]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosLzPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').policyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').initiativeDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionSecDeploymentName)]",
+                "alz-prerequisites",
+                "corpConnectedMoveLzs"
+            ],
+            "location": "[deployment().location]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').privateDnsResolver]"
+                },
+                "parameters": {
+                    "resolverVnetName": {
+                        "value": "[parameters('resourceNames').vnetHubNameSecondary]"
+                    },
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    },
+                    "location": {
+                        "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "inboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverInboundSecondary')]"
+                    },
+                    "outboundAddressPrefix": {
+                        "value": "[parameters('subnetMaskForDnsResolverOutboundSecondary')]"
+                    },
+                    "vnetRg":{
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
+                    },
+                    "dnsResolverName": {
+                        "value": "[parameters('resourceNames').privateDnsResolverNameSecondary]"
+                    },
+                    "resourceGroupOverride": {
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
                     }
                 }
             }
@@ -5923,10 +6802,10 @@
                         "value": "[parameters('connectivityLocationSecondary')]"
                     },
                     "hubRgName": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
+                        "value": "[parameters('resourceNames').connectivityRg]"
                     },
                     "hubRgNameSecondary": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
                     }
                 }
             }
@@ -5938,7 +6817,7 @@
             "apiVersion": "2024-11-01",
             "name": "[variables('deploymentNames').vnetConnectivityRouteTableDeploymentName]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').connectivityRg]",
+            "resourceGroup": "[parameters('resourceNames').connectivityRg]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRgDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
@@ -5974,6 +6853,9 @@
                     },
                     "hubLocation": {
                         "value": "[parameters('connectivityLocation')]"
+                    },
+                    "routeTableName": {
+                        "value": "[parameters('resourceNames').routeTableName]"
                     }
                 }
             }
@@ -5985,7 +6867,7 @@
             "apiVersion": "2024-11-01",
             "name": "[variables('deploymentNames').vnetConnectivityRouteTable2DeploymentName]",
             "subscriptionId": "[parameters('connectivitySubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').connectivityRgSecondary]",
+            "resourceGroup": "[parameters('resourceNames').connectivityRgSecondary]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').privateDnsZoneRgDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
@@ -6021,6 +6903,9 @@
                     },
                     "hubLocation": {
                         "value": "[parameters('connectivityLocationSecondary')]"
+                    },
+                    "routeTableName": {
+                        "value": "[parameters('resourceNames').routeTableNameSecondary]"
                     }
                 }
             }
@@ -7693,10 +8578,10 @@
                 },
                 "parameters": {
                     "vNetRgName": {
-                        "value": "[variables('platformRgNames').identityVnetRg]"
+                        "value": "[parameters('resourceNames').identityVnetRg]"
                     },
                     "vNetName": {
-                        "value": "[take(concat(variables('platformResourceNames').identityVnet, '-', uniqueString(parameters('identitySubscriptionId'))), 64)]"
+                        "value": "[take(concat(parameters('resourceNames').identityVnet, '-', first(split(parameters('identitySubscriptionId'), '-'))), 64)]"
                     },
                     "vNetLocation": {
                         "value": "[parameters('connectivityLocation')]"
@@ -7740,10 +8625,10 @@
                 },
                 "parameters": {
                     "vNetRgName": {
-                        "value": "[variables('platformRgNames').identityVnetRgSecondary]"
+                        "value": "[parameters('resourceNames').identityVnetRgSecondary]"
                     },
                     "vNetName": {
-                        "value": "[take(concat(variables('platformResourceNames').identityVnetSecondary, '-', uniqueString(parameters('identitySubscriptionId'))), 64)]"
+                        "value": "[take(concat(parameters('resourceNames').identityVnetSecondary, '-', first(split(parameters('identitySubscriptionId'), '-'))), 64)]"
                     },
                     "vNetLocation": {
                         "value": "[parameters('connectivityLocationSecondary')]"
@@ -7787,10 +8672,10 @@
                 },
                 "parameters": {
                     "vNetRgName": {
-                        "value": "[variables('platformRgNames').identityVnetRg]"
+                        "value": "[parameters('resourceNames').identityVnetRg]"
                     },
                     "vNetName": {
-                        "value": "[take(concat(variables('platformResourceNames').identityVnet, '-', uniqueString(parameters('identitySubscriptionId'))), 64)]"
+                        "value": "[take(concat(parameters('resourceNames').identityVnet, '-', first(split(parameters('identitySubscriptionId'), '-'))), 64)]"
                     },
                     "vNetLocation": {
                         "value": "[parameters('connectivityLocation')]"
@@ -7834,10 +8719,10 @@
                 },
                 "parameters": {
                     "vNetRgName": {
-                        "value": "[variables('platformRgNames').identityVnetRgSecondary]"
+                        "value": "[parameters('resourceNames').identityVnetRgSecondary]"
                     },
                     "vNetName": {
-                        "value": "[take(concat(variables('platformResourceNames').identityVnetSecondary, '-', uniqueString(parameters('identitySubscriptionId'))), 64)]"
+                        "value": "[take(concat(parameters('resourceNames').identityVnetSecondary, '-', first(split(parameters('identitySubscriptionId'), '-'))), 64)]"
                     },
                     "vNetLocation": {
                         "value": "[parameters('connectivityLocationSecondary')]"
@@ -7997,10 +8882,10 @@
                 },
                 "parameters": {
                     "vNetRgName": {
-                        "value": "[variables('platformRgNames').lzVnetRg]"
+                        "value": "[parameters('resourceNames').lzVnetRg]"
                     },
                     "vNetName": {
-                        "value": "[take(concat(variables('platformResourceNames').lzVnet, '-', parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs), 64)]"
+                        "value": "[take(concat(parameters('resourceNames').lzVnet, '-', first(split(parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs, '-'))), 64)]"
                     },
                     "vNetLocation": {
                         "value": "[parameters('connectivityLocation')]"
@@ -8054,10 +8939,10 @@
                 },
                 "parameters": {
                     "vNetRgName": {
-                        "value": "[variables('platformRgNames').lzVnetRg]"
+                        "value": "[parameters('lzVnetRg')]"
                     },
                     "vNetName": {
-                        "value": "[take(concat(variables('platformResourceNames').lzVnet, '-', parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs), 64)]"
+                        "value": "[take(concat(parameters('lzVnet'), '-', parameters('corpConnectedLzSubscriptionId')[copyIndex()].subs), 64)]"
                     },
                     "vNetLocation": {
                         "value": "[parameters('connectivityLocation')]"
@@ -8154,10 +9039,10 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
+                        "value": "[parameters('resourceNames').mgmtRg]"
                     },
                     "workspaceName": {
-                        "value": "[variables('platformResourceNames').logAnalyticsWorkspace]"
+                        "value": "[parameters('resourceNames').logAnalyticsWorkspace]"
                     },
                     "workspaceRegion": {
                         "value": "[deployment().location]"
@@ -8193,10 +9078,10 @@
                         "value": "[deployment().location]"
                     },
                     "userAssignedIdentityName": {
-                        "value": "[variables('platformResourceNames').userAssignedIdentity]"
+                        "value": "[parameters('resourceNames').userAssignedIdentity]"
                     },
                     "userAssignedIdentityResourceGroup": {
-                        "value": "[variables('platformRgNames').mgmtRg]"
+                        "value": "[parameters('resourceNames').mgmtRg]"
                     }
                 }
             }
@@ -8226,7 +9111,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').ddosRg]"
+                        "value": "[parameters('resourceNames').ddosRg]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
@@ -8244,7 +9129,7 @@
             "apiVersion": "2024-11-01",
             "name": "[variables('esLiteDeploymentNames').ddosLiteDeploymentName]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').ddosRg]",
+            "resourceGroup": "[parameters('resourceNames').ddosRg]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').ddosRgLiteDeploymentName)]"
             ],
@@ -8256,7 +9141,7 @@
                 },
                 "parameters": {
                     "ddosName": {
-                        "value": "[variables('platformResourceNames').ddosName]"
+                        "value": "[parameters('resourceNames').ddosName]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
@@ -8272,7 +9157,7 @@
             "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2024-11-01",
-            "name": "[variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName]",
+            "name": "[variables('esLiteDeploymentNames').privateDnsZoneRgLiteDeploymentName]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -8282,9 +9167,9 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8294,7 +9179,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').privateDnsRg]"
+                        "value": "[parameters('resourceNames').privateDnsRg]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocation')]"
@@ -8310,7 +9195,7 @@
             "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2024-11-01",
-            "name": "[variables('esLitedeploymentNames').privateDnsZoneRgLite2DeploymentName]",
+            "name": "[variables('esLiteDeploymentNames').privateDnsZoneRgLite2DeploymentName]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
             "location": "[deployment().location]",
             "dependsOn": [
@@ -8320,8 +9205,8 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8331,7 +9216,7 @@
                 },
                 "parameters": {
                     "rgName": {
-                        "value": "[variables('platformRgNames').privateDnsRg2]"
+                        "value": "[parameters('resourceNames').privateDnsRg2]"
                     },
                     "location": {
                         "value": "[parameters('connectivityLocationSecondary')]"
@@ -8347,17 +9232,17 @@
             "condition": "[and(equals(parameters('enablePrivateDnsZones'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2024-11-01",
-            "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLiteDeploymentName, copyIndex())]",
+            "name": "[concat(variables('esLiteDeploymentNames').privateDnsZonesLiteDeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg]",
+            "resourceGroup": "[parameters('resourceNames').privateDnsRg]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vwanConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
             ],
             "copy": {
@@ -8397,15 +9282,15 @@
             "condition": "[and(equals(parameters('enablePrivateDnsZonesSecondary'), 'Yes'), not(empty(parameters('singlePlatformSubscriptionId'))))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2024-11-01",
-            "name": "[concat(variables('esLitedeploymentNames').privateDnsZonesLite2DeploymentName, copyIndex())]",
+            "name": "[concat(variables('esLiteDeploymentNames').privateDnsZonesLite2DeploymentName, copyIndex())]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').privateDnsRg2]",
+            "resourceGroup": "[parameters('resourceNames').privateDnsRg2]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').privateDnsZoneRgLite2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').activityDiagnosticsPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').resourceDiagnosticsPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLite2DeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLite2DeploymentName)]"
             ],
             "copy": {
                 "name": "dnsZonesLite",
@@ -8998,14 +9883,15 @@
                         "value": "[parameters('connectivityLocationSecondary')]"
                     },
                     "hubRgName": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocation'))]"
+                        "value": "[parameters('resourceNames').connectivityRg]"
                     },
                     "hubRgNameSecondary": {
-                        "value": "[concat(parameters('enterpriseScaleCompanyPrefix'), '-vnethub-', parameters('connectivityLocationSecondary'))]"
+                        "value": "[parameters('resourceNames').connectivityRgSecondary]"
                     }
                 }
             }
         },
+        /*
         /*
             Note: ES Lite only: deploys route tables to forward traffic between hubs
         */
@@ -9016,7 +9902,7 @@
             "apiVersion": "2024-11-01",
             "name": "[variables('esLitedeploymentNames').vnetConnectivityRouteTableDeploymentName]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').connectivityRg]",
+            "resourceGroup": "[parameters('resourceNames').connectivityRg]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
@@ -9064,9 +9950,9 @@
             "condition": "[and(not(empty(parameters('singlePlatformSubscriptionId'))), equals(parameters('enableHub'), 'vhub'), equals(parameters('enableAzFw'), 'Yes'), equals(parameters('enableAzFwSecondary'), 'Yes'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2024-11-01",
-            "name": "[variables('esLitedeploymentNames').vnetConnectivityRouteTable2DeploymentName]",
+            "name": "[variables('esLiteDeploymentNames').vnetConnectivityRouteTable2DeploymentName]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
-            "resourceGroup": "[variables('platformRgNames').connectivityRgSecondary]",
+            "resourceGroup": "[parameters('resourceNames').connectivityRgSecondary]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').privateDnsZoneRgLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLitedeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
@@ -9134,7 +10020,7 @@
                         "value": "[deployment().location]"
                     },
                     "userGivenDcrName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRuleVmInsights]"
+                        "value": "[parameters('resourceNames').dataCollectionRuleVmInsights]"
                     }
                 }
             }
@@ -9167,7 +10053,7 @@
                         "value": "[deployment().location]"
                     },
                     "dataCollectionRuleName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRuleChangeTracking]"
+                        "value": "[parameters('resourceNames').dataCollectionRuleChangeTracking]"
                     }
                 }
             }
@@ -9200,7 +10086,7 @@
                         "value": "[deployment().location]"
                     },
                     "userGivenDcrName": {
-                        "value": "[variables('platformResourceNames').dataCollectionRuleMdfcDefenderSql]"
+                        "value": "[parameters('resourceNames').dataCollectionRuleMdfcDefenderSql]"
                     }
                 }
             }
