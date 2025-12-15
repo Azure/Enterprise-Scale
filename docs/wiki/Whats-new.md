@@ -2,6 +2,9 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh H1 FY26](#-policy-refresh-h1-fy26)
+  - [December 2025](#december-2025)
+  - [November 2025](#november-2025)
+  - [October 2025](#october-2025)
   - [September 2025](#september-2025)
   - [🔃 Policy Refresh H2 FY25](#-policy-refresh-h2-fy25)
   - [June 2025](#june-2025)
@@ -68,6 +71,27 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Updated policy [Deny-FileServices-InsecureSmbChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbChannel.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.channelEncryption` to `null` - which would have resulted in compliance being incorrectly reported.
 - Updated policy [Deploy-ASC-SecurityContacts](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-ASC-SecurityContacts.html) to version 2.1.0. Updated the policy to update the default deployment and compliance check for the new attack path severity parameter, which is defaulted to `critical`.
 - Added the new built-in initiative [Microsoft cloud security benchmark v2](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e3ec7e09-768c-4b64-882c-fcada3772047.html) to the portal accelerator. This initiative includes updated policies and new controls to align with the latest security best practices. The new initiative is assigned by default (if Defender for Cloud and Log Analytics are enabled) at the Intermediate root management group scope using the default values as defined in the initiative. As this initiative is still in preview, we're are deploying this together with version 1 of the existing Microsoft Cloud Security Benchmark initiative to allow customers to evaluate and prepare for the transition.
+### December 2025
+
+#### Tooling
+
+- Implemented default [Cloud Adoption Framework (CAF) naming standards](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) across all resources. In addition, you now have the flexibility to apply custom naming conventions to suit your unique organizational requirements.
+- The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the `AzureFirewallManagementSubnet`.
+- **NEW** ALZ Portal Accelerator:
+  - Added support for Bastion and Private DNS Resolver in the portal experience. These can be selected in the networking section of the portal experience.
+  - For Private DNS Resolver, last mile configuration is required. This requires configuring forwarding rules to your own domain. By default peered networks are not configured to use the Private DNS Resolver. Please see [Private DNS Resolver documentation](https://learn.microsoft.com/azure/dns/resolver/overview) for more information, these need to be updated once Private DNS Resolver is fully configured.
+
+### November 2025
+
+#### Other
+
+- 5th November 2025 ALZ Community Call recording and slides have been uploaded to YouTube and wiki, all available from [aka.ms/alz/community](https://aka.ms/alz/community)
+
+### October 2025
+
+#### Tooling
+
+- Updated the ***Baseline alerts and monitoring*** integration section in the portal accelerator to deploy the latest release of AMBA (2025-010-01). To read more on the changes, see the [What's new](https://aka.ms/amba/alz/whatsnew) page in the AMBA documentation.
 
 ### September 2025
 
