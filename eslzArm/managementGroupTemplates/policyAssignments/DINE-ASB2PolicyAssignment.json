@@ -1,0 +1,113 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "enforcementMode": {
+            "type": "string",
+            "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+            ],
+            "defaultValue": "Default"
+        },
+        "nonComplianceMessagePlaceholder": {
+            "type": "string",
+            "defaultValue": "{enforcementMode}"
+        },
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "maxLength": 10,
+            "metadata": {
+                "description": "Provide a prefix (max 10 characters, unique at tenant-scope) for the Management Group hierarchy and other resources created as part of Enterprise-scale."
+            }
+        }
+    },
+    "variables": {
+        "policyDefinitions": {
+            "ascMonitoring": "/providers/Microsoft.Authorization/policySetDefinitions/e3ec7e09-768c-4b64-882c-fcada3772047",
+            "policyVersion": "1.*.*-preview"
+        },
+        "policyAssignmentNames": {
+            "ascMonitoring": "Deploy-MCSB2-Monitoring",
+            "description": "Microsoft Cloud Security Benchmark v2 policy initiative.",
+            "displayName": "Microsoft Cloud Security Benchmark v2"
+        },
+        "nonComplianceMessage": {
+            "message": "Microsoft Cloud Security Benchmark v2 {enforcementMode} be met.",
+            "Default": "must",
+            "DoNotEnforce": "should"
+        },
+        "rbacCognitiveOAIContributor": "a001fd3d-188f-4b5d-821b-7da978bf7442",
+        "rbacNetworkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7",
+        "rbacCognitiveContributor": "25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68",
+        "roleAssignmentNames": {
+            "roleAssignmentNameCognitiveOAIContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').ascMonitoring,'-1'))]",
+            "roleAssignmentNameNetworkContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').ascMonitoring,'-2'))]",
+            "roleAssignmentNameCognitiveContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').ascMonitoring,'-3'))]"
+        }
+      },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2024-04-01",
+            "name": "[variables('policyAssignmentNames').ascMonitoring]",
+            "location": "[deployment().location]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "description": "[variables('policyAssignmentNames').description]",
+                "displayName": "[variables('policyAssignmentNames').displayName]",
+                "policyDefinitionId": "[variables('policyDefinitions').ascMonitoring]",
+                "definitionVersion": "[variables('policyDefinitions').policyVersion]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "nonComplianceMessages": [
+                    {
+                        "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
+                    }
+                ],
+                "parameters": {}
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameCognitiveOAIContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').ascMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacCognitiveOAIContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').ascMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameNetworkContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').ascMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacNetworkContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').ascMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('roleAssignmentNames').roleAssignmentNameCognitiveContributor]",
+            "dependsOn": [
+                "[variables('policyAssignmentNames').ascMonitoring]"
+            ],
+            "properties": {
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacCognitiveContributor'))]",
+                "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').ascMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
+            }
+        }
+    ],
+    "outputs": {}
+}
