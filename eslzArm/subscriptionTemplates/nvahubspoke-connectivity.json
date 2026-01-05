@@ -119,22 +119,46 @@
         },
         "ddosPlanResourceId": {
             "type": "string"
+        },
+        "vpnGwName": {
+            "type": "string",
+            "defaultValue": "[concat('vpng-', parameters('topLevelManagementGroupPrefix'), '-prod-', parameters('location'))]",
+            "metadata": {
+                "description": "Name for the VPN Gateway"
+            }
+        },
+        "erGwName": {
+            "type": "string",
+            "defaultValue": "[concat('ergw-', parameters('topLevelManagementGroupPrefix'), '-prod-', parameters('location'))]",
+            "metadata": {
+                "description": "Name for the ExpressRoute Gateway"
+            }
+        },
+        "rgName": {
+            "type": "string",
+            "defaultValue": "[concat('rg-', 'vnet-hub-prod-', parameters('location'))]",
+            "metadata": {
+                "description": "Name for the hub resource group"
+            }
+        },
+        "hubName": {
+            "type": "string",
+            "defaultValue": "[concat('vnet-hub-', parameters('topLevelManagementGroupPrefix'), '-prod-', parameters('location'))]",
+            "metadata": {
+                "description": "Name for the hub virtual network"
+            }
         }
     },
     "variables": {
-        "vpngwname": "[concat(parameters('topLevelManagementGroupPrefix'), '-vpngw-', parameters('location'))]",
-        "erGwName": "[concat(parameters('topLevelManagementGroupPrefix'), '-ergw-', parameters('location'))]",
-        "rgName": "[concat(parameters('topLevelManagementGroupPrefix'), '-vnethub-', parameters('location'))]",
-        "hubName": "[concat(parameters('topLevelManagementGroupPrefix'), '-hub-', parameters('location'))]",
-        "azVpnGwIpName": "[concat(variables('vpngwname'), '-pip')]",
-        "azVpnGwAAIpName": "[concat(variables('vpngwname'), '-pip-002')]",
-        "azVpnGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
-        "azErGwIpName": "[concat(variables('erGwName'), '-pip')]",
-        "azVpnGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
-        "azVpnGwAAPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwAAIpName'))]",
+        "azVpnGwIpName": "[concat('pip-', parameters('vpnGwName'), '-001')]",
+        "azVpnGwAAIpName": "[concat('pip-', parameters('vpnGwName'), '-002')]",
+        "azVpnGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', parameters('rgName'),'/providers/Microsoft.Network/virtualNetworks/', parameters('hubName'), '/subnets/GatewaySubnet')]",
+        "azErGwIpName": "[concat('pip-', parameters('erGwName'))]",
+        "azVpnGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
+        "azVpnGwAAPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azVpnGwAAIpName'))]",
         "azVpnPIPZones": "[split('1,2,3', ',')]",
-        "azErGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'),'/providers/Microsoft.Network/virtualNetworks/', variables('hubname'), '/subnets/GatewaySubnet')]",
-        "azErGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', variables('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
+        "azErGwSubnetId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', parameters('rgName'),'/providers/Microsoft.Network/virtualNetworks/', parameters('hubName'), '/subnets/GatewaySubnet')]",
+        "azErGwPipId": "[concat('/subscriptions/', parameters('connectivitySubscriptionId'), '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
         "resourceDeploymentName": "[take(concat(deployment().name, '-hubspoke', parameters('location')), 64)]",
         // Creating variable that later will be used in conjunction with the union() function to cater for conditional subnet creation while ensuring idempotency
         "gwSubnet": [
@@ -177,16 +201,16 @@
                             "type": "Microsoft.Resources/resourceGroups",
                             "apiVersion": "2019-10-01",
                             "location": "[parameters('location')]",
-                            "name": "[variables('rgName')]",
+                            "name": "[parameters('rgName')]",
                             "properties": {}
                         },
                         {
                             "type": "Microsoft.Resources/deployments",
                             "apiVersion": "2019-10-01",
                             "name": "[variables('resourceDeploymentName')]",
-                            "resourceGroup": "[variables('rgName')]",
+                            "resourceGroup": "[parameters('rgName')]",
                             "dependsOn": [
-                                "[concat('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                                "[concat('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
                             ],
                             "properties": {
                                 "mode": "Incremental",
@@ -196,7 +220,7 @@
                                     "parameters": {},
                                     "resources": [
                                         {
-                                            "name": "[variables('hubName')]",
+                                            "name": "[parameters('hubName')]",
                                             "type": "Microsoft.Network/virtualNetworks",
                                             "apiVersion": "2020-04-01",
                                             "location": "[parameters('location')]",
@@ -207,13 +231,13 @@
                                                     ]
                                                 },
                                                 "subnets": "[
-                                                             union(
-                                                                  if(
-                                                                      not(
-                                                                          empty(parameters('subnetMaskForGw'))), variables('gwSubnet'), json('[]')), 
-                                                                          if(
-                                                                              not(
-                                                                                  empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')))]",
+                                                    union(
+                                                    if(
+                                                        not(
+                                                            empty(parameters('subnetMaskForGw'))), variables('gwSubnet'), json('[]')), 
+                                                    if(
+                                                        not(
+                                                            empty(parameters('subnetMaskForAzFw'))), variables('fwSubnet'), json('[]')))]",
                                                 "enableDdosProtection": "[if(equals(parameters('enableDdoS'), 'Yes'), 'true', 'false')]",
                                                 "ddosProtectionPlan": "[if(equals(parameters('enableDdoS'), 'Yes'), variables('ddosProtectionPlanId'), json('null'))]"
                                             }
@@ -249,12 +273,12 @@
                                         {
                                             "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'No'), not(empty(parameters('subnetMaskForGw'))))]",
                                             "apiVersion": "2023-11-01",
-                                            "name": "[variables('vpngwname')]",
+                                            "name": "[parameters('vpnGwName')]",
                                             "type": "Microsoft.Network/virtualNetworkGateways",
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
+                                                "[concat('Microsoft.Network/virtualNetworks/', parameters('hubName'))]"
                                             ],
                                             "properties": {
                                                 "activeActive": false,
@@ -300,13 +324,13 @@
                                         {
                                             "condition": "[and(equals(parameters('enableVpnGw'), 'Yes'), equals(parameters('enableVpnActiveActive'),'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
                                             "apiVersion": "2020-05-01",
-                                            "name": "[variables('vpngwname')]",
+                                            "name": "[parameters('vpnGwName')]",
                                             "type": "Microsoft.Network/virtualNetworkGateways",
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIPAddresses/', variables('azVpnGwIpName'))]",
                                                 "[concat('Microsoft.Network/publicIPAddresses/', variables('azVpnGwAAIpName'))]",
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
+                                                "[concat('Microsoft.Network/virtualNetworks/', parameters('hubName'))]"
                                             ],
                                             "properties": {
                                                 "activeActive": true,
@@ -377,13 +401,13 @@
                                         {
                                             "condition": "[and(equals(parameters('enableErGw'), 'Yes'), not(empty(parameters('subnetMaskForGw'))))]",
                                             "apiVersion": "2020-05-01",
-                                            "name": "[variables('erGwName')]",
+                                            "name": "[parameters('erGwName')]",
                                             "type": "Microsoft.Network/virtualNetworkGateways",
                                             "location": "[parameters('location')]",
                                             "dependsOn": [
                                                 "[concat('Microsoft.Network/publicIPAddresses/', variables('azErGwIpName'))]",
-                                                "[concat('Microsoft.Network/virtualNetworkGateways/', variables('vpngwname'))]",
-                                                "[concat('Microsoft.Network/virtualNetworks/', variables('hubName'))]"
+                                                "[concat('Microsoft.Network/virtualNetworkGateways/', parameters('vpnGwName'))]",
+                                                "[concat('Microsoft.Network/virtualNetworks/', parameters('hubName'))]"
                                             ],
                                             "properties": {
                                                 "gatewayType": "ExpressRoute",

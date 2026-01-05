@@ -1,6 +1,7 @@
 ## In this Section
 
 - [In this Section](#in-this-section)
+- [November 2025](#5th-november-2025-05112025)
 - [May 2025](#7th-may-2025-07052025)
 - [January 2025](#29th-january-2025-29012025)
 - [September 2024](#25th-september-2024-25092024)
@@ -19,6 +20,16 @@
 On this page you will find the meeting recordings and PowerPoint slides from previous Azure Landing Zone External Community Calls. To sign-up to the next Azure Landing Zone External Community Call, head to: [aka.ms/alz/communitycall](https://aka.ms/alz/communitycall)
 
 > Short link to this page is [aka.ms/alz/community](https://aka.ms/alz/community)
+
+## 5th November 2025 (05/11/2025)
+
+### Recording
+
+[![Screenshot of Azure Landing Zones Community Call from November 2025 recording on YouTube](./media/community-calls/nov-2025/youtube-thumbnail.png)](https://youtu.be/2dja9IKEqDY)
+
+### Slides
+
+A PDF of the PowerPoint slides are available [here.](./media/community-calls/nov-2025/ALZ-Community-Call-05112025.pdf)
 
 ## 7th May 2025 (07/05/2025)
 
