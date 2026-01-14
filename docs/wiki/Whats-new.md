@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [January 2026](#january-2026)
   - [December 2025](#december-2025)
   - [November 2025](#november-2025)
   - [October 2025](#october-2025)
@@ -61,6 +62,12 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### January 2026
+
+#### Tooling
+
+- Updated Portal Accelerator to remove all HTML used to enhance the layout and experience. We've had to remove all HTML as the use of HTML in templates will now be blocked for security reasons.
 
 ### December 2025
 
