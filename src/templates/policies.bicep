@@ -188,6 +188,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Modify-UDR.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-Generic.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DeleteResources.json')
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-AKS-kubenet.json')
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Audit-MachineLearning-PrivateEndpointId.json') // Needs validating in AzureChinaCloud and AzureUSGovernment

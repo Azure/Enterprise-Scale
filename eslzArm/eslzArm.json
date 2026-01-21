@@ -1911,6 +1911,7 @@
             "resourceGroup": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/resourceGroup.json')]",
             "ddosProtection": "[uri(deployment().properties.templateLink.uri, 'resourceGroupTemplates/ddosProtection.json')]",
             "asbPolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASBPolicyAssignment.json')]",
+            "asb2PolicyInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ASB2PolicyAssignment.json')]",
             "svcHealthBuiltInPolicyAssignment": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ServiceHealthBuiltInPolicyAssignment.json')]",
             "regulatoryComplianceInitaitves": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/ENFORCE-RegulatoryCompliancePolicyAssignment.json')]",
             "resourceDiagnosticsInitiative": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyAssignments/DINE-ResourceDiagnosticsPolicyAssignment.json')]",
@@ -2032,6 +2033,7 @@
             "monitorServiceHealthDeploymentName": "[take(concat('alz-SvcHealthMonitor', variables('deploymentSuffix')), 64)]",
             "monitorServiceHealthBuiltInDeploymentName": "[take(concat('alz-SvcHealthBuiltIn', variables('deploymentSuffix')), 64)]",
             "asbPolicyDeploymentName": "[take(concat('alz-ASB', variables('deploymentSuffix')), 64)]",
+            "asb2PolicyDeploymentName": "[take(concat('alz-ASB2', variables('deploymentSuffix')), 64)]",
             "regulatoryComplianceInitativesToAssignDeploymentName": "[take(concat('alz-RegComp-', deployment().location, '-', uniqueString(parameters('currentDateTimeUtcNow')), '-'), 64)]",
             "resourceDiagnosticsPolicyDeploymentName": "[take(concat('alz-ResourceDiagnostics', variables('deploymentSuffix')), 64)]",
             "activityDiagnosticsPolicyDeploymentName": "[take(concat('alz-ActivityDiagnostics', variables('deploymentSuffix')), 64)]",
@@ -2225,31 +2227,31 @@
             "australiacentral2": "acl2",
             "australiaeast": "ae",
             "australiasoutheast": "ase",
+            "austriaeast": "aue",
+            "belgiumcentral": "bec",
             "brazilsouth": "brs",
-            "brazilsoutheast": "bse",
-            "centraluseuap": "ccy",
+            "brazilsoutheast": "bse",           
             "canadacentral": "cnc",
             "canadaeast": "cne",
+            "centralindia": "inc",            
             "centralus": "cus",
+            "chilecentral": "clc",
+            "denmarkeast": "dke",
             "eastasia": "ea",
-            "eastus2euap": "ecy",
             "eastus": "eus",
             "eastus2": "eus2",
             "francecentral": "frc",
             "francesouth": "frs",
             "germanynorth": "gn",
             "germanywestcentral": "gwc",
-            "centralindia": "inc",
-            "southindia": "ins",
-            "westindia": "inw",
-            "italynorth": "itn",
+            "indonesiacentral": "idc",
             "israelcentral": "ilc",
+            "italynorth": "itn",
             "japaneast": "jpe",
             "japanwest": "jpw",
-            "jioindiacentral": "jic",
-            "jioindiawest": "jiw",
             "koreacentral": "krc",
             "koreasouth": "krs",
+            "malaysiawest": "myw",
             "mexicocentral": "mxc",
             "newzealandnorth": "nzn",
             "northcentralus": "ncus",
@@ -2261,19 +2263,21 @@
             "southafricanorth": "san",
             "southafricawest": "saw",
             "southcentralus": "scus",
+            "southindia": "ins",
+            "southeastasia": "sea",
             "spaincentral": "spc",
             "swedencentral": "sdc",
-            "swedensouth": "sds",
-            "southeastasia": "sea",
             "switzerlandnorth": "szn",
             "switzerlandwest": "szw",
             "taiwannorth": "twn",
+            "taiwannorthwest": "tnw",
             "uaecentral": "uac",
             "uaenorth": "uan",
             "uksouth": "uks",
             "ukwest": "ukw",
             "westcentralus": "wcus",
             "westeurope": "we",
+            "westindia": "inw",            
             "westus": "wus",
             "westus2": "wus2",
             "westus3": "wus3",
@@ -2294,7 +2298,11 @@
             "chinaeast2": "sha2",
             "chinaeast3": "sha3",
             "germanycentral": "gec",
-            "germanynortheast": "gne"
+            "germanynortheast": "gne",
+            "centraluseuap": "ccy",
+            "eastus2euap": "ecy",
+            "jioindiacentral": "jic",
+            "jioindiawest": "jiw"
         },
         "privateDnsZonesMerge": "[if(and(contains(variables('azBackupGeoCodes'), parameters('connectivityLocation')), contains(variables('privateDnsZones'), 'privatelink.regionGeoShortCode.backup.windowsazure.com')), union(createArray(replace(variables('privateDnsZones')[0], '.regionGeoShortCode.', concat('.', variables('azBackupGeoCodes')[toLower(parameters('connectivityLocation'))], '.'))), variables('privateDnsZones')), variables('privateDnsZones'))]",
         "privateDnsZonesMergedWithBackupPlaceholderRemoved": "[filter(variables('privateDnsZonesMerge'), lambda('i', not(equals(lambdaVariables('i'), 'privatelink.regionGeoShortCode.backup.windowsazure.com'))))]",
@@ -3055,6 +3063,33 @@
                     "uri": "[variables('deploymentUris').asbPolicyInitiative]"
                 },
                 "parameters": {}
+            }
+        },
+        {
+            // Assigning Microsoft Cloud Security Benchmark v2 policy to intermediate root management group if condition is true
+            "condition": "[and(or(not(empty(parameters('singlePlatformSubscriptionId'))), not(empty(parameters('managementSubscriptionId')))), or(equals(parameters('enableLogAnalytics'), 'Yes'), equals(parameters('enableAsc'), 'Yes')))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2024-11-01",
+            "name": "[variables('deploymentNames').asb2PolicyDeploymentName]",
+            "scope": "[variables('scopes').eslzRootManagementGroup]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
+                "alz-prerequisites",
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('deploymentUris').asb2PolicyInitiative]"
+                },
+                "parameters": {
+                    "topLevelManagementGroupPrefix": {
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
+                    }
+                }
             }
         },
         {

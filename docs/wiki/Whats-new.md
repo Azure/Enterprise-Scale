@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [🔃 Policy Refresh H1 FY26](#-policy-refresh-h1-fy26)
   - [January 2026](#january-2026)
   - [December 2025](#december-2025)
   - [November 2025](#november-2025)
@@ -62,6 +63,17 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### 🔃 Policy Refresh H1 FY26
+
+- *New* custom policy [Audit-AKS-kubenet](https://www.azadvertizer.net/azpolicyadvertizer/Audit-AKS-kubenet.html) to detect AKS clusters using the deprecated 'kubenet' network plugin. This policy is included in the initiative [Enforce-Guardrails-Kubernetes](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-Kubernetes.html) with the effect defaulted to "Audit". The effect can be changed via the new parameter `aksKubenetEffect`. Deployment scope is defined in deployments; ALZ defaults to the `Platform` and `Landing Zones` management groups. Added as the deprecation of kubenet is planned for 31 March 2028. For more information review [https://learn.microsoft.com/en-us/azure/aks/configure-kubenet](https://learn.microsoft.com/en-us/azure/aks/configure-kubenet). Please review the deprecation announcement on [Azure Updates](https://azure.microsoft.com/en-gb/updates?id=485172).
+- Updated initiative [Enforce-Guardrails-SQL](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-SQL.html) to include additional policies to enforce Entra-only authentication for SQL and SQL Managed Instances (prevents changing authentication method after creation).
+- Updated policy [Deny-FileServices-InsecureSmbVersions](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbVersions.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.versions` to `null` - which would have resulted in compliance being incorrectly reported.
+- Updated policy [Deny-FileServices-InsecureSmbChannel](https://www.azadvertizer.net/azpolicyadvertizer/Deny-FileServices-InsecureSmbChannel.html) to version 1.1.0. Added a check for storage accounts created with maximum compatibility, which sets the value of `protocolSettings.smb.channelEncryption` to `null` - which would have resulted in compliance being incorrectly reported.
+- Updated policy [Deploy-ASC-SecurityContacts](https://www.azadvertizer.net/azpolicyadvertizer/Deploy-ASC-SecurityContacts.html) to version 3.0.0. Updated the policy to update the default deployment and compliance check for the new attack path severity parameter, which is defaulted to `critical`.
+- Added the new built-in initiative [Microsoft cloud security benchmark v2](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e3ec7e09-768c-4b64-882c-fcada3772047.html) to the portal accelerator. This initiative includes updated policies and new controls to align with the latest security best practices. The new initiative is assigned by default (if Defender for Cloud and Log Analytics are enabled) at the Intermediate root management group scope using the default values as defined in the initiative. As this initiative is still in preview, we're are deploying this together with version 1 of the existing Microsoft Cloud Security Benchmark initiative to allow customers to evaluate and prepare for the transition.
+- Updated the portal accelerator and policy assignment parameters for [Private DNS Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html) initiative to include new Azure regions launched since the last update.
+- Updated the initiative [Enforce-Guardrails-KeyVault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html) to correct a typo in variable names, correct "Hms" to "Hsm".
 
 ### January 2026
 
