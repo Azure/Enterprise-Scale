@@ -2,6 +2,7 @@
 
 - [Updates](#updates)
   - [🔃 Policy Refresh H1 FY26](#-policy-refresh-h1-fy26)
+  - [January 2026](#january-2026)
   - [December 2025](#december-2025)
   - [November 2025](#november-2025)
   - [October 2025](#october-2025)
@@ -73,6 +74,11 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 - Added the new built-in initiative [Microsoft cloud security benchmark v2](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/e3ec7e09-768c-4b64-882c-fcada3772047.html) to the portal accelerator. This initiative includes updated policies and new controls to align with the latest security best practices. The new initiative is assigned by default (if Defender for Cloud and Log Analytics are enabled) at the Intermediate root management group scope using the default values as defined in the initiative. As this initiative is still in preview, we're are deploying this together with version 1 of the existing Microsoft Cloud Security Benchmark initiative to allow customers to evaluate and prepare for the transition.
 - Updated the portal accelerator and policy assignment parameters for [Private DNS Zones](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Deploy-Private-DNS-Zones.html) initiative to include new Azure regions launched since the last update.
 - Updated the initiative [Enforce-Guardrails-KeyVault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html) to correct a typo in variable names, correct "Hms" to "Hsm".
+### January 2026
+
+#### Tooling
+
+- Updated Portal Accelerator to remove all HTML used to enhance the layout and experience. We've had to remove all HTML as the use of HTML in templates will now be blocked for security reasons.
 
 ### December 2025
 
@@ -80,6 +86,7 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Implemented default [Cloud Adoption Framework (CAF) naming standards](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) across all resources. In addition, you now have the flexibility to apply custom naming conventions to suit your unique organizational requirements.
 - The portal accelerator now deploys all SKUs of Azure Firewall with the [management NIC](https://learn.microsoft.com/azure/firewall/management-nic) to route its management traffic via the `AzureFirewallManagementSubnet`.
+- Updated the ALZ portal accelerator to remove the option to select regional VPN gateways as these are being deprecated. All regions that support VPN gateways now deploy zone redundant VPN gateways by default.
 - **NEW** ALZ Portal Accelerator:
   - Added support for Bastion and Private DNS Resolver in the portal experience. These can be selected in the networking section of the portal experience.
   - For Private DNS Resolver, last mile configuration is required. This requires configuring forwarding rules to your own domain. By default peered networks are not configured to use the Private DNS Resolver. Please see [Private DNS Resolver documentation](https://learn.microsoft.com/azure/dns/resolver/overview) for more information, these need to be updated once Private DNS Resolver is fully configured.
