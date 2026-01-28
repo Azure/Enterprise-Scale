@@ -81,6 +81,10 @@ Here's what's changed in Enterprise Scale/Azure Landing Zones:
 
 - Updated Portal Accelerator to remove all HTML used to enhance the layout and experience. We've had to remove all HTML as the use of HTML in templates will now be blocked for security reasons.
 
+#### Policy
+
+- Updated the definition [Deny-Subnet-Without-Udr](https://www.azadvertizer.net/azpolicyadvertizer/Deny-Subnet-Without-Udr.html) to add default value 'RouteServerSubnet' to parameter 'excludedSubnets'.
+
 ### December 2025
 
 #### Tooling
