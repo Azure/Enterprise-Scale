@@ -1,6 +1,7 @@
 ## In this Section
 
 - [Updates](#updates)
+  - [February 2026](#february-2026)
   - [🔃 Policy Refresh H1 FY26](#-policy-refresh-h1-fy26)
   - [January 2026](#january-2026)
   - [December 2025](#december-2025)
@@ -63,6 +64,13 @@ This article will be updated as and when changes are made to the above and anyth
 ## Updates
 
 Here's what's changed in Enterprise Scale/Azure Landing Zones:
+
+### February 2026
+
+#### Policy
+
+- **Breaking change:** we accidentally introduced a breaking change to the initiative [Enforce-Guardrails-KeyVault](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault.html) in the last policy refresh where we fixed a typo is serveral parameter names, changing "Hms" to "Hsm". This change has been reverted in this release to avoid breaking existing assignments and a new version of the initiative has been created [Enforce-Guardrails-KeyVault_20260203](https://www.azadvertizer.net/azpolicyinitiativesadvertizer/Enforce-Guardrails-KeyVault_20260203.html) with the corrected parameter names.
+  - **Action Required:** If you have previously assigned this initiative, please delete the existing assignment prior to deploying the updated initiative to avoid deployment failures.
 
 ### 🔃 Policy Refresh H1 FY26
 
