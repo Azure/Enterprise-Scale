@@ -1,3 +1,7 @@
+This article answers frequently asked questions relating to Enterprise-scale.
+
+Some FAQ questions that relate more to the architecture are based over in the CAF docs here: [Enterprise-scale architecture FAQ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq)
+
 ## In this Section
 
 - [How long does enterprise-scale architecture take to deploy?](#how-long-does-enterprise-scale-architecture-take-to-deploy)
@@ -15,12 +19,6 @@
 - [What is the impact of GitHub Releases and ALZ?](#what-is-the-impact-of-github-releases-and-alz)
 
 ---
-
-## Enterprise-scale FAQ
-
-This article answers frequently asked questions relating to Enterprise-scale.
-
-Some FAQ questions that relate more to the architecture are based over in the CAF docs here: [Enterprise-scale architecture FAQ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/faq)
 
 ## How long does enterprise-scale architecture take to deploy?
 
@@ -42,8 +40,6 @@ We then work with the Azure Policy and associated engineering teams to continuou
 You can find a list of policy definitions here: [Policies included in enterprise-scale landing zones reference implementations](./ALZ-Policies)
 
 We also add changes to our [What's New? wiki page](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new).
-
-<!-- IMPLEMENTATION -->
 
 ## Why does the enterprise-scale reference implementation require permission at tenant root '/' scope?
 
@@ -67,14 +63,29 @@ Finally, taking the same templates for future operations requires you to redeplo
 
 However, if you want to deploy and manage enterprise-scale architecture via infrastructure-as-code, see [What if we can't deploy using the Azure landing zone accelerator portal-based experience, but want to deploy via infrastructure-as-code?](#what-if-we-cant-deploy-by-using-the-azure-landing-zone-accelerator-portal-based-experience-but-can-deploy-via-infrastructure-as-code).
 
+## I made a mistake or I was just testing. How can I remove the Platform Landing Zone and start over?
+
+We provide a PowerShell cmdlet for cleaning up the IaC Accelerators, instructions for which can be found here: [ALZ IaC Accelerator Cleanup](https://azure.github.io/Azure-Landing-Zones/accelerator/faq/cleanup/)
+
+Example usage:
+
+```pwsh
+Remove-PlatformLandingZone `
+  -ManagementGroups "<root-parent-management-group-id>" `
+  -ManagementGroupsToDeleteNamePatterns "alz-" `
+  -Subscriptions "<management-subscription-id>", "<connectivity-subscription-id>", "<identity-subscription-id>", "<security-subscription-id>" `
+  -SubscriptionsTargetManagementGroup "<root-parent-management-group-id>" `
+  -PlanMode
+
+```
+
 ## What if we can't deploy by using the Azure landing zone accelerator portal-based experience, but can deploy via infrastructure-as-code?
 
 The following implementation options are available when you use infrastructure-as-code:
 
 - The [Azure landing zone accelerator](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-accelerator) portal-based experience can integrate and bootstrap a CI/CD pipeline using GitHub with [AzOps](https://github.com/Azure/AzOps) as documented at [Deploying Enterprise Scale](https://github.com/Azure/Enterprise-Scale/wiki/Deploying-Enterprise-Scale).
 - The [Enterprise-scale Do-It-Yourself (DIY) ARM templates](https://github.com/Azure/Enterprise-Scale/tree/main/eslzArm#enterprise-scale-landing-zones-arm-templates) method
-- The [ALZ Terraform module](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale#terraform-module-for-cloud-adoption-framework-enterprise-scale)
-- The [ALZ Bicep modules](https://github.com/Azure/ALZ-Bicep)
+- The [ALZ IaC Accelerator for Terraform and Bicep](https://aka.ms/alz/acc)
 
 ## If we already deployed enterprise-scale architecture without using infrastructure-as-code, do we have to delete everything and start again to use infrastructure-as-code?
 
@@ -88,21 +99,13 @@ Once configured, AzOps connects to your Azure tenant, scans it, and then pulls i
 
 To see a demo of AzOps being used, check out this YouTube video on the Microsoft DevRadio channel: [Enterprise-scale landing zones DevOps and automation step by step](https://www.youtube.com/watch?v=wWLxxj-uMsY)
 
-### Bicep
+### Infrastructure as Code (IaC) with Bicep or Terraform
 
-The [AzOps](https://github.com/Azure/AzOps) tooling supports deploying Bicep files at the [four Azure scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#understand-scope). Its pull process only stores the scan of your Azure tenants resources in ARM templates that use JSON.
+If you would like to deploy your platform landing zone with infrastructure as code, then head over to our [IaC accelerator docs](https://aka.ms/alz/acc).
 
-Leave us feedback via [GitHub issues on the AzOps repository](https://github.com/Azure/AzOps/issues) if you want to see something added to AzOps.
+It is possible to run Bicep on top of the ARM deployment.
 
-### Terraform
-
-Terraform builds its own [state](https://www.terraform.io/docs/language/state/index.html) file to track and configure resources. If you already deployed enterprise-scale architecture to your Azure tenant, [import](https://www.terraform.io/docs/cli/import/index.html) each resource into the state file to learn what it manages as part of your Terraform code. Then you can deploy, manage, and operate your enterprise-scale deployment via Terraform.
-
-Terraform import is currently done on a per resource basis and can be time consuming and complex to do at scale. It's often easier to delete and redeploy via Terraform than to import everything that's been deployed by the Azure landing zone accelerator portal-based experience. Most customers know from the start that they want to use Terraform to manage their Azure tenant, so this scenario is uncommon.
-
-To deploy enterprise-scale architecture by using Terraform, you might want to use the Terraform module we provide. It deploys everything that the Azure landing zone accelerator portal-based experience does. The module, [Terraform Module for Cloud Adoption Framework Enterprise-scale](https://registry.terraform.io/modules/Azure/caf-enterprise-scale/azurerm/0.0.4-preview), is available from the Terraform Registry page.
-
-To see a demo of Terraform being used, check out this YouTube video on the Microsoft DevRadio channel: [Terraform Module for Cloud Adoption Framework Enterprise-scale Walkthrough](https://www.youtube.com/watch?v=5pJxM1O4bys)
+It is possible to import state to Terraform. We provide guidance and tooling for migrating from the classic Terraform module, but the same tooling and process could be applied to importing an ARM based deployment: [migration guide](https://aka.ms/alz/tf/migrate)
 
 ## The `AzureDiagnostics` table in my Log Analytics Workspace has hit the 500 column limit, what should I do?
 
@@ -159,7 +162,7 @@ The Management Group Names/IDs created via the ALZ Portal Accelerator Deployment
 
 ### What if we are not ready to make the switch (from MMA) and migrate to AMA, right now?
 
-The log analytics agent (MMA) has retired as documented [here]( https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/). Cloud ingestion services will gradually reduce support for MMA agents, which may result in compatibility issues over time. Ingestion for MMA will remain unchanged until February 1, 2025. You need to complete the migration to the Azure Monitor Agent before that date. 
+The log analytics agent (MMA) has retired as documented [here]( https://azure.microsoft.com/updates/were-retiring-the-log-analytics-agent-in-azure-monitor-on-31-august-2024/). Cloud ingestion services will gradually reduce support for MMA agents, which may result in compatibility issues over time. Ingestion for MMA will remain unchanged until February 1, 2025. You need to complete the migration to the Azure Monitor Agent before that date.
 
 ## Where do I find more information about the Azure Monitor Baseline Alerts initiative included in the Azure landing zones Portal Accelerator?
 
