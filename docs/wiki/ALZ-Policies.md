@@ -1,3 +1,8 @@
+> **Important:** We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). As a result this content can now be found under the policy section here: https://azure.github.io/Azure-Landing-Zones/policy/
+> Please note that this content will no longer be updated.
+
+---
+
 # Policies included in Azure landing zones reference implementations
 
 Azure Policy and deployIfNotExist enables autonomy in the platform, and reduces operational burden as you scale your deployments and subscriptions in the Azure landing zone architecture. The primary purpose is to ensure that subscriptions and resources are compliant, while empowering application teams to use their own preferred tools/clients to deploy.
