@@ -28,6 +28,10 @@ To successfully deploy an Enterprise-Scale with a predefined [template](https://
 * Microsoft.GuestConfiguration
 * Microsoft.Advisor
 * Microsoft.PolicyInsights
+* Microsoft.ContainerInstance ^
+* Microsoft.Storage ^
+
+^ = These resource providers are used by deployment scripts. We recommend registering them up front to avoid issues mid-run if there is any problem registering them.
 
 This list of RPs is all you need to deploy Enterprise Scale for EMPTY subscriptions (only resources listed in the template). If you want to deploy additional resources, please ensure the RPs for those resources are also registered.
 
