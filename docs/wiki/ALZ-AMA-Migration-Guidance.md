@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Introduction
 
 The ALZ Portal Accelerator has recently been enhanced, and starting with the 2024-01-31 release, has removed the legacy MMA agent and now deploys Azure Monitor Agent (AMA) to new environments. With the 2024-06-03 release, there are also updates for User Assigned Managed Identities. Azure Landing Zones has transitioned to using one centralized User Assigned Managed Identity. This consolidation of User Assigned Managed Identity for AMA represents an important improvement in managing deployments at scale more effectively. Please refer to [What’s new](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) for more information.

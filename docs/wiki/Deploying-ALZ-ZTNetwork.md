@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 ## Azure landing zone portal accelerator deployment with Zero Trust network principles
 
 This guide will review how to deploy the Azure landing zone portal accelerator with a jump start on Zero Trust Networking Principles for Azure landing zones. If you are looking for a complete walkthrough of the Azure landing zones portal accelerator select one of the deployment guides in the wiki navigation on the right of this page under "Deploying Enterprise-Scale". For more information on Zero Trust security model and principles visit [What is Zero Trust?](https://learn.microsoft.com/security/zero-trust/zero-trust-overview) in the [Zero Trust Guidance Center](https://learn.microsoft.com/security/zero-trust/).

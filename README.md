@@ -6,7 +6,8 @@
 
 ## User documentation
 
-To find out more about the Azure landing zones reference implementation, please refer to the [documentation on our Wiki](https://github.com/Azure/Enterprise-Scale/wiki)
+> [!Important]
+> All documentation has moved to our central, consolidated technical documentation library: https://aka.ms/alz/techdocs
 
 ---
 

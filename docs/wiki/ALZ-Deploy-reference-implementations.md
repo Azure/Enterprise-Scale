@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Deploy Enterprise-Scale Reference implementation in your own environment
 
 This section will guide you through the process of deploying an Enterprise-Scale reference implementation in your own environment.

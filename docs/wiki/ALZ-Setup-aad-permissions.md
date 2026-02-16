@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Configure Microsoft Entra ID permissions for Service Principal
 
 This article will guide you through the process to add your AzOps service principal to the  Microsoft Entra ID [Directory Readers](https://learn.microsoft.com/azure/active-directory/users-groups-roles/directory-assign-admin-roles) role.

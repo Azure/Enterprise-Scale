@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Create Landing Zone(s)
 
 It is now time to turn the lights ON :bulb:
@@ -37,4 +40,4 @@ To use the ARM templates below to create new subscriptions, you must have Manage
 | Agreement types | ARM Template | Description
 |:-------------------------|:-------------|:--------------|
 | Enterprise Agreement (EA) |[![Deploy To Azure](https://learn.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Feslz.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fdocs%2Freference%2Flzs%2FarmTemplates%2Fportal-eslz.json) | Create 'N' number of subscriptions into multiple Management Groups
-| Enterprise Agreement (EA) |[![Deploy To Azure](https://learn.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fexamples%2Flanding-zones%2Fsubscription-with-rbac%2FsubscriptionWithRbac.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fexamples%2Flanding-zones%2Fsubscription-with-rbac%2Fportal-subscriptionWithRbac.json)| Create a subscription with RBAC for SPN
+| Enterprise Agreement (EA) |[![Deploy To Azure](https://learn.microsoft.com/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fexamples%2Flanding-zones%2Fsubscription-with-rbac%2FsubscriptionWithRbac.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FEnterprise-Scale%2Fmain%2Fexamples%2Flanding-zones%2Fsubscription-with-rbac%2Fportal-subscriptionWithRbac.json)| Create a subscription with RBAC for SPN |
