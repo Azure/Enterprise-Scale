@@ -13,36 +13,53 @@
             "type": "string",
             "defaultValue": "[resourceGroup().location]",
             "allowedValues": [
+                "australiacentral",
                 "australiaeast",
-                "uksouth",
-                "northeurope",
-                "southcentralus",
-                "westus3",
-                "eastus",
-                "northcentralus",
-                "westcentralus",
-                "eastus2",
-                "westeurope",
-                "centralus",
-                "canadacentral",
+                "australiasoutheast",
+                "belgiumcentral",
                 "brazilsouth",
+                "canadacentral",
+                "canadaeast",
+                "centralindia",
+                "centralus",
+                "chilecentral",
+                "eastasia",
+                "eastus",
+                "eastus2",
                 "francecentral",
+                "germanynorth",
+                "germanywestcentral",
+                "indonesiacentral",
+                "israelcentral",
+                "italynorth",
+                "japaneast",
+                "japanwest",
+                "koreacentral",
+                "malaysiawest",
+                "mexicocentral",
+                "newzealandnorth",
+                "northcentralus",
+                "northeurope",
+                "norwayeast",
+                "polandcentral",
+                "qatarcentral",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "southindia",
+                "spaincentral",
                 "swedencentral",
                 "switzerlandnorth",
-                "eastasia",
-                "southeastasia",
-                "japaneast",
-                "koreacentral",
-                "southafricanorth",
-                "centralindia",
-                "westus",
-                "canadaeast",
-                "qatarcentral",
+                "taiwannorth",
+                "uaecentral",
                 "uaenorth",
-                "australiasoutheast",
-                "polandcentral",
-                "spaincentral",
-                "italynorth"
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2",
+                "westus3"
             ],
             "metadata": {
                 "description": "Azure region for DNS private resolver and virtual network. Azure DNS Private Resolver available in specific region, refer the documentation to select the supported region for this deployment. For more information https://docs.microsoft.com/azure/dns/dns-private-resolver-overview#regional-availability"
@@ -128,8 +145,7 @@
             "apiVersion": "2019-10-01",
             "name": "[concat(variables('resourceDeploymentName'), '-corenetworking')]",
             "resourceGroup": "[parameters('vnetRg')]",
-            "dependsOn": [
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
@@ -553,8 +569,7 @@
                             "type": "string"
                         }
                     },
-                    "variables": {
-                    },
+                    "variables": {},
                     "resources": [
                         {
                             "type": "Microsoft.Network/dnsResolvers",
@@ -566,27 +581,26 @@
                                     "id": "[concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName'))]"
                                 }
                             },
-                            "dependsOn": [
-                            ]
+                            "dependsOn": []
                         },
                         {
-                        "type": "Microsoft.Network/dnsResolvers/inboundEndpoints",
-                        "apiVersion": "2022-07-01",
-                        "name": "[format('{0}/{1}', parameters('dnsResolverName'), parameters('inboundSubnet'))]",
-                        "location": "[parameters('location')]",
-                        "properties": {
-                            "ipConfigurations": [
-                            {
-                                "privateIpAllocationMethod": "Dynamic",
-                                "subnet": {
-                                    "id": "[format('{0}/subnets/{1}', concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName')), parameters('inboundSubnet'))]"
-                                }
-                            }
+                            "type": "Microsoft.Network/dnsResolvers/inboundEndpoints",
+                            "apiVersion": "2022-07-01",
+                            "name": "[format('{0}/{1}', parameters('dnsResolverName'), parameters('inboundSubnet'))]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "privateIpAllocationMethod": "Dynamic",
+                                        "subnet": {
+                                            "id": "[format('{0}/subnets/{1}', concat(subscription().id,'/resourceGroups/',parameters('vnetRgName'), '/providers/','Microsoft.Network/virtualNetworks/', parameters('resolverVNETName')), parameters('inboundSubnet'))]"
+                                        }
+                                    }
+                                ]
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/dnsResolvers', parameters('dnsResolverName'))]"
                             ]
-                        },
-                        "dependsOn": [
-                            "[resourceId('Microsoft.Network/dnsResolvers', parameters('dnsResolverName'))]"
-                        ]
                         },
                         {
                             "type": "Microsoft.Network/dnsResolvers/outboundEndpoints",
