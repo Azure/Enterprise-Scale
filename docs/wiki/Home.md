@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Azure landing zones User Guide
 
 > **NOTE:** _Enterprise-Scale is now Azure landing zones_

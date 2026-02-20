@@ -1,6 +1,7 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
 
 # ALZ Azure Resource Provider Recommendations
-
 
 ## What are Resource Providers in Azure?
 

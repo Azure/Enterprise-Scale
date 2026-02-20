@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Deploy workloads into the landing zones
 
 At this point you have the necessary platform setup and landing zones (subscriptions) created and placed into their respective management groups, being secure, governed, monitored, and enabled for autonomy and are ready for your application teams to do workload deployments, migrations, and net-new development to their landing zones.
