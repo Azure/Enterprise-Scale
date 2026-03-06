@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 # Configure Azure permissions for ARM tenant deployments
 
 This article will guide you through the process of configuring permissions in your Azure environment to enable ARM tenant level deployments.

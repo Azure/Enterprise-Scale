@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 ## Create landing zones (subscriptions) via Subscription Vending
 
 The approach of "Subscription Vending", materializes and standardizes the ALZ "Subscription Democratization" Design Principle, by formulating a process for requesting, deploying and governing Azure Subscriptions, and by doing so enabling the Applications Teams to onboard their workloads in a fast, yet deterministic way.

@@ -1,12 +1,16 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 ## In this Section
 
-- [What to do if you have a need for a feature that is not in AMA, not GA, and not available in an alternative solution?](#What-to-do-if-you-have-a-need-for-a-feature-that-is-not-in-AMA,-not-GA,-and-not-available-in-an-alternative-solution?)
-- [Migration guidance for existing customers?](#Migration-guidance-for-existing-customers?)
-
-- [Why do I need an User-Assigned Managed Identity?](#Why-do-I-need-a-User-Assigned-Managed-Identity?)
-- [Why do I need Data Collection Rules?](#Why-do-I-need-Data-Collection-Rules?)
-- [Custom Policies and Assignments](#Custom-Policies-and-Assignments)
-- [MMA deprecation vs Legacy Solutions in Log Analytics Workspace](#MMA-deprecation-and-Legacy-Solutions-in-Log-Analytics-Workspace)
+- [In this Section](#in-this-section)
+- [What to do if you have a need for a feature that is not in AMA, not GA, and not available in an alternative solution?](#what-to-do-if-you-have-a-need-for-a-feature-that-is-not-in-ama-not-ga-and-not-available-in-an-alternative-solution)
+- [Migration guidance for existing customers?](#migration-guidance-for-existing-customers)
+- [Why do I need a User-Assigned Managed Identity?](#why-do-i-need-a-user-assigned-managed-identity)
+- [Why do I need Data Collection Rules?](#why-do-i-need-data-collection-rules)
+- [Custom Policies and Assignments](#custom-policies-and-assignments)
+- [MMA deprecation and Legacy Solutions in Log Analytics Workspace](#mma-deprecation-and-legacy-solutions-in-log-analytics-workspace)
+- [Why is a Policy disbled in the "Configure SQL VMs and Arc-enabled SQL Servers to install Microsoft Defender for SQL and AMA with a user-defined LA workspace" initiative?](#why-is-a-policy-disbled-in-the-configure-sql-vms-and-arc-enabled-sql-servers-to-install-microsoft-defender-for-sql-and-ama-with-a-user-defined-la-workspace-initiative)
 
 ---
 

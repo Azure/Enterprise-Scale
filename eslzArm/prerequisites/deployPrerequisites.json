@@ -4,7 +4,7 @@
     "parameters": {
       "resourceGroupName": {
         "type": "string",
-        "defaultValue": "rg-alz-prereqs",
+        "defaultValue": "[concat('rg-alz-prereqs-', parameters('location'))]",
         "metadata": {
           "description": "The resource group name where the AVNM resources will be created"
         }
@@ -26,6 +26,20 @@
         "metadata": {
           "description": "The subscription ID of the management subscription."
         }
+      },
+      "userAssignedIdentityName": {
+        "type": "string",
+        "defaultValue": "[concat('id-alz-prereq-prod-', parameters('location'))]",
+        "metadata": {
+          "description": "The name of the user-assigned managed identity for ALZ prerequisites."
+        }
+      },
+      "deploymentScriptName": {
+        "type": "string",
+        "defaultValue": "[concat('script-alz-prereq-prod-', parameters('location'))]",
+        "metadata": {
+          "description": "The name of the deployment script for ALZ prerequisites."
+        }
       }
     },
     "resources": [
@@ -46,6 +60,9 @@
             },
             "resourceGroupName": {
               "value": "[parameters('resourceGroupName')]"
+            },
+            "userAssignedIdentityName": {
+              "value": "[parameters('userAssignedIdentityName')]"
             }
           },
           "template": {
@@ -56,6 +73,9 @@
                 "type": "string"
               },
               "resourceGroupName": {
+                "type": "string"
+              },
+              "userAssignedIdentityName": {
                 "type": "string"
               }
             },
@@ -82,6 +102,9 @@
                         "parameters": {
                             "location": {
                                 "value": "[parameters('location')]"
+                            },
+                            "userAssignedIdentityName": {
+                                "value": "[parameters('userAssignedIdentityName')]"
                             }
                         },
                         "template": {
@@ -90,6 +113,9 @@
                             "parameters": {
                                 "location": {
                                     "type": "string"
+                                },
+                                "userAssignedIdentityName": {
+                                    "type": "string"
                                 }
                             },
                             "variables": {},
@@ -97,18 +123,18 @@
                                 {
                                     "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
                                     "apiVersion": "2023-07-31-preview",
-                                    "name": "uai-alz-prereq",
+                                    "name": "[parameters('userAssignedIdentityName')]",
                                     "location": "[parameters('location')]"
                                 }
                             ],
                             "outputs": {
                                 "userAssignedIdentityId": {
                                     "type": "string",
-                                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq')]"
+                                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
                                 },
                                 "uaiPrincipalId": {
                                     "type": "string",
-                                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'uai-alz-prereq'), '2023-07-31-preview').principalId]"
+                                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName')), '2023-07-31-preview').principalId]"
                                 }
                             }
                         }
@@ -175,6 +201,9 @@
                         },
                         "managementSubscriptionId": {
                         "value": "[parameters('managementSubscriptionId')]"
+                        },
+                        "deploymentScriptName": {
+                        "value": "[parameters('deploymentScriptName')]"
                         }
                     },
                     "template": {
@@ -189,13 +218,16 @@
                             },
                             "managementSubscriptionId": {
                                 "type": "string"
+                            },
+                            "deploymentScriptName": {
+                                "type": "string"
                             }
                         },
                         "resources": [
                         {
                             "type": "Microsoft.Resources/deploymentScripts",
                             "apiVersion": "2020-10-01",
-                            "name": "alz-prereq-deploymentscript",
+                            "name": "[parameters('deploymentScriptName')]",
                             "location": "[parameters('location')]",
                             "kind": "AzurePowerShell",
                             "identity": {

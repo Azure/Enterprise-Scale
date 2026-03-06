@@ -1,3 +1,6 @@
+> [!Important] 
+> We are migrating all documentation to the central Azure landing zone repository (https://azure.github.io/Azure-Landing-Zones/). This content is no longer maintained.
+
 ## Azure landing zone portal accelerator deployment with hub and spoke network topology
 
 This section will describe how to deploy the Azure landing zone portal accelerator with connectivity to on-premises datacenters and branch offices based on a hub and spoke network topology. Please refer to [AdventureWorks reference implementation](https://github.com/Azure/Enterprise-Scale/blob/main/docs/reference/adventureworks/README.md) for further details on this reference architecture.
