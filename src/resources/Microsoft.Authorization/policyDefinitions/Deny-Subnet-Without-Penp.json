@@ -9,7 +9,7 @@
     "displayName": "Subnets without Private Endpoint Network Policies enabled should be denied",
     "description": "This policy denies the creation of a subnet without Private Endpoint Netwotk Policies enabled. This policy is intended for 'workload' subnets, not 'central infrastructure' (aka, 'hub') subnets.",
     "metadata": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "Network",
       "source": "https://github.com/Azure/Enterprise-Scale/",
       "alzCloudEnvironments": [
@@ -45,6 +45,20 @@
           "AzureBastionSubnet",
           "RouteServerSubnet"
         ]
+      },
+      "penpValue": {
+        "type": "String",
+        "allowedValues": [
+          "Disabled",
+          "NetworkSecurityGroupEnabled",
+          "RouteTableEnabled",
+          "Enabled"
+        ],
+        "defaultValue": "Enabled",
+        "metadata": {
+          "displayName": "Private Endpoint Network Policies Value",
+          "description": "The privateEndpointNetworkPolicies value required for evaluated subnets"
+        }
       }
     },
     "policyRule": {
@@ -63,7 +77,7 @@
                     "allOf": [
                       {
                         "field": "Microsoft.Network/virtualNetworks/subnets[*].privateEndpointNetworkPolicies",
-                        "notEquals": "Enabled"
+                        "notEquals": "[[parameters('penpValue')]"
                       },
                       {
                         "field": "Microsoft.Network/virtualNetworks/subnets[*].name",
@@ -88,7 +102,7 @@
               },
               {
                 "field": "Microsoft.Network/virtualNetworks/subnets/privateEndpointNetworkPolicies",
-                "notEquals": "Enabled"
+                "notEquals": "[[parameters('penpValue')]"
               }
             ]
           }
