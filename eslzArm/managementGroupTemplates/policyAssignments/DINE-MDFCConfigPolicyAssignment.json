@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -155,8 +156,8 @@
             "deployAzureSecurity": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').azureSecurity))]"
         }
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').azureSecurity]",
@@ -224,14 +225,18 @@
                         "value": "[parameters('enableAscForCspm')]"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNames').deployAzureSecurity]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').azureSecurity]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -239,6 +244,6 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').azureSecurity), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
-    ],
+    },
     "outputs": {}
 }
