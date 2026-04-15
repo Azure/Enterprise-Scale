@@ -1813,9 +1813,6 @@
                 "azFwPolicyNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'azFwPolicyNameSecondary'), not(empty(parameters('customResourceNames').azFwPolicyNameSecondary))), parameters('customResourceNames').azFwPolicyNameSecondary, concat('afwp-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
                 "routeTableName": "[if(and(contains(parameters('customResourceNames'), 'routeTableName'), not(empty(parameters('customResourceNames').routeTableName))), parameters('customResourceNames').routeTableName, concat('rt-hub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
                 "routeTableNameSecondary": "[if(and(contains(parameters('customResourceNames'), 'routeTableNameSecondary'), not(empty(parameters('customResourceNames').routeTableNameSecondary))), parameters('customResourceNames').routeTableNameSecondary, concat('rt-hub-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocationSecondary')))]",
-                "alzPreReqRg": "[if(and(contains(parameters('customResourceNames'), 'alzPreReqRg'), not(empty(parameters('customResourceNames').alzPreReqRg))), parameters('customResourceNames').alzPreReqRg, concat('rg-alz-prereq-prod-', parameters('connectivityLocation')))]",
-                "alzPreReqUAMIName": "[if(and(contains(parameters('customResourceNames'), 'alzPreReqUAMIName'), not(empty(parameters('customResourceNames').alzPreReqUAMIName))), parameters('customResourceNames').alzPreReqUAMIName, concat('id-alz-prereq-prod-', parameters('connectivityLocation')))]",
-                "alzPreReqScriptName": "[if(and(contains(parameters('customResourceNames'), 'alzPreReqScriptName'), not(empty(parameters('customResourceNames').alzPreReqScriptName))), parameters('customResourceNames').alzPreReqScriptName, concat('script-alz-prereq-prod-', parameters('connectivityLocation')))]",
                 "avnmName": "[if(and(contains(parameters('customResourceNames'), 'avnmName'), not(empty(parameters('customResourceNames').avnmName))), parameters('customResourceNames').avnmName, concat('vnm-', parameters('enterpriseScaleCompanyPrefix'), '-prod-', parameters('connectivityLocation')))]",
                 "avnmRgName": "[if(and(contains(parameters('customResourceNames'), 'avnmRgName'), not(empty(parameters('customResourceNames').avnmRgName))), parameters('customResourceNames').avnmRgName, concat('rg-vnm-prod-', parameters('connectivityLocation')))]",
                 "avnmUserAssignedIdentityName": "[if(and(contains(parameters('customResourceNames'), 'avnmUserAssignedIdentityName'), not(empty(parameters('customResourceNames').avnmUserAssignedIdentityName))), parameters('customResourceNames').avnmUserAssignedIdentityName, concat('id-vnm-prod-', parameters('connectivityLocation')))]",
@@ -1895,7 +1892,6 @@
             "roleDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/roleDefinitions/customRoleDefinitions.json')]",
             "policyDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/policies.json')]",
             "initiativeDefinitions": "[uri(deployment().properties.templateLink.uri, 'managementGroupTemplates/policyDefinitions/initiatives.json')]",
-            "preRequisites": "[uri(deployment().properties.templateLink.uri, 'prerequisites/deployPrerequisites.json')]",
             "avnmConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/avnmConfiguration.json')]",
             "avnmPolicy": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/avnmPolicy.json')]",
             "vnetConnectivityHub": "[uri(deployment().properties.templateLink.uri, 'subscriptionTemplates/hubspoke-connectivity.json')]",
@@ -2443,8 +2439,7 @@
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2546,8 +2541,7 @@
             "location": "[deployment().location]",
             "scope": "[concat('Microsoft.Management/managementGroups/', parameters('enterpriseScaleCompanyPrefix'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -2640,86 +2634,10 @@
                 }
             }
         },
-        {
-            // ALZ Pre-Requisites and Azure's Untold Story...
-            "condition": "[not(empty(parameters('managementSubscriptionId')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2024-11-01",
-            "name": "alz-prerequisites",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "[variables('deploymentNames').initiativeDeploymentName]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').preRequisites]"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[deployment().location]"
-                    },
-                    "eslzRootName": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "managementSubscriptionId": {
-                        "value": "[parameters('managementSubscriptionId')]"
-                    },
-                    "resourceGroupName": {
-                        "value": "[parameters('resourceNames').alzPreReqRg]"
-                    },
-                    "userAssignedIdentityName": {
-                        "value": "[parameters('resourceNames').alzPreReqUAMIName]"
-                    },
-                    "deploymentScriptName": {
-                        "value": "[parameters('resourceNames').alzPreReqScriptName]"
-                    }
-                }
-            }
-        },
-        {
-            // ALZ Pre-Requisites and Azure's Untold Story... LITE
-            "condition": "[not(empty(parameters('singlePlatformSubscriptionId')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2024-11-01",
-            "name": "alz-prerequisites",
-            "scope": "[variables('scopes').eslzRootManagementGroup]",
-            "location": "[deployment().location]",
-            "dependsOn": [
-                "[variables('deploymentNames').initiativeDeploymentName]",
-                "[variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[variables('deploymentUris').preRequisites]"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[deployment().location]"
-                    },
-                    "eslzRootName": {
-                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
-                    },
-                    "managementSubscriptionId": {
-                        "value": "[parameters('singlePlatformSubscriptionId')]"
-                    },
-                    "resourceGroupName": {
-                        "value": "[parameters('resourceNames').alzPreReqRg]"
-                    },
-                    "userAssignedIdentityName": {
-                        "value": "[parameters('resourceNames').alzPreReqUAMIName]"
-                    },
-                    "deploymentScriptName": {
-                        "value": "[parameters('resourceNames').alzPreReqScriptName]"
-                    }
-                }
-            }
-        },
+        /*
+            ALZ Pre-Requisites removed - policy assignment templates now use retryOn (languageVersion 2.0)
+            to handle eventual consistency for policy definitions and initiatives.
+        */
         /*
             The following deployments will organize the dedicated platform subscriptions into their respective management groups
         */
@@ -2843,8 +2761,7 @@
             "location": "[deployment().location]",
             "subscriptionId": "[parameters('managementSubscriptionId')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -3060,7 +2977,6 @@
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
             ],
@@ -3083,7 +2999,6 @@
             "location": "[deployment().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').monitoringLiteDeploymentName)]"
             ],
@@ -3109,8 +3024,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtSubscriptionPlacement)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -3164,7 +3078,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3214,7 +3127,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3264,7 +3176,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3314,7 +3225,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3364,7 +3274,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3414,7 +3323,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3464,7 +3372,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3514,7 +3421,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3564,7 +3470,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3614,7 +3519,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3664,7 +3568,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3714,7 +3617,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3764,7 +3666,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3814,7 +3715,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3864,7 +3764,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3914,7 +3813,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -3964,7 +3862,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4014,7 +3911,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4064,7 +3960,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4114,7 +4009,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4167,7 +4061,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4217,7 +4110,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4267,7 +4159,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4317,7 +4208,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4367,7 +4257,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4417,7 +4306,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4467,7 +4355,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').vnetConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').nvaConnectivityHubLiteDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "copy": {
@@ -4708,7 +4595,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -4732,7 +4619,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -4756,7 +4643,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -4780,7 +4667,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -5091,7 +4978,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -5161,7 +5048,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -5415,7 +5302,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -5479,7 +5365,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionPriDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -5790,8 +5675,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -5848,7 +5732,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -5913,7 +5796,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarPriDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').bastionPriDeploymentName))]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -5968,8 +5850,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vnetConnectivityHubDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanConnectivityHubDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').nvaConnectivityHubDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6026,7 +5907,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -6091,7 +5971,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').vwanSidecarSecDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', concat('vwan-', variables('deploymentNames').bastionSecDeploymentName))]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -6143,8 +6022,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').asbPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascPolicyDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ascGovPolicyDeploymentName)]",
-                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').ddosDeploymentName)]"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6195,8 +6073,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
                 "dnsZones",
-                "dnsZonesLite",
-                "alz-prerequisites"
+                "dnsZonesLite"
             ],
             "location": "[deployment().location]",
             "properties": {
@@ -6624,7 +6501,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').monitoringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -6688,7 +6564,6 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeeringDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identityPeering2DeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').bastionSecDeploymentName)]",
-                "alz-prerequisites",
                 "corpConnectedMoveLzs"
             ],
             "location": "[deployment().location]",
@@ -6968,8 +6843,7 @@
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').mgmtGroupDeploymentName)]",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').mgmtGroupLiteDeploymentName)]",
                 "dnsZones",
-                "dnsZonesLite",
-                "alz-prerequisites"
+                "dnsZonesLite"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7261,7 +7135,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7294,7 +7168,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7657,7 +7531,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7714,7 +7588,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7738,7 +7612,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7762,7 +7636,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7786,7 +7660,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7813,7 +7687,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7837,7 +7711,7 @@
             "scope": "[variables('scopes').corpManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7864,7 +7738,7 @@
             "scope": "[variables('scopes').corpManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7888,7 +7762,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7914,7 +7788,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7940,7 +7814,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7967,7 +7841,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -7991,7 +7865,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8018,7 +7892,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8045,7 +7919,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8072,7 +7946,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8099,7 +7973,7 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8129,7 +8003,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8159,7 +8033,7 @@
             "scope": "[variables('scopes').corpManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8183,7 +8057,7 @@
             "scope": "[variables('scopes').corpManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8213,7 +8087,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8237,7 +8111,7 @@
             "scope": "[variables('scopes').eslzRootManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8264,7 +8138,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8384,7 +8258,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8411,7 +8285,7 @@
             "scope": "[variables('scopes').lzsManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8438,7 +8312,7 @@
             "scope": "[variables('scopes').decommissionedManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8465,7 +8339,7 @@
             "scope": "[variables('scopes').sandboxManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8495,7 +8369,7 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites"
+                "[variables('deploymentNames').initiativeDeploymentName]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -8522,7 +8396,6 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
             ],
             "properties": {
@@ -8547,7 +8420,6 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
             ],
             "properties": {
@@ -8575,7 +8447,6 @@
             "scope": "[variables('scopes').identityManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('deploymentNames').identitySubscriptionPlacement)]"
             ],
             "properties": {
@@ -9071,8 +8942,7 @@
             "location": "[deployment().location]",
             "subscriptionId": "[parameters('singlePlatformSubscriptionId')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', variables('esliteDeploymentNames').platformLiteSubscriptionPlacement)]",
-                "alz-prerequisites"
+                "[resourceId('Microsoft.Resources/deployments', variables('esliteDeploymentNames').platformLiteSubscriptionPlacement)]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -10176,7 +10046,6 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"
             ],
             "properties": {
@@ -10207,7 +10076,6 @@
             "scope": "[variables('scopes').platformManagementGroup]",
             "location": "[deployment().location]",
             "dependsOn": [
-                "alz-prerequisites",
                 "[resourceId('Microsoft.Resources/deployments', variables('esLiteDeploymentNames').platformLiteSubscriptionPlacement)]"
             ],
             "properties": {
