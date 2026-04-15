@@ -35,16 +35,13 @@ var loadPolicySetDefinitions = {
   All: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-UnusedResourcesCostOptimization.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Audit-TrustedLaunch.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security.json') // Deprecated from ALZ - superseded by dated version and missing definitionVersion on built-in policy references which risks breaking changes
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Sql-Security_20240529.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit.json') // Deprecated from ALZ - superseded by dated versions and missing definitionVersion on built-in policy references which risks breaking changes
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20240509.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-EncryptTransit_20241211.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Decomm.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ALZ-Sandbox.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/DenyAction-DeleteProtection.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-AUM-CheckUpdates.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault.json') // Superseded by Enforce-Guardrails-KeyVault_20260203.json
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault_20260203.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-APIM.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-AppServices.json') // FSI specific initiative
@@ -64,7 +61,6 @@ var loadPolicySetDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Kubernetes.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MachineLearning.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-MySQL.json') // FSI specific initiative
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network.json') // FSI specific initiative - superseded by Enforce-Guardrails-Network_20250326.json
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network_20250326.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-OpenAI.json') // FSI specific initiative
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-PostgreSQL.json') // FSI specific initiative
@@ -76,14 +72,10 @@ var loadPolicySetDefinitions = {
   ]
   AzureCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deny-PublicPaaSEndpoints.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Diagnostics-LogAnalytics.json') // Deprecated from ALZ - superseded by built-in initiative 0884adba-2312-4468-abeb-5422caed1038
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config.json') // Deprecated from ALZ - superseded by dated version and missing definitionVersion on built-in policy references which risks breaking changes
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config_20240319.json')
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-Private-DNS-Zones.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK_20250218.json') // See AzureChinaCloud and AzureUSGovernment comments below for reasoning
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-ACSB.json') // Unable to validate if Guest Configuration is working in other clouds
-    // loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-DefenderSQL-AMA.json') // Deprecated from ALZ - superseded by built-in initiative de01d381-bae9-4670-8870-786f89f49e26
     loadTextContent('../resources/Microsoft.Authorization/policySetDefinitions/Enforce-Backup.json') // Unable to validate if all Azure Site Recovery features are working in other clouds
   ]
   AzureChinaCloud: [

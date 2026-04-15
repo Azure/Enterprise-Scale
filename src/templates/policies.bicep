@@ -61,14 +61,10 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MySql-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PostgreSql-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Private-DNS-Zones.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicEndpoint-MariaDB.json') // Deprecated from ALZ - superseded by built-in fdccbe47-f3e3-4213-ad5d-ea459b2fa077
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicIP.json') // Deprecated from ALZ - superseded by built-in 6c112d4e-5bc7-47ae-a041-ea2d9dccd749
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet.json') // Deprecated from ALZ - superseded by custom Deny-MgmtPorts-From-Internet
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MgmtPorts-From-Internet.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Redis-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Sql-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-SqlMi-minTLS.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-minTLS.json') // Deprecated from ALZ - superseded by built-ins fe83a0eb-a853-422d-aac2-1bffd182c5d0 and 404c3081-a854-4457-ae30-26a93ef643f9
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-SFTP.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Penp.json')
@@ -138,8 +134,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-WVDWorkspace.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-FirewallPolicy.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MySQL-sslEnforcement.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Nsg-FlowLogs-to-LA.json') // Deprecated from ALZ - superseded by built-in e920df7f-9a64-4066-9b58-52684c02a091
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Nsg-FlowLogs.json') // Deprecated from ALZ - superseded by built-in e920df7f-9a64-4066-9b58-52684c02a091
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-PostgreSQL-sslEnforcement.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-AuditingSettings.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-SQL-minTLS.json')
@@ -157,11 +151,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DiagnosticLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-ActivityLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-UserAssignedManagedIdentity-VMInsights.json')
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DCR-Association.json') // Deprecated from ALZ - superseded by built-in 2227e1f1-23dd-4c3a-85a9-7024a401d8b2
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DefenderSQL-DCR.json') // Deprecated from ALZ - superseded by built-in 63d03cbd-47fd-4ee1-8a1c-9ddf07303de0
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-AMA.json') // Deprecated from ALZ - superseded by built-in f91991d1-5383-4c95-8ee5-5ac423dd8bb1
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL-DCR.json') // Deprecated from ALZ - superseded by built-in 04754ef9-9ae3-4477-bf17-86ef50026304
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL.json') // Deprecated from ALZ - superseded by built-in ddca0ddc-4e9d-4bbb-92a1-f7c4dd7ef7ce
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-APIM-TLS.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppGw-Without-Tls.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppService-without-BYOC.json') // FSI specific policy
@@ -203,7 +192,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-ComputeCluster-Scale.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-HbiWorkspace.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-PublicAccessWhenBehindVnet.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
-    // loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-PublicNetworkAccess.json') // Deprecated from ALZ - superseded by built-in 438c38d2-3772-465a-a9cc-7a6666a275ce
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Budget.json') // Needs validating in AzureChinaCloud (already used in AzureUSGovernment)
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-AVDScalingPlans.json') // No obvious reason for exclusion from AzureChinaCloud and AzureUSGovernment, impacts "Deploy-Diagnostics-LogAnalytics" Policy Set Definition
   ]
