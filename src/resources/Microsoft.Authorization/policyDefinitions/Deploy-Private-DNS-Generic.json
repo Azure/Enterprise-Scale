@@ -9,7 +9,7 @@
         "displayName": "Deploy-Private-DNS-Generic",
         "description": "Configure private DNS zone group to override the DNS resolution for PaaS services private endpoint. See https://aka.ms/pepdnszones for information on values to provide to parameters in this policy.",
         "metadata": {
-            "version": "2.0.0",
+            "version": "2.1.0",
             "category": "Networking",
             "source": "https://github.com/Azure/Enterprise-Scale/",
             "alzCloudEnvironments": [
@@ -84,22 +84,44 @@
                         "equals": "Microsoft.Network/privateEndpoints"
                     },
                     {
-                        "count": {
-                            "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*]",
-                            "where": {
-                                "allOf": [
-                                    {
-                                        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].privateLinkServiceId",
-                                        "contains": "[[parameters('resourceType')]"
-                                    },
-                                    {
-                                        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
-                                        "equals": "[[parameters('groupId')]"
+                        "anyOf": [
+                            {
+                                "count": {
+                                    "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*]",
+                                    "where": {
+                                        "allOf": [
+                                            {
+                                                "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].privateLinkServiceId",
+                                                "contains": "[[parameters('resourceType')]"
+                                            },
+                                            {
+                                                "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+                                                "equals": "[[parameters('groupId')]"
+                                            }
+                                        ]
                                     }
-                                ]
+                                },
+                                "greaterOrEquals": 1
+                            },
+                            {
+                                "count": {
+                                    "field": "Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections[*]",
+                                    "where": {
+                                        "allOf": [
+                                            {
+                                                "field": "Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections[*].privateLinkServiceId",
+                                                "contains": "[[parameters('resourceType')]"
+                                            },
+                                            {
+                                                "field": "Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections[*].groupIds[*]",
+                                                "equals": "[[parameters('groupId')]"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "greaterOrEquals": 1
                             }
-                        },
-                        "greaterOrEquals": 1
+                        ]
                     }
                 ]
             },
