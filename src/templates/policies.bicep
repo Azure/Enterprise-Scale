@@ -61,14 +61,10 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MySql-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PostgreSql-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Private-DNS-Zones.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicEndpoint-MariaDB.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-PublicIP.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-RDP-From-Internet.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MgmtPorts-From-Internet.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Redis-http.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Sql-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-SqlMi-minTLS.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-minTLS.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Storage-SFTP.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Nsg.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Penp.json')
@@ -138,8 +134,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-WVDWorkspace.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-FirewallPolicy.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MySQL-sslEnforcement.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Nsg-FlowLogs-to-LA.json') // Only difference is hard-coded template deployment location (handled by this template)
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Nsg-FlowLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-PostgreSQL-sslEnforcement.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Sql-AuditingSettings.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-SQL-minTLS.json')
@@ -157,11 +151,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-DiagnosticLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/DenyAction-ActivityLogs.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-UserAssignedManagedIdentity-VMInsights.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DCR-Association.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-Arc-SQL-DefenderSQL-DCR.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-AMA.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL-DCR.json')
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-MDFC-SQL-DefenderSQL.json')
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-APIM-TLS.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppGw-Without-Tls.json') // FSI specific policy
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AppService-without-BYOC.json') // FSI specific policy
@@ -203,7 +192,6 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-ComputeCluster-Scale.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-HbiWorkspace.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-PublicAccessWhenBehindVnet.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
-    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-PublicNetworkAccess.json') // Needs validating in AzureChinaCloud and AzureUSGovernment
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Budget.json') // Needs validating in AzureChinaCloud (already used in AzureUSGovernment)
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-AVDScalingPlans.json') // No obvious reason for exclusion from AzureChinaCloud and AzureUSGovernment, impacts "Deploy-Diagnostics-LogAnalytics" Policy Set Definition
   ]
@@ -275,7 +263,7 @@ var policyDefinitionsByCloudType = {
 var policyDefinitions = concat(policyDefinitionsByCloudType.All, policyDefinitionsByCloudType[cloudEnv])
 
 // Create the Policy Definitions as needed for the target cloud environment
-resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [
+resource PolicyDefinitions 'Microsoft.Authorization/policyDefinitions@2025-11-01' = [
   for policy in policyDefinitions: {
     name: policy.name
     properties: {
