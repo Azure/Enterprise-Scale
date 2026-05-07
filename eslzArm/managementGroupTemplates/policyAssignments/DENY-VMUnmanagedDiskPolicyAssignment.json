@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "enforcementMode": {
@@ -31,8 +32,8 @@
             "DoNotEnforce": "should"
         }
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2024-04-01",
             "name": "[variables('policyAssignmentNames').denyVMUnmanagedDisk]",
@@ -47,14 +48,18 @@
                         "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
                     }
                 ],
-                "overrides":[
+                "overrides": [
                     {
                         "kind": "policyEffect",
                         "value": "Deny"
                     }
                 ]
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         }
-    ],
+    },
     "outputs": {}
 }
