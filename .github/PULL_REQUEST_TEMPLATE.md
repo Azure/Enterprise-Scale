@@ -39,4 +39,3 @@ The below URLs can be updated where the placeholders are, look for `{YOUR GITHUB
 - [ ] Performed testing and provided evidence.
 - [ ] Ensured [contribution guidance](https://github.com/Azure/Enterprise-Scale/wiki/ALZ-Contribution-Guide) is followed.
 - [ ] Updated relevant and associated documentation.
-- [ ] Updated the ["What's New?"](https://github.com/Azure/Enterprise-Scale/wiki/Whats-new) wiki page (located: `/docs/wiki/whats-new.md`)
