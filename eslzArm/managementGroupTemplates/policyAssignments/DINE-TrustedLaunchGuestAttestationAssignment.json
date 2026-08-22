@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -61,8 +62,8 @@
             "roleAssignmentMIContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployGuestAtt,'-4',parameters('scope')))]"
         }
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2024-05-01",
             "name": "[variables('policyAssignmentNames').deployGuestAtt]",
@@ -86,14 +87,18 @@
                         "value": "[parameters('attestationEndpoint')]"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment1": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentVMContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deployGuestAtt]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -101,12 +106,12 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment2": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentReader]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deployGuestAtt]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -114,12 +119,12 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment3": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentMIOperator]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deployGuestAtt]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -127,12 +132,12 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment4": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentMIContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deployGuestAtt]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -140,7 +145,6 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployGuestAtt), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
-
-    ],
+    },
     "outputs": {}
 }
