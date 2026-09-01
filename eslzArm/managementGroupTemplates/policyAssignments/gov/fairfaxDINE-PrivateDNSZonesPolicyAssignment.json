@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -65,8 +66,8 @@
         },
         "policyRbac": "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2019-09-01",
             "name": "[variables('policyAssignmentNames').deployPrivateDnsZones]",
@@ -138,14 +139,18 @@
                         "value": "[variables('policyParameterMapping').azureCognitiveSearchPrivateDnsZoneId]"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNames').deployPrivateDnsZones]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deployPrivateDnsZones]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -153,7 +158,7 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployPrivateDnsZones), '2019-09-01', 'Full').identity.principalId)]"
             }
         }
-    ],
+    },
     "outputs": {
         "principalId": {
             "type": "string",

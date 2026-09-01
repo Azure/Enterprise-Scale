@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -44,8 +45,8 @@
             "deployRoles": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').enforceGuardrailsCosmosDb))]"
         }
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').enforceGuardrailsCosmosDb]",
@@ -63,14 +64,18 @@
                         "message": "[replace(variables('nonComplianceMessage').message, parameters('nonComplianceMessagePlaceholder'), variables('nonComplianceMessage')[parameters('enforcementMode')])]"
                     }
                 ]
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNames').deployRoles]",
             "dependsOn": [
-                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').enforceGuardrailsCosmosDb)]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -78,6 +83,6 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').enforceGuardrailsCosmosDb), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
-    ],
+    },
     "outputs": {}
 }
