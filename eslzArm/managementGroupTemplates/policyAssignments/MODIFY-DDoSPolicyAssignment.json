@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -29,7 +30,7 @@
     },
     "variables": {
         "policyDefinitions": {
-             "deployDoS": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d",
+            "deployDoS": "/providers/Microsoft.Authorization/policyDefinitions/94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d",
             "policyVersion": "1.*.*"
         },
         "policyAssignmentNames": {
@@ -45,10 +46,10 @@
         "rbacNetworkContributor": "4d97b98b-1d4f-4787-a291-c67834d212e7",
         "roleAssignmentNames": {
             "deployDdoS": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deployDdoS))]"
-         }
+        }
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2024-04-01",
             "name": "[variables('policyAssignmentNames').deployDdoS]",
@@ -70,14 +71,18 @@
                         "value": "Modify"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNames').deployDdoS]",
             "dependsOn": [
-                "[resourceId('Microsoft.Authorization/policyAssignments', variables('policyAssignmentNames').deployDdoS)]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -85,6 +90,6 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployDdoS), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
-           ],
+    },
     "outputs": {}
 }

@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -47,8 +48,8 @@
         "roleAssignmentNameLogAnalyticsContributor": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing,'-1'))]",
         "roleAssignmentNameSqlSecurityManager": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').deploySqlAuditing,'-2'))]"
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2024-04-01",
             "name": "[variables('policyAssignmentNames').deploySqlAuditing]",
@@ -72,14 +73,18 @@
                         "value": "[parameters('logAnalyticsResourceId')]"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment1": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNameLogAnalyticsContributor')]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deploySqlAuditing]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -87,12 +92,12 @@
                 "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full' ).identity.principalId]"
             }
         },
-        {
+        "roleAssignment2": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNameSqlSecurityManager')]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deploySqlAuditing]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -100,7 +105,7 @@
                 "principalId": "[reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deploySqlAuditing), '2019-09-01', 'Full' ).identity.principalId]"
             }
         }
-    ],
+    },
     "outputs": {
         "principalId": {
             "type": "string",

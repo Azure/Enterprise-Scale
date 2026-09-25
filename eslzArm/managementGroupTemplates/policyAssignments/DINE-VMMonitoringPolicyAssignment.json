@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -106,8 +107,8 @@
             "roleAssignmentNamePlatformManagedIdentityOperator": "[guid(concat(parameters('toplevelManagementGroupPrefix'),variables('policyAssignmentNames').vmMonitoring,'-6',parameters('scope')))]"
         }
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2024-04-01",
             "name": "[variables('policyAssignmentNames').vmMonitoring]",
@@ -146,14 +147,18 @@
                         "value": "[parameters('scopeToSupportedImages')]"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment1": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameLogAnalyticsContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -161,12 +166,12 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment2": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameVmContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -174,12 +179,12 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment3": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameMonitoringContributor]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -187,12 +192,12 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment4": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameManagedIdentityOperator]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -200,14 +205,14 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment5": {
             "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNameReader]",
             "scope": "[parameters('platformScope')]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -215,14 +220,14 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         },
-        {
+        "roleAssignment6": {
             "condition": "[not(equals(parameters('platformScope'), parameters('scope')))]",
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[variables('roleAssignmentNames').roleAssignmentNamePlatformManagedIdentityOperator]",
             "scope": "[parameters('platformScope')]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').vmMonitoring]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -230,6 +235,6 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').vmMonitoring), '2019-09-01', 'Full' ).identity.principalId)]"
             }
         }
-    ],
+    },
     "outputs": {}
 }

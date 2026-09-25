@@ -1,5 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+    "languageVersion": "2.0",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "topLevelManagementGroupPrefix": {
@@ -42,10 +43,10 @@
             "austriaeast": "aue",
             "belgiumcentral": "bec",
             "brazilsouth": "brs",
-            "brazilsoutheast": "bse",           
+            "brazilsoutheast": "bse",
             "canadacentral": "cnc",
             "canadaeast": "cne",
-            "centralindia": "inc",            
+            "centralindia": "inc",
             "centralus": "cus",
             "chilecentral": "clc",
             "denmarkeast": "dke",
@@ -89,7 +90,7 @@
             "ukwest": "ukw",
             "westcentralus": "wcus",
             "westeurope": "we",
-            "westindia": "inw",            
+            "westindia": "inw",
             "westus": "wus",
             "westus2": "wus2",
             "westus3": "wus3",
@@ -168,7 +169,7 @@
             "azureAcrPrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.azurecr.io')]",
             "azureEventHubNamespacePrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.servicebus.windows.net')]",
             "azureMachineLearningWorkspacePrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.api.azureml.ms')]",
-            "azureMachineLearningWorkspaceSecondPrivateDnsZoneId" : "[concat(variables('baseId'), 'privatelink.notebooks.azure.net')]",
+            "azureMachineLearningWorkspaceSecondPrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.notebooks.azure.net')]",
             "azureServiceBusNamespacePrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.servicebus.windows.net')]",
             "azureCognitiveSearchPrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.search.windows.net')]",
             "azureBotServicePrivateDnsZoneId": "[concat(variables('baseId'), 'privatelink.directline.botframework.com')]",
@@ -204,8 +205,8 @@
         },
         "policyRbac": "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
     },
-    "resources": [
-        {
+    "resources": {
+        "policyAssignment": {
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2022-06-01",
             "name": "[variables('policyAssignmentNames').deployPrivateDnsZones]",
@@ -426,14 +427,18 @@
                         "value": "[variables('policyParameterMapping').azureSiteRecoveryQueuePrivateDnsZoneId]"
                     }
                 }
+            },
+            "retryOn": {
+                "count": 6,
+                "interval": "PT5M"
             }
         },
-        {
+        "roleAssignment": {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[variables('roleAssignmentNames').deployPrivateDnsZones]",
             "dependsOn": [
-                "[variables('policyAssignmentNames').deployPrivateDnsZones]"
+                "policyAssignment"
             ],
             "properties": {
                 "principalType": "ServicePrincipal",
@@ -441,7 +446,7 @@
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentNames').deployPrivateDnsZones), '2019-09-01', 'Full').identity.principalId)]"
             }
         }
-    ],
+    },
     "outputs": {
         "principalId": {
             "type": "string",
