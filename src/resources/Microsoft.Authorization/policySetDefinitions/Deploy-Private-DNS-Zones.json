@@ -8,7 +8,7 @@
     "displayName": "Configure Azure PaaS services to use private DNS zones",
     "description": "This policy initiative is a group of policies that ensures private endpoints to Azure PaaS services are integrated with Azure Private DNS zones",
     "metadata": {
-      "version": "2.5.0",
+      "version": "2.6.0",
       "category": "Network",
       "source": "https://github.com/Azure/Enterprise-Scale/",
       "alzCloudEnvironments": [
@@ -141,6 +141,7 @@
         "defaultValue": {
           "azureAcrPrivateDnsZoneId": "privatelink.azurecr.io",
           "azureAcrDataPrivateDnsZoneId": "{regionName}.data.privatelink.azurecr.io",
+          "azureAIServicesPrivateDnsZoneId": "privatelink.services.ai.azure.com",
           "azureAppPrivateDnsZoneId": "privatelink.azconfig.io",
           "azureAppServicesPrivateDnsZoneId": "privatelink.azurewebsites.net",
           "azureArcGuestconfigurationPrivateDnsZoneId": "privatelink.guestconfiguration.azure.com",
@@ -186,6 +187,7 @@
           "azureMonitorPrivateDnsZoneId3": "privatelink.ods.opinsights.azure.com",
           "azureMonitorPrivateDnsZoneId4": "privatelink.agentsvc.azure-automation.net",
           "azureMonitorPrivateDnsZoneId5": "privatelink.blob.core.windows.net",
+          "azureOpenAIPrivateDnsZoneId": "privatelink.openai.azure.com",
           "azureRedisCachePrivateDnsZoneId": "privatelink.redis.cache.windows.net",
           "azureServiceBusNamespacePrivateDnsZoneId": "privatelink.servicebus.windows.net",
           "azureSignalRPrivateDnsZoneId": "privatelink.service.signalr.net",
@@ -607,6 +609,24 @@
         "defaultValue": "",
         "metadata": {
           "displayName": "azureCognitiveServicesPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azureOpenAIPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azureOpenAIPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azureAIServicesPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azureAIServicesPrivateDnsZoneId",
           "strongType": "Microsoft.Network/privateDnsZones",
           "description": "Private DNS Zone Identifier"
         }
@@ -1476,11 +1496,17 @@
       },
       {
         "policyDefinitionReferenceId": "DINE-Private-DNS-Azure-CognitiveServices",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c4bc6f10-cb41-49eb-b000-d5ab82e2a091",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-CognitiveServices",
         "definitionVersion": "1.*.*",
         "parameters": {
           "privateDnsZoneId": {
             "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azureCognitiveServicesPrivateDnsZoneId'), format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(parameters('dnsZoneNames').azureCognitiveServicesPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')])))]"
+          },
+          "privateDnsZoneIdOpenAI": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azureOpenAIPrivateDnsZoneId'), if(empty(union(createObject('azureOpenAIPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureOpenAIPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azureOpenAIPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureOpenAIPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
+          },
+          "privateDnsZoneIdAIServices": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azureAIServicesPrivateDnsZoneId'), if(empty(union(createObject('azureAIServicesPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureAIServicesPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azureAIServicesPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureAIServicesPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
           },
           "effect": {
             "value": "[[parameters('effect')]"
