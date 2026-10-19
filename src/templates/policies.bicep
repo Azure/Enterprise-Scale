@@ -195,6 +195,7 @@ var loadPolicyDefinitions = {
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Budget.json') // Needs validating in AzureChinaCloud (already used in AzureUSGovernment)
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-AVDScalingPlans.json') // No obvious reason for exclusion from AzureChinaCloud and AzureUSGovernment, impacts "Deploy-Diagnostics-LogAnalytics" Policy Set Definition
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-CognitiveServices.json') // Interim replacement for built-in c4bc6f10 in "Deploy-Private-DNS-Zones" until it supports OpenAI/AI Services zones
+    loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-Generic-MultiZone.json') // Interim implementation in "Deploy-Private-DNS-Zones" for services that need multiple private DNS zones and have no built-in Policy Definition
   ]
   AzureChinaCloud: [
     loadTextContent('../resources/Microsoft.Authorization/policyDefinitions/Deny-AFSPaasPublicIP.AzureChinaCloud.json') // Used by "Deny-PublicPaaSEndpoints" Policy Set Definition to replace missing built-in Policy Definition in AzureChinaCloud
