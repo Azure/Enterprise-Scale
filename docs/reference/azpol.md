@@ -137,6 +137,23 @@ Azure Private DNS Zone Group helps is grouping the Private Link connections by A
 
 Enterprises can create central Azure Private Zones and ESLZ custom policies will auto-provision connections between Private Link/Endpoint and Private DNS Zone for Azure services.
 
+### Private endpoints requiring multiple DNS zones
+
+In AzureCloud, `Deploy-Private-DNS-Zones` uses the interim custom definition `Deploy-Private-DNS-Generic-MultiZone` for these services:
+
+| Service | Resource type / group ID | Private DNS zones |
+| --- | --- | --- |
+| Azure Health Data Services | `Microsoft.HealthcareApis/workspaces` / `healthcareworkspace` | `privatelink.azurehealthcareapis.com`, `privatelink.dicom.azurehealthcareapis.com` |
+| Power BI | `Microsoft.PowerBI/privateLinkServicesForPowerBI` / `tenant` | `privatelink.analysis.windows.net`, `privatelink.pbidedicated.windows.net`, `privatelink.prod.powerquery.microsoft.com` |
+
+The definition accepts up to four zone IDs, skips empty IDs, and supports both automatic and manual private link service connections. A location of `*` matches private endpoints in any region. With no zone IDs supplied, the endpoint is not evaluated by this definition; initiative references are also disabled when all their zone IDs are empty.
+
+The Portal creates the zones above and passes their IDs to the initiative. For other deployment paths, create all required zones before enabling the references: an initiative zone ID parameter or a `dnsZoneNames` entry does not create a zone. `privatelink.prod.powerquery.microsoft.com` is opt-in outside the Portal because not every hub module creates it: it is not part of the default `dnsZoneNames`, so Power BI endpoints get the other two zones until you add it. After creating the zone, in subscription/resource-group naming mode add the `azurePowerBIPowerQueryPrivateDnsZoneId` entry to a custom `dnsZoneNames` object; in explicit-ID mode, pass `azurePowerBIPowerQueryPrivateDnsZoneId`. Older custom `dnsZoneNames` objects without the new keys continue to work, but their missing zones are not linked.
+
+Existing zone groups named `deployedByPolicy` are noncompliant if any configured zone is missing. Remediation replaces that group's configuration with the supplied nonempty zones; include every zone that must be retained. Zone groups with other names are left unchanged and considered compliant, so workload owners remain responsible for their DNS configuration. Existing private endpoints require a remediation task; an evaluation alone does not update their zone groups. Ensure the policy assignment identity has permissions at both the endpoint and DNS zone scopes; Terraform and Bicep consumers must verify role assignments for every supplied zone.
+
+Static Web Apps remains workload-managed because its partition-specific zone is not known in advance. Sovereign-cloud initiatives and the separate Cognitive Services definition are unchanged. The interim MultiZone references can be replaced with compatible built-ins after their matching rules, zone group name, parameter mapping, and permissions have been verified.
+
 ## Centrally manage firewall rules
 
 Fragmented firewall rules can lead to uncontrolled and ambiguous network traffic paths. Continuous changes in the firewalls rules for every instance of firewall makes it difficult to assess the network security posture. Multiple rules makes it impossible to distinguish between centrally managed basic set of rules and workload specific network path rules.

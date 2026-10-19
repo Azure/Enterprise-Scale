@@ -173,6 +173,8 @@
           "azureEventHubNamespacePrivateDnsZoneId": "privatelink.servicebus.windows.net",
           "azureFilePrivateDnsZoneId": "privatelink.afs.azure.net",
           "azureHDInsightPrivateDnsZoneId": "privatelink.azurehdinsight.net",
+          "azureHealthDataServicesDicomPrivateDnsZoneId": "privatelink.dicom.azurehealthcareapis.com",
+          "azureHealthDataServicesPrivateDnsZoneId": "privatelink.azurehealthcareapis.com",
           "azureIotCentralPrivateDnsZoneId": "privatelink.azureiotcentral.com",
           "azureIotDeviceupdatePrivateDnsZoneId": "privatelink.azure-devices.net",
           "azureIotHubsPrivateDnsZoneId": "privatelink.azure-devices.net",
@@ -195,6 +197,8 @@
           "azureMySQLPrivateDnsZoneId": "privatelink.mysql.database.azure.com",
           "azureOpenAIPrivateDnsZoneId": "privatelink.openai.azure.com",
           "azurePostgreSQLPrivateDnsZoneId": "privatelink.postgres.database.azure.com",
+          "azurePowerBIAnalysisPrivateDnsZoneId": "privatelink.analysis.windows.net",
+          "azurePowerBIDedicatedPrivateDnsZoneId": "privatelink.pbidedicated.windows.net",
           "azurePurviewAccountPrivateDnsZoneId": "privatelink.purview.azure.com",
           "azurePurviewPortalPrivateDnsZoneId": "privatelink.purviewstudio.azure.com",
           "azureRedisCachePrivateDnsZoneId": "privatelink.redis.cache.windows.net",
@@ -936,6 +940,51 @@
           "displayName": "azurePurviewPortalPrivateDnsZoneId",
           "strongType": "Microsoft.Network/privateDnsZones",
           "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azureHealthDataServicesPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azureHealthDataServicesPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azureHealthDataServicesDicomPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azureHealthDataServicesDicomPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azurePowerBIAnalysisPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azurePowerBIAnalysisPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azurePowerBIDedicatedPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azurePowerBIDedicatedPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier"
+        }
+      },
+      "azurePowerBIPowerQueryPrivateDnsZoneId": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "displayName": "azurePowerBIPowerQueryPrivateDnsZoneId",
+          "strongType": "Microsoft.Network/privateDnsZones",
+          "description": "Private DNS Zone Identifier. Opt-in: privatelink.prod.powerquery.microsoft.com is not included in the default dnsZoneNames because not every hub module creates it"
         }
       },
       "effect": {
@@ -2097,6 +2146,61 @@
           },
           "effect": {
             "value": "[[if(empty(if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azurePurviewPortalPrivateDnsZoneId'), union(createObject('azurePurviewPortalPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePurviewPortalPrivateDnsZoneId)), 'Disabled', parameters('effect'))]"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "DINE-Private-DNS-Azure-HealthDataServices",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-Generic-MultiZone",
+        "definitionVersion": "1.*.*",
+        "parameters": {
+          "privateDnsZoneId": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azureHealthDataServicesPrivateDnsZoneId'), if(empty(union(createObject('azureHealthDataServicesPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureHealthDataServicesPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azureHealthDataServicesPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureHealthDataServicesPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
+          },
+          "privateDnsZoneId2": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azureHealthDataServicesDicomPrivateDnsZoneId'), if(empty(union(createObject('azureHealthDataServicesDicomPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureHealthDataServicesDicomPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azureHealthDataServicesDicomPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureHealthDataServicesDicomPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
+          },
+          "resourceType": {
+            "value": "Microsoft.HealthcareApis/workspaces"
+          },
+          "groupId": {
+            "value": "healthcareworkspace"
+          },
+          "location": {
+            "value": "*"
+          },
+          "effect": {
+            "value": "[[if(empty(if(equals(parameters('dnsZoneSubscriptionId'), ''), concat(parameters('azureHealthDataServicesPrivateDnsZoneId'), parameters('azureHealthDataServicesDicomPrivateDnsZoneId')), concat(union(createObject('azureHealthDataServicesPrivateDnsZoneId', '', 'azureHealthDataServicesDicomPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureHealthDataServicesPrivateDnsZoneId, union(createObject('azureHealthDataServicesPrivateDnsZoneId', '', 'azureHealthDataServicesDicomPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azureHealthDataServicesDicomPrivateDnsZoneId))), 'Disabled', parameters('effect'))]"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "DINE-Private-DNS-Azure-PowerBI",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/contoso/providers/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-Generic-MultiZone",
+        "definitionVersion": "1.*.*",
+        "parameters": {
+          "privateDnsZoneId": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azurePowerBIAnalysisPrivateDnsZoneId'), if(empty(union(createObject('azurePowerBIAnalysisPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIAnalysisPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azurePowerBIAnalysisPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIAnalysisPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
+          },
+          "privateDnsZoneId2": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azurePowerBIDedicatedPrivateDnsZoneId'), if(empty(union(createObject('azurePowerBIDedicatedPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIDedicatedPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azurePowerBIDedicatedPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIDedicatedPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
+          },
+          "privateDnsZoneId3": {
+            "value": "[[if(equals(parameters('dnsZoneSubscriptionId'), ''), parameters('azurePowerBIPowerQueryPrivateDnsZoneId'), if(empty(union(createObject('azurePowerBIPowerQueryPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIPowerQueryPrivateDnsZoneId), '', format('/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}', parameters('dnsZoneSubscriptionId'), toLower(parameters('dnsZoneResourceGroupName')), parameters('dnsZoneResourceType'), replace(replace(union(createObject('azurePowerBIPowerQueryPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIPowerQueryPrivateDnsZoneId, '{regionName}', parameters('dnsZoneRegion')), '{regionCode}', parameters('dnzZoneRegionShortNames')[parameters('dnsZoneRegion')]))))]"
+          },
+          "resourceType": {
+            "value": "Microsoft.PowerBI/privateLinkServicesForPowerBI"
+          },
+          "groupId": {
+            "value": "tenant"
+          },
+          "location": {
+            "value": "*"
+          },
+          "effect": {
+            "value": "[[if(empty(if(equals(parameters('dnsZoneSubscriptionId'), ''), concat(parameters('azurePowerBIAnalysisPrivateDnsZoneId'), parameters('azurePowerBIDedicatedPrivateDnsZoneId'), parameters('azurePowerBIPowerQueryPrivateDnsZoneId')), concat(union(createObject('azurePowerBIAnalysisPrivateDnsZoneId', '', 'azurePowerBIDedicatedPrivateDnsZoneId', '', 'azurePowerBIPowerQueryPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIAnalysisPrivateDnsZoneId, union(createObject('azurePowerBIAnalysisPrivateDnsZoneId', '', 'azurePowerBIDedicatedPrivateDnsZoneId', '', 'azurePowerBIPowerQueryPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIDedicatedPrivateDnsZoneId, union(createObject('azurePowerBIAnalysisPrivateDnsZoneId', '', 'azurePowerBIDedicatedPrivateDnsZoneId', '', 'azurePowerBIPowerQueryPrivateDnsZoneId', ''), parameters('dnsZoneNames')).azurePowerBIPowerQueryPrivateDnsZoneId))), 'Disabled', parameters('effect'))]"
           }
         },
         "groupNames": []
