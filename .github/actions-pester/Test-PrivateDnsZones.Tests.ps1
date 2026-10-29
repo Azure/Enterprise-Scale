@@ -4,22 +4,22 @@
 
 BeforeDiscovery {
     $zoneWiring = @(
-        @{ Key = 'azureBotServiceTokenPrivateDnsZoneId'; Zone = 'privatelink.token.botframework.com'; InDefaultNames = $true }
-        @{ Key = 'azureSqlServerPrivateDnsZoneId'; Zone = 'privatelink.database.windows.net'; InDefaultNames = $true }
-        @{ Key = 'azureApiManagementPrivateDnsZoneId'; Zone = 'privatelink.azure-api.net'; InDefaultNames = $true }
-        @{ Key = 'azureMySQLPrivateDnsZoneId'; Zone = 'privatelink.mysql.database.azure.com'; InDefaultNames = $true }
-        @{ Key = 'azurePostgreSQLPrivateDnsZoneId'; Zone = 'privatelink.postgres.database.azure.com'; InDefaultNames = $true }
-        @{ Key = 'azureCosmosPostgreSQLPrivateDnsZoneId'; Zone = 'privatelink.postgres.cosmos.azure.com'; InDefaultNames = $true }
-        @{ Key = 'azureDigitalTwinsPrivateDnsZoneId'; Zone = 'privatelink.digitaltwins.azure.net'; InDefaultNames = $true }
-        @{ Key = 'azureManagedHSMPrivateDnsZoneId'; Zone = 'privatelink.managedhsm.azure.net'; InDefaultNames = $true }
-        @{ Key = 'azurePurviewAccountPrivateDnsZoneId'; Zone = 'privatelink.purview.azure.com'; InDefaultNames = $true }
-        @{ Key = 'azurePurviewPortalPrivateDnsZoneId'; Zone = 'privatelink.purviewstudio.azure.com'; InDefaultNames = $true }
-        @{ Key = 'azureHealthDataServicesPrivateDnsZoneId'; Zone = 'privatelink.azurehealthcareapis.com'; InDefaultNames = $true }
-        @{ Key = 'azureHealthDataServicesDicomPrivateDnsZoneId'; Zone = 'privatelink.dicom.azurehealthcareapis.com'; InDefaultNames = $true }
-        @{ Key = 'azurePowerBIAnalysisPrivateDnsZoneId'; Zone = 'privatelink.analysis.windows.net'; InDefaultNames = $true }
-        @{ Key = 'azurePowerBIDedicatedPrivateDnsZoneId'; Zone = 'privatelink.pbidedicated.windows.net'; InDefaultNames = $true }
-        # Opt-in in dnsZoneNames mode: the Terraform and Bicep hub modules do not create this zone.
-        @{ Key = 'azurePowerBIPowerQueryPrivateDnsZoneId'; Zone = 'privatelink.prod.powerquery.microsoft.com'; InDefaultNames = $false }
+        @{ Key = 'azureBotServiceTokenPrivateDnsZoneId'; Zone = 'privatelink.token.botframework.com'; OptIn = $false }
+        @{ Key = 'azureSqlServerPrivateDnsZoneId'; Zone = 'privatelink.database.windows.net'; OptIn = $false }
+        @{ Key = 'azureApiManagementPrivateDnsZoneId'; Zone = 'privatelink.azure-api.net'; OptIn = $false }
+        @{ Key = 'azureMySQLPrivateDnsZoneId'; Zone = 'privatelink.mysql.database.azure.com'; OptIn = $false }
+        @{ Key = 'azurePostgreSQLPrivateDnsZoneId'; Zone = 'privatelink.postgres.database.azure.com'; OptIn = $false }
+        @{ Key = 'azureCosmosPostgreSQLPrivateDnsZoneId'; Zone = 'privatelink.postgres.cosmos.azure.com'; OptIn = $false }
+        @{ Key = 'azureDigitalTwinsPrivateDnsZoneId'; Zone = 'privatelink.digitaltwins.azure.net'; OptIn = $false }
+        @{ Key = 'azureManagedHSMPrivateDnsZoneId'; Zone = 'privatelink.managedhsm.azure.net'; OptIn = $false }
+        @{ Key = 'azurePurviewAccountPrivateDnsZoneId'; Zone = 'privatelink.purview.azure.com'; OptIn = $false }
+        @{ Key = 'azurePurviewPortalPrivateDnsZoneId'; Zone = 'privatelink.purviewstudio.azure.com'; OptIn = $false }
+        @{ Key = 'azureHealthDataServicesPrivateDnsZoneId'; Zone = 'privatelink.azurehealthcareapis.com'; OptIn = $false }
+        @{ Key = 'azureHealthDataServicesDicomPrivateDnsZoneId'; Zone = 'privatelink.dicom.azurehealthcareapis.com'; OptIn = $false }
+        @{ Key = 'azurePowerBIAnalysisPrivateDnsZoneId'; Zone = 'privatelink.analysis.windows.net'; OptIn = $false }
+        @{ Key = 'azurePowerBIDedicatedPrivateDnsZoneId'; Zone = 'privatelink.pbidedicated.windows.net'; OptIn = $false }
+        # Opt-in in dnsZoneNames mode (default entry ''): the Terraform and Bicep hub modules do not create this zone.
+        @{ Key = 'azurePowerBIPowerQueryPrivateDnsZoneId'; Zone = 'privatelink.prod.powerquery.microsoft.com'; OptIn = $true }
     )
     $genericSlots = @(
         @{ Reference = 'DINE-Private-DNS-Azure-SqlServer'; Key = 'azureSqlServerPrivateDnsZoneId'; ResourceType = 'Microsoft.Sql/servers'; GroupId = 'sqlServer' }
@@ -50,7 +50,10 @@ BeforeAll {
     $template = $details.deployment.properties.template
     $zoneParameters = @('privateDnsZoneId', 'privateDnsZoneId2', 'privateDnsZoneId3', 'privateDnsZoneId4')
     function Get-Reference([string]$Id) { , @($initiative.properties.policyDefinitions | Where-Object policyDefinitionReferenceId -EQ $Id) }
-    function Get-GuardedZoneExpression([string]$Key) { "union(createObject('$Key', ''), parameters('dnsZoneNames')).$Key" }
+    # dnsZoneNames lookup that skips an empty zone name. Plain property access on purpose: terraform-provider-alz
+    # (alzlib / goarmfunctions) cannot evaluate union() or createObject() and would skip the zone role assignment.
+    function Get-ZoneNameExpression([string]$Key) { "if(empty(parameters('dnsZoneNames').$Key), ''" }
+    $alzlibFunctions = 'if', 'equals', 'parameters', 'format', 'replace', 'toLower', 'concat', 'empty'
 }
 
 Describe 'Private DNS zone wiring <Key>' -ForEach $zoneWiring {
@@ -59,12 +62,8 @@ Describe 'Private DNS zone wiring <Key>' -ForEach $zoneWiring {
         $parameter.type | Should -Be 'string'
         $parameter.defaultValue | Should -Be ''
         $parameter.metadata.strongType | Should -Be 'Microsoft.Network/privateDnsZones'
-        if ($InDefaultNames) {
-            $initiative.properties.parameters.dnsZoneNames.defaultValue[$Key] | Should -Be $Zone
-        }
-        else {
-            $initiative.properties.parameters.dnsZoneNames.defaultValue.ContainsKey($Key) | Should -BeFalse
-        }
+        $initiative.properties.parameters.dnsZoneNames.defaultValue.ContainsKey($Key) | Should -BeTrue
+        $initiative.properties.parameters.dnsZoneNames.defaultValue[$Key] | Should -Be ($OptIn ? '' : $Zone)
     }
 
     It 'is passed by the Portal assignment and the zone is created by the Portal hub' {
@@ -85,7 +84,7 @@ Describe 'Bot Service Token reference' {
         $reference.definitionVersion | Should -Be '1.*.*'
         @($reference.parameters.Keys | Sort-Object) | Should -Be @('effect', 'privateDnsZoneId', 'privateEndpointGroupId')
         $reference.parameters.privateEndpointGroupId.value | Should -Be 'Token'
-        $reference.parameters.privateDnsZoneId.value | Should -Match ([regex]::Escape((Get-GuardedZoneExpression 'azureBotServiceTokenPrivateDnsZoneId')))
+        $reference.parameters.privateDnsZoneId.value | Should -Match ([regex]::Escape((Get-ZoneNameExpression 'azureBotServiceTokenPrivateDnsZoneId')))
         $reference.parameters.effect.value | Should -Match ([regex]::Escape("parameters('azureBotServiceTokenPrivateDnsZoneId')"))
         $reference.parameters.effect.value | Should -Match "'Disabled', parameters\('effect'\)"
     }
@@ -129,10 +128,9 @@ Describe 'Generic private DNS slot <Reference>' -ForEach $genericSlots {
         foreach ($name in $reference.parameters.Keys) { $generic.properties.parameters.Keys | Should -Contain $name }
     }
 
-    It 'guards the dnsZoneNames lookup and is disabled when the zone is empty' {
+    It 'skips an empty dnsZoneNames entry and is disabled when the zone is empty' {
         $reference = (Get-Reference $Reference)[0]
-        $reference.parameters.privateDnsZoneId.value | Should -Match ([regex]::Escape((Get-GuardedZoneExpression $Key)))
-        $reference.parameters.privateDnsZoneId.value | Should -Not -Match ([regex]::Escape("parameters('dnsZoneNames').$Key"))
+        $reference.parameters.privateDnsZoneId.value | Should -Match ([regex]::Escape((Get-ZoneNameExpression $Key)))
         $reference.parameters.effect.value | Should -Match ([regex]::Escape("parameters('$Key')"))
         $reference.parameters.effect.value | Should -Match "'Disabled', parameters\('effect'\)"
     }
@@ -240,11 +238,15 @@ Describe 'Deploy-Private-DNS-Generic-MultiZone' {
             $reference.parameters.resourceType.value | Should -Be $slot.ResourceType
             $reference.parameters.groupId.value | Should -Be $slot.GroupId
             $reference.parameters.location.value | Should -Be '*'
-            @($reference.parameters.Keys | Where-Object { $_ -like 'privateDnsZoneId*' }).Count | Should -Be $slot.Keys.Count
             $reference.parameters.effect.value | Should -Match "'Disabled', parameters\('effect'\)"
-            for ($i = 0; $i -lt $slot.Keys.Count; $i++) {
+            for ($i = 0; $i -lt $zoneParameters.Count; $i++) {
+                if ($i -ge $slot.Keys.Count) {
+                    # Unused slots evaluate to '': alzlib needs every assignPermissions parameter and cannot parse "".
+                    $reference.parameters[$zoneParameters[$i]].value | Should -Be "[['']"
+                    continue
+                }
                 $key = $slot.Keys[$i]
-                $reference.parameters[$zoneParameters[$i]].value | Should -Match ([regex]::Escape((Get-GuardedZoneExpression $key)))
+                $reference.parameters[$zoneParameters[$i]].value | Should -Match ([regex]::Escape((Get-ZoneNameExpression $key)))
                 $reference.parameters.effect.value | Should -Match ([regex]::Escape("parameters('$key')"))
             }
         }
@@ -281,5 +283,42 @@ Describe 'Deploy-Private-DNS-Zones invariants' {
     It 'receives only known parameters from the Portal assignment' {
         foreach ($name in $assignedParameters.Keys) { $initiative.properties.parameters.Keys | Should -Contain $name }
         foreach ($name in $assignment.variables.policyParameterMapping.Keys) { $assignedParameters.Keys | Should -Contain $name }
+    }
+
+    It 'defines every dnsZoneNames entry that a reference reads' {
+        $names = $initiative.properties.parameters.dnsZoneNames.defaultValue
+        $missing = foreach ($reference in $initiative.properties.policyDefinitions) {
+            foreach ($name in $reference.parameters.Keys) {
+                foreach ($match in [regex]::Matches([string]$reference.parameters[$name].value, "parameters\('dnsZoneNames'\)\.(\w+)")) {
+                    if (-not $names.ContainsKey($match.Groups[1].Value)) { "$($reference.policyDefinitionReferenceId)/$name -> $($match.Groups[1].Value)" }
+                }
+            }
+        }
+        @($missing).Count | Should -Be 0 -Because ($missing -join '; ')
+    }
+
+    It 'only uses functions alzlib can evaluate in zone ID parameters' {
+        # terraform-provider-alz evaluates these with alzlib (goarmfunctions v0.3.0) to create the policy role
+        # assignments; any other function is a warning and the zone gets no role assignment.
+        $unsupported = foreach ($reference in $initiative.properties.policyDefinitions) {
+            foreach ($name in $reference.parameters.Keys | Where-Object { $_ -notlike 'effect*' }) {
+                $expression = [regex]::Replace([string]$reference.parameters[$name].value, "'(?:[^']|'')*'", "''")
+                foreach ($match in [regex]::Matches($expression, '([A-Za-z_]\w*)\s*\(')) {
+                    if ($match.Groups[1].Value -cnotin $alzlibFunctions) { "$($reference.policyDefinitionReferenceId)/$name -> $($match.Groups[1].Value)" }
+                }
+            }
+        }
+        @($unsupported).Count | Should -Be 0 -Because ($unsupported -join '; ')
+    }
+
+    It 'passes every assignPermissions parameter of the ALZ custom definitions it references' {
+        # alzlib reports a role assignment error for each assignPermissions parameter a reference does not pass.
+        $missing = foreach ($reference in $initiative.properties.policyDefinitions | Where-Object { $_.policyDefinitionId.StartsWith($customDefinitionPrefix) }) {
+            $definition = Get-RepoJson "src/resources/Microsoft.Authorization/policyDefinitions/$(($reference.policyDefinitionId -split '/')[-1]).json"
+            foreach ($name in $definition.properties.parameters.Keys | Where-Object { $definition.properties.parameters[$_].metadata.assignPermissions }) {
+                if (-not $reference.parameters.ContainsKey($name)) { "$($reference.policyDefinitionReferenceId) -> $name" }
+            }
+        }
+        @($missing).Count | Should -Be 0 -Because ($missing -join '; ')
     }
 }
