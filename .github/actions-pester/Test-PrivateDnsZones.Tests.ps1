@@ -1,6 +1,7 @@
 # Static contract tests for the private DNS coverage added to Deploy-Private-DNS-Zones for Azure/Azure-Landing-Zones#461:
 # Bot Service Token (built-in 6a4e6f44), Deploy-Private-DNS-Generic slots for services without a built-in policy,
 # and Deploy-Private-DNS-Generic-MultiZone slots for services that need several private DNS zones.
+# Also covers Deploy-Private-DNS-CognitiveServices (Azure/Azure-Landing-Zones#446) and the Audit-PeDnsZones zone list.
 
 BeforeDiscovery {
     $zoneWiring = @(
@@ -320,5 +321,41 @@ Describe 'Deploy-Private-DNS-Zones invariants' {
             }
         }
         @($missing).Count | Should -Be 0 -Because ($missing -join '; ')
+    }
+}
+
+Describe 'Deploy-Private-DNS-CognitiveServices' {
+    It 'matches the account group ID on automatic or manual connections' {
+        $cognitive = Get-RepoJson 'src/resources/Microsoft.Authorization/policyDefinitions/Deploy-Private-DNS-CognitiveServices.json'
+        $connections = @($cognitive.properties.policyRule.if.allOf | Where-Object { $_.ContainsKey('anyOf') })[0].anyOf
+        $connections.Count | Should -Be 2
+        for ($i = 0; $i -lt 2; $i++) {
+            $property = @('privateLinkServiceConnections', 'manualPrivateLinkServiceConnections')[$i]
+            $prefix = "Microsoft.Network/privateEndpoints/$property"
+            $connections[$i].count.field | Should -Be "$prefix`[*]"
+            $where = $connections[$i].count.where.allOf
+            $where[0].field | Should -Be "$prefix`[*].privateLinkServiceId"
+            $where[0].contains | Should -Be 'Microsoft.CognitiveServices/accounts'
+            $where[1].field | Should -Be "$prefix`[*].groupIds[*]"
+            $where[1].equals | Should -Be 'account'
+            $connections[$i].greaterOrEquals | Should -Be 1
+        }
+    }
+}
+
+Describe 'Audit-PrivateLinkDnsZones' {
+    BeforeAll {
+        $definitionZones = @((Get-RepoJson 'src/resources/Microsoft.Authorization/policyDefinitions/Audit-PrivateLinkDnsZones.json').properties.parameters.privateLinkDnsZones.defaultValue)
+        $assignmentZones = @((Get-RepoJson 'eslzArm/managementGroupTemplates/policyAssignments/AUDIT-PeDnsZonesPolicyAssignment.json').parameters.privateLinkDnsZones.defaultValue)
+    }
+
+    It 'uses the same zone list in the definition and the Corp assignment' {
+        ($assignmentZones -join ',') | Should -Be ($definitionZones -join ',')
+    }
+
+    It 'audits the OpenAI, AI Services, Cosmos DB for PostgreSQL and Static Web Apps partition zones' {
+        $expected = @('privatelink.openai.azure.com', 'privatelink.services.ai.azure.com', 'privatelink.postgres.cosmos.azure.com') +
+            @(1..5 | ForEach-Object { "privatelink.$_.azurestaticapps.net" })
+        foreach ($zone in $expected) { $definitionZones | Should -Contain $zone }
     }
 }
