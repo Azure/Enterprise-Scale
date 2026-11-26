@@ -137,6 +137,27 @@ Azure Private DNS Zone Group helps is grouping the Private Link connections by A
 
 Enterprises can create central Azure Private Zones and ESLZ custom policies will auto-provision connections between Private Link/Endpoint and Private DNS Zone for Azure services.
 
+### Private endpoints requiring multiple DNS zones
+
+In AzureCloud, `Deploy-Private-DNS-Zones` uses the interim custom definition `Deploy-Private-DNS-Generic-MultiZone` for these services:
+
+| Service | Resource type / group ID | Private DNS zones |
+| --- | --- | --- |
+| Azure Health Data Services | `Microsoft.HealthcareApis/workspaces` / `healthcareworkspace` | `privatelink.azurehealthcareapis.com`, `privatelink.dicom.azurehealthcareapis.com` |
+| Power BI | `Microsoft.PowerBI/privateLinkServicesForPowerBI` / `tenant` | `privatelink.analysis.windows.net`, `privatelink.pbidedicated.windows.net`, `privatelink.prod.powerquery.microsoft.com` |
+
+The definition accepts up to four zone IDs, skips empty IDs, and supports both automatic and manual private link service connections. A location of `*` matches private endpoints in any region. With no zone IDs supplied, the endpoint is not evaluated by this definition; initiative references are also disabled when all their zone IDs are empty.
+
+The Portal creates the zones above and passes their IDs to the initiative. For other deployment paths, create all required zones before enabling the references: an initiative zone ID parameter or a `dnsZoneNames` entry does not create a zone. `privatelink.prod.powerquery.microsoft.com` is opt-in outside the Portal because not every hub module creates it: its default `dnsZoneNames` entry, `azurePowerBIPowerQueryPrivateDnsZoneId`, is empty, so Power BI endpoints get the other two zones until you set it. After creating the zone, in subscription/resource-group naming mode set `azurePowerBIPowerQueryPrivateDnsZoneId` to `privatelink.prod.powerquery.microsoft.com` in a custom `dnsZoneNames` object; in explicit-ID mode, pass `azurePowerBIPowerQueryPrivateDnsZoneId`. A custom `dnsZoneNames` object must contain every entry of the default object, including entries added by newer versions; set an entry to `''` to skip that zone. A missing entry makes the parameter expressions that read it fail, and Terraform cannot create the matching role assignments.
+
+Existing zone groups named `deployedByPolicy` are noncompliant if any configured zone is missing. Remediation replaces that group's configuration with the supplied nonempty zones; include every zone that must be retained. Zone groups with other names are left unchanged and considered compliant, so workload owners remain responsible for their DNS configuration. Existing private endpoints require a remediation task; an evaluation alone does not update their zone groups. Ensure the policy assignment identity has permissions at both the endpoint and DNS zone scopes; Terraform and Bicep consumers must verify role assignments for every supplied zone.
+
+Cognitive Services accounts (`Microsoft.CognitiveServices/accounts` / `account`), including Azure OpenAI and Azure AI Foundry, use the separate interim custom definition `Deploy-Private-DNS-CognitiveServices`. It links `privatelink.cognitiveservices.azure.com`, `privatelink.openai.azure.com` and `privatelink.services.ai.azure.com`, skips empty zone IDs, supports both automatic and manual private link service connections, and repairs `deployedByPolicy` zone groups in the same way. In subscription/resource-group naming mode, the OpenAI and AI Services zones are linked by default: create both zones in the DNS resource group, or set `azureOpenAIPrivateDnsZoneId` and `azureAIServicesPrivateDnsZoneId` to `''` in a custom `dnsZoneNames` object. Otherwise the zone group deployment fails, and the endpoint is not linked to the Cognitive Services zone either.
+
+`Audit-PrivateLinkDnsZones` (assigned as `Audit-PeDnsZones` to the Corp landing zones) audits the creation of private DNS zones there, so that workloads use the central zones. Its default zone list, also used by the `Audit-PeDnsZones` assignment template, now includes the OpenAI, AI Services, Azure Cosmos DB for PostgreSQL and Static Web Apps partition zones. Portal deployments pass the zones selected for creation in the connectivity hub instead of this list.
+
+Static Web Apps remains workload-managed because its partition-specific zone is not known in advance. Sovereign-cloud initiatives are unchanged. The interim Cognitive Services and MultiZone references can be replaced with compatible built-ins after their matching rules, zone group name, parameter mapping, and permissions have been verified.
+
 ## Centrally manage firewall rules
 
 Fragmented firewall rules can lead to uncontrolled and ambiguous network traffic paths. Continuous changes in the firewalls rules for every instance of firewall makes it difficult to assess the network security posture. Multiple rules makes it impossible to distinguish between centrally managed basic set of rules and workload specific network path rules.
